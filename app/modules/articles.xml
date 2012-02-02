@@ -1,0 +1,11 @@
+<js:Module xmlns="http://www.w3.org/1999/xhtml"
+           xmlns:js="js.core" xmlns:ui="js.ui" xmlns:cfg="js.conf">
+
+    <js:Content target="header">
+
+    </js:Content>
+
+    <js:Content target="main">
+    </js:Content>
+
+</js:Module>

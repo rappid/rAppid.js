@@ -1,0 +1,74 @@
+<?xml version="1.0"?>
+<js:Application xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:js="js.core" xmlns:ui="js.ui" xmlns:cfg="js.conf"
+                xmlns:fx="js.fx" >
+
+    <js:Imports>
+        js.core.Base;
+    </js:Imports>
+
+
+    <!--<cfg:Modules>-->
+        <!--<js:Module src="app.modules.Articles" route="/^articles(.*)$/" />-->
+    <!--</cfg:Modules>-->
+
+    <js:ModuleLoader id="">
+
+        <!-- optional-->
+        <js:ContentPlaceHolder name="main">
+        </js:ContentPlaceHolder>
+    </js:ModuleLoader>
+
+    <js:UIComponent />
+
+    <!-- comes into moduleloader into content place holders-->
+    <!--<header class="fixed">-->
+
+    <!--</header>-->
+    <!--<div id="">-->
+
+    <!--</div>-->
+    <!--<footer>-->
+
+    <!--</footer>-->
+
+    <!--
+    <script type="text/javascript">
+
+        var x = function (){
+
+        };
+
+    </script>
+
+    <fx:alpha>
+
+    </fx:alpha>
+
+    <div id="asd">
+        <ui:View>
+            <ui:Button className="{}">
+
+            </ui:Button>
+            <ui:Listview collection="{products}">
+                <ui:binding property="" model="" key="" transform="x">
+
+                </ui:binding>
+                <templates>
+                    <template name="item" model="">
+                        <li>
+                            <ui:img src="{data.image}"/>
+                        </li>
+                    </template>
+                </templates>
+            </ui:Listview>
+        </ui:View>
+
+    </div>
+
+    <js:Module>
+
+    </js:Module>
+    -->
+
+</js:Application>

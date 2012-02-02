@@ -1,0 +1,1 @@
+../../inherit.js/inherit.js
