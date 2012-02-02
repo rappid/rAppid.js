@@ -1,7 +1,6 @@
 rAppid.defineClass("js.core.Component",
     ["js.core.EventDispatcher"], function(EventDispatcher) {
         return EventDispatcher.inherit({
-
             ctor: function (options) {
                 this.base.ctor.callBase(this);
                 this.$children = [];
@@ -41,15 +40,20 @@ rAppid.defineClass("js.core.Component",
 
                 this._preinitialize();
 
-                var node;
+                var node,attrVal;
 
                 // get attributes from descriptor
-                var attributes = this.$options;
+                var attributes = this.$options || {};
                 if (descriptor && descriptor.attributes) {
                     for (var a = 0; a < descriptor.attributes.length; a++) {
                         node = descriptor.attributes[a];
                         if (node.nodeType == 2) { // attributes
-                            attributes[node.nodeName] = node.value;
+                            attrVal = node.value;
+                            // TODO: add proper reg expr for {varName123}
+                            if(attrVal.match(/{[a-zA-Z]+}/)){
+                                attrVal = eval(attrVal);
+                            }
+                            attributes[node.nodeName] = attrVal;
                         }
                     }
                 }

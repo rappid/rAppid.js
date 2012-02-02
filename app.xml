@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <js:Application xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:js="js.core" xmlns:ui="js.ui" xmlns:cfg="js.conf"
-                xmlns:fx="js.fx" >
+                xmlns:fx="js.fx">
 
     <js:Imports>
         js.core.Base;
@@ -9,7 +9,7 @@
 
 
     <!--<cfg:Modules>-->
-        <!--<js:Module src="app.modules.Articles" route="/^articles(.*)$/" />-->
+    <!--<js:Module src="app.modules.Articles" route="/^articles(.*)$/" />-->
     <!--</cfg:Modules>-->
 
     <js:ModuleLoader id="">
@@ -19,7 +19,20 @@
         </js:ContentPlaceHolder>
     </js:ModuleLoader>
 
-    <js:UIComponent />
+    <js:UIComponent width="300px" className="{globalVar}">
+        <js:Binding attr="className" model="{globalVar}" key="what">
+            <script>
+                ret = {
+                    transform: function(val){
+                        return val;
+                    },
+                    transformBack: function(val){
+                        return val;
+                    }
+                }
+            </script>
+        </js:Binding>
+    </js:UIComponent>
     <js:UIComponent tagName="span"/>
 
     <!-- comes into moduleloader into content place holders-->

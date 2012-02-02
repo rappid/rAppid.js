@@ -2,6 +2,7 @@ rAppid.defineClass("js.core.UIComponent",
     ["underscore", "js.core.Component"], function (_, Composite) {
         return Composite.inherit({
             $tagName: 'div',
+
             render: function() {
                 if(!this.$initialized){
                     this._initialize(this.$creationPolicy);
@@ -15,6 +16,11 @@ rAppid.defineClass("js.core.UIComponent",
                     this.$tagName = this.$options.tagName;
                 }
                 this.$el = document.createElement(this.$tagName);
+
+                this._renderWidth(this.$options.width);
+                this._renderClassName(this.$options.className);
+                // bind events -> on ...
+                // this._registerEvents(['click','mouseover','mouseout','keydown']);
 
                 // for all children
                 var child;
@@ -32,6 +38,20 @@ rAppid.defineClass("js.core.UIComponent",
             },
             isRendered: function(){
                 return typeof (this.$el) != "undefined";
+            },
+            _renderWidth: function(width){
+                if(width){
+                    this.$el.setAttribute('width',width);
+                }else{
+                    this.$el.removeAttribute('width');
+                }
+            },
+            _renderClassName: function(className){
+                if(className){
+                    this.$el.setAttribute('className',className);
+                }else{
+                    this.$el.removeAttribute('className');
+                }
             }
         });
     }
