@@ -7,32 +7,34 @@
         js.core.Base;
     </js:Imports>
 
+    <js:Script>
+        (function () {
+            return {
+                x: function () {
+                    console.log("x");
+                },
+                y: function () {
+                    console.log("y");
+                }
+            }
+        })();
+    </js:Script>
 
     <!--<cfg:Modules>-->
     <!--<js:Module src="app.modules.Articles" route="/^articles(.*)$/" />-->
     <!--</cfg:Modules>-->
 
-    <js:ModuleLoader id="">
+    <!--<js:ModuleLoader id="">-->
 
-        <!-- optional-->
-        <js:ContentPlaceHolder name="main">
-        </js:ContentPlaceHolder>
-    </js:ModuleLoader>
+        <!--&lt;!&ndash; optional&ndash;&gt;-->
+        <!--<js:ContentPlaceHolder name="main">-->
+        <!--</js:ContentPlaceHolder>-->
+    <!--</js:ModuleLoader>-->
 
     <js:UIComponent width="300px" className="{globalVar}">
-        <js:Binding attr="className" model="{globalVar}" key="what">
-            <script>
-                ret = {
-                    transform: function(val){
-                        return val;
-                    },
-                    transformBack: function(val){
-                        return val;
-                    }
-                }
-            </script>
-        </js:Binding>
+        <js:Binding attr="className" model="{globalVar}" key="what" />
     </js:UIComponent>
+
     <js:UIComponent tagName="span"/>
 
     <!-- comes into moduleloader into content place holders-->
@@ -45,19 +47,6 @@
     <!--<footer>-->
 
     <!--</footer>-->
-
-    <!--
-    <script type="text/javascript">
-
-        var x = function (){
-
-        };
-
-    </script>
-
-    <fx:alpha>
-
-    </fx:alpha>
 
     <div id="asd">
         <ui:View>
@@ -83,6 +72,4 @@
     <js:Module>
 
     </js:Module>
-    -->
-
 </js:Application>

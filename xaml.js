@@ -109,6 +109,42 @@
                 return ret;
             },
 
+            parseScript: function(script) {
+                return new (eval(script));
+            },
+
+            findScripts: function(xaml) {
+                var ret = [];
+
+                for (var i = 0; i < xaml.childNodes.length; i++) {
+                    var node = xaml.childNodes[i];
+                    if (node.nodeType == 1) {
+                        if ("js/core/Script" == this.getDependency(node.namespaceURI, node.localName, {}, [])) {
+                            ret.push(node);
+                        }
+                    }
+                }
+
+                return ret;
+            },
+
+            getDeclarationFromScripts: function(scripts) {
+                var ret = {};
+
+                if (scripts) {
+                    for (var s = 0; s < scripts.length; s++) {
+                        var script = scripts[s];
+                        for (var fn in script) {
+                            if (script.hasOwnProperty(fn)) {
+                                ret[fn] = script[fn];
+                            }
+                        }
+                    }
+                }
+
+                return ret;
+            },
+
             load: function (name, req, onLoad, config) {
 //                if (config.isBuild && !config.inlineText) {
 //                    onLoad();
@@ -128,12 +164,34 @@
 
                             // console.log(["dependencies for " + url, dependencies ]);
 
+                            var scripts = self.findScripts(xhr.responseXML.documentElement);
+                            if (scripts.length > 0) {
+                                // at least one script
+                                dependencies.splice(1, 0, "js/core/Script");
+                            }
+
                             // first item should be the dependency of the document element
-                            req(dependencies, function(baseClass) {
+                            req(dependencies, function(baseClass, Script) {
                                 // dependencies are loaded
 
-                                var xamlFactory = baseClass.inherit({
-                                });
+
+                                var scriptObjects = [];
+
+                                if (scripts.length > 0) {
+                                    for (var s = 0; s < scripts.length; s++) {
+                                        try {
+                                            var scriptInstance = new Script();
+                                            scriptInstance._construct(scripts[s], null);
+                                            scriptObjects.push(scriptInstance.evaluate());
+                                        } catch (e) {
+                                            throw "Script cannot be loaded";
+                                        }
+                                    }
+                                }
+
+                                var xamlFactory = baseClass.inherit(
+                                    self.getDeclarationFromScripts(scriptObjects)
+                                );
 
                                 xamlFactory.prototype._$descriptor = xhr.responseXML;
 
