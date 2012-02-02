@@ -8,15 +8,7 @@ rAppid.defineClass("js.core.Application",
             },
             render: function (target) {
                 // TODO: call base method
-                var dom = document.createElement("div");
-
-                for (var i = 0; i < this.$children.length; i++) {
-                    var child = this.$children[i];
-                    if (child instanceof UIComponent) {
-                        dom.appendChild(child.render());
-                    }
-
-                }
+                var dom = this.base.render.callBase(this);
 
                 if (target) {
                     target.appendChild(dom);

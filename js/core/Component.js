@@ -45,11 +45,11 @@ rAppid.defineClass("js.core.Component",
 
                 // get attributes from descriptor
                 var attributes = this.$options;
-                if (descriptor) {
-                    for (var a = 0; a < descriptor.childNodes.length; a++) {
-                        node = descriptor.childNodes[a];
+                if (descriptor && descriptor.attributes) {
+                    for (var a = 0; a < descriptor.attributes.length; a++) {
+                        node = descriptor.attributes[a];
                         if (node.nodeType == 2) { // attributes
-                            attributes[node.nodeName] = descriptor.getAttribute(node.nodeName);
+                            attributes[node.nodeName] = node.value;
                         }
                     }
                 }
