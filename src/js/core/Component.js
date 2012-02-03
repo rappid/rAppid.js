@@ -1,13 +1,10 @@
 rAppid.defineClass("js.core.Component",
-    ["js.core.EventDispatcher"], function(EventDispatcher) {
-        return EventDispatcher.inherit({
-            ctor: function (options) {
+    ["js.core.Bindable"], function(Bindable) {
+        return Bindable.inherit({
+            ctor: function (attributes) {
                 this.base.ctor.callBase(this);
                 this.$children = [];
-                this.$options = _.defaults(options || {}, this._defaultOptions);
             },
-
-            _defaultOptions: {},
 
             _construct: function(descriptor, applicationDomain) {
                 this.$descriptor = descriptor;
@@ -43,7 +40,7 @@ rAppid.defineClass("js.core.Component",
                 var node,attrVal;
 
                 // get attributes from descriptor
-                var attributes = this.$options || {};
+                var attributes = this.$ || {};
                 if (descriptor && descriptor.attributes) {
                     for (var a = 0; a < descriptor.attributes.length; a++) {
                         node = descriptor.attributes[a];
@@ -99,8 +96,7 @@ rAppid.defineClass("js.core.Component",
             _preinitialize: function () {
             },
             _initializeAttributes: function (attributes) {
-                this.$attributes = attributes;
-                
+                this.$ = attributes;
             },
             _createComponentForNode: function (node) {
                 // only instantiation and construction but no initialization

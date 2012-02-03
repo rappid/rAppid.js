@@ -1,5 +1,9 @@
 rAppid.defineClass("js.core.EventDispatcher",
     [],
+    /**
+     * Base class for trigger and listen to events
+     * @export js/core/EventDispatcher
+     */
     function () {
         return js.core.Base.inherit({
             ctor: function() {
