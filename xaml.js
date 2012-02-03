@@ -193,7 +193,7 @@
                                     self.getDeclarationFromScripts(scriptObjects)
                                 );
 
-                                xamlFactory.prototype._$descriptor = xhr.responseXML;
+                                xamlFactory.prototype._$descriptor = xhr.responseXML.documentElement;
 
                                 onLoad(xamlFactory);
                             });

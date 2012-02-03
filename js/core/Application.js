@@ -1,6 +1,9 @@
 rAppid.defineClass("js.core.Application",
     ["js.core.UIComponent"], function (UIComponent) {
         return UIComponent.inherit({
+            ctor: function() {
+                this.base.ctor.callBase(this);
+            },
             start: function(callback) {
                 if (callback) {
                     callback(null);

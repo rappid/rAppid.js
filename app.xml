@@ -48,28 +48,28 @@
 
     <!--</footer>-->
 
-    <div id="asd">
-        <ui:View>
-            <ui:Button className="{}">
+    <!--<div id="asd">-->
+        <!--<ui:View>-->
+            <!--<ui:Button className="{}">-->
 
-            </ui:Button>
-            <ui:Listview collection="{products}">
-                <ui:binding property="" model="" key="" transform="x">
+            <!--</ui:Button>-->
+            <!--<ui:Listview collection="{products}">-->
+                <!--<ui:binding property="" model="" key="" transform="x">-->
 
-                </ui:binding>
-                <templates>
-                    <template name="item" model="">
-                        <li>
-                            <ui:img src="{data.image}"/>
-                        </li>
-                    </template>
-                </templates>
-            </ui:Listview>
-        </ui:View>
+                <!--</ui:binding>-->
+                <!--<templates>-->
+                    <!--<template name="item" model="">-->
+                        <!--<li>-->
+                            <!--<ui:img src="{data.image}"/>-->
+                        <!--</li>-->
+                    <!--</template>-->
+                <!--</templates>-->
+            <!--</ui:Listview>-->
+        <!--</ui:View>-->
 
-    </div>
+    <!--</div>-->
 
-    <js:Module>
+    <!--<js:Module>-->
 
-    </js:Module>
+    <!--</js:Module>-->
 </js:Application>
