@@ -8,8 +8,6 @@ rAppid.defineClass("js.core.Bindable", ["js.core.EventDispatcher", "underscore"]
          * @extends js.core.EventDispatcher
          */
         return EventDispatcher.inherit({
-            $previous$:{},
-            $: {},
             ctor: function (attributes) {
                 // call the base class constructor
                 this.base.ctor.callBase(this);

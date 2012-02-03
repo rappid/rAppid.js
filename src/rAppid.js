@@ -33,10 +33,10 @@ var rAppid;
             if (global.js.core.ApplicationDomain.currentDomain) {
                 global.js.core.ApplicationDomain.currentDomain.defineClass(fqName, dependencies, generateFactory);
             } else {
-                throw "ApplicaitonDomain not available! Application not bootstrapped?";
+                throw "ApplicationDomain not available! Application not bootstrapped?";
             }
         },
-        bootStrap: function (mainClass, xamlClasses, callback, namespaceMap) {
+        bootStrap: function (mainClass, xamlClasses, callback, namespaceMap, rewriteMap) {
             mainClass = mainClass || "app.xml";
             xamlClasses = xamlClasses || [];
             namespaceMap = namespaceMap || defaultNamespaceMap;
@@ -55,15 +55,19 @@ var rAppid;
             }
 
             // TODO: automatic detect xaml or js -> default load plugin for require has to overwritten
-            require.config({
-                xamlClasses: xamlClasses,
-                namespaceMap: namespaceMap
-            });
 
             var self = this;
 
             require(["js/core/ApplicationDomain"], function (ApplicationDomain) {
-                var applicationDomain = new ApplicationDomain(null, global, namespaceMap);
+
+                var applicationDomain = new ApplicationDomain(null, global, namespaceMap, rewriteMap);
+
+                require.config({
+                    xamlClasses: xamlClasses,
+                    namespaceMap: namespaceMap,
+                    rewriteMap: applicationDomain.$rewriteMap
+                });
+
 
                 global.js.core.ApplicationDomain = ApplicationDomain;
                 ApplicationDomain.currentDomain = applicationDomain;
@@ -95,7 +99,6 @@ var rAppid;
             });
         }
     };
-
 
     rAppid = exports.rAppid = _rAppid;
 

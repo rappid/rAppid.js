@@ -1,43 +1,8 @@
 rAppid.defineClass("js.core.UIComponent",
-    ["underscore", "js.core.Component"], function (_, Composite) {
-        return Composite.inherit({
-            $tagName: 'div',
-
-            render: function() {
-                if(!this.$initialized){
-                    this._initialize(this.$creationPolicy);
-                }
-                // check if it is already rendered
-                if(this.isRendered()){
-                    return this.$el;
-                }
-
-                if(this.$options.tagName){
-                    this.$tagName = this.$options.tagName;
-                }
-                this.$el = document.createElement(this.$tagName);
-
-                this._renderWidth(this.$options.width);
-                this._renderClassName(this.$options.className);
-                // bind events -> on ...
-                // this._registerEvents(['click','mouseover','mouseout','keydown']);
-
-                // for all children
-                var child;
-                for(var i = 0; i < this.$children.length; i++){
-                    child = this.$children[i];
-                    if (_.isFunction(child.render)) {
-                        var el =  child.render();
-                        if(el){
-                            this.$el.appendChild(el);
-                        }
-                    }
-                }
-
-                return this.$el;
-            },
-            isRendered: function(){
-                return typeof (this.$el) != "undefined";
+    ["underscore", "js.html.DomElement"], function (_, DomElement) {
+        return DomElement.inherit({
+            _defaults: {
+                tagName: "div"
             },
             _renderWidth: function(width){
                 if(width){

@@ -53,23 +53,33 @@
 
             },
 
-            getDependency: function(namespace, localName, namespaceMap, xamlClasses) {
-                var fqName = [namespaceMap[namespace] || namespace, localName].join(".");
+            getDependency: function(namespace, localName, namespaceMap, xamlClasses, rewriteMap) {
+                var fqClassName = [namespaceMap[namespace] || namespace, localName].join(".");
 
-                if (xamlClasses[fqName]) {
-                    fqName = "xaml!" + fqName;
+                for (var i = 0; i < rewriteMap.length; i++) {
+                    var entry = rewriteMap[i];
+                    if (entry.$from && entry.$to) {
+                        if (entry.$from.test(fqClassName)) {
+                            fqClassName = fqClassName.replace(entry.$from, entry.$to);
+                            break;
+                        }
+                    }
                 }
 
-                return fqName.replace(/\./g, "/");
+                if (xamlClasses[fqClassName]) {
+                    fqClassName = "xaml!" + fqClassName;
+                }
+
+                return fqClassName.replace(/\./g, "/");
             },
 
-            findDependencies: function (xaml, namespaceMap, xamlClasses) {
+            findDependencies: function (xaml, namespaceMap, xamlClasses, rewriteMap) {
 
                 var self = this;
                 var ret = [];
 
                 function findDependencies(domNode) {
-                    var dep = self.getDependency(domNode.namespaceURI, domNode.localName, namespaceMap, xamlClasses);
+                    var dep = self.getDependency(domNode.namespaceURI, domNode.localName, namespaceMap, xamlClasses, rewriteMap);
 
                     if (dep == "js/core/Imports") {
                         for (var t = 0; t < domNode.childNodes.length; t++) {
@@ -109,17 +119,13 @@
                 return ret;
             },
 
-            parseScript: function(script) {
-                return new (eval(script));
-            },
-
-            findScripts: function(xaml) {
+            findScripts: function(xaml, namespaceMap, xamlClasses, rewriteMap) {
                 var ret = [];
 
                 for (var i = 0; i < xaml.childNodes.length; i++) {
                     var node = xaml.childNodes[i];
                     if (node.nodeType == 1) {
-                        if ("js/core/Script" == this.getDependency(node.namespaceURI, node.localName, {}, [])) {
+                        if ("js/core/Script" == this.getDependency(node.namespaceURI, node.localName, namespaceMap, xamlClasses, rewriteMap)) {
                             ret.push(node);
                         }
                     }
@@ -160,11 +166,12 @@
                         if (xhr.responseXML) {
                             // require all dependencies
                             var dependencies = self.findDependencies(xhr.responseXML.documentElement,
-                                config.namespaceMap, config.xamlClasses);
+                                config.namespaceMap, config.xamlClasses, config.rewriteMap);
 
                             // console.log(["dependencies for " + url, dependencies ]);
 
-                            var scripts = self.findScripts(xhr.responseXML.documentElement);
+                            var scripts = self.findScripts(xhr.responseXML.documentElement,
+                                config.namespaceMap, config.xamlClasses, config.rewriteMap);
                             if (scripts.length > 0) {
                                 // at least one script
                                 dependencies.splice(1, 0, "js/core/Script");
