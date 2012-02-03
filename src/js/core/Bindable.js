@@ -2,7 +2,7 @@ rAppid.defineClass("js.core.Bindable", ["js.core.EventDispatcher", "underscore"]
     /**
      * @export js.core.Bindable
      */
-    function (EventDispatcher) {
+    function (EventDispatcher, _) {
 
         /**
          * @class js.core.Bindable
@@ -11,10 +11,14 @@ rAppid.defineClass("js.core.Bindable", ["js.core.EventDispatcher", "underscore"]
         return EventDispatcher.inherit({
             ctor: function (attributes) {
                 this.base.ctor.callBase(this);
-                this.$ = _.defaults(attributes || {}, this._defaultAttributes);
+                this.$ = _.defaults(attributes || {}, this._defaultAttributes());
             },
 
-            _defaultAttributes: {},
+            _defaults: {},
+
+            _defaultAttributes: function() {
+                return _.defaults(this._defaults, this.base._defaults);
+            },
 
             set: function (attributes) {
                 if (!(attributes instanceof Object)) {

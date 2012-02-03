@@ -20,6 +20,10 @@
         })();
     </js:Script>
 
+    <div>
+        <span>XYZ</span>
+    </div>
+
     <!--<cfg:Modules>-->
     <!--<js:Module src="app.modules.Articles" route="/^articles(.*)$/" />-->
     <!--</cfg:Modules>-->
