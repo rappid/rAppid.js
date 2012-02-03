@@ -5,25 +5,41 @@ rAppid.defineClass("js.core.EventDispatcher",
      * @export js/core/EventDispatcher
      */
     function () {
-        return js.core.Base.inherit({
+
+
+        var EventDispatcher = js.core.Base.inherit({
             ctor: function() {
 
             },
-            bind: function (event, callback) {
+            bind: function (eventType, callback) {
 
                 // get the list for the event
-                var list = this.$eventHandlers[event] || (this.$eventHandlers[event] = []);
+                var list = this.$eventHandlers[eventType] || (this.$eventHandlers[eventType] = []);
                 // and push the callback function
                 list.push(callback);
 
                 return this;
             },
-            trigger: function (event, data) {
-                if (this.$eventHandlers[event]) {
-                    var list = this.$eventHandlers[event];
+            /**
+             *
+             * @param {String} eventType
+             * @param {js.core.EventDispatcher.Event|Object} event
+             * @param target
+             */
+            trigger: function (eventType, event, target) {
+                if (this.$eventHandlers[eventType]) {
+                    if (!(event instanceof EventDispatcher.Event)) {
+                        event = new EventDispatcher.Event(event);
+                    }
+                    event.type = eventType;
+                    if(!event.target){
+                        event.target = target || this;
+                    }
+
+                    var list = this.$eventHandlers[eventType];
                     for (var i = 0; i < list.length; i++) {
                         if (list[i]) {
-                            list[i].call(this, event, data);
+                            list[i](event,event.$);
                         }
                     }
                 }
@@ -45,5 +61,13 @@ rAppid.defineClass("js.core.EventDispatcher",
                 }
             }
         });
+
+        EventDispatcher.Event = js.core.Base.inherit({
+            ctor: function(attributes){
+                this.$ = attributes;
+            }
+        });
+
+        return EventDispatcher;
     }
 );
