@@ -12,14 +12,16 @@ rAppid.defineClass("js.core.Bindable", ["js.core.EventDispatcher", "underscore"]
                 // call the base class constructor
                 this.base.ctor.callBase(this);
 
+                this.$ = {};
+                this._previous$ = {};
 
-                _.defaults(attributes || {}, this._defaultAttributes);
-                this.set(attributes,true);
+                attributes = attributes || {};
+                _.defaults(attributes, this._defaultAttributes);
+                this.set(attributes,{silent: true});
 
-                this.$previous$ = _.clone(this.$);
+                this._previous$ = _.clone(this.$);
             },
             _defaultAttributes: {},
-
             /**
              *
              * @param attributes
@@ -27,7 +29,7 @@ rAppid.defineClass("js.core.Bindable", ["js.core.EventDispatcher", "underscore"]
             set: function (key, value, options) {
                 var attributes = {};
 
-                if(_.String(key)){
+                if(_.isString(key)){
                     attributes[key] = value;
                 }else{
                     options = value;
@@ -43,7 +45,7 @@ rAppid.defineClass("js.core.Bindable", ["js.core.EventDispatcher", "underscore"]
                     }
                 }
 
-                var changedAttributes = [],equal = true;
+                var changedAttributes = {},equal = true;
                 var now = this.$;
                 var val;
 
@@ -52,15 +54,28 @@ rAppid.defineClass("js.core.Bindable", ["js.core.EventDispatcher", "underscore"]
                         // get the value
                         val = attributes[key];
                         // unset attribute or change it ...
-                        options.unset ? delete now[key] : now[key] = val;
-                        // if attribute has changed and there is no async changing process in the background, fire the event
-                        if(options.silent === false && !_.isEqual(now[key],attributes[key])){
-                            this.trigger('change:' + key, val, this);
+                        if(options.unset === true){
+                            delete now[key];
+                        }else{
+                            if(!_.isEqual(now[key],attributes[key])){
+                                now[key] = attributes[key];
+                                changedAttributes[key] = now[key];
+                                if(options.silent === false){
+                                    this.trigger('change:' + key, val, this);
+                                }
+                            }
                         }
+                        // if attribute has changed and there is no async changing process in the background, fire the event
+
                     }
                 }
-
+                this._commitChangedAttributes(changedAttributes);
                 return this.$;
+            },
+            _commitChangedAttributes: function(attributes){
+                if(_.size(attributes) > 0){
+                    this.trigger('change',attributes,this);
+                }
             },
             unset: function(key,options){
                 (options || (options = {})).unset = true;

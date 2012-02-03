@@ -9,12 +9,14 @@ rAppid.defineClass("js.core.EventDispatcher",
 
         var EventDispatcher = js.core.Base.inherit({
             ctor: function() {
-
+                this.base.ctor.callBase(this);
+                this._eventHandlers = {};
             },
             bind: function (eventType, callback) {
 
+
                 // get the list for the event
-                var list = this.$eventHandlers[eventType] || (this.$eventHandlers[eventType] = []);
+                var list = this._eventHandlers[eventType] || (this._eventHandlers[eventType] = []);
                 // and push the callback function
                 list.push(callback);
 
@@ -27,7 +29,7 @@ rAppid.defineClass("js.core.EventDispatcher",
              * @param target
              */
             trigger: function (eventType, event, target) {
-                if (this.$eventHandlers[eventType]) {
+                if (this._eventHandlers[eventType]) {
                     if (!(event instanceof EventDispatcher.Event)) {
                         event = new EventDispatcher.Event(event);
                     }
@@ -36,7 +38,7 @@ rAppid.defineClass("js.core.EventDispatcher",
                         event.target = target || this;
                     }
 
-                    var list = this.$eventHandlers[eventType];
+                    var list = this._eventHandlers[eventType];
                     for (var i = 0; i < list.length; i++) {
                         if (list[i]) {
                             list[i](event,event.$);
@@ -47,12 +49,12 @@ rAppid.defineClass("js.core.EventDispatcher",
             unbind: function (event, callback) {
                 if (!event) {
                     // remove all events
-                    this.$eventHandlers = {};
+                    this._eventHandlers = {};
                 } else if (!callback) {
                     // remove all callbacks for these event
-                    this.$eventHandlers[event] = [];
-                } else if (this.$eventHandlers[event]) {
-                    var list = this.$eventHandlers[event];
+                    this._eventHandlers[event] = [];
+                } else if (this._eventHandlers[event]) {
+                    var list = this._eventHandlers[event];
                     for (var i = list.length - 1; i >= 0; i--) {
                         if (list[i] == callback) {
                             list.splice(i, 1);  // delete callback

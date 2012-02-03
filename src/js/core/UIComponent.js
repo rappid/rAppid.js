@@ -17,6 +17,9 @@ rAppid.defineClass("js.core.UIComponent",
                 }else{
                     this.$el.removeAttribute('className');
                 }
+            },
+            _renderAttributes: function(attributes){
+
             }
         });
     }

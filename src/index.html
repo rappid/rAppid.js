@@ -26,6 +26,17 @@
     var bootStrap = rAppid.bootStrap("app.xml", ["app.modules.articles"],
             function (err, systemManager, application) {
                 if (!err) {
+                    var model = new js.core.Bindable();
+
+                    model.bind('change:name',function(e,data){
+                        console.log(e.target.$);
+                    });
+                    model.bind('change',function(e,data){
+                        console.log(data);
+                    });
+
+                    model.set({name: 'Marcus'});
+
                     application.render(document.body);
                 } else {
                     console.warn(err);

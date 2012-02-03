@@ -15,7 +15,7 @@ rAppid.defineClass("js.core.Component",
                 if (!(child instanceof js.core.Component)) {
                     throw "only children of type js.core.Component can be added"
                 }
-
+                child.$parent = this;
                 this.$children.push(child);
             },
 
@@ -38,6 +38,7 @@ rAppid.defineClass("js.core.Component",
                 this._preinitialize();
 
                 var node,attrVal;
+                var variables = {};
 
                 // get attributes from descriptor
                 var attributes = this.$ || {};
@@ -47,10 +48,13 @@ rAppid.defineClass("js.core.Component",
                         if (node.nodeType == 2) { // attributes
                             attrVal = node.value;
                             // TODO: add proper reg expr for {varName123}
-                            if(attrVal.match(/{[a-zA-Z]+}/)){
-                                attrVal = eval(attrVal);
+                            var key = attrVal.match(/{([a-zA-Z]+)}/)
+                            if(key){
+                                variables[node.nodeName] = key[1];
+                            }else{
+                                attributes[node.nodeName] = attrVal;
                             }
-                            attributes[node.nodeName] = attrVal;
+
                         }
                     }
                 }
@@ -66,7 +70,7 @@ rAppid.defineClass("js.core.Component",
 
                 this.$creationPolicy = creationPolicy;
 
-                this._initializeAttributes(attributes);
+
 
                 var childrenFromDescriptor = [];
 
@@ -78,25 +82,50 @@ rAppid.defineClass("js.core.Component",
                 }
 
                 this._initializeChildren(childrenFromDescriptor);
+
+                // read out variables and put in attributes
+                // after the script tag is evaluated
+                for (key in variables) {
+                    if(variables.hasOwnProperty(key)){
+                        var val = this._getVar(variables[key]);
+                        if(val){
+                            attributes[key] = _.isFunction(val) ? val() : val;
+                        }
+
+                    }
+                }
+
+                this._initializeAttributes(attributes);
+
                 this._childrenInitialized();
 
                 this._initializationComplete();
 
             },
+            _getVar: function(key){
+                var ret = this[key];
+                if(ret){
+                    return ret;
+                }else if(this.$parent){
+                    // ask base
+                    return this.$parent._getVar(key);
+                }else{
+                    return null;
+                }
+            },
             _initializeChildren: function (childComponents) {
                 for (var i = 0; i < childComponents.length; i++) {
+                    this.addChild(childComponents[i]);
 
                     if (this.$creationPolicy == "auto") {
                         childComponents[i]._initialize(this.$creationPolicy);
                     }
-
-                    this.addChild(childComponents[i]);
                 }
             },
             _preinitialize: function () {
             },
             _initializeAttributes: function (attributes) {
-                this.$ = attributes;
+                this.set(attributes,{silent: true});
             },
             _createComponentForNode: function (node) {
                 // only instantiation and construction but no initialization

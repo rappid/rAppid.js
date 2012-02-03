@@ -10,18 +10,22 @@
     <js:Script>
         (function () {
             return {
-                x: function () {
-                    console.log("x");
+                start: {
+                   // TODO: put here the start code the application like loading models etc...
+                },
+                name:'first-application',
+                awesome: function () {
+                    return ["WE", "ARE", "AWESOME"].join(" ");
                 },
                 y: function () {
-                    console.log("y");
+                    console.log("x");
                 }
             }
         })();
     </js:Script>
 
-    <div>
-        <span>XYZ</span>
+    <div class="{awesome}">
+        <span id="{name}">XYZ</span>
     </div>
 
     <!--<cfg:Modules>-->
