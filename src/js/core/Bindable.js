@@ -16,7 +16,7 @@ rAppid.defineClass("js.core.Bindable", ["js.core.EventDispatcher", "underscore"]
                 this._previous$ = {};
 
                 attributes = attributes || {};
-                _.defaults(attributes, this._defaultAttributes);
+                _.defaults(attributes, this._defaults);
                 this.set(attributes,{silent: true});
 
                 this._previous$ = _.clone(this.$);
