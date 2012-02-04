@@ -1,5 +1,5 @@
 rAppid.defineClass("js.html.DomElement",
-    ["js.core.Component"], function (Component) {
+    ["js.core.Component","js.core.Binding"], function (Component, Binding) {
         return Component.inherit({
                 ctor:function (attributes) {
                     this.base.ctor.callBase(this, attributes);
@@ -26,6 +26,17 @@ rAppid.defineClass("js.html.DomElement",
                     if (attributes.tagName) {
                         this.$tagName = attributes.tagName;
                     }
+
+                    var attr;
+                    // find bindings
+                    for(var key in attributes){
+                        if(attributes.hasOwnProperty(key)){
+                            attr = attributes[key];
+                            if(attr instanceof Binding){
+
+                            }
+                        }
+                    }
                 },
                 render:function () {
                     if (!this.$initialized) {
@@ -44,15 +55,18 @@ rAppid.defineClass("js.html.DomElement",
                     var child;
                     for (var i = 0; i < this.$children.length; i++) {
                         child = this.$children[i];
-                        if (_.isFunction(child.render)) {
-                            var el = child.render();
-                            if (el) {
-                                this.$el.appendChild(el);
-                            }
-                        }
+                        this._renderChild(child);
                     }
 
                     return this.$el;
+                },
+                _renderChild: function(child){
+                    if (_.isFunction(child.render)) {
+                        var el = child.render();
+                        if (el) {
+                            this.$el.appendChild(el);
+                        }
+                    }
                 },
                 isRendered:function () {
                     return typeof (this.$el) !== "undefined";

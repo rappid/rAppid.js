@@ -2,24 +2,17 @@ rAppid.defineClass("js.core.Binding", ["js.core.Component"], function(Component,
     return Component.inherit({
         _initializeChildren: function(childComponents){
             this.base._initializeChildren.callBase(this,childComponents);
-
-//            var obj, component;
-//            for(var i = 0; i < childComponents.length; i++){
-//                component = childComponents[i];
-//                if(component instanceof Script){
-//                    obj = component.evaluate();
-//                    break;
-//                }
-//            }
-//
-//            if(obj.transform){
-//                this.transform = obj.transform;
-//            }
-//            if(obj.transformBack){
-//                this.transformBack = obj.transformBack;
-//            }
         },
         _initializeAttributes: function(attributes){
+            this.base._initializeAttributes.callBase(this);
+
+            if(attributes.transform){
+                this.transform = attributes.transform;
+            }
+            if(attributes.transformBack){
+                this.transformBack = attributes.transformBack;
+            }
+
 
         },
         // default transform method

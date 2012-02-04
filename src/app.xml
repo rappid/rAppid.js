@@ -10,22 +10,39 @@
     <js:Script>
         (function () {
             return {
-                start: {
-                   // TODO: put here the start code the application like loading models etc...
+                start:function () {
+                    // TODO: put here the start code the application like loading models etc...
+                    this.bindable = new js.core.Bindable({prop:'main'});
                 },
-                name:'first-application',
-                awesome: function () {
+                // First variant of binding
+                classNameBinding:function () {
+                    return js.core.Binding({model:this.bindable, key:'prop'});
+                },
+                appName:'first-application',
+                awesome:function () {
                     return ["WE", "ARE", "AWESOME"].join(" ");
                 },
-                y: function () {
+                y:function () {
                     console.log("x");
-                }
+                },
+                facets:[
+                    {
+                        label:'Colors',
+                        subitems:['red', "green", "gold"]
+                    },
+                    {
+                        label:'Sizes',
+                        subitems:['S', "M", "L"]
+                    }
+                ]
+
             }
         })();
     </js:Script>
 
-    <div class="{awesome}">
-        <span id="{name}">XYZ</span>
+    <div id="{appName}">
+        <span>Here is some Text</span><br/>
+        <span>Some Text with a placeholder: {awesome}</span>
     </div>
 
     <!--<cfg:Modules>-->
@@ -34,18 +51,26 @@
 
     <!--<js:ModuleLoader id="">-->
 
-        <!--&lt;!&ndash; optional&ndash;&gt;-->
-        <!--<js:ContentPlaceHolder name="main">-->
-        <!--</js:ContentPlaceHolder>-->
+    <!--&lt;!&ndash; optional&ndash;&gt;-->
+    <!--<js:ContentPlaceHolder name="main">-->
+    <!--</js:ContentPlaceHolder>-->
     <!--</js:ModuleLoader>-->
 
-    <js:UIComponent width="300px" className="{globalVar}">
-        <js:Binding attr="className" model="{globalVar}" key="what" />
-    </js:UIComponent>
+    <ui:CollectionView tagName="ul" items="{facets}">
+        <ui:ItemRenderer>
+            <li>
+                <b>Select:</b><span>{item.label}</span>
+                <ui:CollectionView items="{item.subitems}" tagName="ul">
+                    <ui:ItemRenderer>
+                        <li>{item} for {appName}</li>
+                    </ui:ItemRenderer>
+                </ui:CollectionView>
+            </li>
+        </ui:ItemRenderer>
+    </ui:CollectionView>
 
-    <js:UIComponent tagName="span"/>
 
-    <!-- comes into moduleloader into content place holders-->
+    <!--comes into moduleloader into content place holders-->
     <!--<header class="fixed">-->
 
     <!--</header>-->
@@ -57,23 +82,23 @@
     <!--</footer>-->
 
     <!--<div id="asd">-->
-        <!--<ui:View>-->
-            <!--<ui:Button className="{}">-->
+    <!--<ui:View>-->
+    <!--<ui:Button className="{}">-->
 
-            <!--</ui:Button>-->
-            <!--<ui:Listview collection="{products}">-->
-                <!--<ui:binding property="" model="" key="" transform="x">-->
+    <!--</ui:Button>-->
+    <!--<ui:Listview collection="{products}">-->
+    <!--<ui:binding property="" model="" key="" transform="x">-->
 
-                <!--</ui:binding>-->
-                <!--<templates>-->
-                    <!--<template name="item" model="">-->
-                        <!--<li>-->
-                            <!--<ui:img src="{data.image}"/>-->
-                        <!--</li>-->
-                    <!--</template>-->
-                <!--</templates>-->
-            <!--</ui:Listview>-->
-        <!--</ui:View>-->
+    <!--</ui:binding>-->
+    <!--<templates>-->
+    <!--<template name="item" model="">-->
+    <!--<li>-->
+    <!--<ui:img src="{data.image}"/>-->
+    <!--</li>-->
+    <!--</template>-->
+    <!--</templates>-->
+    <!--</ui:Listview>-->
+    <!--</ui:View>-->
 
     <!--</div>-->
 

@@ -1,6 +1,6 @@
 rAppid.defineClass("js.core.Component",
-    ["js.core.Bindable"], function(Bindable) {
-        return Bindable.inherit({
+    ["js.core.Element", "js.core.TextElement"], function(Element, TextElement) {
+        return Element.inherit({
             ctor: function (attributes) {
                 this.base.ctor.callBase(this);
                 this.$children = [];
@@ -12,7 +12,7 @@ rAppid.defineClass("js.core.Component",
             },
 
             addChild: function (child) {
-                if (!(child instanceof js.core.Component)) {
+                if (!(child instanceof Element)) {
                     throw "only children of type js.core.Component can be added"
                 }
                 child.$parent = this;
@@ -22,23 +22,14 @@ rAppid.defineClass("js.core.Component",
             /**
              *
              * @param descriptor
-             * @param creationPolicy
              *          auto - do not overwrite (default),
              *          all - create all children
              *          TODO none?
              */
-            _initialize: function (creationPolicy) {
-                if (this.$initialized) {
-                    return;
-                }
+            _initializeDescriptor: function (descriptor) {
+                var node, attrVal;
+                var placeholders = {};
 
-                var descriptor = this.$descriptor;
-
-
-                this._preinitialize();
-
-                var node,attrVal;
-                var variables = {};
 
                 // get attributes from descriptor
                 var attributes = this.$ || {};
@@ -48,10 +39,10 @@ rAppid.defineClass("js.core.Component",
                         if (node.nodeType == 2) { // attributes
                             attrVal = node.value;
                             // TODO: add proper reg expr for {varName123}
-                            var key = attrVal.match(/{([a-zA-Z]+)}/)
-                            if(key){
-                                variables[node.nodeName] = key[1];
-                            }else{
+                            var key = attrVal.match(/{([a-zA-Z_\.]+)}/)
+                            if (key) {
+                                placeholders[node.nodeName] = key[1];
+                            } else {
                                 attributes[node.nodeName] = attrVal;
                             }
 
@@ -60,35 +51,25 @@ rAppid.defineClass("js.core.Component",
                 }
 
 
-                if (creationPolicy != "full") {
+                if (this.$creationPolicy != "full") {
                     if (attributes.hasOwnProperty("creationPolicy")) {
-                        creationPolicy = attributes.creationPolicy;
-                    } else {
-                        creationPolicy = "auto";
+                        this.$creationPolicy = attributes.creationPolicy;
                     }
                 }
 
-                this.$creationPolicy = creationPolicy;
 
-
-
-                var childrenFromDescriptor = [];
-
-                for (var i = 0; i < descriptor.childNodes.length; i++) {
-                    node = descriptor.childNodes[i];
-                    if (node.nodeType == 1) { // Elements
-                        childrenFromDescriptor.push(this._createComponentForNode(node));
-                    }
-                }
+                var childrenFromDescriptor = this._createChildrenFromDescriptor(descriptor);
 
                 this._initializeChildren(childrenFromDescriptor);
 
                 // read out variables and put in attributes
                 // after the script tag is evaluated
-                for (key in variables) {
-                    if(variables.hasOwnProperty(key)){
-                        var val = this._getVar(variables[key]);
-                        if(val){
+                for (key in placeholders) {
+                    if (placeholders.hasOwnProperty(key)) {
+
+
+                        var val = this._getPropertyForPlaceholder(placeholders[key]);
+                        if (val) {
                             attributes[key] = _.isFunction(val) ? val() : val;
                         }
 
@@ -99,19 +80,6 @@ rAppid.defineClass("js.core.Component",
 
                 this._childrenInitialized();
 
-                this._initializationComplete();
-
-            },
-            _getVar: function(key){
-                var ret = this[key];
-                if(ret){
-                    return ret;
-                }else if(this.$parent){
-                    // ask base
-                    return this.$parent._getVar(key);
-                }else{
-                    return null;
-                }
             },
             _initializeChildren: function (childComponents) {
                 for (var i = 0; i < childComponents.length; i++) {
@@ -121,8 +89,6 @@ rAppid.defineClass("js.core.Component",
                         childComponents[i]._initialize(this.$creationPolicy);
                     }
                 }
-            },
-            _preinitialize: function () {
             },
             _initializeAttributes: function (attributes) {
                 this.set(attributes,{silent: true});
@@ -136,14 +102,37 @@ rAppid.defineClass("js.core.Component",
 
                 return component;
             },
+            _createComponentForTextNode:function (node) {
+                // only instantiation and construction but no initialization
+                var appDomain = this.$applicationDomain;
+                var component = new TextElement();
 
+                component._construct(node, appDomain);
+
+                return component;
+            },
+            _createChildrenFromDescriptor: function(descriptor){
+                var childrenFromDescriptor = [], node;
+                for (var i = 0; i < descriptor.childNodes.length; i++) {
+                    node = descriptor.childNodes[i];
+                    if (node.nodeType == 1) { // Elements
+                        childrenFromDescriptor.push(this._createComponentForNode(node));
+                    }else if(node.nodeType == 3){ // Textnodes
+                        // remove whitespaces from text textnodes
+                        var text = node.textContent.trim();
+                        if(text.length > 0){
+                            // console.log(node);
+                            node.textContent = text;
+                            childrenFromDescriptor.push(this._createComponentForTextNode(node));
+                        }
+
+                    }
+                }
+                return childrenFromDescriptor;
+            },
             _childrenInitialized: function () {
 
-            },
-            _initializationComplete: function () {
-                this.$initialized = true;
             }
-
         });
     }
 );
