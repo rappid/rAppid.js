@@ -15,13 +15,34 @@ rAppid.defineClass("js.core.Bindable", ["js.core.EventDispatcher", "underscore"]
                 this.$ = {};
                 this._previous$ = {};
 
+
+                this._allEventAttributes = (this.base._eventAttributes || []).concat(this._eventAttributes);
+
                 attributes = attributes || {};
-                _.defaults(attributes, this._defaults);
+                _.defaults(attributes, this._defaultAttributes());
                 this.set(attributes,{silent: true});
 
                 this._previous$ = _.clone(this.$);
             },
-            _defaultAttributes: {},
+
+            _defaults: {},
+
+            _defaultAttributes: function () {
+                return _.defaults(this._defaults, this.base._defaults);
+            },
+
+
+            /**
+             * an array of attributes names, which will expect handler functions
+             */
+            _eventAttributes: [],
+
+            _isEventAttribute: function (attributeName) {
+
+                return this._allEventAttributes.indexOf(attributeName) != -1
+            },
+
+
             /**
              *
              * @param attributes

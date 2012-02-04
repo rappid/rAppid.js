@@ -11,7 +11,8 @@ rAppid.defineClass("js.core.TextElement",
 
                 function matchPlaceholder(text){
                     return text.match(/{([a-zA-Z\._]+)}/);
-                };
+                }
+
                 var matches = matchPlaceholder(textContent);
                 var key, val;
                 while (matches && matches.length > 0) {

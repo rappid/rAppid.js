@@ -4,18 +4,57 @@ rAppid.defineClass("js.core.Component",
             ctor: function (attributes) {
                 this.base.ctor.callBase(this);
                 this.$children = [];
+
+                // TODO, what is with the attributes ?
             },
 
-            _construct: function(descriptor, applicationDomain) {
+            _construct: function(descriptor, applicationDomain, scope) {
                 this.$descriptor = descriptor;
                 this.$applicationDomain = applicationDomain;
+
+                // initializing of the ID is a must, event in construction
+                if (descriptor) {
+                    var id;
+
+                    try {
+                        id = descriptor.getAttribute("id");
+                    } catch (e) {
+                    }
+                    if (id) {
+                        this.$.id = id;
+                    }
+                }
+
+                if (descriptor && descriptor.parentNode && !descriptor.parentNode.parentNode) {
+                    // we are the root
+                    scope = {};
+                }
+
+                this.$scope = scope;
+
             },
 
             addChild: function (child) {
                 if (!(child instanceof Element)) {
                     throw "only children of type js.core.Component can be added"
                 }
+
+                if (child.$.id) {
+                    if (this.$scope) {
+                        if (this.$scope.hasOwnProperty(child.$.id)) {
+                            throw "an element with the id '" + child.$.id + "' already exits";
+                        }
+
+                        this.$scope[child.$.id] = child;
+                    } else {
+                        console.warn(["No scope for element found", this]);
+                    }
+
+
+                }
+
                 child.$parent = this;
+
                 this.$children.push(child);
             },
 
@@ -38,12 +77,19 @@ rAppid.defineClass("js.core.Component",
                         node = descriptor.attributes[a];
                         if (node.nodeType == 2) { // attributes
                             attrVal = node.value;
-                            // TODO: add proper reg expr for {varName123}
-                            var key = attrVal.match(/{([a-zA-Z_\.]+)}/)
-                            if (key) {
-                                placeholders[node.nodeName] = key[1];
+
+
+                            if (this._isEventAttribute(node.nodeName)) {
+                                // TODO: create event handler
                             } else {
-                                attributes[node.nodeName] = attrVal;
+
+                                var key = attrVal.match(/\{([a-zA-Z_.]+)\}/);
+
+                                if (key) {
+                                    placeholders[node.nodeName] = key[1];
+                                } else {
+                                    attributes[node.nodeName] = attrVal;
+                                }
                             }
 
                         }
@@ -66,8 +112,6 @@ rAppid.defineClass("js.core.Component",
                 // after the script tag is evaluated
                 for (key in placeholders) {
                     if (placeholders.hasOwnProperty(key)) {
-
-
                         var val = this._getPropertyForPlaceholder(placeholders[key]);
                         if (val) {
                             attributes[key] = _.isFunction(val) ? val() : val;
@@ -98,7 +142,7 @@ rAppid.defineClass("js.core.Component",
                 var appDomain = this.$applicationDomain;
                 var component = appDomain.createInstance(appDomain.getFqClassName(node.namespaceURI, node.localName));
 
-                component._construct(node, appDomain);
+                component._construct(node, appDomain, this.$scope);
 
                 return component;
             },

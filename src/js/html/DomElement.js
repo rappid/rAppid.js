@@ -8,8 +8,8 @@ rAppid.defineClass("js.html.DomElement",
                         this.$tagName = attributes.tagName;
                     }
                 },
-                _construct:function (descriptor, applicationDomain) {
-                    this.base._construct.callBase(this, descriptor, applicationDomain);
+                _construct:function (descriptor, applicationDomain, scope) {
+                    this.base._construct.callBase(this, descriptor, applicationDomain, scope);
 
                     if (this.$descriptor) {
                         if (!this.$tagName) {

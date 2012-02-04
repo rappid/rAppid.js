@@ -40,9 +40,16 @@
         })();
     </js:Script>
 
+    <!-- TODO DO not allow binding for ID -->
     <div id="{appName}">
         <span>Here is some Text</span><br/>
         <span>Some Text with a placeholder: {awesome}</span>
+    </div>
+
+    <div id="x">
+        <div id="xx">
+
+        </div>
     </div>
 
     <!--<cfg:Modules>-->
@@ -50,13 +57,13 @@
     <!--</cfg:Modules>-->
 
     <!--<js:ModuleLoader id="">-->
-
-    <!--&lt;!&ndash; optional&ndash;&gt;-->
-    <!--<js:ContentPlaceHolder name="main">-->
-    <!--</js:ContentPlaceHolder>-->
+        <!--&lt;!&ndash; optional&ndash;&gt;-->
+        <!--<js:ContentPlaceHolder name="main">-->
+        <!--</js:ContentPlaceHolder>-->
     <!--</js:ModuleLoader>-->
 
     <ui:CollectionView tagName="ul" items="{facets}">
+        <!-- TODO: please change to <js:Templete name="item"> to have a general solution-->
         <ui:ItemRenderer>
             <li>
                 <b>Select:</b><span>{item.label}</span>
