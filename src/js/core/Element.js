@@ -4,7 +4,6 @@ rAppid.defineClass("js.core.Element",
             ctor: function (attributes) {
                 this.base.ctor.callBase(this, attributes);
             },
-
             _construct:function (descriptor, applicationDomain, scope) {
                 this.$descriptor = descriptor;
                 this.$applicationDomain = applicationDomain;
@@ -30,7 +29,20 @@ rAppid.defineClass("js.core.Element",
 
                 this.$scope = scope;
             },
-
+            setVar: function(key,value){
+                this[key] = value;
+            },
+            getVar: function(key){
+                var ret = this[key];
+                if (ret) {
+                    return ret;
+                } else if (this.$parent) {
+                    // ask base
+                    return this.$parent.getVar(key);
+                } else {
+                    return null;
+                }
+            },
             /**
              *
              * @param creationPolicy
@@ -45,6 +57,8 @@ rAppid.defineClass("js.core.Element",
 
                 this.$creationPolicy = creationPolicy || "auto";
 
+
+
                 this._preinitialize();
 
                 this._initializeDescriptor(this.$descriptor);
@@ -55,9 +69,9 @@ rAppid.defineClass("js.core.Element",
             _initializeDescriptor: function(descriptor){
 
             },
-            _getPropertyForPlaceholder: function(placeholder){
+            _getVarForPlaceholder: function(placeholder){
                 var path = placeholder.split(".");
-                var prop = this._getProperty(path.shift());
+                var prop = this.getVar(path.shift());
                 var key;
                 while(path.length > 0 && prop != null){
                     key = path.shift();
@@ -68,17 +82,6 @@ rAppid.defineClass("js.core.Element",
                     }
                 }
                 return prop;
-            },
-            _getProperty: function(key){
-                var ret = this[key];
-                if(ret){
-                    return ret;
-                }else if(this.$parent){
-                    // ask base
-                    return this.$parent._getProperty(key);
-                }else{
-                    return null;
-                }
             },
             _preinitialize: function () {
 

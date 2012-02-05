@@ -1,5 +1,5 @@
-rAppid.defineClass("js.ui.CollectionView",
-    ["underscore", "js.core.UIComponent", "js.ui.ItemRenderer"], function (_, UIComponent, ItemRenderer) {
+rAppid.defineClass("js.ui.ItemsView",
+    ["underscore", "js.core.UIComponent", "js.core.Template"], function (_, UIComponent, Template) {
         return UIComponent.inherit({
             _defaults: {
                 tagName: "div",
@@ -11,7 +11,7 @@ rAppid.defineClass("js.ui.CollectionView",
                 var child;
                 for(var i = 0; i < children.length; i++){
                     child = children[i];
-                    if(child instanceof ItemRenderer){
+                    if(child instanceof Template){
                         this.$itemRenderer = child;
                         break;
                     }
@@ -27,21 +27,16 @@ rAppid.defineClass("js.ui.CollectionView",
                 }
 
             },
-            _renderAttribute: function(key, attribute){
-                if(key == "items"){
-                    if(_.isArray(attribute)){
-                        this._renderItems(attribute);
-                    }
-                }
-            },
             _renderItems: function(items){
-                var item;
+                var item, comp;
                 for(var i = 0 ; i < items.length; i++){
                     item = items[i];
                     if(this.$itemRendererFnc){
                         this.addChild(this.$itemRendererFnc(item));
                     }else if(this.$itemRenderer){
-                        this.addChild(this.$itemRenderer.createDomElementForItem(item));
+                        comp = this.$itemRenderer.createComponent();
+                        comp.setVar('item',item);
+                        this.addChild(comp);
                     }
                 }
             }

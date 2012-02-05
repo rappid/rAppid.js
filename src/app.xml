@@ -9,40 +9,40 @@
     <js:Script>
         (function () {
             return {
-                start:function () {
-                    // TODO: put here the start code the application like loading models etc...
-                    this.bindable = new js.core.Bindable({prop:'main'});
+                /**
+                 * Initializes the app
+                 * this method is called right after the script tag is evaluated
+                 */
+                initialize:function () {
+                    this.setVar("appName", "AWESOME APP");
+                    this.setVar("hello", "Hello world");
+                    this.setVar("facets", [
+                        {
+                            label:'Colors',
+                            subitems:['red', "green", "gold"]
+                        },
+                        {
+                            label:'Sizes',
+                            subitems:['S', "M", "L"]
+                        }
+                    ]);
                 },
-                // First variant of binding
-                classNameBinding:function () {
-                    return js.core.Binding({model:this.bindable, key:'prop'});
-                },
-                appName:'first-application',
-                awesome:function () {
-                    return ["WE", "ARE", "AWESOME"].join(" ");
-                },
-                y:function () {
-                    console.log("x");
-                },
-                facets:[
-                    {
-                        label:'Colors',
-                        subitems:['red', "green", "gold"]
-                    },
-                    {
-                        label:'Sizes',
-                        subitems:['S', "M", "L"]
-                    }
-                ]
 
+                /**
+                 * This method should be called from outside to start the application
+                 */
+                start:function () {
+                    this.render(document.body);
+                }
             }
         })();
     </js:Script>
 
     <!-- TODO DO not allow binding for ID -->
-    <div id="{appName}">
-        <span>Here is some Text</span><br/>
-        <span>Some Text with a placeholder: {awesome}</span>
+    <div id="test">
+        <span>{hello}</span>
+        <br/>
+        <span>{appName}</span>
     </div>
 
     <div id="x">
@@ -55,24 +55,24 @@
     <!--</cfg:Modules>-->
 
     <!--<js:ModuleLoader id="">-->
-        <!--&lt;!&ndash; optional&ndash;&gt;-->
-        <!--<js:ContentPlaceHolder name="main">-->
-        <!--</js:ContentPlaceHolder>-->
+    <!--&lt;!&ndash; optional&ndash;&gt;-->
+    <!--<js:ContentPlaceHolder name="main">-->
+    <!--</js:ContentPlaceHolder>-->
     <!--</js:ModuleLoader>-->
 
-    <ui:CollectionView tagName="ul" items="{facets}">
-        <!-- TODO: please change to <js:Templete name="item"> to have a general solution-->
-        <ui:ItemRenderer>
+    <ui:ItemsView tagName="ul" items="{facets}">
+        <js:Template>
             <li>
-                <b>Select:</b><span>{item.label}</span>
-                <ui:CollectionView items="{item.subitems}" tagName="ul">
-                    <ui:ItemRenderer>
+                <b>Select:</b>
+                <span>{item.label}</span>
+                <ui:ItemsView items="{item.subitems}" tagName="ul">
+                    <js:Template>
                         <li>{item} for {appName}</li>
-                    </ui:ItemRenderer>
-                </ui:CollectionView>
+                    </js:Template>
+                </ui:ItemsView>
             </li>
-        </ui:ItemRenderer>
-    </ui:CollectionView>
+        </js:Template>
+    </ui:ItemsView>
 
 
     <!--comes into moduleloader into content place holders-->

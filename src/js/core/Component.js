@@ -99,7 +99,9 @@ rAppid.defineClass("js.core.Component",
                 // after the script tag is evaluated
                 for (key in placeholders) {
                     if (placeholders.hasOwnProperty(key)) {
-                        var val = this._getPropertyForPlaceholder(placeholders[key]);
+
+                        var val = this._getVarForPlaceholder(placeholders[key]);
+                        // var val = placeholders[key];
                         if (val) {
                             attributes[key] = _.isFunction(val) ? val() : val;
                         }
@@ -114,11 +116,15 @@ rAppid.defineClass("js.core.Component",
             },
             _initializeChildren: function (childComponents) {
                 for (var i = 0; i < childComponents.length; i++) {
+                    // FIRST ADD CHILD
+                    this.addChild(childComponents[i]);
+
+                    // THEN INITIALIZE !
                     if (this.$creationPolicy == "auto") {
                         childComponents[i]._initialize(this.$creationPolicy);
                     }
 
-                    this.addChild(childComponents[i]);
+
                 }
             },
             _initializeAttributes: function (attributes) {
@@ -142,16 +148,23 @@ rAppid.defineClass("js.core.Component",
                 var appDomain = this.$applicationDomain;
                 var component = new TextElement();
 
-                component._construct(node, appDomain);
+                component._construct(node, appDomain, this.$scope);
 
                 return component;
             },
             _createChildrenFromDescriptor: function (descriptor) {
-                var childrenFromDescriptor = [], node;
+                this.$scopInitialized = false;
+                var childrenFromDescriptor = [], node, component;
                 for (var i = 0; i < descriptor.childNodes.length; i++) {
                     node = descriptor.childNodes[i];
                     if (node.nodeType == 1) { // Elements
-                        childrenFromDescriptor.push(this._createComponentForNode(node));
+                        component = this._createComponentForNode(node);
+                        childrenFromDescriptor.push(component);
+                        // call initializeScope
+                        if (this.$scopInitialized == false && this.initialize) {
+                            this.$scopInitialized = true;
+                            this.initialize(this.$scope);
+                        }
                     } else if (node.nodeType == 3) { // Textnodes
                         // remove whitespaces from text textnodes
                         var text = node.textContent.trim();
@@ -167,6 +180,8 @@ rAppid.defineClass("js.core.Component",
             },
             _childrenInitialized: function () {
 
+            },
+            initialize:function (scope) {
             }
         });
     }
