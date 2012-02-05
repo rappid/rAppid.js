@@ -1,7 +1,15 @@
 rAppid.defineClass("js.core.Binding", ["js.core.Component"], function(Component,Script) {
     return Component.inherit({
+        ctor: function(attributes){
+            this.base.ctor.callBase(this,attributes);
+            this._initializeAttributes(attributes);
+        },
+        _defaults: {
+            event: 'change',
+            key: null
+        },
         _initializeChildren: function(childComponents){
-            this.base._initializeChildren.callBase(this,childComponents);
+            // this.base._initializeChildren.callBase(this,childComponents);
         },
         _initializeAttributes: function(attributes){
             this.base._initializeAttributes.callBase(this);
@@ -13,7 +21,9 @@ rAppid.defineClass("js.core.Binding", ["js.core.Component"], function(Component,
                 this.transformBack = attributes.transformBack;
             }
 
-
+            if(!attributes.model){
+                throw "No model defined for binding";
+            }
         },
         // default transform method
         transform: function(val,model){

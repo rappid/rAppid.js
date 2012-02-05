@@ -20,7 +20,7 @@ rAppid.defineClass("js.core.Bindable", ["js.core.EventDispatcher", "underscore"]
 
                 attributes = attributes || {};
                 _.defaults(attributes, this._defaultAttributes());
-                this._initializeAttributes(attributes);
+                this.set(attributes, {silent:true});
 
                 this._previous$ = _.clone(this.$);
             },
@@ -29,9 +29,6 @@ rAppid.defineClass("js.core.Bindable", ["js.core.EventDispatcher", "underscore"]
 
             _defaultAttributes: function () {
                 return _.defaults(this._defaults, this.base._defaults);
-            },
-            _initializeAttributes: function(attributes){
-                this.set(attributes, {silent:true});
             },
             /**
              * an array of attributes names, which will expect handler functions

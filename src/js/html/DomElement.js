@@ -14,7 +14,7 @@ rAppid.defineClass("js.html.DomElement",
                     }
                 },
                 _initializeAttributes:function (attributes) {
-                    js.core.Bindable.prototype._initializeAttributes.call(this, attributes);
+                    this.base._initializeAttributes.callBase(this, attributes);
 
                     if (attributes.tagName) {
                         this.$tagName = attributes.tagName;

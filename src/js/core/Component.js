@@ -127,6 +127,9 @@ rAppid.defineClass("js.core.Component",
 
                 }
             },
+            _initializeAttributes: function (attributes) {
+                this.set(attributes, {silent: true});
+            },
             _createComponentForNode: function (node) {
                 // only instantiation and construction but no initialization
                 var appDomain = this.$applicationDomain;
