@@ -60,7 +60,7 @@
     <!--</js:ContentPlaceHolder>-->
     <!--</js:ModuleLoader>-->
 
-    <ui:ItemsView tagName="ul" items="{facets}">
+    <ui:ItemsView tagName="ul" items="{facets}" class="facets">
         <js:Template>
             <li>
                 <b>Select:</b>

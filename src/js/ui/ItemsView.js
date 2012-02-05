@@ -1,5 +1,5 @@
 rAppid.defineClass("js.ui.ItemsView",
-    ["underscore", "js.core.UIComponent", "js.core.Template"], function (_, UIComponent, Template) {
+    ["underscore", "js.ui.View", "js.core.Template"], function (_, UIComponent, Template) {
         return UIComponent.inherit({
             _defaults: {
                 tagName: "div",
@@ -7,7 +7,7 @@ rAppid.defineClass("js.ui.ItemsView",
             },
             _initializeChildren: function(children){
                 this.base._initializeChildren.callBase(this,children);
-                // find the itemRenderer
+                // find the template
                 var child;
                 for(var i = 0; i < children.length; i++){
                     child = children[i];
@@ -16,16 +16,6 @@ rAppid.defineClass("js.ui.ItemsView",
                         break;
                     }
                 }
-            },
-            _initializeAttributes: function(attributes){
-                this.base._initializeAttributes.callBase(this,attributes);
-
-                // if a function is set as itemRenderer
-                var itemRenderer = attributes["itemRenderer"];
-                if(itemRenderer && _.isFunction(itemRenderer)){
-                    this.$itemRendererFnc = itemRenderer;
-                }
-
             },
             _renderItems: function(items){
                 var item, comp;

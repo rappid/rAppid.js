@@ -1,13 +1,6 @@
 rAppid.defineClass("js.html.DomElement",
     ["js.core.Component","js.core.Binding"], function (Component, Binding) {
         return Component.inherit({
-                ctor:function (attributes) {
-                    this.base.ctor.callBase(this, attributes);
-
-                    if (attributes) {
-                        this.$tagName = attributes.tagName;
-                    }
-                },
                 _construct:function (descriptor, applicationDomain, scope) {
                     this.base._construct.callBase(this, descriptor, applicationDomain, scope);
 
@@ -21,7 +14,7 @@ rAppid.defineClass("js.html.DomElement",
                     }
                 },
                 _initializeAttributes:function (attributes) {
-                    this.base._initializeAttributes.callBase(this, attributes);
+                    js.core.Bindable.prototype._initializeAttributes.call(this, attributes);
 
                     if (attributes.tagName) {
                         this.$tagName = attributes.tagName;
