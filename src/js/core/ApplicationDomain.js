@@ -52,6 +52,8 @@ define("js/core/ApplicationDomain", [],
                 define(fqClassname.replace(/\./g, "/"), realDependencies, function () {
                     var factory = generateFactor.apply(this, arguments);
 
+                    factory.prototype.constructor.name = fqClassname;
+
                     if (ApplicationDomain.installClass(self.$ns, fqClassname.split("."), factory)) {
                         if (self.$globalClassRegistrationRoot) {
                             // install class factory in the globalClassRegistration

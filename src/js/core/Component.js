@@ -32,13 +32,13 @@ rAppid.defineClass("js.core.Component",
 
                 this.$children.push(child);
 
-//                if (child instanceof Template) {
-//                    if (!child.$.name) {
-//                        throw "template without name"
-//                    }
-//
-//                    this.$templates[child.$.name] = child;
-//                }
+                if (child.constructor.name == "js.core.Template") {
+                    if (!child.$.name) {
+                        throw "template without name"
+                    }
+
+                    this.$templates[child.$.name] = child;
+                }
             },
 
             getTemplate: function (name) {
