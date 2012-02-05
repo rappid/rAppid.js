@@ -56,8 +56,6 @@ var rAppid;
 
             // TODO: automatic detect xaml or js -> default load plugin for require has to overwritten
 
-            var self = this;
-
             require(["js/core/ApplicationDomain"], function (ApplicationDomain) {
 
                 var applicationDomain = new ApplicationDomain(null, global, namespaceMap, rewriteMap);

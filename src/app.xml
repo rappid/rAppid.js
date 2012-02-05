@@ -1,7 +1,6 @@
 <?xml version="1.0"?>
 <js:Application xmlns="http://www.w3.org/1999/xhtml"
-                xmlns:js="js.core" xmlns:ui="js.ui" xmlns:cfg="js.conf"
-                xmlns:fx="js.fx">
+                xmlns:js="js.core" xmlns:ui="js.ui" xmlns:fx="js.fx">
 
     <js:Imports>
         js.core.Base;
@@ -47,9 +46,8 @@
     </div>
 
     <div id="x">
-        <div id="xx">
-
-        </div>
+        <!--<js:Template name="ListItem">-->
+        <!--</js:Template>-->
     </div>
 
     <!--<cfg:Modules>-->

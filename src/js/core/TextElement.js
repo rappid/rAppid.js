@@ -25,7 +25,7 @@ rAppid.defineClass("js.core.TextElement",
             },
             render: function(){
                 if (!this.$initialized) {
-                    this._initialize();
+                    this._initialize(this.$creationPolicy);
                 }
                 return document.createTextNode(this.$textContent);
             }

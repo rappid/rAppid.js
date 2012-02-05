@@ -66,9 +66,10 @@ rAppid.defineClass("js.core.Bindable", ["js.core.EventDispatcher", "underscore"]
                     }
                 }
 
-                var changedAttributes = {},equal = true;
-                var now = this.$;
-                var val;
+                var changedAttributes = {},
+                    equal = true,
+                    now = this.$,
+                    val;
 
                 for(key in attributes){
                     if(attributes.hasOwnProperty(key)){

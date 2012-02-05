@@ -16,22 +16,22 @@
 <body>
 <script type="text/javascript">
 
-    define("underscore", function() {
+    define("underscore", function () {
         return _;
     });
 
     var globalVar = "HELLO WORLD";
 
 
-    var bootStrap = rAppid.bootStrap("app.xml", ["app.modules.articles"],
+    rAppid.bootStrap("app.xml", ["app.modules.articles"],
             function (err, systemManager, application) {
                 if (!err) {
                     var model = new js.core.Bindable();
 
-                    model.bind('change:name',function(e,data){
+                    model.bind('change:name', function (e, data) {
                         console.log(e.target.$);
                     });
-                    model.bind('change',function(e,data){
+                    model.bind('change', function (e, data) {
                         console.log(data);
                     });
 

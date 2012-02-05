@@ -1,37 +1,14 @@
 rAppid.defineClass("js.core.Component",
-    ["js.core.Element", "js.core.TextElement"], function(Element, TextElement) {
+    ["js.core.Element", "js.core.TextElement"],
+    function (Element, TextElement, Template) {
         return Element.inherit({
             ctor: function (attributes) {
                 this.base.ctor.callBase(this);
                 this.$children = [];
 
+                this.$templates = {};
+
                 // TODO, what is with the attributes ?
-            },
-
-            _construct: function(descriptor, applicationDomain, scope) {
-                this.$descriptor = descriptor;
-                this.$applicationDomain = applicationDomain;
-
-                // initializing of the ID is a must, event in construction
-                if (descriptor) {
-                    var id;
-
-                    try {
-                        id = descriptor.getAttribute("id");
-                    } catch (e) {
-                    }
-                    if (id) {
-                        this.$.id = id;
-                    }
-                }
-
-                if (descriptor && descriptor.parentNode && !descriptor.parentNode.parentNode) {
-                    // we are the root
-                    scope = {};
-                }
-
-                this.$scope = scope;
-
             },
 
             addChild: function (child) {
@@ -49,13 +26,23 @@ rAppid.defineClass("js.core.Component",
                     } else {
                         console.warn(["No scope for element found", this]);
                     }
-
-
                 }
 
                 child.$parent = this;
 
                 this.$children.push(child);
+
+//                if (child instanceof Template) {
+//                    if (!child.$.name) {
+//                        throw "template without name"
+//                    }
+//
+//                    this.$templates[child.$.name] = child;
+//                }
+            },
+
+            getTemplate: function (name) {
+                return this.$templates[name];
             },
 
             /**
@@ -127,26 +114,30 @@ rAppid.defineClass("js.core.Component",
             },
             _initializeChildren: function (childComponents) {
                 for (var i = 0; i < childComponents.length; i++) {
-                    this.addChild(childComponents[i]);
-
                     if (this.$creationPolicy == "auto") {
                         childComponents[i]._initialize(this.$creationPolicy);
                     }
+
+                    this.addChild(childComponents[i]);
                 }
             },
             _initializeAttributes: function (attributes) {
-                this.set(attributes,{silent: true});
+                this.set(attributes, {silent: true});
             },
             _createComponentForNode: function (node) {
                 // only instantiation and construction but no initialization
                 var appDomain = this.$applicationDomain;
                 var component = appDomain.createInstance(appDomain.getFqClassName(node.namespaceURI, node.localName));
 
+                if (appDomain.getFqClassName(node.namespaceURI, node.localName) == "js.core.Template") {
+                    var a = "x";
+                }
+
                 component._construct(node, appDomain, this.$scope);
 
                 return component;
             },
-            _createComponentForTextNode:function (node) {
+            _createComponentForTextNode: function (node) {
                 // only instantiation and construction but no initialization
                 var appDomain = this.$applicationDomain;
                 var component = new TextElement();
@@ -155,16 +146,16 @@ rAppid.defineClass("js.core.Component",
 
                 return component;
             },
-            _createChildrenFromDescriptor: function(descriptor){
+            _createChildrenFromDescriptor: function (descriptor) {
                 var childrenFromDescriptor = [], node;
                 for (var i = 0; i < descriptor.childNodes.length; i++) {
                     node = descriptor.childNodes[i];
                     if (node.nodeType == 1) { // Elements
                         childrenFromDescriptor.push(this._createComponentForNode(node));
-                    }else if(node.nodeType == 3){ // Textnodes
+                    } else if (node.nodeType == 3) { // Textnodes
                         // remove whitespaces from text textnodes
                         var text = node.textContent.trim();
-                        if(text.length > 0){
+                        if (text.length > 0) {
                             // console.log(node);
                             node.textContent = text;
                             childrenFromDescriptor.push(this._createComponentForTextNode(node));

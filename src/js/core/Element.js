@@ -2,18 +2,37 @@ rAppid.defineClass("js.core.Element",
     ["js.core.Bindable"], function(Bindable) {
         return Bindable.inherit({
             ctor: function (attributes) {
-                this.base.ctor.callBase(this);
-                this.$children = [];
+                this.base.ctor.callBase(this, attributes);
             },
 
-            _construct:function (descriptor, applicationDomain) {
+            _construct:function (descriptor, applicationDomain, scope) {
                 this.$descriptor = descriptor;
                 this.$applicationDomain = applicationDomain;
+
+                // initializing of the ID is a must, event in construction
+                if (descriptor && descriptor.nodeType == 1) { // element
+                    var id;
+
+                    try {
+                        id = descriptor.getAttribute("id");
+                    } catch (e) {
+                    }
+
+                    if (id) {
+                        this.$.id = id;
+                    }
+                }
+
+                if (descriptor && descriptor.parentNode && !descriptor.parentNode.parentNode) {
+                    // we are the root
+                    scope = {};
+                }
+
+                this.$scope = scope;
             },
 
             /**
              *
-             * @param descriptor
              * @param creationPolicy
              *          auto - do not overwrite (default),
              *          all - create all children
@@ -26,11 +45,9 @@ rAppid.defineClass("js.core.Element",
 
                 this.$creationPolicy = creationPolicy || "auto";
 
-                var descriptor = this.$descriptor;
-
                 this._preinitialize();
 
-                this._initializeDescriptor(descriptor);
+                this._initializeDescriptor(this.$descriptor);
 
                 this._initializationComplete();
 
