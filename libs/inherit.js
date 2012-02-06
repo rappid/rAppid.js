@@ -1,4 +1,3 @@
-
 var inherit;
 (function (global, exports) {
 
@@ -9,10 +8,10 @@ var inherit;
      *
      * @return {Function} returns a constructor function describing the class
      */
-    inherit = function(classDefinition, baseClass) {
+    inherit = function (classDefinition, baseClass) {
         baseClass = baseClass || Object;
 
-        var newClass = function() {
+        var newClass = function () {
             if (this.ctor) {
                 this.ctor.apply(this, arguments);
             }
@@ -20,7 +19,9 @@ var inherit;
 
         if (baseClass.constructor == Function) {
 
-            function Inheritance(){}
+            function Inheritance() {
+            }
+
             Inheritance.prototype = baseClass.prototype;
 
             newClass.prototype = new Inheritance();
@@ -41,8 +42,21 @@ var inherit;
             }
         }
 
+        newClass.prototype.callBase = inherit.callBase;
+
         return newClass;
 
+    };
+
+    inherit.callBase = function () {
+        var args = Array.prototype.slice.call(arguments);
+
+        if (args.length == 0) {
+            // use arguments from call
+            args = Array.prototype.slice.call(arguments.callee.caller.arguments);
+        }
+
+        return arguments.callee.caller.baseImplementation.apply(this, args);
     };
 
     /**
@@ -51,11 +65,11 @@ var inherit;
      *
      * @return {Function} returns a constructor function describing the class
      */
-    Function.prototype.inherit = function(classDefinition) {
+    Function.prototype.inherit = function (classDefinition) {
         return inherit(classDefinition, this);
     };
 
-    Function.prototype.callBase = function() {
+    Function.prototype.callBase = function () {
         var args = Array.prototype.slice.call(arguments);
         var that = args.shift();
 
@@ -63,7 +77,7 @@ var inherit;
             var caller = arguments.callee.caller;
 
             if (this == caller) {
-                return this.baseImplementation(that, args);
+                return this.baseImplementation.apply(that, args);
             } else {
                 return this.apply(that, args);
             }
@@ -76,7 +90,8 @@ var inherit;
      * @property {Function} base class
      */
     inherit.Base = inherit({
-        ctor: function(){}
+        ctor: function () {
+        }
     });
 
     exports.inherit = inherit;
