@@ -2,6 +2,13 @@
 var inherit;
 (function (global, exports) {
 
+    /**
+     *
+     * @param {Object} classDefinition The definition for the prototype methods
+     * @param {Function} [baseClass] The prototype to inherit from
+     *
+     * @return {Function} returns a constructor function describing the class
+     */
     inherit = function(classDefinition, baseClass) {
         baseClass = baseClass || Object;
 
@@ -28,7 +35,9 @@ var inherit;
 
         for (var publicMethod in classDefinition) {
             if (classDefinition.hasOwnProperty(publicMethod)) {
+                var baseFunction = newClass.prototype[publicMethod];
                 newClass.prototype[publicMethod] = classDefinition[publicMethod];
+                newClass.prototype[publicMethod].baseImplementation = baseFunction;
             }
         }
 
@@ -36,6 +45,12 @@ var inherit;
 
     };
 
+    /**
+     *
+     * @param classDefinition The definition for the prototype methods
+     *
+     * @return {Function} returns a constructor function describing the class
+     */
     Function.prototype.inherit = function(classDefinition) {
         return inherit(classDefinition, this);
     };
@@ -45,17 +60,21 @@ var inherit;
         var that = args.shift();
 
         if (that && that.base) {
-            var originalBase = that.base;
-            that.base = that.base.base;
-            var ret = this.apply(that, args);
-            that.base = originalBase;
+            var caller = arguments.callee.caller;
 
-            return ret;
+            if (this == caller) {
+                return this.baseImplementation(that, args);
+            } else {
+                return this.apply(that, args);
+            }
         } else {
             throw "base not definied";
         }
     };
 
+    /**
+     * @property {Function} base class
+     */
     inherit.Base = inherit({
         ctor: function(){}
     });
