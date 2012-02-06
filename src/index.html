@@ -24,8 +24,6 @@
             function (err, systemManager, application) {
                 if (!err) {
                     application.start();
-
-                    application.model.set({name: "Peter"});
                 } else {
                     console.warn(err);
                 }
