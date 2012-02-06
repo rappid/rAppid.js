@@ -50,6 +50,7 @@ var inherit;
     };
 
     inherit.callBase = function () {
+        // get arguments
         var args = Array.prototype.slice.call(arguments);
 
         if (args.length == 0) {
