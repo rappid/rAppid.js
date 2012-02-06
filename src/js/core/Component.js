@@ -3,7 +3,7 @@ rAppid.defineClass("js.core.Component",
     function (Element, TextElement, Template) {
         return Element.inherit({
             ctor: function (attributes) {
-                this.base.ctor.callBase(this);
+                this.callBase();
                 this.$children = [];
 
                 this.$templates = {};
@@ -16,6 +16,7 @@ rAppid.defineClass("js.core.Component",
                     throw "only children of type js.core.Component can be added"
                 }
 
+                /*
                 if (child.$.id) {
                     if (this.$scope) {
                         if (this.$scope.hasOwnProperty(child.$.id)) {
@@ -26,7 +27,7 @@ rAppid.defineClass("js.core.Component",
                     } else {
                         console.warn(["No scope for element found", this]);
                     }
-                }
+                }*/
 
                 child.$parent = this;
 
@@ -94,7 +95,6 @@ rAppid.defineClass("js.core.Component",
                     }
                 }
 
-                this._initializeAttributes(attributes);
 
                 this._childrenInitialized();
 
@@ -114,7 +114,7 @@ rAppid.defineClass("js.core.Component",
                 }
             },
             _initializeAttributes: function (attributes) {
-                this.base._initializeAttributes.callBase(attributes);
+                this.callBase();
 
                 if (this.$creationPolicy != "full") {
                     if (attributes.hasOwnProperty("creationPolicy")) {

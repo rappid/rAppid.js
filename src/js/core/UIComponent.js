@@ -6,6 +6,18 @@ rAppid.defineClass("js.core.UIComponent",
             },
             _renderAttribute:function (key, attr) {
 
+            },
+            _commitChangedAttributes: function(attributes){
+                if(this.isRendered()){
+                    for(var key in attributes){
+                        if(attributes.hasOwnProperty(key)){
+                            this._renderAttribute(attributes[key])
+                        }
+                    }
+                }
+            },
+            _initializationComplete: function(){
+                this.callBase();
             }
         });
     }

@@ -14,7 +14,7 @@ rAppid.defineClass("js.core.Bindable", ["js.core.EventDispatcher", "underscore"]
         var Bindable = EventDispatcher.inherit({
             ctor: function (attributes) {
                 // call the base class constructor
-                this.base.ctor.callBase(this);
+                this.callBase();
 
                 this.$ = {};
 
@@ -97,33 +97,19 @@ rAppid.defineClass("js.core.Bindable", ["js.core.EventDispatcher", "underscore"]
 
                     }
                 }
-                this._commitAttributes(changedAttributes);
+                this._commitChangedAttributes(changedAttributes);
+
+                if(options.silent === false && _.size(changedAttributes) > 0){
+                        this.trigger('change', changedAttributes, this);
+                }
+
                 return this.$;
             },
-
-            get: function(name) {
-
-                var path = name.split(".");
-                var prop = this.$[path.shift()];
-                var key;
-                while (path.length > 0 && prop != null) {
-                    key = path.shift();
-                    if (prop instanceof Bindable) {
-                        prop = prop.get(key);
-                    } else if (prop[key]) {
-                        prop = prop[key];
-                    } else {
-                        throw "Couldn't find attribute for " + key;
-                    }
-                }
-                return prop;
-                
+            get: function(key){
+                return this.$[key];
             },
+            _commitChangedAttributes: function(attributes){
 
-            _commitAttributes: function(attributes){
-                if(_.size(attributes) > 0){
-                    this.trigger('change',attributes,this);
-                }
             },
             unset: function(key,options){
                 (options || (options = {})).unset = true;

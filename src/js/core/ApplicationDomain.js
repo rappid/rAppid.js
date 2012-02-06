@@ -18,7 +18,7 @@ define("js/core/ApplicationDomain", [],
              * @param {Object} [rewriteMap] Maps fqNames to different fqNames e.g. js.html.div -> js.html.DomElement
              */
             ctor: function (parentDomain, globalClassRegistrationRoot, namespaceMap, rewriteMap) {
-                this.base.ctor.callBase(this);
+                this.callBase();
 
                 this.$ns = {};
                 this.$parentDomain = parentDomain;

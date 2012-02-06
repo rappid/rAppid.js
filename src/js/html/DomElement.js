@@ -2,7 +2,7 @@ rAppid.defineClass("js.html.DomElement",
     ["js.core.Component","js.core.Binding"], function (Component, Binding) {
         return Component.inherit({
                 _construct:function (descriptor, applicationDomain, scope) {
-                    this.base._construct.callBase(this, descriptor, applicationDomain, scope);
+                    this.callBase();
 
                     if (this.$descriptor) {
                         if (!this.$tagName) {
@@ -14,21 +14,10 @@ rAppid.defineClass("js.html.DomElement",
                     }
                 },
                 _initializeAttributes:function (attributes) {
-                    this.base._initializeAttributes.callBase(this, attributes);
+                    this.callBase();
 
                     if (attributes.tagName) {
                         this.$tagName = attributes.tagName;
-                    }
-
-                    var attr;
-                    // find bindings
-                    for(var key in attributes){
-                        if(attributes.hasOwnProperty(key)){
-                            attr = attributes[key];
-                            if(attr instanceof Binding){
-
-                            }
-                        }
                     }
                 },
                 render:function () {

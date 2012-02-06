@@ -6,7 +6,7 @@ rAppid.defineClass("js.ui.ItemsView",
                 items: []
             },
             _initializeChildren: function(children){
-                this.base._initializeChildren.callBase(this,children);
+                this.callBase();
                 // find the template
                 var child;
                 for(var i = 0; i < children.length; i++){

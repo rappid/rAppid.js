@@ -2,7 +2,7 @@ rAppid.defineClass("js.core.Element",
     ["js.core.Bindable"], function(Bindable) {
         return Bindable.inherit({
             ctor: function (attributes) {
-                this.base.ctor.callBase(this, attributes);
+               this.callBase();
 
                 this._initializeAttributes(this.$);
             },
@@ -23,8 +23,8 @@ rAppid.defineClass("js.core.Element",
                 }
 
                 this.$ = attributes;
-                this.$parentScope = parentScope;
-                this.$rootScope = rootScope;
+                this.$parentScope = parentScope || null;
+                this.$rootScope = rootScope || null;
 
                 this._initializeAttributes(this.$);
 
@@ -37,7 +37,6 @@ rAppid.defineClass("js.core.Element",
             _initializeAttributes: function(attributes) {
 
             },
-
             /**
              *
              * @param creationPolicy
@@ -63,14 +62,16 @@ rAppid.defineClass("js.core.Element",
 
             _getVarForPlaceholder: function(placeholder){
                 var path = placeholder.split(".");
-                var prop = this.getVar(path.shift());
+                var prop = this.get(path.shift());
                 var key;
                 while(path.length > 0 && prop != null){
                     key = path.shift();
-                    if(prop[key]){
+                    if(prop instanceof Bindable){
+                        prop = prop.get(key);
+                    }else if(prop[key]){
                         prop = prop[key];
                     }else{
-                        prop = null;
+                        throw "Couldn't find attribute for "+ key;
                     }
                 }
                 return prop;

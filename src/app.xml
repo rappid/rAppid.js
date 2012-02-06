@@ -26,6 +26,9 @@
                             subitems:['S', "M", "L"]
                         }
                     ]);
+                    this.model = new js.core.Bindable({name:'Bob'});
+
+                    this.setVar("modelBinding", new js.core.Binding({model:this.model, key:'name'}))
                 },
 
                 /**
@@ -39,7 +42,7 @@
     </js:Script>
 
     <!-- TODO DO not allow binding for ID -->
-    <div id="test">
+    <div id="test" onclick="alert('what')">
         <span>{hello}</span>
         <br/>
         <span>{appName}</span>
@@ -64,7 +67,7 @@
         <js:Template name="item">
             <li>
                 <b>Select:</b>
-                <span>{item.label}</span>
+                <span class="{modelBinding}">{item.label}</span>
                 <ui:ItemsView items="{item.subitems}" tagName="ul">
                     <js:Template name="item">
                         <li>{item} for {appName}</li>

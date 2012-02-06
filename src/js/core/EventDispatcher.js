@@ -9,7 +9,7 @@ rAppid.defineClass("js.core.EventDispatcher",
 
         var EventDispatcher = js.core.Base.inherit({
             ctor: function() {
-                this.base.ctor.callBase(this);
+                this.callBase();
                 this._eventHandlers = {};
             },
             bind: function (eventType, callback, thisArg) {

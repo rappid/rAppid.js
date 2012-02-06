@@ -8,7 +8,7 @@ rAppid.defineClass("js.core.Application",
             },
             render: function (target) {
                 // TODO: call base method
-                var dom = this.base.render.callBase(this);
+                var dom = this.callBase();
 
                 if (target) {
                     target.appendChild(dom);
