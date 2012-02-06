@@ -1,4 +1,5 @@
 var inherit;
+
 (function (global, exports) {
 
     /**
