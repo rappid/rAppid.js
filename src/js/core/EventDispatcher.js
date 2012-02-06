@@ -12,8 +12,9 @@ rAppid.defineClass("js.core.EventDispatcher",
                 this.base.ctor.callBase(this);
                 this._eventHandlers = {};
             },
-            bind: function (eventType, callback) {
-
+            bind: function (eventType, callback, thisArg) {
+                // TODO: mkre push thisarg to eventHandlers
+                thisArg = thisArg || this;
 
                 // get the list for the event
                 var list = this._eventHandlers[eventType] || (this._eventHandlers[eventType] = []);

@@ -3,26 +3,27 @@ rAppid.defineClass("js.core.Bindable", ["js.core.EventDispatcher", "underscore"]
      * @export js.core.Bindable
      */
     function (EventDispatcher, _) {
+
+        var bindingRegex = /^\{([a-z_$][a-z0-9$_.]*)\}$/i;
+
         /**
          * @class js.core.Bindable
          * @extends js.core.EventDispatcher
          */
-        return EventDispatcher.inherit({
+
+        var Bindable = EventDispatcher.inherit({
             ctor: function (attributes) {
                 // call the base class constructor
                 this.base.ctor.callBase(this);
 
                 this.$ = {};
-                this._previous$ = {};
 
-
-                this._allEventAttributes = (this.base._eventAttributes || []).concat(this._eventAttributes);
+                _.extend(this._eventAttributes, this.base._eventAttributes || {});
 
                 attributes = attributes || {};
                 _.defaults(attributes, this._defaultAttributes());
-                this.set(attributes, {silent:true});
+                this.$ = attributes;
 
-                this._previous$ = _.clone(this.$);
             },
 
             _defaults: {},
@@ -33,13 +34,20 @@ rAppid.defineClass("js.core.Bindable", ["js.core.EventDispatcher", "underscore"]
             /**
              * an array of attributes names, which will expect handler functions
              */
-            _eventAttributes: [],
+            _eventAttributes: {},
 
             _isEventAttribute: function (attributeName) {
-
-                return this._allEventAttributes.indexOf(attributeName) != -1
+                return this._eventAttributes.hasOwnProperty(attributeName);
             },
 
+            _getEventTypeForAttribute: function(eventName) {
+                // TODO: implement eventAttribites as hash
+                return this._eventAttributes[eventName];
+            },
+
+            _isBindingDefinition: function (value) {
+                return bindingRegex.test(value);
+            },
 
             /**
              *
@@ -89,10 +97,30 @@ rAppid.defineClass("js.core.Bindable", ["js.core.EventDispatcher", "underscore"]
 
                     }
                 }
-                this._commitChangedAttributes(changedAttributes);
+                this._commitAttributes(changedAttributes);
                 return this.$;
             },
-            _commitChangedAttributes: function(attributes){
+
+            get: function(name) {
+
+                var path = name.split(".");
+                var prop = this.$[path.shift()];
+                var key;
+                while (path.length > 0 && prop != null) {
+                    key = path.shift();
+                    if (prop instanceof Bindable) {
+                        prop = prop.get(key);
+                    } else if (prop[key]) {
+                        prop = prop[key];
+                    } else {
+                        throw "Couldn't find attribute for " + key;
+                    }
+                }
+                return prop;
+                
+            },
+
+            _commitAttributes: function(attributes){
                 if(_.size(attributes) > 0){
                     this.trigger('change',attributes,this);
                 }
@@ -105,4 +133,6 @@ rAppid.defineClass("js.core.Bindable", ["js.core.EventDispatcher", "underscore"]
                 this.set(this.$,{unset: true});
             }
         });
+
+        return Bindable;
     });

@@ -34,11 +34,31 @@ rAppid.defineClass("js.core.Component",
 
                 if (child.constructor.name == "js.core.Template") {
                     if (!child.$.name) {
-                        throw "template without name"
+                        throw "template without name";
                     }
 
                     this.$templates[child.$.name] = child;
                 }
+            },
+
+            removeChild: function(child) {
+                if (!(child instanceof Element)) {
+                    throw "only children of type js.core.Component can be removed"
+                }
+
+                var index = this.$children.indexOf(child);
+                if (index != -1) {
+                    // child found
+                    child.$parent = null;
+                    this.$children.splice(index, 1);
+                }
+
+                index = this.$templates.indexOf(child);
+                if (index != -1) {
+                    // remove it from templates
+                    this.$templates.splice(index, 1);
+                }
+
             },
 
             getTemplate: function (name) {
@@ -53,42 +73,7 @@ rAppid.defineClass("js.core.Component",
              *          TODO none?
              */
             _initializeDescriptor: function (descriptor) {
-                var node, attrVal;
                 var placeholders = {};
-
-
-                // get attributes from descriptor
-                var attributes = this.$ || {};
-                if (descriptor && descriptor.attributes) {
-                    for (var a = 0; a < descriptor.attributes.length; a++) {
-                        node = descriptor.attributes[a];
-                        if (node.nodeType == 2) { // attributes
-                            attrVal = node.value;
-
-
-                            if (this._isEventAttribute(node.nodeName)) {
-                                // TODO: create event handler
-                            } else {
-
-                                var key = attrVal.match(/\{([a-zA-Z_.]+)\}/);
-
-                                if (key) {
-                                    placeholders[node.nodeName] = key[1];
-                                } else {
-                                    attributes[node.nodeName] = attrVal;
-                                }
-                            }
-
-                        }
-                    }
-                }
-
-
-                if (this.$creationPolicy != "full") {
-                    if (attributes.hasOwnProperty("creationPolicy")) {
-                        this.$creationPolicy = attributes.creationPolicy;
-                    }
-                }
 
 
                 var childrenFromDescriptor = this._createChildrenFromDescriptor(descriptor);
@@ -114,6 +99,7 @@ rAppid.defineClass("js.core.Component",
                 this._childrenInitialized();
 
             },
+
             _initializeChildren: function (childComponents) {
                 for (var i = 0; i < childComponents.length; i++) {
                     // FIRST ADD CHILD
@@ -128,18 +114,37 @@ rAppid.defineClass("js.core.Component",
                 }
             },
             _initializeAttributes: function (attributes) {
-                this.set(attributes, {silent: true});
+                this.base._initializeAttributes.callBase(attributes);
+
+                if (this.$creationPolicy != "full") {
+                    if (attributes.hasOwnProperty("creationPolicy")) {
+                        this.$creationPolicy = attributes.creationPolicy;
+                    }
+                }
+
+                // Resolve bindings
+                for (var key in attributes) {
+                    if (attributes.hasOwnProperty(key)) {
+                        var value = attributes[key];
+
+                        if (this._isEventAttribute(key)) {
+                            this.bind(this._getEventTypeForAttribute(key), this[value], this);
+                        } else if (this._isBindingDefinition(value)) {
+                            // TODO: createBinding
+                        }
+
+                    }
+                }
+
+                // Resolve event listener
+
             },
             _createComponentForNode: function (node) {
                 // only instantiation and construction but no initialization
                 var appDomain = this.$applicationDomain;
                 var component = appDomain.createInstance(appDomain.getFqClassName(node.namespaceURI, node.localName));
 
-                if (appDomain.getFqClassName(node.namespaceURI, node.localName) == "js.core.Template") {
-                    var a = "x";
-                }
-
-                component._construct(node, appDomain, this.$scope);
+                component._construct(node, appDomain, this.$);
 
                 return component;
             },
@@ -148,23 +153,23 @@ rAppid.defineClass("js.core.Component",
                 var appDomain = this.$applicationDomain;
                 var component = new TextElement();
 
-                component._construct(node, appDomain, this.$scope);
+                component._construct(node, appDomain, this.$);
 
                 return component;
             },
             _createChildrenFromDescriptor: function (descriptor) {
-                this.$scopInitialized = false;
+
                 var childrenFromDescriptor = [], node, component;
                 for (var i = 0; i < descriptor.childNodes.length; i++) {
                     node = descriptor.childNodes[i];
                     if (node.nodeType == 1) { // Elements
                         component = this._createComponentForNode(node);
                         childrenFromDescriptor.push(component);
-                        // call initializeScope
-                        if (this.$scopInitialized == false && this.initialize) {
-                            this.$scopInitialized = true;
-                            this.initialize(this.$scope);
-                        }
+//                        // call initializeScope
+//                        if (this.$scopInitialized == false && this.initialize) {
+//                            this.$scopInitialized = true;
+//                            this.initialize(this.$scope);
+//                        }
                     } else if (node.nodeType == 3) { // Textnodes
                         // remove whitespaces from text textnodes
                         var text = node.textContent.trim();

@@ -61,12 +61,12 @@
     <!--</js:ModuleLoader>-->
 
     <ui:ItemsView tagName="ul" items="{facets}" class="facets">
-        <js:Template>
+        <js:Template name="item">
             <li>
                 <b>Select:</b>
                 <span>{item.label}</span>
                 <ui:ItemsView items="{item.subitems}" tagName="ul">
-                    <js:Template>
+                    <js:Template name="item">
                         <li>{item} for {appName}</li>
                     </js:Template>
                 </ui:ItemsView>

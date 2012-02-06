@@ -3,46 +3,41 @@ rAppid.defineClass("js.core.Element",
         return Bindable.inherit({
             ctor: function (attributes) {
                 this.base.ctor.callBase(this, attributes);
+
+                this._initializeAttributes(this.$);
             },
-            _construct:function (descriptor, applicationDomain, scope) {
+            _construct:function (descriptor, applicationDomain, parentScope, rootScope) {
+
+                var attributes = this.$;
+
                 this.$descriptor = descriptor;
                 this.$applicationDomain = applicationDomain;
 
-                // initializing of the ID is a must, event in construction
-                if (descriptor && descriptor.nodeType == 1) { // element
-                    var id;
+                if (descriptor && descriptor.attributes) {
+                    var node;
 
-                    try {
-                        id = descriptor.getAttribute("id");
-                    } catch (e) {
-                    }
-
-                    if (id) {
-                        this.$.id = id;
+                    for (var a = 0; a < descriptor.attributes.length; a++) {
+                        node = descriptor.attributes[a];
+                        attributes[node.nodeName] = node.value;
                     }
                 }
 
-                if (descriptor && descriptor.parentNode && !descriptor.parentNode.parentNode) {
-                    // we are the root
-                    scope = {};
-                }
+                this.$ = attributes;
+                this.$parentScope = parentScope;
+                this.$rootScope = rootScope;
 
-                this.$scope = scope;
+                this._initializeAttributes(this.$);
+
             },
-            setVar: function(key,value){
-                this[key] = value;
+
+            _defaults: {
+                creationPolicy: "auto"
             },
-            getVar: function(key){
-                var ret = this[key];
-                if (ret) {
-                    return ret;
-                } else if (this.$parent) {
-                    // ask base
-                    return this.$parent.getVar(key);
-                } else {
-                    return null;
-                }
+
+            _initializeAttributes: function(attributes) {
+
             },
+
             /**
              *
              * @param creationPolicy
@@ -55,10 +50,6 @@ rAppid.defineClass("js.core.Element",
                     return;
                 }
 
-                this.$creationPolicy = creationPolicy || "auto";
-
-
-
                 this._preinitialize();
 
                 this._initializeDescriptor(this.$descriptor);
@@ -69,6 +60,7 @@ rAppid.defineClass("js.core.Element",
             _initializeDescriptor: function(descriptor){
 
             },
+
             _getVarForPlaceholder: function(placeholder){
                 var path = placeholder.split(".");
                 var prop = this.getVar(path.shift());
