@@ -12,14 +12,14 @@ rAppid.defineClass("js.core.EventDispatcher",
                 this.callBase();
                 this._eventHandlers = {};
             },
-            bind: function (eventType, callback, thisArg) {
+            bind: function (eventType, callback, scope) {
                 // TODO: mkre push thisarg to eventHandlers
-                thisArg = thisArg || this;
+                scope = scope || this;
 
                 // get the list for the event
                 var list = this._eventHandlers[eventType] || (this._eventHandlers[eventType] = []);
                 // and push the callback function
-                list.push(new EventDispatcher.EventHandler(callback, thisArg));
+                list.push(new EventDispatcher.EventHandler(callback, scope));
 
                 return this;
             },
@@ -29,20 +29,22 @@ rAppid.defineClass("js.core.EventDispatcher",
              * @param {js.core.EventDispatcher.Event|Object} event
              * @param target
              */
-            trigger: function (eventType, event, target) {
+            trigger: function (eventType, event, caller) {
                 if (this._eventHandlers[eventType]) {
                     if (!(event instanceof EventDispatcher.Event)) {
                         event = new EventDispatcher.Event(event);
                     }
-                    event.type = eventType;
-                    if(!event.target){
-                        event.target = target || this;
+
+                    if(!caller){
+                        caller = this;
                     }
+
+                    event.type = eventType;
 
                     var list = this._eventHandlers[eventType];
                     for (var i = 0; i < list.length; i++) {
                         if (list[i]) {
-                            list[i].trigger(event);
+                            list[i].trigger(event, caller);
                         }
                     }
                 }
@@ -72,12 +74,12 @@ rAppid.defineClass("js.core.EventDispatcher",
         });
 
         EventDispatcher.EventHandler = js.core.Base.inherit(({
-            ctor: function(callback, thisArg) {
+            ctor: function(callback, scope) {
                 this.$callback = callback;
-                this.$thisArg = thisArg;
+                this.scope = scope;
             },
-            trigger: function(event) {
-                this.$callback.call(this.$thisArg, event);
+            trigger: function(event, caller) {
+                this.$callback.call(this.scope, event, caller);
             }
         }));
 

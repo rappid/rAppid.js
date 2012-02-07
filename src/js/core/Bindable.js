@@ -35,7 +35,8 @@ rAppid.defineClass("js.core.Bindable", ["js.core.EventDispatcher", "underscore"]
             _eventAttributes: {},
 
             _isEventAttribute: function (attributeName) {
-                return this._eventAttributes.hasOwnProperty(attributeName);
+                return attributeName.indexOf("on") == 0;
+                // return this._eventAttributes.hasOwnProperty(attributeName);
             },
 
             _getEventTypeForAttribute: function(eventName) {

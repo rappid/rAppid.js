@@ -31,6 +31,12 @@ rAppid.defineClass("js.html.DomElement",
 
                     this.$el = document.createElement(this.$tagName);
 
+                    // TODO: bind the events
+                    var self = this;
+                    this.$el.onclick = function(e){
+                        self.trigger('onclick',e, self);
+                    }
+
                     this._renderAttributes(this.$);
 
                     // for all children
@@ -66,6 +72,12 @@ rAppid.defineClass("js.html.DomElement",
                     if (_.isString(attr)) {
                         this.$el.setAttribute(key, attr);
                     }
+                },
+                _commitChangedAttributes:function (attributes) {
+                    if(this.isRendered()){
+                        this._renderAttributes(attributes);
+                    }
+
                 }
             }
         )

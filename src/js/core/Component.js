@@ -97,7 +97,9 @@ rAppid.defineClass("js.core.Component",
                     if (attributes.hasOwnProperty(key)) {
                         var value = attributes[key];
                         if (this._isEventAttribute(key)) {
-                            this.bind(this._getEventTypeForAttribute(key), this[value], this);
+                            console.log(key);
+                            this.bind(key, this.$rootScope[value], this.$rootScope);
+                            delete attributes[key];
                         } else if (this._isBindingDefinition(value)) {
                             var attrKey = value.match(this._bindingRegex);
                             attributes[key] = this.get(attrKey[1]);
