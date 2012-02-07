@@ -74,30 +74,11 @@ rAppid.defineClass("js.core.Component",
              *          TODO none?
              */
             _initializeDescriptor: function (descriptor) {
-                var placeholders = {};
-
-
                 var childrenFromDescriptor = this._createChildrenFromDescriptor(descriptor);
 
                 this._initializeChildren(childrenFromDescriptor);
 
-                // read out variables and put in attributes
-                // after the script tag is evaluated
-                for (key in placeholders) {
-                    if (placeholders.hasOwnProperty(key)) {
-
-                        var val = this._getVarForPlaceholder(placeholders[key]);
-                        // var val = placeholders[key];
-                        if (val) {
-                            attributes[key] = _.isFunction(val) ? val() : val;
-                        }
-
-                    }
-                }
-
-
                 this._childrenInitialized();
-
             },
 
             _initializeChildren: function (childComponents) {
@@ -124,13 +105,14 @@ rAppid.defineClass("js.core.Component",
 
                 // Resolve bindings
                 for (var key in attributes) {
+
                     if (attributes.hasOwnProperty(key)) {
                         var value = attributes[key];
-
+                        console.log(value);
                         if (this._isEventAttribute(key)) {
                             this.bind(this._getEventTypeForAttribute(key), this[value], this);
                         } else if (this._isBindingDefinition(value)) {
-                            // TODO: createBinding
+
                         }
 
                     }
@@ -144,7 +126,7 @@ rAppid.defineClass("js.core.Component",
                 var appDomain = this.$applicationDomain;
                 var component = appDomain.createInstance(appDomain.getFqClassName(node.namespaceURI, node.localName));
 
-                component._construct(node, appDomain, this.$);
+                component._construct(node, appDomain, this, this.$rootScope);
 
                 return component;
             },
@@ -153,7 +135,7 @@ rAppid.defineClass("js.core.Component",
                 var appDomain = this.$applicationDomain;
                 var component = new TextElement();
 
-                component._construct(node, appDomain, this.$);
+                component._construct(node, appDomain, this, this.$rootScope);
 
                 return component;
             },

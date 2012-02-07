@@ -14,9 +14,9 @@
                  * this method is called right after the script tag is evaluated
                  */
                 initialize:function () {
-                    this.setVar("appName", "AWESOME APP");
-                    this.setVar("hello", "Hello world");
-                    this.setVar("facets", [
+                    this.set("appName", "AWESOME APP");
+                    this.set("hello", "Hello world");
+                    this.set("facets", [
                         {
                             label:'Colors',
                             subitems:['red', "green", "gold"]
@@ -28,7 +28,7 @@
                     ]);
                     this.model = new js.core.Bindable({name:'Bob'});
 
-                    this.setVar("modelBinding", new js.core.Binding({model:this.model, key:'name'}))
+                    this.set("modelBinding", new js.core.Binding({model:this.model, key:'name'}))
                 },
 
                 /**
@@ -62,7 +62,7 @@
     <!--<js:ContentPlaceHolder name="main">-->
     <!--</js:ContentPlaceHolder>-->
     <!--</js:ModuleLoader>-->
-
+    <!--
     <ui:ItemsView tagName="ul" items="{facets}" class="facets">
         <js:Template name="item">
             <li>
@@ -75,7 +75,7 @@
                 </ui:ItemsView>
             </li>
         </js:Template>
-    </ui:ItemsView>
+    </ui:ItemsView>  -->
 
 
     <!--comes into moduleloader into content place holders-->

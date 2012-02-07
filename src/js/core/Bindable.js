@@ -106,7 +106,20 @@ rAppid.defineClass("js.core.Bindable", ["js.core.EventDispatcher", "underscore"]
                 return this.$;
             },
             get: function(key){
-                return this.$[key];
+                var path = key.split(".");
+                var prop = this.$[path.shift()];
+                var key;
+                while (path.length > 0 && prop != null) {
+                    key = path.shift();
+                    if (prop instanceof Bindable) {
+                        prop = prop.get(key);
+                    } else if (prop[key]) {
+                        prop = prop[key];
+                    } else {
+                        throw "Couldn't find attribute for " + key;
+                    }
+                }
+                return prop;
             },
             _commitChangedAttributes: function(attributes){
 

@@ -17,7 +17,7 @@ rAppid.defineClass("js.core.TextElement",
                 var key, val;
                 while (matches && matches.length > 0) {
                     key = matches[1];
-                    val = this._getVarForPlaceholder(key);
+                    val = this.get(key);
                     textContent = textContent.replace(new RegExp("{" + key + "}", "g"), val);
                     matches = matchPlaceholder(textContent);
                 }

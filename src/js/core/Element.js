@@ -51,6 +51,8 @@ rAppid.defineClass("js.core.Element",
 
                 this._preinitialize();
 
+                this.initialize();
+
                 this._initializeDescriptor(this.$descriptor);
 
                 this._initializationComplete();
@@ -59,22 +61,23 @@ rAppid.defineClass("js.core.Element",
             _initializeDescriptor: function(descriptor){
 
             },
+            initialize: function(){
 
-            _getVarForPlaceholder: function(placeholder){
-                var path = placeholder.split(".");
-                var prop = this.get(path.shift());
-                var key;
-                while(path.length > 0 && prop != null){
-                    key = path.shift();
-                    if(prop instanceof Bindable){
-                        prop = prop.get(key);
-                    }else if(prop[key]){
-                        prop = prop[key];
-                    }else{
-                        throw "Couldn't find attribute for "+ key;
-                    }
+            },
+            get: function(key){
+                var path = key.split(".");
+                // get first key
+                var k1 = path[0];
+                // try to find value for first key
+                var value = this.$[k1];
+                // if value was found
+                if(value){
+                    return this.callBase(key);
+                // if not, ask parent
+                }else if(this.$parentScope){
+                    return this.$parentScope.get(key);
                 }
-                return prop;
+                return null;
             },
             _preinitialize: function () {
 
