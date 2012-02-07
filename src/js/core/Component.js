@@ -16,19 +16,6 @@ rAppid.defineClass("js.core.Component",
                     throw "only children of type js.core.Component can be added"
                 }
 
-                /*
-                if (child.$.id) {
-                    if (this.$scope) {
-                        if (this.$scope.hasOwnProperty(child.$.id)) {
-                            throw "an element with the id '" + child.$.id + "' already exits";
-                        }
-
-                        this.$scope[child.$.id] = child;
-                    } else {
-                        console.warn(["No scope for element found", this]);
-                    }
-                }*/
-
                 child.$parent = this;
 
                 this.$children.push(child);
