@@ -1,7 +1,18 @@
 rAppid.defineClass("js.core.Application",
     ["js.core.UIComponent"], function (UIComponent) {
         return UIComponent.inherit({
-            start: function(callback) {
+
+            initialize: function () {
+                // set up application wide vars
+            },
+
+            /**
+             * Method called, when application is initialized
+             *
+             * @param {Object} parameter
+             * @param {Function} callback
+             */
+            start: function(parameter, callback) {
                 if (callback) {
                     callback(null);
                 }
