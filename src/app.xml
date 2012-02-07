@@ -14,6 +14,7 @@
                  * this method is called right after the script tag is evaluated
                  */
                 initialize:function () {
+                    this.set("currentTime", new Date().toString());
                     this.set("appName", "AWESOME APP");
                     this.set("hello", "Hello");
                     this.set("hash", {a: {b: {c: "Welt"}}});
@@ -39,8 +40,8 @@
                     this.render(document.body);
                 },
                 onItemClick: function(e, caller){
-                    console.log(caller.get('item'));
-                    this.set("appName","MY NEW APP");
+                    console.log("clicked on item");
+                    this.set("currentTime",new Date().toString());
                 },
                 foo: function(e){
 
@@ -53,10 +54,10 @@
     </js:Script>
 
     <!-- TODO DO not allow binding for ID -->
-    <div id="test">
+    <div id="test" onclick="onItemClick">
         <span>{hello} {hash.a.b.c}</span>
         <br/>
-        <span>{appName}</span>
+        <span>The current Time is {currentTime}</span>
     </div>
 
     <div class="{appName}">
@@ -73,6 +74,7 @@
     <!--<js:ContentPlaceHolder name="main">-->
     <!--</js:ContentPlaceHolder>-->
     <!--</js:ModuleLoader>-->
+
     <ui:ItemsView tagName="ul" items="{facets}" class="facets" >
         <js:Template name="item">
             <li onclick="onItemClick">
@@ -80,7 +82,7 @@
                 <span>{item.label}</span>
                 <ui:ItemsView items="{item.subitems}" tagName="ul">
                     <js:Template name="item">
-                        <li>{item} for {appName} on {hash.a.b.c}</li>
+                        <li>{item} for {currentTime} on {hash.a.b.c}</li>
                     </js:Template>
                 </ui:ItemsView>
             </li>

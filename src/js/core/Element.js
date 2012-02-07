@@ -65,19 +65,27 @@ rAppid.defineClass("js.core.Element",
 
             },
             get: function(key){
+                var scope = this.getScopeForKey(key);
+                if(this == scope){
+                    return this.callBase();
+                }else {
+                    return scope.get(key);
+                }
+            },
+            getScopeForKey: function(key){
                 var path = key.split(".");
                 // get first key
                 var k1 = path[0];
                 // try to find value for first key
                 var value = this.$[k1];
                 // if value was found
-                if(value){
-                    return this.callBase(key);
-                // if not, ask parent
-                }else if(this.$parentScope){
-                    return this.$parentScope.get(key);
+                if (value) {
+                    return this;
+                } else if (this.$parentScope) {
+                    return this.$parentScope.getScopeForKey(k1);
+                }else{
+                    return null;
                 }
-                return null;
             },
 
             _preinitialize: function () {

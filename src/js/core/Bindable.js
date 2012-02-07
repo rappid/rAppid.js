@@ -23,7 +23,7 @@ rAppid.defineClass("js.core.Bindable", ["js.core.EventDispatcher", "underscore"]
                 this.$ = attributes;
 
             },
-            _bindingRegex: /^\{([a-z_$][a-z0-9$_.]*)\}$/i,
+            $bindingRegex: /^\{([a-z_$][a-z0-9$_.]*)\}$/i,
             _defaults: {},
 
             _defaultAttributes: function () {
@@ -45,7 +45,7 @@ rAppid.defineClass("js.core.Bindable", ["js.core.EventDispatcher", "underscore"]
             },
 
             _isBindingDefinition: function (value) {
-                return this._bindingRegex.test(value);
+                return this.$bindingRegex.test(value);
             },
 
             /**

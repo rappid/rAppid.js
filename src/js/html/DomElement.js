@@ -75,6 +75,7 @@ rAppid.defineClass("js.html.DomElement",
                 },
                 _commitChangedAttributes:function (attributes) {
                     if(this.isRendered()){
+                        console.log(attributes);
                         this._renderAttributes(attributes);
                     }
 

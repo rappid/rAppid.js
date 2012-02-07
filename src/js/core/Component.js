@@ -101,8 +101,22 @@ rAppid.defineClass("js.core.Component",
                             this.bind(key, this.$rootScope[value], this.$rootScope);
                             delete attributes[key];
                         } else if (this._isBindingDefinition(value)) {
-                            var attrKey = value.match(this._bindingRegex);
-                            attributes[key] = this.get(attrKey[1]);
+                            var attrKey = value.match(this.$bindingRegex);
+                            attrKey = attrKey[1];
+                            var scope = this.getScopeForKey(attrKey);
+                            if(scope){
+                                var self = this;
+                                scope.bind('change:' + attrKey, function (e) {
+                                    var changed = {};
+                                    changed[key] = e.$;
+                                    self._commitChangedAttributes(changed);
+                                });
+                                attributes[key] = scope.get(attrKey);
+                            }else{
+                                throw "Binding not found";
+                            }
+
+
                         }
 
                     }
