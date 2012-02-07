@@ -61,14 +61,11 @@ rAppid.defineClass("js.core.Component",
              *          TODO none?
              */
             _initializeDescriptor: function (descriptor) {
-                var placeholders = {};
-
                 var childrenFromDescriptor = this._createChildrenFromDescriptor(descriptor);
 
                 this._initializeChildren(childrenFromDescriptor);
 
                 this._childrenInitialized();
-
             },
 
             _initializeChildren: function (childComponents) {
@@ -95,13 +92,14 @@ rAppid.defineClass("js.core.Component",
 
                 // Resolve bindings and events
                 for (var key in attributes) {
+
                     if (attributes.hasOwnProperty(key)) {
                         var value = attributes[key];
-
+                        console.log(value);
                         if (this._isEventAttribute(key)) {
                             this.bind(this._getEventTypeForAttribute(key), this[value], this);
                         } else if (this._isBindingDefinition(value)) {
-                            // TODO: createBinding
+
                         }
 
                     }
