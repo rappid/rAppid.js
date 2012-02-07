@@ -63,19 +63,19 @@
     <!--</js:ContentPlaceHolder>-->
     <!--</js:ModuleLoader>-->
 
-    <ui:ItemsView tagName="ul" items="{facets}" class="facets">
-        <js:Template name="item">
-            <li>
-                <b>Select:</b>
-                <span class="{modelBinding}">{item.label}</span>
-                <ui:ItemsView items="{item.subitems}" tagName="ul">
-                    <js:Template name="item">
-                        <li>{item} for {appName}</li>
-                    </js:Template>
-                </ui:ItemsView>
-            </li>
-        </js:Template>
-    </ui:ItemsView>
+    <!--<ui:ItemsView tagName="ul" items="{facets}" class="facets">-->
+        <!--<js:Template name="item">-->
+            <!--<li>-->
+                <!--<b>Select:</b>-->
+                <!--<span class="{modelBinding}">{item.label}</span>-->
+                <!--<ui:ItemsView items="{item.subitems}" tagName="ul">-->
+                    <!--<js:Template name="item">-->
+                        <!--<li>{item} for {appName}</li>-->
+                    <!--</js:Template>-->
+                <!--</ui:ItemsView>-->
+            <!--</li>-->
+        <!--</js:Template>-->
+    <!--</ui:ItemsView>-->
 
 
     <!--comes into moduleloader into content place holders-->

@@ -11,7 +11,7 @@ rAppid.defineClass("js.core.Bindable", ["js.core.EventDispatcher", "underscore"]
          * @extends js.core.EventDispatcher
          */
 
-        var Bindable = EventDispatcher.inherit({
+        return EventDispatcher.inherit({
             ctor: function (attributes) {
                 // call the base class constructor
                 this.callBase();
@@ -51,7 +51,9 @@ rAppid.defineClass("js.core.Bindable", ["js.core.EventDispatcher", "underscore"]
 
             /**
              *
-             * @param attributes
+             * @param key
+             * @param value
+             * @param options
              */
             set: function (key, value, options) {
                 var attributes = {};
@@ -120,5 +122,4 @@ rAppid.defineClass("js.core.Bindable", ["js.core.EventDispatcher", "underscore"]
             }
         });
 
-        return Bindable;
     });

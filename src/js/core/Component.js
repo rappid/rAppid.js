@@ -76,25 +76,9 @@ rAppid.defineClass("js.core.Component",
             _initializeDescriptor: function (descriptor) {
                 var placeholders = {};
 
-
                 var childrenFromDescriptor = this._createChildrenFromDescriptor(descriptor);
 
                 this._initializeChildren(childrenFromDescriptor);
-
-                // read out variables and put in attributes
-                // after the script tag is evaluated
-                for (key in placeholders) {
-                    if (placeholders.hasOwnProperty(key)) {
-
-                        var val = this._getVarForPlaceholder(placeholders[key]);
-                        // var val = placeholders[key];
-                        if (val) {
-                            attributes[key] = _.isFunction(val) ? val() : val;
-                        }
-
-                    }
-                }
-
 
                 this._childrenInitialized();
 
@@ -122,7 +106,7 @@ rAppid.defineClass("js.core.Component",
                     }
                 }
 
-                // Resolve bindings
+                // Resolve bindings and events
                 for (var key in attributes) {
                     if (attributes.hasOwnProperty(key)) {
                         var value = attributes[key];
@@ -136,24 +120,22 @@ rAppid.defineClass("js.core.Component",
                     }
                 }
 
-                // Resolve event listener
-
             },
             _createComponentForNode: function (node) {
                 // only instantiation and construction but no initialization
                 var appDomain = this.$applicationDomain;
                 var component = appDomain.createInstance(appDomain.getFqClassName(node.namespaceURI, node.localName));
 
-                component._construct(node, appDomain, this.$);
+                component._construct(node, appDomain, this, this.$rootScope);
 
                 return component;
             },
-            _createComponentForTextNode: function (node) {
+            _createTextElementForNode: function (node) {
                 // only instantiation and construction but no initialization
                 var appDomain = this.$applicationDomain;
                 var component = new TextElement();
 
-                component._construct(node, appDomain, this.$);
+                component._construct(node, appDomain, this, this.$rootScope);
 
                 return component;
             },
@@ -176,7 +158,7 @@ rAppid.defineClass("js.core.Component",
                         if (text.length > 0) {
                             // console.log(node);
                             node.textContent = text;
-                            childrenFromDescriptor.push(this._createComponentForTextNode(node));
+                            childrenFromDescriptor.push(this._createTextElementForNode(node));
                         }
 
                     }

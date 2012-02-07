@@ -76,6 +76,7 @@ rAppid.defineClass("js.core.Element",
                 }
                 return prop;
             },
+
             _preinitialize: function () {
 
             },
