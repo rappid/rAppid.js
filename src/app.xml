@@ -15,7 +15,8 @@
                  */
                 initialize:function () {
                     this.set("appName", "AWESOME APP");
-                    this.set("hello", "Hello world");
+                    this.set("hello", "Hello");
+                    this.set("hash", {a: {b: {c: "Welt"}}});
                     this.set("facets", [
                         {
                             label:'Colors',
@@ -36,19 +37,30 @@
                  */
                 start:function () {
                     this.render(document.body);
+                },
+                onItemClick: function(e){
+                    e.target.get('item');
+                    // e.preventDefault();
+                    // this.showItem(e.item);
+                },
+                foo: function(e){
+
+                },
+                showItem: function(item){
+
                 }
             }
         })();
     </js:Script>
 
     <!-- TODO DO not allow binding for ID -->
-    <div id="test" onclick="alert('what')">
-        <span>{hello}</span>
+    <div id="test" onclick="foo">
+        <span>{hello} {hash.a.b.c}</span>
         <br/>
         <span>{appName}</span>
     </div>
 
-    <div id="x">
+    <div class="{appName}">
         <!--<js:Template name="ListItem">-->
         <!--</js:Template>-->
     </div>
@@ -62,20 +74,19 @@
     <!--<js:ContentPlaceHolder name="main">-->
     <!--</js:ContentPlaceHolder>-->
     <!--</js:ModuleLoader>-->
-    <!--
     <ui:ItemsView tagName="ul" items="{facets}" class="facets">
         <js:Template name="item">
             <li>
                 <b>Select:</b>
-                <span class="{modelBinding}">{item.label}</span>
+                <span>{item.label}</span>
                 <ui:ItemsView items="{item.subitems}" tagName="ul">
                     <js:Template name="item">
-                        <li>{item} for {appName}</li>
+                        <li onclick="onItemClick">{item} for {appName} on {hash.a.b.c}</li>
                     </js:Template>
                 </ui:ItemsView>
             </li>
         </js:Template>
-    </ui:ItemsView>  -->
+    </ui:ItemsView>
 
 
     <!--comes into moduleloader into content place holders-->

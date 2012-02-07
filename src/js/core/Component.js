@@ -87,6 +87,7 @@ rAppid.defineClass("js.core.Component",
                 if (this.$creationPolicy != "full") {
                     if (attributes.hasOwnProperty("creationPolicy")) {
                         this.$creationPolicy = attributes.creationPolicy;
+                        delete attributes.creationPolicy;
                     }
                 }
 
@@ -95,11 +96,11 @@ rAppid.defineClass("js.core.Component",
 
                     if (attributes.hasOwnProperty(key)) {
                         var value = attributes[key];
-                        console.log(value);
                         if (this._isEventAttribute(key)) {
                             this.bind(this._getEventTypeForAttribute(key), this[value], this);
                         } else if (this._isBindingDefinition(value)) {
-
+                            var attrKey = value.match(this._bindingRegex);
+                            attributes[key] = this.get(attrKey[1]);
                         }
 
                     }

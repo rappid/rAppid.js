@@ -4,14 +4,12 @@ rAppid.defineClass("js.core.Bindable", ["js.core.EventDispatcher", "underscore"]
      */
     function (EventDispatcher, _) {
 
-        var bindingRegex = /^\{([a-z_$][a-z0-9$_.]*)\}$/i;
-
         /**
          * @class js.core.Bindable
          * @extends js.core.EventDispatcher
          */
 
-        return EventDispatcher.inherit({
+        var Bindable = EventDispatcher.inherit({
             ctor: function (attributes) {
                 // call the base class constructor
                 this.callBase();
@@ -25,7 +23,7 @@ rAppid.defineClass("js.core.Bindable", ["js.core.EventDispatcher", "underscore"]
                 this.$ = attributes;
 
             },
-
+            _bindingRegex: /^\{([a-z_$][a-z0-9$_.]*)\}$/i,
             _defaults: {},
 
             _defaultAttributes: function () {
@@ -46,7 +44,7 @@ rAppid.defineClass("js.core.Bindable", ["js.core.EventDispatcher", "underscore"]
             },
 
             _isBindingDefinition: function (value) {
-                return bindingRegex.test(value);
+                return this._bindingRegex.test(value);
             },
 
             /**
@@ -134,5 +132,7 @@ rAppid.defineClass("js.core.Bindable", ["js.core.EventDispatcher", "underscore"]
                 this.set(this.$,{unset: true});
             }
         });
+
+        return Bindable;
 
     });
