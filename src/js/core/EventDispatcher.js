@@ -19,7 +19,7 @@ rAppid.defineClass("js.core.EventDispatcher",
                 // get the list for the event
                 var list = this._eventHandlers[eventType] || (this._eventHandlers[eventType] = []);
                 // and push the callback function
-                list.push(callback);
+                list.push(new EventDispatcher.EventHandler(callback, thisArg));
 
                 return this;
             },
@@ -42,20 +42,20 @@ rAppid.defineClass("js.core.EventDispatcher",
                     var list = this._eventHandlers[eventType];
                     for (var i = 0; i < list.length; i++) {
                         if (list[i]) {
-                            list[i](event,event.$);
+                            list[i].trigger(event);
                         }
                     }
                 }
             },
-            unbind: function (event, callback) {
-                if (!event) {
+            unbind: function (eventType, callback) {
+                if (!eventType) {
                     // remove all events
                     this._eventHandlers = {};
                 } else if (!callback) {
                     // remove all callbacks for these event
-                    this._eventHandlers[event] = [];
-                } else if (this._eventHandlers[event]) {
-                    var list = this._eventHandlers[event];
+                    this._eventHandlers[eventType] = [];
+                } else if (this._eventHandlers[eventType]) {
+                    var list = this._eventHandlers[eventType];
                     for (var i = list.length - 1; i >= 0; i--) {
                         if (list[i] == callback) {
                             list.splice(i, 1);  // delete callback
@@ -70,6 +70,16 @@ rAppid.defineClass("js.core.EventDispatcher",
                 this.$ = attributes;
             }
         });
+
+        EventDispatcher.EventHandler = js.core.Base.inherit(({
+            ctor: function(callback, thisArg) {
+                this.$callback = callback;
+                this.$thisArg = thisArg;
+            },
+            trigger: function(event) {
+                this.$callback.call(this.$thisArg, event);
+            }
+        }));
 
         return EventDispatcher;
     }
