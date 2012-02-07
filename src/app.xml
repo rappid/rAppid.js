@@ -48,7 +48,7 @@
         <span>{appName}</span>
     </div>
 
-    <div id="x">
+    <div class="{appName}">
         <!--<js:Template name="ListItem">-->
         <!--</js:Template>-->
     </div>
@@ -62,12 +62,11 @@
     <!--<js:ContentPlaceHolder name="main">-->
     <!--</js:ContentPlaceHolder>-->
     <!--</js:ModuleLoader>-->
-    <!--
     <ui:ItemsView tagName="ul" items="{facets}" class="facets">
         <js:Template name="item">
             <li>
                 <b>Select:</b>
-                <span class="{modelBinding}">{item.label}</span>
+                <span>{item.label}</span>
                 <ui:ItemsView items="{item.subitems}" tagName="ul">
                     <js:Template name="item">
                         <li>{item} for {appName}</li>
@@ -75,7 +74,7 @@
                 </ui:ItemsView>
             </li>
         </js:Template>
-    </ui:ItemsView>  -->
+    </ui:ItemsView>
 
 
     <!--comes into moduleloader into content place holders-->

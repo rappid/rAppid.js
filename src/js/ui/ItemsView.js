@@ -13,19 +13,19 @@ rAppid.defineClass("js.ui.ItemsView",
                     child = children[i];
                     if(child instanceof Template){
                         this.$itemRenderer = child;
+
                         break;
                     }
                 }
             },
             _renderItems: function(items){
+                this.$itemRenderer._initialize();
                 var item, comp;
                 for(var i = 0 ; i < items.length; i++){
                     item = items[i];
-                    if(this.$itemRendererFnc){
-                        this.addChild(this.$itemRendererFnc(item));
-                    }else if(this.$itemRenderer){
+                    if(this.$itemRenderer){
                         comp = this.$itemRenderer.createComponent();
-                        comp.setVar('item',item);
+                        comp.set('item',item);
                         this.addChild(comp);
                     }
                 }
