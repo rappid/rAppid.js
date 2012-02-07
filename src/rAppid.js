@@ -77,7 +77,7 @@ var rAppid;
 
                     if (application instanceof global.js.core.Application) {
 
-                        application._construct(application._$descriptor, applicationDomain);
+                        application._construct(application._$descriptor, applicationDomain, null, application);
                         application._initialize("auto");
 
                         // return system manager

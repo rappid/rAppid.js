@@ -79,6 +79,7 @@ rAppid.defineClass("js.core.Element",
                 }
                 return null;
             },
+
             _preinitialize: function () {
 
             },

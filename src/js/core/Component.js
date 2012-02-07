@@ -103,7 +103,7 @@ rAppid.defineClass("js.core.Component",
                     }
                 }
 
-                // Resolve bindings
+                // Resolve bindings and events
                 for (var key in attributes) {
 
                     if (attributes.hasOwnProperty(key)) {
@@ -118,8 +118,6 @@ rAppid.defineClass("js.core.Component",
                     }
                 }
 
-                // Resolve event listener
-
             },
             _createComponentForNode: function (node) {
                 // only instantiation and construction but no initialization
@@ -130,7 +128,7 @@ rAppid.defineClass("js.core.Component",
 
                 return component;
             },
-            _createComponentForTextNode: function (node) {
+            _createTextElementForNode: function (node) {
                 // only instantiation and construction but no initialization
                 var appDomain = this.$applicationDomain;
                 var component = new TextElement();
@@ -158,7 +156,7 @@ rAppid.defineClass("js.core.Component",
                         if (text.length > 0) {
                             // console.log(node);
                             node.textContent = text;
-                            childrenFromDescriptor.push(this._createComponentForTextNode(node));
+                            childrenFromDescriptor.push(this._createTextElementForNode(node));
                         }
 
                     }
