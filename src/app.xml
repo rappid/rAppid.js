@@ -15,7 +15,8 @@
                  */
                 initialize:function () {
                     this.set("appName", "AWESOME APP");
-                    this.set("hello", "Hello world");
+                    this.set("hello", "Hello");
+                    this.set("hash", {a: {b: {c: "Welt"}}});
                     this.set("facets", [
                         {
                             label:'Colors',
@@ -36,14 +37,25 @@
                  */
                 start:function () {
                     this.render(document.body);
+                },
+                onItemClick: function(e){
+                    e.target.get('item');
+                    // e.preventDefault();
+                    // this.showItem(e.item);
+                },
+                foo: function(e){
+
+                },
+                showItem: function(item){
+
                 }
             }
         })();
     </js:Script>
 
     <!-- TODO DO not allow binding for ID -->
-    <div id="test" onclick="alert('what')">
-        <span>{hello}</span>
+    <div id="test" onclick="foo">
+        <span>{hello} {hash.a.b.c}</span>
         <br/>
         <span>{appName}</span>
     </div>
@@ -69,7 +81,7 @@
                 <span>{item.label}</span>
                 <ui:ItemsView items="{item.subitems}" tagName="ul">
                     <js:Template name="item">
-                        <li>{item} for {appName}</li>
+                        <li onclick="onItemClick">{item} for {appName} on {hash.a.b.c}</li>
                     </js:Template>
                 </ui:ItemsView>
             </li>
