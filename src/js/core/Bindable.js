@@ -12,22 +12,25 @@ rAppid.defineClass("js.core.Bindable", ["js.core.EventDispatcher", "underscore"]
         var Bindable = EventDispatcher.inherit({
             ctor: function (attributes) {
                 // call the base class constructor
-                this.callBase();
+                this.callBase(null);
 
                 this.$ = {};
 
                 _.extend(this._eventAttributes, this.base._eventAttributes || {});
 
                 attributes = attributes || {};
+
+
                 _.defaults(attributes, this._defaultAttributes());
                 this.$ = attributes;
 
             },
             $bindingRegex: /^\{([a-z_$][a-z0-9$_.]*)\}$/i,
+
             _defaults: {},
 
             _defaultAttributes: function () {
-                return _.defaults(this._defaults, this.base._defaults);
+                return _.defaults(this._defaults, this.base._defaults || {});
             },
             /**
              * an array of attributes names, which will expect handler functions
