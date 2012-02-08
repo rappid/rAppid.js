@@ -4,11 +4,12 @@ rAppid.defineClass("js.core.Component",
         return Element.inherit({
             ctor: function (attributes) {
                 this.callBase();
+
                 this.$children = [];
 
                 this.$templates = {};
+                this.$configurations = [];
 
-                // TODO, what is with the attributes ?
             },
 
             addChild: function (child) {
@@ -27,6 +28,10 @@ rAppid.defineClass("js.core.Component",
 
                     this.$templates[child.$.name] = child;
                 }
+
+                if (child.className.indexOf("js.conf") == 0) {
+                    this.$configurations.push(child);
+                }
             },
 
             removeChild: function(child) {
@@ -41,10 +46,14 @@ rAppid.defineClass("js.core.Component",
                     this.$children.splice(index, 1);
                 }
 
-                index = this.$templates.indexOf(child);
-                if (index != -1) {
+                if (this.$templates.hasOwnProperty(child.$.name)) {
                     // remove it from templates
-                    this.$templates.splice(index, 1);
+                    delete this.$templates[child.$.name];
+                }
+
+                index = this.$children.indexOf(child);
+                if (index != -1) {
+                    this.$configurations.splice(index, 1);
                 }
 
             },
@@ -77,8 +86,6 @@ rAppid.defineClass("js.core.Component",
                     if (this.$creationPolicy == "auto") {
                         childComponents[i]._initialize(this.$creationPolicy);
                     }
-
-
                 }
             },
             _initializeAttributes: function (attributes) {
@@ -126,7 +133,11 @@ rAppid.defineClass("js.core.Component",
             _createComponentForNode: function (node) {
                 // only instantiation and construction but no initialization
                 var appDomain = this.$applicationDomain;
-                var component = appDomain.createInstance(appDomain.getFqClassName(node.namespaceURI, node.localName));
+
+                var fqClassName = appDomain.getFqClassName(node.namespaceURI, node.localName, true);
+                var className = appDomain.getFqClassName(node.namespaceURI, node.localName, false);
+
+                var component = appDomain.createInstance(fqClassName, [], className);
 
                 component._construct(node, appDomain, this, this.$rootScope);
 
@@ -135,7 +146,7 @@ rAppid.defineClass("js.core.Component",
             _createTextElementForNode: function (node) {
                 // only instantiation and construction but no initialization
                 var appDomain = this.$applicationDomain;
-                var component = new TextElement();
+                var component = appDomain.createInstance("js.core.TextElement");
 
                 component._construct(node, appDomain, this, this.$rootScope);
 
@@ -149,11 +160,6 @@ rAppid.defineClass("js.core.Component",
                     if (node.nodeType == 1) { // Elements
                         component = this._createComponentForNode(node);
                         childrenFromDescriptor.push(component);
-//                        // call initializeScope
-//                        if (this.$scopInitialized == false && this.initialize) {
-//                            this.$scopInitialized = true;
-//                            this.initialize(this.$scope);
-//                        }
                     } else if (node.nodeType == 3) { // Textnodes
                         // remove whitespaces from text textnodes
                         var text = node.textContent.trim();

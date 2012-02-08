@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <js:Application xmlns="http://www.w3.org/1999/xhtml"
-                xmlns:js="js.core" xmlns:ui="js.ui" xmlns:fx="js.fx">
+                xmlns:js="js.core" xmlns:ui="js.ui" xmlns:conf="js.conf">
 
     <js:Imports>
         js.core.Base;
@@ -52,6 +52,8 @@
             }
         })();
     </js:Script>
+
+    <conf:Test id="xy"/>
 
     <!-- TODO DO not allow binding for ID -->
     <div id="test" onclick="onItemClick">

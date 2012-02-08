@@ -23,7 +23,9 @@
     rAppid.bootStrap("app.xml", ["app.modules.articles"],
             function (err, systemManager, application) {
                 if (!err) {
-                    application.start();
+                    application.start({
+                        foo: "bar"
+                    });
                 } else {
                     console.warn(err);
                 }

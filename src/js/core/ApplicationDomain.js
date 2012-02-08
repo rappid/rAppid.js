@@ -93,7 +93,11 @@ define("js/core/ApplicationDomain", [],
             hasDefinition: function (fqClassName) {
                 return this.getDefinition(fqClassName) ? true : false;
             },
-            createInstance: function (fqClassName, args) {
+
+            createInstance: function (fqClassName, args, className) {
+
+                className = className || fqClassName;
+
                 args = args || [];
                 var classDefinition = this.getDefinition(fqClassName);
                 if (!classDefinition && this.getParentDomain()) {
@@ -109,16 +113,25 @@ define("js/core/ApplicationDomain", [],
                     return new F();
                 }
 
-                return construct(classDefinition, args);
+                var ret = construct(classDefinition, args);
+                ret.className = className;
+
+                return ret;
             },
-            getFqClassName: function (namespace, className) {
+            getFqClassName: function (namespace, className, useRewriteMap) {
+                if (useRewriteMap == undefined || useRewriteMap == null) {
+                    useRewriteMap = true;
+                }
+
                 var fqClassName = [this.$namespaceMap[namespace] || namespace, className].join(".");
 
-                for (var i = 0; i < this.$rewriteMap.length; i++) {
-                    var entry = this.$rewriteMap[i];
-                    if (entry instanceof ApplicationDomain.rewriteMapEntry) {
-                        if (entry.$from.test(fqClassName)) {
-                            return fqClassName.replace(entry.$from, entry.$to);
+                if (useRewriteMap) {
+                    for (var i = 0; i < this.$rewriteMap.length; i++) {
+                        var entry = this.$rewriteMap[i];
+                        if (entry instanceof ApplicationDomain.rewriteMapEntry) {
+                            if (entry.$from.test(fqClassName)) {
+                                return fqClassName.replace(entry.$from, entry.$to);
+                            }
                         }
                     }
                 }
@@ -174,13 +187,14 @@ define("js/core/ApplicationDomain", [],
 
         ApplicationDomain.currentDomain = null;
 
-        var rewrite = ApplicationDomain.rewriteMapEntry = function(from, to) {
+        var Rewrite = ApplicationDomain.rewriteMapEntry = function(from, to) {
             this.$from = from;
             this.$to = to;
         };
 
         ApplicationDomain.defaultRewriteMap = [
-            new rewrite(/^js.html.(.+)$/, "js.html.DomElement")
+            new Rewrite(/^js.html.(.+)$/, "js.html.DomElement"),
+            new Rewrite(/^js.conf.(.+)$/, "js.core.Component")
         ];
 
 
