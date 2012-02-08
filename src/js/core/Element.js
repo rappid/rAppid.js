@@ -81,7 +81,7 @@ rAppid.defineClass("js.core.Element",
                 // try to find value for first key
                 var value = this.$[k1];
                 // if value was found
-                if (value) {
+                if (!_.isUndefined(value)) {
                     return this;
                 } else if (this.$parentScope) {
                     return this.$parentScope.getScopeForKey(k1);
