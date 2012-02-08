@@ -60,7 +60,6 @@ rAppid.defineClass("js.html.DomElement",
                     return typeof (this.$el) !== "undefined";
                 },
                 _renderAttributes:function (attributes) {
-                    console.log(attributes);
                     var attr;
                     for (var key in attributes) {
                         if (key.indexOf("$") !== 0 && attributes.hasOwnProperty(key)) {
@@ -73,7 +72,6 @@ rAppid.defineClass("js.html.DomElement",
                     this.$el.setAttribute(key, new String(attr));
                 },
                 _commitChangedAttributes:function (attributes) {
-                    console.log(attributes);
                     if(this.isRendered()){
                         this._renderAttributes(attributes);
                     }

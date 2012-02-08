@@ -9,6 +9,9 @@
     <js:Script>
         (function () {
             return {
+                _defaults:{
+                    awesomeness:false
+                },
                 /**
                  * Initializes the app
                  * this method is called right after the script tag is evaluated
@@ -17,7 +20,7 @@
                     this.set("currentTime", new Date().getMilliseconds());
                     this.set("appName", "AWESOME APP");
                     this.set("hello", "Hello");
-                    this.set("hash", {a: {b: {c: "Welt"}}});
+                    this.set("hash", {a:{b:{c:"Welt"}}});
                     this.set("facets", [
                         {
                             label:'Colors',
@@ -28,24 +31,28 @@
                             subitems:['S', "M", "L"]
                         }
                     ]);
+
                     this.model = new js.core.Bindable({name:'Bob'});
 
                     this.set("modelBinding", new js.core.Binding({model:this.model, key:'name'}))
                 },
-
+                isAwesome:function () {
+                    return this.$['awesomeness'] === true;
+                }.on('awesomeness'),
                 /**
                  * This method should be called from outside to start the application
                  */
                 start:function () {
                     this.render(document.body);
                 },
-                onItemClick: function(e, caller){
-                    this.set("currentTime",(new Date().getMilliseconds()));
+                onItemClick:function (e, caller) {
+                    this.set("currentTime", (new Date().getMilliseconds()));
+                    this.set("awesomeness", !this.$['awesomeness']);
                 },
-                foo: function(e){
+                foo:function (e) {
 
                 },
-                showItem: function(item){
+                showItem:function (item) {
 
                 }
             }
@@ -56,7 +63,7 @@
 
     <!-- TODO DO not allow binding for ID -->
     <div id="test" onclick="onItemClick">
-        <span>{hello} {hash.a.b.c}</span>
+        <span>{hello} {hash.a.b.c} is awesome : {isAwesome}</span>
         <br/>
         <span>The current Time is {currentTime}</span>
     </div>

@@ -4,6 +4,10 @@ rAppid.defineClass("js.core.Bindable", ["js.core.EventDispatcher", "underscore"]
      */
     function (EventDispatcher, _) {
 
+        Function.prototype.on = function(){
+            this._bindings = arguments;
+            return this;
+        };
         /**
          * @class js.core.Bindable
          * @extends js.core.EventDispatcher
@@ -20,11 +24,29 @@ rAppid.defineClass("js.core.Bindable", ["js.core.EventDispatcher", "underscore"]
 
                 attributes = attributes || {};
 
-
                 _.defaults(attributes, this._defaultAttributes());
+
                 this.$ = attributes;
 
+                // init calculated attributes
+                var self = this, fnc, callFnc;
+                for (var key in this) {
+                    // find functions which have a bindings attribute
+                    if (_.isFunction(this[key]) && this[key]._bindings) {
+                        var k = key;
+                        fnc = this[k];
+                        // register as listener to all bindings
+                        for (var i = 0; i < fnc._bindings.length; i++) {
+                            this.on('change:' + fnc._bindings[i], function () {
+                                self.set(k, fnc.call(self));
+                            });
+                        }
+                        // set the return value of the function as attribute
+                        this.$[k] = fnc.call(this);
+                    }
+                }
             },
+
             $bindingRegex: /^\{([a-z_$][a-z0-9$_.]*)\}$/i,
 
             _defaults: {},
