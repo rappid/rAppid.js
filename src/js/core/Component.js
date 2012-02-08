@@ -104,8 +104,7 @@ rAppid.defineClass("js.core.Component",
                     if (attributes.hasOwnProperty(key)) {
                         var value = attributes[key];
                         if (this._isEventAttribute(key)) {
-                            console.log(key);
-                            this.bind(key, this.$rootScope[value], this.$rootScope);
+                            this.on(key, this.$rootScope[value], this.$rootScope);
                             delete attributes[key];
                         } else if (this._isBindingDefinition(value)) {
                             var attrKey = value.match(this.$bindingRegex);
@@ -113,7 +112,7 @@ rAppid.defineClass("js.core.Component",
                             var scope = this.getScopeForKey(attrKey);
                             if(scope){
                                 var self = this;
-                                scope.bind('change:' + attrKey, function (e) {
+                                scope.on('change:' + attrKey, function (e) {
                                     var changed = {};
                                     changed[key] = e.$;
                                     self._commitChangedAttributes(changed);
@@ -164,7 +163,6 @@ rAppid.defineClass("js.core.Component",
                         // remove whitespaces from text textnodes
                         var text = node.textContent.trim();
                         if (text.length > 0) {
-                            // console.log(node);
                             node.textContent = text;
                             childrenFromDescriptor.push(this._createTextElementForNode(node));
                         }

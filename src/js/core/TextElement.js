@@ -15,7 +15,7 @@ rAppid.defineClass("js.core.TextElement",
                     scope = this.getScopeForKey(key);
                     if (scope) {
                         var self = this;
-                        scope.bind('change:' + key, function (e) {
+                        scope.on('change:' + key, function (e) {
                             self._commitChangedAttributes();
                         });
                     }

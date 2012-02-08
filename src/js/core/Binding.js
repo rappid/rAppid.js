@@ -40,7 +40,7 @@ rAppid.defineClass("js.core.Binding", ["js.core.Component"], function(Component)
                 fnc:this.createCallbackFnc(fnc, target),
                 target:target
             }
-            this.$.model.bind(this.getEventName(), cb.fnc);
+            this.$.model.on(this.getEventName(), cb.fnc);
 
             this.$callbacks.push(cb);
         },
