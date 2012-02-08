@@ -39,7 +39,10 @@ var inherit;
             if (classDefinition.hasOwnProperty(publicMethod)) {
                 var baseFunction = newClass.prototype[publicMethod];
                 newClass.prototype[publicMethod] = classDefinition[publicMethod];
-                newClass.prototype[publicMethod].baseImplementation = baseFunction;
+
+                if (baseFunction instanceof Function) {
+                    newClass.prototype[publicMethod].baseImplementation = baseFunction;
+                }
             }
         }
 
