@@ -14,7 +14,7 @@
                  * this method is called right after the script tag is evaluated
                  */
                 initialize:function () {
-                    this.set("currentTime", new Date().toString());
+                    this.set("currentTime", new Date().getMilliseconds());
                     this.set("appName", "AWESOME APP");
                     this.set("hello", "Hello");
                     this.set("hash", {a: {b: {c: "Welt"}}});
@@ -40,8 +40,7 @@
                     this.render(document.body);
                 },
                 onItemClick: function(e, caller){
-                    console.log("clicked on item");
-                    this.set("currentTime",new Date().toString());
+                    this.set("currentTime",(new Date().getMilliseconds()));
                 },
                 foo: function(e){
 
@@ -81,10 +80,10 @@
         <js:Template name="item">
             <li onclick="onItemClick">
                 <b>Select:</b>
-                <span>{item.label}</span>
-                <ui:ItemsView items="{item.subitems}" tagName="ul">
+                <span>{$item.label}</span>
+                <ui:ItemsView items="{$item.subitems}" tagName="ul">
                     <js:Template name="item">
-                        <li>{item} for {currentTime} on {hash.a.b.c}</li>
+                        <li class="{currentTime}">{$item} for {currentTime} on {hash.a.b.c}</li>
                     </js:Template>
                 </ui:ItemsView>
             </li>

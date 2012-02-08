@@ -1,13 +1,13 @@
 rAppid.defineClass("js.core.TextElement",
     ["js.core.Element"], function(Element) {
         function matchPlaceholder(text) {
-            return text.match(/{([a-zA-Z\._]+)}/);
+            return text.match(/\{([a-zA-Z$._]+)\}/);
         }
 
         return Element.inherit({
             _initializeDescriptor:function (descriptor) {
                 // find bindings and register for onchange event
-                var matches = descriptor.textContent.match(/{([a-zA-Z\._]+)}/g);
+                var matches = descriptor.textContent.match(/\{([a-zA-Z$._]+)\}/g);
                 var key, scope;
                 while (matches && matches.length > 0) {
                     key = matches.shift();
@@ -40,7 +40,7 @@ rAppid.defineClass("js.core.TextElement",
                 while (matches && matches.length > 0) {
                     key = matches[1];
                     val = this.get(key);
-                    textContent = textContent.replace(new RegExp("{" + key + "}", "g"), val);
+                    textContent = textContent.split("{" + key + "}").join(val);
                     matches = matchPlaceholder(textContent);
                 }
 

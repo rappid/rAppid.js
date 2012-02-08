@@ -25,7 +25,7 @@ rAppid.defineClass("js.ui.ItemsView",
                     item = items[i];
                     if(this.$itemRenderer){
                         comp = this.$itemRenderer.createComponent();
-                        comp.set('item',item);
+                        comp.set('$item',item);
                         this.addChild(comp);
                     }
                 }

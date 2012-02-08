@@ -4,7 +4,7 @@ rAppid.defineClass("js.core.Element",
             ctor: function (attributes) {
                this.callBase();
 
-                this._initializeAttributes(this.$);
+               this._initializeAttributes(this.$);
             },
             _construct:function (descriptor, applicationDomain, parentScope, rootScope) {
 
@@ -68,8 +68,10 @@ rAppid.defineClass("js.core.Element",
                 var scope = this.getScopeForKey(key);
                 if(this == scope){
                     return this.callBase();
-                }else {
+                }else if(scope != null){
                     return scope.get(key);
+                }else{
+                    return null;
                 }
             },
             getScopeForKey: function(key){

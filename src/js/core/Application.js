@@ -19,7 +19,7 @@ rAppid.defineClass("js.core.Application",
             },
             render: function (target) {
                 // TODO: call base method
-                var dom = this.callBase();
+                var dom = this.callBase(null);
 
                 if (target) {
                     target.appendChild(dom);

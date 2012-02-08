@@ -60,22 +60,21 @@ rAppid.defineClass("js.html.DomElement",
                     return typeof (this.$el) !== "undefined";
                 },
                 _renderAttributes:function (attributes) {
+                    console.log(attributes);
                     var attr;
                     for (var key in attributes) {
-                        if (attributes.hasOwnProperty(key)) {
+                        if (key.indexOf("$") !== 0 && attributes.hasOwnProperty(key)) {
                             attr = attributes[key];
                             this._renderAttribute(key,attr);
                         }
                     }
                 },
                 _renderAttribute: function(key,attr){
-                    if (_.isString(attr)) {
-                        this.$el.setAttribute(key, attr);
-                    }
+                    this.$el.setAttribute(key, new String(attr));
                 },
                 _commitChangedAttributes:function (attributes) {
+                    console.log(attributes);
                     if(this.isRendered()){
-                        console.log(attributes);
                         this._renderAttributes(attributes);
                     }
 
