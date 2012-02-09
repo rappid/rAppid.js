@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<js:Application xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:js="js.core" xmlns:ui="js.ui" xmlns:conf="js.conf">
+
+    <js:Imports>
+        js.core.Base;
+        js.ui.View;
+    </js:Imports>
+
+    <js:Script>
+        (function () {
+            return {
+                _defaults:{
+
+                },
+                /**
+                 * Initializes the app
+                 * this method is called right after the script tag is evaluated
+                 */
+                initialize:function () {
+
+                },
+                /**
+                 * This method should be called from outside to start the application
+                 */
+                start:function () {
+                    this.render(document.body);
+                }
+            }
+        })();
+    </js:Script>
+
+    <div>
+        <ui:Button></ui:Button>
+    </div>
+</js:Application>
