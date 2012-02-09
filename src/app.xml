@@ -88,8 +88,7 @@
     <ui:ItemsView tagName="ul" items="{facets}" class="facets" >
         <js:Template name="item">
             <li onclick="onItemClick">
-                <b>Select:</b>
-                <span>{$item.label}</span>
+                <b>Select:</b><span>{$item.label}</span>
                 <ui:ItemsView items="{$item.subitems}" tagName="ul">
                     <js:Template name="item">
                         <li class="{currentTime}">{$item} for {currentTime} on {hash.a.b.c}</li>

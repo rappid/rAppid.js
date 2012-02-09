@@ -7,9 +7,9 @@
                     tagName: 'button'
                 }
              }
-         })
+         })();
      </js:Script>
-     <js:Template>
-         <ul>WHAT</ul>
+     <js:Template name="button-tpl">
+        <div>HALLO</div>
      </js:Template>
 </ui:View>
