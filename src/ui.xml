@@ -31,6 +31,6 @@
     </js:Script>
 
     <div>
-        <ui:Button></ui:Button>
+        <ui:Button class="test"/>
     </div>
 </js:Application>

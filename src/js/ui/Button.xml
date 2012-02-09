@@ -1,4 +1,15 @@
 <?xml version="1.0"?>
 <ui:View xmlns="http://www.w3.org/1999/xhtml" xmlns:js="js.core" xmlns:ui="js.ui">
-
+     <js:Script>
+         (function(){
+             return {
+                _defaults: {
+                    tagName: 'button'
+                }
+             }
+         })
+     </js:Script>
+     <js:Template>
+         <ul>WHAT</ul>
+     </js:Template>
 </ui:View>
