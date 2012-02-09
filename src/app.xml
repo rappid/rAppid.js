@@ -61,6 +61,8 @@
 
     <conf:Test id="xy"/>
 
+    <ui:Button />
+
     <!-- TODO DO not allow binding for ID -->
     <div id="test" onclick="onItemClick">
         <span>{hello} {hash.a.b.c} is awesome : {isAwesome}</span>

@@ -30,14 +30,14 @@ define("js/core/ApplicationDomain", [],
              *
              * loads all dependencies and defines a class under the given fqClassname
              *
-             * @param fqClassname full qualified classname (e.g. js.ui.myComponent)
+             * @param fqClassName full qualified classname (e.g. js.ui.myComponent)
              * @param dependencies as hash or array
              * @param generateFactor a function that return the factory function invoked after all dependencies are loaded
              */
-            defineClass: function (fqClassname, dependencies, generateFactor) {
+            defineClass: function (fqClassName, dependencies, generateFactor) {
                 // create the namespace and install the class
-                if (!fqClassname || fqClassname == "") {
-                    throw "Full qualified class name '" + fqClassname + "' in wrong format. Use dot notation.";
+                if (!fqClassName || fqClassName == "") {
+                    throw "Full qualified class name '" + fqClassName + "' in wrong format. Use dot notation.";
                 }
 
                 var self = this;
@@ -49,24 +49,65 @@ define("js/core/ApplicationDomain", [],
                     }
                 }
 
-                define(fqClassname.replace(/\./g, "/"), realDependencies, function () {
+
+                define(fqClassName.replace(/\./g, "/"), realDependencies, function () {
+
                     var factory = generateFactor.apply(this, arguments);
 
-                    factory.prototype.constructor.name = fqClassname;
+                    factory.prototype.constructor.name = fqClassName;
 
-                    if (ApplicationDomain.installClass(self.$ns, fqClassname.split("."), factory)) {
+                    if (ApplicationDomain.installClass(self.$ns, fqClassName.split("."), factory)) {
                         if (self.$globalClassRegistrationRoot) {
                             // install class factory in the globalClassRegistration
-                            if (!(ApplicationDomain.installClass(self.$globalClassRegistrationRoot, fqClassname.split("."), factory))) {
-                                throw "Class '" + fqClassname + "' could not be installed in the global class registration";
+                            if (!(ApplicationDomain.installClass(self.$globalClassRegistrationRoot, fqClassName.split("."), factory))) {
+                                throw "Class '" + fqClassName + "' could not be installed in the global class registration";
                             }
                         }
                     } else {
-                        throw "Class '" + fqClassname + "' could not be installed";
+                        throw "Class '" + fqClassName + "' could not be installed";
                     }
 
                     return factory;
                 });
+
+            },
+
+            /**
+             * registers an XAML component
+             *
+             * differs from normal class registration because, dependencies are loaded
+             * and class has to be installed immedently
+             *
+             * @param fqClassName
+             * @param dependencies
+             * @param factory
+             */
+            defineXamlClass: function (fqClassName, dependencies, factory) {
+                // create the namespace and install the class
+                if (!fqClassName || fqClassName == "") {
+                    throw "Full qualified class name '" + fqClassName + "' in wrong format. Use dot notation.";
+                }
+
+                var normalizeRegex = /\//g;
+
+                fqClassName = fqClassName.replace(normalizeRegex, ".");
+                factory.prototype.constructor.name = fqClassName;
+
+                if (ApplicationDomain.installClass(this.$ns, fqClassName.split("."), factory)) {
+                    if (self.$globalClassRegistrationRoot) {
+                        // install class factory in the globalClassRegistration
+                        if (!(ApplicationDomain.installClass(self.$globalClassRegistrationRoot, fqClassName.split("."), factory))) {
+                            throw "Class '" + fqClassName + "' could not be installed in the global class registration";
+                        }
+                    }
+                } else {
+                    throw "Class '" + fqClassName + "' could not be installed";
+                }
+
+                define(fqClassName.replace(/\./g, "/"), dependencies, function () {
+                    return factory;
+                });
+
 
             },
 

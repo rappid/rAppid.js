@@ -1,4 +1,4 @@
-rAppid.defineClass("app.modules.ArticleClass", ["js.core.Module"], function (Module) {
+rAppid.defineClass("app.modules.TodoClass", ["js.core.Module"], function (Module) {
     return Module.inherit({
             initialize: function() {
 

@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<app:OrganizerClass xmlns="http://www.w3.org/1999/xhtml"
+               xmlns:app="app" xmlns:js="js.core" xmlns:ui="js.ui" xmlns:conf="js.conf">
+
+    <js:Imports>
+        <!--
+            additional required classes, not references in this dependency tree
+        -->
+    </js:Imports>
+
+    <js:Router cid="appRouter">
+
+    </js:Router>
+
+    <h1>rAppid.js demo application</h1>
+    <h2>by Tony Findeisen &amp; Marcus Krejpowicz</h2>
+
+    <js:ModuleLoader router="{appRouter}" onLoadModule="">
+        <conf:Module name="must not be set" route="info.*" moduleClass="xaml!app.modules.Info"/>
+        <conf:Module route="todo.*" moduleClass="xaml!app.modules.Todo"/>
+
+        <header>
+            <js:ContentPlaceHolder name="header" />
+        </header>
+        <div id="wrapper">
+            <js:ContentPlaceHolder name="main" />
+        </div>
+    </js:ModuleLoader>
+
+</app:OrganizerClass>

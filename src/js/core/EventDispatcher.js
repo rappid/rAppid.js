@@ -6,6 +6,7 @@ rAppid.defineClass("js.core.EventDispatcher",
      */
     function () {
 
+        var undefinedValue;
 
         var EventDispatcher = js.core.Base.inherit({
             ctor: function() {
@@ -27,16 +28,17 @@ rAppid.defineClass("js.core.EventDispatcher",
              *
              * @param {String} eventType
              * @param {js.core.EventDispatcher.Event|Object} event
-             * @param target
+             * @param caller
              */
             trigger: function (eventType, event, caller) {
+
                 if (this._eventHandlers[eventType]) {
                     if (!(event instanceof EventDispatcher.Event)) {
                         event = new EventDispatcher.Event(event);
                     }
 
                     if(!caller){
-                        caller = this;
+                        caller = arguments.callee.caller;
                     }
 
                     event.type = eventType;
@@ -44,10 +46,24 @@ rAppid.defineClass("js.core.EventDispatcher",
                     var list = this._eventHandlers[eventType];
                     for (var i = 0; i < list.length; i++) {
                         if (list[i]) {
-                            list[i].trigger(event, caller);
+                            var result = list[i].trigger(event, caller);
+
+                            if (result !== undefinedValue) {
+                                ret = result;
+                                if (result === false) {
+                                    event.preventDefault();
+                                    event.stopPropagation();
+                                }
+                            }
+
+                            if (event.isImmediatePropagationStopped) {
+                                break;
+                            }
                         }
                     }
                 }
+
+                return event;
             },
             unbind: function (eventType, callback) {
                 if (!eventType) {
@@ -70,6 +86,39 @@ rAppid.defineClass("js.core.EventDispatcher",
         EventDispatcher.Event = js.core.Base.inherit({
             ctor: function(attributes){
                 this.$ = attributes;
+
+                this.isDefaultPrevented = false;
+                this.isPropagationStopped = false;
+                this.isImmediatePropagationStopped = false;
+
+            },
+            preventDefault: function() {
+                this.isDefaultPrevented = true;
+
+                var e = this.orginalEvent;
+
+                if (e) {
+                    if (e.preventDefault) {
+                        e.preventDefault();
+                    } else {
+                        e.returnValue = false;  // IE
+                    }
+                }
+            },
+            stopPropagation: function () {
+                this.isPropagationStopped = true;
+
+                var e = this.originalEvent;
+                if (e) {
+                    if (e.stopPropagation) {
+                        e.stopPropagation();
+                    }
+                    e.cancelBubble = true;
+                }
+            },
+            stopImmediatePropagation: function() {
+                this.isImmediatePropagationStopped = true;
+                this.stopPropagation();
             }
         });
 

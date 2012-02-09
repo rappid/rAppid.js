@@ -1,0 +1,44 @@
+<js:Module xmlns="http://www.w3.org/1999/xhtml"
+           xmlns:js="js.core" xmlns:ui="js.ui" xmlns:conf="js.conf">
+
+    <js:Script>
+        (function(){
+            return {
+                initialize: function() {
+                    this.callBase();
+                },
+                start: function(parameter, callback) {
+
+                }
+            }
+        })();
+    </js:Script>
+
+    <h2>rAppid.js</h2>
+    <p>rAppid.js is the next generation rich internet application framework
+       with the following features and patterns:</p>
+
+    <ul>
+        <li>pure javascript application framework</li>
+        <li>definition application with XML</li>
+        <li>loading dependencies dynamically on demand with require.js</li>
+        <li>code behind and inline script business logic</li>
+        <li>binding <pre>{model.submodel.key}</pre> and two-way-binding <pre>{{two.way.binding}}</pre> from models to components </li>
+        <li>event handler registration in XML with <pre>onClick="clickHandler(event)"</pre></li>
+        <li>handling of modules and routes</li>
+        <li>support all html5 elements from scratch</li>
+        <li>template system</li>
+        <li>on callback for success and errors <pre>callback(err, ...)</pre></li>
+    </ul>
+
+
+    <h2>Roadmap</h2>
+
+    <ol>
+        <li>package manager</li>
+        <li>implement bootstrap components</li>
+        <li>move rAppid.js to node.js and share models</li>
+    </ol>
+
+
+</js:Module>

@@ -1,4 +1,4 @@
-<module:ArticleClass xmlns="http://www.w3.org/1999/xhtml"
+<module:TodoClass xmlns="http://www.w3.org/1999/xhtml"
            xmlns:js="js.core" xmlns:module="app.modules" xmlns:ui="js.ui" >
 
     <js:Route route="articles/(\d+)/details" match="showArticleDetails" />
@@ -11,4 +11,4 @@
 
     </js:Template>
 
-</module:ArticleClass>
+</module:TodoClass>

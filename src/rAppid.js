@@ -36,6 +36,15 @@ var rAppid;
                 throw "ApplicationDomain not available! Application not bootstrapped?";
             }
         },
+
+        defineXamlClass: function(fqClassName, dependencies, factory) {
+            if (global.js.core.ApplicationDomain.currentDomain) {
+                global.js.core.ApplicationDomain.currentDomain.defineXamlClass(fqClassName, dependencies, factory);
+            } else {
+                throw "ApplicationDomain not available! Application not bootstrapped?";
+            }
+        },
+
         bootStrap: function (mainClass, xamlClasses, callback, namespaceMap, rewriteMap) {
             mainClass = mainClass || "app.xml";
             xamlClasses = xamlClasses || [];
@@ -63,7 +72,8 @@ var rAppid;
                 require.config({
                     xamlClasses: xamlClasses,
                     namespaceMap: namespaceMap,
-                    rewriteMap: applicationDomain.$rewriteMap
+                    rewriteMap: applicationDomain.$rewriteMap,
+                    rAppid: _rAppid
                 });
 
 

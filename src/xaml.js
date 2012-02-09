@@ -202,7 +202,15 @@
 
                                 xamlFactory.prototype._$descriptor = xhr.responseXML.documentElement;
 
-                                onLoad(xamlFactory);
+                                if (config.rAppid) {
+
+
+                                    config.rAppid.defineXamlClass(name, dependencies, xamlFactory);
+
+                                    onLoad(xamlFactory);
+                                }
+                                
+
                             });
 
                         } else {
