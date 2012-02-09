@@ -66,7 +66,7 @@
                     }
                 }
 
-                if (xamlClasses[fqClassName]) {
+                if (_.include(xamlClasses,fqClassName)) {
                     fqClassName = "xaml!" + fqClassName;
                 }
 
