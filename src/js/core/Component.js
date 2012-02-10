@@ -21,14 +21,6 @@ rAppid.defineClass("js.core.Component",
 
                 this.$children.push(child);
 
-                if (child.constructor.name == "js.core.Template") {
-                    if (!child.$.name) {
-                        throw "template without name";
-                    }
-
-                    this.$templates[child.$.name] = child;
-                }
-
                 if (child.className.indexOf("js.conf") == 0) {
                     this.$configurations.push(child);
                 }
@@ -118,9 +110,15 @@ rAppid.defineClass("js.core.Component",
                                     self._commitChangedAttributes(changed);
                                 });
                                 attributes[key] = scope.get(attrKey);
+                                // if is twoWay binding
+                                this.on('change:'+key,function(e){
+                                    scope.set(attrKey,e.$);
+                                });
+
                             }else{
-                                throw "Binding not found";
+                               //  throw "Binding not found";
                             }
+
 
 
                         }
@@ -129,14 +127,16 @@ rAppid.defineClass("js.core.Component",
                 }
 
             },
-            _createComponentForNode: function (node) {
+            _createComponentForNode: function (node, args) {
+                args = args || [];
+
                 // only instantiation and construction but no initialization
                 var appDomain = this.$applicationDomain;
 
                 var fqClassName = appDomain.getFqClassName(node.namespaceURI, node.localName, true);
                 var className = appDomain.getFqClassName(node.namespaceURI, node.localName, false);
 
-                var component = appDomain.createInstance(fqClassName, [], className);
+                var component = appDomain.createInstance(fqClassName, args, className);
 
                 component._construct(node, appDomain, this, this.$rootScope);
 
@@ -158,7 +158,14 @@ rAppid.defineClass("js.core.Component",
                     node = descriptor.childNodes[i];
                     if (node.nodeType == 1) { // Elements
                         component = this._createComponentForNode(node);
-                        childrenFromDescriptor.push(component);
+                        if(component.constructor.name == "js.core.Template"){
+                                if (!component.$.name) {
+                                    throw "template without name";
+                                }
+                                this.$templates[component.$.name] = component;
+                        }else{
+                            childrenFromDescriptor.push(component);
+                        }
                     } else if (node.nodeType == 3) { // Textnodes
                         // remove whitespaces from text textnodes
                         var text = node.textContent.trim();
