@@ -14,7 +14,7 @@ var inherit;
 
         var newClass = function () {
             if (this.ctor) {
-                this.ctor.apply(this, arguments);
+                return this.ctor.apply(this, arguments);
             }
         };
 
