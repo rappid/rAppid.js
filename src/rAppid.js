@@ -5,8 +5,14 @@ var rAppid;
     global.js = global.js || {};
     global.js.core = global.js.core || {};
 
+
     var Base = inherit.Base.inherit({
         ctor: function () {
+        },
+        helper: {
+            // TODO: own implementation
+            defaults: _.defaults,
+            extend: _.extend
         }
     });
 
