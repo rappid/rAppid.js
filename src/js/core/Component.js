@@ -1,6 +1,6 @@
 rAppid.defineClass("js.core.Component",
-    ["js.core.Element", "js.core.TextElement"],
-    function (Element, TextElement, Template) {
+    ["js.core.Element", "js.core.TextElement", "underscore"],
+    function (Element, TextElement, _) {
         return Element.inherit({
             ctor: function (attributes) {
                 this.callBase();
@@ -9,6 +9,41 @@ rAppid.defineClass("js.core.Component",
 
                 this.$templates = {};
                 this.$configurations = [];
+
+            },
+
+            /**
+             * values to be injected
+             * @key {String} name of the variable for this.$key
+             * @value {Required Class}
+             */
+            inject: {
+            },
+
+            _injectChain: function() {
+                return this._generateDefaultsChain("inject");
+            },
+
+            _preinitialize: function() {
+                this.callBase();
+
+                var inject = this._injectChain();
+
+                if (Object.keys(inject).length > 0) {
+                    // we need to inject at least on item
+
+                    // synchronous singleton instantiation of Injection,
+                    // because if module requires injection, application also depends on
+                    // Injection.js and class should be installed.
+
+
+                    var injection = this.$applicationDomain.createInstance("js.core.Injection");
+                    for (var name in inject) {
+                        if (inject.hasOwnProperty(name)) {
+                            this["$" + name] = injection.getInstance(inject[name]);
+                        }
+                    }
+                }
 
             },
 
@@ -21,9 +56,6 @@ rAppid.defineClass("js.core.Component",
 
                 this.$children.push(child);
 
-                if (child.className.indexOf("js.conf") == 0) {
-                    this.$configurations.push(child);
-                }
             },
 
             removeChild: function(child) {
@@ -72,7 +104,18 @@ rAppid.defineClass("js.core.Component",
             _initializeChildren: function (childComponents) {
                 for (var i = 0; i < childComponents.length; i++) {
                     // FIRST ADD CHILD
-                    this.addChild(childComponents[i]);
+                    var child = childComponents[i];
+
+                    if (child.constructor.name == "js.core.Template") {
+                        if (!child.$.name) {
+                            throw "template without name";
+                        }
+                        this.$templates[child.$.name] = child;
+                    } else if (child.className.indexOf("js.conf") == 0) {
+                        this.$configurations.push(child);
+                    } else {
+                        this.addChild(childComponents[i]);
+                    }
 
                     // THEN INITIALIZE !
                     if (this.$creationPolicy == "auto") {
@@ -119,8 +162,6 @@ rAppid.defineClass("js.core.Component",
                                //  throw "Binding not found";
                             }
 
-
-
                         }
 
                     }
@@ -158,14 +199,7 @@ rAppid.defineClass("js.core.Component",
                     node = descriptor.childNodes[i];
                     if (node.nodeType == 1) { // Elements
                         component = this._createComponentForNode(node);
-                        if(component.constructor.name == "js.core.Template"){
-                                if (!component.$.name) {
-                                    throw "template without name";
-                                }
-                                this.$templates[component.$.name] = component;
-                        }else{
-                            childrenFromDescriptor.push(component);
-                        }
+                        childrenFromDescriptor.push(component);
                     } else if (node.nodeType == 3) { // Textnodes
                         // remove whitespaces from text textnodes
                         var text = node.textContent.trim();
