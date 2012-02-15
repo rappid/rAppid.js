@@ -125,10 +125,6 @@ define("js/core/ApplicationDomain", [],
                     }
                 }
 
-                if (!ret) {
-                    console.log(fqClassName);
-                }
-
                 return ret;
             },
             hasDefinition: function (fqClassName) {
