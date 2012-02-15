@@ -35,7 +35,7 @@ rAppid.defineClass("js.html.DomElement",
                     var self = this;
                     this.$el.onclick = function(e){
                         self.trigger('onclick',e, self);
-                    }
+                    };
 
                     this._renderAttributes(this.$);
 
