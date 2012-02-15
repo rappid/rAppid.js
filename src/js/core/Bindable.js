@@ -49,11 +49,25 @@ rAppid.defineClass("js.core.Bindable", ["js.core.EventDispatcher", "underscore"]
 
             $bindingRegex: /^\{([a-z_$][a-z0-9$_.]*)\}$/i,
 
-            _defaults: {},
+            defaults: {
+            },
 
             _defaultAttributes: function () {
-                return _.defaults(this._defaults, this.base._defaults || {});
+                return this._generateDefaultsChain("defaults");
             },
+
+            _generateDefaultsChain: function(property) {
+                var ret = this[property],
+                    base = this.base;
+
+                while (base) {
+                    _.defaults(ret, base[property]);
+                    base = base.base;
+                }
+
+                return ret;
+            },
+
             /**
              * an array of attributes names, which will expect handler functions
              */
