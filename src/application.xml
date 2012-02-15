@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <js:Application xmlns="http://www.w3.org/1999/xhtml"
-                xmlns:js="js.core" xmlns:ui="js.ui" xmlns:conf="js.conf" xmlns:lib="app.libs">
+                xmlns:js="js.core" xmlns:ui="js.ui" xmlns:conf="js.conf" xmlns:lib="app.libs"
+                xmlns:cc="app.components">
 
     <js:Imports>
         js.core.Base;
@@ -60,11 +61,18 @@
     </js:Script>
 
     <js:Injection>
-        <lib:Api />
-        <js:EventDispatcher />
+        <!-- Defines a factory -->
+        <conf:Factory type="app.libs.Api" singleton="true"/>
+        <!-- Defines a singleton instance-->
+        <js:Component foo="bar"/>
+
+        <!-- you can also add factory and singleton at runtime-->
     </js:Injection>
 
-    <conf:Test id="xy"/>
+    <cc:Test cid="test1"/>
+    <cc:Test cid="test2"/>
+
+
 
     <!-- TODO DO not allow binding for ID -->
     <div id="test" onclick="onItemClick">
