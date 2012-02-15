@@ -30,12 +30,11 @@ rAppid.defineClass("js.core.Element",
 
             },
 
-            _defaults: {
+            defaults: {
                 creationPolicy: "auto"
             },
 
             _initializeAttributes: function(attributes) {
-
             },
             /**
              *
