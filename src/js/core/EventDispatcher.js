@@ -14,7 +14,6 @@ rAppid.defineClass("js.core.EventDispatcher",
                 this._eventHandlers = {};
             },
             on: function (eventType, callback, scope) {
-                // TODO: mkre push thisarg to eventHandlers
                 scope = scope || this;
 
                 // get the list for the event
