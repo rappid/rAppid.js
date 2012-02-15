@@ -4,6 +4,7 @@ rAppid.defineClass("js.core.Application",
 
             initialize: function () {
                 // set up application wide vars
+                this.callBase();
             },
 
             /**
@@ -12,13 +13,12 @@ rAppid.defineClass("js.core.Application",
              * @param {Object} parameter
              * @param {Function} callback
              */
-            start: function(parameter, callback) {
+            start: function (parameter, callback) {
                 if (callback) {
                     callback(null);
                 }
             },
             render: function (target) {
-                // TODO: call base method
                 var dom = this.callBase(null);
 
                 if (target) {
