@@ -20,7 +20,6 @@ rAppid.defineClass("js.ui.ItemsView",
             },
             _renderItems: function(items){
                 // TODO: remove this initialize
-                this.$itemRenderer._initialize();
                 var item, comp;
                 for(var i = 0 ; i < items.length; i++){
                     item = items[i];

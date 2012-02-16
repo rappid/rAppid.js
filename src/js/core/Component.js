@@ -37,7 +37,6 @@ rAppid.defineClass("js.core.Component",
                     // because if module requires injection, application also depends on
                     // Injection.js and class should be installed.
 
-
                     var injection = this.$applicationDomain.createInstance("js.core.Injection");
                     for (var name in inject) {
                         if (inject.hasOwnProperty(name)) {
@@ -126,20 +125,20 @@ rAppid.defineClass("js.core.Component",
                 }
             },
 
-            /**
-             *
-             * @param descriptor
-             *          auto - do not overwrite (default),
-             *          all - create all children
-             *          TODO none?
-             */
-            _initializeDescriptor: function (descriptor) {
-                var childrenFromDescriptor = this._createChildrenFromDescriptor(descriptor);
-
-                this._initializeChildren(childrenFromDescriptor);
-
-                this._childrenInitialized();
-            },
+//            /**
+//             *
+//             * @param descriptor
+//             *          auto - do not overwrite (default),
+//             *          all - create all children
+//             *          TODO none?
+//             */
+//            _initializeDescriptor: function (descriptor) {
+//                var childrenFromDescriptor = this._createChildrenFromDescriptor(descriptor);
+//
+//                this._initializeChildren(childrenFromDescriptor);
+//
+//                this._childrenInitialized();
+//            },
 
             _initializeChildren: function (childComponents) {
                 for (var i = 0; i < childComponents.length; i++) {
@@ -170,6 +169,15 @@ rAppid.defineClass("js.core.Component",
                     }
                 }
 
+            },
+
+            _initializeDescriptors: function() {
+                var children = this._getChildrenFromDescriptor(this._$descriptor);
+                children.concat(this._getChildrenFromDescriptor(this.$descriptor));
+
+                this._initializeChildren(children);
+
+                this._childrenInitialized();
             },
 
             _initializeBindings: function() {
@@ -232,7 +240,7 @@ rAppid.defineClass("js.core.Component",
                 return appDomain.createInstance("js.core.TextElement", [null, node, appDomain, this, this.$rootScope]);
 
             },
-            _createChildrenFromDescriptor: function (descriptor) {
+            _getChildrenFromDescriptor: function (descriptor) {
 
                 var childrenFromDescriptor = [], node, component;
 

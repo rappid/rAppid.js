@@ -4,7 +4,6 @@
 
     <js:Imports>
         js.core.Base;
-        js.ui.View;
     </js:Imports>
 
     <js:Script>

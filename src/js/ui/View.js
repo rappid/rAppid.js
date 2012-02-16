@@ -5,6 +5,15 @@ rAppid.defineClass("js.ui.View",
                 tagName: "div",
                 items: []
             },
+
+            _initialize: function(creationPolicy) {
+                this.callBase();
+            },
+
+            _initializeChildren: function(childrenFormDescriptor) {
+                this.callBase();
+            },
+
             render: function(){
                 if(this.isRendered()){
                    return this.$el;

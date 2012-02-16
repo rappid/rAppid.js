@@ -1,5 +1,5 @@
 rAppid.defineClass("js.core.Element",
-    ["js.core.Bindable"], function (Bindable) {
+    ["js.core.Bindable", "underscore"], function (Bindable, _) {
         return Bindable.inherit({
             ctor: function (attributes, descriptor, applicationDomain, parentScope, rootScope) {
 
@@ -17,14 +17,8 @@ rAppid.defineClass("js.core.Element",
                 this.$parentScope = parentScope || null;
                 this.$rootScope = rootScope || null;
 
-                if (descriptor && descriptor.attributes) {
-                    var node;
 
-                    for (var a = 0; a < descriptor.attributes.length; a++) {
-                        node = descriptor.attributes[a];
-                        attributes[node.nodeName] = node.value;
-                    }
-                }
+                _.defaults(attributes, this._getAttributesFromDescriptor(descriptor), this._getAttributesFromDescriptor(this._$descriptor));
 
                 this.callBase(attributes);
 
@@ -37,13 +31,32 @@ rAppid.defineClass("js.core.Element",
 
             },
 
+            _getAttributesFromDescriptor: function(descriptor) {
+
+                var attributes = {};
+
+                if (descriptor && descriptor.attributes) {
+                    var node;
+
+                    for (var a = 0; a < descriptor.attributes.length; a++) {
+                        node = descriptor.attributes[a];
+                        attributes[node.nodeName] = node.value;
+                    }
+                }
+
+                return attributes;
+            },
+
             defaults: {
                 creationPolicy: "auto"
             },
 
             _initializeAttributes: function (attributes) {
-
             },
+
+            _initializeDescriptors: function() {
+            },
+
             /**
              *
              * @param creationPolicy
@@ -58,17 +71,19 @@ rAppid.defineClass("js.core.Element",
 
                 this._preinitialize();
 
+                this._initializeDescriptors();
+
                 this.initialize();
 
-                // init descriptor of xaml component (component definition)
-                if(this._$descriptor){
-                    this._createChildrenFromDescriptor(this._$descriptor);
-                    // this._initializeChildren(childrenFromDescriptor);
-                }
-                if(this.$descriptor){
-                    this._initializeDescriptor(this.$descriptor);
 
-                }
+//                // init descriptor of xaml component (component definition)
+//                if(this._$descriptor){
+//                    this._createChildrenFromDescriptor(this._$descriptor);
+//                    // this._initializeChildren(childrenFromDescriptor);
+//                }
+//                if(this.$descriptor){
+//                    this._initializeDescriptor(this.$descriptor);
+//                }
 
                 this._initializeBindings();
 

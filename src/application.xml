@@ -69,10 +69,8 @@
         <!-- you can also add factory and singleton at runtime-->
     </js:Injection>
 
-    <cc:Test cid="test1"/>
-    <cc:Test cid="test2"/>
-
-
+    <!--<cc:Test cid="test1"/>-->
+    <!--<cc:Test cid="test2"/>-->
 
     <!-- TODO DO not allow binding for ID -->
     <div id="test" onclick="onItemClick">
