@@ -6,13 +6,6 @@ rAppid.defineClass("js.ui.View",
                 items: []
             },
 
-            _initialize: function(creationPolicy) {
-                this.callBase();
-            },
-
-            _initializeChildren: function(childrenFormDescriptor) {
-                this.callBase();
-            },
 
             render: function(){
                 if(this.isRendered()){
