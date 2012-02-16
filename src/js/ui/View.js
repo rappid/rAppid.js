@@ -29,7 +29,7 @@ rAppid.defineClass("js.ui.View",
                 return null;
             },
             _renderClass: function(className){
-                $(this.$el).addClass(className);
+                this.addClass(className);
             },
             _renderTemplateToPlaceHolder:function (templateName, placeholderCid, attributes) {
                 this.$renderedPlaceholders = this.$renderedPlaceholders || {};
