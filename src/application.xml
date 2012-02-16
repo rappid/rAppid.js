@@ -5,6 +5,7 @@
 
     <js:Imports>
         js.core.Base;
+        app.libs.Api;
     </js:Imports>
 
     <js:Script>
