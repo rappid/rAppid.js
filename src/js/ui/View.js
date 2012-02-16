@@ -2,23 +2,22 @@ rAppid.defineClass("js.ui.View",
     ["underscore", "js.core.UIComponent", "js.core.Template"], function (_, UIComponent, Template) {
         return UIComponent.inherit({
             defaults: {
-                tagName: "div",
-                items: []
+                tagName: "div"
             },
 
 
             render: function(){
-                if(this.isRendered()){
-                   return this.$el;
-                }
-                var layout = this.getTemplate('layout');
 
-                // TODO: remove this initialize
+                this.$el = this.callBase();
+
+                var layout = this.getTemplate('layout');
+                // layout template available...
                 if(layout){
-                    var children = layout.createComponents();
-                    this._initializeChildren(children);
+                    var children = layout.createComponents({});
+                    // this._initializeChildren(children);
+                    this._renderChildren(children);
                 }
-                return this.callBase();
+                return this.$el;
             },
             // TODO: change Cid to name
             getPlaceholderByCid: function(cid){
@@ -30,7 +29,7 @@ rAppid.defineClass("js.ui.View",
                 return null;
             },
             _renderClass: function(className){
-                this.$el.setAttribute("class",className);
+                $(this.$el).addClass(className);
             },
             _renderTemplateToPlaceHolder:function (templateName, placeholderCid, attributes) {
                 this.$renderedPlaceholders = this.$renderedPlaceholders || {};

@@ -64,7 +64,7 @@ rAppid.defineClass("js.html.DomElement",
                     // for all children
                     var child;
                     for (var i = 0; i < children.length; i++) {
-                        child = this.$children[i];
+                        child = children[i];
                         this._renderChild(child);
                     }
                 },
@@ -107,7 +107,6 @@ rAppid.defineClass("js.html.DomElement",
                     if(this.isRendered()){
                         this._renderAttributes(attributes);
                     }
-
                 }
             }
         )

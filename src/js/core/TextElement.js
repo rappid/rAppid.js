@@ -5,9 +5,9 @@ rAppid.defineClass("js.core.TextElement",
         }
 
         return Element.inherit({
-            _initializeDescriptor:function (descriptor) {
+            _initializeBindings: function () {
                 // find bindings and register for onchange event
-                var matches = descriptor.textContent.match(/\{([a-zA-Z$._]+)\}/g);
+                var matches = this.$descriptor.textContent.match(/\{([a-zA-Z$._]+)\}/g);
                 var key, scope;
                 while (matches && matches.length > 0) {
                     key = matches.shift();

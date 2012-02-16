@@ -17,13 +17,24 @@
                  * this method is called right after the script tag is evaluated
                  */
                 initialize:function () {
-                     this.set('success',"he");
+                    this.set('success', "he");
+                    this.set('btnType', "success");
+                    this.set('btnLabel',"wait");
+                },
+                onButtonClick: function(e){
+                    console.log(e);
+                    e.$.preventDefault();
                 },
                 /**
                  * This method should be called from outside to start the application
                  */
                 start:function () {
 
+                    var self = this;
+                    setInterval(function () {
+                        self.set("btnLabel"," what");
+                        self.set("btnType","info");
+                    },2000);
 
                     this.render(document.body);
                 }
@@ -32,7 +43,7 @@
     </js:Script>
 
     <div>
-        <ui:Button tagName="a" type="success" iconClass="icon-refresh icon-white" disabled="false" label="Button" showCaret="true"/>
+        <ui:Button tagName="a" iconClass="icon-refresh icon-white" disabled="false" label="{btnLabel}" type="{btnType}" onclick="onButtonClick"/>
         <!--<ui:MenuButton type="info" label="MenuButton">-->
             <!--<div>My DropdownMenu</div>-->
         <!--</ui:MenuButton>-->

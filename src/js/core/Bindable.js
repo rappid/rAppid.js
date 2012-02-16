@@ -27,6 +27,7 @@ rAppid.defineClass("js.core.Bindable", ["js.core.EventDispatcher", "underscore"]
                 _.defaults(attributes, this._defaultAttributes());
 
                 this.$ = attributes;
+                this.$previousAttributes = _.clone(this.$);
 
                 // init calculated attributes
                 var self = this, fnc, callFnc;
@@ -126,6 +127,7 @@ rAppid.defineClass("js.core.Bindable", ["js.core.EventDispatcher", "underscore"]
                             delete now[key];
                         }else{
                             if(!_.isEqual(now[key],attributes[key])){
+                                this.$previousAttributes[key] = now[key];
                                 now[key] = attributes[key];
                                 changedAttributes[key] = now[key];
                                 if(options.silent === false){

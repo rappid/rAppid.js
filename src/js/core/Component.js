@@ -183,6 +183,14 @@ rAppid.defineClass("js.core.Component",
             _initializeBindings: function() {
 
                 var attributes = this.$;
+
+                var self = this;
+                var bind = function(scope,scopeKey, key){
+                    scope.on('change:' + scopeKey, function (e) {
+                        self.set(key, e.$);
+                    });
+
+                };
                 // Resolve bindings and events
                 for (var key in attributes) {
 
@@ -196,18 +204,11 @@ rAppid.defineClass("js.core.Component",
                             attrKey = attrKey[1];
                             var scope = this.getScopeForKey(attrKey);
                             if (scope) {
-                                var self = this;
-                                scope.on('change:' + attrKey, function (e) {
-                                    var changed = {};
-                                    changed[key] = e.$;
-                                    self._commitChangedAttributes(changed);
-                                });
-                                attributes[key] = scope.get(attrKey);
-                                // if is twoWay binding
-                                this.on('change:' + key, function (e) {
-                                    scope.set(attrKey, e.$);
-                                });
+                                bind(scope,attrKey,key);
 
+                                attributes[key] = scope.get(attrKey);
+
+                                // TODO: two way binding
                             } else {
                                 //  throw "Binding not found";
                             }

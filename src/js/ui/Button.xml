@@ -14,50 +14,17 @@
                     }
                 },
                 _renderType:function (type, oldType) {
-                    if (oldType) {
+                    if(oldType){
                         $(this.$el).removeClass("btn-" + oldType);
                     }
                     if (type) {
                         $(this.$el).addClass("btn-" + type);
-                    }
-                },
-                _renderIconClass:function (iconClass) {
-                    if (iconClass) {
-                        this._renderTemplateToPlaceHolder("icon", "icon", {$iconClass:iconClass});
-                    }
-                },
-                _renderLabel:function (label) {
-                    if (label) {
-                        this._renderTemplateToPlaceHolder("label", "label", {$label:" " + label + " "});
-                    }
-                },
-                _renderPlaceholder:function (placeholderId, templateId, attributes) {
-
-                },
-                _renderShowCaret:function (showCaret) {
-                    if (showCaret === true) {
-                        this._renderTemplateToPlaceHolder("caret", "caret", {});
-                        $(this.$el).addClass('dropdown-toggle');
-                    } else {
-                        // TODO: remove caret
-                        $(this.$el).removeClass('dropdown-toggle');
                     }
                 }
             }
         })();
     </js:Script>
     <js:Template name="layout">
-        <js:Placeholder cid="icon"/>
-        <js:Placeholder cid="label"/>
-    </js:Template>
-    <!-- DEFAULT ICON CLASS TEMPLATE-->
-    <js:Template name="icon">
-        <i class="{$iconClass}"/>
-    </js:Template>
-    <js:Template name="label">
-        {$label}
-    </js:Template>
-    <js:Template name="caret">
-        <span class="caret"/>
+        <i class="{iconClass}"/>{label}
     </js:Template>
 </ui:View>
