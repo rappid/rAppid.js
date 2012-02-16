@@ -1,7 +1,7 @@
 rAppid.defineClass("js.ui.View",
     ["underscore", "js.core.UIComponent", "js.core.Template"], function (_, UIComponent, Template) {
         return UIComponent.inherit({
-            _defaults: {
+            defaults: {
                 tagName: "div",
                 items: []
             },
@@ -45,7 +45,9 @@ rAppid.defineClass("js.ui.View",
                 if (!renderedComponent) {
                     var template = this.getTemplate(templateName);
                     if (template) {
-                        renderedComponent = template.createComponent(attributes);
+                        // TODO: maybe render all components returned
+                        // or create special method createComponent
+                        renderedComponent = template.createComponents(attributes)[0];
                         // renderedComponent._initialize();
                         var placeholder = this.getPlaceholderByCid(placeholderCid);
                         if (placeholder) {

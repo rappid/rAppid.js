@@ -7,7 +7,7 @@
         <![CDATA[
         (function () {
             return {
-                _defaults:{
+                defaults:{
                     tagName:'div',
                     'class':'btn-group'
                 },

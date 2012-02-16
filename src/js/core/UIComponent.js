@@ -1,7 +1,7 @@
 rAppid.defineClass("js.core.UIComponent",
     ["underscore", "js.html.DomElement"], function (_, DomElement) {
         return DomElement.inherit({
-            _defaults: {
+            defaults: {
                 tagName: "div"
             },
             _commitChangedAttributes: function(attributes){

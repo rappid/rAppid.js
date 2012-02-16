@@ -5,7 +5,7 @@ rAppid.defineClass("js.core.Binding", ["js.core.Component"], function(Component)
             this.callBase();
             this._initializeAttributes(attributes);
         },
-        _defaults: {
+        defaults: {
             event: 'change',
             key: null
         },

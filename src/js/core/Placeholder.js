@@ -1,7 +1,7 @@
 rAppid.defineClass("js.core.Placeholder",
     ["underscore", "js.core.UIComponent"], function (_, UIComponent) {
         return UIComponent.inherit({
-            _defaults: {
+            defaults: {
 
             },
             render: function(){

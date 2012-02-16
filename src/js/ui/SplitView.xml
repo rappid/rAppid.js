@@ -3,7 +3,7 @@
     <js:Script>
         (function () {
             return {
-                _defaults:{
+                defaults:{
                     tagName:'button',
                     'class':'btn'
                 },

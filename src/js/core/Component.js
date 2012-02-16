@@ -2,7 +2,7 @@ rAppid.defineClass("js.core.Component",
     ["js.core.Element", "js.core.TextElement", "underscore"],
     function (Element, TextElement, _) {
         return Element.inherit({
-            ctor: function (attributes) {
+            ctor: function (attributes, descriptor, applicationDomain, parentScope, rootScope) {
 
                 this.$components = [];
 
@@ -173,7 +173,7 @@ rAppid.defineClass("js.core.Component",
 
             _initializeDescriptors: function() {
                 var children = this._getChildrenFromDescriptor(this._$descriptor);
-                children.concat(this._getChildrenFromDescriptor(this.$descriptor));
+                children = children.concat(this._getChildrenFromDescriptor(this.$descriptor));
 
                 this._initializeChildren(children);
 

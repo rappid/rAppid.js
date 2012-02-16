@@ -1,7 +1,7 @@
 rAppid.defineClass("js.ui.ItemsView",
     ["underscore", "js.ui.View", "js.core.Template"], function (_, UIComponent, Template) {
         return UIComponent.inherit({
-            _defaults: {
+            defaults: {
                 tagName: "div",
                 items: []
             },

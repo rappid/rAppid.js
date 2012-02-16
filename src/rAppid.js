@@ -89,7 +89,7 @@ var rAppid;
 
                 require([mainClass], function(mainClassFactory) {
                     // create instance
-                    var application = new mainClassFactory(null, mainClassFactory.prototype._$descriptor, applicationDomain, null, null);
+                    var application = new mainClassFactory(null, null, applicationDomain, null, null);
 
                     if (application instanceof global.js.core.Application) {
 

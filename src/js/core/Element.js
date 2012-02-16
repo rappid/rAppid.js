@@ -1,11 +1,14 @@
 rAppid.defineClass("js.core.Element",
     ["js.core.Bindable", "underscore"], function (Bindable, _) {
+
+        var undef;
+
         return Bindable.inherit({
             ctor: function (attributes, descriptor, applicationDomain, parentScope, rootScope) {
 
                 attributes = attributes || {};
 
-                if (descriptor) {
+                if (descriptor == undef) {
                     // created from node
                     if (!rootScope) {
                         rootScope = this;
