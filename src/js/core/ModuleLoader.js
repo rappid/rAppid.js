@@ -98,10 +98,10 @@ rAppid.defineClass("js.core.ModuleLoader", ["js.core.UIComponent", "js.core.Cont
                 // load module
 
                 require.require([moduleFqClassName], function(moduleBaseClass) {
-                    var moduleInstance = new moduleBaseClass();
+                    var moduleInstance = new moduleBaseClass(null, moduleBaseClass.prototype._$descriptor, self.$applicationDomain, null, null);
 
                     if (moduleInstance instanceof Module) {
-                        moduleInstance._construct(moduleInstance._$descriptor, self.$applicationDomain, null, moduleInstance);
+
                         moduleInstance._initialize("auto");
 
                         internalCallback(null);

@@ -187,8 +187,7 @@
                                 if (scripts.length > 0) {
                                     for (var s = 0; s < scripts.length; s++) {
                                         try {
-                                            var scriptInstance = new Script();
-                                            scriptInstance._construct(scripts[s], null);
+                                            var scriptInstance = new Script(null, scripts[s]);
                                             scriptObjects.push(scriptInstance.evaluate());
                                         } catch (e) {
                                             throw "Script cannot be loaded";

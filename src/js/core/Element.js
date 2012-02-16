@@ -1,17 +1,21 @@
 rAppid.defineClass("js.core.Element",
-    ["js.core.Bindable"], function(Bindable) {
+    ["js.core.Bindable"], function (Bindable) {
         return Bindable.inherit({
-            ctor: function (attributes) {
-               this.callBase();
+            ctor: function (attributes, descriptor, applicationDomain, parentScope, rootScope) {
 
-               this._initializeAttributes(this.$);
-            },
-            _construct:function (descriptor, applicationDomain, parentScope, rootScope) {
+                attributes = attributes || {};
 
-                var attributes = this.$;
+                if (descriptor) {
+                    // created from node
+                    if (!rootScope) {
+                        rootScope = this;
+                    }
+                }
 
                 this.$descriptor = descriptor;
                 this.$applicationDomain = applicationDomain;
+                this.$parentScope = parentScope || null;
+                this.$rootScope = rootScope || null;
 
                 if (descriptor && descriptor.attributes) {
                     var node;
@@ -22,11 +26,14 @@ rAppid.defineClass("js.core.Element",
                     }
                 }
 
-                this.$ = attributes;
-                this.$parentScope = parentScope || null;
-                this.$rootScope = rootScope || null;
+                this.callBase(attributes);
 
                 this._initializeAttributes(this.$);
+
+                // manually constructed
+                if (!descriptor) {
+                    this._initialize(this.$creationPolicy);
+                }
 
             },
 
@@ -34,7 +41,8 @@ rAppid.defineClass("js.core.Element",
                 creationPolicy: "auto"
             },
 
-            _initializeAttributes: function(attributes) {
+            _initializeAttributes: function (attributes) {
+
             },
             /**
              *
@@ -54,26 +62,32 @@ rAppid.defineClass("js.core.Element",
 
                 this._initializeDescriptor(this.$descriptor);
 
+                this._initializeBindings();
+
                 this._initializationComplete();
 
             },
-            _initializeDescriptor: function(descriptor){
+
+            _initializeBindings: function () {
+            },
+
+            _initializeDescriptor: function (descriptor) {
 
             },
-            initialize: function(){
+            initialize: function () {
 
             },
-            get: function(key){
+            get: function (key) {
                 var scope = this.getScopeForKey(key);
-                if(this == scope){
+                if (this == scope) {
                     return this.callBase();
-                }else if(scope != null){
+                } else if (scope != null) {
                     return scope.get(key);
-                }else{
+                } else {
                     return null;
                 }
             },
-            getScopeForKey: function(key){
+            getScopeForKey: function (key) {
                 var path = key.split(".");
                 // get first key
                 var k1 = path[0];
@@ -84,7 +98,7 @@ rAppid.defineClass("js.core.Element",
                     return this;
                 } else if (this.$parentScope) {
                     return this.$parentScope.getScopeForKey(k1);
-                }else{
+                } else {
                     return null;
                 }
             },

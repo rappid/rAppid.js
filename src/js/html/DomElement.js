@@ -1,15 +1,15 @@
 rAppid.defineClass("js.html.DomElement",
     ["js.core.Component","js.core.Binding"], function (Component, Binding) {
         return Component.inherit({
-                _construct:function (descriptor, applicationDomain, scope) {
+                ctor: function(attributes, descriptor, applicationDomain, parentScope, rootScope) {
                     this.callBase();
 
-                    if (this.$descriptor) {
+                    if (descriptor) {
                         if (!this.$tagName) {
-                            this.$tagName = this.$descriptor.localName;
+                            this.$tagName = descriptor.localName;
                         }
                         if (!this.$namespace) {
-                            this.$namespace = this.$descriptor.namespaceURI;
+                            this.$namespace = descriptor.namespaceURI;
                         }
                     }
                 },

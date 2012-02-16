@@ -3,13 +3,14 @@ rAppid.defineClass("js.core.Component",
     function (Element, TextElement, _) {
         return Element.inherit({
             ctor: function (attributes) {
-                this.callBase();
 
-                this.$children = [];
+                this.$components = [];
 
                 this.$templates = {};
                 this.$configurations = [];
+                this.$children = [];
 
+                this.callBase();
             },
 
             /**
@@ -47,13 +48,31 @@ rAppid.defineClass("js.core.Component",
 
             },
 
+            addComponent: function(component) {
+                if (!component) {
+                    throw "component null";
+                }
+
+                this.$components.push(component);
+
+                if (this.$rootScope && component.$.cid) {
+                        // register component by cid in the root scope
+                        this.$rootScope.set(component.$.cid, component);
+                }
+            },
+
+            removeComponent: function(component) {
+                // TODO: implement and remove cid from rootscope
+            },
+
             addChild: function (child) {
                 if (!(child instanceof Element)) {
                     throw "only children of type js.core.Component can be added"
                 }
 
-                child.$parent = this;
+                this.addComponent(child);
 
+                child.$parent = this;
                 this.$children.push(child);
 
             },
@@ -82,6 +101,20 @@ rAppid.defineClass("js.core.Component",
 
             },
 
+            addTemplate: function(template) {
+                if (!template.$.name) {
+                    throw "template without name";
+                }
+
+                this.addComponent(template);
+                this.$templates[template.$.name] = template;
+            },
+
+            addConfiguration: function(config) {
+                this.addComponent(config);
+                this.$configurations.push(config);
+            },
+
             getTemplate: function (name) {
                 return this.$templates[name];
             },
@@ -107,12 +140,9 @@ rAppid.defineClass("js.core.Component",
                     var child = childComponents[i];
 
                     if (child.constructor.name == "js.core.Template") {
-                        if (!child.$.name) {
-                            throw "template without name";
-                        }
-                        this.$templates[child.$.name] = child;
+                        this.addTemplate(child);
                     } else if (child.className.indexOf("js.conf") == 0) {
-                        this.$configurations.push(child);
+                        this.addConfiguration(child);
                     } else {
                         this.addChild(childComponents[i]);
                     }
@@ -133,6 +163,11 @@ rAppid.defineClass("js.core.Component",
                     }
                 }
 
+            },
+
+            _initializeBindings: function() {
+
+                var attributes = this.$;
                 // Resolve bindings and events
                 for (var key in attributes) {
 
@@ -145,7 +180,7 @@ rAppid.defineClass("js.core.Component",
                             var attrKey = value.match(this.$bindingRegex);
                             attrKey = attrKey[1];
                             var scope = this.getScopeForKey(attrKey);
-                            if(scope){
+                            if (scope) {
                                 var self = this;
                                 scope.on('change:' + attrKey, function (e) {
                                     var changed = {};
@@ -154,12 +189,12 @@ rAppid.defineClass("js.core.Component",
                                 });
                                 attributes[key] = scope.get(attrKey);
                                 // if is twoWay binding
-                                this.on('change:'+key,function(e){
-                                    scope.set(attrKey,e.$);
+                                this.on('change:' + key, function (e) {
+                                    scope.set(attrKey, e.$);
                                 });
 
-                            }else{
-                               //  throw "Binding not found";
+                            } else {
+                                //  throw "Binding not found";
                             }
 
                         }
@@ -167,9 +202,13 @@ rAppid.defineClass("js.core.Component",
                     }
                 }
 
+                for (var c = 0; c < this.$components.length; c++) {
+                    this.$components[c]._initializeBindings();
+                }
             },
-            _createComponentForNode: function (node, args) {
-                args = args || [];
+
+            _createComponentForNode: function (node, attributes) {
+                attributes = attributes || [];
 
                 // only instantiation and construction but no initialization
                 var appDomain = this.$applicationDomain;
@@ -177,39 +216,37 @@ rAppid.defineClass("js.core.Component",
                 var fqClassName = appDomain.getFqClassName(node.namespaceURI, node.localName, true);
                 var className = appDomain.getFqClassName(node.namespaceURI, node.localName, false);
 
-                var component = appDomain.createInstance(fqClassName, args, className);
+                return appDomain.createInstance(fqClassName, [attributes, node, appDomain, this, this.$rootScope], className);
 
-                component._construct(node, appDomain, this, this.$rootScope);
-
-                return component;
             },
             _createTextElementForNode: function (node) {
                 // only instantiation and construction but no initialization
                 var appDomain = this.$applicationDomain;
-                var component = appDomain.createInstance("js.core.TextElement");
+                return appDomain.createInstance("js.core.TextElement", [null, node, appDomain, this, this.$rootScope]);
 
-                component._construct(node, appDomain, this, this.$rootScope);
-
-                return component;
             },
             _createChildrenFromDescriptor: function (descriptor) {
 
                 var childrenFromDescriptor = [], node, component;
-                for (var i = 0; i < descriptor.childNodes.length; i++) {
-                    node = descriptor.childNodes[i];
-                    if (node.nodeType == 1) { // Elements
-                        component = this._createComponentForNode(node);
-                        childrenFromDescriptor.push(component);
-                    } else if (node.nodeType == 3) { // Textnodes
-                        // remove whitespaces from text textnodes
-                        var text = node.textContent.trim();
-                        if (text.length > 0) {
-                            node.textContent = text;
-                            childrenFromDescriptor.push(this._createTextElementForNode(node));
-                        }
 
+                if (descriptor) {
+                    for (var i = 0; i < descriptor.childNodes.length; i++) {
+                        node = descriptor.childNodes[i];
+                        if (node.nodeType == 1) { // Elements
+                            component = this._createComponentForNode(node);
+                            childrenFromDescriptor.push(component);
+                        } else if (node.nodeType == 3) { // Textnodes
+                            // remove whitespaces from text textnodes
+                            var text = node.textContent.trim();
+                            if (text.length > 0) {
+                                node.textContent = text;
+                                childrenFromDescriptor.push(this._createTextElementForNode(node));
+                            }
+
+                        }
                     }
                 }
+
                 return childrenFromDescriptor;
             },
             _childrenInitialized: function () {
