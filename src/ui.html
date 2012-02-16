@@ -3,10 +3,11 @@
 <html>
 <head>
     <title></title>
+    <link href="../libs/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <script type="text/javascript" src="../libs/require.js"></script>
     <script type="text/javascript" src="../libs/inherit.js"></script>
     <script type="text/javascript" src="../libs/underscore-min.js"></script>
-
+    <script type="text/javascript" src="../libs/jquery-1.7.1.js"></script>
     <script type="text/javascript" src="rAppid.js"></script>
 </head>
 <body>
@@ -16,7 +17,7 @@
         return _;
     });
 
-    rAppid.bootStrap("ui.xml", ["js.ui.Button"],
+    rAppid.bootStrap("ui.xml", ["js.ui.Button", "js.ui.MenuButton"],
             function (err, systemManager, application) {
                 if (!err) {
                     application.start();

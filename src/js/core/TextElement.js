@@ -27,14 +27,15 @@ rAppid.defineClass("js.core.TextElement",
                     this._initialize(this.$creationPolicy);
                 }
 
-                this.$el = document.createTextNode(this.$descriptor.textContent);
-                this._renderTextContent();
+                this.$el = document.createTextNode("");
+                if(this.$descriptor){
+                    this._renderTextContent(this.$descriptor.textContent);
+                }
 
                 return this.$el;
             },
-            _renderTextContent: function(){
+            _renderTextContent: function(textContent){
 
-                var textContent = this.$descriptor.textContent;
                 var matches = matchPlaceholder(textContent);
                 var key, val;
                 while (matches && matches.length > 0) {
@@ -47,8 +48,8 @@ rAppid.defineClass("js.core.TextElement",
                 this.$el.textContent = textContent;
             },
             _commitChangedAttributes: function(){
-                if(this.$el){
-                    this._renderTextContent();
+                if(this.$el && this.$descriptor){
+                    this._renderTextContent(this.$descriptor.textContent);
                 }
             }
         });

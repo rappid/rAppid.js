@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<ui:View xmlns="http://www.w3.org/1999/xhtml" xmlns:js="js.core" xmlns:ui="js.ui">
+    <js:Imports>
+        xaml!js.ui.Button
+    </js:Imports>
+    <js:Script type="text/javascript">
+        <![CDATA[
+        (function () {
+            return {
+                _defaults:{
+                    tagName:'div',
+                    'class':'btn-group'
+                },
+                _renderType:function (type) {
+                    this.$button.set({type:type});
+                },
+                _renderIconClass:function (iconClass) {
+                    this.$button.set({iconClass:iconClass});
+                },
+                _renderLabel:function (label) {
+                    this.$button.set({label:label});
+                },
+                _renderChildren: function(children){
+                    for (var i = 0; i < children.length; i++) {
+                        if (children[i].className === "js.ui.Button") {
+                            this.$button = children[i];
+                            this.$el.appendChild(this.$button.render());
+                        }
+                    }
+                },
+                _renderMenu:function (menu) {
+                    if (menu) {
+                        if (menu != this.$menu) {
+                            // TODO: remove old menu
+                        }
+                        // this.$button.set({showCaret:true});
+                        this.$menu = menu;
+                        var el = this.$menu.render();
+                        $(el).addClass('dropdown-menu');
+                        this.$el.appendChild(el);
+
+                    }
+                }
+            }
+        })();
+        ]]>
+    </js:Script>
+    <js:Template name="layout">
+        <ui:Button>
+        </ui:Button>
+        <js:Placeholder cid="menu"/>
+    </js:Template>
+
+</ui:View>

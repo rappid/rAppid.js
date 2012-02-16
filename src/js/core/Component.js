@@ -116,7 +116,14 @@ rAppid.defineClass("js.core.Component",
             },
 
             getTemplate: function (name) {
-                return this.$templates[name];
+                var tpl = this.$templates[name];
+                if(tpl){
+                    return tpl;
+                }else if(this.$parent){
+                    return this.$parent.getTemplate(name);
+                }else{
+                    return null
+                }
             },
 
             /**

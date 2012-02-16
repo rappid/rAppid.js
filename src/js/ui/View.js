@@ -9,25 +9,48 @@ rAppid.defineClass("js.ui.View",
                 if(this.isRendered()){
                    return this.$el;
                 }
-                console.log(this);
-                var template = this.getTemplate('button-tpl');
-                if(template){
-                    console.log(template);
-                }else{
-                    return this.callBase();
+                var layout = this.getTemplate('layout');
+
+                // TODO: remove this initialize
+                if(layout){
+                    var children = layout.createComponents();
+                    this._initializeChildren(children);
                 }
+                return this.callBase();
             },
-            _renderAttribute:function (key, attribute) {
-                // generic call of render functions
-                key = key[0].toUpperCase() + key.substr(1);
-                var methodName = "_render" + key;
-                var method = this[methodName];
-                if (_.isFunction(method)) {
-                    method.call(this, attribute);
+            // TODO: change Cid to name
+            getPlaceholderByCid: function(cid){
+                for(var i = 0 ; i < this.$children.length; i++){
+                    if(this.$children[i].$.cid === cid){
+                        return this.$children[i];
+                    }
                 }
+                return null;
             },
             _renderClass: function(className){
-                this.$el.setAttribute('class',className);
+                this.$el.setAttribute("class",className);
+            },
+            _renderTemplateToPlaceHolder:function (templateName, placeholderCid, attributes) {
+                this.$renderedPlaceholders = this.$renderedPlaceholders || {};
+                var renderedComponent = this.$renderedPlaceholders[placeholderCid];
+                if (!renderedComponent) {
+                    var template = this.getTemplate(templateName);
+                    if (template) {
+                        renderedComponent = template.createComponent(attributes);
+                        // renderedComponent._initialize();
+                        var placeholder = this.getPlaceholderByCid(placeholderCid);
+                        if (placeholder) {
+                            placeholder.set({content:renderedComponent});
+                            this.$renderedPlaceholders[placeholderCid] = renderedComponent;
+                        } else{
+                            throw "No placeholder '"+placeholderCid+"' found";
+                        }
+
+                    }
+                } else {
+                    renderedComponent.set(attributes);
+                }
+
             }
         });
     }

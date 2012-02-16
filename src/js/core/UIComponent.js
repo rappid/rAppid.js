@@ -4,16 +4,18 @@ rAppid.defineClass("js.core.UIComponent",
             _defaults: {
                 tagName: "div"
             },
-            _renderAttribute:function (key, attr) {
-
-            },
             _commitChangedAttributes: function(attributes){
                 if(this.isRendered()){
-                    for(var key in attributes){
-                        if(attributes.hasOwnProperty(key)){
-                            this._renderAttribute(attributes[key])
-                        }
-                    }
+                    this._renderAttributes(attributes);
+                }
+            },
+            _renderAttribute:function (key, attribute) {
+                // generic call of render functions
+                key = key[0].toUpperCase() + key.substr(1);
+                var methodName = "_render" + key;
+                var method = this[methodName];
+                if (_.isFunction(method)) {
+                    method.call(this, attribute);
                 }
             },
             _initializationComplete: function(){

@@ -5,15 +5,22 @@ rAppid.defineClass("js.core.Template", ["js.core.Component"],
         return Component.inherit({
             _initializeDescriptor:function (descriptor) {
                 var node;
+                this.$childDescriptors = [];
+
                 // sets the first node as descriptor for component
                 for (var i = 0; i < descriptor.childNodes.length; i++) {
                     node = descriptor.childNodes[i];
                     if (node.nodeType == 1) { // Elements
-                        this.$componentDescriptor = node;
-                        break;
+                        this.$childDescriptors.push(node);
+                    }else if(node.nodeType == 3){
+                        var text = node.textContent.trim();
+                        if (text.length > 0) {
+                            node.textContent = text;
+                            this.$childDescriptors.push(node);
+                        }
                     }
                 }
-                if(!this.$componentDescriptor){
+                if(this.$childDescriptors.length == 0){
                     throw "No Component Descriptor defined in Template!";
                 }
                 return [];
@@ -21,8 +28,20 @@ rAppid.defineClass("js.core.Template", ["js.core.Component"],
             _createChildrenFromDescriptor:function (descriptor) {
                // doesn't need to
             },
-            createComponent:function() {
-                return this._createComponentForNode(_.clone(this.$componentDescriptor));
+            createComponent:function(attributes) {
+                return this._createComponentForNode(_.clone(this.$childDescriptors[0]),[attributes]);
+            },
+            createComponents: function(attributes){
+                // foreach child Descriptor
+                var components = [];
+                // call create Component For Node
+                var node, comp;
+                for(var i = 0 ; i < this.$childDescriptors.length; i++){
+                    node = this.$childDescriptors[i];
+                    comp = this._createComponentForNode(node,[attributes]);
+                    components.push(comp);
+                }
+                return components
             }
         });
     });

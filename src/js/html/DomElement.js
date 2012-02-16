@@ -20,6 +20,12 @@ rAppid.defineClass("js.html.DomElement",
                         this.$tagName = attributes.tagName;
                     }
                 },
+                addChild: function(child){
+                    this.callBase();
+                    if(this.isRendered()){
+                        this._renderChild(child);
+                    }
+                },
                 render:function () {
                     if (!this.$initialized) {
                         this._initialize(this.$creationPolicy);
@@ -31,22 +37,36 @@ rAppid.defineClass("js.html.DomElement",
 
                     this.$el = document.createElement(this.$tagName);
 
+                    // TODO: read layout and create renderMAP
+                    /**
+                     * <js:Template name="layout"><placeholder cid="icon"/><placeholder cid="label"/></js:Template>
+                     */
+
+
+
                     // TODO: bind the events
                     var self = this;
                     this.$el.onclick = function(e){
                         self.trigger('onclick',e, self);
                     };
 
-                    this._renderAttributes(this.$);
+                    this._renderContent();
+                    this._renderChildren(this.$children);
 
+                    this._renderAttributes(this.$);
+                    return this.$el;
+                },
+                _renderContent: function(){
+
+
+                },
+                _renderChildren: function(children){
                     // for all children
                     var child;
-                    for (var i = 0; i < this.$children.length; i++) {
+                    for (var i = 0; i < children.length; i++) {
                         child = this.$children[i];
                         this._renderChild(child);
                     }
-
-                    return this.$el;
                 },
                 _renderChild: function(child){
                     if (_.isFunction(child.render)) {
@@ -55,6 +75,18 @@ rAppid.defineClass("js.html.DomElement",
                             this.$el.appendChild(el);
                         }
                     }
+                },
+                _getIndexOfPlaceHolder: function(placeHolder){
+                    if (this.$layoutTpl) {
+                        var child;
+                        for(var i = 0 ; i < this.$layoutTpl.$children.length; i++){
+                            child = this.$layoutTpl.$children[i];
+                            if(placeHolderId == child.$cid){
+                                return i;
+                            }
+                        }
+                    }
+                    return -1;
                 },
                 isRendered:function () {
                     return typeof (this.$el) !== "undefined";
@@ -69,7 +101,7 @@ rAppid.defineClass("js.html.DomElement",
                     }
                 },
                 _renderAttribute: function(key,attr){
-                    this.$el.setAttribute(key, new String(attr));
+                    this.$el.setAttribute(key, attr);
                 },
                 _commitChangedAttributes:function (attributes) {
                     if(this.isRendered()){

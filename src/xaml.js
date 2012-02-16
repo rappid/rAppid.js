@@ -1,6 +1,6 @@
 (function () {
     var progIds = ['Msxml2.XMLHTTP', 'Microsoft.XMLHTTP', 'Msxml2.XMLHTTP.4.0'];
-    var importRegEx = /([a-z]+(\.[a-z]+[a-z0-9]*)*)/mgi;
+    var importRegEx = /((?:xaml!)?[a-z]+(\.[a-z]+[a-z0-9]*)*)/mgi;
 
     define(function () {
         return {

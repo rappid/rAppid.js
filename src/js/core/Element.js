@@ -60,7 +60,15 @@ rAppid.defineClass("js.core.Element",
 
                 this.initialize();
 
-                this._initializeDescriptor(this.$descriptor);
+                // init descriptor of xaml component (component definition)
+                if(this._$descriptor){
+                    this._createChildrenFromDescriptor(this._$descriptor);
+                    // this._initializeChildren(childrenFromDescriptor);
+                }
+                if(this.$descriptor){
+                    this._initializeDescriptor(this.$descriptor);
+
+                }
 
                 this._initializeBindings();
 

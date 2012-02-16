@@ -18,12 +18,14 @@
                  * this method is called right after the script tag is evaluated
                  */
                 initialize:function () {
-
+                     this.set('success',"he");
                 },
                 /**
                  * This method should be called from outside to start the application
                  */
                 start:function () {
+
+
                     this.render(document.body);
                 }
             }
@@ -31,6 +33,10 @@
     </js:Script>
 
     <div>
-        <ui:Button class="test"/>
+        <ui:Button tagName="a" type="success" iconClass="icon-refresh icon-white" disabled="false" label="Button" showCaret="true"/>
+        <!--<ui:MenuButton type="info" label="MenuButton">-->
+            <!--<div>My DropdownMenu</div>-->
+        <!--</ui:MenuButton>-->
+        <!--<ui:SplitMenuButton/>-->
     </div>
 </js:Application>
