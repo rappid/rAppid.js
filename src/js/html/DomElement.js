@@ -1,7 +1,9 @@
 rAppid.defineClass("js.html.DomElement",
     ["js.core.Component","js.core.Binding"], function (Component, Binding) {
-        return Component.inherit({
+        var DomElement = Component.inherit({
                 ctor: function(attributes, descriptor, applicationDomain, parentScope, rootScope) {
+                    this.$childViews = [];
+
                     this.callBase();
 
                     if (descriptor) {
@@ -12,6 +14,8 @@ rAppid.defineClass("js.html.DomElement",
                             this.$namespace = descriptor.namespaceURI;
                         }
                     }
+
+
                 },
                 _initializeAttributes:function (attributes) {
                     this.callBase();
@@ -25,6 +29,25 @@ rAppid.defineClass("js.html.DomElement",
                     if(this.isRendered()){
                         this._renderChild(child);
                     }
+                },
+                // TODO: change Cid to name
+                getPlaceholder:function (name) {
+                    for (var i = 0; i < this.$children.length; i++) {
+                        if (this.$children[i].$.name === name) {
+                            return this.$children[i];
+                        }
+                    }
+                    var placeholder;
+                    for (i = 0; i < this.$children.length; i++) {
+                        if (this.$children[i].getPlaceholder) {
+                            placeholder = this.$children[i].getPlaceholder(name);
+                            if (placeholder) {
+                                return placeholder;
+                            }
+                        }
+
+                    }
+                    return null;
                 },
                 render:function () {
                     if (!this.$initialized) {
@@ -69,7 +92,7 @@ rAppid.defineClass("js.html.DomElement",
                     }
                 },
                 _renderChild: function(child){
-                    if (_.isFunction(child.render)) {
+                    if (child.render) {
                         var el = child.render();
                         if (el) {
                             this.$el.appendChild(el);
@@ -109,6 +132,9 @@ rAppid.defineClass("js.html.DomElement",
                     }
                 }
             }
-        )
+
+        );
+
+        return DomElement;
     }
 );

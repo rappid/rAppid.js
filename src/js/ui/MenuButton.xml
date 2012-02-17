@@ -9,7 +9,8 @@
             return {
                 defaults:{
                     tagName:'div',
-                    'class':'btn-group'
+                    'class':'btn-group',
+                    'menuClassName':"dropdown-menu"
                 },
                 _renderType:function (type) {
                     this.$button.set({type:type});
@@ -20,37 +21,37 @@
                 _renderLabel:function (label) {
                     this.$button.set({label:label});
                 },
-                _initializeChildren: function(children){
-                    console.log(children);
-                },
-                _renderChildren: function(children){
+                addChild:function (child) {
+                    if (child.className === "js.ui.Button") {
+                        this.$button = child;
+                    }
                     this.callBase();
                 },
                 _renderMenu:function (menu) {
-                    if (menu) {
-                        if (menu != this.$menu) {
-                            // TODO: remove old menu
-                        }
-                        this.$menu = menu;
-                        var el = this.$menu.render();
-                        $(el).addClass('dropdown-menu');
-                        this.$el.appendChild(el);
+                    /*
+                     if (menu) {
+                     if (menu != this.$menu) {
+                     // TODO: remove old menu
+                     }
+                     this.$menu = menu;
+                     var el = this.$menu.render();
+                     $(el).addClass('dropdown-menu');
+                     this.$el.appendChild(el);
 
-                    }
+                     } */
                 }
             }
         })();
         ]]>
     </js:Script>
     <js:Template name="layout">
-        <ui:Button>
+        <ui:Button class="btn dropdown-toggle">
             <js:Template name="layout">
-                <js:Placeholder cid="icon"/>
-                <js:Placeholder cid="label"/>
-                <span class="caret"/>
+                <ui:Placeholder name="icon"/>{label}<span class="caret"/>
             </js:Template>
         </ui:Button>
-        <js:Placeholder cid="menu"/>
+        <ui:ContentPlaceHolder tagName="div" name="menu" class="{menuClassName}"/>
+
     </js:Template>
 
 </ui:View>

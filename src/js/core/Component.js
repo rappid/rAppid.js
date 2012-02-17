@@ -118,7 +118,7 @@ rAppid.defineClass("js.core.Component",
                 var tpl = this.$templates[name];
                 if(tpl){
                     return tpl;
-                }else if(this.$parent){
+                }else if(this.$parent && this.$parent != this){
                     return this.$parent.getTemplate(name);
                 }else{
                     return null

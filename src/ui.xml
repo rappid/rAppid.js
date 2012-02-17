@@ -4,6 +4,7 @@
 
     <js:Imports>
         js.core.Base;
+        js.core.Content;
     </js:Imports>
 
     <js:Script>
@@ -43,10 +44,19 @@
     </js:Script>
 
     <div>
-        <ui:Button tagName="a" iconClass="icon-refresh icon-white" disabled="false" label="{btnLabel}" type="{btnType}" onclick="onButtonClick"/>
-        <!--<ui:MenuButton type="info" label="MenuButton">-->
-            <!--<div>My DropdownMenu</div>-->
-        <!--</ui:MenuButton>-->
+
+        <ui:Button disabled="false" label="Button without Icon" type="{btnType}" onclick="onButtonClick"/>
+        <ui:Button iconClass="icon-refresh" label="Button with Icon" onclick="onButtonClick"/>
+        <ui:Button iconClass="icon-plus" label="Button with Icon on the right" onclick="onButtonClick">
+            <js:Template name="layout">
+                {label}<ui:Placeholder name="icon"/>
+            </js:Template>
+        </ui:Button>
+        <ui:Button iconClass="icon-refresh" onclick="onButtonClick"/>
+        <ui:MenuButton type="success" label="MenuButton w/o Icon"/>
+        <ui:MenuButton type="success" iconClass="icon-plus icon-white" label="MenuButton with Icon">
+
+        </ui:MenuButton>
         <!--<ui:SplitMenuButton/>-->
     </div>
 </js:Application>

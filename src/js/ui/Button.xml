@@ -4,9 +4,17 @@
         (function () {
             return {
                 defaults:{
-                    tagName:'button',
+                    tagName:'a',
                     'class':'btn',
-                    href: null
+                    href: null,
+                    label: ''
+                },
+                _renderIconClass: function(iconClass, oldIconClass){
+                      if(iconClass){
+                          this._renderTemplateToPlaceHolder('iconTemplate','icon',{$iconClass: iconClass});
+                      }else{
+                          this.getPlaceholder("icon").clear();
+                      }
                 },
                 _renderHref:function (href) {
                     if (this.$tagName == "a") {
@@ -25,6 +33,9 @@
         })();
     </js:Script>
     <js:Template name="layout">
-        <i class="{iconClass}"/>{label}
+        <ui:Placeholder name="icon"/>{label}
+    </js:Template>
+    <js:Template name="iconTemplate">
+        <i class="{$iconClass}"/>
     </js:Template>
 </ui:View>

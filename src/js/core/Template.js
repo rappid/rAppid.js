@@ -14,9 +14,6 @@ rAppid.defineClass("js.core.Template", ["js.core.Component"],
                 for (var c = 0; c < components.length; c++) {
                     components[c].set(attributes);
                 }
-
-                this._initializeChildren(components);
-
                 return components
             }
         });
