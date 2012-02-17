@@ -29,6 +29,24 @@ rAppid.defineClass("js.html.DomElement",
                     this._renderChild(child);
                 }
             },
+            getPlaceholder:function (name) {
+                for (var i = 0; i < this.$children.length; i++) {
+                    if (this.$children[i].$.name === name) {
+                        return this.$children[i];
+                    }
+                }
+                var placeholder;
+                for (i = 0; i < this.$children.length; i++) {
+                    if (this.$children[i].getPlaceholder) {
+                        placeholder = this.$children[i].getPlaceholder(name);
+                        if (placeholder) {
+                            return placeholder;
+                        }
+                    }
+
+                }
+                return null;
+            },
             render: function () {
                 if (!this.$initialized) {
                     this._initialize(this.$creationPolicy);
