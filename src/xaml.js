@@ -73,7 +73,7 @@
                 return fqClassName.replace(/\./g, "/");
             },
 
-            findDependencies: function (xaml, namespaceMap, xamlClasses, rewriteMap) {
+            findDependencies: function (xaml, namespaceMap, xamlClasses, rewriteMap, imports) {
 
                 var self = this;
                 var ret = [];
@@ -91,6 +91,10 @@
                                     var importClass =  m[0].replace(/\./g, "/");
                                     if (ret.indexOf(importClass) == -1) {
                                         ret.push(importClass);
+                                    }
+                                    
+                                    if (imports) {
+                                        imports.push(importClass);
                                     }
                                 }
                             }
@@ -165,8 +169,10 @@
                     if (!err) {
                         if (xhr.responseXML) {
                             // require all dependencies
+                            var imports = [];
+                            
                             var dependencies = self.findDependencies(xhr.responseXML.documentElement,
-                                config.namespaceMap, config.xamlClasses, config.rewriteMap);
+                                config.namespaceMap, config.xamlClasses, config.rewriteMap, imports);
 
                             // console.log(["dependencies for " + url, dependencies ]);
 
@@ -177,18 +183,26 @@
                                 dependencies.splice(1, 0, "js/core/Script");
                             }
 
+                            dependencies = dependencies.concat(imports);
+
                             // first item should be the dependency of the document element
-                            req(dependencies, function(baseClass, Script) {
+                            req(dependencies, function() {
                                 // dependencies are loaded
+
+                                var baseClass = arguments[0],
+                                    Script = arguments[1],
+                                    args = Array.prototype.slice.call(arguments);
 
 
                                 var scriptObjects = [];
+                                var importedClasses = args.slice(args.length - imports.length);
 
                                 if (scripts.length > 0) {
                                     for (var s = 0; s < scripts.length; s++) {
                                         try {
+
                                             var scriptInstance = new Script(null, scripts[s]);
-                                            scriptObjects.push(scriptInstance.evaluate());
+                                            scriptObjects.push(scriptInstance.evaluate(importedClasses));
                                         } catch (e) {
                                             throw "Script cannot be loaded";
                                         }

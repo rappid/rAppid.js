@@ -41,7 +41,7 @@
                      } */
                 }
             }
-        })();
+        })
         ]]>
     </js:Script>
     <js:Template name="layout">

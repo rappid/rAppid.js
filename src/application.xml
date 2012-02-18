@@ -9,7 +9,10 @@
     </js:Imports>
 
     <js:Script>
-        (function () {
+        (function (Base, app) {
+
+            console.log([Base, app]);
+
             return {
                 defaults:{
                     awesomeness:false
@@ -58,7 +61,7 @@
 
                 }
             }
-        })();
+        })
     </js:Script>
 
     <js:Injection>

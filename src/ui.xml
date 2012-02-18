@@ -40,7 +40,7 @@
                     this.render(document.body);
                 }
             }
-        })();
+        })
     </js:Script>
 
     <div>

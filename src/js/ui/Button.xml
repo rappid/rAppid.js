@@ -30,7 +30,7 @@
                     }
                 }
             }
-        })();
+        })
     </js:Script>
     <js:Template name="layout">
         <ui:Placeholder name="icon"/>{label}
