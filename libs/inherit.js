@@ -87,7 +87,7 @@ var inherit;
                 return this.apply(that, args);
             }
         } else {
-            throw "base not definied";
+            throw "base not defined";
         }
     };
 
