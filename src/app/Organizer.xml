@@ -20,10 +20,10 @@
         <conf:Module route="todo.*" moduleClass="xaml!app.modules.Todo"/>
 
         <header>
-            <js:ContentPlaceHolder name="header" />
+            <ui:ContentPlaceHolder name="header" />
         </header>
         <div id="wrapper">
-            <js:ContentPlaceHolder name="main" />
+            <ui:ContentPlaceHolder name="main" />
         </div>
     </js:ModuleLoader>
 
