@@ -71,14 +71,13 @@ rAppid.defineClass("js.html.DomElement",
                     self.trigger('onclick', e, self);
                 };
 
-                this._renderContent();
                 this._renderChildren(this.$children);
-
                 this._renderAttributes(this.$);
+                this._bindDomEvents(this.$el);
+
                 return this.$el;
             },
-            _renderContent: function () {
-
+            _bindDomEvents: function(el){
 
             },
             _renderChildren: function (children) {
@@ -137,6 +136,10 @@ rAppid.defineClass("js.html.DomElement",
         };
 
         var DomManipulationFunctions = {
+            hasClass: function (value){
+                // var classes = this.$el.className.split(" "+value+" ");
+
+            },
             addClass: function (value) {
                 var classNames = value.split(rspace);
 
@@ -158,7 +161,7 @@ rAppid.defineClass("js.html.DomElement",
                 var removeClasses = value.split(rspace);
                 var classes = this.$el.className.split(rspace);
 
-                for (var i = 0; i < removeClasses; i++) {
+                for (var i = 0; i < removeClasses.length; i++) {
                     var index = classes.indexOf(removeClasses[i]);
                     if (index != -1) {
                         classes.splice(index, 1);

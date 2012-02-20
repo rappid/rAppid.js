@@ -1,4 +1,4 @@
-rAppid.defineClass("js.ui.ContentPlaceHolder", ["js.html.DomElement"], function(View) {
+rAppid.defineClass("js.ui.ContentPlaceHolder", ["js.ui.View"], function(View) {
     return View.inherit(({
         _renderContent: function(content){
             if(content){

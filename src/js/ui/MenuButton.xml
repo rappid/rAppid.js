@@ -1,16 +1,24 @@
 <?xml version="1.0"?>
 <ui:View xmlns="http://www.w3.org/1999/xhtml" xmlns:js="js.core" xmlns:ui="js.ui">
     <js:Imports>
-        xaml!js.ui.Button
+        js.ui.Button
     </js:Imports>
     <js:Script type="text/javascript">
         <![CDATA[
-        (function () {
+        (function (Button) {
             return {
                 defaults:{
                     tagName:'div',
                     'class':'btn-group',
-                    'menuClassName':"dropdown-menu"
+                    'menuClassName':"dropdown-menu",
+                    menuVisible:false
+                },
+                $instances:[],
+                _collectChild:function (child) {
+                    if (child instanceof Button) {
+                        this.$button = child;
+                        this.$toggleButton = child;
+                    }
                 },
                 _renderType:function (type) {
                     this.$button.set({type:type});
@@ -21,24 +29,46 @@
                 _renderLabel:function (label) {
                     this.$button.set({label:label});
                 },
-                addChild:function (child) {
-                    if (child.className === "js.ui.Button") {
-                        this.$button = child;
+                _renderChild:function (child) {
+                    if (child.className == 'js.core.Content') {
+                        var ref = child.get('ref');
+                        var placeHolder = this.getPlaceholder(ref);
+                        if (placeHolder) {
+                            placeHolder.set({content:child});
+                        }
                     }
                     this.callBase();
-                },
-                _renderMenu:function (menu) {
-                    /*
-                     if (menu) {
-                     if (menu != this.$menu) {
-                     // TODO: remove old menu
-                     }
-                     this.$menu = menu;
-                     var el = this.$menu.render();
-                     $(el).addClass('dropdown-menu');
-                     this.$el.appendChild(el);
 
-                     } */
+                },
+                _renderMenuVisible:function (visible) {
+                    if (visible === true) {
+                        for (var i = 0; i < this.$instances.length; i++) {
+                            if (this.$instances[i] != this) {
+                                this.$instances[i].set({menuVisible:false});
+                            }
+                        }
+                        this.addClass('open');
+                    }else{
+                        this.removeClass('open');
+                    }
+
+                },
+                _bindDomEvents:function (el) {
+                    if (!_.contains(this.$instances, this)) {
+                        this.$instances.push(this);
+                    }
+                    var self = this;
+
+                    document.addEventListener('click', function (e) {
+                        self.set({menuVisible: false});
+                    });
+
+                    this.$toggleButton.$el.addEventListener('click', function (e) {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        self.set({menuVisible: !self.$.menuVisible});
+                    });
+
                 }
             }
         })
@@ -51,7 +81,6 @@
             </js:Template>
         </ui:Button>
         <ui:ContentPlaceHolder tagName="div" name="menu" class="{menuClassName}"/>
-
     </js:Template>
 
 </ui:View>

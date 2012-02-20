@@ -1,6 +1,9 @@
 rAppid.defineClass("js.core.Component",
     ["js.core.Element", "js.core.TextElement", "underscore"],
     function (Element, TextElement, _) {
+
+
+
         return Element.inherit({
             ctor: function (attributes, descriptor, applicationDomain, parentScope, rootScope) {
 
@@ -196,6 +199,7 @@ rAppid.defineClass("js.core.Component",
 
                     if (attributes.hasOwnProperty(key)) {
                         var value = attributes[key];
+
                         if (this._isEventAttribute(key)) {
                             this.on(key, this.$rootScope[value], this.$rootScope);
                             delete attributes[key];

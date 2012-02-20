@@ -3,6 +3,18 @@ rAppid.defineClass("js.core.Element",
 
         var undef;
 
+        function stringToPrimitive(str) {
+            // if it's not a string
+            if (_.isString(str)) {
+                if (str === "true") {
+                    return true;
+                } else if (str === "false") {
+                    return false;
+                }
+            }
+            return str;
+        }
+
         return Bindable.inherit({
             ctor: function (attributes, descriptor, applicationDomain, parentScope, rootScope) {
 
@@ -43,7 +55,7 @@ rAppid.defineClass("js.core.Element",
 
                     for (var a = 0; a < descriptor.attributes.length; a++) {
                         node = descriptor.attributes[a];
-                        attributes[node.nodeName] = node.value;
+                        attributes[node.nodeName] = stringToPrimitive(node.value);
                     }
                 }
 

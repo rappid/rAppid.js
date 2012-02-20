@@ -1,9 +1,9 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-        "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE HTML>
 <html>
 <head>
     <title></title>
-    <link href="../libs/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../libs/bootstrap/css/bootstrap.css" rel="stylesheet">
+    <link href="../css/bootstrap-fixes.css" rel="stylesheet">
     <script type="text/javascript" src="../libs/require.js"></script>
     <script type="text/javascript" src="../libs/inherit.js"></script>
     <script type="text/javascript" src="../libs/underscore-min.js"></script>
@@ -17,7 +17,7 @@
         return _;
     });
 
-    rAppid.bootStrap("ui.xml", ["js.ui.Button", "js.ui.MenuButton"],
+    rAppid.bootStrap("ui.xml", ["js.ui.Link", "js.ui.MenuButton", "js.ui.SplitButton"],
             function (err, systemManager, application) {
                 if (!err) {
                     application.start();

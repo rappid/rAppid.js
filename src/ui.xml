@@ -20,9 +20,9 @@
                 initialize:function () {
                     this.set('success', "he");
                     this.set('btnType', "success");
-                    this.set('btnLabel',"wait");
+                    this.set('btnLabel', "wait");
                 },
-                onButtonClick: function(e){
+                onButtonClick:function (e) {
                     console.log(e);
                     e.$.preventDefault();
                 },
@@ -33,30 +33,112 @@
 
                     var self = this;
                     setInterval(function () {
-                        self.set("btnLabel"," what");
-                        self.set("btnType","info");
-                    },2000);
+                        self.set("btnLabel", " what");
+                        self.set("btnType", "info");
+                    }, 2000);
 
                     this.render(document.body);
                 }
             }
         })
     </js:Script>
+    <div class="container">
+        <div>
+            <h3>Buttons</h3>
+            <div class="btn-toolbar">
+                <p>
+                    <ui:Button disabled="false" label="Button without Icon" type="{btnType}" onclick="onButtonClick"/>
+                    <ui:Button iconClass="icon-refresh" label="Button with Icon" onclick="onButtonClick"/>
+                    <ui:Button iconClass="icon-plus" label="Button with Icon on the right" onclick="onButtonClick">
+                        <js:Template name="layout">
+                            {label}
+                            <ui:Placeholder name="icon"/>
+                        </js:Template>
+                    </ui:Button>
+                    <ui:Button iconClass="icon-refresh" onclick="onButtonClick"/>
+                    <ui:Button label="Toggle Button" onclick="onButtonClick" selectable="true"/>
 
-    <div>
+                </p>
+            </div>
 
-        <ui:Button disabled="false" label="Button without Icon" type="{btnType}" onclick="onButtonClick"/>
-        <ui:Button iconClass="icon-refresh" label="Button with Icon" onclick="onButtonClick"/>
-        <ui:Button iconClass="icon-plus" label="Button with Icon on the right" onclick="onButtonClick">
-            <js:Template name="layout">
-                {label}<ui:Placeholder name="icon"/>
-            </js:Template>
-        </ui:Button>
-        <ui:Button iconClass="icon-refresh" onclick="onButtonClick"/>
-        <ui:MenuButton type="success" label="MenuButton w/o Icon"/>
-        <ui:MenuButton type="success" iconClass="icon-plus icon-white" label="MenuButton with Icon">
+            <h3>Menu Buttons</h3>
+            <div class="btn-toolbar">
+                <ui:MenuButton type="success" label="MenuButton w/o Icon"/>
+                <ui:MenuButton type="success" iconClass="icon-plus icon-white" label="MenuButton with Icon">
+                    <js:Content ref="menu">
+                        <div class="">
+                            My Menu!
+                        </div>
+                    </js:Content>
+                </ui:MenuButton>
+                <ui:MenuButton type="{btnType}" iconClass="icon-plus icon-white" label="MenuButton with Icon">
+                    <js:Content ref="menu">
+                        <ul>
+                            <li>
+                                <ui:Link label="Menu Item 1"/>
+                            </li>
+                            <li>
+                                <ui:Link label="Menu Item 2"/>
+                            </li>
+                        </ul>
+                        <div class="">What up?</div>
+                    </js:Content>
+                </ui:MenuButton>
+                <ui:SplitButton type="{btnType}" iconClass="icon-plus icon-white" label="MenuButton with Icon">
+                    <js:Content ref="menu">
+                        <ul>
+                            <li>
+                                <ui:Link label="Menu Item 1"/>
+                            </li>
+                            <li>
+                                <ui:Link label="Menu Item 2"/>
+                            </li>
+                        </ul>
+                        <div class="">What up?</div>
+                    </js:Content>
+                </ui:SplitButton>
+            </div>
+            <h3>List Views</h3>
+            <div class="row">
+                <div class="span3">
+                    <h4>Single Select</h4>
+                    <ui:List tagName="ul" class="nav nav-pills nav-stacked" multiSelect="false" needsSelection="true">
+                        <ui:View tagName="li">
+                            <ui:Link label="Item 1" href="#item1"/>
+                        </ui:View>
+                        <ui:View tagName="li">
+                            <ui:Link label="Item 2" href="#item2"/>
+                        </ui:View>
+                        <ui:View tagName="li">
+                            <ui:Link label="Item 3" href="#item3"/>
+                        </ui:View>
+                        <ui:View tagName="li">
+                            <ui:Link label="Item 4" href="#item4"/>
+                        </ui:View>
+                    </ui:List>
+                </div>
+                <div class="span3">
+                    <h4>Multi Select</h4>
+                    <ui:List tagName="ul" class="nav nav-pills nav-stacked" multiSelect="true">
+                        <ui:View tagName="li">
+                            <ui:Link label="Item 1" href="#item1"/>
+                        </ui:View>
+                        <ui:View tagName="li">
+                            <ui:Link label="Item 2" href="#item2"/>
+                        </ui:View>
+                        <ui:View tagName="li">
+                            <ui:Link label="Item 3" href="#item3"/>
+                        </ui:View>
+                        <ui:View tagName="li">
+                            <ui:Link label="Item 4" href="#item4"/>
+                        </ui:View>
+                    </ui:List>
+                </div>
+            </div>
+            <h3>Scrollable View</h3>
+            <div class="row">
 
-        </ui:MenuButton>
-        <!--<ui:SplitMenuButton/>-->
+            </div>
+        </div>
     </div>
 </js:Application>

@@ -130,9 +130,6 @@ rAppid.defineClass("js.core.Bindable", ["js.core.EventDispatcher", "underscore"]
                                 this.$previousAttributes[key] = now[key];
                                 now[key] = attributes[key];
                                 changedAttributes[key] = now[key];
-                                if(options.silent === false){
-                                    this.trigger('change:' + key, val, this);
-                                }
                             }
                         }
                         // if attribute has changed and there is no async changing process in the background, fire the event
@@ -142,7 +139,13 @@ rAppid.defineClass("js.core.Bindable", ["js.core.EventDispatcher", "underscore"]
                 this._commitChangedAttributes(changedAttributes);
 
                 if(options.silent === false && _.size(changedAttributes) > 0){
-                        this.trigger('change', changedAttributes, this);
+                    for(key in changedAttributes){
+                        if (changedAttributes.hasOwnProperty(key)) {
+                            this.trigger('change:' + key, changedAttributes[key], this);
+                        }
+                    }
+                    this.trigger('change', changedAttributes, this);
+
                 }
 
                 return this.$;

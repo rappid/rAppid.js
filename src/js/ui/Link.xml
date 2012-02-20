@@ -5,9 +5,8 @@
             return {
                 defaults:{
                     tagName:'a',
-                    'class':'btn',
                     href: null,
-                    label: ''
+                    label: ' '
                 },
                 _renderIconClass: function(iconClass, oldIconClass){
                       if(iconClass){
@@ -23,10 +22,10 @@
                 },
                 _renderType:function (type, oldType) {
                     if(oldType){
-                        $(this.$el).removeClass("btn-" + oldType);
+                        this.removeClass("btn-" + oldType);
                     }
                     if (type) {
-                        $(this.$el).addClass("btn-" + type);
+                        this.addClass("btn-" + type);
                     }
                 }
             }
