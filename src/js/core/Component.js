@@ -161,7 +161,6 @@ rAppid.defineClass("js.core.Component",
                         child._initialize(this.$creationPolicy);
                     }
                 }
-
             },
             _initializeAttributes: function (attributes) {
                 this.callBase();
@@ -193,9 +192,6 @@ rAppid.defineClass("js.core.Component",
                     scope.on('change:' + scopeKey, function (e) {
                         self.set(key, e.$);
                     });
-                    self.on('change:'+key, function(e) {
-                        scope.set(scopeKey,e.$,{silent: false});
-                    });
 
                 };
                 // Resolve bindings and events
@@ -208,7 +204,6 @@ rAppid.defineClass("js.core.Component",
                             this.on(key, this.$rootScope[value], this.$rootScope);
                             delete attributes[key];
                         } else if (this._isBindingDefinition(value)) {
-
                             var attrKey = value.match(this.$bindingRegex);
                             attrKey = attrKey[1];
                             var scope = this.getScopeForKey(attrKey);

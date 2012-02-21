@@ -1,4 +1,4 @@
-rAppid.defineClass("js.core.ModuleLoader", ["js.core.UIComponent", "js.core.ContentPlaceHolder",
+rAppid.defineClass("js.core.ModuleLoader", ["js.core.UIComponent", "js.ui.ContentPlaceHolder",
     "underscore", "require", "js.core.Module"],
     function(UIComponent, ContentPlaceHolder, _, require, Module) {
     var ModuleLoader = UIComponent.inherit({
