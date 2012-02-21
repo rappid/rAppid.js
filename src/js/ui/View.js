@@ -2,9 +2,7 @@ rAppid.defineClass("js.ui.View",
     ["underscore", "js.core.UIComponent", "js.core.Template", "js.core.Content"], function (_, UIComponent, Template, Content) {
         return UIComponent.inherit({
             defaults: {
-                tagName: "div",
-                selected: false,
-                selectable: false
+                tagName: "div"
             },
             _collectChild:function (child) {
             },
@@ -18,33 +16,12 @@ rAppid.defineClass("js.ui.View",
                 // if layout template available...
                 if(layout){
                     var children = layout.createComponents({});
-                    this._initializeChildren(children);
+                    this._initializeLayoutChildren(children);
                 }
                 return this.callBase();
             },
-            _renderVisible: function(visible){
-                if(visible === true){
-
-                }else if(visible === false){
-
-                }
-            },
-            _renderSelected: function(selected){
-                if(selected === true){
-                    this.addClass('active');
-                }else if(selected === false){
-                    this.removeClass('active');
-                }
-            },
-            _renderSelectable: function(selectable){
-                  if(selectable === true){
-                      var self = this;
-                      this.$el.addEventListener('click', function(e){
-                          self.set({selected: !self.$.selected});
-                      });
-                  }else{
-                      this.set({selected: false});
-                  }
+            _initializeLayoutChildren: function(children){
+                this._initializeChildren(children);
             },
             _renderChild: function(child){
                 this.callBase();

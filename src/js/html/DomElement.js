@@ -4,8 +4,13 @@ rAppid.defineClass("js.html.DomElement",
         var rspace = /\s+/;
 
         var DomElementFunctions = {
+            defaults: {
+                selected: false,
+                selectable: false
+            },
             ctor: function (attributes, descriptor, applicationDomain, parentScope, rootScope) {
                 this.callBase();
+                this.$renderMap = {};
 
                 if (descriptor) {
                     if (!this.$tagName) {
@@ -121,7 +126,50 @@ rAppid.defineClass("js.html.DomElement",
                 }
             },
             _renderAttribute: function (key, attr) {
-                this.$el.setAttribute(key, attr);
+                var method = this.$renderMap[key];
+                var prev = this.$previousAttributes[key];
+
+                if (_.isUndefined(method)) {
+                    // generic call of render functions
+                    var k = key[0].toUpperCase() + key.substr(1);
+                    var methodName = "_render" + k;
+                    method = this[methodName];
+
+                    if (!_.isFunction(method)) {
+                         method = false;
+                    }
+
+                    this.$renderMap[key] = method;
+                }
+                if (method !== false) {
+                    method.call(this, attr, prev);
+                } else if (this.className && this.className.indexOf("js.html.") > -1) {
+                    this.$el.setAttribute(key, attr);
+                }
+            },
+            _renderVisible:function (visible) {
+                if (visible === true) {
+                    this.removeClass('hidden');
+                } else if (visible === false) {
+                    this.addClass('hidden');
+                }
+            },
+            _renderSelected:function (selected) {
+                if (selected === true) {
+                    this.addClass('active');
+                } else if (selected === false) {
+                    this.removeClass('active');
+                }
+            },
+            _renderSelectable:function (selectable) {
+                if (selectable === true) {
+                    var self = this;
+                    this.$el.addEventListener('click', function (e) {
+                        self.set({selected:!self.$.selected});
+                    });
+                } else {
+                    this.set({selected:false});
+                }
             },
             _commitChangedAttributes: function (attributes) {
                 if (this.isRendered()) {
