@@ -6,6 +6,12 @@ rAppid.defineClass("js.core.Element",
         function stringToPrimitive(str) {
             // if it's not a string
             if (_.isString(str)) {
+
+                var n = parseFloat(str);
+                if(!_.isNaN(n)){
+                    return n;
+                }
+
                 if (str === "true") {
                     return true;
                 } else if (str === "false") {
