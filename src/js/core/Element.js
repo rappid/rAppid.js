@@ -26,7 +26,7 @@ rAppid.defineClass("js.core.Element",
 
                 attributes = attributes || {};
 
-                if (descriptor == undef) {
+                if (!descriptor) {
                     // created from node
                     if (!rootScope) {
                         rootScope = this;
@@ -46,7 +46,7 @@ rAppid.defineClass("js.core.Element",
                 this._initializeAttributes(this.$);
 
                 // manually constructed
-                if (!descriptor) {
+                if (descriptor === undef || descriptor === null) {
                     this._initialize(this.$creationPolicy);
                 }
 

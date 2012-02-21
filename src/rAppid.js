@@ -89,15 +89,18 @@ var rAppid;
 
                 require([mainClass], function(mainClassFactory) {
                     // create instance
-                    var application = new mainClassFactory(null, null, applicationDomain, null, null);
+                    var application = new mainClassFactory(null, false, applicationDomain, null, null);
 
                     if (application instanceof global.js.core.Application) {
+
+                        var systemManager = new SystemManager(applicationDomain, application);
+                        rAppid.systemManager = systemManager;
 
                         application._initialize("auto");
 
                         // return system manager
                         if (callback) {
-                            callback(null, new SystemManager(applicationDomain, application), application);
+                            callback(null, systemManager, application);
                         }
 
                     } else {

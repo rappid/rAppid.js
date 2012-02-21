@@ -1,6 +1,11 @@
 rAppid.defineClass("js.core.Application",
-    ["js.core.UIComponent"], function (UIComponent) {
+    ["js.core.UIComponent", "js.core.History"], function (UIComponent, History) {
         return UIComponent.inherit({
+            ctor: function() {
+                this.history = new History();
+
+                this.callBase();
+            },
 
             initialize: function () {
                 // set up application wide vars
@@ -14,6 +19,8 @@ rAppid.defineClass("js.core.Application",
              * @param {Function} callback
              */
             start: function (parameter, callback) {
+                this.history.start();
+
                 if (callback) {
                     callback(null);
                 }
