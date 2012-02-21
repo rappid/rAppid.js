@@ -11,3 +11,7 @@
 .hidden {
     display: none;
 }
+
+[class^="icon-"]:first-child {
+    margin-right: 5px;
+}
