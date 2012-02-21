@@ -11,11 +11,8 @@ rAppid.defineClass("js.core.Template", ["js.core.Component"],
             createComponents: function(attributes){
                 // foreach child Descriptor
                 var components = this._getChildrenFromDescriptor(this.$descriptor);
-
-                if(attributes){
-                    for (var c = 0; c < components.length; c++) {
-                        components[c].set(attributes);
-                    }
+                for (var c = 0; c < components.length; c++) {
+                    components[c].set(attributes);
                 }
                 return components
             }
