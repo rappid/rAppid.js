@@ -71,7 +71,10 @@ rAppid.defineClass("js.core.Component",
                 if (!(child instanceof Element)) {
                     throw "only children of type js.core.Component can be added"
                 }
-
+                // THEN INITIALIZE !
+                if (this.$creationPolicy == "auto") {
+                    child._initialize(this.$creationPolicy);
+                }
                 this.addComponent(child);
 
                 child.$parent = this;
@@ -155,12 +158,8 @@ rAppid.defineClass("js.core.Component",
                     } else {
                         this.addChild(childComponents[i]);
                     }
-
-                    // THEN INITIALIZE !
-                    if (this.$creationPolicy == "auto") {
-                        childComponents[i]._initialize(this.$creationPolicy);
-                    }
                 }
+
             },
             _initializeAttributes: function (attributes) {
                 this.callBase();
