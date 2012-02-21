@@ -175,8 +175,26 @@ rAppid.defineClass("js.core.Component",
             },
 
             _initializeDescriptors: function() {
-                var children = this._getChildrenFromDescriptor(this._$descriptor);
-                children = children.concat(this._getChildrenFromDescriptor(this.$descriptor));
+
+                var children = [];
+                var descriptors = [];
+
+                // go inherit tree up and search for descriptors
+                var current = this;
+                while (current) {
+                    if (current._$descriptor) {
+                        descriptors.unshift(current._$descriptor);
+                    }
+                    current = current.base;
+                }
+
+
+                // and add outside descriptor
+                descriptors.unshift(this.$descriptor);
+
+                for (var d = 0; d < descriptors.length; d++) {
+                    children = children.concat(this._getChildrenFromDescriptor(descriptors[d]));
+                }
 
                 this._initializeChildren(children);
 
