@@ -71,10 +71,7 @@ rAppid.defineClass("js.html.DomElement",
 
 
                     // TODO: bind the events
-                var self = this;
-                this.$el.onclick = function (e) {
-                    self.trigger('onclick', e, self);
-                };
+
 
                 this._renderChildren(this.$children);
                 this._renderAttributes(this.$);
@@ -83,6 +80,23 @@ rAppid.defineClass("js.html.DomElement",
                 return this.$el;
             },
             _bindDomEvents: function(el){
+                var self = this;
+                this.$el.addEventListener('click',function (e) {
+                    self.trigger('onclick', e, self);
+                });
+                if(this.$el.tagName == "INPUT"){
+                    if(this.$el.type == "text" || this.$el.type == "password"){
+                        this.$el.addEventListener('change', function (e) {
+                            self.set('value', e.target.value);
+                        });
+                    }else if(this.$el.type == "checkbox"){
+                        this.$el.addEventListener('change', function (e) {
+                            self.set('checked', e.target.checked);
+                        });
+                    }
+
+
+                }
 
             },
             _renderChildren: function (children) {
@@ -144,9 +158,14 @@ rAppid.defineClass("js.html.DomElement",
                 if (method !== false) {
                     method.call(this, attr, prev);
                 } else if (this.className && this.className.indexOf("js.html.") > -1) {
-                    this.$el.setAttribute(key, attr);
+                    if(!_.isUndefined(this.$el[key])){
+                        this.$el[key] = attr;
+                    }else{
+                        this.$el.setAttribute(key,attr);
+                    }
                 }
             },
+
             _renderVisible:function (visible) {
                 if (visible === true) {
                     this.removeClass('hidden');
@@ -170,6 +189,12 @@ rAppid.defineClass("js.html.DomElement",
                 } else {
                     this.set({selected:false});
                 }
+            },
+            _renderWidth: function(width){
+                // TODO: implement
+            },
+            _renderHeight: function(height){
+                // TODO: implement
             },
             _commitChangedAttributes: function (attributes) {
                 if (this.isRendered()) {
@@ -203,10 +228,15 @@ rAppid.defineClass("js.html.DomElement",
                     }
 
                     this.$el.className = setClasses.join(" ");
+
                 }
             },
             removeClass: function (value) {
+                if(this.$el.className.length === 0){
+                    return;
+                }
                 var removeClasses = value.split(rspace);
+
                 var classes = this.$el.className.split(rspace);
 
                 for (var i = 0; i < removeClasses.length; i++) {
@@ -216,8 +246,11 @@ rAppid.defineClass("js.html.DomElement",
                     }
                 }
 
-                this.$el.className = classes.join(" ");
-
+                if(classes.length === 0){
+                    this.$el.removeAttribute('class');
+                }else{
+                    this.$el.className = classes.join(" ");
+                }
             }
         };
 

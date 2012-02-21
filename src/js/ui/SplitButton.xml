@@ -14,14 +14,13 @@
                     this.$toggleButton.set({type:type});
                     this.$button.set({type:type});
                 },
-                _collectChild: function (child) {
-                    if (child instanceof Button) {
-                        if (child.$['class'].indexOf("dropdown-toggle") > -1) {
-                            this.$toggleButton = child;
-                        } else {
-                            this.$button = child;
-                        }
+                _collectButton: function (child) {
+                    if (child.$['class'].indexOf("dropdown-toggle") > -1) {
+                        this.$toggleButton = child;
+                    } else {
+                        this.$button = child;
                     }
+
                 }
             }
         })

@@ -12,11 +12,14 @@ rAppid.defineClass("js.core.Template", ["js.core.Component"],
                 // foreach child Descriptor
                 var components = this._getChildrenFromDescriptor(this.$descriptor);
 
-                if(attributes){
-                    for (var c = 0; c < components.length; c++) {
-                        components[c].set(attributes);
-                    }
+                for (var c = 0; c < components.length; c++) {
+                    components[c].set(attributes);
+                    components[c]._initialize("auto");
+
                 }
+
+
+
                 return components
             }
         });

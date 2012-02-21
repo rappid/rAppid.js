@@ -22,7 +22,7 @@
                         child = children[i];
                         if (child instanceof SelectionView) {
                             this.$selectionView = child;
-                            this.$selectionView.set({needsSelection:true, items: []});
+                            this.$selectionView.set({items: []});
                             this.$selectionView.on('change:selectedViews', this._onTabChange, this);
                         } else if (child instanceof SegmentedView) {
                             this.$segmentedView = child;
@@ -55,7 +55,7 @@
         ]]>
     </js:Script>
     <js:Template name="layout">
-        <ui:SelectionView tagName="ul" class="{tabClassName}">
+        <ui:SelectionView tagName="ul" class="{tabClassName}" needsSelection="true">
             <js:Template name="item">
                 <ui:View tagName="li"><a href="#">{$item.title}</a></ui:View>
             </js:Template>

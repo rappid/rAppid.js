@@ -71,10 +71,7 @@ rAppid.defineClass("js.core.Component",
                 if (!(child instanceof Element)) {
                     throw "only children of type js.core.Component can be added"
                 }
-                // THEN INITIALIZE !
-                if (this.$creationPolicy == "auto") {
-                    child._initialize(this.$creationPolicy);
-                }
+
                 this.addComponent(child);
 
                 child.$parent = this;
@@ -158,6 +155,11 @@ rAppid.defineClass("js.core.Component",
                     } else {
                         this.addChild(childComponents[i]);
                     }
+
+                    // THEN INITIALIZE !
+                    if (this.$creationPolicy == "auto") {
+                        child._initialize(this.$creationPolicy);
+                    }
                 }
 
             },
@@ -191,6 +193,9 @@ rAppid.defineClass("js.core.Component",
                     scope.on('change:' + scopeKey, function (e) {
                         self.set(key, e.$);
                     });
+                    self.on('change:'+key, function(e) {
+                        scope.set(scopeKey,e.$,{silent: false});
+                    });
 
                 };
                 // Resolve bindings and events
@@ -203,6 +208,7 @@ rAppid.defineClass("js.core.Component",
                             this.on(key, this.$rootScope[value], this.$rootScope);
                             delete attributes[key];
                         } else if (this._isBindingDefinition(value)) {
+
                             var attrKey = value.match(this.$bindingRegex);
                             attrKey = attrKey[1];
                             var scope = this.getScopeForKey(attrKey);

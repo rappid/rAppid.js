@@ -14,11 +14,17 @@
                     menuVisible:false
                 },
                 $instances:[],
-                _collectChild:function (child) {
+
+                addChild:function (child) {
                     if (child instanceof Button) {
-                        this.$button = child;
-                        this.$toggleButton = child;
+                        this._collectButton(child);
                     }
+                    this.callBase();
+                },
+                _collectButton: function(child){
+                    this.$button = child;
+                    this.$toggleButton = child;
+
                 },
                 _renderType:function (type) {
                     this.$button.set({type:type});

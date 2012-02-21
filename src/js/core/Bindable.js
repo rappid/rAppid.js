@@ -48,8 +48,8 @@ rAppid.defineClass("js.core.Bindable", ["js.core.EventDispatcher", "underscore"]
                 }
             },
 
-            $bindingRegex: /^\{([a-z_$][a-z0-9$_.]*)\}$/i,
-
+            $bindingRegex: /^\{([a-z_$][a-z0-9$_\-.]*)\}$/i,
+            $twoWayBindingRegex:/^\{{2}([a-z_$][a-z0-9$_.]*)\}{2}$/i,
             defaults: {
             },
 

@@ -4,12 +4,6 @@ rAppid.defineClass("js.ui.View",
             defaults: {
                 tagName: "div"
             },
-            _collectChild:function (child) {
-            },
-            addChild:function (child) {
-                this.callBase();
-                this._collectChild(child);
-            },
             render: function(){
                 // look if the component has a layout defined
                 var layout = this.$templates['layout'];
@@ -21,7 +15,10 @@ rAppid.defineClass("js.ui.View",
                 return this.callBase();
             },
             _initializeLayoutChildren: function(children){
-                this._initializeChildren(children);
+                for(var i = 0; i < children.length; i++){
+                    this.addChild(children[i]);
+                }
+
             },
             _renderChild: function(child){
                 this.callBase();
@@ -35,8 +32,19 @@ rAppid.defineClass("js.ui.View",
                     }
                 }
             },
+            _renderComponentClass:function (cls,oldCls) {
+                if (oldCls) {
+                    this.removeClass(oldCls);
+                }
+                if (cls) {
+                    this.addClass(cls);
+                }
+            },
             _renderClass: function(className){
-                this.addClass(className);
+                if(className){
+                    this.addClass(className);
+                }
+
             },
             _renderTemplateToPlaceHolder:function (templateName, placeholderName, attributes) {
                 this.$renderedPlaceholders = this.$renderedPlaceholders || {};

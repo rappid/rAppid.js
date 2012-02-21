@@ -6,9 +6,9 @@ rAppid.defineClass("js.ui.SelectionView",
                 needsSelection: false,
                 multiSelect: false,
                 selectedViews: [],
+                selectedItems: [],
                 hasSelection:false,
-                items: [],
-                selectedIndex: 0
+                items: []
             },
             ctor: function(){
                 this.$childViews = [];
@@ -17,11 +17,11 @@ rAppid.defineClass("js.ui.SelectionView",
             hasSelection: function(){
                  return this.$.selectedViews.length > 0;
             }.on('selectedViews'),
-            _collectChild: function(child){
-                this.callBase();
-                if(child instanceof DomElement){
+            addChild: function(child){
+                if (child instanceof DomElement) {
                     this.$childViews.push(child);
                 }
+                this.callBase();
             },
             _renderChild: function(child){
                 if(child instanceof DomElement){
@@ -32,6 +32,9 @@ rAppid.defineClass("js.ui.SelectionView",
                     },child);
                 }
                 this.callBase();
+                if(this.$.needsSelection === true && this.hasSelection() === false){
+                    child.set({selected: true});
+                }
             },
             _renderChildren: function(){
                 this.callBase();
@@ -56,6 +59,7 @@ rAppid.defineClass("js.ui.SelectionView",
                 var correctSelection = false;
                 var somethingSelected = false;
                 var selectedChildren = [];
+                var selectedItems = [];
                 for (i = 0; i < this.$childViews.length; i++) {
                     c = this.$children[i];
                     if(checkMultiSelect){
@@ -69,7 +73,11 @@ rAppid.defineClass("js.ui.SelectionView",
                         }
                     }
                     if(c.$.selected === true){
+
                         selectedChildren.push(c);
+                        if(this.$.items.length > 0){
+                            selectedItems.push(this.$.items[i]);
+                        }
                     }
                 }
                 if (this.$.needsSelection === true && somethingSelected === false && child.$.selected === false) {
@@ -78,7 +86,7 @@ rAppid.defineClass("js.ui.SelectionView",
                 }
 
                 if(!correctSelection){
-                    this.set({selectedViews: selectedChildren});
+                    this.set({selectedViews: selectedChildren, selectedItems: selectedItems});
                 }
             }
         });

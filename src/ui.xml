@@ -24,6 +24,7 @@
                     this.set('page', 0);
                     this.set('pages', ['page 1', 'page 2', 'page 3', 'page 4']);
                     this.set('inputValue','nigga');
+                    this.set('isChecked',true);
                     this.on('change:inputValue',function(e){
                         console.log(e);
                     });
@@ -37,6 +38,7 @@
                 start:function () {
 
                     var self = this;
+
                     setInterval(function () {
                         self.set("btnLabel", " what");
                         self.set("btnType", "info");
@@ -50,150 +52,164 @@
     </js:Script>
     <div class="container">
         <div>
-            <!--<h2>Buttons</h2>-->
-            <!--<div class="btn-toolbar">-->
-                <!--<p>-->
-                    <!--<ui:Button disabled="false" label="Button without Icon" type="{btnType}" onclick="onButtonClick"/>-->
-                    <!--<ui:Button iconClass="icon-refresh" label="Button with Icon" onclick="onButtonClick"/>-->
-                    <!--<ui:Button iconClass="icon-plus" label="Button with Icon on the right" onclick="onButtonClick">-->
-                        <!--<js:Template name="layout">-->
-                            <!--{label}-->
-                            <!--<ui:Placeholder name="icon"/>-->
-                        <!--</js:Template>-->
-                    <!--</ui:Button>-->
-                    <!--<ui:Button iconClass="icon-refresh" onclick="onButtonClick"/>-->
-                    <!--<ui:Button label="Toggle Button" onclick="onButtonClick" selectable="true"/>-->
+            <h2>Buttons</h2>
+            <div class="btn-toolbar">
+                <p>
+                    <ui:Button disabled="false" label="Button without Icon" type="{btnType}" onclick="onButtonClick"/>
+                    <ui:Button iconClass="icon-refresh" label="Button with Icon" onclick="onButtonClick"/>
+                    <ui:Button iconClass="icon-plus" label="Button with Icon on the right" onclick="onButtonClick">
+                        <js:Template name="layout">
+                            {label}
+                            <ui:Placeholder name="icon"/>
+                        </js:Template>
+                    </ui:Button>
+                    <ui:Button iconClass="icon-refresh" onclick="onButtonClick"/>
+                    <ui:Button label="Toggle Button" onclick="onButtonClick" selectable="true"/>
 
-                <!--</p>-->
-            <!--</div>-->
+                </p>
+            </div>
 
-            <!--<h2>Menu Buttons</h2>-->
-            <!--<div class="btn-toolbar">-->
-                <!--<ui:MenuButton type="success" label="MenuButton w/o Icon"/>-->
-                <!--<ui:MenuButton type="success" iconClass="icon-plus icon-white" label="MenuButton with Icon">-->
-                    <!--<js:Content ref="menu">-->
-                        <!--<div class="">-->
-                            <!--My Menu!-->
-                        <!--</div>-->
-                    <!--</js:Content>-->
-                <!--</ui:MenuButton>-->
-                <!--<ui:MenuButton type="{btnType}" iconClass="icon-plus icon-white" label="MenuButton with Icon">-->
-                    <!--<js:Content ref="menu">-->
-                        <!--<ul>-->
-                            <!--<li>-->
-                                <!--<ui:Link label="Menu Item 1"/>-->
-                            <!--</li>-->
-                            <!--<li>-->
-                                <!--<ui:Link label="Menu Item 2"/>-->
-                            <!--</li>-->
-                        <!--</ul>-->
-                        <!--<div class="">What up?</div>-->
-                    <!--</js:Content>-->
-                <!--</ui:MenuButton>-->
-                <!--<ui:SplitButton type="{btnType}" iconClass="icon-plus icon-white" label="MenuButton with Icon">-->
-                    <!--<js:Content ref="menu">-->
-                        <!--<ul>-->
-                            <!--<li>-->
-                                <!--<ui:Link label="Menu Item 1"/>-->
-                            <!--</li>-->
-                            <!--<li>-->
-                                <!--<ui:Link label="Menu Item 2"/>-->
-                            <!--</li>-->
-                        <!--</ul>-->
-                        <!--<div class="">What up?</div>-->
-                    <!--</js:Content>-->
-                <!--</ui:SplitButton>-->
-            <!--</div>-->
-            <!--<h2>Selection Views</h2>-->
-            <!--<div class="row">-->
-                <!--<div class="span3">-->
-                    <!--<h4>Single Select</h4>-->
-                    <!--<ui:SelectionView tagName="ul" class="nav nav-pills nav-stacked" multiSelect="false"-->
-                                      <!--needsSelection="true">-->
-                        <!--<li>-->
-                            <!--<ui:Link label="Item 1" href="#item1"/>-->
-                        <!--</li>-->
-                        <!--<li>-->
-                            <!--<ui:Link label="Item 2" href="#item2"/>-->
-                        <!--</li>-->
-                        <!--<li>-->
-                            <!--<ui:Link label="Item 3" href="#item3"/>-->
-                        <!--</li>-->
-                        <!--<li>-->
-                            <!--<ui:Link label="Item 4" href="#item4"/>-->
-                        <!--</li>-->
-                    <!--</ui:SelectionView>-->
-                <!--</div>-->
-                <!--<div class="span3">-->
-                    <!--<h4>Multi Select</h4>-->
-                    <!--<ui:SelectionView tagName="ul" class="nav nav-pills nav-stacked" multiSelect="true">-->
-                        <!--<li>-->
-                            <!--<ui:Link label="Item 1" href="#item1"/>-->
-                        <!--</li>-->
-                        <!--<li>-->
-                            <!--<ui:Link label="Item 2" href="#item2"/>-->
-                        <!--</li>-->
-                        <!--<li>-->
-                            <!--<ui:Link label="Item 3" href="#item3"/>-->
-                        <!--</li>-->
-                        <!--<li>-->
-                            <!--<ui:Link label="Item 4" href="#item4"/>-->
-                        <!--</li>-->
-                    <!--</ui:SelectionView>-->
-                <!--</div>-->
-                <!--<div class="span3">-->
-                    <!--<h4>Toggle Buttons Select</h4>-->
-                    <!--<ui:SelectionView tagName="div" class="btn-group" multiSelect="false" needsSelection="{hasSelection}">-->
-                        <!--<ui:Button label="1"/>-->
-                        <!--<ui:Button label="2"/>-->
-                        <!--<ui:Button label="3"/>-->
-                        <!--<ui:Button label="4"/>-->
-                        <!--<ui:Button label="5"/>-->
-                    <!--</ui:SelectionView>-->
-                <!--</div>-->
-            <!--</div>-->
-            <!--<h2>Segmented Views</h2>-->
-            <!--<div class="row">-->
-                <!--<div class="span5">-->
-                    <!--<ui:SegmentedView visibleIndex="{page}">-->
-                        <!--<ui:View>View 1</ui:View>-->
-                        <!--<ui:View>View 2</ui:View>-->
-                        <!--<ui:View>View 3</ui:View>-->
-                        <!--<ui:View>View 4</ui:View>-->
-                    <!--</ui:SegmentedView>-->
-                <!--</div>-->
-                <!--<div class="span5">-->
-                    <!--<ui:SegmentedView items="{pages}" visibleIndex="{page}">-->
-                        <!--<js:Template name="item">-->
-                            <!--<ui:View>{$item}</ui:View>-->
-                        <!--</js:Template>-->
-                    <!--</ui:SegmentedView>-->
-                <!--</div>-->
-            <!--</div>-->
-            <!--<h2>Tab Views</h2>-->
-            <!--<div class="row">-->
-                <!--<div class="span5">-->
-                    <!--<ui:TabView>-->
-                        <!--<ui:View title="Tab 1">View 1</ui:View>-->
-                        <!--<ui:View title="Tab 2">View 2</ui:View>-->
-                        <!--<ui:View title="Tab 3">View 3</ui:View>-->
-                        <!--<ui:View title="Tab 4">View 4</ui:View>-->
-                    <!--</ui:TabView>-->
+            <h2>Menu Buttons</h2>
+            <div class="btn-toolbar">
+                <ui:MenuButton type="success" label="MenuButton w/o Icon"/>
+                <ui:MenuButton type="success" iconClass="icon-plus icon-white" label="MenuButton with Icon">
+                    <js:Content ref="menu">
+                        <div class="">
+                            My Menu!
+                        </div>
+                    </js:Content>
+                </ui:MenuButton>
+                <ui:MenuButton type="{btnType}" iconClass="icon-plus icon-white" label="MenuButton with Icon">
+                    <js:Content ref="menu">
+                        <ul>
+                            <li>
+                                <ui:Link label="Menu Item 1"/>
+                            </li>
+                            <li>
+                                <ui:Link label="Menu Item 2"/>
+                            </li>
+                        </ul>
+                        <div class="">What up?</div>
+                    </js:Content>
+                </ui:MenuButton>
+                <ui:SplitButton type="{btnType}" iconClass="icon-plus icon-white" label="MenuButton with Icon">
+                    <js:Content ref="menu">
+                        <ul>
+                            <li>
+                                <ui:Link label="Menu Item 1"/>
+                            </li>
+                            <li>
+                                <ui:Link label="Menu Item 2"/>
+                            </li>
+                        </ul>
+                        <div class="">What up?</div>
+                    </js:Content>
+                </ui:SplitButton>
+            </div>
+            <h2>Selection Views</h2>
+            <div class="row">
+                <div class="span3">
+                    <h4>Single Select</h4>
+                    <ui:SelectionView tagName="ul" class="nav nav-pills nav-stacked" multiSelect="false"
+                                      needsSelection="true">
+                        <li>
+                            <ui:Link label="Item 1" href="#item1"/>
+                        </li>
+                        <li>
+                            <ui:Link label="Item 2" href="#item2"/>
+                        </li>
+                        <li>
+                            <ui:Link label="Item 3" href="#item3"/>
+                        </li>
+                        <li>
+                            <ui:Link label="Item 4" href="#item4"/>
+                        </li>
+                    </ui:SelectionView>
+                </div>
+                <div class="span3">
+                    <h4>Multi Select</h4>
+                    <ui:SelectionView tagName="ul" class="nav nav-pills nav-stacked" multiSelect="true">
+                        <li>
+                            <ui:Link label="Item 1" href="#item1"/>
+                        </li>
+                        <li>
+                            <ui:Link label="Item 2" href="#item2"/>
+                        </li>
+                        <li>
+                            <ui:Link label="Item 3" href="#item3"/>
+                        </li>
+                        <li>
+                            <ui:Link label="Item 4" href="#item4"/>
+                        </li>
+                    </ui:SelectionView>
+                </div>
+                <div class="span3">
+                    <h4>Toggle Buttons Select</h4>
+                    <ui:SelectionView tagName="div" class="btn-group" multiSelect="false" needsSelection="false">
+                        <ui:Button label="1"/>
+                        <ui:Button label="2"/>
+                        <ui:Button label="3"/>
+                        <ui:Button label="4"/>
+                        <ui:Button label="5"/>
+                    </ui:SelectionView>
+                </div>
+            </div>
+            <h2>Segmented Views</h2>
+            <div class="row">
+                <div class="span5">
+                    <ui:SegmentedView visibleIndex="{page}">
+                        <ui:View>View 1</ui:View>
+                        <ui:View>View 2</ui:View>
+                        <ui:View>View 3</ui:View>
+                        <ui:View>View 4</ui:View>
+                    </ui:SegmentedView>
+                </div>
+                <div class="span5">
+                    <ui:SegmentedView items="{pages}" visibleIndex="{page}">
+                        <js:Template name="item">
+                            <ui:View>{$item}</ui:View>
+                        </js:Template>
+                    </ui:SegmentedView>
+                </div>
+            </div>
+            <h2>Tab Views</h2>
+            <div class="row">
+                <div class="span5">
+                    <ui:TabView>
+                        <ui:View title="Tab 1">View 1</ui:View>
+                        <ui:View title="Tab 2">View 2</ui:View>
+                        <ui:View title="Tab 3">View 3</ui:View>
+                        <ui:View title="Tab 4">View 4</ui:View>
+                    </ui:TabView>
 
-                <!--</div>-->
-                <!--<div class="span5">-->
-                    <!--<ui:TabView items="{pages}" tabClassName="nav nav-pills" selectedIndex="2">-->
-                        <!--<js:Template name="item">-->
-                            <!--<ui:View title="{$item}">Whats Up on {$item} ??</ui:View>-->
-                        <!--</js:Template>-->
-                    <!--</ui:TabView>-->
-                <!--</div>-->
-            <!--</div>-->
+                </div>
+                <div class="span5">
+                    <ui:TabView items="{pages}" tabClassName="nav nav-pills" selectedIndex="2">
+                        <js:Template name="item">
+                            <ui:View title="{$item}">Whats Up on {$item} ??</ui:View>
+                        </js:Template>
+                    </ui:TabView>
+                </div>
+            </div>
             <h2>Form Elements</h2>
             <div class="row">
                 <div class="span5">
-                    <label for="textInput">Label</label>
-                    <input id="textInput" type="text" value="{{inputValue}}"/>
+                    <label for="textInput">Text Input</label>
+                    <input id="textInput" type="text" value="{inputValue}"/>
+                    <label for="passwordInput">password</label>
+                    <input id="passwordInput" type="password" value="{inputValue}"/>
+                    <!--<ui:SelectionView selectedIndex="1" multiSelect="true">-->
+                        <!--<label class="checkbox" data-selected="{selected}">-->
+                            <!--<input type="checkbox" name="interests" value="1" checked="{data-selected}"/> Item 1-->
+                        <!--</label>-->
+                        <!--<label class="checkbox" data-selected="{selected}">-->
+                            <!--<input type="checkbox" name="interests" value="2" checked="{data-selected}"/> Item 2-->
+                        <!--</label>-->
+                    <!--</ui:SelectionView>-->
+                </div>
+                <div class="span5">
+                    Hello {inputValue}!
+                    {isChecked}
                 </div>
             </div>
         </div>
