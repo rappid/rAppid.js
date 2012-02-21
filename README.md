@@ -12,6 +12,6 @@ rAppid.js is currently in an early state, defining the component life cycle and 
 * Combination of XAML-Components and HTML5
 * Code behind
 * Model-View Binding
-* Two-ways Binding
+* Two-Way Binding
 * Dependency Injection
 * Inline JavaScript usage in XAML
