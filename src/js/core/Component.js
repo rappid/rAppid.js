@@ -190,7 +190,7 @@ rAppid.defineClass("js.core.Component",
 
 
                 // and add outside descriptor
-                descriptors.unshift(this.$descriptor);
+                descriptors.push(this.$descriptor);
 
                 for (var d = 0; d < descriptors.length; d++) {
                     children = children.concat(this._getChildrenFromDescriptor(descriptors[d]));
