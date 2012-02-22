@@ -9,7 +9,7 @@
     </js:Imports>
 
     <js:Router cid="appRouter">
-
+        <conf:Route name="articles" regex="/^articles.*/" onExecute="doSomething(event)" />
     </js:Router>
 
     <h1>rAppid.js demo application</h1>

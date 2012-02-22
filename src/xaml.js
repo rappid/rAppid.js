@@ -185,6 +185,8 @@
 
                             dependencies = dependencies.concat(imports);
 
+                            console.log(["dependencies", name, dependencies]);
+
                             // first item should be the dependency of the document element
                             req(dependencies, function() {
                                 // dependencies are loaded
@@ -215,14 +217,10 @@
 
                                 xamlFactory.prototype._$descriptor = xhr.responseXML.documentElement;
 
-                                if (config.rAppid) {
-
-
-                                    config.rAppid.defineXamlClass(name, dependencies, xamlFactory);
-
+                                if (config.applicationDomain) {
+                                    config.applicationDomain.defineXamlClass(name, dependencies, xamlFactory);
                                     onLoad(xamlFactory);
                                 }
-                                
 
                             });
 
