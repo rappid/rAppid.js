@@ -1,14 +1,14 @@
 rAppid.defineClass("js.core.EventDispatcher",
-    [],
+    ["js.core.Base"],
     /**
      * Base class for trigger and listen to events
      * @export js/core/EventDispatcher
      */
-    function () {
+    function (Base) {
 
         var undefinedValue;
 
-        var EventDispatcher = js.core.Base.inherit({
+        var EventDispatcher = Base.inherit({
             ctor: function() {
                 this.callBase();
                 this._eventHandlers = {};
@@ -82,7 +82,7 @@ rAppid.defineClass("js.core.EventDispatcher",
             }
         });
 
-        EventDispatcher.Event = js.core.Base.inherit({
+        EventDispatcher.Event = Base.inherit({
             ctor: function(attributes){
                 this.$ = attributes;
 
@@ -121,7 +121,7 @@ rAppid.defineClass("js.core.EventDispatcher",
             }
         });
 
-        EventDispatcher.EventHandler = js.core.Base.inherit(({
+        EventDispatcher.EventHandler = Base.inherit(({
             ctor: function(callback, scope) {
                 this.$callback = callback;
                 this.scope = scope;

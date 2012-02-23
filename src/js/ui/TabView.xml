@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <ui:ItemsView xmlns="http://www.w3.org/1999/xhtml" xmlns:js="js.core" xmlns:ui="js.ui">
     <js:Imports>
-        js.ui.View
-        js.ui.SelectionView
-        js.ui.SegmentedView
+        js.ui.View;
+        js.ui.SelectionView;
+        js.ui.SegmentedView;
     </js:Imports>
     <js:Script>
         <![CDATA[

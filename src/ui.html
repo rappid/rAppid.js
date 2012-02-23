@@ -17,6 +17,10 @@
         return _;
     });
 
+    define("rAppid", function () {
+        return rAppid;
+    });
+
     rAppid.bootStrap("ui.xml", ["js.ui.Link", "js.ui.MenuButton", "js.ui.SplitButton" , "js.ui.TabView"],
             function (err, systemManager, application) {
                 if (!err) {
