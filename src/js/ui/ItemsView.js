@@ -5,6 +5,10 @@ rAppid.defineClass("js.ui.ItemsView",
                 tagName: "div",
                 items: []
             },
+            ctor: function(){
+                this.$renderedItems = [];
+                this.callBase();
+            },
             addItem: function(item){
                 this.$.items.push(item);
                 if(this.isRendered()){
@@ -19,7 +23,23 @@ rAppid.defineClass("js.ui.ItemsView",
                 }
             },
             _renderItem: function(item){
-                this.addChild(this.$templates['item'].createComponents({$item:item})[0]);
+                var comp = this.$templates['item'].createComponents({$item:item})[0];
+                // add to rendered item map
+                this.$renderedItems.push({
+                    item: item,
+                    component: comp
+                });
+                this.addChild(comp);
+            },
+            getComponentForItem: function(item){
+                var ri;
+                for(var i = 0 ; i < this.$renderedItems.length; i++){
+                    ri = this.$renderedItems[i];
+                    if(ri.item === item){
+                        return ri.component;
+                    }
+                }
+                return null;
             }
         });
     }
