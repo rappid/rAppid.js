@@ -1,23 +1,23 @@
 rAppid.defineClass("js.core.TextElement",
-    ["js.core.Element"], function(Element) {
+    ["js.core.Element", "js.core.Binding"], function(Element, Binding) {
         function matchPlaceholder(text) {
             return text.match(/\{([a-zA-Z$._]+)\}/);
         }
 
         return Element.inherit({
             _initializeBindings: function () {
+                this.$bindings = [];
                 // find bindings and register for onchange event
                 var matches = this.$descriptor.textContent.match(/\{([a-zA-Z$._]+)\}/g);
-                var key, scope;
+                var key, scope, tKey;
                 while (matches && matches.length > 0) {
                     key = matches.shift();
-                    key = key.substr(1,key.length-2);
+                    key = key.substr(1, key.length - 2);
                     scope = this.getScopeForKey(key);
                     if (scope) {
-                        var self = this;
-                        scope.on('change:' + key, function (e) {
-                            self._commitChangedAttributes();
-                        });
+                        tKey = key.replace(/\./g,"_");
+                        this.$bindings.push(new Binding({scope: scope, path: key, target: this, targetKey: tKey}));
+                        this.$[tKey] = scope.get(key);
                     }
                 }
 
@@ -40,7 +40,7 @@ rAppid.defineClass("js.core.TextElement",
                 var key, val;
                 while (matches && matches.length > 0) {
                     key = matches[1];
-                    val = this.get(key);
+                    val = this.get(key.replace(/\./g, "_"));
                     textContent = textContent.split("{" + key + "}").join(val);
                     matches = matchPlaceholder(textContent);
                 }

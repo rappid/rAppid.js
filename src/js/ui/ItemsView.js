@@ -5,10 +5,6 @@ rAppid.defineClass("js.ui.ItemsView",
                 tagName: "div",
                 items: []
             },
-            ctor: function(){
-                this.$renderedItems = [];
-                this.callBase();
-            },
             addItem: function(item){
                 this.$.items.push(item);
                 if(this.isRendered()){
@@ -17,6 +13,7 @@ rAppid.defineClass("js.ui.ItemsView",
 
             },
             _renderItems: function(items){
+                this.$renderedItems = [];
                 var item;
                 for (var i = 0; i < items.length; i++) {
                     this._renderItem(items[i]);

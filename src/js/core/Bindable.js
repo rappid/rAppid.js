@@ -48,8 +48,6 @@ rAppid.defineClass("js.core.Bindable", ["js.core.EventDispatcher", "underscore"]
                 }
             },
 
-            $bindingRegex: /^\{([a-z_$][a-z0-9$_\-.]*)\}$/i,
-            $twoWayBindingRegex:/^\{{2}([a-z_$][a-z0-9$_.]*)\}{2}$/i,
             defaults: {
             },
 
@@ -84,10 +82,6 @@ rAppid.defineClass("js.core.Bindable", ["js.core.EventDispatcher", "underscore"]
                 return this._eventAttributes[eventName];
             },
 
-            _isBindingDefinition: function (value) {
-                return this.$bindingRegex.test(value);
-            },
-
             /**
              *
              * @param key
@@ -98,6 +92,17 @@ rAppid.defineClass("js.core.Bindable", ["js.core.EventDispatcher", "underscore"]
                 var attributes = {};
 
                 if(_.isString(key)){
+                    // check for path
+                    var path = key.split(".");
+                    if (path.length > 1) {
+                        var scope = this.get(path.shift());
+                        if (scope && scope.set) {
+                            scope.set(path.join("."), value, options);
+                            return this;
+                        }
+
+                    }
+
                     attributes[key] = value;
                 }else{
                     options = value;
@@ -148,7 +153,7 @@ rAppid.defineClass("js.core.Bindable", ["js.core.EventDispatcher", "underscore"]
 
                 }
 
-                return this.$;
+                return this;
             },
             get: function(key){
                 var path = key.split(".");
@@ -161,7 +166,7 @@ rAppid.defineClass("js.core.Bindable", ["js.core.EventDispatcher", "underscore"]
                     } else if (prop[key]) {
                         prop = prop[key];
                     } else {
-                        throw "Couldn't find attribute for " + key;
+                        return null;
                     }
                 }
                 return prop;
@@ -174,7 +179,7 @@ rAppid.defineClass("js.core.Bindable", ["js.core.EventDispatcher", "underscore"]
                 return this.set(key, null, options);
             },
             clear: function(){
-                this.set(this.$,{unset: true});
+                return this.set(this.$,{unset: true});
             }
         });
 

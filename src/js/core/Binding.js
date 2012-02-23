@@ -1,105 +1,110 @@
-
-var requirejs = (typeof requirejs === "undefined" ? require("requirejs") : requirejs);
-
-requirejs(["rAppid"], function(rAppid) {
-    rAppid.defineClass("js.core.Binding", ["js.core.Component"], function (Component) {
-        return Component.inherit({
-            ctor: function (attributes) {
-                this.$callbacks = [];
-                this.callBase();
-                this._initializeAttributes(attributes);
-            },
-            defaults: {
-                event: 'change',
-                key: null
-            },
-            _initializeChildren: function (childComponents) {
-                // this.base._initializeChildren.callBase(this,childComponents);
-            },
-            _initializeAttributes: function (attributes) {
-
-                if (attributes.transform) {
-                    this.transform = attributes.transform;
-                }
-
-                if (attributes.transformBack) {
-                    this.transformBack = attributes.transformBack;
-                }
-
-                if (!attributes.model) {
-                    throw "No model defined for binding";
-                }
-            },
-            // default transform method
-            transform: function (val, model) {
+rAppid.defineClass("js.core.Binding", ["js.core.Bindable"], function(Bindable) {
+    var Binding = Bindable.inherit({
+        defaults: {
+            event: 'change',
+            path: null,
+            twoWay: false,
+            transform: function(val){
                 return val;
             },
-            // default transform back for 2way binding
-            transformBack: function (val, model) {
+            transformBack: function(val){
                 return val;
-            },
-            // adds a callback to the model event
-            add: function (fnc, target) {
-                var cb = {
-                    fnc: this.createCallbackFnc(fnc, target),
-                    target: target
-                };
-                this.$.model.on(this.getEventName(), cb.fnc);
-
-                this.$callbacks.push(cb);
-            },
-            createCallbackFnc: function (fnc, target) {
-                var self = this;
-                return function (model, value) {
-                    fnc.call(target, self.transform(value, model));
-                }
-            },
-            getEventName: function () {
-                if (this.$.key != null) {
-                    return this.$.event + ":" + this.$.key;
-                } else {
-                    return this.$.event;
-                }
-            },
-            // removes the callback
-            remove: function (fnc) {
-                var self = this;
-                _.each(this.$callbacks, function (cb, i) {
-                    if (cb.fnc == fnc) {
-                        self.$callbacks.slice(i, 1);
-                    }
-                });
-                this.$.model.unbind(this.getEventName(), fnc);
-            },
-            removeByTarget: function (target) {
-                var self = this;
-                var callback;
-                _.each(this.$callbacks, function (cb, i) {
-                    if (cb.target == target) {
-                        callback = cb;
-                        self.$callbacks.slice(i, 1);
-                    }
-                });
-                this.$.model.unbind(this.getEventName(), callback.fnc);
-            },
-            getValue: function () {
-                if (this.$.key != null) {
-                    if (this.$.event == "change") {
-                        var val = this.$.model.$[this.$.key];
-                        return this.transform(val, this.$.model);
-                    }
-                }
-                return this.transform(null, this.$.model);
-            },
-            setValue: function (v, silent) {
-                if (_.isUndefined(silent)) {
-                    silent = true;
-                }
-                var s = {};
-                s[this.$.key] = this.transformBack(v, this);
-                this.$.model.set(s, {silent: silent});
             }
-        });
-    });
-});
+        },
+        ctor: function(){
+            this.callBase();
 
+            this.initialize();
+        },
+        initialize: function(){
+            this._checkAttributes();
+            this.$subBinding = null;
+
+            if(!this.$.rootScope){
+                this.$.rootScope = this;
+            }
+
+            var keys = this.$.path.split(".");
+            // split up first key
+            this.$.key = keys.shift();
+            this.$.event = "change:"+this.$.key;
+            var scope = this.$.scope;
+
+            // on change of this key
+            scope.on(this.$.event,this._callback,this);
+
+            if(this.$.twoWay === true){
+                this.$.targetEvent = 'change:' + this.$.targetKey;
+                this.$.target.on(this.$.targetEvent,this._revCallback,this);
+            }
+
+
+            this._createSubBinding();
+        },
+        _checkAttributes: function(){
+            // check infrastructur
+            if (!this.$.path) {
+                throw "No path defined!";
+            }
+
+            if (!this.$.scope) {
+                throw "No scope defined!"
+            }
+
+            if (this.$.twoWay) {
+                if (!this.$.target) {
+                    throw "TwoWay binding, but no target defined!";
+                }
+                if(!this.$.target instanceof Bindable){
+                    throw "Target is not a Bindable!";
+                }
+
+                if (!this.$.targetKey) {
+                    throw "TwoWay binding, but no target key defined!";
+                }
+
+            }
+        },
+        _createSubBinding: function(){
+            var keys = this.$.path.split(".");
+            var k = keys.shift();
+            // if keys are left and has value && is bindable
+            if (keys.length > 0) {
+                // get value for first child
+                var nScope = this.$.scope.$[k];
+                if (nScope && nScope instanceof Bindable) {
+                    // init new binding, which triggers this binding
+                    this.$subBinding = new Binding({scope:nScope, path:keys.join("."), target:this.$.target, targetKey:this.$.targetKey, rootScope: this.$.rootScope});
+                }
+            }
+        },
+        _revCallback: function(e){
+            this.$.scope.set(this.$.path,this.$.transformBack(e.$,this.$.target));
+        },
+        _callback : function () {
+            // remove subBindings!
+            if(this.$subBinding){
+                this.$subBinding.destroy();
+            }
+
+            // try to create subBinding
+            this._createSubBinding();
+
+            // get value
+            var val = this.$.scope.get(this.$.path);
+
+            // trigger
+            this.$.target.set(this.$.targetKey, this.$.transform(val,this.$.rootScope));
+        },
+        destroy: function(){
+            this.$.scope.unbind(this.$.event,this._callback);
+            if(this.$.twoWay === true){
+                this.$.target.unbind(this.$.targetEvent,this._revCallback);
+            }
+            if(this.$subBinding){
+               this.$subBinding.destroy();
+            }
+        }
+    });
+    return Binding;
+});

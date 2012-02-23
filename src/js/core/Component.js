@@ -1,6 +1,6 @@
 rAppid.defineClass("js.core.Component",
-    ["js.core.Element", "js.core.TextElement", "underscore"],
-    function (Element, TextElement, _) {
+    ["js.core.Element", "js.core.TextElement", "underscore", "js.core.Binding"],
+    function (Element, TextElement, _, Binding) {
 
 
 
@@ -200,9 +200,16 @@ rAppid.defineClass("js.core.Component",
 
                 this._childrenInitialized();
             },
-
+            $bindingRegex:/^\{{1,2}([a-z_$][a-z0-9$_\-.]*)\}{1,2}$/i,
+            $twoWayBindingRegex:/^\{{2}([a-z_$][a-z0-9$\-_.]*)\}{2}$/i,
+            _isBindingDefinition:function (value) {
+                return this.$bindingRegex.test(value);
+            },
+            _isTwoWayBindingDefinition:function (value) {
+                return this.$twoWayBindingRegex.test(value);
+            },
             _initializeBindings: function() {
-
+                this.$bindings = [];
                 var attributes = this.$;
 
                 var self = this;
@@ -212,6 +219,7 @@ rAppid.defineClass("js.core.Component",
                     });
 
                 };
+                var binding, twoWay;
                 // Resolve bindings and events
                 for (var key in attributes) {
 
@@ -225,12 +233,20 @@ rAppid.defineClass("js.core.Component",
                             var attrKey = value.match(this.$bindingRegex);
                             attrKey = attrKey[1];
                             var scope = this.getScopeForKey(attrKey);
-                            if (scope) {
-                                bind(scope,attrKey,key);
+                            if (scope && (scope != this || attrKey != key)) {
+                                twoWay = this._isTwoWayBindingDefinition(value)
+                                if(twoWay){
+                                   console.log([attrKey,scope]);
+                                }
+
+                                // TODO: two way binding
+                                binding = new Binding({scope: scope, path: attrKey, target: this, targetKey: key, twoWay: twoWay});
+                                this.$bindings.push(binding);
+
+                                // bind(scope,attrKey,key);
 
                                 attributes[key] = scope.get(attrKey);
 
-                                // TODO: two way binding
                             } else {
                                 //  throw "Binding not found";
                             }

@@ -1,0 +1,34 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title></title>
+    <link href="../libs/bootstrap/css/bootstrap.css" rel="stylesheet">
+    <link href="../css/bootstrap-fixes.css" rel="stylesheet">
+    <script type="text/javascript" src="../libs/require.js"></script>
+    <script type="text/javascript" src="../libs/inherit.js"></script>
+    <script type="text/javascript" src="../libs/underscore-min.js"></script>
+    <script type="text/javascript" src="../libs/jquery-1.7.1.js"></script>
+    <script type="text/javascript" src="rAppid.js"></script>
+</head>
+<body>
+<script type="text/javascript">
+
+    define("underscore", function () {
+        return _;
+    });
+
+    rAppid.bootStrap("binding.xml", [],
+            function (err, systemManager, application) {
+                if (!err) {
+
+
+
+                    application.start();
+                } else {
+                    console.warn(err);
+                }
+            });
+
+</script>
+</body>
+</html>

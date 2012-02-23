@@ -74,7 +74,7 @@ rAppid.defineClass("js.core.EventDispatcher",
                 } else if (this._eventHandlers[eventType]) {
                     var list = this._eventHandlers[eventType];
                     for (var i = list.length - 1; i >= 0; i--) {
-                        if (list[i] == callback) {
+                        if (list[i].$callback == callback) {
                             list.splice(i, 1);  // delete callback
                         }
                     }

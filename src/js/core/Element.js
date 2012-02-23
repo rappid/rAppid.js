@@ -121,7 +121,8 @@ rAppid.defineClass("js.core.Element",
             initialize: function () {
 
             },
-            get: function (key) {
+
+            getScoped: function (key) {
                 var scope = this.getScopeForKey(key);
                 if (this == scope) {
                     return this.callBase();

@@ -185,7 +185,6 @@
 
                             dependencies = dependencies.concat(imports);
 
-                            console.log(["dependencies", name, dependencies]);
 
                             // first item should be the dependency of the document element
                             req(dependencies, function() {

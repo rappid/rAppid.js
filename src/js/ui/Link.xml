@@ -18,14 +18,10 @@
                 _renderHref:function (href) {
                     if (this.$tagName == "a") {
                         this.$el.setAttribute("href", href || "#");
-                    }
-                },
-                _renderType:function (type, oldType) {
-                    if(oldType){
-                        this.removeClass("btn-" + oldType);
-                    }
-                    if (type) {
-                        this.addClass("btn-" + type);
+                        if(!href){
+                            this.$el.setAttribute('onclick',"return false;");
+                        }
+
                     }
                 }
             }
