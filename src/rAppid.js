@@ -57,19 +57,9 @@ var rAppid;
         },
 
         bootStrap: function (mainClass, xamlClasses, callback, namespaceMap, rewriteMap) {
-            mainClass = mainClass || "app.xml";
+
             xamlClasses = xamlClasses || [];
             namespaceMap = namespaceMap || defaultNamespaceMap;
-
-            var parts = xamlApplication.exec(mainClass);
-            if (parts) {
-                // mainClass is xaml
-                mainClass = "xaml!" + parts[2];
-            } else {
-                // mainClass is javascript factory
-                mainClass = mainClass.replace(/\./g, "/");
-            }
-
 
             var applicationDomain = currentApplicationDomain = new ApplicationDomain(namespaceMap, rewriteMap);
 
@@ -80,33 +70,45 @@ var rAppid;
                 applicationDomain: applicationDomain
             });
 
-            require(["js/core/Imports"], function() {
-                require(["js/core/Application", mainClass], function (Application, mainClassFactory) {
-                    // create instance
-                    var application = new mainClassFactory(null, false, applicationDomain, null, null);
+            if (mainClass) {
+                var parts = xamlApplication.exec(mainClass);
+                if (parts) {
+                    // mainClass is xaml
+                    mainClass = "xaml!" + parts[2];
+                } else {
+                    // mainClass is javascript factory
+                    mainClass = mainClass.replace(/\./g, "/");
+                }
 
-                    if (application instanceof Application) {
+                require(["js/core/Imports"], function () {
+                    require(["js/core/Application", mainClass], function (Application, mainClassFactory) {
+                        // create instance
+                        var application = new mainClassFactory(null, false, applicationDomain, null, null);
 
-                        var systemManager = new SystemManager(applicationDomain, application);
-                        rAppid.systemManager = systemManager;
+                        if (application instanceof Application) {
 
-                        application._initialize("auto");
+                            var systemManager = new SystemManager(applicationDomain, application);
+                            rAppid.systemManager = systemManager;
 
-                        // return system manager
-                        if (callback) {
-                            callback(null, systemManager, application);
-                        }
+                            application._initialize("auto");
 
-                    } else {
-                        var errMessage = "mainClass isn't an instance of js.core.Application";
-                        if (callback) {
-                            callback(errMessage);
+                            // return system manager
+                            if (callback) {
+                                callback(null, systemManager, application);
+                            }
+
                         } else {
-                            throw(errMessage);
+                            var errMessage = "mainClass isn't an instance of js.core.Application";
+                            if (callback) {
+                                callback(errMessage);
+                            } else {
+                                throw(errMessage);
+                            }
                         }
-                    }
+                    });
                 });
-            });
+            }
+
         }
     };
 

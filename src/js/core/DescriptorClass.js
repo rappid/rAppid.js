@@ -1,1 +1,0 @@
-// items that fill be constructed by a XML descriptor

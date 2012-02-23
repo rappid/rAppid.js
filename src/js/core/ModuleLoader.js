@@ -1,158 +1,162 @@
-rAppid.defineClass("js.core.ModuleLoader", ["js.core.UIComponent", "js.ui.ContentPlaceHolder",
-    "underscore", "require", "js.core.Module"],
-    function(UIComponent, ContentPlaceHolder, _, require, Module) {
-    var ModuleLoader = UIComponent.inherit({
+var requirejs = (typeof requirejs === "undefined" ? require("requirejs") : requirejs);
 
-        ctor: function(attributes) {
-            this.callBase();
+requirejs(["rAppid"], function (rAppid) {
+    rAppid.defineClass("js.core.ModuleLoader", ["js.core.UIComponent", "js.ui.ContentPlaceHolder",
+        "underscore", "require", "js.core.Module"],
+        function (UIComponent, ContentPlaceHolder, _, require, Module) {
+            var ModuleLoader = UIComponent.inherit({
 
-            this.$modules = {};
-        },
+                ctor: function (attributes) {
+                    this.callBase();
 
-        addChild: function(child) {
-            this.callBase();
+                    this.$modules = {};
+                },
 
-            if (child && child.className == "js.conf.Module") {
-                this.addModule(child.$);
-            }
-        },
+                addChild: function (child) {
+                    this.callBase();
 
-        addModule: function(module) {
-            _.defaults(module, {
-                name: null,
-                moduleClass: null,
-                route: null,
-                cacheInstance: true
-            });
+                    if (child && child.className == "js.conf.Module") {
+                        this.addModule(child.$);
+                    }
+                },
 
-            if (!module.name && !module.route) {
-                throw "module cannot be added: route or at least name is required";
-            }
+                addModule: function (module) {
+                    _.defaults(module, {
+                        name: null,
+                        moduleClass: null,
+                        route: null,
+                        cacheInstance: true
+                    });
 
-            if (!module.moduleClass) {
-                throw "no moduleClass defined for module";
-            }
-
-            if (module.name) {
-                if (this.modules.hasOwnProperty(module.name)) {
-                    throw "module with name '" + module.name + "' already registered"
-                }
-
-                this.modules[module.name] = module;
-            }
-
-            if (module.route) {
-                if (!this.$.router) {
-                    throw "defining modules with routes requires a router instance to be set"
-                }
-
-                var self = this;
-                this.$.router.route(module.name, module.route, function () {
-                    // route triggered
-
-                    // load module
-                    if (module.name) {
-                        self.loadModuleByName(module.name, null);
-                    } else {
-                        self.loadModule(module.moduleClass, null);
+                    if (!module.name && !module.route) {
+                        throw "module cannot be added: route or at least name is required";
                     }
 
-                });
+                    if (!module.moduleClass) {
+                        throw "no moduleClass defined for module";
+                    }
 
-            }
+                    if (module.name) {
+                        if (this.modules.hasOwnProperty(module.name)) {
+                            throw "module with name '" + module.name + "' already registered"
+                        }
 
-        },
+                        this.modules[module.name] = module;
+                    }
 
-        loadModuleByName: function(moduleName, callback) {
-            if (this.modules.hasOwnProperty(moduleName)) {
+                    if (module.route) {
+                        if (!this.$.router) {
+                            throw "defining modules with routes requires a router instance to be set"
+                        }
 
-                var module = this.modules[moduleName];
+                        var self = this;
+                        this.$.router.route(module.name, module.route, function () {
+                            // route triggered
 
-                if (module.cacheInstance && module.moduleInstance) {
-                    // TODO: load instance from cache
-                } else {
-                    this.loadModule(module.moduleClass, callback);
+                            // load module
+                            if (module.name) {
+                                self.loadModuleByName(module.name, null);
+                            } else {
+                                self.loadModule(module.moduleClass, null);
+                            }
+
+                        });
+
+                    }
+
+                },
+
+                loadModuleByName: function (moduleName, callback) {
+                    if (this.modules.hasOwnProperty(moduleName)) {
+
+                        var module = this.modules[moduleName];
+
+                        if (module.cacheInstance && module.moduleInstance) {
+                            // TODO: load instance from cache
+                        } else {
+                            this.loadModule(module.moduleClass, callback);
+                        }
+
+                    } else {
+                        throw "Module '" + moduleName + "' not found";
+                    }
+                },
+
+                loadModule: function (moduleFqClassName, callback) {
+
+                    var eventResult = this.trigger("loadModule", {
+                        moduleClass: moduleFqClassName
+                    });
+
+                    var internalCallback = function (err) {
+                        // TODO Dispatch events
+
+                        if (callback) {
+                            callback(err);
+                        }
+                    };
+
+                    var self = this;
+                    if (!eventResult.isDefaultPrevented) {
+                        // load module
+
+                        require.require([moduleFqClassName], function (moduleBaseClass) {
+                            var moduleInstance = new moduleBaseClass(null, moduleBaseClass.prototype._$descriptor, self.$applicationDomain, null, null);
+
+                            if (moduleInstance instanceof Module) {
+
+                                moduleInstance._initialize("auto");
+
+                                internalCallback(null);
+                                // TODO: show and start module
+                            } else {
+                                internalCallback("Module '" + moduleFqClassName + "' isn't an instance of js.core.Module");
+                            }
+
+                        });
+
+                        // TODO cache model instances
+
+                        // Trigger events
+
+                    }
+                },
+
+                removeChild: function (child) {
+                    this.callBase();
+
+                    var index = this.$modules.indexOf(child);
+                    if (index != -1) {
+                        // TODO: remove route from router
+
+                    }
+                },
+
+                render: function () {
+                    // render the ContentPlaceHolder
+                    this.callBase();
+                },
+                getContentPlaceHolders: function () {
+                    return ModuleLoader.findContentPlaceHolders(this);
                 }
-
-            } else {
-                throw "Module '" + moduleName + "' not found";
-            }
-        },
-
-        loadModule: function(moduleFqClassName, callback) {
-
-            var eventResult = this.trigger("loadModule", {
-                moduleClass: moduleFqClassName
             });
 
-            var internalCallback = function(err) {
-                // TODO Dispatch events
+            ModuleLoader.findContentPlaceHolders = function (component) {
+                var ret = [];
 
-                if (callback) {
-                    callback(err);
+                for (var i = 0; i < component.$children.length; i++) {
+                    var child = component.$children[i];
+                    if (child instanceof ContentPlaceHolder) {
+                        ret.push(child);
+                    } else {
+                        ret.concat(ModuleLoader.findContentPlaceHolders(child));
+                    }
                 }
+
+                return ret;
+
             };
 
-            var self = this;
-            if (!eventResult.isDefaultPrevented) {
-                // load module
-
-                require.require([moduleFqClassName], function(moduleBaseClass) {
-                    var moduleInstance = new moduleBaseClass(null, moduleBaseClass.prototype._$descriptor, self.$applicationDomain, null, null);
-
-                    if (moduleInstance instanceof Module) {
-
-                        moduleInstance._initialize("auto");
-
-                        internalCallback(null);
-                        // TODO: show and start module
-                    } else {
-                        internalCallback("Module '" + moduleFqClassName + "' isn't an instance of js.core.Module");
-                    }
-
-                });
-
-                // TODO cache model instances
-
-                // Trigger events
-
-            }
-        },
-
-        removeChild: function(child) {
-            this.callBase();
-
-            var index = this.$modules.indexOf(child);
-            if (index != -1) {
-                // TODO: remove route from router
-
-            }
-        },
-
-        render: function() {
-            // render the ContentPlaceHolder
-            this.callBase();
-        },
-        getContentPlaceHolders: function() {
-            return ModuleLoader.findContentPlaceHolders(this);
-        }
-    });
-
-    ModuleLoader.findContentPlaceHolders = function(component) {
-        var ret = [];
-
-        for (var i = 0; i < component.$children.length; i++) {
-            var child = component.$children[i];
-            if (child instanceof ContentPlaceHolder) {
-                ret.push(child);
-            } else {
-                ret.concat(ModuleLoader.findContentPlaceHolders(child));
-            }
-        }
-
-        return ret;
-
-    };
-
-    return ModuleLoader;
+            return ModuleLoader;
+        });
 });

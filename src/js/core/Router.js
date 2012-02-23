@@ -1,81 +1,85 @@
-rAppid.defineClass("js.core.Router", ["js.core.Component", "underscore"],
+var requirejs = (typeof requirejs === "undefined" ? require("requirejs") : requirejs);
 
-    function (Component, _) {
+requirejs(["rAppid"], function (rAppid) {
+    rAppid.defineClass("js.core.Router", ["js.core.Component", "underscore"],
 
-        return Component.inherit({
-            ctor: function () {
+        function (Component, _) {
 
-                this.$routes = [];
+            return Component.inherit({
+                ctor: function () {
 
-                this.callBase();
-            },
+                    this.$routes = [];
 
-            initialize: function () {
-                this.callBase();
+                    this.callBase();
+                },
 
-                if (this.$.history) {
-                    this.history = this.$.history;
-                } else {
-                    this.history = rAppid.systemManager.application.history;
-                }
+                initialize: function () {
+                    this.callBase();
 
-                this.history.addRouter(this);
-            },
-
-            /**
-             *
-             * @param {Regexp|Object} route
-             * @param {Function} [fn]
-             */
-            addRoute: function() {
-
-                var route;
-                if (arguments.length == 2) {
-                    route = {
-                        regex: arguments[0],
-                        fn: arguments[1]
+                    if (this.$.history) {
+                        this.history = this.$.history;
+                    } else {
+                        this.history = rAppid.systemManager.application.history;
                     }
-                } else {
-                    route = arguments[0];
-                }
 
-                _.defaults(route, {
-                    name: null,
-                    regex: null,
-                    fn: null
-                });
+                    this.history.addRouter(this);
+                },
 
-                if (!(route.fn && route.regex)) {
-                    throw "fn and regex required"
-                }
+                /**
+                 *
+                 * @param {Regexp|Object} route
+                 * @param {Function} [fn]
+                 */
+                addRoute: function () {
 
-                this.$routes.push(route);
-            },
-
-            executeRoute: function(fragment) {
-                // Test routes and call callback
-                for (var i = 0; i < this.$routes.length; i++) {
-                    var route = this.$routes[i];
-                    var params = route.regex.exec(fragment);
-                    if (params) {
-                        params.shift();
-                        route.fn.apply(this, params);
-
-                        return true;
+                    var route;
+                    if (arguments.length == 2) {
+                        route = {
+                            regex: arguments[0],
+                            fn: arguments[1]
+                        }
+                    } else {
+                        route = arguments[0];
                     }
+
+                    _.defaults(route, {
+                        name: null,
+                        regex: null,
+                        fn: null
+                    });
+
+                    if (!(route.fn && route.regex)) {
+                        throw "fn and regex required"
+                    }
+
+                    this.$routes.push(route);
+                },
+
+                executeRoute: function (fragment) {
+                    // Test routes and call callback
+                    for (var i = 0; i < this.$routes.length; i++) {
+                        var route = this.$routes[i];
+                        var params = route.regex.exec(fragment);
+                        if (params) {
+                            params.shift();
+                            route.fn.apply(this, params);
+
+                            return true;
+                        }
+                    }
+
+                    return false;
+                },
+
+                /**
+                 * shortcut to history.navigate
+                 * @param to
+                 * @param createHistoryEntry
+                 * @param triggerRoute
+                 */
+                navigate: function (to, createHistoryEntry, triggerRoute) {
+                    return this.history.navigate(to, createHistoryEntry, triggerRoute);
                 }
-
-                return false;
-            },
-
-            /**
-             * shortcut to history.navigate
-             * @param to
-             * @param createHistoryEntry
-             * @param triggerRoute
-             */
-            navigate: function (to, createHistoryEntry, triggerRoute) {
-                return this.history.navigate(to, createHistoryEntry, triggerRoute);
-            }
+            });
         });
 });

@@ -1,100 +1,104 @@
-rAppid.defineClass("js.core.Element",
-    ["js.core.Bindable", "underscore"], function (Bindable, _) {
+var requirejs = (typeof requirejs === "undefined" ? require("requirejs") : requirejs);
 
-        var undef;
+requirejs(["rAppid"], function (rAppid) {
 
-        function stringToPrimitive(str) {
-            // if it's not a string
-            if (_.isString(str)) {
+    rAppid.defineClass("js.core.Element",
+        ["js.core.Bindable", "underscore"], function (Bindable, _) {
 
-                var n = parseFloat(str);
-                if(!_.isNaN(n)){
-                    return n;
+            var undef;
+
+            function stringToPrimitive(str) {
+                // if it's not a string
+                if (_.isString(str)) {
+
+                    var n = parseFloat(str);
+                    if (!_.isNaN(n)) {
+                        return n;
+                    }
+
+                    if (str === "true") {
+                        return true;
+                    } else if (str === "false") {
+                        return false;
+                    }
                 }
-
-                if (str === "true") {
-                    return true;
-                } else if (str === "false") {
-                    return false;
-                }
+                return str;
             }
-            return str;
-        }
 
-        return Bindable.inherit({
-            ctor: function (attributes, descriptor, applicationDomain, parentScope, rootScope) {
+            return Bindable.inherit({
+                ctor: function (attributes, descriptor, applicationDomain, parentScope, rootScope) {
 
-                attributes = attributes || {};
+                    attributes = attributes || {};
 
-                if (!descriptor) {
-                    // created from node
-                    if (!rootScope) {
-                        rootScope = this;
+                    if (!descriptor) {
+                        // created from node
+                        if (!rootScope) {
+                            rootScope = this;
+                        }
                     }
-                }
 
-                this.$descriptor = descriptor;
-                this.$applicationDomain = applicationDomain;
-                this.$parentScope = parentScope || null;
-                this.$rootScope = rootScope || null;
+                    this.$descriptor = descriptor;
+                    this.$applicationDomain = applicationDomain;
+                    this.$parentScope = parentScope || null;
+                    this.$rootScope = rootScope || null;
 
 
-                _.defaults(attributes, this._getAttributesFromDescriptor(descriptor), this._getAttributesFromDescriptor(this._$descriptor));
+                    _.defaults(attributes, this._getAttributesFromDescriptor(descriptor), this._getAttributesFromDescriptor(this._$descriptor));
 
-                this.callBase(attributes);
+                    this.callBase(attributes);
 
-                this._initializeAttributes(this.$);
+                    this._initializeAttributes(this.$);
 
-                // manually constructed
-                if (descriptor === undef || descriptor === null) {
-                    this._initialize(this.$creationPolicy);
-                }
-
-            },
-
-            _getAttributesFromDescriptor: function(descriptor) {
-
-                var attributes = {};
-
-                if (descriptor && descriptor.attributes) {
-                    var node;
-
-                    for (var a = 0; a < descriptor.attributes.length; a++) {
-                        node = descriptor.attributes[a];
-                        attributes[node.nodeName] = stringToPrimitive(node.value);
+                    // manually constructed
+                    if (descriptor === undef || descriptor === null) {
+                        this._initialize(this.$creationPolicy);
                     }
-                }
 
-                return attributes;
-            },
+                },
 
-            defaults: {
-                creationPolicy: "auto"
-            },
+                _getAttributesFromDescriptor: function (descriptor) {
 
-            _initializeAttributes: function (attributes) {
-            },
+                    var attributes = {};
 
-            _initializeDescriptors: function() {
-            },
+                    if (descriptor && descriptor.attributes) {
+                        var node;
 
-            /**
-             *
-             * @param creationPolicy
-             *          auto - do not overwrite (default),
-             *          all - create all children
-             *          TODO none?
-             */
-            _initialize: function (creationPolicy) {
-                if (this.$initialized) {
-                    return;
-                }
+                        for (var a = 0; a < descriptor.attributes.length; a++) {
+                            node = descriptor.attributes[a];
+                            attributes[node.nodeName] = stringToPrimitive(node.value);
+                        }
+                    }
 
-                this._preinitialize();
+                    return attributes;
+                },
 
-                this._initializeDescriptors();
+                defaults: {
+                    creationPolicy: "auto"
+                },
 
-                this.initialize();
+                _initializeAttributes: function (attributes) {
+                },
+
+                _initializeDescriptors: function () {
+                },
+
+                /**
+                 *
+                 * @param creationPolicy
+                 *          auto - do not overwrite (default),
+                 *          all - create all children
+                 *          TODO none?
+                 */
+                _initialize: function (creationPolicy) {
+                    if (this.$initialized) {
+                        return;
+                    }
+
+                    this._preinitialize();
+
+                    this._initializeDescriptors();
+
+                    this.initialize();
 
 
 //                // init descriptor of xaml component (component definition)
@@ -106,54 +110,55 @@ rAppid.defineClass("js.core.Element",
 //                    this._initializeDescriptor(this.$descriptor);
 //                }
 
-                this._initializeBindings();
+                    this._initializeBindings();
 
-                this._initializationComplete();
+                    this._initializationComplete();
 
-            },
+                },
 
-            _initializeBindings: function () {
-            },
+                _initializeBindings: function () {
+                },
 
-            _initializeDescriptor: function (descriptor) {
+                _initializeDescriptor: function (descriptor) {
 
-            },
-            initialize: function () {
+                },
+                initialize: function () {
 
-            },
+                },
 
-            getScoped: function (key) {
-                var scope = this.getScopeForKey(key);
-                if (this == scope) {
-                    return this.callBase();
-                } else if (scope != null) {
-                    return scope.get(key);
-                } else {
-                    return null;
+                getScoped: function (key) {
+                    var scope = this.getScopeForKey(key);
+                    if (this == scope) {
+                        return this.callBase();
+                    } else if (scope != null) {
+                        return scope.get(key);
+                    } else {
+                        return null;
+                    }
+                },
+                getScopeForKey: function (key) {
+                    var path = key.split(".");
+                    // get first key
+                    var k1 = path[0];
+                    // try to find value for first key
+                    var value = this.$[k1];
+                    // if value was found
+                    if (!_.isUndefined(value)) {
+                        return this;
+                    } else if (this.$parentScope) {
+                        return this.$parentScope.getScopeForKey(k1);
+                    } else {
+                        return null;
+                    }
+                },
+
+                _preinitialize: function () {
+
+                },
+                _initializationComplete: function () {
+                    this.$initialized = true;
                 }
-            },
-            getScopeForKey: function (key) {
-                var path = key.split(".");
-                // get first key
-                var k1 = path[0];
-                // try to find value for first key
-                var value = this.$[k1];
-                // if value was found
-                if (!_.isUndefined(value)) {
-                    return this;
-                } else if (this.$parentScope) {
-                    return this.$parentScope.getScopeForKey(k1);
-                } else {
-                    return null;
-                }
-            },
-
-            _preinitialize: function () {
-
-            },
-            _initializationComplete: function () {
-                this.$initialized = true;
-            }
-        });
-    }
-);
+            });
+        }
+    );
+});
