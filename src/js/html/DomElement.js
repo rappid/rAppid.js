@@ -71,11 +71,6 @@ requirejs(["rAppid"], function (rAppid) {
                      * <js:Template name="layout"><placeholder cid="icon"/><placeholder cid="label"/></js:Template>
                      */
 
-
-
-                        // TODO: bind the events
-
-
                     this._renderChildren(this.$children);
                     this._renderAttributes(this.$);
                     this._bindDomEvents(this.$el);
@@ -84,9 +79,7 @@ requirejs(["rAppid"], function (rAppid) {
                 },
                 _bindDomEvents: function (el) {
                     var self = this;
-                    this.$el.addEventListener('click', function (e) {
-                        self.trigger('onclick', e, self);
-                    });
+
                     if (this.$el.tagName == "INPUT") {
                         if (this.$el.type == "text" || this.$el.type == "password") {
                             this.$el.addEventListener('change', function (e) {
@@ -136,7 +129,7 @@ requirejs(["rAppid"], function (rAppid) {
                 _renderAttributes: function (attributes) {
                     var attr;
                     for (var key in attributes) {
-                        if (key.indexOf("$") !== 0 && attributes.hasOwnProperty(key)) {
+                        if (attributes.hasOwnProperty(key) && key.indexOf("$") !== 0 && key.indexOf("data") !== 0){
                             attr = attributes[key];
                             this._renderAttribute(key, attr);
                         }
@@ -176,6 +169,11 @@ requirejs(["rAppid"], function (rAppid) {
                         this.addClass('hidden');
                     }
                 },
+                _renderHidden: function(hidden){
+                    if(typeof(hidden) !== "undefined"){
+                        this.set({visible:!hidden});
+                    }
+                },
                 _renderSelected: function (selected) {
                     if (selected === true) {
                         this.addClass('active');
@@ -187,6 +185,7 @@ requirejs(["rAppid"], function (rAppid) {
                     if (selectable === true) {
                         var self = this;
                         this.$el.addEventListener('click', function (e) {
+                            // e.preventDefault();
                             self.set({selected: !self.$.selected});
                         });
                     } else {
