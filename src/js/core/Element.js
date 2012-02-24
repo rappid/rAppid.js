@@ -96,24 +96,13 @@ requirejs(["rAppid"], function (rAppid) {
 
                     this._preinitialize();
 
-                    this._initializeDescriptors();
-
                     this.initialize();
-
-
-//                // init descriptor of xaml component (component definition)
-//                if(this._$descriptor){
-//                    this._createChildrenFromDescriptor(this._$descriptor);
-//                    // this._initializeChildren(childrenFromDescriptor);
-//                }
-//                if(this.$descriptor){
-//                    this._initializeDescriptor(this.$descriptor);
-//                }
 
                     this._initializeBindings();
 
-                    this._initializationComplete();
+                    this._initializeDescriptors();
 
+                    this._initializationComplete();
                 },
 
                 _initializeBindings: function () {
@@ -125,8 +114,7 @@ requirejs(["rAppid"], function (rAppid) {
                 initialize: function () {
 
                 },
-
-                getScoped: function (key) {
+                find: function (key) {
                     var scope = this.getScopeForKey(key);
                     if (this == scope) {
                         return this.callBase();
