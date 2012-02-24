@@ -216,12 +216,6 @@ requirejs(["rAppid"], function (rAppid) {
                     var attributes = this.$;
 
                     var self = this;
-                    var bind = function (scope, scopeKey, key) {
-                        scope.on('change:' + scopeKey, function (e) {
-                            self.set(key, e.$);
-                        });
-
-                    };
                     var binding, twoWay;
                     // Resolve bindings and events
                     for (var key in attributes) {
@@ -236,32 +230,24 @@ requirejs(["rAppid"], function (rAppid) {
                                 var attrKey = value.match(this.$bindingRegex);
                                 attrKey = attrKey[1];
                                 var scope = this.getScopeForKey(attrKey);
-                                if (scope && (scope != this || attrKey != key)) {
-                                    twoWay = this._isTwoWayBindingDefinition(value)
-                                    if (twoWay) {
-                                        console.log([attrKey, scope]);
-                                    }
 
-                                    // TODO: two way binding
+                                if (scope && (scope != this || attrKey != key)) {
+                                    twoWay = this._isTwoWayBindingDefinition(value);
+
                                     binding = new Binding({scope: scope, path: attrKey, target: this, targetKey: key, twoWay: twoWay});
                                     this.$bindings.push(binding);
 
-                                    // bind(scope,attrKey,key);
-
                                     attributes[key] = scope.get(attrKey);
-
-                                } else {
-                                    //  throw "Binding not found";
                                 }
 
                             }
 
                         }
                     }
-
+                    /* TODO: remove
                     for (var c = 0; c < this.$components.length; c++) {
-                        this.$components[c]._initializeBindings();
-                    }
+                       // this.$components[c]._initializeBindings();
+                    } */
                 },
 
                 _createComponentForNode: function (node, attributes) {
