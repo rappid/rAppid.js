@@ -16,8 +16,23 @@ requirejs(["rAppid"], function (rAppid) {
                     }
 
                 },
-                _renderItems: function (items) {
+                removeItem: function(){
+                    // TODO: implement
+                },
+                clear: function(){
+                    var c;
+                    if(this.$renderedItems){
+                        for (var i = 0; i < this.$renderedItems.length; i++) {
+                            c = this.$renderedItems[i];
+                            if (this.isRendered()) {
+                                this.$el.removeChild(c.component.$el);
+                            }
+                        }
+                    }
                     this.$renderedItems = [];
+                },
+                _renderItems: function (items) {
+                    this.clear();
                     var item;
                     for (var i = 0; i < items.length; i++) {
                         this._renderItem(items[i]);
