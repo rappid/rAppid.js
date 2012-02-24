@@ -66,7 +66,7 @@
                     var self = this;
 
                     document.addEventListener('click', function (e) {
-                        // self.set({menuVisible: false});
+                        self.set({menuVisible: false});
                     });
 
                     this.$toggleButton.$el.addEventListener('click', function (e) {
@@ -81,7 +81,7 @@
         ]]>
     </js:Script>
     <js:Template name="layout">
-        <ui:Button class="btn dropdown-toggle">
+        <ui:Button class="dropdown-toggle">
             <js:Template name="layout">
                 <ui:Placeholder name="icon"/>{label}<span class="caret"/>
             </js:Template>
