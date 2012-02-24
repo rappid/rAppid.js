@@ -33,21 +33,27 @@ requirejs(["rAppid"], function (rAppid) {
                     this.$ = attributes;
                     this.$previousAttributes = _.clone(this.$);
 
+
+                    var self = this, fnc;
+
+                    var bind = function(key, targetKey, method){
+                        self.on('change:' + key, function () {
+                            self.set(targetKey, method.call(self));
+                        });
+                    };
+
                     // init calculated attributes
-                    var self = this, fnc, callFnc;
                     for (var key in this) {
+
                         // find functions which have a bindings attribute
                         if (_.isFunction(this[key]) && this[key]._bindings) {
-                            var k = key;
-                            fnc = this[k];
+                            fnc = this[key];
                             // register as listener to all bindings
                             for (var i = 0; i < fnc._bindings.length; i++) {
-                                this.on('change:' + fnc._bindings[i], function () {
-                                    self.set(k, fnc.call(self));
-                                });
+                                bind(fnc._bindings[i],key, fnc);
                             }
                             // set the return value of the function as attribute
-                            this.$[k] = fnc.call(this);
+                            this.set(key,fnc.call(this));
                         }
                     }
                 },
@@ -167,7 +173,7 @@ requirejs(["rAppid"], function (rAppid) {
                         key = path.shift();
                         if (prop instanceof Bindable) {
                             prop = prop.get(key);
-                        } else if (prop[key]) {
+                        } else if (typeof(prop[key]) !== "undefined") {
                             prop = prop[key];
                         } else {
                             return null;
