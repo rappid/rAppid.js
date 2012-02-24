@@ -10,6 +10,7 @@
     </js:Imports>
 
     <js:Script>
+        <![CDATA[
         (function (Base, Bindable, Content) {
             return {
                 _defaults:{
@@ -23,16 +24,27 @@
                     var Person = Bindable.inherit({
                         fullName: function(){
                             return this.$.firstname + " " + this.$.lastname;
-                        }.on('firstname','lastname')
+                        }.on('firstname','lastname'),
+                        gender: function(){
+                            return (this.$.isMale) ? 'male' : 'female';
+                        }.on('isMale'),
+                        hasInterests: function(){
+                            return (this.$.interests && this.$.interests.length > 0);
+                        }.on("interests")
                     });
+
+
 
                     // let's create a person
                     var person = new Person({
                         firstname: 'Tony',
                         lastname: 'Findeisen',
-                        username: 'it-tony'
+                        username: 'it-tony',
+                        isMale: true,
+                        interests: []
                     });
 
+                    this.set('interests',['programming','sports', 'chilling']);
                     this.set('person',person);
 
 
@@ -66,7 +78,7 @@
                     this.render(document.body);
                 }
             }
-        })
+        })]]>
     </js:Script>
     <div class="container">
         <div>
@@ -199,7 +211,6 @@
                         <ui:View title="Tab 3">View 3</ui:View>
                         <ui:View title="Tab 4">View 4</ui:View>
                     </ui:TabView>
-
                 </div>
                 <div class="span5">
                     <ui:TabView items="{pages}" tabClassName="nav nav-pills" selectedIndex="2">
@@ -216,20 +227,33 @@
                     <input id="firstname" type="text" value="{{person.firstname}}"/>
                     <label for="lastname">Lastname</label>
                     <input id="lastname" type="text" value="{{person.lastname}}"/>
-                    <label for="passwordInput">password</label>
-                    <input id="passwordInput" type="text" value="{{inputValue}}"/>
-                    <!--<ui:SelectionView selectedIndex="1" multiSelect="true">-->
-                        <!--<label class="checkbox" data-selected="{selected}">-->
-                            <!--<input type="checkbox" name="interests" value="1" checked="{data-selected}"/> Item 1-->
-                        <!--</label>-->
-                        <!--<label class="checkbox" data-selected="{selected}">-->
-                            <!--<input type="checkbox" name="interests" value="2" checked="{data-selected}"/> Item 2-->
-                        <!--</label>-->
-                    <!--</ui:SelectionView>-->
+                    <label>
+                        <input type="checkbox" name="isMale" value="1" checked="{{person.isMale}}"/>Is Male
+                    </label>
+                    <ui:SelectionView multiSelect="true" selectedIndex="1" items="{interests}" selectedItems="{{person.interests}}" forceSelectable="false">
+                        <js:Template name="item">
+                            <label class="checkbox" data-selected="{{selected}}">
+                                <input type="checkbox" name="isMale" value="1" checked="{{data-selected}}"/>{$item}
+                            </label>
+                        </js:Template>
+                    </ui:SelectionView>
                 </div>
                 <div class="span5">
-                    <span>Name: {person.fullName}</span>
-                    <span>{inputValue}</span>
+                    <div>
+                        <label>Fullname</label><span>{person.fullName}</span>
+                    </div>
+                    <div>
+                        <label>Gender</label><span>{person.gender}</span>
+                    </div>
+                    <div>
+                        <label>Interests</label>
+                        <ui:ItemsView items="{person.interests}" tagName="ul" visible="{person.hasInterests}">
+                            <js:Template name="item">
+                                <li>{$item}</li>
+                            </js:Template>
+                        </ui:ItemsView>
+                        <span hidden="{person.hasInterests}">Peron has no interests</span>
+                    </div>
                 </div>
             </div>
         </div>
