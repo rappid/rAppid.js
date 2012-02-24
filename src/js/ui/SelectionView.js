@@ -2,7 +2,7 @@ var requirejs = (typeof requirejs === "undefined" ? require("requirejs") : requi
 
 requirejs(["rAppid"], function (rAppid) {
     rAppid.defineClass("js.ui.SelectionView",
-        ["underscore", "js.ui.ItemsView", "js.html.DomElement", "js.core.Template"], function (_, ItemsView, DomElement, Template) {
+        ["underscore", "js.ui.ItemsView", "js.html.DomElement"], function (_, ItemsView, DomElement) {
             return ItemsView.inherit({
                 defaults: {
                     tagName: "div",
@@ -11,7 +11,8 @@ requirejs(["rAppid"], function (rAppid) {
                     selectedViews: [],
                     selectedItems: [],
                     hasSelection: false,
-                    items: []
+                    items: [],
+                    forceSelectable: true
                 },
                 ctor: function () {
                     this.$childViews = [];
@@ -29,7 +30,9 @@ requirejs(["rAppid"], function (rAppid) {
                 _renderChild: function (child) {
                     if (child instanceof DomElement) {
                         var self = this;
-                        child.set({selectable: true});
+                        if(this.$.forceSelectable === true){
+                            child.set({selectable:true});
+                        }
                         child.on('change:selected', function (e, c) {
                             self._onChildSelected(c);
                         }, child);
@@ -38,11 +41,6 @@ requirejs(["rAppid"], function (rAppid) {
                     if (this.$.needsSelection === true && this.hasSelection() === false) {
                         child.set({selected: true});
                     }
-                },
-                _renderChildren: function () {
-                    this.callBase();
-
-
                 },
                 _renderSelectedItem: function (item) {
                     // TODO: implement
