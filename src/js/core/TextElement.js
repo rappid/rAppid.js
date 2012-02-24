@@ -5,14 +5,14 @@ requirejs(["rAppid"], function (rAppid) {
     rAppid.defineClass("js.core.TextElement",
         ["js.core.Element", "js.core.Binding"], function (Element, Binding) {
             function matchPlaceholder(text) {
-                return text.match(/\{([a-zA-Z$._]+)\}/);
+                return text.match(/\{([a-zA-Z$.\-_]+)\}/);
             }
 
             return Element.inherit({
                 _initializeBindings: function () {
                     this.$bindings = [];
                     // find bindings and register for onchange event
-                    var matches = this.$descriptor.textContent.match(/\{([a-zA-Z$._]+)\}/g);
+                    var matches = this.$descriptor.textContent.match(/\{([a-zA-Z$\-._]+)\}/g);
                     var key, scope, tKey;
                     while (matches && matches.length > 0) {
                         key = matches.shift();
