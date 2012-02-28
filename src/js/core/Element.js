@@ -139,7 +139,6 @@ requirejs(["rAppid"], function (rAppid) {
                         return null;
                     }
                 },
-
                 _preinitialize: function () {
 
                 },

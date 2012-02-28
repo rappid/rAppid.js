@@ -181,6 +181,9 @@ requirejs(["rAppid"], function (rAppid) {
                     }
                     return prop;
                 },
+                has: function(key){
+                    return typeof(this.$[key]) !== "undefined" && this.$[key] !== null;
+                },
                 _commitChangedAttributes: function (attributes) {
 
                 },

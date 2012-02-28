@@ -19,6 +19,7 @@ requirejs(["rAppid"], function (rAppid) {
                         key = key.substr(1, key.length - 2);
                         scope = this.getScopeForKey(key);
                         if (scope) {
+                            console.log(key);
                             tKey = key.replace(/\./g, "_");
                             this.$bindings.push(new Binding({scope: scope, path: key, target: this, targetKey: tKey}));
                             this.$[tKey] = scope.get(key);
@@ -45,6 +46,10 @@ requirejs(["rAppid"], function (rAppid) {
                     while (matches && matches.length > 0) {
                         key = matches[1];
                         val = this.get(key.replace(/\./g, "_"));
+                        if(val === null || typeof(val) === "undefined"){
+
+                            val = "";
+                        }
                         textContent = textContent.split("{" + key + "}").join(val);
                         matches = matchPlaceholder(textContent);
                     }

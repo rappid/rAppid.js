@@ -21,7 +21,7 @@
                     }
                     this.callBase();
                 },
-                _collectButton: function(child){
+                _collectButton:function (child) {
                     this.$button = child;
                     this.$toggleButton = child;
 
@@ -38,7 +38,7 @@
                 _renderChild:function (child) {
                     if (child.className == 'js.core.Content') {
                         var ref = child.get('ref');
-                        var placeHolder = this.getPlaceholder(ref);
+                        var placeHolder = this.getPlaceHolder(ref);
                         if (placeHolder) {
                             placeHolder.set({content:child});
                         }
@@ -54,7 +54,7 @@
                             }
                         }
                         this.addClass('open');
-                    }else{
+                    } else {
                         this.removeClass('open');
                     }
 
@@ -66,13 +66,13 @@
                     var self = this;
 
                     document.addEventListener('click', function (e) {
-                        self.set({menuVisible: false});
+                        self.set({menuVisible:false});
                     });
 
                     this.$toggleButton.$el.addEventListener('click', function (e) {
                         e.stopPropagation();
                         e.preventDefault();
-                        self.set({menuVisible: !self.$.menuVisible});
+                        self.set({menuVisible:!self.$.menuVisible});
                     });
 
                 }
@@ -83,7 +83,7 @@
     <js:Template name="layout">
         <ui:Button class="dropdown-toggle">
             <js:Template name="layout">
-                <ui:Placeholder name="icon"/>{label}<span class="caret"/>
+                <ui:PlaceHolder name="icon"/>{label}<span class="caret"/>
             </js:Template>
         </ui:Button>
         <ui:ContentPlaceHolder tagName="div" name="menu" class="{menuClassName}"/>

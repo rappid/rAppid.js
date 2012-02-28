@@ -10,6 +10,7 @@ requirejs(["rAppid"], function (rAppid) {
                     multiSelect: false,
                     selectedViews: [],
                     selectedItems: [],
+                    selectedItem: null,
                     hasSelection: false,
                     items: [],
                     forceSelectable: true
@@ -17,6 +18,9 @@ requirejs(["rAppid"], function (rAppid) {
                 ctor: function () {
                     this.$childViews = [];
                     return this.callBase();
+                },
+                hasSelectedItems: function(){
+                    return this.$.selectedItems.length > 0;
                 },
                 hasSelection: function () {
                     return this.$.selectedViews.length > 0;
@@ -38,8 +42,18 @@ requirejs(["rAppid"], function (rAppid) {
                         }, child);
                     }
                     this.callBase();
-                    if (this.$.needsSelection === true && this.hasSelection() === false) {
+                    if (this.$.needsSelection === true && this.$.selectedItem === null && this.hasSelection() === false ) {
                         child.set({selected: true});
+                    } else {
+                        // get item for child, if item is in selectedItems, select child!
+                        if (child.has("$item")) {
+                            for (var i = 0; i < this.$.selectedItems.length; i++) {
+                                if (child.$.$item === this.$.selectedItems[i] || child.$.$item === this.$.selectedItem) {
+                                    child.set({selected:true});
+                                    break;
+                                }
+                            }
+                        }
                     }
                 },
                 _renderSelectedItem: function (item) {
@@ -49,7 +63,8 @@ requirejs(["rAppid"], function (rAppid) {
                     // set selected
                 },
                 _renderSelectedIndex: function (i) {
-                    if (i > -1 && i < this.$childViews.length) {
+
+                    if (i != null && i > -1 && i < this.$childViews.length) {
                         this.$childViews[i].set({selected: true});
                     }
                 },
@@ -61,6 +76,7 @@ requirejs(["rAppid"], function (rAppid) {
                     var somethingSelected = false;
                     var selectedChildren = [];
                     var selectedItems = [];
+                    var selectedIndex, selectedItem = null;
                     for (i = 0; i < this.$childViews.length; i++) {
                         c = this.$children[i];
                         if (checkMultiSelect) {
@@ -75,9 +91,11 @@ requirejs(["rAppid"], function (rAppid) {
                         }
                         if (c.$.selected === true) {
 
+                            selectedIndex = i;
                             selectedChildren.push(c);
-                            if (this.$.items.length > 0) {
-                                selectedItems.push(this.$.items[i]);
+                            if (c.has("$item")) {
+                                selectedItems.push(c.$.$item);
+                                selectedItem = c.$.$item;
                             }
                         }
                     }
@@ -87,7 +105,7 @@ requirejs(["rAppid"], function (rAppid) {
                     }
 
                     if (!correctSelection) {
-                        this.set({selectedViews: selectedChildren, selectedItems: selectedItems});
+                        this.set({selectedViews: selectedChildren, selectedItems: selectedItems, selectedIndex: selectedIndex, selectedItem: selectedItem});
                     }
                 }
             });

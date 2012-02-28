@@ -22,40 +22,40 @@
                  */
                 initialize:function () {
                     var Person = Bindable.inherit({
-                        fullName: function(){
+                        fullName:function () {
                             return this.$.firstname + " " + this.$.lastname;
-                        }.on('firstname','lastname'),
-                        gender: function(){
+                        }.on('firstname', 'lastname'),
+                        gender:function () {
                             return (this.$.isMale) ? 'male' : 'female';
                         }.on('isMale'),
-                        hasInterests: function(){
+                        hasInterests:function () {
                             return (this.$.interests && this.$.interests.length > 0);
                         }.on("interests")
                     });
 
 
-
                     // let's create a person
                     var person = new Person({
-                        firstname: 'Tony',
-                        lastname: 'Findeisen',
-                        username: 'it-tony',
-                        isMale: true,
-                        interests: []
+                        firstname:'Tony',
+                        lastname:'Findeisen',
+                        username:'it-tony',
+                        isMale:true,
+                        interests:['programming'],
+                        comment: 'rappid is awesome'
                     });
 
-                    this.set('interests',['programming','sports', 'chilling']);
-                    this.set('person',person);
-
+                    this.set('interests', ['programming', 'sports', 'chilling']);
+                    this.set('paymentMethods',['bar','visa','credit card']);
+                    this.set('person', person);
+                    this.set('progress', "40%");
 
                     this.set('success', "he");
                     this.set('btnType', "success");
                     this.set('btnLabel', "wait");
                     this.set('page', 0);
                     this.set('pages', ['page 1', 'page 2', 'page 3', 'page 4']);
-                    this.set('inputValue','nigga');
-                    this.set('isChecked',true);
-
+                    this.set('inputValue', 'nigga');
+                    this.set('isChecked', true);
 
 
                 },
@@ -69,16 +69,22 @@
 
                     var self = this;
                     /*
+                     setInterval(function () {
+                     self.set("btnLabel", " what");
+                     self.set("btnType", "info");
+                     self.set('page', (self.$.page + 1) % 4);
+                     }, 2000); */
+
                     setInterval(function () {
-                        self.set("btnLabel", " what");
-                        self.set("btnType", "info");
-                        self.set('page', (self.$.page + 1) % 4);
-                    }, 2000); */
+                        var p = parseInt(self.$.progress);
+                        self.set("progress", ((p >= 100) ? 0 : p + 10) + "%");
+                    }, 400);
 
                     this.render(document.body);
                 }
             }
-        })]]>
+        })
+        ]]>
     </js:Script>
     <div class="container">
         <div>
@@ -90,7 +96,7 @@
                     <ui:Button iconClass="icon-plus" label="Button with Icon on the right" onclick="onButtonClick">
                         <js:Template name="layout">
                             {label}
-                            <ui:Placeholder name="icon"/>
+                            <ui:PlaceHolder name="icon"/>
                         </js:Template>
                     </ui:Button>
                     <ui:Button iconClass="icon-refresh" onclick="onButtonClick"/>
@@ -230,32 +236,82 @@
                     <label>
                         <input type="checkbox" name="isMale" value="1" checked="{{person.isMale}}"/>Is Male
                     </label>
-                    <ui:SelectionView multiSelect="true" selectedIndex="1" items="{interests}" selectedItems="{{person.interests}}" forceSelectable="false">
+                    <!-- CHECKBOX SELECTION VIEW WITH LABELS-->
+                    <ui:SelectionView multiSelect="true" items="{interests}" selectedItems="{{person.interests}}" forceSelectable="false">
                         <js:Template name="item">
-                            <label class="checkbox" data-selected="{{selected}}">
+                            <label class="checkbox inline" data-selected="{{selected}}">
                                 <input type="checkbox" name="isMale" value="1" checked="{{data-selected}}"/>{$item}
                             </label>
                         </js:Template>
                     </ui:SelectionView>
+                    <!-- RADIO BOX SELECTION VIEW WITH LABELS-->
+                    <ui:SelectionView multiSelect="false" items="{paymentMethods}" selectedItem="{{person.paymentMethod}}" forceSelectable="false">
+                        <js:Template name="item">
+                            <label class="radio inline" data-selected="{{selected}}">
+                                <input type="radio" name="isMale" value="1" checked="{{data-selected}}"/>{$item}
+                            </label>
+                        </js:Template>
+                    </ui:SelectionView>
+                    <div>
+                        <!--<select items="{interests}" multiSelect="true" selectedItems="{{person.interests}}">-->
+                            <!--<option>No Interests</option>-->
+                            <!--<js:Template name="item">-->
+                                <!--<option value="{$item}">{$item}</option>-->
+                            <!--</js:Template>-->
+                        <!--</select>-->
+                    </div>
+                    <!-- TEXT AREA -->
+                    <div>
+                        <textarea rows="3" cols="4">
+                            {{person.comment}}
+                        </textarea>
+                    </div>
                 </div>
                 <div class="span5">
-                    <div>
-                        <label>Fullname</label><span>{person.fullName}</span>
+                    <div class="row">
+                        <label class="span2">Fullname</label><span>{person.fullName}</span>
                     </div>
-                    <div>
-                        <label>Gender</label><span>{person.gender}</span>
+                    <div class="row">
+                        <label class="span2">Gender</label><span>{person.gender}</span>
                     </div>
-                    <div>
-                        <label>Interests</label>
-                        <ui:ItemsView items="{person.interests}" tagName="ul" visible="{person.hasInterests}">
+                    <div class="row">
+                        <label class="span2">Interests</label>
+                        <ui:ItemsView items="{person.interests}" tagName="ul" visible="{person.hasInterests}" class="span3">
                             <js:Template name="item">
                                 <li>{$item}</li>
                             </js:Template>
                         </ui:ItemsView>
                         <span hidden="{person.hasInterests}">Peron has no interests</span>
                     </div>
+                    <div class="row">
+                        <label class="span2">Payment</label><span>{person.paymentMethod}</span>
+                    </div>
+                    <div class="row">
+                        <label class="span2">Comment</label>
+                        <span>{person.comment}</span>
+                    </div>
                 </div>
             </div>
+            <!--<h2>Other useful Components</h2>-->
+            <!--<div class="row">-->
+                <!--<div class="progress progress-dange progress-striped active">-->
+                    <!--<div class="bar" width="{progress}"/>-->
+                <!--</div>-->
+            <!--</div>-->
+            <!--<div class="row" data-page="0">-->
+                <!--<ui:ScrollableView width="300" height="100" selectedPage="{data-page}">-->
+                    <!--<ui:ItemsView items="{pages}" width="1200">-->
+                        <!--<js:Template name="item">-->
+                            <!--<div width="300" style="display: inline-block; width: 300px;">{$item}</div>-->
+                        <!--</js:Template>-->
+                    <!--</ui:ItemsView>-->
+                <!--</ui:ScrollableView>-->
+                <!--<ui:SelectionView items="{pages}" selectedIndex="{{data-page}}">-->
+                    <!--<js:Template name="item">-->
+                        <!--<ui:Button label="{$item}"/>-->
+                    <!--</js:Template>-->
+                <!--</ui:SelectionView>-->
+            <!--</div>-->
         </div>
     </div>
 </js:Application>

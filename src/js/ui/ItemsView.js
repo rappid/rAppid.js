@@ -9,6 +9,9 @@ requirejs(["rAppid"], function (rAppid) {
                     tagName: "div",
                     items: []
                 },
+                hasItems: function(){
+                    return this.$.items.length > 0;
+                }.on('items'),
                 addItem: function (item) {
                     this.$.items.push(item);
                     if (this.isRendered()) {
@@ -18,6 +21,8 @@ requirejs(["rAppid"], function (rAppid) {
                 },
                 removeItem: function(){
                     // TODO: implement
+
+                    this.$.hasItems = this.hasItems();
                 },
                 clear: function(){
                     var c;

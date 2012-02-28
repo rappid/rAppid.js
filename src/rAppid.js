@@ -118,6 +118,10 @@ var rAppid;
     };
 
     _rAppid.defaultRewriteMap = [
+        new Rewrite(/^js.html.(input)$/, "js.html.Input"),
+        new Rewrite(/^js.html.(select)$/, "js.html.Select"),
+        new Rewrite(/^js.html.(textarea)$/, "js.html.TextArea"),
+        new Rewrite(/^js.html.(option)$/, "js.html.Option"),
         new Rewrite(/^js.html.(.+)$/, "js.html.DomElement"),
         new Rewrite(/^js.conf.(.+)$/, "js.core.Component")
     ];

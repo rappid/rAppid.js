@@ -21,14 +21,13 @@ requirejs(["rAppid"], function (rAppid) {
                     for (var i = 0; i < children.length; i++) {
                         this.addChild(children[i]);
                     }
-
                 },
                 _renderChild: function (child) {
                     this.callBase();
                     if (child instanceof Content) {
                         var ref = child.get('ref');
                         if (ref) {
-                            var placeHolder = this.getPlaceholder(ref);
+                            var placeHolder = this.getPlaceHolder(ref);
                             if (placeHolder) {
                                 placeHolder.set({content: child});
                             }
@@ -59,7 +58,7 @@ requirejs(["rAppid"], function (rAppid) {
                             // or create special method createComponent
                             renderedComponent = template.createComponents(attributes)[0];
                             // renderedComponent._initialize();
-                            var placeholder = this.getPlaceholder(placeholderName);
+                            var placeholder = this.getPlaceHolder(placeholderName);
                             if (placeholder) {
                                 placeholder.set({content: renderedComponent});
                                 this.$renderedPlaceholders[placeholderName] = renderedComponent;

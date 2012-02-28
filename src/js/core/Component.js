@@ -227,19 +227,7 @@ requirejs(["rAppid"], function (rAppid) {
                                 this.on(key, this.$rootScope[value], this.$rootScope);
                                 delete attributes[key];
                             } else if (this._isBindingDefinition(value)) {
-                                var attrKey = value.match(this.$bindingRegex);
-                                attrKey = attrKey[1];
-                                var scope = this.getScopeForKey(attrKey);
-
-                                if (scope && (scope != this || attrKey != key)) {
-                                    twoWay = this._isTwoWayBindingDefinition(value);
-
-                                    binding = new Binding({scope: scope, path: attrKey, target: this, targetKey: key, twoWay: twoWay});
-                                    this.$bindings.push(binding);
-
-                                    attributes[key] = scope.get(attrKey);
-                                }
-
+                                this._initBinding(value,key);
                             }
 
                         }
@@ -249,7 +237,20 @@ requirejs(["rAppid"], function (rAppid) {
                        // this.$components[c]._initializeBindings();
                     } */
                 },
+                _initBinding:function (bindingDef, key) {
+                    var attrKey = bindingDef.match(this.$bindingRegex);
+                    attrKey = attrKey[1];
+                    var scope = this.getScopeForKey(attrKey);
 
+                    if (scope && (scope != this || attrKey != key)) {
+                        var twoWay = this._isTwoWayBindingDefinition(bindingDef);
+
+                        var binding = new Binding({scope:scope, path:attrKey, target:this, targetKey:key, twoWay:twoWay});
+                        this.$bindings.push(binding);
+
+                        this.$[key] = scope.get(attrKey);
+                    }
+                },
                 _createComponentForNode: function (node, attributes) {
                     attributes = attributes || [];
 

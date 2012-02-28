@@ -5,21 +5,21 @@
             return {
                 defaults:{
                     tagName:'a',
-                    href: null,
-                    label: ' '
+                    href:null,
+                    label:' '
                 },
-                _renderIconClass: function(iconClass, oldIconClass){
-                      if(iconClass){
-                          this._renderTemplateToPlaceHolder('iconTemplate','icon',{$iconClass: iconClass});
-                      }else{
-                          this.getPlaceholder("icon").clear();
-                      }
+                _renderIconClass:function (iconClass, oldIconClass) {
+                    if (iconClass) {
+                        this._renderTemplateToPlaceHolder('iconTemplate', 'icon', {$iconClass:iconClass});
+                    } else {
+                        this.getPlaceHolder("icon").clear();
+                    }
                 },
                 _renderHref:function (href) {
                     if (this.$tagName == "a") {
                         this.$el.setAttribute("href", href || "#");
-                        if(!href){
-                            this.$el.setAttribute('onclick',"return false;");
+                        if (!href) {
+                            this.$el.setAttribute('onclick', "return false;");
                         }
 
                     }
@@ -28,7 +28,7 @@
         })
     </js:Script>
     <js:Template name="layout">
-        <ui:Placeholder name="icon"/>{label}
+        <ui:PlaceHolder name="icon"/>{label}
     </js:Template>
     <js:Template name="iconTemplate">
         <i class="{$iconClass}"/>

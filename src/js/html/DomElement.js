@@ -11,6 +11,7 @@ requirejs(["rAppid"], function (rAppid) {
                     selected: false,
                     selectable: false
                 },
+                $behavesAsDomElement: true,
                 ctor: function (attributes, descriptor, applicationDomain, parentScope, rootScope) {
                     this.callBase();
                     this.$renderMap = {};
@@ -29,6 +30,7 @@ requirejs(["rAppid"], function (rAppid) {
 
                     if (attributes.tagName) {
                         this.$tagName = attributes.tagName;
+                        delete(attributes.tagName);
                     }
                 },
                 addChild: function (child) {
@@ -37,7 +39,7 @@ requirejs(["rAppid"], function (rAppid) {
                         this._renderChild(child);
                     }
                 },
-                getPlaceholder: function (name) {
+                getPlaceHolder: function (name) {
                     for (var i = 0; i < this.$children.length; i++) {
                         if (this.$children[i].$.name === name) {
                             return this.$children[i];
@@ -45,8 +47,8 @@ requirejs(["rAppid"], function (rAppid) {
                     }
                     var placeholder;
                     for (i = 0; i < this.$children.length; i++) {
-                        if (this.$children[i].getPlaceholder) {
-                            placeholder = this.$children[i].getPlaceholder(name);
+                        if (this.$children[i].getPlaceHolder) {
+                            placeholder = this.$children[i].getPlaceHolder(name);
                             if (placeholder) {
                                 return placeholder;
                             }
@@ -65,6 +67,7 @@ requirejs(["rAppid"], function (rAppid) {
                     }
 
                     this.$el = document.createElement(this.$tagName);
+                    this.$el.owner = this;
 
                     // TODO: read layout and create renderMAP
                     /**
@@ -78,21 +81,6 @@ requirejs(["rAppid"], function (rAppid) {
                     return this.$el;
                 },
                 _bindDomEvents: function (el) {
-                    var self = this;
-
-                    if (this.$el.tagName == "INPUT") {
-                        if (this.$el.type == "text" || this.$el.type == "password") {
-                            this.$el.addEventListener('change', function (e) {
-                                self.set('value', e.target.value);
-                            });
-                        } else if (this.$el.type == "checkbox") {
-                            this.$el.addEventListener('change', function (e) {
-                                self.set('checked', e.target.checked);
-                            });
-                        }
-
-
-                    }
 
                 },
                 _renderChildren: function (children) {
@@ -153,12 +141,8 @@ requirejs(["rAppid"], function (rAppid) {
                     }
                     if (method !== false) {
                         method.call(this, attr, prev);
-                    } else if (this.className && this.className.indexOf("js.html.") > -1) {
-                        if (!_.isUndefined(this.$el[key])) {
-                            this.$el[key] = attr;
-                        } else {
-                            this.$el.setAttribute(key, attr);
-                        }
+                    } else if (this.$behavesAsDomElement) {
+                        this.$el.setAttribute(key, attr);
                     }
                 },
 
@@ -193,10 +177,20 @@ requirejs(["rAppid"], function (rAppid) {
                     }
                 },
                 _renderWidth: function (width) {
-                    // TODO: implement
+                    if(width){
+                        if(typeof(width) !== "string"){
+                            width += "px";
+                        }
+                        this.$el.style.width = width;
+                    }
                 },
                 _renderHeight: function (height) {
-                    // TODO: implement
+                    if (height) {
+                        if(typeof(height) !== "string"){
+                            height += "px";
+                        }
+                        this.$el.style.height = height;
+                    }
                 },
                 _commitChangedAttributes: function (attributes) {
                     if (this.isRendered()) {

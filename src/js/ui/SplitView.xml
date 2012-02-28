@@ -60,13 +60,13 @@
     <!-- DEFAULT ICON CLASS TEMPLATE-->
     <js:Template name="left">
         <div>
-            <js:Placeholder cid="innerleft"/>
+            <js:PlaceHolder cid="innerleft"/>
         </div>
     </js:Template>
     <js:Template name="left">
         <div>
             <span>splitterbar</span>
-            <js:Placeholder cid="innerright"/>
+            <js:PlaceHolder cid="innerright"/>
         </div>
 
     </js:Template>

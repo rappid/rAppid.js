@@ -7,7 +7,11 @@ requirejs(["rAppid"], function (rAppid) {
                 if (content) {
                     this._renderChildren(content.$children);
                 } else {
-                    // TODO: remove children
+                    var cv;
+                    for(var i = 0 ; i < this.$childViews.length; i++){
+                        cv = this.$childViews[i];
+                        this.$el.removeChild(cv.$el);
+                    }
                 }
             }
         }));
