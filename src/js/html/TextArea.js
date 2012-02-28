@@ -13,7 +13,6 @@ requirejs(["rAppid"], function (rAppid) {
                             this._initBinding(text,"value");
                         }
                     }
-                    //this.callBase();
                 },
                 _renderValue: function(value){
                     this.$el.textContent = value;
