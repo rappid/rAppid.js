@@ -1,12 +1,9 @@
 var requirejs = (typeof requirejs === "undefined" ? require("requirejs") : requirejs);
 
 requirejs(["rAppid"], function (rAppid) {
-    rAppid.defineClass("js.ui.Placeholder",
+    rAppid.defineClass("js.ui.PlaceHolder",
         ["underscore", "js.core.UIComponent", "js.core.Content"], function (_, UIComponent, Content) {
             return UIComponent.inherit({
-                defaults: {
-
-                },
                 render: function () {
                     if (this.isRendered()) {
                         return this.$el;
@@ -29,7 +26,6 @@ requirejs(["rAppid"], function (rAppid) {
                     } else {
                         children = [content];
                     }
-
 
                     var child, el;
                     for (var i = 0; i < children.length; i++) {
