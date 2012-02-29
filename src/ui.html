@@ -22,11 +22,7 @@
         return jQuery;
     });
 
-    define("rAppid", function () {
-        return rAppid;
-    });
-
-    rAppid.bootStrap("ui.xml", ["js.ui.Link", "js.ui.MenuButton", "js.ui.SplitButton" , "js.ui.TabView"],
+    rAppid.bootStrap("ui.xml", "config.json",
             function (err, systemManager, application) {
                 if (!err) {
                     application.start();

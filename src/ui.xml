@@ -6,7 +6,6 @@
         js.core.Base;
         js.core.Bindable;
         js.core.Content;
-
     </js:Imports>
 
     <js:Script>

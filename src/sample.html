@@ -19,7 +19,7 @@
             return _;
         });
 
-        rAppid.bootStrap("app/Organizer.xml", ["app.modules.Articles"],
+        rAppid.bootStrap("app/Organizer.xml", "config.json",
                 function (err, systemManager, application) {
                     if (!err) {
                         application.start({

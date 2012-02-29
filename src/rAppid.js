@@ -10,6 +10,13 @@ var rAppid;
         throw "define is needed";
     }
 
+    require.config({
+        paths: {
+            "xaml": "js/plugins/xaml",
+            "json": "js/plugins/json"
+        }
+    });
+
 
     var Base = inherit.Base.inherit({
         ctor: function () {
@@ -25,6 +32,10 @@ var rAppid;
     // define js.core.Base
     define("js/core/Base", [], function() {
         return Base;
+    });
+
+    define("rAppid", function() {
+        return _rAppid;
     });
 
     function SystemManager(applicationDomain, application) {
@@ -56,57 +67,71 @@ var rAppid;
             }
         },
 
-        bootStrap: function (mainClass, xamlClasses, callback, namespaceMap, rewriteMap) {
+        bootStrap: function (mainClass, config, callback) {
+            config = config || {};
+            
+            var internalBootstrap = function(config) {
 
-            xamlClasses = xamlClasses || [];
-            namespaceMap = namespaceMap || defaultNamespaceMap;
+                var xamlClasses = config.xamlClasses || [];
+                var namespaceMap = config.namespaceMap || defaultNamespaceMap;
+                var rewriteMap = config.rewriteMap;
 
-            var applicationDomain = currentApplicationDomain = new ApplicationDomain(namespaceMap, rewriteMap);
+                var applicationDomain = currentApplicationDomain = new ApplicationDomain(namespaceMap, rewriteMap);
 
-            require.config({
-                xamlClasses: xamlClasses,
-                namespaceMap: namespaceMap,
-                rewriteMap: applicationDomain.$rewriteMap,
-                applicationDomain: applicationDomain
-            });
-
-            if (mainClass) {
-                var parts = xamlApplication.exec(mainClass);
-                if (parts) {
-                    // mainClass is xaml
-                    mainClass = "xaml!" + parts[2];
-                } else {
-                    // mainClass is javascript factory
-                    mainClass = mainClass.replace(/\./g, "/");
-                }
-
-                require(["js/core/Imports"], function () {
-                    require(["js/core/Application", mainClass], function (Application, mainClassFactory) {
-                        // create instance
-                        var application = new mainClassFactory(null, false, applicationDomain, null, null);
-
-                        if (application instanceof Application) {
-
-                            var systemManager = new SystemManager(applicationDomain, application);
-                            rAppid.systemManager = systemManager;
-
-                            application._initialize("auto");
-
-                            // return system manager
-                            if (callback) {
-                                callback(null, systemManager, application);
-                            }
-
-                        } else {
-                            var errMessage = "mainClass isn't an instance of js.core.Application";
-                            if (callback) {
-                                callback(errMessage);
-                            } else {
-                                throw(errMessage);
-                            }
-                        }
-                    });
+                require.config({
+                    xamlClasses: xamlClasses,
+                    namespaceMap: namespaceMap,
+                    rewriteMap: applicationDomain.$rewriteMap,
+                    applicationDomain: applicationDomain
                 });
+
+                if (mainClass) {
+                    var parts = xamlApplication.exec(mainClass);
+                    if (parts) {
+                        // mainClass is xaml
+                        mainClass = "xaml!" + parts[2];
+                    } else {
+                        // mainClass is javascript factory
+                        mainClass = mainClass.replace(/\./g, "/");
+                    }
+
+                    require(["js/core/Imports"], function () {
+                        require(["js/core/Application", mainClass], function (Application, mainClassFactory) {
+                            // create instance
+                            var application = new mainClassFactory(null, false, applicationDomain, null, null);
+
+                            if (application instanceof Application) {
+
+                                var systemManager = new SystemManager(applicationDomain, application);
+                                rAppid.systemManager = systemManager;
+
+                                application.$config = config;
+                                application._initialize("auto");
+
+                                // return system manager
+                                if (callback) {
+                                    callback(null, systemManager, application);
+                                }
+
+                            } else {
+                                var errMessage = "mainClass isn't an instance of js.core.Application";
+                                if (callback) {
+                                    callback(errMessage);
+                                } else {
+                                    throw(errMessage);
+                                }
+                            }
+                        });
+                    });
+                }
+            };
+            
+            if (Object.prototype.toString.call(config) == '[object String]') {
+                require(["json!" + config], function(config) {
+                    internalBootstrap(config);
+                });
+            } else {
+                internalBootstrap(config);
             }
 
         }
