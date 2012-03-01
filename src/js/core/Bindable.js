@@ -142,7 +142,7 @@ requirejs(["rAppid"], function (rAppid) {
                             if (options.unset === true) {
                                 delete now[key];
                             } else {
-                                if (!_.isEqual(now[key], attributes[key])) {
+                                if (!rAppid._.isEqual(now[key], attributes[key])) {
                                     this.$previousAttributes[key] = now[key];
                                     now[key] = attributes[key];
                                     changedAttributes[key] = now[key];
