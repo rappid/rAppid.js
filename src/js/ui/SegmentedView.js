@@ -2,7 +2,7 @@ var requirejs = (typeof requirejs === "undefined" ? require("requirejs") : requi
 
 requirejs(["rAppid"], function (rAppid) {
     rAppid.defineClass("js.ui.SegmentedView",
-        ["underscore", "js.ui.ItemsView", "js.html.DomElement"], function (_, ItemsView, DomElement) {
+        ["js.ui.ItemsView", "js.html.DomElement"], function (ItemsView, DomElement) {
             return ItemsView.inherit({
                 defaults: {
                     tagName: "div",

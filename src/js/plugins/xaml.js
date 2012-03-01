@@ -3,6 +3,18 @@
     var importRegEx = /((?:xaml!)?[a-z]+(\.[a-z]+[a-z0-9]*)*)/mgi;
 
     define(function () {
+
+        if (!Array.indexOf) {
+            Array.prototype.indexOf = function (obj) {
+                for (var i = 0; i < this.length; i++) {
+                    if (this[i] === obj) {
+                        return i;
+                    }
+                }
+                return -1;
+            }
+        }
+
         return {
             version: '0.1.0',
 
@@ -66,7 +78,8 @@
                     }
                 }
 
-                if (_.include(xamlClasses,fqClassName)) {
+                // TODO fix
+                if (xamlClasses.indexOf(fqClassName) != -1) {
                     fqClassName = "xaml!" + fqClassName;
                 }
 
@@ -173,8 +186,6 @@
                             
                             var dependencies = self.findDependencies(xhr.responseXML.documentElement,
                                 config.namespaceMap, config.xamlClasses, config.rewriteMap, imports);
-
-                            // console.log(["dependencies for " + url, dependencies ]);
 
                             var scripts = self.findScripts(xhr.responseXML.documentElement,
                                 config.namespaceMap, config.xamlClasses, config.rewriteMap);

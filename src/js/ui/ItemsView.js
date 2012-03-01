@@ -3,7 +3,7 @@ var requirejs = (typeof requirejs === "undefined" ? require("requirejs") : requi
 requirejs(["rAppid"], function (rAppid) {
 
     rAppid.defineClass("js.ui.ItemsView",
-        ["underscore", "js.ui.View", "js.core.Template"], function (_, View, Template) {
+        ["js.ui.View", "js.core.Template"], function (View, Template) {
             return View.inherit({
                 defaults: {
                     tagName: "div",
@@ -21,7 +21,6 @@ requirejs(["rAppid"], function (rAppid) {
                 },
                 removeItem: function(){
                     // TODO: implement
-
                     this.$.hasItems = this.hasItems();
                 },
                 clear: function(){

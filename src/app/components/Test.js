@@ -1,7 +1,6 @@
 rAppid.defineClass("app.components.Test", ["js.core.Component", "app.libs.Api"], function(Component, Api) {
     return Component.inherit({
         ctor: function() {
-            console.log("Test.ctor");
             this.callBase();
         },
         inject: {

@@ -2,7 +2,7 @@ var requirejs = (typeof requirejs === "undefined" ? require("requirejs") : requi
 
 requirejs(["rAppid"], function (rAppid) {
     rAppid.defineClass("js.html.DomElement",
-        ["js.core.Component", "js.core.Binding", "underscore"], function (Component, Binding, _) {
+        ["js.core.Component", "js.core.Binding"], function (Component, Binding) {
 
             var rspace = /\s+/;
 
@@ -92,7 +92,7 @@ requirejs(["rAppid"], function (rAppid) {
                     }
                 },
                 _renderChild: function (child) {
-                    if (_.isFunction(child.render)) {
+                    if (rAppid._.isFunction(child.render)) {
                         var el = child.render();
                         if (el) {
                             this.$el.appendChild(el);
@@ -127,13 +127,13 @@ requirejs(["rAppid"], function (rAppid) {
                     var method = this.$renderMap[key];
                     var prev = this.$previousAttributes[key];
 
-                    if (_.isUndefined(method)) {
+                    if (rAppid._.isUndefined(method)) {
                         // generic call of render functions
                         var k = key[0].toUpperCase() + key.substr(1);
                         var methodName = "_render" + k;
                         method = this[methodName];
 
-                        if (!_.isFunction(method)) {
+                        if (!rAppid._.isFunction(method)) {
                             method = false;
                         }
 
@@ -250,13 +250,13 @@ requirejs(["rAppid"], function (rAppid) {
                 }
             };
 
-            var DomManipulation = inherit.Base.inherit(_.extend({
+            var DomManipulation = inherit.Base.inherit(rAppid._.extend({
                 ctor: function (elm) {
                     this.$el = elm;
                 }
             }, DomManipulationFunctions));
 
-            return Component.inherit(_.extend(DomElementFunctions, DomManipulationFunctions));
+            return Component.inherit(rAppid._.extend(DomElementFunctions, DomManipulationFunctions));
         }
     );
 });

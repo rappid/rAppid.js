@@ -2,11 +2,12 @@ var requirejs = (typeof requirejs === "undefined" ? require("requirejs") : requi
 
 requirejs(["rAppid"], function (rAppid) {
 
-    rAppid.defineClass("js.core.Bindable", ["js.core.EventDispatcher", "underscore"],
+    rAppid.defineClass("js.core.Bindable", ["js.core.EventDispatcher"],
         /**
          * @export js.core.Bindable
          */
-            function (EventDispatcher, _) {
+            function (EventDispatcher) {
+
 
             Function.prototype.on = function () {
                 this._bindings = arguments;
@@ -24,14 +25,14 @@ requirejs(["rAppid"], function (rAppid) {
 
                     this.$ = {};
 
-                    _.extend(this._eventAttributes, this.base._eventAttributes || {});
+                    rAppid._.extend(this._eventAttributes, this.base._eventAttributes || {});
 
                     attributes = attributes || {};
 
-                    _.defaults(attributes, this._defaultAttributes());
+                    rAppid._.defaults(attributes, this._defaultAttributes());
 
                     this.$ = attributes;
-                    this.$previousAttributes = _.clone(this.$);
+                    this.$previousAttributes = rAppid._.clone(this.$);
 
 
                     var self = this, fnc;
@@ -46,7 +47,7 @@ requirejs(["rAppid"], function (rAppid) {
                     for (var key in this) {
 
                         // find functions which have a bindings attribute
-                        if (_.isFunction(this[key]) && this[key]._bindings) {
+                        if (rAppid._.isFunction(this[key]) && this[key]._bindings) {
                             fnc = this[key];
                             // register as listener to all bindings
                             for (var i = 0; i < fnc._bindings.length; i++) {
@@ -70,7 +71,7 @@ requirejs(["rAppid"], function (rAppid) {
                         base = this.base;
 
                     while (base) {
-                        _.defaults(ret, base[property]);
+                        rAppid._.defaults(ret, base[property]);
                         base = base.base;
                     }
 
@@ -101,7 +102,7 @@ requirejs(["rAppid"], function (rAppid) {
                 set: function (key, value, options) {
                     var attributes = {};
 
-                    if (_.isString(key)) {
+                    if (rAppid._.isString(key)) {
                         // check for path
                         var path = key.split(".");
                         if (path.length > 1) {
@@ -153,7 +154,7 @@ requirejs(["rAppid"], function (rAppid) {
                     }
                     this._commitChangedAttributes(changedAttributes);
 
-                    if (options.silent === false && _.size(changedAttributes) > 0) {
+                    if (options.silent === false && rAppid._.size(changedAttributes) > 0) {
                         for (key in changedAttributes) {
                             if (changedAttributes.hasOwnProperty(key)) {
                                 this.trigger('change:' + key, changedAttributes[key], this);

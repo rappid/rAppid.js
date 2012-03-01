@@ -1,6 +1,6 @@
 var rAppid;
 
-(function (exports, inherit, require, define) {
+(function (exports, inherit, require, define, underscore) {
 
     if (!require) {
         throw "require.js is needed";
@@ -10,6 +10,11 @@ var rAppid;
         throw "define is needed";
     }
 
+    if (!underscore) {
+        // TODO include own implementation
+        throw "underscore is needed"
+    }
+
     require.config({
         paths: {
             "xaml": "js/plugins/xaml",
@@ -17,14 +22,8 @@ var rAppid;
         }
     });
 
-
     var Base = inherit.Base.inherit({
         ctor: function () {
-        },
-        helper: {
-            // TODO: own implementation
-//            defaults: _.defaults,
-//            extend: _.extend
         }
     });
 
@@ -134,7 +133,8 @@ var rAppid;
                 internalBootstrap(config);
             }
 
-        }
+        },
+        _: underscore
     };
 
     var Rewrite = _rAppid.rewriteMapEntry = function (from, to) {
@@ -326,4 +326,5 @@ var rAppid;
 })(typeof exports === "undefined" ? this : exports,
    typeof inherit === "undefined" ? global.inherit : inherit,
     requirejs,
-    requirejs.define ? requirejs.define : define);
+    requirejs.define ? requirejs.define : define,
+    typeof this._ === "undefined" ? global.underscore : this._);

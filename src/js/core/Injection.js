@@ -1,7 +1,7 @@
 var requirejs = (typeof requirejs === "undefined" ? require("requirejs") : requirejs);
 
 requirejs(["rAppid"], function (rAppid) {
-    rAppid.defineClass("js.core.Injection", ["js.core.Component", "underscore"], function (Component, _) {
+    rAppid.defineClass("js.core.Injection", ["js.core.Component"], function (Component) {
 
         var singleton;
 
@@ -81,7 +81,7 @@ requirejs(["rAppid"], function (rAppid) {
                     }
                 }
 
-                _.defaults(factory, {
+                rAppid._.defaults(factory, {
                     "type": null,
                     "factory": null,
                     "singleton": false

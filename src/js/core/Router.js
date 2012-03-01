@@ -1,9 +1,9 @@
 var requirejs = (typeof requirejs === "undefined" ? require("requirejs") : requirejs);
 
 requirejs(["rAppid"], function (rAppid) {
-    rAppid.defineClass("js.core.Router", ["js.core.Component", "underscore"],
+    rAppid.defineClass("js.core.Router", ["js.core.Component"],
 
-        function (Component, _) {
+        function (Component) {
 
             return Component.inherit({
                 ctor: function () {
@@ -42,7 +42,7 @@ requirejs(["rAppid"], function (rAppid) {
                         route = arguments[0];
                     }
 
-                    _.defaults(route, {
+                    rAppid._.defaults(route, {
                         name: null,
                         regex: null,
                         fn: null

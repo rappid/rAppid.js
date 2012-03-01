@@ -2,8 +2,8 @@ var requirejs = (typeof requirejs === "undefined" ? require("requirejs") : requi
 
 requirejs(["rAppid"], function (rAppid) {
     rAppid.defineClass("js.core.ModuleLoader", ["js.core.UIComponent", "js.ui.ContentPlaceHolder",
-        "underscore", "require", "js.core.Module"],
-        function (UIComponent, ContentPlaceHolder, _, require, Module) {
+        "require", "js.core.Module"],
+        function (UIComponent, ContentPlaceHolder, require, Module) {
             var ModuleLoader = UIComponent.inherit({
 
                 ctor: function (attributes) {
@@ -21,7 +21,7 @@ requirejs(["rAppid"], function (rAppid) {
                 },
 
                 addModule: function (module) {
-                    _.defaults(module, {
+                    rAppid._.defaults(module, {
                         name: null,
                         moduleClass: null,
                         route: null,

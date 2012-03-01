@@ -2,7 +2,7 @@ var requirejs = (typeof requirejs === "undefined" ? require("requirejs") : requi
 
 requirejs(["rAppid"], function (rAppid) {
     rAppid.defineClass("js.ui.View",
-        ["underscore", "js.core.UIComponent", "js.core.Template", "js.core.Content"], function (_, UIComponent, Template, Content) {
+        ["js.core.UIComponent", "js.core.Template", "js.core.Content"], function (UIComponent, Template, Content) {
             return UIComponent.inherit({
                 defaults: {
                     tagName: "div"

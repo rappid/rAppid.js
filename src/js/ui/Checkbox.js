@@ -2,7 +2,7 @@ var requirejs = (typeof requirejs === "undefined" ? require("requirejs") : requi
 
 requirejs(["rAppid"], function (rAppid) {
     rAppid.defineClass("js.ui.Button",
-        ["underscore", "xaml!js.ui.Link", "js.core.Content"], function (_, Link) {
+        ["xaml!js.ui.Link", "js.core.Content"], function (Link) {
             return Link.inherit({
                 defaults: {
                     'tagName': 'label',

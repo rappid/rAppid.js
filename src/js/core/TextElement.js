@@ -19,7 +19,6 @@ requirejs(["rAppid"], function (rAppid) {
                         key = key.substr(1, key.length - 2);
                         scope = this.getScopeForKey(key);
                         if (scope) {
-                            console.log(key);
                             tKey = key.replace(/\./g, "_");
                             this.$bindings.push(new Binding({scope: scope, path: key, target: this, targetKey: tKey}));
                             this.$[tKey] = scope.get(key);

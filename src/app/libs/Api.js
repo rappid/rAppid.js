@@ -1,8 +1,8 @@
-rAppid.defineClass("app.libs.Api", ["underscore"], function(_){
+rAppid.defineClass("app.libs.Api", [], function(){
     var Api = function(configuration){
         configuration = configuration || {};
 
-        _.defaults(configuration, {
+        rAppid._.defaults(configuration, {
             endPoint: "api"
         });
 

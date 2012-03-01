@@ -2,7 +2,7 @@ var requirejs = (typeof requirejs === "undefined" ? require("requirejs") : requi
 
 requirejs(["rAppid"], function (rAppid) {
     rAppid.defineClass("js.html.Select",
-        ["js.ui.SelectionView", "underscore"], function (SelectionView, _) {
+        ["js.ui.SelectionView"], function (SelectionView) {
             return SelectionView.inherit({
                 defaults:{
                     multiSelect:false,
@@ -23,7 +23,7 @@ requirejs(["rAppid"], function (rAppid) {
                     for (var i = 0; i < this.$renderedItems.length; i++) {
                         ri = this.$renderedItems[i];
                         comp = ri.component;
-                        comp.set({selected:_.contains(items, ri.item)});
+                        comp.set({selected: rAppid._.contains(items, ri.item)});
                     }
                 },
                 _bindDomEvents:function () {

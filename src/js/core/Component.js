@@ -3,8 +3,8 @@ var requirejs = (typeof requirejs === "undefined" ? require("requirejs") : requi
 requirejs(["rAppid"], function (rAppid) {
 
     rAppid.defineClass("js.core.Component",
-        ["js.core.Element", "js.core.TextElement", "underscore", "js.core.Binding"],
-        function (Element, TextElement, _, Binding) {
+        ["js.core.Element", "js.core.TextElement", "js.core.Binding"],
+        function (Element, TextElement, Binding) {
 
 
             return Element.inherit({

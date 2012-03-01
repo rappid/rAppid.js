@@ -3,16 +3,16 @@ var requirejs = (typeof requirejs === "undefined" ? require("requirejs") : requi
 requirejs(["rAppid"], function (rAppid) {
 
     rAppid.defineClass("js.core.Element",
-        ["js.core.Bindable", "underscore"], function (Bindable, _) {
+        ["js.core.Bindable"], function (Bindable) {
 
             var undef;
 
             function stringToPrimitive(str) {
                 // if it's not a string
-                if (_.isString(str)) {
+                if (rAppid._.isString(str)) {
 
                     var n = parseFloat(str);
-                    if (!_.isNaN(n)) {
+                    if (!rAppid._.isNaN(n)) {
                         return n;
                     }
 
@@ -43,7 +43,7 @@ requirejs(["rAppid"], function (rAppid) {
                     this.$rootScope = rootScope || null;
 
 
-                    _.defaults(attributes, this._getAttributesFromDescriptor(descriptor), this._getAttributesFromDescriptor(this._$descriptor));
+                    rAppid._.defaults(attributes, this._getAttributesFromDescriptor(descriptor), this._getAttributesFromDescriptor(this._$descriptor));
 
                     this.callBase(attributes);
 
@@ -131,7 +131,7 @@ requirejs(["rAppid"], function (rAppid) {
                     // try to find value for first key
                     var value = this.$[k1];
                     // if value was found
-                    if (!_.isUndefined(value)) {
+                    if (!rAppid._.isUndefined(value)) {
                         return this;
                     } else if (this.$parentScope) {
                         return this.$parentScope.getScopeForKey(k1);

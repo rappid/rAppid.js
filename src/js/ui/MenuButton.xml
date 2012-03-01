@@ -60,7 +60,7 @@
 
                 },
                 _bindDomEvents:function (el) {
-                    if (!_.contains(this.$instances, this)) {
+                    if (!rAppid._.contains(this.$instances, this)) {
                         this.$instances.push(this);
                     }
                     var self = this;
