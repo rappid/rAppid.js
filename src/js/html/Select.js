@@ -10,12 +10,7 @@ requirejs(["rAppid"], function (rAppid) {
                     tagName:'select'
                 },
                 _renderMultiSelect:function (multiSelect) {
-                    if (multiSelect === true) {
-                        this.$el.multiple = true;
-                    } else {
-                        this.$el.multiple = false;
-                    }
-
+                    this.$el.multiple = multiSelect;
                 },
                 _renderSelectedItems:function (items) {
                     var comp, ri;
@@ -28,7 +23,7 @@ requirejs(["rAppid"], function (rAppid) {
                 },
                 _bindDomEvents:function () {
                     var self = this;
-                    this.$el.addEventListener('change', function (e) {
+                    this.addEventListener('change', function (e) {
                         self._checkOptions();
                     });
                 },
