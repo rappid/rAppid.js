@@ -4,16 +4,27 @@
 
     define(function () {
 
-        if (!Array.indexOf) {
+        if (!Array.prototype.indexOf) {
             Array.prototype.indexOf = function (obj) {
                 for (var i = 0; i < this.length; i++) {
-                    if (this[i] === obj) {
+                    if (this[i] == obj) {
                         return i;
                     }
                 }
                 return -1;
             }
         }
+
+        /**
+         * IE8 FIXES
+         * @param domNode
+         */
+        var localNameFromDomNode = function(domNode){
+            if(domNode.localName) return domNode.localName;
+
+            var st = domNode.tagName.split(":");
+            return st[st.length-1];
+        };
 
         return {
             version: '0.1.0',
@@ -48,6 +59,7 @@
                 var xhr;
                 try {
                     xhr = this.createXhr();
+
                     xhr.open('GET', url, true);
 
                     xhr.onreadystatechange = function (evt) {
@@ -73,6 +85,7 @@
                     if (entry.$from && entry.$to) {
                         if (entry.$from.test(fqClassName)) {
                             fqClassName = fqClassName.replace(entry.$from, entry.$to);
+
                             break;
                         }
                     }
@@ -92,23 +105,31 @@
                 var ret = [];
 
                 function findDependencies(domNode) {
-                    var dep = self.getDependency(domNode.namespaceURI, domNode.localName, namespaceMap, xamlClasses, rewriteMap);
 
+                    var localName = localNameFromDomNode(domNode);
+
+                    var dep = self.getDependency(domNode.namespaceURI, localName, namespaceMap, xamlClasses, rewriteMap);
+                    // console.log(dep);
                     if (dep == "js/core/Imports") {
                         for (var t = 0; t < domNode.childNodes.length; t++) {
                             var importNode = domNode.childNodes[t];
                             if (importNode.nodeType == 3) {
                                 // text node
                                 var m;
-                                while ((m = importRegEx.exec(importNode.textContent)) != null) {
+                                var textContent = importNode.textContent ? importNode.textContent : importNode.text;
+                                while ((m = importRegEx.exec(textContent+" ")) != null) {
                                     var importClass =  m[0].replace(/\./g, "/");
-                                    if (ret.indexOf(importClass) == -1) {
-                                        ret.push(importClass);
+                                    if(importClass !== "undefined"){
+                                        if (ret.indexOf(importClass) == -1) {
+                                            ret.push(importClass);
+                                        }
+
+                                        if (imports) {
+                                            imports.push(importClass);
+                                        }
                                     }
-                                    
-                                    if (imports) {
-                                        imports.push(importClass);
-                                    }
+
+
                                 }
                             }
                         }
@@ -142,7 +163,7 @@
                 for (var i = 0; i < xaml.childNodes.length; i++) {
                     var node = xaml.childNodes[i];
                     if (node.nodeType == 1) {
-                        if ("js/core/Script" == this.getDependency(node.namespaceURI, node.localName, namespaceMap, xamlClasses, rewriteMap)) {
+                        if ("js/core/Script" == this.getDependency(node.namespaceURI, localNameFromDomNode(node), namespaceMap, xamlClasses, rewriteMap)) {
                             ret.push(node);
                         }
                     }
@@ -173,38 +194,45 @@
 //                    onLoad();
 //                    return;
 //                }
-
                 var self = this;
                 var url = req.toUrl(name.replace(/\./g, "/") + ".xml");
-
                 this.get(url, function (err, xhr) {
-
                     if (!err) {
                         if (xhr.responseXML) {
                             // require all dependencies
                             var imports = [];
-                            
+
                             var dependencies = self.findDependencies(xhr.responseXML.documentElement,
                                 config.namespaceMap, config.xamlClasses, config.rewriteMap, imports);
-
+                            for (var i = 0; i < imports.length; i++) {
+                                // console.log(imports[i]);
+                            }
                             var scripts = self.findScripts(xhr.responseXML.documentElement,
                                 config.namespaceMap, config.xamlClasses, config.rewriteMap);
+
                             if (scripts.length > 0) {
                                 // at least one script
+
                                 dependencies.splice(1, 0, "js/core/Script");
                             }
 
-                            dependencies = dependencies.concat(imports);
-
+                            if(imports.length > 0){
+                                dependencies = dependencies.concat(imports);
+                            }
+                            for(i = 0 ; i < dependencies.length; i++){
+                               // console.log("AFTER: "+dependencies[i]);
+                            }
 
                             // first item should be the dependency of the document element
                             req(dependencies, function() {
                                 // dependencies are loaded
-
                                 var baseClass = arguments[0],
-                                    Script = arguments[1],
-                                    args = Array.prototype.slice.call(arguments);
+                                    Script = arguments[1];
 
+                                var args = [];
+                                for(var i = 1; i < arguments.length; i++){
+                                    args.push(arguments[i]);
+                                }
 
                                 var scriptObjects = [];
                                 var importedClasses = args.slice(args.length - imports.length);
@@ -245,4 +273,4 @@
         };
 
     });
-}());
+})();

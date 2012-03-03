@@ -144,6 +144,9 @@ requirejs(["rAppid"], function (rAppid) {
                 },
                 _initializationComplete: function () {
                     this.$initialized = true;
+                },
+                _getTextContentFromDescriptor:function (desc) {
+                    return desc.textContent ? desc.textContent : desc.text;
                 }
             });
         }

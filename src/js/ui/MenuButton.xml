@@ -5,7 +5,7 @@
     </js:Imports>
     <js:Script type="text/javascript">
         <![CDATA[
-        (function (Button) {
+        (function (Button,_) {
             return {
                 defaults:{
                     tagName:'div',

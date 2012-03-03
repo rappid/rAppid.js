@@ -6,7 +6,6 @@ requirejs(["rAppid"], function (rAppid) {
         ["js.core.Element", "js.core.TextElement", "js.core.Binding"],
         function (Element, TextElement, Binding) {
 
-
             return Element.inherit({
                 ctor: function (attributes, descriptor, applicationDomain, parentScope, rootScope) {
 
@@ -36,7 +35,7 @@ requirejs(["rAppid"], function (rAppid) {
 
                     var inject = this._injectChain();
 
-                    if (Object.keys(inject).length > 0) {
+                    if (rAppid._.size(inject) > 0) {
                         // we need to inject at least on item
 
                         // synchronous singleton instantiation of Injection,
@@ -257,8 +256,8 @@ requirejs(["rAppid"], function (rAppid) {
                     // only instantiation and construction but no initialization
                     var appDomain = this.$applicationDomain;
 
-                    var fqClassName = appDomain.getFqClassName(node.namespaceURI, node.localName, true);
-                    var className = appDomain.getFqClassName(node.namespaceURI, node.localName, false);
+                    var fqClassName = appDomain.getFqClassName(node.namespaceURI, this._localNameFromDomNode(node), true);
+                    var className = appDomain.getFqClassName(node.namespaceURI, this._localNameFromDomNode(node), false);
 
                     return appDomain.createInstance(fqClassName, [attributes, node, appDomain, this, this.$rootScope], className);
 
@@ -281,9 +280,12 @@ requirejs(["rAppid"], function (rAppid) {
                                 childrenFromDescriptor.push(component);
                             } else if (node.nodeType == 3) { // Textnodes
                                 // remove whitespaces from text textnodes
-                                var text = node.textContent.trim();
+                                var text = node.textContent ? node.textContent : node.text;
+                                text = text.trim();
                                 if (text.length > 0) {
-                                    node.textContent = text;
+                                    if(node.textContent){
+                                        node.textContent = text;
+                                    }
                                     childrenFromDescriptor.push(this._createTextElementForNode(node));
                                 }
 
@@ -297,6 +299,16 @@ requirejs(["rAppid"], function (rAppid) {
 
                 },
                 initialize: function (scope) {
+                },
+                /**
+                 * IE8 FIXES
+                 * @param domNode
+                 */
+                _localNameFromDomNode : function (domNode) {
+                    if (domNode.localName) return domNode.localName;
+
+                    var st = domNode.tagName.split(":");
+                    return st[st.length - 1];
                 }
             });
         }

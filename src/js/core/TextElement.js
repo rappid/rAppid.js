@@ -11,8 +11,9 @@ requirejs(["rAppid"], function (rAppid) {
             return Element.inherit({
                 _initializeBindings: function () {
                     this.$bindings = [];
+                    var textContent = this._getTextContentFromDescriptor(this.$descriptor);
                     // find bindings and register for onchange event
-                    var matches = this.$descriptor.textContent.match(/\{([a-zA-Z$\-._]+)\}/g);
+                    var matches = textContent.match(/\{([a-zA-Z$\-._]+)\}/g);
                     var key, scope, tKey;
                     while (matches && matches.length > 0) {
                         key = matches.shift();
@@ -33,7 +34,7 @@ requirejs(["rAppid"], function (rAppid) {
 
                     this.$el = document.createTextNode("");
                     if (this.$descriptor) {
-                        this._renderTextContent(this.$descriptor.textContent);
+                        this._renderTextContent(this._getTextContentFromDescriptor(this.$descriptor));
                     }
 
                     return this.$el;
@@ -52,12 +53,16 @@ requirejs(["rAppid"], function (rAppid) {
                         textContent = textContent.split("{" + key + "}").join(val);
                         matches = matchPlaceholder(textContent);
                     }
+                    if(this.$el.textContent){
+                        this.$el.textContent = textContent;
+                    }else{
+                        this.$el.nodeValue = textContent;
+                    }
 
-                    this.$el.textContent = textContent;
                 },
                 _commitChangedAttributes: function () {
                     if (this.$el && this.$descriptor) {
-                        this._renderTextContent(this.$descriptor.textContent);
+                        this._renderTextContent(this._getTextContentFromDescriptor(this.$descriptor));
                     }
                 }
             });

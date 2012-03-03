@@ -7,25 +7,25 @@ requirejs(["rAppid"], function (rAppid) {
             var rspace = /\s+/;
 
             var DomElementFunctions = {
-                defaults: {
-                    selected: false,
-                    selectable: false
+                defaults:{
+                    selected:false,
+                    selectable:false
                 },
-                $behavesAsDomElement: true,
-                ctor: function (attributes, descriptor, applicationDomain, parentScope, rootScope) {
+                $behavesAsDomElement:true,
+                ctor:function (attributes, descriptor, applicationDomain, parentScope, rootScope) {
                     this.callBase();
                     this.$renderMap = {};
 
                     if (descriptor) {
                         if (!this.$tagName) {
-                            this.$tagName = descriptor.localName;
+                            this.$tagName = descriptor.tagName;
                         }
                         if (!this.$namespace) {
                             this.$namespace = descriptor.namespaceURI;
                         }
                     }
                 },
-                _initializeAttributes: function (attributes) {
+                _initializeAttributes:function (attributes) {
                     this.callBase();
 
                     if (attributes.tagName) {
@@ -33,13 +33,13 @@ requirejs(["rAppid"], function (rAppid) {
                         delete(attributes.tagName);
                     }
                 },
-                addChild: function (child) {
+                addChild:function (child) {
                     this.callBase();
                     if (this.isRendered()) {
                         this._renderChild(child);
                     }
                 },
-                getPlaceHolder: function (name) {
+                getPlaceHolder:function (name) {
                     for (var i = 0; i < this.$children.length; i++) {
                         if (this.$children[i].$.name === name) {
                             return this.$children[i];
@@ -57,7 +57,7 @@ requirejs(["rAppid"], function (rAppid) {
                     }
                     return null;
                 },
-                render: function () {
+                render:function () {
                     if (!this.$initialized) {
                         this._initialize(this.$creationPolicy);
                     }
@@ -80,10 +80,10 @@ requirejs(["rAppid"], function (rAppid) {
 
                     return this.$el;
                 },
-                _bindDomEvents: function (el) {
+                _bindDomEvents:function (el) {
 
                 },
-                _renderChildren: function (children) {
+                _renderChildren:function (children) {
                     // for all children
                     var child;
                     for (var i = 0; i < children.length; i++) {
@@ -91,7 +91,7 @@ requirejs(["rAppid"], function (rAppid) {
                         this._renderChild(child);
                     }
                 },
-                _renderChild: function (child) {
+                _renderChild:function (child) {
                     if (rAppid._.isFunction(child.render)) {
                         var el = child.render();
                         if (el) {
@@ -99,7 +99,7 @@ requirejs(["rAppid"], function (rAppid) {
                         }
                     }
                 },
-                _getIndexOfPlaceHolder: function (placeHolder) {
+                _getIndexOfPlaceHolder:function (placeHolder) {
                     if (this.$layoutTpl) {
                         var child;
                         for (var i = 0; i < this.$layoutTpl.$children.length; i++) {
@@ -111,19 +111,19 @@ requirejs(["rAppid"], function (rAppid) {
                     }
                     return -1;
                 },
-                isRendered: function () {
+                isRendered:function () {
                     return typeof (this.$el) !== "undefined";
                 },
-                _renderAttributes: function (attributes) {
+                _renderAttributes:function (attributes) {
                     var attr;
                     for (var key in attributes) {
-                        if (attributes.hasOwnProperty(key) && key.indexOf("$") !== 0 && key.indexOf("data") !== 0){
+                        if (attributes.hasOwnProperty(key) && key.indexOf("$") !== 0 && key.indexOf("data") !== 0) {
                             attr = attributes[key];
                             this._renderAttribute(key, attr);
                         }
                     }
                 },
-                _renderAttribute: function (key, attr) {
+                _renderAttribute:function (key, attr) {
                     var method = this.$renderMap[key];
                     var prev = this.$previousAttributes[key];
 
@@ -146,70 +146,70 @@ requirejs(["rAppid"], function (rAppid) {
                     }
                 },
 
-                _renderVisible: function (visible) {
+                _renderVisible:function (visible) {
                     if (visible === true) {
                         this.removeClass('hidden');
                     } else if (visible === false) {
                         this.addClass('hidden');
                     }
                 },
-                _renderHidden: function(hidden){
-                    if(typeof(hidden) !== "undefined"){
+                _renderHidden:function (hidden) {
+                    if (typeof(hidden) !== "undefined") {
                         this.set({visible:!hidden});
                     }
                 },
-                _renderSelected: function (selected) {
+                _renderSelected:function (selected) {
                     if (selected === true) {
                         this.addClass('active');
                     } else if (selected === false) {
                         this.removeClass('active');
                     }
                 },
-                _renderSelectable: function (selectable) {
+                _renderSelectable:function (selectable) {
                     if (selectable === true) {
                         var self = this;
                         this.$el.addEventListener('click', function (e) {
                             // e.preventDefault();
-                            self.set({selected: !self.$.selected});
+                            self.set({selected:!self.$.selected});
                         });
                     } else {
-                        this.set({selected: false});
+                        this.set({selected:false});
                     }
                 },
-                _renderWidth: function (width) {
-                    if(width){
-                        if(typeof(width) !== "string"){
+                _renderWidth:function (width) {
+                    if (width) {
+                        if (typeof(width) !== "string") {
                             width += "px";
                         }
                         this.$el.style.width = width;
                     }
                 },
-                _renderHeight: function (height) {
+                _renderHeight:function (height) {
                     if (height) {
-                        if(typeof(height) !== "string"){
+                        if (typeof(height) !== "string") {
                             height += "px";
                         }
                         this.$el.style.height = height;
                     }
                 },
-                _commitChangedAttributes: function (attributes) {
+                _commitChangedAttributes:function (attributes) {
                     if (this.isRendered()) {
                         this._renderAttributes(attributes);
                     }
                 },
 
-                dom: function (element) {
+                dom:function (element) {
                     return new DomManipulation(element || this);
                 }
 
             };
 
             var DomManipulationFunctions = {
-                hasClass: function (value) {
+                hasClass:function (value) {
                     // var classes = this.$el.className.split(" "+value+" ");
 
                 },
-                addClass: function (value) {
+                addClass:function (value) {
                     var classNames = value.split(rspace);
 
                     if (!this.$el.className && classNames.length === 1) {
@@ -227,7 +227,7 @@ requirejs(["rAppid"], function (rAppid) {
 
                     }
                 },
-                removeClass: function (value) {
+                removeClass:function (value) {
                     if (this.$el.className.length === 0) {
                         return;
                     }
@@ -247,11 +247,30 @@ requirejs(["rAppid"], function (rAppid) {
                     } else {
                         this.$el.className = classes.join(" ");
                     }
-                }
+                },
+                addEventListener:function (type, eventHandle) {
+                    if (this.$el.addEventListener) {
+                        this.$el.addEventListener(type, eventHandle, false);
+
+                    } else if (this.$el.attachEvent) {
+                        this.$el.attachEvent("on" + type, eventHandle);
+                    }
+                },
+                removeEvent:document.removeEventListener ?
+                    function (type, handle) {
+                        if (this.$el.removeEventListener) {
+                            this.$el.removeEventListener(type, handle, false);
+                        }
+                    } :
+                    function (type, handle) {
+                        if (this.$el.detachEvent) {
+                            this.$el.detachEvent("on" + type, handle);
+                        }
+                    }
             };
 
             var DomManipulation = inherit.Base.inherit(rAppid._.extend({
-                ctor: function (elm) {
+                ctor:function (elm) {
                     this.$el = elm;
                 }
             }, DomManipulationFunctions));

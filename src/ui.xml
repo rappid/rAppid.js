@@ -20,6 +20,7 @@
                  * this method is called right after the script tag is evaluated
                  */
                 initialize:function () {
+
                     var Person = Bindable.inherit({
                         fullName:function () {
                             return this.$.firstname + " " + this.$.lastname;
@@ -44,6 +45,7 @@
                     });
 
                     this.set('interests', ['programming', 'sports', 'chilling']);
+
                     this.set('paymentMethods',['bar','visa','credit card']);
                     this.set('person', person);
                     this.set('progress', "40%");
@@ -87,144 +89,144 @@
     </js:Script>
     <div class="container">
         <div>
-            <h2>Buttons</h2>
-            <div class="btn-toolbar">
-                <p>
-                    <ui:Button disabled="false" label="Button without Icon" type="{btnType}" onclick="onButtonClick"/>
-                    <ui:Button iconClass="icon-refresh" label="Button with Icon" onclick="onButtonClick"/>
-                    <ui:Button iconClass="icon-plus" label="Button with Icon on the right" onclick="onButtonClick">
-                        <js:Template name="layout">
-                            {label}
-                            <ui:PlaceHolder name="icon"/>
-                        </js:Template>
-                    </ui:Button>
-                    <ui:Button iconClass="icon-refresh" onclick="onButtonClick"/>
-                    <ui:Button label="Toggle Button" onclick="onButtonClick" selectable="true"/>
+            <!--<h2>Buttons</h2>-->
+            <!--<div class="btn-toolbar">-->
+                <!--<p>-->
+                    <!--<ui:Button disabled="false" label="Button without Icon" type="{btnType}" onclick="onButtonClick"/>-->
+                    <!--<ui:Button iconClass="icon-refresh" label="Button with Icon" onclick="onButtonClick"/>-->
+                    <!--<ui:Button iconClass="icon-plus" label="Button with Icon on the right" onclick="onButtonClick">-->
+                        <!--<js:Template name="layout">-->
+                            <!--{label}-->
+                            <!--<ui:PlaceHolder name="icon"/>-->
+                        <!--</js:Template>-->
+                    <!--</ui:Button>-->
+                    <!--<ui:Button iconClass="icon-refresh" onclick="onButtonClick"/>-->
+                    <!--<ui:Button label="Toggle Button" onclick="onButtonClick" selectable="true"/>-->
 
-                </p>
-            </div>
+                <!--</p>-->
+            <!--</div>-->
 
-            <h2>Menu Buttons</h2>
-            <div class="btn-toolbar">
-                <ui:MenuButton type="success" label="MenuButton w/o Icon"/>
-                <ui:MenuButton type="success" iconClass="icon-plus icon-white" label="MenuButton with Icon">
-                    <js:Content ref="menu">
-                        <div class="">
-                            My Menu!
-                        </div>
-                    </js:Content>
-                </ui:MenuButton>
-                <ui:MenuButton type="{btnType}" iconClass="icon-plus icon-white" label="MenuButton with Icon">
-                    <js:Content ref="menu">
-                        <ul>
-                            <li>
-                                <ui:Link label="Menu Item 1"/>
-                            </li>
-                            <li>
-                                <ui:Link label="Menu Item 2"/>
-                            </li>
-                        </ul>
-                        <div class="">What up?</div>
-                    </js:Content>
-                </ui:MenuButton>
-                <ui:SplitButton type="{btnType}" iconClass="icon-plus icon-white" label="MenuButton with Icon">
-                    <js:Content ref="menu">
-                        <ul>
-                            <li>
-                                <ui:Link label="Menu Item 1"/>
-                            </li>
-                            <li>
-                                <ui:Link label="Menu Item 2"/>
-                            </li>
-                        </ul>
-                        <div class="">What up?</div>
-                    </js:Content>
-                </ui:SplitButton>
-            </div>
-            <h2>Selection Views</h2>
-            <div class="row">
-                <div class="span3">
-                    <h4>Single Select</h4>
-                    <ui:SelectionView tagName="ul" class="nav nav-pills nav-stacked" multiSelect="false"
-                                      needsSelection="true">
-                        <li>
-                            <ui:Link label="Item 1" href="#item1"/>
-                        </li>
-                        <li>
-                            <ui:Link label="Item 2" href="#item2"/>
-                        </li>
-                        <li>
-                            <ui:Link label="Item 3" href="#item3"/>
-                        </li>
-                        <li>
-                            <ui:Link label="Item 4" href="#item4"/>
-                        </li>
-                    </ui:SelectionView>
-                </div>
-                <div class="span3">
-                    <h4>Multi Select</h4>
-                    <ui:SelectionView tagName="ul" class="nav nav-pills nav-stacked" multiSelect="true">
-                        <li>
-                            <ui:Link label="Item 1" href="#item1"/>
-                        </li>
-                        <li>
-                            <ui:Link label="Item 2" href="#item2"/>
-                        </li>
-                        <li>
-                            <ui:Link label="Item 3" href="#item3"/>
-                        </li>
-                        <li>
-                            <ui:Link label="Item 4" href="#item4"/>
-                        </li>
-                    </ui:SelectionView>
-                </div>
-                <div class="span3">
-                    <h4>Toggle Buttons Select</h4>
-                    <ui:SelectionView tagName="div" class="btn-group" multiSelect="false" needsSelection="{hasSelection}">
-                        <ui:Button label="1"/>
-                        <ui:Button label="2"/>
-                        <ui:Button label="3"/>
-                        <ui:Button label="4"/>
-                        <ui:Button label="5"/>
-                    </ui:SelectionView>
-                </div>
-            </div>
-            <h2>Segmented Views</h2>
-            <div class="row">
-                <div class="span5">
-                    <ui:SegmentedView visibleIndex="{page}">
-                        <ui:View>View 1</ui:View>
-                        <ui:View>View 2</ui:View>
-                        <ui:View>View 3</ui:View>
-                        <ui:View>View 4</ui:View>
-                    </ui:SegmentedView>
-                </div>
-                <div class="span5">
-                    <ui:SegmentedView items="{pages}" visibleIndex="{page}">
-                        <js:Template name="item">
-                            <ui:View>{$item}</ui:View>
-                        </js:Template>
-                    </ui:SegmentedView>
-                </div>
-            </div>
-            <h2>Tab Views</h2>
-            <div class="row">
-                <div class="span5">
-                    <ui:TabView>
-                        <ui:View title="Tab 1">View 1</ui:View>
-                        <ui:View title="Tab 2">View 2</ui:View>
-                        <ui:View title="Tab 3">View 3</ui:View>
-                        <ui:View title="Tab 4">View 4</ui:View>
-                    </ui:TabView>
-                </div>
-                <div class="span5">
-                    <ui:TabView items="{pages}" tabClassName="nav nav-pills" selectedIndex="2">
-                        <js:Template name="item">
-                            <ui:View title="{$item}">Whats Up on {$item} ??</ui:View>
-                        </js:Template>
-                    </ui:TabView>
-                </div>
-            </div>
+            <!--<h2>Menu Buttons</h2>-->
+            <!--<div class="btn-toolbar">-->
+                <!--<ui:MenuButton type="success" label="MenuButton w/o Icon"/>-->
+                <!--<ui:MenuButton type="success" iconClass="icon-plus icon-white" label="MenuButton with Icon">-->
+                    <!--<js:Content ref="menu">-->
+                        <!--<div class="">-->
+                            <!--My Menu!-->
+                        <!--</div>-->
+                    <!--</js:Content>-->
+                <!--</ui:MenuButton>-->
+                <!--<ui:MenuButton type="{btnType}" iconClass="icon-plus icon-white" label="MenuButton with Icon">-->
+                    <!--<js:Content ref="menu">-->
+                        <!--<ul>-->
+                            <!--<li>-->
+                                <!--<ui:Link label="Menu Item 1"/>-->
+                            <!--</li>-->
+                            <!--<li>-->
+                                <!--<ui:Link label="Menu Item 2"/>-->
+                            <!--</li>-->
+                        <!--</ul>-->
+                        <!--<div class="">What up?</div>-->
+                    <!--</js:Content>-->
+                <!--</ui:MenuButton>-->
+                <!--<ui:SplitButton type="{btnType}" iconClass="icon-plus icon-white" label="MenuButton with Icon">-->
+                    <!--<js:Content ref="menu">-->
+                        <!--<ul>-->
+                            <!--<li>-->
+                                <!--<ui:Link label="Menu Item 1"/>-->
+                            <!--</li>-->
+                            <!--<li>-->
+                                <!--<ui:Link label="Menu Item 2"/>-->
+                            <!--</li>-->
+                        <!--</ul>-->
+                        <!--<div class="">What up?</div>-->
+                    <!--</js:Content>-->
+                <!--</ui:SplitButton>-->
+            <!--</div>-->
+            <!--<h2>Selection Views</h2>-->
+            <!--<div class="row">-->
+                <!--<div class="span3">-->
+                    <!--<h4>Single Select</h4>-->
+                    <!--<ui:SelectionView tagName="ul" class="nav nav-pills nav-stacked" multiSelect="false"-->
+                                      <!--needsSelection="true">-->
+                        <!--<li>-->
+                            <!--<ui:Link label="Item 1" href="#item1"/>-->
+                        <!--</li>-->
+                        <!--<li>-->
+                            <!--<ui:Link label="Item 2" href="#item2"/>-->
+                        <!--</li>-->
+                        <!--<li>-->
+                            <!--<ui:Link label="Item 3" href="#item3"/>-->
+                        <!--</li>-->
+                        <!--<li>-->
+                            <!--<ui:Link label="Item 4" href="#item4"/>-->
+                        <!--</li>-->
+                    <!--</ui:SelectionView>-->
+                <!--</div>-->
+                <!--<div class="span3">-->
+                    <!--<h4>Multi Select</h4>-->
+                    <!--<ui:SelectionView tagName="ul" class="nav nav-pills nav-stacked" multiSelect="true">-->
+                        <!--<li>-->
+                            <!--<ui:Link label="Item 1" href="#item1"/>-->
+                        <!--</li>-->
+                        <!--<li>-->
+                            <!--<ui:Link label="Item 2" href="#item2"/>-->
+                        <!--</li>-->
+                        <!--<li>-->
+                            <!--<ui:Link label="Item 3" href="#item3"/>-->
+                        <!--</li>-->
+                        <!--<li>-->
+                            <!--<ui:Link label="Item 4" href="#item4"/>-->
+                        <!--</li>-->
+                    <!--</ui:SelectionView>-->
+                <!--</div>-->
+                <!--<div class="span3">-->
+                    <!--<h4>Toggle Buttons Select</h4>-->
+                    <!--<ui:SelectionView tagName="div" class="btn-group" multiSelect="false" needsSelection="{hasSelection}">-->
+                        <!--<ui:Button label="1"/>-->
+                        <!--<ui:Button label="2"/>-->
+                        <!--<ui:Button label="3"/>-->
+                        <!--<ui:Button label="4"/>-->
+                        <!--<ui:Button label="5"/>-->
+                    <!--</ui:SelectionView>-->
+                <!--</div>-->
+            <!--</div>-->
+            <!--<h2>Segmented Views</h2>-->
+            <!--<div class="row">-->
+                <!--<div class="span5">-->
+                    <!--<ui:SegmentedView visibleIndex="{page}">-->
+                        <!--<ui:View>View 1</ui:View>-->
+                        <!--<ui:View>View 2</ui:View>-->
+                        <!--<ui:View>View 3</ui:View>-->
+                        <!--<ui:View>View 4</ui:View>-->
+                    <!--</ui:SegmentedView>-->
+                <!--</div>-->
+                <!--<div class="span5">-->
+                    <!--<ui:SegmentedView items="{pages}" visibleIndex="{page}">-->
+                        <!--<js:Template name="item">-->
+                            <!--<ui:View>{$item}</ui:View>-->
+                        <!--</js:Template>-->
+                    <!--</ui:SegmentedView>-->
+                <!--</div>-->
+            <!--</div>-->
+            <!--<h2>Tab Views</h2>-->
+            <!--<div class="row">-->
+                <!--<div class="span5">-->
+                    <!--<ui:TabView>-->
+                        <!--<ui:View title="Tab 1">View 1</ui:View>-->
+                        <!--<ui:View title="Tab 2">View 2</ui:View>-->
+                        <!--<ui:View title="Tab 3">View 3</ui:View>-->
+                        <!--<ui:View title="Tab 4">View 4</ui:View>-->
+                    <!--</ui:TabView>-->
+                <!--</div>-->
+                <!--<div class="span5">-->
+                    <!--<ui:TabView items="{pages}" tabClassName="nav nav-pills" selectedIndex="2">-->
+                        <!--<js:Template name="item">-->
+                            <!--<ui:View title="{$item}">Whats Up on {$item} ??</ui:View>-->
+                        <!--</js:Template>-->
+                    <!--</ui:TabView>-->
+                <!--</div>-->
+            <!--</div>-->
             <h2>Form Elements</h2>
             <div class="row">
                 <div class="span5">
@@ -239,7 +241,7 @@
                     <ui:SelectionView multiSelect="true" items="{interests}" selectedItems="{{person.interests}}" forceSelectable="false">
                         <js:Template name="item">
                             <label class="checkbox inline" data-selected="{{selected}}">
-                                <input type="checkbox" name="isMale" value="1" checked="{{data-selected}}"/>{$item}
+                                <input type="checkbox" name="interests" value="1" checked="{{data-selected}}"/>{$item}
                             </label>
                         </js:Template>
                     </ui:SelectionView>
@@ -291,12 +293,12 @@
                     </div>
                 </div>
             </div>
-            <!--<h2>Other useful Components</h2>-->
-            <!--<div class="row">-->
-                <!--<div class="progress progress-dange progress-striped active">-->
-                    <!--<div class="bar" width="{progress}"/>-->
-                <!--</div>-->
-            <!--</div>-->
+            <h2>Other useful Components</h2>
+            <div class="row">
+                <div class="progress progress-dange progress-striped active">
+                    <div class="bar" width="{progress}"/>
+                </div>
+            </div>
             <!--<div class="row" data-page="0">-->
                 <!--<ui:ScrollableView width="300" height="100" selectedPage="{data-page}">-->
                     <!--<ui:ItemsView items="{pages}" width="1200">-->

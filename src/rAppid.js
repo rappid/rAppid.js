@@ -1,5 +1,12 @@
 var rAppid;
 
+/** ECMA SCRIPT COMPLIANT**/
+if(!String.prototype.trim){
+    String.prototype.trim = function () {
+        return this.replace(/^\s+|\s+$/g, '');
+    };
+}
+
 (function (exports, inherit, require, define, underscore) {
 
     if (!require) {
@@ -256,7 +263,6 @@ var rAppid;
         },
 
         createInstance: function (fqClassName, args, className) {
-
             className = className || fqClassName;
             args = args || [];
 
@@ -270,6 +276,7 @@ var rAppid;
                 F.prototype = constructor.prototype;
                 return new F();
             }
+
 
             var ret = construct(classDefinition, args);
             ret.className = className;

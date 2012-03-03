@@ -14,12 +14,13 @@ requirejs(["rAppid"], function (rAppid) {
                 _bindDomEvents: function(){
                     var self = this;
                     if (this.$el.type == "text" || this.$el.type == "password") {
-                        this.$el.addEventListener('change', function (e) {
-                            self.set('value', e.target.value);
+                        this.addEventListener('change', function (e) {
+
+                            self.set('value', self.$el.value);
                         });
                     } else if (this.$el.type == "checkbox" || this.$el.type == "radio") {
-                        this.$el.addEventListener('change', function (e) {
-                            self.set('checked', e.target.checked);
+                        this.addEventListener('click', function (e) {
+                            self.set('checked', self.$el.checked);
                         });
                     }
                 }
