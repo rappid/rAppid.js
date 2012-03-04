@@ -105,7 +105,12 @@
                             </js:Template>
                         </ui:Button>
                         <ui:Button iconClass="icon-refresh" onclick="onButtonClick"/>
-                        <ui:Button label="Toggle Button" onclick="onButtonClick" selectable="true"/>
+                    </div>
+                    <h2>Toggle Buttons</h2>
+                    <div class="btn-toolbar">
+                        <div class="pull-left">
+                            <ui:Button label="Toggle Button" onclick="onButtonClick" selectable="true"/>
+                        </div>
                         <ui:SelectionView tagName="div" class="btn-group" multiSelect="false"
                                           needsSelection="{hasSelection}">
                             <ui:Button label="1"/>
@@ -114,8 +119,8 @@
                             <ui:Button label="4"/>
                             <ui:Button label="5"/>
                         </ui:SelectionView>
-                    </div>
 
+                    </div>
                     <h2>Menu and Split Buttons</h2>
                     <div class="btn-toolbar">
                         <ui:MenuButton type="success" label="MenuButton w/o Icon"/>
@@ -189,7 +194,7 @@
                                               selectedItem="{{person.paymentMethod}}" forceSelectable="false">
                                 <js:Template name="item">
                                     <label class="radio inline" data-selected="{{selected}}">
-                                        <input type="radio" name="isMale" value="1" checked="{{data-selected}}"/>{$item}
+                                        <input type="radio" name="paymentMethod" value="{$item}" checked="{{data-selected}}"/>{$item}
                                     </label>
                                 </js:Template>
                             </ui:SelectionView>
