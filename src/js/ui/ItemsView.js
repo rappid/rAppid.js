@@ -17,7 +17,10 @@ requirejs(["rAppid"], function (rAppid) {
                     if (this.isRendered()) {
                         this._renderItem(item);
                     }
-
+                },
+                render: function(){
+                    this.$renderedItems = [];
+                    return this.callBase();
                 },
                 removeItem: function(){
                     // TODO: implement

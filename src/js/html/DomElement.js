@@ -2,7 +2,7 @@ var requirejs = (typeof requirejs === "undefined" ? require("requirejs") : requi
 
 requirejs(["rAppid"], function (rAppid) {
     rAppid.defineClass("js.html.DomElement",
-        ["js.core.Component", "js.core.Binding"], function (Component, Binding) {
+        ["js.core.Component", "js.core.Content", "js.core.Binding"], function (Component, Content, Binding) {
 
             var rspace = /\s+/;
 
@@ -13,8 +13,10 @@ requirejs(["rAppid"], function (rAppid) {
                 },
                 $behavesAsDomElement:true,
                 ctor:function (attributes, descriptor, applicationDomain, parentScope, rootScope) {
-                    this.callBase();
                     this.$renderMap = {};
+                    this.$childViews = [];
+                    this.$contentChildren = [];
+                    this.callBase();
 
                     if (descriptor) {
                         if (!this.$tagName) {
@@ -35,8 +37,13 @@ requirejs(["rAppid"], function (rAppid) {
                 },
                 addChild:function (child) {
                     this.callBase();
-                    if (this.isRendered()) {
-                        this._renderChild(child);
+                    if (child instanceof DomElement || child.render) {
+                        this.$childViews.push(child);
+                        if(this.isRendered()){
+                            this._renderChild(child);
+                        }
+                    }else if(child instanceof Content){
+                        this.$contentChildren.push(child);
                     }
                 },
                 getPlaceHolder:function (name) {
@@ -58,6 +65,7 @@ requirejs(["rAppid"], function (rAppid) {
                     return null;
                 },
                 render:function () {
+
                     if (!this.$initialized) {
                         this._initialize(this.$creationPolicy);
                     }
@@ -65,6 +73,8 @@ requirejs(["rAppid"], function (rAppid) {
                     if (this.isRendered()) {
                         return this.$el;
                     }
+
+                    this.$renderedChildren = [];
 
                     this.$el = document.createElement(this.$tagName);
                     this.$el.owner = this;
@@ -74,14 +84,18 @@ requirejs(["rAppid"], function (rAppid) {
                      * <js:Template name="layout"><placeholder cid="icon"/><placeholder cid="label"/></js:Template>
                      */
 
-                    this._renderChildren(this.$children);
+                    this._renderChildren(this.$childViews);
+                    this._renderContentChildren(this.$contentChildren);
                     this._renderAttributes(this.$);
                     this._bindDomEvents(this.$el);
 
                     return this.$el;
                 },
                 _bindDomEvents:function (el) {
-
+                    var self = this;
+                    this.addEventListener('click', function (e) {
+                        self.trigger('onclick', e , self);
+                    });
                 },
                 _renderChildren:function (children) {
                     // for all children
@@ -91,9 +105,21 @@ requirejs(["rAppid"], function (rAppid) {
                         this._renderChild(child);
                     }
                 },
+                _renderContentChildren: function(children){
+                    var child;
+                    for(var i = 0; i < children.length; i++){
+                        child = children[i];
+                        var ref = child.get('ref');
+                        var placeHolder = this.getPlaceHolder(ref);
+                        if (placeHolder) {
+                            placeHolder.set({content:child});
+                        }
+                    }
+                },
                 _renderChild:function (child) {
                     if (rAppid._.isFunction(child.render)) {
                         var el = child.render();
+                        this.$renderedChildren.push(child);
                         if (el) {
                             this.$el.appendChild(el);
                         }
@@ -168,7 +194,7 @@ requirejs(["rAppid"], function (rAppid) {
                 _renderSelectable:function (selectable) {
                     if (selectable === true) {
                         var self = this;
-                        this.$el.addEventListener('click', function (e) {
+                        this.addEventListener('click', function (e) {
                             // e.preventDefault();
                             self.set({selected:!self.$.selected});
                         });
@@ -274,8 +300,8 @@ requirejs(["rAppid"], function (rAppid) {
                     this.$el = elm;
                 }
             }, DomManipulationFunctions));
-
-            return Component.inherit(rAppid._.extend(DomElementFunctions, DomManipulationFunctions));
+            var DomElement = Component.inherit(rAppid._.extend(DomElementFunctions, DomManipulationFunctions));
+            return DomElement;
         }
     );
 });

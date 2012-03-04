@@ -15,22 +15,12 @@ requirejs(["rAppid"], function (rAppid) {
                     items: [],
                     forceSelectable: true
                 },
-                ctor: function () {
-                    this.$childViews = [];
-                    return this.callBase();
-                },
                 hasSelectedItems: function(){
                     return this.$.selectedItems.length > 0;
                 },
                 hasSelection: function () {
                     return this.$.selectedViews.length > 0;
                 }.on('selectedViews'),
-                addChild: function (child) {
-                    if (child instanceof DomElement) {
-                        this.$childViews.push(child);
-                    }
-                    this.callBase();
-                },
                 _renderChild: function (child) {
                     if (child instanceof DomElement) {
                         var self = this;
@@ -46,6 +36,7 @@ requirejs(["rAppid"], function (rAppid) {
                         child.set({selected: true});
                     } else {
                         // get item for child, if item is in selectedItems, select child!
+
                         if (child.has("$item")) {
                             for (var i = 0; i < this.$.selectedItems.length; i++) {
                                 if (child.$.$item === this.$.selectedItems[i] || child.$.$item === this.$.selectedItem) {
@@ -56,16 +47,24 @@ requirejs(["rAppid"], function (rAppid) {
                         }
                     }
                 },
-                _renderSelectedItem: function (item) {
-                    // TODO: implement
-                    // get view for item
-                    // if there is a view, select the view basta!
-                    // set selected
+                _renderSelectedItem: function(item){
+                    var comp = this.getComponentForItem(item);
+                    if(comp){
+                        comp.set({selected: true});
+                    }
+                },
+                _renderSelectedItems: function (items) {
+                    var item;
+                    for (var i = 0; i < this.$renderedItems.length; i++) {
+                        item = this.$renderedItems[i].item;
+                        this.$renderedItems[i].component.set({selected:rAppid._.contains(items, item)});
+                    }
+
+
                 },
                 _renderSelectedIndex: function (i) {
-
-                    if (i != null && i > -1 && i < this.$childViews.length) {
-                        this.$childViews[i].set({selected: true});
+                    if (i != null && i > -1 && i < this.$renderedChildren.length) {
+                        this.$renderedChildren[i].set({selected: true});
                     }
                 },
                 _onChildSelected: function (child) {
@@ -77,7 +76,7 @@ requirejs(["rAppid"], function (rAppid) {
                     var selectedChildren = [];
                     var selectedItems = [];
                     var selectedIndex, selectedItem = null;
-                    for (i = 0; i < this.$childViews.length; i++) {
+                    for (i = 0; i < this.$renderedChildren.length; i++) {
                         c = this.$children[i];
                         if (checkMultiSelect) {
                             if (c != child && c.$.selected === true) {

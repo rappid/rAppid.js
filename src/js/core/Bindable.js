@@ -32,7 +32,7 @@ requirejs(["rAppid"], function (rAppid) {
                     rAppid._.defaults(attributes, this._defaultAttributes());
 
                     this.$ = attributes;
-                    this.$previousAttributes = rAppid._.clone(this.$);
+                    this.$previousAttributes = rAppid._.clone(attributes);
 
 
                     var self = this, fnc;
@@ -45,17 +45,17 @@ requirejs(["rAppid"], function (rAppid) {
 
                     // init calculated attributes
                     for (var key in this) {
-
                         // find functions which have a bindings attribute
                         if (rAppid._.isFunction(this[key]) && this[key]._bindings) {
                             fnc = this[key];
                             // register as listener to all bindings
                             for (var i = 0; i < fnc._bindings.length; i++) {
-                                bind(fnc._bindings[i],key, fnc);
+                                bind(fnc._bindings[i], key, fnc);
                             }
                             // set the return value of the function as attribute
-                            this.set(key,fnc.call(this));
+                            this.set(key, fnc.call(this));
                         }
+
                     }
                 },
 
@@ -73,6 +73,12 @@ requirejs(["rAppid"], function (rAppid) {
                     while (base) {
                         rAppid._.defaults(ret, base[property]);
                         base = base.base;
+                    }
+                    // clone all attributes
+                    for(var k in ret){
+                        if(ret.hasOwnProperty(k) && !rAppid._.isFunction(ret[k])){
+                            ret[k] = rAppid._.clone(ret[k]);
+                        }
                     }
 
                     return ret;

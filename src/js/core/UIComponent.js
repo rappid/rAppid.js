@@ -7,15 +7,7 @@ requirejs(["rAppid"], function (rAppid) {
                 defaults: {
                     tagName: "div"
                 },
-                $behavesAsDomElement: false,
-                _commitChangedAttributes: function (attributes) {
-                    if (this.isRendered()) {
-                        this._renderAttributes(attributes);
-                    }
-                },
-                _initializationComplete: function () {
-                    this.callBase();
-                }
+                $behavesAsDomElement: false
             });
         }
     );

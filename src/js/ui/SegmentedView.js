@@ -9,11 +9,11 @@ requirejs(["rAppid"], function (rAppid) {
                     visibleIndex: 0,
                     visibleView: null
                 },
-                ctor: function () {
-                    this.callBase();
+                ctor: function(){
                     this.$childViews = [];
+                    this.callBase();
                 },
-                _collectChild: function (child) {
+                addChild: function (child) {
                     this.callBase();
                     if (child instanceof DomElement) {
                         this.$childViews.push(child);

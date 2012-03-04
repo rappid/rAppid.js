@@ -43,7 +43,7 @@ requirejs(["rAppid"], function (rAppid) {
                     this.$rootScope = rootScope || null;
 
 
-                    rAppid._.defaults(attributes, this._getAttributesFromDescriptor(descriptor), this._getAttributesFromDescriptor(this._$descriptor));
+                    rAppid._.extend(attributes, this._getAttributesFromDescriptor(descriptor), this._getAttributesFromDescriptor(this._$descriptor));
 
                     this.callBase(attributes);
 

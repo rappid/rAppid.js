@@ -1,11 +1,12 @@
 <?xml version="1.0"?>
 <ui:View xmlns="http://www.w3.org/1999/xhtml" xmlns:js="js.core" xmlns:ui="js.ui">
     <js:Imports>
-        js.ui.Button
+        js.core.Content;
+        js.ui.Button;
     </js:Imports>
     <js:Script type="text/javascript">
         <![CDATA[
-        (function (Button,_) {
+        (function (Content, Button) {
             return {
                 defaults:{
                     tagName:'div',
@@ -34,17 +35,6 @@
                 },
                 _renderLabel:function (label) {
                     this.$button.set({label:label});
-                },
-                _renderChild:function (child) {
-                    if (child.className == 'js.core.Content') {
-                        var ref = child.get('ref');
-                        var placeHolder = this.getPlaceHolder(ref);
-                        if (placeHolder) {
-                            placeHolder.set({content:child});
-                        }
-                    }
-                    this.callBase();
-
                 },
                 _renderMenuVisible:function (visible) {
                     if (visible === true) {
@@ -75,6 +65,9 @@
                         self.set({menuVisible:!self.$.menuVisible});
                     });
 
+                    this.$button.addEventListener('click', function (e) {
+                        self.trigger('onclick', e, self);
+                    });
                 }
             }
         })

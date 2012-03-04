@@ -10,7 +10,6 @@
         (function (View, SelectionView, SegmentedView) {
             return {
                 defaults:{
-                    items:[],
                     selectedIndex:0,
                     selectedView:null,
                     tabClassName: 'nav nav-tabs'
@@ -20,11 +19,11 @@
                     var self = this;
                     for (var i = 0; i < children.length; i++) {
                         child = children[i];
-                        if (child instanceof SelectionView) {
+                        if (!this.$selectionView && child instanceof SelectionView) {
                             this.$selectionView = child;
                             this.$selectionView.set({items: []});
                             this.$selectionView.on('change:selectedViews', this._onTabChange, this);
-                        } else if (child instanceof SegmentedView) {
+                        } else if (!this.$segmentedView && child instanceof SegmentedView) {
                             this.$segmentedView = child;
                         }
                     }

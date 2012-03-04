@@ -2,11 +2,12 @@ var requirejs = (typeof requirejs === "undefined" ? require("requirejs") : requi
 
 requirejs(["rAppid"], function (rAppid) {
     rAppid.defineClass("js.ui.View",
-        ["js.core.UIComponent", "js.core.Template", "js.core.Content"], function (UIComponent, Template, Content) {
-            return UIComponent.inherit({
+        ["js.html.DomElement", "js.core.Template", "js.core.Content"], function (DomElement, Template, Content) {
+            return DomElement.inherit({
                 defaults: {
                     tagName: "div"
                 },
+                $behavesAsDomElement: false,
                 render: function () {
                     // look if the component has a layout defined
                     var layout = this.$templates['layout'];
@@ -33,6 +34,16 @@ requirejs(["rAppid"], function (rAppid) {
                             }
                         }
                     }
+                },
+                _renderLayoutClass: function(layoutClass, oldLayoutClass){
+                    rAppid._.each(this.$renderedChildren,function(child){
+                        if(oldLayoutClass){
+                            child.removeClass(oldLayoutClass);
+                        }
+                        if(layoutClass){
+                            child.addClass(layoutClass)
+                        }
+                    });
                 },
                 _renderComponentClass: function (cls, oldCls) {
                     if (oldCls) {
