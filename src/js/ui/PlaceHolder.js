@@ -2,7 +2,7 @@ var requirejs = (typeof requirejs === "undefined" ? require("requirejs") : requi
 
 requirejs(["rAppid"], function (rAppid) {
     rAppid.defineClass("js.ui.PlaceHolder",
-        ["js.ui.UIComponent", "js.core.Content"], function (UIComponent, Content) {
+        ["js.core.UIComponent", "js.core.Content"], function (UIComponent, Content) {
             return UIComponent.inherit({
                 render: function () {
                     if (this.isRendered()) {
