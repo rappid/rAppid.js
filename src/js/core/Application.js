@@ -15,6 +15,10 @@ requirejs(["rAppid"], function (rAppid) {
                     this.callBase();
                 },
 
+                _inject: function() {
+                    // overwrite and call inside start
+                },
+
                 /**
                  * Method called, when application is initialized
                  *
@@ -23,6 +27,8 @@ requirejs(["rAppid"], function (rAppid) {
                  */
                 start: function (parameter, callback) {
                     this.history.start();
+
+                    UIComponent.prototype._inject.call(this);
 
                     if (callback) {
                         callback(null);

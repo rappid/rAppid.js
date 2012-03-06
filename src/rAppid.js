@@ -7,7 +7,7 @@ if(!String.prototype.trim){
     };
 }
 
-(function (exports, inherit, require, define, underscore) {
+(function (exports, inherit, require, define, underscore, XMLHttpRequest) {
 
     if (!require) {
         throw "require.js is needed";
@@ -31,6 +31,9 @@ if(!String.prototype.trim){
 
     var Base = inherit.Base.inherit({
         ctor: function () {
+            if (!this.className) {
+                this.className = this.constructor.name;
+            }
         }
     });
 
@@ -68,6 +71,14 @@ if(!String.prototype.trim){
         defineXamlClass: function(fqClassName, dependencies, factory) {
             if (currentApplicationDomain) {
                 currentApplicationDomain.defineXamlClass(fqClassName, dependencies, factory);
+            } else {
+                throw "CurrentApplicationDomain not available! Application not bootstrapped?";
+            }
+        },
+
+        getDefinition: function(fqClassName) {
+            if (currentApplicationDomain) {
+                currentApplicationDomain.getDefinition(fqClassName);
             } else {
                 throw "CurrentApplicationDomain not available! Application not bootstrapped?";
             }
@@ -141,8 +152,129 @@ if(!String.prototype.trim){
             }
 
         },
-        _: underscore
+
+        ajax: function(url, options, callback) {
+
+            var s = {
+                url: url
+            };
+
+            rAppid._.defaults(s, options, _rAppid.ajaxSettings);
+
+            if (s.data && !rAppid._.isString(s.data)) {
+                throw "data must be a string";
+            }
+
+            s.hasContent = !/^(?:GET|HEAD)$/.test(s.type);
+            
+            if (!s.hasContent) {
+                // append to url
+                // TODO: make a query string from data
+                s.url += /\?/.test(s.url) ? "&" : "?" + s.data;
+            }
+
+            if (s.data && s.hasContent && s.contentType !== false) {
+                xhr.setRequestHeader("Content-Type", s.contentType);
+            }
+
+            // create new xhr
+            var xhr = s.xhr();
+            xhr.open(s.type, s.url, s.async);
+
+            try {
+                for (var header in s.headers) {
+                    xhr.setRequestHeader(header, s.headers[header]);
+                }
+            } catch (e) {} // FF3
+
+            xhr.send();
+
+            var xhrCallback = function(_, isAbort) {
+
+                var wrappedXhr;
+
+                if (xhrCallback && (isAbort || xhr.readyState === 4)) {
+                    xhrCallback = undefined;
+
+                    if (isAbort) {
+                        // Abort it manually if needed
+                        if (xhr.readyState !== 4) {
+                            xhr.abort();
+                        }
+                    } else {
+                        wrappedXhr = new rAppidXhr(xhr);
+                    }
+
+                    if (callback) {
+                        callback(isAbort, wrappedXhr)
+                    }
+                }
+            };
+
+            if (!s.async || xhr.readyState === 4) {
+                xhrCallback();
+            } else {
+                xhr.onreadystatechange = xhrCallback
+            }
+
+            return xhr;
+        },
+
+        // export underscore
+        _: underscore,
+        // export inherit
+        inherit: inherit,
+        require: require
     };
+
+    var rheaders = /^(.*?):[ \t]*([^\r\n]*)\r?$/mg; // IE leaves an \r character at EOL
+
+    var rAppidXhr = Base.inherit({
+        ctor: function(xhr) {
+            this.xhr = xhr;
+            this.status = xhr.status;
+            this.$nativeResponseHeaders = xhr.getAllResponseHeaders();
+            this.responses = {};
+
+            var xml = xhr.responseXML;
+
+            // Construct response list
+            if (xml && xml.documentElement) {
+                this.responses.xml = xml;
+            }
+            this.responses.text = xhr.responseText;
+
+            try {
+                this.statusText = xhr.statusText;
+            } catch (e) {
+                this.statusText = "";
+            }
+        },
+        getResponseHeader: function(key) {
+            var match;
+            if (!this.$responseHeaders) {
+                this.$responseHeaders = {};
+                while (( match = rheaders.exec(this.$nativeResponseHeaders) )) {
+                    this.$responseHeaders[match[1].toLowerCase()] = match[2];
+                }
+            }
+            return this.$responseHeaders[key.toLowerCase()];
+        }
+
+    });
+
+    _rAppid.ajaxSettings = {
+        type: "GET",
+        contentType: "application/x-www-form-urlencoded",
+        async: true,
+        // TODO: add ie7 support for local file requests via ActiveX
+        xhr: function() {
+            return new XMLHttpRequest();
+        },
+        headers: {
+        }
+    };
+
 
     var Rewrite = _rAppid.rewriteMapEntry = function (from, to) {
         this.$from = from;
@@ -334,4 +466,5 @@ if(!String.prototype.trim){
    typeof inherit === "undefined" ? global.inherit : inherit,
     requirejs,
     requirejs.define ? requirejs.define : define,
-    typeof this._ === "undefined" ? global.underscore : this._);
+    typeof this._ === "undefined" ? global.underscore : this._,
+    typeof window !== "undefined" ? window.XMLHttpRequest : global.XMLHttpRequest);
