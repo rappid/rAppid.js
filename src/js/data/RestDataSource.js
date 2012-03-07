@@ -198,7 +198,6 @@ requirejs(["rAppid"], function (rAppid) {
 
                 var extractor = id ? referenceModelTypeExtractor : referenceCollectionTypeExtractor;
 
-
                 var match = extractor.exec(reference);
                 if (match) {
                     var path = match[1];
@@ -276,13 +275,14 @@ requirejs(["rAppid"], function (rAppid) {
                 rAppid.require(requiredClasses, function () {
                     var factories = Array.prototype.slice.call(arguments);
 
-                    // TODO: replace references with real models
                     for (var i = 0; i < referenceInformation.length; i++) {
                         var info = referenceInformation[i];
                         var factory = factories[rAppid._.indexOf(requiredClasses, info.requireClassName)];
 
                         if (factory) {
-                            var referenceInstance = model.$context.createModel(factory, info.id, info.type);
+                            // create instance in correct context
+                            var referenceInstance = self.createModel(factory, info.id, info.type,
+                                self.getContext(info.context, model.$context));
 
                             if (referenceInstance) {
                                 var value = info.referenceObject[info.propertyName];
@@ -302,7 +302,6 @@ requirejs(["rAppid"], function (rAppid) {
 
                     callback(null, data);
                 });
-
             },
 
             /**

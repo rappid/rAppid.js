@@ -101,6 +101,10 @@ requirejs(["rAppid"], function (rAppid) {
                     return value;
                 });
 
+                if (ret.length == 0) {
+                    return "root";
+                }
+
                 return ret.join("&");
             },
 
