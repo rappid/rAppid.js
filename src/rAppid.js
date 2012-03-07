@@ -153,13 +153,25 @@ if(!String.prototype.trim){
 
         },
 
+        createQueryString: function(parameter) {
+            var ret = [];
+
+            for (var key in parameter) {
+                if (parameter.hasOwnProperty(key)) {
+                    ret.push(encodeURIComponent(key) + "=" + encodeURIComponent(parameter[key]));
+                }
+            }
+
+            return ret.join("&");
+        },
+
         ajax: function(url, options, callback) {
 
             var s = {
                 url: url
             };
 
-            rAppid._.defaults(s, options, _rAppid.ajaxSettings);
+            rAppid._.extend(s, options, _rAppid.ajaxSettings);
 
             if (s.data && !rAppid._.isString(s.data)) {
                 throw "data must be a string";
@@ -167,10 +179,9 @@ if(!String.prototype.trim){
 
             s.hasContent = !/^(?:GET|HEAD)$/.test(s.type);
             
-            if (!s.hasContent) {
-                // append to url
-                // TODO: make a query string from data
-                s.url += /\?/.test(s.url) ? "&" : "?" + s.data;
+            if (s.queryParameter) {
+                // append query parameter to url
+                s.url += /\?/.test(s.url) ? "&" : "?" + this.createQueryString(s.queryParameter);
             }
 
             if (s.data && s.hasContent && s.contentType !== false) {
