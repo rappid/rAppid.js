@@ -112,10 +112,15 @@ requirejs(["rAppid"], function (rAppid) {
 
             /**
              * resolve references to models and collections
+             * @param {js.core.Model} model
              * @param {JSON} data deserialized, parsed data
+             * @param {Object} options
              * @param {Function} callback - function (err, resolvedData)
              */
-            resolveReferences: function (data, callback) {
+            resolveReferences: function (model, data, options, callback) {
+                if (callback) {
+                    callback("Abstract method", data);
+                }
             },
 
             load: function (model, options, callback) {

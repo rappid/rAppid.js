@@ -12,6 +12,9 @@ requirejs(["rAppid"], function (rAppid) {
             }
         });
 
+        var referenceCollectionTypeExtractor = /^.*\/([^/]+)$/i,
+            referenceModelTypeExtractor = /^.*\/([^/]+)\/(\w+)$/i;
+
         var RestDataSource = DataSource.inherit({
             ctor: function() {
                 this.callBase();
@@ -29,7 +32,9 @@ requirejs(["rAppid"], function (rAppid) {
 
             defaults: {
                 endPoint: null,
-                gateway: null
+                gateway: null,
+                identifierProperty: "id",
+                referenceProperty: "href"
             },
 
             initialize: function () {
@@ -102,9 +107,7 @@ requirejs(["rAppid"], function (rAppid) {
 
             getFqClassName: function (alias) {
                 return rAppid._.find(this.$configuredTypes, function (typeConfig) {
-                    var ali = typeConfig.$.alias ? typeConfig.$.alias : typeConfig.$.className.split(".").pop();
-
-                    if (ali == alias) {
+                    if (typeConfig.$.alias == alias) {
                         return typeConfig.$.className;
                     }
                 });
@@ -174,10 +177,132 @@ requirejs(["rAppid"], function (rAppid) {
 
             /**
              *
-             * @param data
+             * @param obj
              */
-            resolveReferences: function(data, callback) {
-                callback(null, data);
+            isReferencedModel: function(obj) {
+                return obj[this.$.identifierProperty] && obj[this.$.referenceProperty] &&
+                    rAppid._.keys(obj).length == 2;
+            },
+
+            isReferencedCollection: function(obj) {
+                return obj[this.$.referenceProperty] && rAppid._.keys(obj).length == 1;
+            },
+
+            getContextPropertiesFromReference: function(reference) {
+                return null;
+            },
+
+            getReferenceInformation: function(reference, id) {
+                // url is something like
+                // http://example.com/api/context/resourceType/id
+
+                var extractor = id ? referenceModelTypeExtractor : referenceCollectionTypeExtractor;
+
+
+                var match = extractor.exec(reference);
+                if (match) {
+                    var path = match[1];
+
+                    for (var i = 0; i < this.$configuredTypes.length; i++) {
+                        var config = this.$configuredTypes[i];
+
+                        if (config.$.path == path) {
+                            return {
+                                context: this.getContextPropertiesFromReference(reference),
+                                className: config.$.className,
+                                requireClassName: config.$.className.replace(/\./g, "/"),
+                                type: config.$.alias,
+                                id: id
+                            }
+                        }
+                    }
+                }
+
+                // could not retrieve reference information
+                return null;
+            },
+
+            resolveReferences: function(model, data, options, callback) {
+                // in REST models and collections will be referenced by href
+
+                // first identify all needed model classes
+                var referenceInformation = [],
+                    self = this;
+
+                function findReferences(obj, api) {
+
+                    for (var prop in obj) {
+                        if (obj.hasOwnProperty(prop)) {
+                            var value = obj[prop];
+
+                            if (value instanceof Object) {
+                                // value is object and could contain sub objects with references
+                                // first resolve references
+
+                                findReferences(value, api);
+
+                                if (self.isReferencedModel(value) || self.isReferencedCollection(value)) {
+                                    var info = self.getReferenceInformation(value[self.$.referenceProperty], value[self.$.identifierProperty]);
+                                    if (info) {
+
+                                        info.referenceObject = obj;
+                                        info.propertyName = prop;
+                                        referenceInformation.push(info);
+                                    } else {
+                                        throw "Cannot determinate referenceInformation for reference '" + value[self.$.referenceProperty] + "'.";
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                findReferences(data);
+
+                var requiredClasses = [];
+                for (var i = 0; i < referenceInformation.length; i++) {
+                    var info = referenceInformation[i];
+                    var requiredClassname = info.requireClassName;
+
+                    if (rAppid._.indexOf(requiredClasses, requiredClassname) == -1) {
+                        requiredClasses.push(requiredClassname);
+                    }
+                }
+
+                // require model classes
+
+                // TODO: how to handle errors here? require.onError?
+                // some unique hash and extending of requirejs required
+                rAppid.require(requiredClasses, function () {
+                    var factories = Array.prototype.slice.call(arguments);
+
+                    // TODO: replace references with real models
+                    for (var i = 0; i < referenceInformation.length; i++) {
+                        var info = referenceInformation[i];
+                        var factory = factories[rAppid._.indexOf(requiredClasses, info.requireClassName)];
+
+                        if (factory) {
+                            var referenceInstance = model.$context.createModel(factory, info.id, info.type);
+
+                            if (referenceInstance) {
+                                var value = info.referenceObject[info.propertyName];
+                                info.referenceObject[info.propertyName] = referenceInstance;
+
+                                referenceInstance.set(value);
+
+                            } else {
+                                callback("Instance for model '" + info.className + "' couldn't be created");
+                            }
+
+                        } else {
+                            callback("Factory for class '" + info.className + "' missing");
+                        }
+
+                    }
+
+                    callback(null, data);
+                });
+
             },
 
             /**
@@ -237,7 +362,7 @@ requirejs(["rAppid"], function (rAppid) {
                             // parse data inside model
                             data = model.parse(data);
 
-                            self.resolveReferences(data, function(err, resolvedData) {
+                            self.resolveReferences(model, data, options, function(err, resolvedData) {
                                 // set data
                                 model.set(resolvedData);
 
