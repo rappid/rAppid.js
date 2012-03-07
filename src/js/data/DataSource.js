@@ -1,7 +1,9 @@
 var requirejs = (typeof requirejs === "undefined" ? require("requirejs") : requirejs);
 
 requirejs(["rAppid"], function (rAppid) {
-    rAppid.defineClass("js.data.DataSource", ["js.core.Component", "js.core.Base"], function (Component, Base) {
+    rAppid.defineClass("js.data.DataSource",
+        ["js.core.Component", "js.core.Base"],
+        function (Component, Base) {
 
         var Context = Base.inherit({
             ctor: function (datasource, properties, parentContext) {
@@ -21,18 +23,23 @@ requirejs(["rAppid"], function (rAppid) {
                 return this.$cache[cacheId];
             },
 
-            createModel: function (type, id) {
+            createModel: function (factory, id, type) {
 
-                if (rAppid._.isFunction(type)) {
-                    var cachedItem = this.getModelByCacheId(Context.generateCacheId(type.prototype.constructor.name, id));
+                if (rAppid._.isFunction(factory)) {
+
+                    type = type || factory.prototype.constructor.name;
+
+                    var cachedItem = this.getModelByCacheId(Context.generateCacheId(type, id));
 
                     if (!cachedItem) {
                         // create new instance
-                        cachedItem = new type({
+                        cachedItem = new factory({
                             id: id
                         });
                         // set context
                         cachedItem.$context = this;
+                        cachedItem.className = type;
+
                         // and add it to the cache
                         this.addToCache(cachedItem);
                     }
@@ -40,7 +47,7 @@ requirejs(["rAppid"], function (rAppid) {
                     return cachedItem;
 
                 } else {
-                    throw "type has to be a function";
+                    throw "Factory has to be a function";
                 }
             }
         });
@@ -97,16 +104,23 @@ requirejs(["rAppid"], function (rAppid) {
                 return ret.join("&");
             },
 
-            createModel: function (type, id, context) {
+            createModel: function (factory, id, type, context) {
                 context = context || this.getContext();
 
-                return context.createModel(type, id);
+                return context.createModel(factory, id, type);
+            },
+
+            /**
+             * resolve references to models and collections
+             * @param {JSON} data deserialized, parsed data
+             * @param {Function} callback - function (err, resolvedData)
+             */
+            resolveReferences: function (data, callback) {
             },
 
             load: function (model, options, callback) {
-                // model.id, model.type
                 if (callback) {
-                    callback(null, model);
+                    callback("Abstract method", model);
                 }
             },
 

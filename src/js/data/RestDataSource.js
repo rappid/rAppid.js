@@ -6,9 +6,11 @@ requirejs(["rAppid"], function (rAppid) {
         var RestContext = DataSource.Context.inherit({
             getPathComponents: function() {
                 return [];
+            },
+            getQueryParameter: function() {
+                return {};
             }
         });
-
 
         var RestDataSource = DataSource.inherit({
             ctor: function() {
@@ -33,13 +35,30 @@ requirejs(["rAppid"], function (rAppid) {
             initialize: function () {
 
                 if (!this.$.endPoint) {
-                    console.warn("No end-point for RestDataSource definied");
+                    console.warn("No end-point for RestDataSource defined");
                 }
 
                 if (!this.$.gateway) {
                     this.$.gateway = this.$.endPoint;
                 }
 
+            },
+
+            addTypeConfiguration: function(configuration) {
+
+                if (!configuration.$.className && !configuration.$.alias) {
+                    throw "neither className nor alias defined";
+                }
+
+                if (configuration.$.className && !configuration.$.alias) {
+                    configuration.$.alias = configuration.$.className.split(".").pop();
+                }
+
+                if (!configuration.$.className) {
+                    configuration.$.className = "js.core.Model";
+                }
+
+                this.$configuredTypes.push(configuration);
             },
 
             _childrenInitialized: function () {
@@ -49,7 +68,7 @@ requirejs(["rAppid"], function (rAppid) {
                     var config = this.$configurations[c];
 
                     if (config.className == "js.conf.Type") {
-                        this.$configuredTypes.push(config);
+                        this.addTypeConfiguration(config);
                     }
                 }
             },
@@ -62,21 +81,21 @@ requirejs(["rAppid"], function (rAppid) {
                 }
             },
 
-            createContext: function (datasource, properties, parentContext) {
-                return new RestContext(datasource, properties, parentContext);
+            createContext: function (dataSource, properties, parentContext) {
+                return new RestContext(dataSource, properties, parentContext);
             },
 
             loadClass: function (type, callback) {
                 if (rAppid._.isFunction(type)) {
                     callback(null, type);
                 } else {
-                    var classname = this.getFqClassName(type);
-                    if (classname) {
-                        rAppid.require(classname, function (klass) {
+                    var className = this.getFqClassName(type);
+                    if (className) {
+                        rAppid.require(className, function (klass) {
                             callback(null, klass);
                         });
                     } else {
-                        callback("classname not found for type '" + type + "'");
+                        callback("className not found for type '" + type + "'");
                     }
                 }
             },
@@ -91,11 +110,23 @@ requirejs(["rAppid"], function (rAppid) {
                 });
             },
 
-            getPathForClassname: function(fqClassname) {
+            getRestPathForModel: function(fqClassname) {
 
-                for (var i = 0; i < this.$configuredTypes.length; i++) {
-                    var typeConfig = this.$configuredTypes[i];
+                var typeConfig,
+                    i;
+
+                // first search via className
+                for (i = 0; i < this.$configuredTypes.length; i++) {
+                    typeConfig = this.$configuredTypes[i];
                     if (typeConfig.$.className == fqClassname) {
+                        return typeConfig.$.path;
+                    }
+                }
+
+                // search via alias
+                for (i = 0; i < this.$configuredTypes.length; i++) {
+                    typeConfig = this.$configuredTypes[i];
+                    if (typeConfig.$.alias == fqClassname) {
                         return typeConfig.$.path;
                     }
                 }
@@ -104,7 +135,7 @@ requirejs(["rAppid"], function (rAppid) {
             },
 
             getPathComponentsForModel: function(model) {
-                var path = this.getPathForClassname(model.className);
+                var path = this.getRestPathForModel(model.className);
 
                 if (path) {
                     var ret = [path];
@@ -131,11 +162,22 @@ requirejs(["rAppid"], function (rAppid) {
             /**
              * deserialize
              * @param input
-             * @param processor
              */
             deserialize: function (input) {
                 // TODO: enable IE7 and FF3 support? Or should the user add json2.js lib
                 return JSON.parse(input);
+            },
+
+            getQueryParameter: function() {
+                return {};
+            },
+
+            /**
+             *
+             * @param data
+             */
+            resolveReferences: function(data, callback) {
+                callback(null, data);
             },
 
             /**
@@ -153,20 +195,23 @@ requirejs(["rAppid"], function (rAppid) {
                     return;
                 }
 
+                // build uri
                 var uri = [this.$.gateway];
                 uri = uri.concat(model.$context.getPathComponents());
                 uri = uri.concat(modelPathComponents);
 
-                var url = uri.join("/");
+                // get queryParameter
+                var params = rAppid._.defaults(model.$context.getQueryParameter(),this.getQueryParameter());
 
-                // TODO add query parameters
-                url = url + "?mediaType=json";
+                // create url
+                var url = uri.join("/");
 
                 var self = this;
 
                 // send request
                 rAppid.ajax(url, {
-                    type: "GET"
+                    type: "GET",
+                    queryParameter: params
                 }, function (err, xhr) {
                     if (!err && (xhr.status == 200 || xhr.status == 304)) {
                         // find processor that matches the content-type
@@ -192,11 +237,13 @@ requirejs(["rAppid"], function (rAppid) {
                             // parse data inside model
                             data = model.parse(data);
 
-                            // set data
-                            model.set(data);
+                            self.resolveReferences(data, function(err, resolvedData) {
+                                // set data
+                                model.set(resolvedData);
 
-                            // and return
-                            callback(null, model, options);
+                                // and return
+                                callback(null, model, options);
+                            });
 
                         } catch (e) {
                             callback(e, null, options);
