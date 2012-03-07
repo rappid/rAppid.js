@@ -60,7 +60,7 @@ requirejs(["rAppid"], function (rAppid) {
                 }
 
                 if (!configuration.$.className) {
-                    configuration.$.className = "js.core.Model";
+                    configuration.$.className = "js.data.Model";
                 }
 
                 this.$configuredTypes.push(configuration);

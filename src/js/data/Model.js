@@ -1,7 +1,7 @@
 var requirejs = (typeof requirejs === "undefined" ? require("requirejs") : requirejs);
 
 requirejs(["rAppid"], function (rAppid) {
-    rAppid.defineClass("js.core.Model", ["js.core.Bindable"], function (Bindable) {
+    rAppid.defineClass("js.data.Model", ["js.core.Bindable"], function (Bindable) {
 
         var cid = 0;
 
