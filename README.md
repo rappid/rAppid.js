@@ -20,3 +20,4 @@ rAppid.js is currently in an early state, defining the component life cycle and 
 * Single Instance Model Stores
 * Datasources with Processors (RestDataSource + JSON Processor, XMLProcessor in future)
 * Abstract data access layer, which will later supports MongoDb
+* i18n
