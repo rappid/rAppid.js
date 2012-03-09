@@ -244,7 +244,7 @@
                                 <label class="span2">Fullname</label>
 
                                 <ui:Button label="{i18n.translate(name,{person.firstname})}"/>
-                                <ui:Button label="{person.firstname}"/>
+                                <ui:Button label="{person.fullName()}"/>
                             </div>
                             <div class="row">
                                 <label class="span2">Gender</label>
