@@ -33,9 +33,14 @@ requirejs(["rAppid"], function (rAppid) {
                 _preinitialize: function () {
                     this.callBase();
 
+                    this._inject();
+                },
+
+                _inject: function () {
+
                     var inject = this._injectChain();
 
-                    if (rAppid._.size(inject) > 0) {
+                    if (rAppid._.keys(inject).length > 0) {
                         // we need to inject at least on item
 
                         // synchronous singleton instantiation of Injection,
@@ -230,7 +235,7 @@ requirejs(["rAppid"], function (rAppid) {
                     } */
                 },
                 _createComponentForNode: function (node, attributes) {
-                    attributes = attributes || [];
+                    attributes = attributes || {};
 
                     // only instantiation and construction but no initialization
                     var appDomain = this.$applicationDomain;
@@ -262,7 +267,7 @@ requirejs(["rAppid"], function (rAppid) {
                                 var text = node.textContent ? node.textContent : node.text;
                                 text = text.trim();
                                 if (text.length > 0) {
-                                    if(node.textContent){
+                                    if (node.textContent) {
                                         node.textContent = text;
                                     }
                                     childrenFromDescriptor.push(this._createTextElementForNode(node));
@@ -283,7 +288,7 @@ requirejs(["rAppid"], function (rAppid) {
                  * IE8 FIXES
                  * @param domNode
                  */
-                _localNameFromDomNode : function (domNode) {
+                _localNameFromDomNode: function (domNode) {
                     if (domNode.localName) return domNode.localName;
 
                     var st = domNode.tagName.split(":");
