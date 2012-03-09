@@ -17,7 +17,8 @@ requirejs(["rAppid"], function (rAppid) {
 
                     for (var c = 0; c < components.length; c++) {
                         components[c].set(attributes);
-                        components[c]._initialize("auto");
+                        components[c]._initialize("auto", true);
+
                     }
 
                     return components

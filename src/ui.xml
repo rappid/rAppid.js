@@ -272,83 +272,83 @@
                     </div>
                 </ui:View>
             </ui:TabView>
-            <!--<h2>Selection Views</h2>-->
-            <!--<div class="row">-->
-                <!--<div class="span3">-->
-                    <!--<h4>Single Select</h4>-->
-                    <!--<ui:SelectionView tagName="ul" class="nav nav-pills nav-stacked" multiSelect="false"-->
-                                      <!--needsSelection="true">-->
-                        <!--<li>-->
-                            <!--<ui:Link label="Item 1" href="#item1"/>-->
-                        <!--</li>-->
-                        <!--<li>-->
-                            <!--<ui:Link label="Item 2" href="#item2"/>-->
-                        <!--</li>-->
-                        <!--<li>-->
-                            <!--<ui:Link label="Item 3" href="#item3"/>-->
-                        <!--</li>-->
-                        <!--<li>-->
-                            <!--<ui:Link label="Item 4" href="#item4"/>-->
-                        <!--</li>-->
-                    <!--</ui:SelectionView>-->
-                <!--</div>-->
-                <!--<div class="span3">-->
-                    <!--<h4>Multi Select</h4>-->
-                    <!--<ui:SelectionView tagName="ul" class="nav nav-pills nav-stacked" multiSelect="true">-->
-                        <!--<li>-->
-                            <!--<ui:Link label="Item 1" href="#item1"/>-->
-                        <!--</li>-->
-                        <!--<li>-->
-                            <!--<ui:Link label="Item 2" href="#item2"/>-->
-                        <!--</li>-->
-                        <!--<li>-->
-                            <!--<ui:Link label="Item 3" href="#item3"/>-->
-                        <!--</li>-->
-                        <!--<li>-->
-                            <!--<ui:Link label="Item 4" href="#item4"/>-->
-                        <!--</li>-->
-                    <!--</ui:SelectionView>-->
-                <!--</div>-->
-                <!--<div class="span3">-->
-                    <!--<h4>Toggle Buttons Select</h4>-->
-                <!--</div>-->
-            <!--</div>-->
-            <!--<h2>Segmented Views</h2>-->
-            <!--<div class="row">-->
-                <!--<div class="span5">-->
-                    <!--<ui:SegmentedView visibleIndex="{page}">-->
-                        <!--<ui:View>View 1</ui:View>-->
-                        <!--<ui:View>View 2</ui:View>-->
-                        <!--<ui:View>View 3</ui:View>-->
-                        <!--<ui:View>View 4</ui:View>-->
-                    <!--</ui:SegmentedView>-->
-                <!--</div>-->
-                <!--<div class="span5">-->
-                    <!--<ui:SegmentedView items="{pages}" visibleIndex="{page}">-->
-                        <!--<js:Template name="item">-->
-                            <!--<ui:View>{$item}</ui:View>-->
-                        <!--</js:Template>-->
-                    <!--</ui:SegmentedView>-->
-                <!--</div>-->
-            <!--</div>-->
-            <!--<h2>Tab Views</h2>-->
-            <!--<div class="row">-->
-                <!--<div class="span5">-->
-                    <!--<ui:TabView>-->
-                        <!--<ui:View title="Tab 1">View 1</ui:View>-->
-                        <!--<ui:View title="Tab 2">View 2</ui:View>-->
-                        <!--<ui:View title="Tab 3">View 3</ui:View>-->
-                        <!--<ui:View title="Tab 4">View 4</ui:View>-->
-                    <!--</ui:TabView>-->
-                <!--</div>-->
-                <!--<div class="span5">-->
-                    <!--<ui:TabView items="{pages}" tabClassName="nav nav-pills" selectedIndex="2">-->
-                        <!--<js:Template name="item">-->
-                            <!--<ui:View title="{$item}">Whats Up on {$item} ??</ui:View>-->
-                        <!--</js:Template>-->
-                    <!--</ui:TabView>-->
-                <!--</div>-->
-            <!--</div>-->
+            <h2>Selection Views</h2>
+            <div class="row">
+                <div class="span3">
+                    <h4>Single Select</h4>
+                    <ui:SelectionView tagName="ul" class="nav nav-pills nav-stacked" multiSelect="false"
+                                      needsSelection="true">
+                        <li>
+                            <ui:Link label="Item 1" href="#item1"/>
+                        </li>
+                        <li>
+                            <ui:Link label="Item 2" href="#item2"/>
+                        </li>
+                        <li>
+                            <ui:Link label="Item 3" href="#item3"/>
+                        </li>
+                        <li>
+                            <ui:Link label="Item 4" href="#item4"/>
+                        </li>
+                    </ui:SelectionView>
+                </div>
+                <div class="span3">
+                    <h4>Multi Select</h4>
+                    <ui:SelectionView tagName="ul" class="nav nav-pills nav-stacked" multiSelect="true">
+                        <li>
+                            <ui:Link label="Item 1" href="#item1"/>
+                        </li>
+                        <li>
+                            <ui:Link label="Item 2" href="#item2"/>
+                        </li>
+                        <li>
+                            <ui:Link label="Item 3" href="#item3"/>
+                        </li>
+                        <li>
+                            <ui:Link label="Item 4" href="#item4"/>
+                        </li>
+                    </ui:SelectionView>
+                </div>
+                <div class="span3">
+                    <h4>Toggle Buttons Select</h4>
+                </div>
+            </div>
+            <h2>Segmented Views</h2>
+            <div class="row">
+                <div class="span5">
+                    <ui:SegmentedView visibleIndex="{page}">
+                        <ui:View>View 1</ui:View>
+                        <ui:View>View 2</ui:View>
+                        <ui:View>View 3</ui:View>
+                        <ui:View>View 4</ui:View>
+                    </ui:SegmentedView>
+                </div>
+                <div class="span5">
+                    <ui:SegmentedView items="{pages}" visibleIndex="{page}">
+                        <js:Template name="item">
+                            <ui:View>{$item}</ui:View>
+                        </js:Template>
+                    </ui:SegmentedView>
+                </div>
+            </div>
+            <h2>Tab Views</h2>
+            <div class="row">
+                <div class="span5">
+                    <ui:TabView>
+                        <ui:View title="Tab 1">View 1</ui:View>
+                        <ui:View title="Tab 2">View 2</ui:View>
+                        <ui:View title="Tab 3">View 3</ui:View>
+                        <ui:View title="Tab 4">View 4</ui:View>
+                    </ui:TabView>
+                </div>
+                <div class="span5">
+                    <ui:TabView items="{pages}" tabClassName="nav nav-pills" selectedIndex="2">
+                        <js:Template name="item">
+                            <ui:View title="{$item}">Whats Up on {$item} ??</ui:View>
+                        </js:Template>
+                    </ui:TabView>
+                </div>
+            </div>
 
             <!--<h2>Other useful Components</h2>-->
             <!--<div class="row">-->

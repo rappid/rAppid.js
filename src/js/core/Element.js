@@ -89,7 +89,7 @@ requirejs(["rAppid"], function (rAppid) {
                  *          all - create all children
                  *          TODO none?
                  */
-                _initialize: function (creationPolicy) {
+                _initialize: function (creationPolicy, withBindings) {
                     if (this.$initialized) {
                         return;
                     }
@@ -100,7 +100,7 @@ requirejs(["rAppid"], function (rAppid) {
 
                     this._initializeDescriptors();
 
-                    if (this == this.$rootScope) {
+                    if (this == this.$rootScope || withBindings) {
                         this._initializeBindings();
                     }
 
