@@ -33,6 +33,16 @@
                         }.on("interests")
                     });
 
+                    var I18n = Bindable.inherit({
+                        translate: function(key, name){
+                            if(this.$.language == "DE"){
+                                return "Hallo " + name;
+                            }else{
+                                return "Hello " + name;
+                            }
+                        }.on('language')
+                    });
+
 
                     // let's create a person
                     var person = new Person({
@@ -41,12 +51,20 @@
                         username:'it-tony',
                         isMale:true,
                         interests:['programming'],
-                        comment: 'rappid is awesome'
+                        comment:'rappid is awesome'
                     });
+
+                    var i18n = new I18n({
+                        language: 'DE'
+                    });
+
+                    this.set('languages', ['DE','EN']);
+
+                    this.set('i18n',i18n);
 
                     this.set('interests', ['programming', 'sports', 'chilling']);
 
-                    this.set('paymentMethods',['bar','visa','credit card']);
+                    this.set('paymentMethods', ['bar', 'visa', 'credit card']);
                     this.set('person', person);
                     this.set('progress', "40%");
 
@@ -55,7 +73,7 @@
                     this.set('btnLabel', "wait");
                     this.set('page', 0);
                     this.set('pages', ['page 1', 'page 2', 'page 3', 'page 4']);
-                    this.set('inputValue', 'nigga');
+                    this.set('inputValue', 'text');
                     this.set('isChecked', true);
 
 
@@ -117,7 +135,7 @@
                             <ui:Button label="2"/>
                             <ui:Button label="3"/>
                             <ui:Button label="4"/>
-                            <ui:Button label="5"/>
+                            <ui:Button label="{i18n.translate(btnlabel,{person.firstname})}"/>
                         </ui:SelectionView>
 
                     </div>
@@ -200,6 +218,13 @@
                             </ui:SelectionView>
                             <!-- SIMPLE SELECT ELEMENT WITH BINDING -->
                             <div>
+                                <select items="{languages}" selectedItem="{{i18n.language}}">
+                                    <js:Template name="item">
+                                        <option value="{$item}">{$item}</option>
+                                    </js:Template>
+                                </select>
+                            </div>
+                            <div>
                                 <select items="{paymentMethods}" selectedItem="{{person.paymentMethod}}">
                                     <option>No method</option>
                                     <js:Template name="item">
@@ -217,7 +242,9 @@
                         <div class="span5">
                             <div class="row">
                                 <label class="span2">Fullname</label>
-                                <span>{person.fullName}</span>
+
+                                <ui:Button label="{i18n.translate(name,{person.firstname})}"/>
+                                <ui:Button label="{person.firstname}"/>
                             </div>
                             <div class="row">
                                 <label class="span2">Gender</label>

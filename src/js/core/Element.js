@@ -125,16 +125,23 @@ requirejs(["rAppid"], function (rAppid) {
                     }
                 },
                 getScopeForKey: function (key) {
-                    var path = key.split(".");
-                    // get first key
-                    var k1 = path[0];
                     // try to find value for first key
-                    var value = this.$[k1];
+                    var value = this.$[key];
                     // if value was found
                     if (!rAppid._.isUndefined(value)) {
                         return this;
                     } else if (this.$parentScope) {
-                        return this.$parentScope.getScopeForKey(k1);
+                        return this.$parentScope.getScopeForKey(key);
+                    } else {
+                        return null;
+                    }
+                },
+                getScopeForFncName: function(fncName){
+                    var fnc = this[fncName];
+                    if(!rAppid._.isUndefined(fnc) && rAppid._.isFunction(fnc)){
+                        return this;
+                    } else if(this.$parentScope){
+                        return this.$parentScope.getScopeForFncName(fncName);
                     } else {
                         return null;
                     }

@@ -10,7 +10,15 @@ requirejs(["rAppid"], function (rAppid) {
 
 
             Function.prototype.on = function () {
-                this._bindings = arguments;
+                var events = Array.prototype.slice.call(arguments,0);
+                this._events = [];
+                for (var i = 0; i < events.length; i++) {
+                    var event = events[i];
+                    if(event.indexOf(":") === -1){
+                        event = "change:"+event;
+                    }
+                    this._events.push(event);
+                }
                 return this;
             };
             /**
@@ -42,21 +50,6 @@ requirejs(["rAppid"], function (rAppid) {
                             self.set(targetKey, method.call(self));
                         });
                     };
-
-                    // init calculated attributes
-                    for (var key in this) {
-                        // find functions which have a bindings attribute
-                        if (rAppid._.isFunction(this[key]) && this[key]._bindings) {
-                            fnc = this[key];
-                            // register as listener to all bindings
-                            for (var i = 0; i < fnc._bindings.length; i++) {
-                                bind(fnc._bindings[i], key, fnc);
-                            }
-                            // set the return value of the function as attribute
-                            this.set(key, fnc.call(this));
-                        }
-
-                    }
                 },
 
                 defaults: {
@@ -150,6 +143,7 @@ requirejs(["rAppid"], function (rAppid) {
                             } else {
                                 if (!rAppid._.isEqual(now[key], attributes[key])) {
                                     this.$previousAttributes[key] = now[key];
+
                                     now[key] = attributes[key];
                                     changedAttributes[key] = now[key];
                                 }
@@ -173,8 +167,9 @@ requirejs(["rAppid"], function (rAppid) {
                     return this;
                 },
                 get: function (key) {
-                    var path = key.split(".");
-                    var prop = this.$[path.shift()];
+                    //var path = key.split(".");
+                    return this.$[key];
+                    /*
                     var key;
                     while (path.length > 0 && prop != null) {
                         key = path.shift();
@@ -185,8 +180,7 @@ requirejs(["rAppid"], function (rAppid) {
                         } else {
                             return null;
                         }
-                    }
-                    return prop;
+                    }  */
                 },
                 has: function(key){
                     return typeof(this.$[key]) !== "undefined" && this.$[key] !== null;

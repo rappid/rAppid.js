@@ -9,9 +9,10 @@ requirejs(["rAppid"], function (rAppid) {
                     if(child instanceof TextElement){
                         // contains two way binding ...
                         var text = this._getTextContentFromDescriptor(child.$descriptor);
+                        /*
                         if(this._isBindingDefinition(text)){
                             this._initBinding(text,"value");
-                        }
+                        } */
                     }
                 },
                 _renderValue: function(value){

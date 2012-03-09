@@ -202,14 +202,6 @@ requirejs(["rAppid"], function (rAppid) {
 
                     this._childrenInitialized();
                 },
-                $bindingRegex: /^\{{1,2}([a-z_$][a-z0-9$_\-.]*)\}{1,2}$/i,
-                $twoWayBindingRegex: /^\{{2}([a-z_$][a-z0-9$\-_.]*)\}{2}$/i,
-                _isBindingDefinition: function (value) {
-                    return this.$bindingRegex.test(value);
-                },
-                _isTwoWayBindingDefinition: function (value) {
-                    return this.$twoWayBindingRegex.test(value);
-                },
                 _initializeBindings: function () {
                     this.$bindings = [];
                     var attributes = this.$;
@@ -225,8 +217,9 @@ requirejs(["rAppid"], function (rAppid) {
                             if (this._isEventAttribute(key)) {
                                 this.on(key, this.$rootScope[value], this.$rootScope);
                                 delete attributes[key];
-                            } else if (this._isBindingDefinition(value)) {
-                                this._initBinding(value,key);
+                            } else if (Binding.matches(value)) {
+                                binding = Binding.create(value, this, key);
+                                this.$[key] = binding.getValue();
                             }
 
                         }
@@ -235,20 +228,6 @@ requirejs(["rAppid"], function (rAppid) {
                     for (var c = 0; c < this.$components.length; c++) {
                        // this.$components[c]._initializeBindings();
                     } */
-                },
-                _initBinding:function (bindingDef, key) {
-                    var attrKey = bindingDef.match(this.$bindingRegex);
-                    attrKey = attrKey[1];
-                    var scope = this.getScopeForKey(attrKey);
-
-                    if (scope && (scope != this || attrKey != key)) {
-                        var twoWay = this._isTwoWayBindingDefinition(bindingDef);
-
-                        var binding = new Binding({scope:scope, path:attrKey, target:this, targetKey:key, twoWay:twoWay});
-                        this.$bindings.push(binding);
-
-                        this.$[key] = scope.get(attrKey);
-                    }
                 },
                 _createComponentForNode: function (node, attributes) {
                     attributes = attributes || [];
