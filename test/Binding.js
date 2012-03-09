@@ -1,7 +1,7 @@
-global.inherit = require(__dirname + '/../libs/inherit.js').inherit;
+global.inherit = require(__dirname + '/../lib/inherit.js').inherit;
 var should = require('chai').should();
 var requirejs = global.requirejs = require('requirejs');
-var underscore = global.underscore = require(__dirname + '/../libs/underscore-min.js')._;
+var underscore = global.underscore = require(__dirname + '/../lib/underscore-min.js')._;
 
 var rAppid = require(__dirname + '/../src/rAppid.js').rAppid;
 
