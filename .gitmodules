@@ -1,0 +1,3 @@
+[submodule "lib/flow.js"]
+	path = lib/flow.js
+	url = git@github.com:it-ony/flow.js.git
