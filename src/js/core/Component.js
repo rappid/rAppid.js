@@ -50,7 +50,7 @@ requirejs(["rAppid"], function (rAppid) {
                         var injection = this.$applicationDomain.createInstance("js.core.Injection");
                         for (var name in inject) {
                             if (inject.hasOwnProperty(name)) {
-                                this["$" + name] = injection.getInstance(inject[name]);
+                                this.$[name] = injection.getInstance(inject[name]);
                             }
                         }
                     }
@@ -229,10 +229,10 @@ requirejs(["rAppid"], function (rAppid) {
 
                         }
                     }
-                    /* TODO: remove
+
                     for (var c = 0; c < this.$components.length; c++) {
-                       // this.$components[c]._initializeBindings();
-                    } */
+                       this.$components[c]._initializeBindings();
+                    }
                 },
                 _createComponentForNode: function (node, attributes) {
                     attributes = attributes || {};

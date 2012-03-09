@@ -98,9 +98,11 @@ requirejs(["rAppid"], function (rAppid) {
 
                     this.initialize();
 
-                    this._initializeBindings();
-
                     this._initializeDescriptors();
+
+                    if (this == this.$rootScope) {
+                        this._initializeBindings();
+                    }
 
                     this._initializationComplete();
                 },
