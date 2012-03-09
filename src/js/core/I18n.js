@@ -18,6 +18,12 @@ requirejs(["rAppid"], function (rAppid) {
                 this.loadLocale(this.$.locale);
             },
 
+            _commitChangedAttributes: function(attributes) {
+                if (attributes.locale) {
+                    this.loadLocale(attributes.locale);
+                }
+            },
+
             loadLocale: function(locale) {
 
                 if (!locale) {
@@ -42,14 +48,13 @@ requirejs(["rAppid"], function (rAppid) {
                 var args = Array.prototype.slice.call(arguments);
                 var key = args.shift();
 
-                var value = this.$.translations[key];
+                var value = this.$.translations[key] || "";
 
                 for (var i = 0; i < args.length; i++) {
                     // replace, placeholder
                     value = value.split("%" + i).join(args[i]);
                 }
 
-                console.log(["i18n-value", value]);
                 return value;
             }.on("translations")
         })
