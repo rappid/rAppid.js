@@ -7,7 +7,7 @@ if(!String.prototype.trim){
     };
 }
 
-(function (exports, inherit, require, define, underscore, XMLHttpRequest) {
+(function (exports, inherit, require, define, underscore, XMLHttpRequest, flow) {
 
     if (!require) {
         throw "require.js is needed";
@@ -21,6 +21,14 @@ if(!String.prototype.trim){
         // TODO include own implementation
         throw "underscore is needed"
     }
+
+    if (!flow) {
+        throw "flow.js is needed";
+    }
+
+    define("flowjs", function() {
+        return flow;
+    });
 
     require.config({
         paths: {
@@ -478,4 +486,5 @@ if(!String.prototype.trim){
     requirejs,
     requirejs.define ? requirejs.define : define,
     typeof this._ === "undefined" ? global.underscore : this._,
-    typeof window !== "undefined" ? window.XMLHttpRequest : global.XMLHttpRequest);
+    typeof window !== "undefined" ? window.XMLHttpRequest : global.XMLHttpRequest,
+    typeof flow === "undefined" ? global.flow : flow);
