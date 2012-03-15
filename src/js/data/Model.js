@@ -104,6 +104,28 @@ requirejs(["rAppid"], function (rAppid) {
 
         });
 
+        function fetchSubModels(attributes, subModelTypes, delegates) {
+            rAppid._.each(attributes, function (value) {
+                if (value instanceof Model) {
+                    // check if the model is required
+                    var subModelTypeEntry = subModelTypes[value.className];
+
+                    if (subModelTypeEntry) {
+                        // model required -> create delegate
+                        subModelTypeEntry.found = true;
+
+                        delegates.push(function (cb) {
+                            value.fetch({
+                                fetchSubModels: subModelTypeEntry.subModels
+                            }, cb);
+                        });
+                    }
+                } else if (value instanceof Object) {
+                    fetchSubModels(value, subModelTypes, delegates);
+                }
+            });
+        }
+
         function modelFetchedComplete(err, model, options, originalCallback) {
 
             var callback = function (err, model) {
@@ -123,29 +145,7 @@ requirejs(["rAppid"], function (rAppid) {
                     // for example fetch an article with ["currency", "product/design", "product/productType"]
                     var subModelTypes = createSubModelLoadingChain(model, options.fetchSubModels);
 
-                    function loadSubModels(attributes, subModelTypes) {
-                        rAppid._.each(attributes, function (value) {
-                            if (value instanceof Model) {
-                                // check if the model is required
-                                var subModelTypeEntry = subModelTypes[value.className];
-
-                                if (subModelTypeEntry) {
-                                    // model required -> create delegate
-                                    subModelTypeEntry.found = true;
-
-                                    delegates.push(function (cb) {
-                                        value.fetch({
-                                            fetchSubModels: subModelTypeEntry.subModels
-                                        }, cb);
-                                    });
-                                }
-                            } else if (value instanceof Object) {
-                                loadSubModels(value, subModelTypes);
-                            }
-                        });
-                    }
-
-                    loadSubModels(model.$, subModelTypes);
+                    fetchSubModels(model.$, subModelTypes, delegates);
 
                     // check that all subResources where found
                     var missingSubModels = rAppid._.filter(subModelTypes, function (subModel) {
