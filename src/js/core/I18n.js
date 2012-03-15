@@ -24,7 +24,7 @@ requirejs(["rAppid"], function (rAppid) {
                 }
             },
 
-            loadLocale: function(locale) {
+            loadLocale: function(locale, callback) {
 
                 if (!locale) {
                     throw "locale not defined";
@@ -32,6 +32,10 @@ requirejs(["rAppid"], function (rAppid) {
 
                 var self = this;
                 rAppid.require(['json!' + this.$.path + '/' + this.$.locale + this.$.suffix], function (translations) {
+                    if (callback) {
+                        callback();
+                    }
+
                     self.set({
                         translations: translations
                     });
