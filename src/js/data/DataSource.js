@@ -52,8 +52,8 @@ requirejs(["rAppid"], function (rAppid) {
             }
         });
 
-        Context.generateCacheId = function (className, id) {
-            return className + "_" + id;
+        Context.generateCacheId = function (type, id) {
+            return type + "_" + id;
         };
 
         Context.generateCacheIdFromModel = function (model) {
@@ -68,6 +68,57 @@ requirejs(["rAppid"], function (rAppid) {
                 this.$configuredTypes = [];
                 this.$contextCache = {};
             },
+
+            _childrenInitialized: function () {
+                this.callBase();
+
+                for (var c = 0; c < this.$configurations.length; c++) {
+                    var config = this.$configurations[c];
+
+                    if (config.className == "js.conf.Type") {
+                        this.addTypeConfiguration(config);
+                    }
+                }
+            },
+
+            addTypeConfiguration: function (configuration) {
+
+                if (!configuration.$.className && !configuration.$.alias) {
+                    throw "neither className nor alias defined";
+                }
+
+                if (configuration.$.className && !configuration.$.alias) {
+                    configuration.$.alias = configuration.$.className.split(".").pop();
+                }
+
+                if (!configuration.$.className) {
+                    configuration.$.className = "js.data.Model";
+                }
+
+                this.$configuredTypes.push(configuration);
+            },
+
+            getFqClassName: function (alias) {
+
+                for (var i = 0; i < this.$configuredTypes.length; i++) {
+                    var typeConfig = this.$configuredTypes[i];
+
+                    if (typeConfig.$.alias == alias) {
+                        return typeConfig.$.className;
+                    }
+                }
+            },
+
+            getModelClassNameForAlias: function (alias) {
+                var fqClassname = this.getFqClassName(alias) || alias;
+
+                if (fqClassname == "js.data.Model") {
+                    return alias;
+                }
+
+                return fqClassname;
+            },
+
 
             getContext: function (properties, parentContext) {
 

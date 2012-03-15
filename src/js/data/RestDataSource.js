@@ -1,7 +1,8 @@
 var requirejs = (typeof requirejs === "undefined" ? require("requirejs") : requirejs);
 
 requirejs(["rAppid"], function (rAppid) {
-    rAppid.defineClass("js.data.RestDataSource", ["js.data.DataSource", "js.core.Base"], function (DataSource, Base) {
+    rAppid.defineClass("js.data.RestDataSource",
+        ["js.data.DataSource", "js.core.Base"], function (DataSource, Base) {
 
         var RestContext = DataSource.Context.inherit({
             getPathComponents: function() {
@@ -49,35 +50,6 @@ requirejs(["rAppid"], function (rAppid) {
 
             },
 
-            addTypeConfiguration: function(configuration) {
-
-                if (!configuration.$.className && !configuration.$.alias) {
-                    throw "neither className nor alias defined";
-                }
-
-                if (configuration.$.className && !configuration.$.alias) {
-                    configuration.$.alias = configuration.$.className.split(".").pop();
-                }
-
-                if (!configuration.$.className) {
-                    configuration.$.className = "js.data.Model";
-                }
-
-                this.$configuredTypes.push(configuration);
-            },
-
-            _childrenInitialized: function () {
-                this.callBase();
-
-                for (var c = 0; c < this.$configurations.length; c++) {
-                    var config = this.$configurations[c];
-
-                    if (config.className == "js.conf.Type") {
-                        this.addTypeConfiguration(config);
-                    }
-                }
-            },
-
             getClass: function (type) {
                 if (rAppid._.isFunction(type)) {
                     return type;
@@ -86,8 +58,8 @@ requirejs(["rAppid"], function (rAppid) {
                 }
             },
 
-            createContext: function (dataSource, properties, parentContext) {
-                return new RestContext(dataSource, properties, parentContext);
+            createContext: function (properties, parentContext) {
+                return new RestContext(this, properties, parentContext);
             },
 
             loadClass: function (type, callback) {
@@ -103,14 +75,6 @@ requirejs(["rAppid"], function (rAppid) {
                         callback("className not found for type '" + type + "'");
                     }
                 }
-            },
-
-            getFqClassName: function (alias) {
-                return rAppid._.find(this.$configuredTypes, function (typeConfig) {
-                    if (typeConfig.$.alias == alias) {
-                        return typeConfig.$.className;
-                    }
-                });
             },
 
             getRestPathForModel: function(fqClassname) {
@@ -243,7 +207,6 @@ requirejs(["rAppid"], function (rAppid) {
                                 if (self.isReferencedModel(value) || self.isReferencedCollection(value)) {
                                     var info = self.getReferenceInformation(value[self.$.referenceProperty], value[self.$.identifierProperty]);
                                     if (info) {
-
                                         info.referenceObject = obj;
                                         info.propertyName = prop;
                                         referenceInformation.push(info);
