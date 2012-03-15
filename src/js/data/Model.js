@@ -35,6 +35,8 @@ requirejs(["rAppid"], function (rAppid) {
              * @param {Function} callback - function(err, model, options)
              */
             fetch: function (options, callback) {
+                options = options || {};
+
                 var self = this;
 
                 if (this._fetch.state === State.LOADING) {
@@ -200,7 +202,6 @@ requirejs(["rAppid"], function (rAppid) {
 
             return ret;
         }
-
 
         return Model;
     });
