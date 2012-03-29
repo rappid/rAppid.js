@@ -1,4 +1,5 @@
 global.inherit = require(__dirname + '/../lib/inherit.js').inherit;
+global.flow = require(__dirname + '/../lib/flow.js').flow;
 var should = require('chai').should();
 var requirejs = global.requirejs = require('requirejs');
 var underscore = global.underscore = require(__dirname + '/../lib/underscore-min.js')._;
@@ -12,8 +13,6 @@ requirejs.define("rAppid", function(){
 requirejs.define("underscore", function() {
     return underscore;
 });
-
-var should = require('chai').should();
 
 describe('js.core.Binding', function () {
 
