@@ -13,9 +13,9 @@ requirejs(["rAppid"], function (rAppid) {
                 this.bind('add', function () {
                     self.length = self.size();
                 });
-//                this.bind('remove', function () {
-//                    self.length = self.size();
-//                });
+                this.bind('remove', function () {
+                    self.length = self.size();
+                });
 
                 this.length = this.size();
             },
