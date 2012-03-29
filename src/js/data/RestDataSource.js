@@ -5,6 +5,16 @@ requirejs(["rAppid"], function (rAppid) {
         ["js.data.DataSource", "js.core.Base", "js.core.List"], function (DataSource, Base, List) {
 
         var RestContext = DataSource.Context.inherit({
+
+            createCollection: function(factory, options, type) {
+                options = options || {};
+                rAppid._.defaults(options, {
+                    chunkSize: 1000
+                });
+
+                return this.callBase(factory, options, type);
+            },
+
             getPathComponents: function() {
                 return [];
             },
@@ -19,8 +29,8 @@ requirejs(["rAppid"], function (rAppid) {
         var RestDataSource = DataSource.inherit({
             ctor: function() {
                 this.callBase();
-                this.$processors = [];
 
+                this.$processors = [];
                 this.initializeProcessors();
             },
 
@@ -251,14 +261,24 @@ requirejs(["rAppid"], function (rAppid) {
 
                         if (factory) {
                             // create instance in correct context
-                            var referenceInstance = self.createModel(factory, info.id, info.type,
-                                self.getContext(info.context, model.$context));
+
+                            var context = self.getContext(info.context, model.$context);
+
+                            var isModel = info.id;
+
+                            var referenceInstance = isModel ?
+                                self.createModel(factory, info.id, info.type, context) :
+                                self.createCollection(factory, null, info.type, context);
 
                             if (referenceInstance) {
                                 var value = info.referenceObject[info.propertyName];
                                 info.referenceObject[info.propertyName] = referenceInstance;
 
-                                referenceInstance.set(value);
+                                if (isModel) {
+                                    referenceInstance.set(value);
+                                } else {
+                                    // TODO: set loaded data for collection, if available in payload
+                                }
 
                             } else {
                                 callback("Instance for model '" + info.className + "' couldn't be created");
