@@ -51,7 +51,7 @@ requirejs(["rAppid"], function (rAppid) {
                     // set state and start loading
                     self._fetch.state = State.LOADING;
 
-                    this.$context.$datasource.load(this, options, function(err, model) {
+                    this.$context.$datasource.loadModel(this, options, function(err, model) {
                         self._fetch.state = err ? State.ERROR : State.LOADED;
 
                         // execute callbacks

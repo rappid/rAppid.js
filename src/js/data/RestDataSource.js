@@ -273,7 +273,7 @@ requirejs(["rAppid"], function (rAppid) {
              * @param options
              * @param callback function(err, model, options)
              */
-            load: function (model, options, callback) {
+            loadModel: function (model, options, callback) {
                 // map model to url
                 var modelPathComponents = this.getPathComponentsForModel(model);
 

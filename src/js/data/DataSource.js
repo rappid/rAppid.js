@@ -178,7 +178,7 @@ requirejs(["rAppid"], function (rAppid) {
                 }
             },
 
-            load: function (model, options, callback) {
+            loadModel: function (model, options, callback) {
                 if (callback) {
                     callback("Abstract method", model);
                 }
