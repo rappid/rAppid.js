@@ -220,7 +220,7 @@ requirejs(["rAppid"], function (rAppid) {
                             var value = attributes[key];
 
                             if (this._isEventAttribute(key)) {
-                                this.on(key, this.$rootScope[value], this.$rootScope);
+                                this.bind(key, this.$rootScope[value], this.$rootScope);
                                 delete attributes[key];
                             } else if (Binding.matches(value)) {
                                 binding = Binding.create(value, this, key);

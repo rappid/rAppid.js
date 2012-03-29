@@ -22,7 +22,7 @@
                         if (!this.$selectionView && child instanceof SelectionView) {
                             this.$selectionView = child;
                             this.$selectionView.set({items: []});
-                            this.$selectionView.on('change:selectedViews', this._onTabChange, this);
+                            this.$selectionView.bind('change:selectedViews', this._onTabChange, this);
                         } else if (!this.$segmentedView && child instanceof SegmentedView) {
                             this.$segmentedView = child;
                         }

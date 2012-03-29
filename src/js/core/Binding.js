@@ -68,7 +68,7 @@ requirejs(["rAppid"], function (rAppid) {
 
                         for (var i = 0; i < events.length; i++) {
                             var event = events[i];
-                            scope.on(event, this._callback, this);
+                            scope.bind(event, this._callback, this);
                         }
                         var self = this;
                         var cb = function(){
@@ -93,11 +93,11 @@ requirejs(["rAppid"], function (rAppid) {
 
 
                     // on change of this key
-                    scope.on(this.$.event, this._callback, this);
+                    scope.bind(this.$.event, this._callback, this);
 
                     if (this.$.twoWay === true) {
                         this.$.targetEvent = 'change:' + this.$.targetKey;
-                        this.$.target.on(this.$.targetEvent, this._revCallback, this);
+                        this.$.target.bind(this.$.targetEvent, this._revCallback, this);
                     }
                 }
                 this._createSubBinding();

@@ -27,7 +27,7 @@ requirejs(["rAppid"], function (rAppid) {
                         if(this.$.forceSelectable === true){
                             child.set({selectable:true});
                         }
-                        child.on('change:selected', function (e, c) {
+                        child.bind('change:selected', function (e, c) {
                             self._onChildSelected(c);
                         }, child);
                     }

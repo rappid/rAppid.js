@@ -2,7 +2,7 @@ var requirejs = (typeof requirejs === "undefined" ? require("requirejs") : requi
 
 requirejs(["rAppid"], function (rAppid) {
     rAppid.defineClass("js.data.RestDataSource",
-        ["js.data.DataSource", "js.core.Base"], function (DataSource, Base) {
+        ["js.data.DataSource", "js.core.Base", "js.core.List"], function (DataSource, Base, List) {
 
         var RestContext = DataSource.Context.inherit({
             getPathComponents: function() {
@@ -198,7 +198,14 @@ requirejs(["rAppid"], function (rAppid) {
                         if (obj.hasOwnProperty(prop)) {
                             var value = obj[prop];
 
-                            if (value instanceof Object) {
+                            // TODO: test if we need also go through array value and convert them
+                            // or if this is actually done
+
+                            if (value instanceof List) {
+                                value.each(function(item) {
+                                    findReferences(item, api);
+                                });
+                            } else if (value instanceof Object) {
                                 // value is object and could contain sub objects with references
                                 // first resolve references
 

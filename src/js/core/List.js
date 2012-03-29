@@ -3,19 +3,21 @@ var requirejs = (typeof requirejs === "undefined" ? require("requirejs") : requi
 requirejs(["rAppid"], function (rAppid) {
     rAppid.defineClass("js.core.List", ["js.core.EventDispatcher"], function(EventDispatcher) {
         return EventDispatcher.inherit({
+
+
             ctor: function(items){
-                this.$items = [];
+                this.$items = items || [];
                 this.callBase();
 
                 var self = this;
-                this.on('add', function () {
+                this.bind('add', function () {
                     self.length = self.size();
                 });
-                this.on('remove', function () {
-                    self.length = self.size();
-                });
-                // add the items
-                this.add(items);
+//                this.bind('remove', function () {
+//                    self.length = self.size();
+//                });
+
+                this.length = this.size();
             },
             push: function(item){
                 this.$items.push(item);
@@ -76,7 +78,8 @@ requirejs(["rAppid"], function (rAppid) {
             },
             size: function(){
                 return this.$items.length;
-            }.on('add','remove'),
+            }.on('add','remove')
+            ,
             at: function(index){
                 if(index < this.$items.length && index >= 0){
                     return this.$items[index];

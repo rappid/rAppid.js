@@ -2,12 +2,14 @@ var requirejs = (typeof requirejs === "undefined" ? require("requirejs") : requi
 
 requirejs(["rAppid"], function (rAppid) {
 
+    var a = 0;
     rAppid.defineClass("js.core.EventDispatcher",
         ["js.core.Base"],
         /**
          * Base class for trigger and listen to events
          * @export js/core/EventDispatcher
          */
+
             function (Base) {
 
             var undefinedValue;
@@ -17,9 +19,8 @@ requirejs(["rAppid"], function (rAppid) {
                     this.callBase();
                     this._eventHandlers = {};
                 },
-                on: function (eventType, callback, scope) {
+                bind: function (eventType, callback, scope) {
                     scope = scope || this;
-
                     // get the list for the event
                     var list = this._eventHandlers[eventType] || (this._eventHandlers[eventType] = []);
                     // and push the callback function
@@ -125,15 +126,15 @@ requirejs(["rAppid"], function (rAppid) {
                 }
             });
 
-            EventDispatcher.EventHandler = Base.inherit(({
+            EventDispatcher.EventHandler = Base.inherit({
                 ctor: function (callback, scope) {
-                    this.$callback = callback;
                     this.scope = scope;
+                    this.$callback = callback;
                 },
                 trigger: function (event, caller) {
                     this.$callback.call(this.scope, event, caller);
                 }
-            }));
+            });
 
             return EventDispatcher;
         }

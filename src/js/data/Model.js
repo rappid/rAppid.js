@@ -1,7 +1,7 @@
 var requirejs = (typeof requirejs === "undefined" ? require("requirejs") : requirejs);
 
 requirejs(["rAppid"], function (rAppid) {
-    rAppid.defineClass("js.data.Model", ["js.core.Bindable", "flow"], function (Bindable, flow) {
+    rAppid.defineClass("js.data.Model", ["js.core.Bindable", "js.core.List", "flow"], function (Bindable, List, flow) {
 
         var cid = 0;
 
@@ -93,8 +93,36 @@ requirejs(["rAppid"], function (rAppid) {
              * @param data
              */
             parse: function(data) {
+
+                // convert all arrays to List
+                function convertArrayToList(obj) {
+
+                    for (var prop in obj) {
+                        if (obj.hasOwnProperty(prop)) {
+                            var value = obj[prop];
+
+                            if (rAppid._.isArray(value)) {
+                                // convert array to js.core.List
+                                obj[prop] = new List(value);
+
+                                for (var i = 0; i < value.length; i++) {
+                                    convertArrayToList(value[i]);
+                                }
+
+                            } else if (value instanceof Object) {
+                                convertArrayToList(value);
+                            }
+
+                        }
+                    }
+                }
+
+                convertArrayToList(data);
+
                 return data;
             },
+
+
 
             status: function() {
                 if (this.$.id === false) {

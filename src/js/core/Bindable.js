@@ -46,7 +46,7 @@ requirejs(["rAppid"], function (rAppid) {
                     var self = this, fnc;
 
                     var bind = function(key, targetKey, method){
-                        self.on('change:' + key, function () {
+                        self.bind('change:' + key, function () {
                             self.set(targetKey, method.call(self));
                         });
                     };
