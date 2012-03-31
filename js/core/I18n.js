@@ -40,14 +40,22 @@ requirejs(["rAppid"], function (rAppid) {
             },
 
             /**
-             * @key translation key
+             * @param [num] for plural or singular
+             * @param key translation key
              * @param - replacement for %0
              * @param - replacement for %1 ...
              */
             translate: function() {
 
                 var args = Array.prototype.slice.call(arguments);
-                var key = args.shift();
+                var key = args.shift(), isPlural;
+                if(rAppid._.isNumber(key)){
+                    isPlural = key !== 1;
+                    key = args.shift();
+                }
+                if(isPlural){
+                    key += "_plural";
+                }
 
                 var value = this.$.translations[key] || "";
 
