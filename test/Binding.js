@@ -104,10 +104,10 @@ describe('js.core.Binding', function () {
         });
 
         it('two way path binding a.b should set value if b is set', function () {
-            new Binding({scope:model, path:'a.b', target:target, targetKey:"val", twoWay:true});
+            var binding = new Binding({scope:model, path:'a.b', target:target, targetKey:"val", twoWay:true});
 
             target.set({val:'TargetValue'});
-            should.equal(model.get('a.b'),undefined);
+            should.equal(binding.getValue(),null);
 
             var m1 = new Bindable({b: "hello"});
             model.set("a",m1);

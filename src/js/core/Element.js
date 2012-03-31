@@ -129,6 +129,7 @@ requirejs(["rAppid"], function (rAppid) {
                 getScopeForKey: function (key) {
                     // try to find value for first key
                     var value = this.$[key];
+
                     // if value was found
                     if (!rAppid._.isUndefined(value)) {
                         return this;

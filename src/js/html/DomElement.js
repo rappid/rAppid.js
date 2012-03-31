@@ -5,6 +5,7 @@ requirejs(["rAppid"], function (rAppid) {
         ["js.core.Component", "js.core.Content", "js.core.Binding"], function (Component, Content, Binding) {
 
             var rspace = /\s+/;
+            var domEvents = ['click','dblclick','keyup', 'keydown' , 'change'];
 
             var DomElementFunctions = {
                 defaults:{
@@ -92,10 +93,19 @@ requirejs(["rAppid"], function (rAppid) {
                     return this.$el;
                 },
                 _bindDomEvents:function (el) {
-                    var self = this;
-                    this.addEventListener('click', function (e) {
-                        self.trigger('onclick', e , self);
-                    });
+                    var self = this, domEvent;
+                    function bindDomEvent(eventName,scope,fncName){
+                        self.bind(eventName,scope[fncName],scope);
+                        domEvent = eventName.substr(2);
+                        self.addEventListener(domEvent, function (e) {
+                            self.trigger(eventName, e, self);
+                        });
+                    }
+                    var eventDef;
+                    for(var i = 0 ; i < this.$eventDefinitions.length; i++){
+                        eventDef = this.$eventDefinitions[i];
+                        bindDomEvent(eventDef.name, eventDef.scope, eventDef.fncName);
+                    }
                 },
                 _renderChildren:function (children) {
                     // for all children

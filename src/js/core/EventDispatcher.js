@@ -12,6 +12,27 @@ requirejs(["rAppid"], function (rAppid) {
 
             function (Base) {
 
+            Function.prototype.on = function () {
+                var events = Array.prototype.slice.call(arguments, 0);
+                this._events = [];
+                for (var i = 0; i < events.length; i++) {
+                    var event = events[i];
+                    this._events.push(event);
+                }
+                return this;
+            };
+
+            Function.prototype.onChange = function () {
+                var events = Array.prototype.slice.call(arguments, 0);
+                this._events = [];
+                for (var i = 0; i < events.length; i++) {
+                    var event = events[i];
+                    event = "change:" + event;
+                    this._events.push(event);
+                }
+                return this;
+            };
+
             var undefinedValue;
 
             var EventDispatcher = Base.inherit({

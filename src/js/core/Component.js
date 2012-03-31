@@ -207,8 +207,23 @@ requirejs(["rAppid"], function (rAppid) {
 
                     this._childrenInitialized();
                 },
+                /**
+                 * an array of attributes names, which will expect handler functions
+                 */
+
+                _isEventAttribute:function (attributeName) {
+                    return attributeName.indexOf("on") == 0;
+                    // return this._eventAttributes.hasOwnProperty(attributeName);
+                },
+
+                _getEventTypeForAttribute:function (eventName) {
+                    // TODO: implement eventAttribites as hash
+                    return this._eventAttributes[eventName];
+                },
+
                 _initializeBindings: function () {
                     this.$bindings = [];
+                    this.$eventDefinitions = [];
                     var attributes = this.$;
 
                     var self = this;
@@ -220,11 +235,20 @@ requirejs(["rAppid"], function (rAppid) {
                             var value = attributes[key];
 
                             if (this._isEventAttribute(key)) {
-                                this.bind(key, this.$rootScope[value], this.$rootScope);
+                                this.$eventDefinitions.push({
+                                    name: key,
+                                    scope: this.$rootScope,
+                                    fncName: value
+                                });
                                 delete attributes[key];
                             } else if (Binding.matches(value)) {
                                 binding = Binding.create(value, this, key);
-                                this.$[key] = binding.getValue();
+                                if(binding){
+                                    this.$[key] = binding.getValue();
+                                }else{
+                                    throw "Binding " + value + " couldn't be created";
+                                }
+
                             }
 
                         }
@@ -265,8 +289,7 @@ requirejs(["rAppid"], function (rAppid) {
                             } else if (node.nodeType == 3) { // Textnodes
                                 // remove whitespaces from text textnodes
                                 var text = node.textContent ? node.textContent : node.text;
-                                text = text.trim();
-                                if (text.length > 0) {
+                                if (text.trim().length > 0) {
                                     if (node.textContent) {
                                         node.textContent = text;
                                     }

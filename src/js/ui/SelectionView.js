@@ -11,7 +11,6 @@ requirejs(["rAppid"], function (rAppid) {
                     selectedViews: [],
                     selectedItems: [],
                     selectedItem: null,
-                    hasSelection: false,
                     items: [],
                     forceSelectable: true
                 },
@@ -20,7 +19,7 @@ requirejs(["rAppid"], function (rAppid) {
                 },
                 hasSelection: function () {
                     return this.$.selectedViews.length > 0;
-                }.on('selectedViews'),
+                }.onChange('selectedViews'),
                 _renderChild: function (child) {
                     if (child instanceof DomElement) {
                         var self = this;

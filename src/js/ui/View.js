@@ -82,6 +82,12 @@ requirejs(["rAppid"], function (rAppid) {
                         renderedComponent.set(attributes);
                     }
 
+                },
+                _renderId: function(id){
+                    if(id){
+                        this.$el.setAttribute("id",id);
+                    }
+
                 }
             });
         }

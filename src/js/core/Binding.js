@@ -2,7 +2,7 @@ var requirejs = (typeof requirejs === "undefined" ? require("requirejs") : requi
 
 requirejs(["rAppid"], function (rAppid) {
 
-    rAppid.defineClass("js.core.Binding", ["js.core.Bindable"], function (Bindable) {
+    rAppid.defineClass("js.core.Binding", ["js.core.Bindable", "js.core.EventDispatcher"], function (Bindable, EventDispatcher) {
         var $splitAtReg = /\.?(?:\w+\([^(]*\)|[^.]+)/;
         var splitPath = function(path){
             var matches = [];
@@ -12,7 +12,9 @@ requirejs(["rAppid"], function (rAppid) {
                 path = path.substr(match[0].length+1);
                 match = path.search($splitAtReg);
             }
-            matches.push(path);
+            if(path.length > 0){
+                matches.push(path);
+            }
             return matches;
         };
         var splitFirst = function(path){
@@ -42,6 +44,7 @@ requirejs(["rAppid"], function (rAppid) {
             },
             initialize: function () {
                 this._checkAttributes();
+                this.$parameters = [];
                 this.$subBinding = null;
 
                 if (!this.$.rootScope) {
@@ -129,24 +132,29 @@ requirejs(["rAppid"], function (rAppid) {
             _createSubBinding: function () {
                 var keys = splitPath(this.$.path);
                 var k = keys.shift();
-                // if keys are left and has value && is bindable
                 if (keys.length > 0) {
+                    var nScope;
+                    if(this.$.fnc){
+                        nScope = this.getValue();
+                    }else{
+                        nScope = this.$.scope.$[k];
+                    }
+                    // if keys are left and has value && is bindable
                     // get value for first child
-                    var nScope = this.$.scope.$[k];
-                    if (nScope && nScope instanceof Bindable) {
+                    if (nScope && (nScope instanceof EventDispatcher)) {
                         // init new binding, which triggers this binding
                         this.$subBinding = new Binding({scope: nScope, path: keys.join("."), target: this.$.target, targetKey: this.$.targetKey, rootScope: this.$.rootScope, callback: this.$.callback});
                     }
                 }
             },
             _revCallback: function (e) {
-                console.log(this.$.path);
                 this.$.scope.set(this.$.path, this.$.transformBack(e.$, this.$.target));
             },
             _callback: function () {
                 // remove subBindings!
                 if (this.$subBinding) {
                     this.$subBinding.destroy();
+                    this.$subBinding = null;
                 }
 
                 // try to create subBinding
@@ -185,8 +193,10 @@ requirejs(["rAppid"], function (rAppid) {
                             parameters.push(para);
                         }
                         return this.$.fnc.apply(this.$.scope,parameters);
-                    }else{
+                    }else if(this.$.path == this.$.key){
                         return this.$.scope.get(this.$.key);
+                    }else{
+                        return null;
                     }
                 }
             },
@@ -206,7 +216,7 @@ requirejs(["rAppid"], function (rAppid) {
         var $bindingRegex= /^((?:\{{2}(.+)\}{2})|(?:\{(.+)\}))$/i;
         var $twoWayBindingRegex= /^\{{2}([a-z_$\}][\(\)a-z0-9$\-_.,\{]*)\}{2}$/i;
         var $fncRegex = /^([a-z$_]\w*)\((.*)\)$/i;
-
+        var $fncNameRegex = /^(\w+)\(.*\)$/;
         Binding.matches = function(attrValue){
             return $bindingRegex.test(attrValue);
         };
@@ -221,19 +231,23 @@ requirejs(["rAppid"], function (rAppid) {
             var path = match[2] ? match[2] : match[3];
             var scopeKey = splitFirst(path);
 
-            if(targetScope.getScopeForKey){
+            var scope;
+            if($fncRegex.test(scopeKey)){
+                match = scopeKey.match($fncNameRegex);
+                scope = targetScope.getScopeForFncName(match[1]);
+            }else{
+                scope = targetScope.getScopeForKey(scopeKey);
+            }
 
-                var scope = targetScope.getScopeForKey(scopeKey);
-                if(scope && (scope != targetScope || attrKey != scopeKey)){
-                    var twoWay = !rAppid._.isUndefined(match[2]);
-                    var options = {scope:scope, path:path, target:targetScope, twoWay: twoWay};
-                    if(cb){
-                        options['callback'] = cb;
-                    }else{
-                        options['targetKey'] = attrKey;
-                    }
-                    return new Binding(options);
+            if(scope && (scope != targetScope || attrKey != scopeKey)){
+                var twoWay = !rAppid._.isUndefined(match[2]);
+                var options = {scope:scope, path:path, target:targetScope, twoWay: twoWay};
+                if(cb){
+                    options['callback'] = cb;
+                }else{
+                    options['targetKey'] = attrKey;
                 }
+                return new Binding(options);
             }
 
             return null;

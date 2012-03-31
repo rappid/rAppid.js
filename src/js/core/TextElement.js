@@ -11,13 +11,19 @@ requirejs(["rAppid"], function (rAppid) {
                     this.$textBindings = {};
                     var textContent = this._getTextContentFromDescriptor(this.$descriptor);
                     // find bindings and register for onchange event
-                    var key, match;
+                    var key, match, binding;
                     while (match = bindingRegEx.exec(textContent)) {
                         key = match[0];
                         if(Binding.matches(key)){
-                            // tKey = key.replace(/\./g, "_");
-                            this.$textBindings[key] = Binding.create(key, this, key);
-                            this.$[key] = this.$textBindings[key].getValue();
+                            binding = Binding.create(key, this, key);
+                            if(binding){
+                                this.$textBindings[key] = binding;
+                                this.$[key] = this.$textBindings[key].getValue();
+                            }else{
+                                throw "could not create binding for " + key;
+                            }
+
+
                         }
                     }
                 },

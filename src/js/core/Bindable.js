@@ -8,19 +8,6 @@ requirejs(["rAppid"], function (rAppid) {
          */
             function (EventDispatcher) {
 
-
-            Function.prototype.on = function () {
-                var events = Array.prototype.slice.call(arguments,0);
-                this._events = [];
-                for (var i = 0; i < events.length; i++) {
-                    var event = events[i];
-                    if(event.indexOf(":") === -1){
-                        event = "change:"+event;
-                    }
-                    this._events.push(event);
-                }
-                return this;
-            };
             /**
              * @class js.core.Bindable
              * @extends js.core.EventDispatcher
@@ -75,21 +62,6 @@ requirejs(["rAppid"], function (rAppid) {
                     }
 
                     return ret;
-                },
-
-                /**
-                 * an array of attributes names, which will expect handler functions
-                 */
-                _eventAttributes: {},
-
-                _isEventAttribute: function (attributeName) {
-                    return attributeName.indexOf("on") == 0;
-                    // return this._eventAttributes.hasOwnProperty(attributeName);
-                },
-
-                _getEventTypeForAttribute: function (eventName) {
-                    // TODO: implement eventAttribites as hash
-                    return this._eventAttributes[eventName];
                 },
 
                 /**
