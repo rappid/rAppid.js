@@ -17,7 +17,7 @@ requirejs(["rAppid"], function (rAppid) {
 
                     this.callBase();
                 },
-
+                events:[],
                 /**
                  * values to be injected
                  * @key {String} name of the variable for this.$key
@@ -210,12 +210,18 @@ requirejs(["rAppid"], function (rAppid) {
                 /**
                  * an array of attributes names, which will expect handler functions
                  */
-
                 _isEventAttribute:function (attributeName) {
                     return attributeName.indexOf("on") == 0;
                     // return this._eventAttributes.hasOwnProperty(attributeName);
                 },
-
+                _isComponentEvent: function(event){
+                    for(var i = 0 ; i < this.events.length; i++){
+                        if(event == this.events[i]){
+                            return true;
+                        }
+                    }
+                    return false;
+                },
                 _getEventTypeForAttribute:function (eventName) {
                     // TODO: implement eventAttribites as hash
                     return this._eventAttributes[eventName];
@@ -235,11 +241,21 @@ requirejs(["rAppid"], function (rAppid) {
                             var value = attributes[key];
 
                             if (this._isEventAttribute(key)) {
-                                this.$eventDefinitions.push({
-                                    name: key,
-                                    scope: this.$rootScope,
-                                    fncName: value
-                                });
+                                if(this.$rootScope[value]){
+
+                                    this.$eventDefinitions.push({
+                                        name:key,
+                                        scope:this.$rootScope,
+                                        fncName:value
+                                    });
+                                    if(this._isComponentEvent(key.substr(2))){
+                                        this.bind(key,this.$rootScope[value], this.$rootScope);
+                                    }
+                                    
+                                }else{
+                                    throw "Couldn't find callback " + value + " for " + key + " event";
+                                }
+
                                 delete attributes[key];
                             } else if (Binding.matches(value)) {
                                 binding = Binding.create(value, this, key);

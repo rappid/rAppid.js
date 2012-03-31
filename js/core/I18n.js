@@ -57,7 +57,7 @@ requirejs(["rAppid"], function (rAppid) {
                 }
 
                 return value;
-            }.on("translations")
+            }.onChange("translations")
         })
     })
 });

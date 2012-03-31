@@ -13,13 +13,14 @@ requirejs(["rAppid"], function (rAppid) {
                     var layout = this.$templates['layout'];
                     // if layout template available...
                     if (layout) {
-                        var children = layout.createComponents({});
+                        var children = layout.createComponents({},this,this);
                         this._initializeLayoutChildren(children);
                     }
                     return this.callBase();
                 },
                 _initializeLayoutChildren: function (children) {
                     for (var i = 0; i < children.length; i++) {
+                        children[i].$rootScope = this;
                         this.addChild(children[i]);
                     }
                 },
