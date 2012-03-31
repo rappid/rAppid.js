@@ -104,7 +104,10 @@ requirejs(["rAppid"], function (rAppid) {
                     var eventDef;
                     for(var i = 0 ; i < this.$eventDefinitions.length; i++){
                         eventDef = this.$eventDefinitions[i];
-                        bindDomEvent(eventDef.name, eventDef.scope, eventDef.fncName);
+                        if(!this._isComponentEvent(eventDef.name.substr(2))){
+                            bindDomEvent(eventDef.name, eventDef.scope, eventDef.fncName);
+                        }
+
                     }
                 },
                 _renderChildren:function (children) {
