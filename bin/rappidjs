@@ -1,0 +1,122 @@
+#!/usr/bin/env node
+
+var fs = require("fs"),
+    path = require("path"),
+    ejs = require('ejs'),
+    args = process.argv.splice(2);
+
+
+var Helper = {
+    template: function(source, destination, options){
+        var data = fs.readFileSync(source, "utf8");
+        fs.writeFileSync(destination, this.render(data,options));
+
+    },
+    render: function(string, options){
+        if (options == null) options = {};
+        return ejs.render(string, options);
+    },
+    copy: function(source, destination){
+        var data = fs.readFileSync(source, "utf8");
+        fs.writeFileSync(destination,data);
+    }
+};
+
+
+var executed = false;
+var cmd = args.shift();
+if (cmd == "init" && args.length > 0) {
+    var appName = args[0];
+    var dir = args[1] || process.cwd();
+
+    if(appName){
+        path.exists(dir, function (exists) {
+            if (!exists) {
+                console.log("Directory " + dir + " doesn't exist");
+            } else {
+                var publicDir = path.join(dir, "public");
+                try {
+                    fs.mkdirSync(publicDir);
+                } catch (e) {
+                }
+
+                var rappidDir = path.normalize(path.join(__dirname, ".."));
+                var localRappidDir = path.join(dir, "node_modules", "rAppid.js");
+
+                path.exists(localRappidDir, function (exists) {
+                    if (exists) {
+                        rappidDir = localRappidDir;
+                    }
+
+                    try {
+                        fs.symlinkSync(path.join(rappidDir, "js"), path.join(publicDir, "js"));
+                    } catch (e) {
+                        console.warn("js dir is already linked");
+                    }
+
+                    var libDir = path.join(publicDir, "lib");
+                    try {
+                        fs.mkdirSync(libDir);
+                    } catch (e) {
+                    }
+                    var nodeModules = path.join(rappidDir, "node_modules");
+                    var libraries = {
+                        "rAppid.js":path.join(rappidDir, "rAppid.js"),
+                        "require.js":path.join(nodeModules, "requirejs", "require.js"),
+                        "flow.js":path.join(nodeModules, "flow.js", "lib", "flow.js"),
+                        "inherit.js":path.join(nodeModules, "inherit.js", "inherit.js"),
+                        "underscore-min.js":path.join(nodeModules, "underscore", "underscore-min.js")
+                    };
+
+                    for (var lib in libraries) {
+                        try {
+                            fs.symlinkSync(libraries[lib], path.join(libDir, lib));
+                        } catch (e) {
+
+                        }
+                    }
+
+
+                    // scaffold files
+                    var appDir = path.join(publicDir, "app");
+
+                    try {
+                        fs.mkdirSync(appDir);
+                    } catch (e) {
+                    }
+
+                    // scaffold index.html
+                    Helper.template(path.join(__dirname, "templates", "index.html"), path.join(publicDir, "index.html"), {appName:appName});
+                    // scaffold app/<AppName>.xml
+                    Helper.template(path.join(__dirname, "templates", "app", "App.xml"), path.join(publicDir, "app", appName + ".xml"), {appName:appName});
+                    // scaffold app/<AppName>Class.xml
+                    Helper.template(path.join(__dirname, "templates", "app", "AppClass.js"), path.join(publicDir, "app", appName + "Class.js"), {appName:appName});
+
+                    // copy config.json
+                    Helper.copy(path.join(__dirname, "..", "config.json"), path.join(publicDir, "config.json"));
+
+
+                });
+
+
+            }
+        });
+
+
+        executed = true;
+    }
+
+
+}
+
+
+if (!executed) {
+    var name = process.argv[1].split("/").pop();
+    console.log("Usage:");
+    console.log(" " + name + " init <AppName> [dir]");
+    console.log(" " + name + " update");
+}
+
+
+
+

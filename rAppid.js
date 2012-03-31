@@ -120,8 +120,8 @@ if(!String.prototype.trim){
                         mainClass = mainClass.replace(/\./g, "/");
                     }
 
-                    require(["./core/Imports"], function () {
-                        require(["./core/Application", mainClass], function (Application, mainClassFactory) {
+                    require(["./js/core/Imports"], function () {
+                        require(["./js/core/Application", mainClass], function (Application, mainClassFactory) {
                             // create instance
                             var application = new mainClassFactory(null, false, applicationDomain, null, null);
 

@@ -11,6 +11,9 @@
   "scripts": {
     "test": "mocha -R spec"
   },
+  "bin": {
+    "rappidjs": "./bin/rappidjs"
+  },
   "lib": ".",
   "main": "rAppid.js",
   "repository": {
@@ -42,5 +45,6 @@
   "engines": {
     "node": "*"
   },
-  "homepage": "http://rappidjs.com"
+  "homepage": "http://rappidjs.com",
+  "optionalDependencies": {}
 }
