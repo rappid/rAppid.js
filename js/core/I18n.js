@@ -4,12 +4,9 @@ requirejs(["rAppid"], function (rAppid) {
     rAppid.defineClass("js.core.I18n", ["js.core.Component"], function(Component) {
         return Component.inherit({
             defaults: {
-                path: 'locale',
+                path: 'app/locale',
                 locale: null,
-                suffix: '.json',
-                translations: {
-                    x: "asd"
-                }
+                suffix: '.json'
             },
 
             initialize: function() {
