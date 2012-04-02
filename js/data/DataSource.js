@@ -15,6 +15,10 @@ requirejs(["rAppid"], function (rAppid) {
                     this.$cache = {};
                 },
 
+                defaults: {
+                    collectionPageSize: null
+                },
+
                 addModelToCache: function (model) {
                     this.$cache[Context.generateCacheIdFromModel(model)] = model;
                 },
@@ -33,7 +37,7 @@ requirejs(["rAppid"], function (rAppid) {
 
                         type = type || factory.prototype.constructor.name;
 
-                        var cachedItem = this.getInstanceByCacheId(Context.generateCacheId(type));
+                        var cachedItem = this.getInstanceByCacheId(Context.generateCacheId(type, id));
 
                         if (!cachedItem) {
                             // create new Collection
@@ -230,6 +234,18 @@ requirejs(["rAppid"], function (rAppid) {
                 loadModel: function (model, options, callback) {
                     if (callback) {
                         callback("Abstract method", model);
+                    }
+                },
+
+                /***
+                 *
+                 * @param list
+                 * @param options
+                 * @param callback
+                 */
+                loadCollectionPage: function(list, options, callback) {
+                    if (callback) {
+                        callback("Abstact method", list);
                     }
                 },
 
