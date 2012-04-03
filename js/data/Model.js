@@ -21,8 +21,9 @@ requirejs(["rAppid"], function (rAppid) {
                 this._fetch = {
                     callbacks: [],
                     state: State.CREATED
-                }
+                };
             },
+
             save: function (options, callback) {
                 this.$context.$datasource.save(options, callback);
             },
@@ -30,8 +31,6 @@ requirejs(["rAppid"], function (rAppid) {
             /**
              * @param options
              * @param options.fetchSubModels
-             *
-             *
              * @param {Function} callback - function(err, model, options)
              */
             fetch: function (options, callback) {
@@ -112,7 +111,6 @@ requirejs(["rAppid"], function (rAppid) {
                             } else if (value instanceof Object) {
                                 convertArrayToList(value);
                             }
-
                         }
                     }
                 }

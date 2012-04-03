@@ -9,7 +9,7 @@ requirejs(["rAppid"], function (rAppid) {
             createCollection: function(factory, options, type) {
                 options = options || {};
                 rAppid._.defaults(options, {
-                    chunkSize: 1000
+                    pageSize: this.$datasource.$.collectionPageSize
                 });
 
                 return this.callBase(factory, options, type);
@@ -185,7 +185,8 @@ requirejs(["rAppid"], function (rAppid) {
                                 className: config.$.className,
                                 requireClassName: config.$.className.replace(/\./g, "/"),
                                 type: config.$.alias,
-                                id: id
+                                id: id,
+                                path: path
                             }
                         }
                     }
@@ -195,7 +196,14 @@ requirejs(["rAppid"], function (rAppid) {
                 return null;
             },
 
-            resolveReferences: function(model, data, options, callback) {
+            /***
+             *
+             * @param [js.data.Model|js.data.Collection] target
+             * @param data data containing the references
+             * @param options
+             * @param callback
+             */
+            resolveReferences: function(target, data, options, callback) {
                 // in REST models and collections will be referenced by href
 
                 // first identify all needed model classes
@@ -262,13 +270,15 @@ requirejs(["rAppid"], function (rAppid) {
                         if (factory) {
                             // create instance in correct context
 
-                            var context = self.getContext(info.context, model.$context);
+                            var context = self.getContext(info.context, target.$context);
 
                             var isModel = info.id;
 
                             var referenceInstance = isModel ?
                                 self.createModel(factory, info.id, info.type, context) :
-                                self.createCollection(factory, null, info.type, context);
+                                self.createCollection(factory, {
+                                    path: info.path
+                                }, info.type, context);
 
                             if (referenceInstance) {
                                 var value = info.referenceObject[info.propertyName];
@@ -370,6 +380,104 @@ requirejs(["rAppid"], function (rAppid) {
                     }
                 });
 
+            },
+
+            extractListMetaData: function(list, payload, options) {
+                return payload;
+            },
+
+            extractListData: function(list, payload, options) {
+                return payload.data;
+            },
+
+            loadCollectionPage: function (page, options, callback) {
+
+
+                var modelPathComponents = page.$collection.$options.path ? page.$collection.$options.path : this.getPathComponentsForModel(page.$collection.$options.factory);
+
+                if (!modelPathComponents) {
+                    callback("path for model unknown", null, options);
+                    return;
+                }
+
+                // build uri
+                var uri = [this.$.gateway];
+                uri = uri.concat(page.$collection.$context.getPathComponents());
+                uri = uri.concat(modelPathComponents);
+
+                var params = {};
+
+                if (page.$limit) {
+                    params.limit = page.$limit;
+                }
+
+                if (page.$offset) {
+                    params.offset = page.$offset;
+                }
+
+                // get queryParameter
+                params = rAppid._.defaults(params, page.$collection.$context.getQueryParameter(), this.getQueryParameter());
+
+                // create url
+                var url = uri.join("/");
+
+                var self = this;
+
+                // send request
+                rAppid.ajax(url, {
+                    type: "GET",
+                    queryParameter: params
+                }, function (err, xhr) {
+                    if (!err && (xhr.status == 200 || xhr.status == 304)) {
+                        // find processor that matches the content-type
+                        var processor,
+                            contentType = xhr.getResponseHeader("Content-Type");
+                        for (var i = 0; i < self.$processors.length; i++) {
+                            var processorEntry = self.$processors[i];
+                            if (processorEntry.regex.test(contentType)) {
+                                processor = processorEntry.processor;
+                                break;
+                            }
+                        }
+
+                        if (!processor) {
+                            callback("No processor for content type '" + contentType + "' found", null, options);
+                            return;
+                        }
+
+                        try {
+                            // deserialize data with processor
+                            var payload = processor.deserialize(xhr.responses);
+
+                            // extract meta data
+                            var metaData = self.extractListMetaData(page, payload, options);
+
+                            if (metaData && metaData.count) {
+                                // set itemsCount in collection for page calculation
+                                page.$collection.$itemsCount = metaData.count;
+                            }
+
+                            // extract data from list result
+                            var data = self.extractListData(page, payload, options);
+
+                            self.resolveReferences(page, data, options, function (err, resolvedData) {
+                                // add data to list
+                                page.add(resolvedData);
+
+                                // and return
+                                callback(null, page, options);
+                            });
+
+                        } catch (e) {
+                            callback(e, null, options);
+                        }
+
+                    } else {
+                        // TODO: better error handling
+                        err = err || "wrong status code";
+                        callback(err, page, options);
+                    }
+                });
             }
         });
 
