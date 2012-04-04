@@ -23,6 +23,10 @@ requirejs(["rAppid"], function (rAppid) {
                 return singleton;
             },
 
+            _initializeChildren: function(childComponents) {
+                this.callBase();
+            },
+
             _childrenInitialized: function () {
                 this.callBase();
 
@@ -70,6 +74,8 @@ requirejs(["rAppid"], function (rAppid) {
             },
 
             addChild: function (child) {
+                this.callBase(child);
+
                 this.addInstance(child);
             },
 
