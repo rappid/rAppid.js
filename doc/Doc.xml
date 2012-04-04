@@ -1,100 +1,127 @@
 <?xml version="1.0"?>
 <app:DocClass xmlns="http://www.w3.org/1999/xhtml"
-               xmlns:js="js.core" xmlns:ui="js.ui" xmlns:app="doc" xmlns:data="doc.data">
+              xmlns:js="js.core" xmlns:ui="js.ui" xmlns:conf="js.conf" xmlns:data="js.data"
+              xmlns:app="doc">
 
-    <data:JsonDataSource cid="api" endPoint="doc/docs"/>
+    <data:RestDataSource cid="api" endPoint="doc/docs" gateway="doc">
+        <conf:Type path="docs" className="doc.model.Class" alias="Class"/>
+    </data:RestDataSource>
 
-    <header>rAppid.js Documentation</header>
-     <section>
-         <header>
-             <input type="text" value="searchtext">
-                 <a href="#" class="search-reset"></a>
-             </input>
-         </header>
-         <div>
-            <ui:SelectionView items="{classList}" multiSelect="false">
-                <js:Template name="item">
-                    <span class="">
-                        {$item}
-                    </span>
-                </js:Template>
-            </ui:SelectionView>
-         </div>
-     </section>
-     <!--<div class="main" cid="#module">-->
-         <!--<h1 class="classTitle">-->
-             <!--{module.type}: module.className-->
-         <!--</h1>-->
-         <!--<p class="description">-->
-             <!--<span class="extends">-->
-                 <!--<br/>Extends-->
-                 <!--<a href="moduleUrl({module.extends()})">module.extends</a>.-->
-                 <!--<br/>-->
-             <!--</span>-->
-         <!--</p>-->
+    <div class="navbar navbar-fixed-top">
+        <div class="navbar-inner">
+            <div class="container">
+                <a class="brand" href="#">&lt;rAppid:js /&gt; Documentation</a>
+                <div class="nav-collapse">
+                    <ul class="nav">
+                        <li class="active">
+                            <a href="#">Home</a>
+                        </li>
+                        <li>
+                            <a href="#about">About</a>
+                        </li>
+                        <li>
+                            <a href="#contact">Contact</a>
+                        </li>
+                    </ul>
+                </div>
+                <!--/.nav-collapse -->
+            </div>
+        </div>
+    </div>
 
-         <!--<h2>Events</h2>-->
-         <!--<ui:ItemsView item="{module.defaults()}">-->
-             <!--<js:Template name="item">-->
-                 <!--<div class="default">-->
-                     <!--<span class="name">-->
-                         <!--<b>{$item.ctx.name}</b>-->
-                     <!--</span>-->
-                     <!--<ui:HTMLView html="{$item.description.full}" class="description"/>-->
-                 <!--</div>-->
+    <div style="margin-top: 50px">
+        <section>
+            <header>
+                <input type="text" value="searchtext">
+                    <a href="#" class="search-reset"></a>
+                </input>
+            </header>
+            <div>
+                <ui:SelectionView list="{classes}" multiSelect="false" tagName="ul">
+                    <js:Template name="item">
+                        <li class="{$item.type}">
+                            {$item.className}
+                        </li>
+                    </js:Template>
+                </ui:SelectionView>
+            </div>
+        </section>
+    </div>
 
-             <!--</js:Template>-->
-         <!--</ui:ItemsView>-->
+    <!--<div class="main" cid="#module">-->
+    <!--<h1 class="classTitle">-->
+    <!--{module.type}: module.className-->
+    <!--</h1>-->
+    <!--<p class="description">-->
+    <!--<span class="extends">-->
+    <!--<br/>Extends-->
+    <!--<a href="moduleUrl({module.extends()})">module.extends</a>.-->
+    <!--<br/>-->
+    <!--</span>-->
+    <!--</p>-->
+
+    <!--<h2>Events</h2>-->
+    <!--<ui:ItemsView item="{module.defaults()}">-->
+    <!--<js:Template name="item">-->
+    <!--<div class="default">-->
+    <!--<span class="name">-->
+    <!--<b>{$item.ctx.name}</b>-->
+    <!--</span>-->
+    <!--<ui:HTMLView html="{$item.description.full}" class="description"/>-->
+    <!--</div>-->
+
+    <!--</js:Template>-->
+    <!--</ui:ItemsView>-->
 
 
-         <!--<h2>Supported Attributes</h2>-->
-         <!--<ui:ItemsView item="{module.defaults()}">-->
-             <!--<js:Template name="item">-->
-                 <!--<div class="default">-->
-                     <!--<span class="name">-->
-                         <!--<b>{$item.ctx.name}</b>-->
-                     <!--</span>-->
-                     <!--<ui:HTMLView html="{$item.description.full}" class="description"/>-->
-                 <!--</div>-->
+    <!--<h2>Supported Attributes</h2>-->
+    <!--<ui:ItemsView item="{module.defaults()}">-->
+    <!--<js:Template name="item">-->
+    <!--<div class="default">-->
+    <!--<span class="name">-->
+    <!--<b>{$item.ctx.name}</b>-->
+    <!--</span>-->
+    <!--<ui:HTMLView html="{$item.description.full}" class="description"/>-->
+    <!--</div>-->
 
-             <!--</js:Template>-->
-         <!--</ui:ItemsView>-->
+    <!--</js:Template>-->
+    <!--</ui:ItemsView>-->
 
-         <!--<h2>Methods</h2>-->
-         <!--<ui:ItemsView items="{module.methods()}">-->
-             <!--<js:Template name="item">-->
-                 <!--<div class="method">-->
-                     <!--<a name="{$item.name()}">$item.name()</a>-->
-                     <!--<span class="name">-->
-                         <!--<b>{$item.name()}</b>-->
-                     <!--</span>-->
-                     <!--<ui:HTMLView html="{$item.description.full}" class="description"/>-->
-                     <!--<ui:ItemsView items="{$item.parameters()}" class="parameters" tagName="dl">-->
-                         <!--<dt class="heading">Parameters:</dt>-->
-                         <!--<js:Template name="item">-->
-                             <!--<dd>-->
-                                 <!--<dt>-->
-                                     <!--<ui:ItemsView tagName="span">-->
-                                         <!--<js:Template>-->
-                                             <!--{joinArray({$item.types},|)}-->
-                                         <!--</js:Template>-->
-                                     <!--</ui:ItemsView>-->
-                                     <!--<b>{$item.name}</b>-->
-                                 <!--</dt>-->
-                                 <!--<dd>{$item.description}</dd>-->
-                             <!--</dd>-->
-                         <!--</js:Template>-->
-                     <!--</ui:ItemsView>-->
-                     <!--<dl class="returns">-->
-                         <!--<dt class="heading">Returns:</dt>-->
-                         <!--<dd data-returns="$item.returns()">-->
-                             <!--<span class="light fixedFont">{joinArray({data-returns.types},|)}</span>-->
-                             <!--{data-returns.description}-->
-                         <!--</dd>-->
-                     <!--</dl>-->
-                 <!--</div>-->
-             <!--</js:Template>-->
-         <!--</ui:ItemsView>-->
+    <!--<h2>Methods</h2>-->
+    <!--<ui:ItemsView items="{module.methods()}">-->
+    <!--<js:Template name="item">-->
+    <!--<div class="method">-->
+    <!--<a name="{$item.name()}">$item.name()</a>-->
+    <!--<span class="name">-->
+    <!--<b>{$item.name()}</b>-->
+    <!--</span>-->
+    <!--<ui:HTMLView html="{$item.description.full}" class="description"/>-->
+    <!--<ui:ItemsView items="{$item.parameters()}" class="parameters" tagName="dl">-->
+    <!--<dt class="heading">Parameters:</dt>-->
+    <!--<js:Template name="item">-->
+    <!--<dd>-->
+    <!--<dt>-->
+    <!--<ui:ItemsView tagName="span">-->
+    <!--<js:Template>-->
+    <!--{joinArray({$item.types},|)}-->
+    <!--</js:Template>-->
+    <!--</ui:ItemsView>-->
+    <!--<b>{$item.name}</b>-->
+    <!--</dt>-->
+    <!--<dd>{$item.description}</dd>-->
+    <!--</dd>-->
+    <!--</js:Template>-->
+    <!--</ui:ItemsView>-->
+    <!--<dl class="returns">-->
+    <!--<dt class="heading">Returns:</dt>-->
+    <!--<dd data-returns="$item.returns()">-->
+    <!--<span class="light fixedFont">{joinArray({data-returns.types},|)}</span>-->
+    <!--{data-returns.description}-->
+    <!--</dd>-->
+    <!--</dl>-->
+    <!--</div>-->
+    <!--</js:Template>-->
+    <!--</ui:ItemsView>-->
 
-     <!--</div>-->
+    <!--</div>-->
 </app:DocClass>

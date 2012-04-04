@@ -2,8 +2,8 @@ var requirejs = (typeof requirejs === "undefined" ? require("requirejs") : requi
 
 requirejs(["rAppid"], function (rAppid) {
     rAppid.defineClass("doc.DocClass",
-        ["js.core.Application", "doc.data.JsonDataSource", "doc.model.Module", "js.data.Model"],
-        function (Application, DataSource, Module, Model) {
+        ["js.core.Application", "js.core.List", "doc.model.Class"],
+        function (Application, List, ClassModel) {
 
             return Application.inherit({
                 /**
@@ -11,7 +11,7 @@ requirejs(["rAppid"], function (rAppid) {
                  * In this method we set the initial models
                  */
                 initialize:function () {
-                     this.set("classList",[]);
+                     this.set("classes", new List());
                 },
                 /**
                  * Start the application and render it to the body ...
@@ -20,8 +20,22 @@ requirejs(["rAppid"], function (rAppid) {
                     // false - disables autostart
                     this.callBase(parameter, false);
                     var self = this;
-                    rAppid.require(["json!"+this.$.api.$.gateway+"/index.json"],function(json){
-                        self.set("classList",json);
+                    rAppid.require(["json!"+this.$.api.$.endPoint+"/index.json"],function(json){
+
+                        for (var i = 0; i < json.length; i++) {
+                            var cls = json[i];
+
+                            var c = self.$.api.root().createModel(ClassModel, cls.className);
+                            c.set(cls);
+                            self.$.classes.add(c)
+                        }
+
+                        self.$.classes.sort();
+
+                        self.$.classes.$items[0].fetch(null, function(item) {
+                            console.log(item);
+                        });
+
                         callback();
                     });
 
