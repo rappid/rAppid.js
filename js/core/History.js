@@ -73,6 +73,8 @@ requirejs(["rAppid"], function (rAppid) {
                     if (currentFragment == this.fragment) {
                         return false;
                     }
+
+                    this.triggerRoute(currentFragment);
                 }
 
                 this.processUrl = true;
