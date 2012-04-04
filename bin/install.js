@@ -40,10 +40,13 @@ function install(args, callback){
 
                     var dependencies = data.rAppidDependencies;
                     var f = flow();
-                    for(let key in dependencies){
+                    function doInstall(dName,dVersion, cb){
+                        install([dName, dVersion].join("@"), cb);
+                    }
+                    for(var key in dependencies){
                         if(dependencies.hasOwnProperty(key)){
                             f.seq(function (cb) {
-                                install([key,dependencies[key]].join("@"), cb);
+                                doInstall(key,dependencies[key],cb);
                             });
                         }
                     }
