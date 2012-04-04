@@ -25,6 +25,19 @@ requirejs(["rAppid"], function (rAppid) {
                     this.history.addRouter(this);
                 },
 
+                _childrenInitialized: function () {
+                    this.callBase();
+
+                    for (var c = 0; c < this.$configurations.length; c++) {
+                        var config = this.$configurations[c];
+
+                        if (config.className == "js.conf.Route") {
+                            this.addRoute(config.$);
+                        }
+                    }
+                },
+
+
                 /**
                  *
                  * @param {Regexp|Object} route
@@ -42,11 +55,20 @@ requirejs(["rAppid"], function (rAppid) {
                         route = arguments[0];
                     }
 
+                    if (route.onexec) {
+                        route.fn = this.$rootScope[route.onexec];
+                    }
+
                     rAppid._.defaults(route, {
                         name: null,
                         regex: null,
                         fn: null
                     });
+
+                    if (route.regex && !(route.regex instanceof RegExp)) {
+                        // build regex from string
+                        route.regex = new RegExp(route.regex);
+                    }
 
                     if (!(route.fn && route.regex)) {
                         throw "fn and regex required"
@@ -62,7 +84,7 @@ requirejs(["rAppid"], function (rAppid) {
                         var params = route.regex.exec(fragment);
                         if (params) {
                             params.shift();
-                            route.fn.apply(this, params);
+                            route.fn.apply(this.$rootScope, params);
 
                             return true;
                         }
