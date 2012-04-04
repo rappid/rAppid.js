@@ -8,6 +8,7 @@ requirejs(["rAppid"], function (rAppid) {
             return Component.inherit({
 
                 _initializeDescriptors: function () {
+                    this._cleanUpDescriptor(this.$descriptor);
                     this._childrenInitialized();
                 },
 

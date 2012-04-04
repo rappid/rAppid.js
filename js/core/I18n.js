@@ -6,7 +6,8 @@ requirejs(["rAppid"], function (rAppid) {
             defaults: {
                 path: 'app/locale',
                 locale: null,
-                suffix: '.json'
+                suffix: '.json',
+                translations: {}
             },
 
             initialize: function() {

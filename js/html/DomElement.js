@@ -236,7 +236,13 @@ requirejs(["rAppid"], function (rAppid) {
                         this._renderAttributes(attributes);
                     }
                 },
+                html: function(){
+                    if(!this.isRendered()){
+                        this.render();
+                    }
+                    return this.$el.innerHTML;
 
+                }.on('change'),
                 dom:function (element) {
                     return new DomManipulation(element || this);
                 }

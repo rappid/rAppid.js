@@ -4,26 +4,23 @@ requirejs(["rAppid"], function (rAppid) {
 
     rAppid.defineClass("js.core.TextElement",
         ["js.core.Element", "js.core.Binding"], function (Element, Binding) {
-            var bindingRegEx = /\{(([^{]*\{[^{}]*\})|[^{}])*?}/g;
 
             return Element.inherit({
                 _initializeBindings: function () {
                     this.$textBindings = {};
                     var textContent = this._getTextContentFromDescriptor(this.$descriptor);
                     // find bindings and register for onchange event
-                    var key, match, binding;
-                    while (match = bindingRegEx.exec(textContent)) {
-                        key = match[0];
-                        if(Binding.matches(key)){
-                            binding = Binding.create(key, this, key);
-                            if(binding){
-                                this.$textBindings[key] = binding;
-                                this.$[key] = this.$textBindings[key].getValue();
-                            }else{
-                                throw "could not create binding for " + key;
-                            }
+                    var key, binding;
 
-
+                    var bindingDefs = Binding.findBindingDefinitions(textContent);
+                    for(var i = 0 ; i < bindingDefs.length ; i++){
+                        key = bindingDefs[i];
+                        binding = Binding.create(key, this, key);
+                        if (binding) {
+                            this.$textBindings[key] = binding;
+                            this.$[key] = this.$textBindings[key].getValue();
+                        } else {
+                            throw "could not create binding for " + key;
                         }
                     }
                 },
@@ -40,8 +37,8 @@ requirejs(["rAppid"], function (rAppid) {
                     return this.$el;
                 },
                 _renderTextContent: function (textContent) {
-
                     for(var key in this.$textBindings){
+
                         if(this.$textBindings.hasOwnProperty(key)){
                             var val = this.$textBindings[key].getValue();
                             if(rAppid._.isUndefined(val) || val == null){
@@ -50,11 +47,7 @@ requirejs(["rAppid"], function (rAppid) {
                             textContent = textContent.split(key).join(val);
                         }
                     }
-                    if(this.$el.textContent){
-                        this.$el.textContent = textContent;
-                    }else{
-                        this.$el.nodeValue = textContent;
-                    }
+                    this.$el.data = textContent;
 
                 },
                 _commitChangedAttributes: function () {

@@ -4,9 +4,25 @@ requirejs(["rAppid"], function (rAppid) {
 
     rAppid.defineClass("js.core.Component",
         ["js.core.Element", "js.core.TextElement", "js.core.Binding"],
+
         function (Element, TextElement, Binding) {
 
-            return Element.inherit({
+
+            var Component = Element.inherit(
+                /** @lends Component# */
+
+
+                {
+                /***
+                 * What up??
+                 * @param attributes The attributes of the component
+                 * @param {String} attributes.style The style of the component
+                 * @param {Node} descriptor
+                 * @param {String} applicationDomain
+                 * @param {Element} parentScope
+                 * @param {Element} rootScope
+                 * @constructs
+                 */
                 ctor: function (attributes, descriptor, applicationDomain, parentScope, rootScope) {
 
                     this.$components = [];
@@ -17,25 +33,32 @@ requirejs(["rAppid"], function (rAppid) {
 
                     this.callBase();
                 },
-                events:[],
+
+                /**
+                 * @name Component#ontest
+                 * @event
+                 * @param {Event} e Custom Event
+                 * @param {String} e.$.value Your value
+                 *
+                 */
+                events:[
+                    "ontest"
+
+                ],
                 /**
                  * values to be injected
                  * @key {String} name of the variable for this.$key
                  * @value {Required Class}
                  */
-                inject: {
-                },
-
+                inject:{},
                 _injectChain: function () {
                     return this._generateDefaultsChain("inject");
                 },
-
                 _preinitialize: function () {
                     this.callBase();
 
                     this._inject();
                 },
-
                 _inject: function () {
 
                     var inject = this._injectChain();
@@ -46,7 +69,6 @@ requirejs(["rAppid"], function (rAppid) {
                         // synchronous singleton instantiation of Injection,
                         // because if module requires injection, application also depends on
                         // Injection.js and class should be installed.
-
                         var injection = this.$applicationDomain.createInstance("js.core.Injection");
                         for (var name in inject) {
                             if (inject.hasOwnProperty(name)) {
@@ -56,7 +78,6 @@ requirejs(["rAppid"], function (rAppid) {
                     }
 
                 },
-
                 addComponent: function (component) {
                     if (!component) {
                         throw "component null";
@@ -134,22 +155,6 @@ requirejs(["rAppid"], function (rAppid) {
                         return null
                     }
                 },
-
-//            /**
-//             *
-//             * @param descriptor
-//             *          auto - do not overwrite (default),
-//             *          all - create all children
-//             *          TODO none?
-//             */
-//            _initializeDescriptor: function (descriptor) {
-//                var childrenFromDescriptor = this._createChildrenFromDescriptor(descriptor);
-//
-//                this._initializeChildren(childrenFromDescriptor);
-//
-//                this._childrenInitialized();
-//            },
-
                 _initializeChildren: function (childComponents) {
                     for (var i = 0; i < childComponents.length; i++) {
                         // FIRST ADD CHILD
@@ -169,6 +174,10 @@ requirejs(["rAppid"], function (rAppid) {
                         }
                     }
                 },
+                /***
+                 *
+                 * @param attributes
+                 */
                 _initializeAttributes: function (attributes) {
                     this.callBase();
 
@@ -180,7 +189,9 @@ requirejs(["rAppid"], function (rAppid) {
                     }
 
                 },
-
+                /***
+                 *  Initializes all internal and external descriptors
+                 */
                 _initializeDescriptors: function () {
 
                     var children = [];
@@ -198,14 +209,32 @@ requirejs(["rAppid"], function (rAppid) {
 
                     // and add outside descriptor
                     descriptors.push(this.$descriptor);
-
+                    var desc, node, text;
                     for (var d = 0; d < descriptors.length; d++) {
-                        children = children.concat(this._getChildrenFromDescriptor(descriptors[d]));
+                        desc = descriptors[d];
+                        this._cleanUpDescriptor(desc);
+                        children = children.concat(this._getChildrenFromDescriptor(desc));
                     }
 
                     this._initializeChildren(children);
 
                     this._childrenInitialized();
+                },
+                _cleanUpDescriptor: function(desc){
+                    if (desc) {
+                        var node, text;
+                        // remove empty text nodes
+                        for (var i = desc.childNodes.length - 1; i >= 0; i--) {
+                            node = desc.childNodes[i];
+                            if (node.nodeType === 3) {
+                                text = node.textContent ? node.textContent : node.text;
+                                if (text.trim().length === 0) {
+                                    desc.removeChild(node);
+                                }
+
+                            }
+                        }
+                    }
                 },
                 /**
                  * an array of attributes names, which will expect handler functions
@@ -214,6 +243,10 @@ requirejs(["rAppid"], function (rAppid) {
                     return attributeName.indexOf("on") == 0;
                     // return this._eventAttributes.hasOwnProperty(attributeName);
                 },
+                /**
+                 * Returns true if event is defined in Component event list
+                 * @param event
+                 */
                 _isComponentEvent: function(event){
                     for(var i = 0 ; i < this.events.length; i++){
                         if(event == this.events[i]){
@@ -226,7 +259,9 @@ requirejs(["rAppid"], function (rAppid) {
                     // TODO: implement eventAttribites as hash
                     return this._eventAttributes[eventName];
                 },
-
+                /***
+                 * Initialize all Binding and Event attributes
+                 */
                 _initializeBindings: function () {
                     this.$bindings = [];
                     this.$eventDefinitions = [];
@@ -274,53 +309,66 @@ requirejs(["rAppid"], function (rAppid) {
                        this.$components[c]._initializeBindings();
                     }
                 },
+                /***
+                 * Create {@link Component} for DOM Node with given attributes
+                 * @param Dome Node
+                 * @param attributes for new Component
+                 */
                 _createComponentForNode: function (node, attributes) {
+                    if(!node) return null;
+
                     attributes = attributes || {};
-
                     // only instantiation and construction but no initialization
                     var appDomain = this.$applicationDomain;
 
-                    var fqClassName = appDomain.getFqClassName(node.namespaceURI, this._localNameFromDomNode(node), true);
-                    var className = appDomain.getFqClassName(node.namespaceURI, this._localNameFromDomNode(node), false);
+                    if (node.nodeType == 1) { // Elements
+                        var fqClassName = appDomain.getFqClassName(node.namespaceURI, this._localNameFromDomNode(node), true);
+                        var className = appDomain.getFqClassName(node.namespaceURI, this._localNameFromDomNode(node), false);
 
-                    return appDomain.createInstance(fqClassName, [attributes, node, appDomain, this, this.$rootScope], className);
+                        return appDomain.createInstance(fqClassName, [attributes, node, appDomain, this, this.$rootScope], className);
 
+                    } else if (node.nodeType == 3) { // Textnodes
+                        // remove whitespaces from text textnodes
+                        var text = node.textContent ? node.textContent : node.text;
+                        if (node.textContent) {
+                            node.textContent = text;
+                        }
+                        // only instantiation and construction but no initialization
+                        return appDomain.createInstance("js.core.TextElement", [null, node, appDomain, this, this.$rootScope]);
+                    }
+
+                    return null;
                 },
-                _createTextElementForNode: function (node) {
-                    // only instantiation and construction but no initialization
-                    var appDomain = this.$applicationDomain;
-                    return appDomain.createInstance("js.core.TextElement", [null, node, appDomain, this, this.$rootScope]);
-
-                },
-                _getChildrenFromDescriptor: function (descriptor) {
-
+                /***
+                 * Converts all child nodes of a descriptor to instances of Components or TextElement
+                 * @param descriptor
+                 */
+                _getChildrenFromDescriptor:function (descriptor) {
                     var childrenFromDescriptor = [], node, component;
 
                     if (descriptor) {
                         for (var i = 0; i < descriptor.childNodes.length; i++) {
                             node = descriptor.childNodes[i];
-                            if (node.nodeType == 1) { // Elements
-                                component = this._createComponentForNode(node);
+                            component = this._createComponentForNode(node);
+                            if(component){
                                 childrenFromDescriptor.push(component);
-                            } else if (node.nodeType == 3) { // Textnodes
-                                // remove whitespaces from text textnodes
-                                var text = node.textContent ? node.textContent : node.text;
-                                if (text.trim().length > 0) {
-                                    if (node.textContent) {
-                                        node.textContent = text;
-                                    }
-                                    childrenFromDescriptor.push(this._createTextElementForNode(node));
-                                }
-
                             }
                         }
                     }
 
                     return childrenFromDescriptor;
                 },
+                /***
+                 * @private
+                 * This method is called after all children are initialized
+                 */
                 _childrenInitialized: function () {
 
                 },
+                /***
+                 * This method should overridden by custom components to set initial variables
+                 * @param scope
+                 */
                 initialize: function (scope) {
                 },
                 /**
@@ -334,6 +382,8 @@ requirejs(["rAppid"], function (rAppid) {
                     return st[st.length - 1];
                 }
             });
+
+            return Component;
         }
     );
 });
