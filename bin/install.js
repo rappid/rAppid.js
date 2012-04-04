@@ -4,11 +4,11 @@ install.usage = "rappidjs install <pkg>"
     + "\nrappidjs install <pkg> <version>"
     + "\nInstalls rAppidjs dependencies from ./package.json.";
 
-var sys = require('sys')
+var sys = require('util')
 var exec = require('child_process').exec;
 var fs = require("fs"),
     path = require("path"),
-    readJson = require("npm/utils/read-json.js"),
+    readJson = require("npm/lib/utils/read-json.js"),
     flow = require("flow.js").flow;
 
 
@@ -25,7 +25,7 @@ function install(args, callback) {
     }
 
     // executes `pwd`
-    exec("nmp install" + what, function (error, stdout, stderr) {
+    exec("npm install" + what, function (err, stdout, stderr) {
         sys.print('stdout: ' + stdout);
         sys.print('stderr: ' + stderr);
         if (!err) {
