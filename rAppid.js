@@ -187,7 +187,7 @@ if(!String.prototype.trim){
 
             s.hasContent = !/^(?:GET|HEAD)$/.test(s.type);
             
-            if (s.queryParameter) {
+            if (s.queryParameter && underscore.keys(s.queryParameter).length > 0) {
                 // append query parameter to url
                 s.url += /\?/.test(s.url) ? "&" : "?" + this.createQueryString(s.queryParameter);
             }
