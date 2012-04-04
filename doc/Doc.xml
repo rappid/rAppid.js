@@ -3,9 +3,16 @@
               xmlns:js="js.core" xmlns:ui="js.ui" xmlns:conf="js.conf" xmlns:data="js.data"
               xmlns:app="doc">
 
-    <data:RestDataSource cid="api" endPoint="doc/docs" gateway="doc">
-        <conf:Type path="docs" className="doc.model.Class" alias="Class"/>
-    </data:RestDataSource>
+    <js:Injection>
+        <data:RestDataSource cid="api" endPoint="doc/docs" gateway="doc">
+            <conf:Type path="docs" className="doc.model.Class" alias="Class"/>
+        </data:RestDataSource>
+
+        <js:Router cid="router">
+            <conf:Route name="show" regex="^view/([^/]+)$" onexec="showDocumentation" />
+        </js:Router>
+
+    </js:Injection>
 
     <div class="navbar navbar-fixed-top">
         <div class="navbar-inner">
@@ -37,10 +44,10 @@
                 </input>
             </header>
             <div>
-                <ui:SelectionView list="{classes}" multiSelect="false" tagName="ul">
+                <ui:SelectionView list="{classes}" multiSelect="false" tagName="ul" class="nav nav-pills nav-stacked">
                     <js:Template name="item">
                         <li class="{$item.type}">
-                            {$item.className}
+                            <a href="{getUrl({$item})}">{$item.className}</a>
                         </li>
                     </js:Template>
                 </ui:SelectionView>

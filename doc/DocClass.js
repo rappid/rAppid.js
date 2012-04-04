@@ -11,7 +11,11 @@ requirejs(["rAppid"], function (rAppid) {
                  * In this method we set the initial models
                  */
                 initialize:function () {
-                     this.set("classes", new List());
+                     this.set({
+                         classes: new List(),
+                         currentClass: null
+                     });
+
                 },
                 /**
                  * Start the application and render it to the body ...
@@ -20,6 +24,7 @@ requirejs(["rAppid"], function (rAppid) {
                     // false - disables autostart
                     this.callBase(parameter, false);
                     var self = this;
+
                     rAppid.require(["json!"+this.$.api.$.endPoint+"/index.json"],function(json){
 
                         for (var i = 0; i < json.length; i++) {
@@ -39,6 +44,24 @@ requirejs(["rAppid"], function (rAppid) {
                         callback();
                     });
 
+                },
+
+                getUrl: function(item) {
+                    return "#/view/" + item.$.className;
+                },
+
+                showDocumentation: function(id) {
+                    var self = this;
+
+                    this.$.api.createModel(ClassModel, id).fetch(null, function(err, cls){
+
+                        console.log(cls);
+                        if (!err) {
+                            self.set("currentClass", cls);
+                        } else {
+                            console.log(err);
+                        }
+                    });
                 }
             });
         }
