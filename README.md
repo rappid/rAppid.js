@@ -21,3 +21,33 @@ rAppid.js is currently in an early state, defining the component life cycle and 
 * Datasources with Processors (RestDataSource + JSON Processor, XMLProcessor in future)
 * Abstract data access layer, which will later supports MongoDb
 * i18n
+
+## Installation
+```
+npm install rAppid.js -d -g
+```
+For a guided creation of an application or library project execute
+```
+rappidjs postinstall
+```
+
+## Setup an application 
+```
+rappidjs create app <ApplicationName> [<TargetDirectory>]
+```
+
+## Command-line interface
+rAppid.js comes with a command-line interface to setup projects, install packages and updated modules.
+Open a terminal and type 
+
+```
+rappidjs
+```
+
+to see the available commands. Type 
+
+```
+rappidjs help <command> 
+```
+
+to see the usage of the command.
