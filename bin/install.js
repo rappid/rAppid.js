@@ -24,8 +24,7 @@ function install(args, callback) {
     var packageName = args.shift();
     var what = packageName;
     if (args.length > 0) {
-        args.shift();
-        // what += "@"+args.shift();
+        what += "@"+args.shift();
     }
     if(args.length > 0){
         dir = args.shift();
@@ -37,14 +36,18 @@ function install(args, callback) {
 
     var originalWD = process.cwd();
     // change dir
-    // process.chdir(dir);
+    process.chdir(dir);
 
     child = child_process.exec(["npm","install",what,"-d"].join(" "), function (err, stdout, stderr) {
         sys.print('stdout: ' + stdout);
         sys.print('stderr: ' + stderr);
 
         if(!err){
-            linkPackage(dir, packageName, callback);
+            linkPackage(dir, packageName, function(err){
+                process.chdir(originalWD);
+
+                callback(err);
+            });
         }else{
             callback(err);
         }

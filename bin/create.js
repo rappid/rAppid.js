@@ -74,6 +74,10 @@ function create(args, callback){
 }
 
 function createLibrary(libName, dir, callback) {
+    dir = dir || process.cwd();
+
+    fs.mkdirParent(dir);
+
     // create directories
     var dirs = ["bin", "doc", "test", libName, "xsd"];
     createDirectories(dirs,dir);
