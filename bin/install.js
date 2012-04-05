@@ -23,8 +23,10 @@ function install(args, callback) {
     }
     var packageName = args.shift();
     var what = packageName;
+    var version = "latest";
     if (args.length > 0) {
-        what += "@"+args.shift();
+        version = args.shift();
+        what += "@"+version;
     }
     if(args.length > 0){
         dir = args.shift();
@@ -34,30 +36,20 @@ function install(args, callback) {
 
     dir = path.resolve(dir.replace(/^~\//, process.env.HOME + '/'));
 
-    var originalWD = process.cwd();
-    // change dir
-    process.chdir(dir);
-
-    child = child_process.exec(["npm","install",what,"-d"].join(" "), function (err, stdout, stderr) {
+    child = child_process.exec(["npm","install",what,"-d"].join(" "),{cwd:dir}, function (err, stdout, stderr) {
         sys.print('stdout: ' + stdout);
         sys.print('stderr: ' + stderr);
 
         if(!err){
-            linkPackage(dir, packageName, function(err){
-                process.chdir(originalWD);
-
-                callback(err);
-            });
+            linkPackage(dir, packageName, version, callback);
         }else{
             callback(err);
         }
-
-
     });
 }
 
 
-function linkPackage(dir, packageName ,callback){
+function linkPackage(dir, packageName, version ,callback){
     var publicDir = path.join(dir, "public");
     var packageDir = path.join(dir, "node_modules", packageName);
 
@@ -69,6 +61,24 @@ function linkPackage(dir, packageName ,callback){
             if (!path.existsSync(libDir)) {
                 fs.symlinkSync(path.join(packageDir, data.lib), libDir);
             }
+            var packageFile = path.join(dir, "package.json");
+            readJson(packageFile, function(err,data){
+               if(!err) {
+                   console.log(data);
+                   if(!data.rAppid){
+                       data.rAppid = {};
+                   }
+                   if(!data.rAppid.dependancies){
+                       data.rAppid.dependancies = {};
+                   }
+
+                   data.rAppid.dependancies[packageName] = version;
+
+                   fs.writeFileSync(packageFile, JSON.stringify(data, null, '\t'));
+               }else{
+                   console.log(err);
+               }
+            });
 
             var dependencies = data.rAppidDependencies || {};
             var f = flow();

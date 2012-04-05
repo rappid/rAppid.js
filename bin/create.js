@@ -67,9 +67,10 @@ function create(args, callback){
 
     if(cmd == "lib" || cmd == "library"){
         createLibrary(name,dir,callback);
-
     }else if(cmd == "app" || cmd == "application"){
         createApplication(name,dir,callback);
+    }else{
+        callback(true);
     }
 }
 
@@ -82,7 +83,7 @@ function createLibrary(libName, dir, callback) {
     var dirs = ["bin", "doc", "test", libName, "xsd"];
     createDirectories(dirs,dir);
 
-
+    Helper.template(path.join(__dirname, "templates", "package.json"), path.join(dir, libName, "package.json"), {name:libName, type:"lib"});
 }
 
 
@@ -122,6 +123,8 @@ function createApplication(appName, dir, callback) {
         Helper.template(path.join(__dirname, "templates", "app", "App.xml"), path.join(publicDir, "app", appName + ".xml"), {appName:appName});
         // scaffold app/<AppName>Class.xml
         Helper.template(path.join(__dirname, "templates", "app", "AppClass.js"), path.join(publicDir, "app", appName + "Class.js"), {appName:appName});
+
+        Helper.template(path.join(__dirname, "templates", "package.json"), path.join(dir, "package.json"), {name:appName, type: "app"});
 
 
         // TODO: add interactive mode

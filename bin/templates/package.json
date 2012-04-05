@@ -1,0 +1,34 @@
+{
+    "name": "<%= name %>",
+    "preferGlobal": "false",
+    "version": "0.0.1",
+    "author": "",
+    "contributors": [],
+    "description": "",
+    "scripts": {
+        "test": "mocha -R spec"
+    },
+    "bin": {},
+    "lib": "public",
+    "main": "index.html",
+    "keywords": [],
+    "dependencies": {},
+    "devDependencies": {
+        "chai": "*",
+        "mocha": "*"
+    },
+    "license": "CC BY-NC-SA 3.0",
+    "engine": {
+        "node": ">=0.4"
+    },
+    "engines": {
+        "node": "*"
+    },
+    "homepage": "",
+    "optionalDependencies": {},
+    "rAppid" : {
+        "type":  "<%= type %>",
+        "dependencies": {}
+    }
+
+}
