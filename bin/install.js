@@ -55,7 +55,6 @@ function linkPackage(dir, packageName, version ,callback){
 
     readJson(path.join(packageDir, "package.json"), function (err, data) {
         if (!err){
-            data.lib = "js";
             var libDir = path.join(publicDir, data.lib);
 
             if (!path.existsSync(libDir)) {
@@ -64,12 +63,11 @@ function linkPackage(dir, packageName, version ,callback){
             var packageFile = path.join(dir, "package.json");
             readJson(packageFile, function(err,data){
                if(!err) {
-                   console.log(data);
                    if(!data.rAppid){
                        data.rAppid = {};
                    }
-                   if(!data.rAppid.dependancies){
-                       data.rAppid.dependancies = {};
+                   if(!data.rAppid.dependencies){
+                       data.rAppid.dependencies = {};
                    }
 
                    data.rAppid.dependancies[packageName] = version;
