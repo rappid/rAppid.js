@@ -53,3 +53,5 @@ var postinstall = function(args, callback) {
 postinstall.usage = "rappidjs postinstall\n" +
                     "\tuser interactive installation helper";
 
+module.exports = postinstall;
+
