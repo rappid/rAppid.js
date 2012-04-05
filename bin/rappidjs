@@ -4,13 +4,14 @@ var args = process.argv.splice(2),
 
     aliases = {
         "inst": "help",
-        "up": "update"
+        "up": "update",
+        "c" : "create"
     },
     cmdList = [
         "help",
         "install",
         "postinstall",
-        "init",
+        "create",
         "config"
     ],
     allCmds = cmdList.concat(Object.keys(aliases));

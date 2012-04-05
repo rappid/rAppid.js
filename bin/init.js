@@ -43,9 +43,9 @@ fs.mkdirParent = function (dirPath) {
 function init(appName, dir) {
     dir = dir || process.cwd();
 
-    appName = appName.charAt(0).toUpperCase() + appName.substr(1);
-
     if (appName) {
+        appName = appName.charAt(0).toUpperCase() + appName.substr(1);
+
         if (!path.existsSync(dir)) {
             console.log("Directory " + dir + " doesn't exist");
         } else {
