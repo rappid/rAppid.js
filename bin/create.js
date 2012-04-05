@@ -86,7 +86,7 @@ function createApplication(appName, dir, callback) {
 
     dir = dir || process.cwd();
 
-    fs.mkdirIfNotExist(dir);
+    fs.mkdirParent(dir);
 
     if (!path.existsSync(dir)) {
         callback("Directory " + dir + " could not be created");
