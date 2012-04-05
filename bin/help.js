@@ -1,7 +1,7 @@
 var path = require('path');
 
 var help = function(args, callback) {
-    if (args.length === 1) {
+    if (args.length >= 1) {
         var cmd = args[0],
             cmdPath = path.join(__dirname, cmd + ".js");
         if (path.existsSync(cmdPath)) {
