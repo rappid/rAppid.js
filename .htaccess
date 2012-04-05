@@ -1,5 +1,0 @@
-RewriteEngine on
-
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteRule ^doc/docs/(.*)$ doc/docs/$1.json [L]
-
