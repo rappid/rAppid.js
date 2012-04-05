@@ -6,19 +6,15 @@ var path = require('path'),
 var config = function(args, callback) {
 
     if (args.length  <= 1) {
-        var configFile = path.join(".", args[0] || "config.json");
-
-        if (!path.existsSync(configFile)) {
-            configFile = path.join(process.cwd(), configFile);
-        }
-
-        configFile = path.resolve(configFile);
+        var configFile = path.resolve(args[0] || "config.json");
 
         // test that we are in the public folder
         var dir = path.dirname(configFile);
 
-        if (path.dirname(dir) !== "public") {
-            callback("config will must be created within public directory");
+        console.log(dir, path.dirname(dir));
+
+        if (path.basename(dir) !== "public") {
+            callback("config must be created within public directory");
         } else {
             var config = {};
 
