@@ -63,6 +63,8 @@ function create(args, callback){
         dir = args.shift();
     }
 
+    dir = path.resolve(dir.replace(/^~\//, process.env.HOME + '/'));
+
     if(cmd == "lib" || cmd == "library"){
         createLibrary(name,dir,callback);
 

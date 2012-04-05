@@ -63,7 +63,9 @@ function linkPackage(dir, packageName ,callback){
             data.lib = "js";
             var libDir = path.join(publicDir, data.lib);
 
-            fs.symlinkSync(path.join(packageDir, data.lib), libDir);
+            if (!path.existsSync(libDir)) {
+                fs.symlinkSync(path.join(packageDir, data.lib), libDir);
+            }
 
             var dependencies = data.rAppidDependencies || {};
             var f = flow();
