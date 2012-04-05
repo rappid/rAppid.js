@@ -24,8 +24,7 @@ function install(args, callback) {
     var packageName = args.shift();
     var what = packageName;
     if (args.length > 0) {
-        args.shift();
-        // what += "@"+args.shift();
+        what += "@"+args.shift();
     }
     if(args.length > 0){
         dir = args.shift();
