@@ -10,7 +10,8 @@ var args = process.argv.splice(2),
         "help",
         "install",
         "postinstall",
-        "init"
+        "init",
+        "config"
     ],
     allCmds = cmdList.concat(Object.keys(aliases));
 
@@ -22,15 +23,18 @@ if (allCmds.indexOf(cmd) !== -1) {
     cmd = aliases[cmd] ? aliases[cmd] : cmd;
 
     // execute the command
-    require(require('path').join(__dirname, cmd + ".js"))(args, function(err) {
+    var command = require(require('path').join(__dirname, cmd + ".js"));
+    // execute command
+    command(args, function(err) {
 
         if (err && err !== true) {
             console.log("Error executing command '" + cmd + "'");
-            console.log(err);
+            console.log("\t", err);
         }
 
         if (err) {
-            console.log(cmd.usage)
+            console.log("Usage: ");
+            console.log(command.usage);
         }
     });
 
