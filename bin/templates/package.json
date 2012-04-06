@@ -10,7 +10,7 @@
     },
     "bin": {},
     "lib": "public",
-    "main": "index.html",
+    "main": "public/index.html",
     "keywords": [],
     "dependencies": {},
     "devDependencies": {
