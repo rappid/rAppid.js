@@ -5,7 +5,13 @@ rAppid.js is a declarative JavaScript web application for rapid web application 
 
 ## Development
 
-rAppid.js is currently in an early state, defining the component life cycle and other core technics like model bindings, component rendering. Some parts of the interface of rAppid.js are changing until all methods, life-cycles, components are clearly defined and universal re-usable. 
+rAppid.js is currently under rapid development. The core features and life cycles are defined, but might be modified.
+For more information and documentation of <rAppid.js /> lookup the [wiki](https://github.com/it-ony/rAppid.js/wiki).
+
+An easy todo application written with rAppid.js can be found under [http://todo.rappidjs.com](http://todo.rappidjs.com).
+For a demo of bindings and controls visit [http://demo.rappidjs.com/src/ui.html](http://demo.rappidjs.com/src/ui.html).
+
+
 
 ## Features 
 * Dependency loading (via requirejs)
@@ -23,17 +29,10 @@ rAppid.js is currently in an early state, defining the component life cycle and 
 * i18n
 
 ## Installation
+The installation of rAppid.js is simple done via [npm](http://npmjs.org/).
+
 ```
 npm install rAppid.js -d -g
-```
-For a guided creation of an application or library project execute
-```
-rappidjs postinstall
-```
-
-## Setup an application 
-```
-rappidjs create app <ApplicationName> [<TargetDirectory>]
 ```
 
 ## Command-line interface
@@ -51,3 +50,18 @@ rappidjs help <command>
 ```
 
 to see the usage of the command.
+
+
+For a guided creation of an application or library project execute
+```
+rappidjs postinstall
+```
+
+## Setup an rAppid.js application project 
+```
+rappidjs create app <ApplicationName> [<TargetDirectory>]
+```
+
+The ```create``` command will setup the directory structure and install the required modules, so that you can concentrate on developing application. Under the target directory there will be an directory named ```public```. Open the ```index.html``` file in your Browser or even better configurate the public directory as website root in your preferred web-server.
+
+*Note: If you want to test your application without configuring a web-server in a Google Chrome Browser, you have to start Chrome with the follwing parameters ```--disable-web-security```*
