@@ -190,10 +190,7 @@
             },
 
             load: function (name, req, onLoad, config) {
-//                if (config.isBuild && !config.inlineText) {
-//                    onLoad();
-//                    return;
-//                }
+
                 var self = this;
                 var url = req.toUrl(name.replace(/\./g, "/") + ".xml");
                 this.get(url, function (err, xhr) {
@@ -204,9 +201,7 @@
 
                             var dependencies = self.findDependencies(xhr.responseXML.documentElement,
                                 config.namespaceMap, config.xamlClasses, config.rewriteMap, imports);
-                            for (var i = 0; i < imports.length; i++) {
-                                // console.log(imports[i]);
-                            }
+
                             var scripts = self.findScripts(xhr.responseXML.documentElement,
                                 config.namespaceMap, config.xamlClasses, config.rewriteMap);
 
@@ -218,9 +213,6 @@
 
                             if(imports.length > 0){
                                 dependencies = dependencies.concat(imports);
-                            }
-                            for(i = 0 ; i < dependencies.length; i++){
-                               // console.log("AFTER: "+dependencies[i]);
                             }
 
                             // first item should be the dependency of the document element
