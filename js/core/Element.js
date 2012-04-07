@@ -104,10 +104,10 @@ requirejs(["rAppid"], function (rAppid) {
                         this._initializeBindings();
                     }
 
-                    this._initializationComplete();
                 },
 
                 _initializeBindings: function () {
+                    this._initializationComplete();
                 },
 
                 _initializeDescriptor: function (descriptor) {

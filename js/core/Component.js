@@ -308,6 +308,8 @@ requirejs(["rAppid"], function (rAppid) {
                     for (var c = 0; c < this.$components.length; c++) {
                        this.$components[c]._initializeBindings();
                     }
+
+                    this.callBase();
                 },
                 /***
                  * Create {@link Component} for DOM Node with given attributes
