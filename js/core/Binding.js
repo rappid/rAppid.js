@@ -240,6 +240,11 @@ requirejs(["rAppid"], function (rAppid) {
             if (Binding.isFunctionDefinition(scopeKey)) {
                 scope = targetScope.getScopeForFncName(scopeKey.substring(0, scopeKey.indexOf("(")));
             } else {
+                // TODO (krebbl): getScopeForKey won't work proberly if the attribute exists but is the target scope
+                /*
+                 <js:Router cid="router"/>
+                 <js:ModuleLoader id="moduleLoader" router="{router}" />
+                 */
                 scope = targetScope.getScopeForKey(scopeKey);
             }
 

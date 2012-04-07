@@ -12,12 +12,19 @@ requirejs(["rAppid"], function (rAppid) {
                     this.$modules = {};
                 },
 
-                addChild: function (child) {
+                $behavesAsDomElement: true,
+
+                _initializationComplete: function() {
                     this.callBase();
 
-                    if (child && child.className == "js.conf.Module") {
-                        this.addModule(child.$);
+                    for (var i = 0; i < this.$configurations.length; i++) {
+                        var config = this.$configurations[i];
+
+                        if (config && config.className == "js.conf.Module") {
+                            this.addModule(config.$);
+                        }
                     }
+
                 },
 
                 addModule: function (module) {
@@ -37,11 +44,11 @@ requirejs(["rAppid"], function (rAppid) {
                     }
 
                     if (module.name) {
-                        if (this.modules.hasOwnProperty(module.name)) {
+                        if (this.$modules.hasOwnProperty(module.name)) {
                             throw "module with name '" + module.name + "' already registered"
                         }
 
-                        this.modules[module.name] = module;
+                        this.$modules[module.name] = module;
                     }
 
                     if (module.route) {
@@ -50,18 +57,21 @@ requirejs(["rAppid"], function (rAppid) {
                         }
 
                         var self = this;
-                        this.$.router.route(module.name, module.route, function () {
-                            // route triggered
+                        this.$.router.addRoute({
+                            name: module.name,
+                            regex: module.route,
+                            fn: function () {
+                                // route triggered
 
-                            // load module
-                            if (module.name) {
-                                self.loadModuleByName(module.name, null);
-                            } else {
-                                self.loadModule(module.moduleClass, null);
+                                // load module
+                                if (module.name) {
+                                    self.loadModuleByName(module.name, null);
+                                } else {
+                                    self.loadModule(module.moduleClass, null);
+                                }
+
                             }
-
                         });
-
                     }
 
                 },
@@ -134,7 +144,7 @@ requirejs(["rAppid"], function (rAppid) {
 
                 render: function () {
                     // render the ContentPlaceHolder
-                    this.callBase();
+                    return this.callBase();
                 },
                 getContentPlaceHolders: function () {
                     return ModuleLoader.findContentPlaceHolders(this);

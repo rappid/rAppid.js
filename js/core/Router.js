@@ -48,7 +48,7 @@ requirejs(["rAppid"], function (rAppid) {
                     var route;
                     if (arguments.length == 2) {
                         route = {
-                            regex: arguments[0],
+                            route: arguments[0],
                             fn: arguments[1]
                         }
                     } else {
@@ -61,30 +61,38 @@ requirejs(["rAppid"], function (rAppid) {
 
                     rAppid._.defaults(route, {
                         name: null,
-                        regex: null,
+                        route: null,
                         fn: null
                     });
 
-                    if (route.regex && !(route.regex instanceof RegExp)) {
+                    if (route.route && !(route.route instanceof RegExp)) {
                         // build regex from string
-                        route.regex = new RegExp(route.regex);
+                        route.route = new RegExp(route.route);
                     }
 
-                    if (!(route.fn && route.regex)) {
-                        throw "fn and regex required"
+                    if (!(route.fn && route.route)) {
+                        throw "fn and route required"
                     }
 
                     this.$routes.push(route);
                 },
 
-                executeRoute: function (fragment) {
+                executeRoute: function (fragment, callback) {
                     // Test routes and call callback
                     for (var i = 0; i < this.$routes.length; i++) {
                         var route = this.$routes[i];
-                        var params = route.regex.exec(fragment);
+                        var params = route.route.exec(fragment);
                         if (params) {
                             params.shift();
-                            route.fn.apply(this.$rootScope, params);
+
+                            var thisArg = {
+                                callback: callback,
+                                router: this,
+                                params: params,
+                                self: this.$rootScope
+                            };
+
+                            route.fn.apply(thisArg, params);
 
                             return true;
                         }
