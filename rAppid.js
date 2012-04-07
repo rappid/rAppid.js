@@ -30,6 +30,14 @@ if(!String.prototype.trim){
         return flow;
     });
 
+    define("flow", function() {
+        return flow;
+    });
+
+    define("inherit", function() {
+        return inherit;
+    });
+
     require.config({
         paths: {
             "xaml": "js/plugins/xaml",
@@ -65,7 +73,8 @@ if(!String.prototype.trim){
         "http://www.w3.org/1999/xhtml": "js.html"
     };
 
-    var currentApplicationDomain = null;
+    var currentApplicationDomain = null,
+        xamlClasses = null;
 
     var _rAppid = {
         defineClass: function(fqName, dependencies, generateFactory){
@@ -97,7 +106,7 @@ if(!String.prototype.trim){
             
             var internalBootstrap = function(config) {
 
-                var xamlClasses = config.xamlClasses || [];
+                xamlClasses = config.xamlClasses || [];
                 var namespaceMap = config.namespaceMap || defaultNamespaceMap;
                 var rewriteMap = config.rewriteMap;
 
@@ -202,7 +211,9 @@ if(!String.prototype.trim){
 
             try {
                 for (var header in s.headers) {
-                    xhr.setRequestHeader(header, s.headers[header]);
+                    if (s.headers.hasOwnProperty(header)) {
+                        xhr.setRequestHeader(header, s.headers[header]);
+                    }
                 }
             } catch (e) {} // FF3
 
@@ -243,7 +254,21 @@ if(!String.prototype.trim){
         _: underscore,
         // export inherit
         inherit: inherit,
-        require: require
+        require: require,
+        resolveXaml: function(classes) {
+            var ret = [];
+            for (var i = 0; i < classes.length; i++) {
+                var dep = classes[i];
+
+                if (underscore.indexOf(xamlClasses, dep) !== -1) {
+                    dep = "xaml!" + dep;
+                }
+
+                ret.push(dep);
+            }
+
+            return ret;
+        }
     };
 
     var rheaders = /^(.*?):[ \t]*([^\r\n]*)\r?$/mg; // IE leaves an \r character at EOL
@@ -434,6 +459,7 @@ if(!String.prototype.trim){
 
             return ret;
         },
+
         getFqClassName: function (namespace, className, useRewriteMap) {
             if (useRewriteMap == undefined || useRewriteMap == null) {
                 useRewriteMap = true;

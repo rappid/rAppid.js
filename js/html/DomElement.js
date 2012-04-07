@@ -47,7 +47,9 @@ requirejs(["rAppid"], function (rAppid) {
                         this.$contentChildren.push(child);
                     }
                 },
+
                 getPlaceHolder:function (name) {
+
                     for (var i = 0; i < this.$children.length; i++) {
                         if (this.$children[i].$.name === name) {
                             return this.$children[i];
@@ -65,6 +67,53 @@ requirejs(["rAppid"], function (rAppid) {
                     }
                     return null;
                 },
+
+
+                getContentPlaceHolders: function () {
+
+                    var ret = [];
+
+                    var child;
+                    for (var i = 0; i < this.$children.length; i++) {
+                        child = this.$children[i];
+
+                        if (child.className === "js.ui.ContentPlaceHolder") {
+                            ret.push(child);
+                        } else {
+                            ret = ret.concat(child.getContentPlaceHolders());
+                        }
+                    }
+
+                    return ret;
+
+                },
+
+                findContent: function(name) {
+
+                    var child,
+                        content;
+
+                    for (var i = 0; i < this.$children.length; i++) {
+                        child = this.$children[i];
+                        if (child instanceof Content && child.$.name === name) {
+                            return child;
+                        }
+                    }
+
+                    for (i = 0; i < this.$children.length; i++) {
+                        child = this.$children[i];
+                        if (child.findContent) {
+                            content = child.findContent(name);
+                            if (content) {
+                                return content;
+                            }
+                        }
+
+                    }
+
+                    return null;
+                },
+
                 render:function () {
 
                     if (!this.$initialized) {

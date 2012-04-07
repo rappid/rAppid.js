@@ -2,8 +2,8 @@ var requirejs = (typeof requirejs === "undefined" ? require("requirejs") : requi
 
 requirejs(["rAppid"], function (rAppid) {
     rAppid.defineClass("js.core.ModuleLoader", ["js.core.UIComponent", "js.ui.ContentPlaceHolder",
-        "require", "js.core.Module"],
-        function (UIComponent, ContentPlaceHolder, require, Module) {
+        "js.core.Module"],
+        function (UIComponent, ContentPlaceHolder, Module) {
             var ModuleLoader = UIComponent.inherit({
 
                 ctor: function (attributes) {
@@ -59,7 +59,7 @@ requirejs(["rAppid"], function (rAppid) {
                         var self = this;
                         this.$.router.addRoute({
                             name: module.name,
-                            regex: module.route,
+                            route: module.route,
                             fn: function () {
                                 // route triggered
 
@@ -77,9 +77,9 @@ requirejs(["rAppid"], function (rAppid) {
                 },
 
                 loadModuleByName: function (moduleName, callback) {
-                    if (this.modules.hasOwnProperty(moduleName)) {
+                    if (this.$modules.hasOwnProperty(moduleName)) {
 
-                        var module = this.modules[moduleName];
+                        var module = this.$modules[moduleName];
 
                         if (module.cacheInstance && module.moduleInstance) {
                             // TODO: load instance from cache
@@ -98,27 +98,45 @@ requirejs(["rAppid"], function (rAppid) {
                         moduleClass: moduleFqClassName
                     });
 
+                    var self = this;
                     var internalCallback = function (err) {
-                        // TODO Dispatch events
+
+                        if (err) {
+                            self.trigger('moduleLoaded', {
+                                moduleClassName: moduleFqClassName
+                            });
+                        } else {
+                            self.trigger('moduleLoadError', {
+                                moduleClassName: moduleFqClassName
+                            });
+                        }
 
                         if (callback) {
                             callback(err);
                         }
                     };
 
-                    var self = this;
                     if (!eventResult.isDefaultPrevented) {
                         // load module
 
-                        require.require([moduleFqClassName], function (moduleBaseClass) {
-                            var moduleInstance = new moduleBaseClass(null, moduleBaseClass.prototype._$descriptor, self.$applicationDomain, null, null);
+                        rAppid.require(rAppid.resolveXaml([moduleFqClassName]), function (moduleBaseClass) {
+                            var moduleInstance = new moduleBaseClass(null, false, self.$applicationDomain, null, null);
 
                             if (moduleInstance instanceof Module) {
 
                                 moduleInstance._initialize("auto");
 
-                                internalCallback(null);
-                                // TODO: show and start module
+                                var contentPlaceHolders = self.getContentPlaceHolders();
+
+                                // set content
+                                for (var i = 0; i < contentPlaceHolders.length; i++) {
+                                    var contentPlaceHolder = contentPlaceHolders[i];
+                                    contentPlaceHolder.set("content", moduleInstance.findContent(contentPlaceHolder.$.name));
+                                }
+
+                                // start module
+                                moduleInstance.start(internalCallback);
+
                             } else {
                                 internalCallback("Module '" + moduleFqClassName + "' isn't an instance of js.core.Module");
                             }
@@ -145,9 +163,6 @@ requirejs(["rAppid"], function (rAppid) {
                 render: function () {
                     // render the ContentPlaceHolder
                     return this.callBase();
-                },
-                getContentPlaceHolders: function () {
-                    return ModuleLoader.findContentPlaceHolders(this);
                 }
             });
 

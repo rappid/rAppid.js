@@ -91,8 +91,7 @@
                     }
                 }
 
-                // TODO fix
-                if (xamlClasses.indexOf(fqClassName) != -1) {
+                if (xamlClasses.indexOf(fqClassName) !== -1) {
                     fqClassName = "xaml!" + fqClassName;
                 }
 
