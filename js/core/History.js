@@ -5,7 +5,8 @@ requirejs(["rAppid"], function (rAppid) {
 
 
         var routeStripper = /^#\/?/,
-            undef;
+            undef,
+            emptyCallback = function () {};
 
         return Bindable.inherit({
 
@@ -24,7 +25,7 @@ requirejs(["rAppid"], function (rAppid) {
                 return fragment.replace(routeStripper, '');
             },
 
-            start: function () {
+            start: function (callback) {
 
                 var self = this;
                 this.$checkUrlFn = function () {
@@ -44,7 +45,7 @@ requirejs(["rAppid"], function (rAppid) {
                 }
 
                 this.fragment = this.getFragment();
-                this.navigate(this.fragment);
+                this.navigate(this.fragment, true, true, callback);
 
             },
 
@@ -74,17 +75,17 @@ requirejs(["rAppid"], function (rAppid) {
                         return false;
                     }
 
-                    this.triggerRoute(currentFragment);
+                    this.triggerRoute(currentFragment, emptyCallback);
                 }
 
                 this.processUrl = true;
 
             },
 
-            triggerRoute: function (fragment) {
+            triggerRoute: function (fragment, callback) {
 
                 for (var i = 0; i < this.$routers.length; i++) {
-                    if (this.$routers[i].executeRoute(fragment)) {
+                    if (this.$routers[i].executeRoute(fragment, callback)) {
                         return true;
                     }
                 }
@@ -92,7 +93,18 @@ requirejs(["rAppid"], function (rAppid) {
                 console.log("no route for '" + fragment + "' found.");
             },
 
-            navigate: function (fragment, createHistoryEntry, triggerRoute) {
+            navigate: function (fragment, createHistoryEntry, triggerRoute, callback) {
+
+                if (!callback && createHistoryEntry instanceof Function) {
+                    callback = createHistoryEntry;
+                    createHistoryEntry = null;
+                }
+
+                if (!callback && triggerRoute instanceof Function) {
+                    callback = triggerRoute;
+                    triggerRoute = null;
+                }
+
                 if (createHistoryEntry == undef || createHistoryEntry == null) {
                     createHistoryEntry = true;
                 }
@@ -113,7 +125,7 @@ requirejs(["rAppid"], function (rAppid) {
                 this.fragment = fragment;
 
                 if (triggerRoute) {
-                    return this.triggerRoute(fragment);
+                    return this.triggerRoute(fragment, callback);
                 }
 
             }

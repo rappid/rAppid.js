@@ -83,16 +83,35 @@ requirejs(["rAppid"], function (rAppid) {
                         var route = this.$routes[i];
                         var params = route.route.exec(fragment);
                         if (params) {
-                            params.shift();
 
-                            var thisArg = {
-                                callback: callback,
-                                router: this,
-                                params: params,
-                                self: this.$rootScope
+                            var cb = function(err, data) {
+                                if (callback) {
+                                    callback(err, data);
+                                }
                             };
 
-                            route.fn.apply(thisArg, params);
+                            params.shift();
+
+                            var routeContext = {
+                                callback: cb,
+                                router: this,
+                                params: params
+                            };
+
+                            params.unshift(routeContext);
+
+                            var thisArg = this.$rootScope;
+
+                            if (route.fn._async) {
+                                route.fn.apply(thisArg, params);
+                            } else {
+                                // exec route sync, call callback after execution
+                                try {
+                                    cb(null, route.fn.apply(thisArg, params));
+                                } catch (e) {
+                                    cb(e);
+                                }
+                            }
 
                             return true;
                         }
@@ -107,8 +126,8 @@ requirejs(["rAppid"], function (rAppid) {
                  * @param createHistoryEntry
                  * @param triggerRoute
                  */
-                navigate: function (to, createHistoryEntry, triggerRoute) {
-                    return this.history.navigate(to, createHistoryEntry, triggerRoute);
+                navigate: function (to, createHistoryEntry, triggerRoute, callback) {
+                    return this.history.navigate(to, createHistoryEntry, triggerRoute, callback);
                 }
             });
         });

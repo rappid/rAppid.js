@@ -31,11 +31,7 @@ requirejs(["rAppid"], function (rAppid) {
                  * @param {Function} callback
                  */
                 start: function (parameter, callback) {
-                    this.history.start();
-
-                    if (callback) {
-                        callback(null);
-                    }
+                    this.history.start(callback);
                 },
                 render: function (target) {
                     var dom = this.callBase(null);

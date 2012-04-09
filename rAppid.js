@@ -63,6 +63,12 @@ if(!String.prototype.trim){
         return _rAppid;
     });
 
+    Function.prototype.async = function() {
+        this._async = true;
+
+        return this;
+    };
+
     function SystemManager(applicationDomain, application) {
         this.applicationDomain = applicationDomain;
         this.application = application;

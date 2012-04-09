@@ -60,17 +60,17 @@ requirejs(["rAppid"], function (rAppid) {
                         this.$.router.addRoute({
                             name: module.name,
                             route: module.route,
-                            fn: function () {
+                            fn: function (routeContext) {
                                 // route triggered
 
                                 // load module
                                 if (module.name) {
-                                    self.loadModuleByName(module.name, null);
+                                    self.loadModuleByName(module.name, routeContext.callback);
                                 } else {
-                                    self.loadModule(module.moduleClass, null);
+                                    self.loadModule(module.moduleClass, routeContext.callback);
                                 }
 
-                            }
+                            }.async()
                         });
                     }
 
