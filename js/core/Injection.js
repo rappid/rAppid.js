@@ -43,32 +43,40 @@ requirejs(["rAppid"], function (rAppid) {
                 // TODO: add class hierarchy distance check
                 var instance;
 
-                // go to the singleton instance and look for requested instance
-                for (var i = 0; i < this.$singletonInstanceCache.length; i++) {
-                    instance = this.$singletonInstanceCache[i];
-
-                    if (instance instanceof type) {
-                        return instance;
+                if (rAppid._.isString(type)) {
+                    // inject by key
+                    if (this.$singletonInstanceCache.hasOwnProperty(type)) {
+                        return this.$singletonInstanceCache[type];
                     }
-                }
-
-                // instance not found -> go thought the factories
-                for (var f = 0; f < this.$factories.length; f++) {
-                    var factory = this.$factories[f];
-
-                    if (factoryInheritsFrom(factory.factory, type)) {
-                        // create instance
-                        instance = new factory.factory();
+                } else {
+                    // go to the singleton instance and look for requested instance
+                    for (var i = 0; i < this.$singletonInstanceCache.length; i++) {
+                        instance = this.$singletonInstanceCache[i];
 
                         if (instance instanceof type) {
-                            if (factory.singleton) {
-                                this.addInstance(instance)
-                            }
-
                             return instance;
                         }
                     }
+
+                    // instance not found -> go thought the factories
+                    for (var f = 0; f < this.$factories.length; f++) {
+                        var factory = this.$factories[f];
+
+                        if (factoryInheritsFrom(factory.factory, type)) {
+                            // create instance
+                            instance = new factory.factory();
+
+                            if (instance instanceof type) {
+                                if (factory.singleton) {
+                                    this.addInstance(instance)
+                                }
+
+                                return instance;
+                            }
+                        }
+                    }
                 }
+
 
                 throw "requested injection type not found";
             },
@@ -105,12 +113,27 @@ requirejs(["rAppid"], function (rAppid) {
                 this.$factories.push(factory);
             },
 
-            addInstance: function (instance) {
+            /***
+             *
+             * @param {String} [key] a unique key
+             * @param instance
+             */
+            addInstance: function (key, instance) {
+                if (arguments.length == 1) {
+                    instance = key;
+                    key = null;
+                }
+
                 if (instance instanceof Function) {
                     throw "got a factory instead of an instance"
                 }
 
-                this.$singletonInstanceCache.push(instance);
+                if (key) {
+                    this.$singletonInstanceCache[key] = instance;
+                } else {
+                    this.$singletonInstanceCache.push(instance);
+                }
+
 
             }
         });
