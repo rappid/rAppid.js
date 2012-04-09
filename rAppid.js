@@ -514,9 +514,9 @@ if(!String.prototype.trim){
     rAppid = exports.rAppid = _rAppid;
 
 })(typeof exports === "undefined" ? this : exports,
-   typeof inherit === "undefined" ? global.inherit : inherit,
-    requirejs,
-    requirejs.define ? requirejs.define : define,
-    typeof this._ === "undefined" ? global.underscore : this._,
-    typeof window !== "undefined" ? window.XMLHttpRequest : global.XMLHttpRequest,
-    typeof flow === "undefined" ? global.flow : flow);
+   typeof inherit === "undefined" ? require('inherit.js').inherit : inherit,
+    typeof requirejs === "undefined" ? require('requirejs') : requirejs,
+    typeof requirejs === "undefined" ? require('requirejs').define : define,
+    typeof this._ === "undefined" ? require('underscore') : this._,
+    typeof window === "undefined" ? require('xmlhttprequest').xmlhttprequest : window.XMLHttpRequest,
+    typeof flow === "undefined" ? require('flow.js').flow : flow);
