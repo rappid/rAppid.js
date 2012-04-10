@@ -70,7 +70,7 @@ function linkPackage(dir, packageName, version ,callback){
                        data.rAppid.dependencies = {};
                    }
 
-                   data.rAppid.dependancies[packageName] = version;
+                   data.rAppid.dependencies[packageName] = version;
 
                    fs.writeFileSync(packageFile, JSON.stringify(data, null, '\t'));
                }else{

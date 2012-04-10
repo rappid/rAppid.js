@@ -1,57 +1,32 @@
-var rl = require("readline"),
+var fs = require("fs"),
     path = require("path"),
-    flow = require("flow.js").flow;
+    child;
 
-var postinstall = function(args, callback) {
+var postInstall = function (args, callback) {
 
-    var i = rl.createInterface(process.stdin, process.stdout, null),
-        defaultDir = path.resolve(process.cwd());
+    var rappidDir = path.join(__dirname, "..");
+    var nodeModules = path.join(rappidDir, "node_modules");
+    var libDir = path.join(rappidDir, "js", "lib");
+    var libraries = {
+        "rAppid.js":path.join(rappidDir, "rAppid.js"),
+        "require.js":path.join(nodeModules, "requirejs", "require.js"),
+        "flow.js":path.join(nodeModules, "flow.js", "lib", "flow.js"),
+        "inherit.js":path.join(nodeModules, "inherit.js", "inherit.js"),
+        "underscore-min.js":path.join(nodeModules, "underscore", "underscore-min.js")
+    };
 
-    flow()
-        .seq("projectType", function(cb){
-            i.question("Create an project [app, lib] ? (app) ", function (projectType) {
-                projectType = projectType.toLowerCase() || "app";
-
-                if (projectType == "app" || projectType == "lib") {
-                    cb(null, projectType);
-                } else {
-                    cb(true);
-                }
-            })
-        })
-        .seq("dir", function(cb) {
-            i.question("Directory? (" + defaultDir + ") ", function (answer) {
-                cb(null, answer || defaultDir);
-            });
-        })
-        .seq("name", function (cb) {
-            i.question("Project name? (Test) ", function (answer) {
-                cb(null, answer || "Test");
-            })
-        })
-        .exec(function(err, results){
-
-            function end() {
-                i.close();
-                process.stdin.destroy();
-                callback();
+    for (var lib in libraries) {
+        if (libraries.hasOwnProperty(lib)) {
+            try {
+                fs.symlinkSync(libraries[lib], path.join(libDir, lib));
+            } catch (e) {
+                console.log(e);
             }
-
-            if (!err) {
-                var create = require(path.join(__dirname, "create"));
-                create([results.projectType, results.name, results.dir], function(){
-                    end();
-                });
-            } else {
-                end();
-            }
-
-        });
-
+        }
+    }
 };
 
-postinstall.usage = "rappidjs postinstall\n" +
-                    "\tuser interactive installation helper";
+postInstall.usage = "rappidjs postinstall links hard dependency libs into lib folder\n";
 
-module.exports = postinstall;
+module.exports = postInstall;
 
