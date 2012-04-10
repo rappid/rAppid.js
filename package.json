@@ -10,7 +10,7 @@
     "description": "rAppid.js is a declarative JavaScript web application for rapid web application development. It uses XML to define the structure of applications, modules, components and views and JavaScript for the business logic of the application. The XML (xaml) gets translated to javascript components during runtime which will render itself as HTML5 DOM elements. This enables a rapid development of applications.",
     "scripts": {
         "test": "mocha -R spec",
-        "postinstall" : "rappidjs postinstall"
+        "postinstall" : "bin/postinstall.js"
     },
     "bin": {
         "rappidjs": "./bin/rappidjs"
