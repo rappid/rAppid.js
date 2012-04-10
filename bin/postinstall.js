@@ -15,6 +15,10 @@ var postinstall = function (args, callback) {
         "underscore-min.js":path.join(nodeModules, "underscore", "underscore-min.js")
     };
 
+    if (!path.existsSync(libDir)) {
+        fs.mkdirSync(libDir);
+    }
+
     for (var lib in libraries) {
         if (libraries.hasOwnProperty(lib)) {
             try {
