@@ -2,7 +2,7 @@ var rl = require("readline"),
     path = require("path"),
     flow = require("flow.js").flow;
 
-var postinstall = function (args, callback) {
+var interactive = function (args, callback) {
 
     var i = rl.createInterface(process.stdin, process.stdout, null),
         defaultDir = path.resolve(process.cwd());
@@ -50,8 +50,8 @@ var postinstall = function (args, callback) {
 
 };
 
-postinstall.usage = "rappidjs interactive\n" +
+interactive.usage = "rappidjs interactive\n" +
     "\tuser interactive installation helper";
 
-module.exports = postinstall;
+module.exports = interactive;
 

@@ -12,7 +12,8 @@ var args = process.argv.splice(2),
         "install",
         "postinstall",
         "create",
-        "config"
+        "config",
+        "interactive"
     ],
     allCmds = cmdList.concat(Object.keys(aliases));
 
