@@ -114,7 +114,7 @@ function createApplication(appName, dir, callback) {
 
         fs.mkdirIfNotExist(appDir);
 
-        createDirectories(["collection", "model", "view", "locale", "modules"],appDir);
+        createDirectories(["collection", "model", "view", "locale", "module"],appDir);
         // do the templating stuff
 
         // scaffold index.html
