@@ -2,7 +2,7 @@ var fs = require("fs"),
     path = require("path"),
     child;
 
-var postInstall = function (args, callback) {
+var postinstall = function (args, callback) {
 
     var rappidDir = path.join(__dirname, "..");
     var nodeModules = path.join(rappidDir, "node_modules");
@@ -26,7 +26,7 @@ var postInstall = function (args, callback) {
     }
 };
 
-postInstall.usage = "rappidjs postinstall links hard dependency libs into lib folder\n";
+postinstall.usage = "rappidjs postinstall links hard dependency libs into lib folder\n";
 
-module.exports = postInstall;
+module.exports = postinstall;
 
