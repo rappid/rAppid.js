@@ -54,7 +54,7 @@ to see the usage of the command.
 
 For a guided creation of an application or library project execute
 ```
-rappidjs postinstall
+rappidjs interactive
 ```
 
 ## Setup an rAppid.js application project 

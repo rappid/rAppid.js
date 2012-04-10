@@ -114,11 +114,12 @@ function createApplication(appName, dir, callback) {
 
         fs.mkdirIfNotExist(appDir);
 
-        createDirectories(["model","view","locale"],appDir);
+        createDirectories(["collection", "model", "view", "locale", "module"],appDir);
         // do the templating stuff
 
         // scaffold index.html
         Helper.template(path.join(__dirname, "templates", "index.html"), path.join(publicDir, "index.html"), {appName:appName});
+
         // scaffold app/<AppName>.xml
         Helper.template(path.join(__dirname, "templates", "app", "App.xml"), path.join(publicDir, "app", appName + ".xml"), {appName:appName});
         // scaffold app/<AppName>Class.xml
