@@ -227,8 +227,8 @@ requirejs(["rAppid"], function (rAppid) {
                         for (var i = desc.childNodes.length - 1; i >= 0; i--) {
                             node = desc.childNodes[i];
                             if (node.nodeType === 3) {
-                                text = node.textContent ? node.textContent : node.text;
-                                if (text.trim().length === 0) {
+                                text = node.textContent || node.text || node.data;
+                                if (!text || text.trim().length === 0) {
                                     desc.removeChild(node);
                                 }
 

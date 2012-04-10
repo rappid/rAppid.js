@@ -52,7 +52,7 @@ requirejs(["rAppid"], function (rAppid) {
                             ph = placeholders[i];
 
                             if(ph.start > start){
-                                this.$el.appendChild(document.createTextNode(string.substring(start+1, ph.start)));
+                                this.$el.appendChild(rAppid.document.createTextNode(string.substring(start+1, ph.start)));
                             }
 
                             start = ph.end;
@@ -79,7 +79,7 @@ requirejs(["rAppid"], function (rAppid) {
                                 this.$childViews.push(childView);
                                 this.$el.appendChild(childView.$el);
                             } else{
-                                this.$el.appendChild(document.createTextNode(ph.text));
+                                this.$el.appendChild(rAppid.document.createTextNode(ph.text));
                             }
 
 

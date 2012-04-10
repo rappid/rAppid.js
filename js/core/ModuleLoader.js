@@ -12,8 +12,6 @@ requirejs(["rAppid"], function (rAppid) {
                     this.$modules = {};
                 },
 
-                $behavesAsDomElement: true,
-
                 _initializationComplete: function() {
                     this.callBase();
 
@@ -102,11 +100,11 @@ requirejs(["rAppid"], function (rAppid) {
                     var internalCallback = function (err) {
 
                         if (err) {
-                            self.trigger('moduleLoaded', {
+                            self.trigger('moduleLoadError', {
                                 moduleClassName: moduleFqClassName
                             });
                         } else {
-                            self.trigger('moduleLoadError', {
+                            self.trigger('moduleLoaded', {
                                 moduleClassName: moduleFqClassName
                             });
                         }

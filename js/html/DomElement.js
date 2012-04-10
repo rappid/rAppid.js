@@ -126,7 +126,7 @@ requirejs(["rAppid"], function (rAppid) {
 
                     this.$renderedChildren = [];
 
-                    this.$el = document.createElement(this.$tagName);
+                    this.$el = rAppid.document.createElement(this.$tagName);
                     this.$el.owner = this;
 
                     // TODO: read layout and create renderMAP
@@ -350,7 +350,7 @@ requirejs(["rAppid"], function (rAppid) {
                         this.$el.attachEvent("on" + type, eventHandle);
                     }
                 },
-                removeEvent:document.removeEventListener ?
+                removeEvent:rAppid.document.removeEventListener ?
                     function (type, handle) {
                         if (this.$el.removeEventListener) {
                             this.$el.removeEventListener(type, handle, false);
@@ -363,7 +363,7 @@ requirejs(["rAppid"], function (rAppid) {
                     }
             };
 
-            var DomManipulation = inherit.Base.inherit(rAppid._.extend({
+            var DomManipulation = rAppid.inherit.Base.inherit(rAppid._.extend({
                 ctor:function (elm) {
                     this.$el = elm;
                 }

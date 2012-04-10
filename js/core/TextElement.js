@@ -29,7 +29,7 @@ requirejs(["rAppid"], function (rAppid) {
                         this._initialize(this.$creationPolicy);
                     }
 
-                    this.$el = document.createTextNode("");
+                    this.$el = rAppid.document.createTextNode("");
                     if (this.$descriptor) {
                         this._renderTextContent(this._getTextContentFromDescriptor(this.$descriptor));
                     }

@@ -9,7 +9,7 @@ requirejs(["rAppid"], function (rAppid) {
                         return this.$el;
                     }
 
-                    this.$textNode = document.createTextNode("");
+                    this.$textNode = rAppid.document.createTextNode("");
                     this.$el = this.$textNode;
 
                     return this.$el;

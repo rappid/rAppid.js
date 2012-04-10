@@ -31,7 +31,9 @@ requirejs(["rAppid"], function (rAppid) {
                  * @param {Function} callback
                  */
                 start: function (parameter, callback) {
-                    this.history.start(callback);
+                    parameter = parameter || {};
+
+                    this.history.start(callback, parameter.initialHash);
                 },
                 render: function (target) {
                     var dom = this.callBase(null);

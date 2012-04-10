@@ -7,9 +7,9 @@ if(!String.prototype.trim){
     };
 }
 
-(function (exports, inherit, require, define, underscore, XMLHttpRequest, flow) {
+(function (exports, inherit, requirejs, define, underscore, XMLHttpRequest, flow, document) {
 
-    if (!require) {
+    if (!requirejs) {
         throw "require.js is needed";
     }
 
@@ -18,7 +18,6 @@ if(!String.prototype.trim){
     }
 
     if (!underscore) {
-        // TODO include own implementation
         throw "underscore is needed"
     }
 
@@ -38,7 +37,7 @@ if(!String.prototype.trim){
         return inherit;
     });
 
-    require.config({
+    requirejs.config({
         paths: {
             "xaml": "js/plugins/xaml",
             "json": "js/plugins/json"
@@ -50,6 +49,9 @@ if(!String.prototype.trim){
             if (!this.className) {
                 this.className = this.constructor.name;
             }
+        },
+        runsInBrowser: function() {
+            return typeof window !== "undefined";
         }
     });
 
@@ -118,7 +120,7 @@ if(!String.prototype.trim){
 
                 var applicationDomain = currentApplicationDomain = new ApplicationDomain(namespaceMap, rewriteMap);
 
-                require.config({
+                requirejs.config({
                     xamlClasses: xamlClasses,
                     namespaceMap: namespaceMap,
                     rewriteMap: applicationDomain.$rewriteMap,
@@ -135,8 +137,8 @@ if(!String.prototype.trim){
                         mainClass = mainClass.replace(/\./g, "/");
                     }
 
-                    require(["./js/core/Imports"], function () {
-                        require(["./js/core/Application", mainClass], function (Application, mainClassFactory) {
+                    requirejs(["./js/core/Imports"], function () {
+                        requirejs(["./js/core/Application", mainClass], function (Application, mainClassFactory) {
                             // create instance
                             var application = new mainClassFactory(null, false, applicationDomain, null, null);
 
@@ -167,7 +169,7 @@ if(!String.prototype.trim){
             };
             
             if (Object.prototype.toString.call(config) == '[object String]') {
-                require(["json!" + config], function(config) {
+                requirejs(["json!" + config], function(config) {
                     internalBootstrap(config);
                 });
             } else {
@@ -209,6 +211,11 @@ if(!String.prototype.trim){
 
             if (s.data && s.hasContent && s.contentType !== false) {
                 xhr.setRequestHeader("Content-Type", s.contentType);
+            }
+
+            // TODO: don't use requirejs for this, use a rAppid instance and config these
+            if (requirejs.config.applicationUrl) {
+                url = requirejs.config.applicationUrl + "/" + url;
             }
 
             // create new xhr
@@ -260,7 +267,8 @@ if(!String.prototype.trim){
         _: underscore,
         // export inherit
         inherit: inherit,
-        require: require,
+        require: requirejs,
+        document: document,
         resolveXaml: function(classes) {
             var ret = [];
             for (var i = 0; i < classes.length; i++) {
@@ -459,9 +467,13 @@ if(!String.prototype.trim){
                 return new F();
             }
 
-
-            var ret = construct(classDefinition, args);
-            ret.className = className;
+            var ret;
+            try {
+                ret = construct(classDefinition, args);
+                ret.className = className;
+            } catch (e) {
+                console.log("Cannot create instance of '" + fqClassName + "'");
+            }
 
             return ret;
         },
@@ -518,5 +530,6 @@ if(!String.prototype.trim){
     typeof requirejs === "undefined" ? require('requirejs') : requirejs,
     typeof requirejs === "undefined" ? require('requirejs').define : define,
     typeof this._ === "undefined" ? require('underscore') : this._,
-    typeof window === "undefined" ? require('xmlhttprequest').xmlhttprequest : window.XMLHttpRequest,
-    typeof flow === "undefined" ? require('flow.js').flow : flow);
+    typeof window === "undefined" ? require('xmlhttprequest').XMLHttpRequest : window.XMLHttpRequest,
+    typeof flow === "undefined" ? require('flow.js').flow : flow,
+    typeof document === "undefined" ? (new (require('xmldom').DOMParser)()) : document);

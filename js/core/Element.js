@@ -156,7 +156,7 @@ requirejs(["rAppid"], function (rAppid) {
                     this.$initialized = true;
                 },
                 _getTextContentFromDescriptor:function (desc) {
-                    return desc.textContent ? desc.textContent : desc.text;
+                    return desc.textContent || desc.text || desc.data;
                 }
             });
         }

@@ -14,34 +14,50 @@ requirejs(["rAppid"], function (rAppid) {
                 this.callBase();
                 this.$routers = [];
                 this.processUrl = true;
+
+                this.$history = [];
             },
 
             defaults: {
                 interval: 50
             },
 
-            getFragment: function (fragment) {
-                fragment = decodeURIComponent(fragment || window.location.hash);
+            getFragment: function () {
+                var fragment;
+
+                if (this.runsInBrowser()) {
+                    fragment = decodeURIComponent(window.location.hash);
+                } else {
+                    fragment = this.$history[this.$history.length-1] || "";
+                }
+
                 return fragment.replace(routeStripper, '');
             },
 
-            start: function (callback) {
+            start: function (callback, initialHash) {
 
                 var self = this;
                 this.$checkUrlFn = function () {
                     self.checkUrl.apply(self, arguments);
                 };
 
-                if ("onhashchange" in window) {
-                    if (window.addEventListener) {
-                        window.addEventListener('hashchange',
-                            this.$checkUrlFn, false);
+
+                if (this.runsInBrowser()) {
+                    // we're on a browser
+                    if ("onhashchange" in window) {
+                        if (window.addEventListener) {
+                            window.addEventListener('hashchange',
+                                this.$checkUrlFn, false);
+                        } else {
+                            window.attachEvent('onhashchange', this.$checkUrlFn);
+                        }
                     } else {
-                        window.attachEvent('onhashchange', this.$checkUrlFn);
+                        // polling
+                        this.$checkUrlInterval = setInterval(this.$checkUrlFn, this.$.interval);
                     }
                 } else {
-                    // polling
-                    this.$checkUrlInterval = setInterval(this.$checkUrlFn, this.$.interval);
+                    // rendering on node
+                    this.$history.push(initialHash || "");
                 }
 
                 this.fragment = this.getFragment();
@@ -50,16 +66,18 @@ requirejs(["rAppid"], function (rAppid) {
             },
 
             stop: function () {
-                if ("onhashchange" in window) {
-                    if (window.removeEventListener) {
-                        window.removeEventListener('hashchange',
-                            this.$checkUrlFn, false);
+                if (typeof window !== "undefined") {
+                    if ("onhashchange" in window) {
+                        if (window.removeEventListener) {
+                            window.removeEventListener('hashchange',
+                                this.$checkUrlFn, false);
+                        } else {
+                            window.detachEvent('onhashchange', this.$checkUrlFn);
+                        }
                     } else {
-                        window.detachEvent('onhashchange', this.$checkUrlFn);
+                        // polling
+                        clearInterval(this.$checkUrlInterval);
                     }
-                } else {
-                    // polling
-                    clearInterval(this.$checkUrlInterval);
                 }
             },
 
@@ -116,10 +134,20 @@ requirejs(["rAppid"], function (rAppid) {
                 this.processUrl = false;
 
                 if (createHistoryEntry) {
-                    window.location.hash = "/" + fragment;
+                    if (this.runsInBrowser()) {
+                        window.location.hash = "/" + fragment;
+                    } else {
+                        this.$history.push(fragment);
+                        this.checkUrl(null);
+                    }
                 } else {
-                    // replace hash
-                    window.location.replace("#/" + fragment);
+                    if (this.runsInBrowser()) {
+                        // replace hash
+                        window.location.replace("#/" + fragment);
+                    } else {
+                        this.$history[this.$history.length-1] = fragment;
+                    }
+
                 }
 
                 this.fragment = fragment;

@@ -1,4 +1,4 @@
-(function () {
+(function (XMLHttpRequest, libxml) {
     var progIds = ['Msxml2.XMLHTTP', 'Microsoft.XMLHTTP', 'Msxml2.XMLHTTP.4.0'];
     var importRegEx = /((?:xaml!)?[a-z]+(\.[a-z]+[a-z0-9]*)*)/mgi;
 
@@ -190,9 +190,21 @@
 
             load: function (name, req, onLoad, config) {
 
+                var url = name.replace(/\./g, "/") + ".xml";
+
+                // FOR NODE RENDERING
+                if (config.applicationUrl) {
+                    url = config.applicationUrl + '/' + url;
+                }
+
                 var self = this;
-                var url = req.toUrl(name.replace(/\./g, "/") + ".xml");
+
                 this.get(url, function (err, xhr) {
+
+                    if (!xhr.responseXML && libxml) {
+                        xhr.responseXML = libxml.parseFromString(xhr.responseText);
+                    }
+
                     if (!err) {
                         if (xhr.responseXML) {
                             // require all dependencies
@@ -264,4 +276,5 @@
         };
 
     });
-})();
+}(typeof document === "undefined" ? require("xmlhttprequest").XMLHttpRequest : XMLHttpRequest,
+  typeof document === "undefined" ? require("libxml") : null));
