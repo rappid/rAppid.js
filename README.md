@@ -27,6 +27,7 @@ For a demo of bindings and controls visit [http://demo.rappidjs.com/src/ui.html]
 * Datasources with Processors (RestDataSource + JSON Processor, XMLProcessor in future)
 * Abstract data access layer, which will later supports MongoDb
 * i18n
+* support rendering on node for SEO
 
 ## Installation
 The installation of rAppid.js is simple done via [npm](http://npmjs.org/).
