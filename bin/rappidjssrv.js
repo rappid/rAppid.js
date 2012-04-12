@@ -60,10 +60,23 @@ flow()
 
         var srv = http.createServer(function(request, response){
 
+            var d = new Date();
+
             flow()
                 .seq("doc", function(){
                     // render application
-                    return jsdom.jsdom(indexContent);
+                    var doc = jsdom.jsdom(indexContent);
+
+                    var scripts = doc.getElementsByTagName('script');
+                    scripts._snapshot.forEach(function(script){
+                        var usage = script.getAttribute("data-usage");
+                        if (usage == "bootstrap" || usage == "lib") {
+                            script.parentNode.removeChild(script);
+                        }
+                    });
+
+                    return doc;
+
                 })
                 .seq("app", function(cb){
                     applicationContext.createApplicationInstance(cb.vars.doc, function(err, systemManager, application){
@@ -102,6 +115,9 @@ flow()
                         'Content-Type': 'text/html' });
                     response.write(buf);
                     response.end();
+
+                    console.log("Responses " + ((new Date()).getTime() - d.getTime()) + "ms");
+
                 });
         });
 
