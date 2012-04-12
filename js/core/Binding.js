@@ -237,15 +237,15 @@ requirejs(["rAppid"], function (rAppid) {
             var scopeKey = splitFirst(path);
 
             var scope;
-            if (Binding.isFunctionDefinition(scopeKey)) {
-                scope = targetScope.getScopeForFncName(scopeKey.substring(0, scopeKey.indexOf("(")));
-            } else {
-                scope = targetScope.getScopeForKey(scopeKey);
-
+            var searchScope = targetScope;
+            if(attrKey == scopeKey){
+                searchScope = searchScope.$parentScope;
             }
 
-            if(scope === targetScope && attrKey == scopeKey){
-                scope = scope.$parentScope;
+            if (Binding.isFunctionDefinition(scopeKey)) {
+                scope = searchScope.getScopeForFncName(scopeKey.substring(0, scopeKey.indexOf("(")));
+            } else {
+                scope = searchScope.getScopeForKey(scopeKey);
             }
 
             if (scope && (scope !== targetScope)) {
@@ -258,6 +258,8 @@ requirejs(["rAppid"], function (rAppid) {
                 }
                 return new Binding(options);
             }
+
+
 
             return null;
         };
