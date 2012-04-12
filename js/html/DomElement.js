@@ -1,6 +1,8 @@
+var requirejs = (typeof requirejs === "undefined" ? require("requirejs") : requirejs);
+
 requirejs(["rAppid"], function (rAppid) {
     rAppid.defineClass("js.html.DomElement",
-        ["js.core.Component", "js.core.Content", "js.core.Binding", "inherit"], function (Component, Content, Binding, inherit) {
+        ["js.core.Component", "js.core.Content", "js.core.Binding"], function (Component, Content, Binding) {
 
             var rspace = /\s+/;
             var domEvents = ['click','dblclick','keyup', 'keydown' , 'change'];
@@ -11,7 +13,7 @@ requirejs(["rAppid"], function (rAppid) {
                     selectable:false
                 },
                 $behavesAsDomElement:true,
-                ctor:function (attributes, descriptor, systemManager, parentScope, rootScope) {
+                ctor:function (attributes, descriptor, applicationDomain, parentScope, rootScope) {
                     this.$renderMap = {};
                     this.$childViews = [];
                     this.$contentChildren = [];
@@ -45,7 +47,9 @@ requirejs(["rAppid"], function (rAppid) {
                         this.$contentChildren.push(child);
                     }
                 },
+                removeChild: function(child){
 
+                },
                 getPlaceHolder:function (name) {
 
                     for (var i = 0; i < this.$children.length; i++) {
@@ -77,7 +81,7 @@ requirejs(["rAppid"], function (rAppid) {
 
                         if (child.className === "js.ui.ContentPlaceHolder") {
                             ret.push(child);
-                        } else {
+                        } else if(child instanceof DomElement){
                             ret = ret.concat(child.getContentPlaceHolders());
                         }
                     }
@@ -124,7 +128,7 @@ requirejs(["rAppid"], function (rAppid) {
 
                     this.$renderedChildren = [];
 
-                    this.$el = this.$systemManager.$document.createElement(this.$tagName);
+                    this.$el = document.createElement(this.$tagName);
                     this.$el.owner = this;
 
                     // TODO: read layout and create renderMAP
@@ -184,6 +188,29 @@ requirejs(["rAppid"], function (rAppid) {
                             this.$el.appendChild(el);
                         }
                     }
+                },
+                _removeRenderedChild: function(child){
+                    if(this.isRendered()){
+                        var rc;
+                        for(var i = this.$renderedChildren.length-1; i >= 0; i--){
+                            rc = this.$renderedChildren[i];
+                            if(child === rc){
+                                this.$el.removeChild(rc.$el);
+                                this.$renderedChildren.splice(i,1);
+                                return;
+                            }
+                        }
+                    }
+                },
+                _clearRenderedChildren: function(){
+                    if(this.isRendered()){
+                        var rc;
+                        for (var i = this.$renderedChildren.length - 1; i >= 0; i--) {
+                            rc = this.$renderedChildren[i];
+                            this.$el.removeChild(rc.$el);
+                        }
+                    }
+                    this.$renderedChildren = [];
                 },
                 _getIndexOfPlaceHolder:function (placeHolder) {
                     if (this.$layoutTpl) {
@@ -348,14 +375,17 @@ requirejs(["rAppid"], function (rAppid) {
                         this.$el.attachEvent("on" + type, eventHandle);
                     }
                 },
-                removeEvent: function (type, handle) {
-                    if (this.$el.removeEventListener) {
-                        this.$el.removeEventListener(type, handle, false);
-                    } else if (this.$el.detachEvent) {
-                        this.$el.detachEvent("on" + type, handle);
+                removeEvent:document.removeEventListener ?
+                    function (type, handle) {
+                        if (this.$el.removeEventListener) {
+                            this.$el.removeEventListener(type, handle, false);
+                        }
+                    } :
+                    function (type, handle) {
+                        if (this.$el.detachEvent) {
+                            this.$el.detachEvent("on" + type, handle);
+                        }
                     }
-
-                }
             };
 
             var DomManipulation = inherit.Base.inherit(rAppid._.extend({
