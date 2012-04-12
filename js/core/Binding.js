@@ -235,18 +235,18 @@ requirejs(["rAppid"], function (rAppid) {
             var scopeKey = splitFirst(path);
 
             var scope;
-            if (Binding.isFunctionDefinition(scopeKey)) {
-                scope = targetScope.getScopeForFncName(scopeKey.substring(0, scopeKey.indexOf("(")));
-            } else {
-                // TODO (krebbl): getScopeForKey won't work proberly if the attribute exists but is the target scope
-                /*
-                 <js:Router cid="router"/>
-                 <js:ModuleLoader id="moduleLoader" router="{router}" />
-                 */
-                scope = targetScope.getScopeForKey(scopeKey);
+            var searchScope = targetScope;
+            if(attrKey == scopeKey){
+                searchScope = searchScope.$parentScope;
             }
 
-            if (scope && (scope != targetScope || attrKey != scopeKey)) {
+            if (Binding.isFunctionDefinition(scopeKey)) {
+                scope = searchScope.getScopeForFncName(scopeKey.substring(0, scopeKey.indexOf("(")));
+            } else {
+                scope = searchScope.getScopeForKey(scopeKey);
+            }
+
+            if (scope && (scope !== targetScope)) {
                 var twoWay = bindingDef.indexOf("{{") == 0;
                 var options = {scope:scope, path:path, target:targetScope, twoWay:twoWay};
                 if (cb) {
@@ -256,6 +256,8 @@ requirejs(["rAppid"], function (rAppid) {
                 }
                 return new Binding(options);
             }
+
+
 
             return null;
         };
