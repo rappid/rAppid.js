@@ -1,5 +1,3 @@
-var requirejs = (typeof requirejs === "undefined" ? require("requirejs") : requirejs);
-
 requirejs(["rAppid"], function (rAppid) {
 
     rAppid.defineClass("js.core.TextElement",
@@ -29,7 +27,7 @@ requirejs(["rAppid"], function (rAppid) {
                         this._initialize(this.$creationPolicy);
                     }
 
-                    this.$el = rAppid.document.createTextNode("");
+                    this.$el = this.$systemManager.$document.createTextNode("");
                     if (this.$descriptor) {
                         this._renderTextContent(this._getTextContentFromDescriptor(this.$descriptor));
                     }

@@ -1,5 +1,3 @@
-var requirejs = (typeof requirejs === "undefined" ? require("requirejs") : requirejs);
-
 requirejs(["rAppid"], function (rAppid) {
     rAppid.defineClass("js.data.Model", ["js.core.Bindable", "js.core.List", "flow"], function (Bindable, List, flow) {
 

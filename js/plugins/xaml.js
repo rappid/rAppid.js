@@ -252,6 +252,9 @@
                                     }
                                 }
 
+                                if (!baseClass) {
+                                    console.log(dependencies[0]);
+                                }
                                 var xamlFactory = baseClass.inherit(
                                     self.getDeclarationFromScripts(scriptObjects)
                                 );

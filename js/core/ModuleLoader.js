@@ -1,5 +1,3 @@
-var requirejs = (typeof requirejs === "undefined" ? require("requirejs") : requirejs);
-
 requirejs(["rAppid"], function (rAppid) {
     rAppid.defineClass("js.core.ModuleLoader", ["js.core.UIComponent", "js.ui.ContentPlaceHolder",
         "js.core.Module"],
@@ -117,8 +115,8 @@ requirejs(["rAppid"], function (rAppid) {
                     if (!eventResult.isDefaultPrevented) {
                         // load module
 
-                        rAppid.require(rAppid.resolveXaml([moduleFqClassName]), function (moduleBaseClass) {
-                            var moduleInstance = new moduleBaseClass(null, false, self.$applicationDomain, null, null);
+                        this.$systemManager.$requirejsContext([rAppid.makeRequireName(moduleFqClassName)], function (moduleBaseClass) {
+                            var moduleInstance = new moduleBaseClass(null, false, self.$systemManager, null, null);
 
                             if (moduleInstance instanceof Module) {
 

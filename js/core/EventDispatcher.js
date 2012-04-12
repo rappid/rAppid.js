@@ -1,5 +1,3 @@
-var requirejs = (typeof requirejs === "undefined" ? require("requirejs") : requirejs);
-
 requirejs(["rAppid"], function (rAppid) {
 
     var a = 0;

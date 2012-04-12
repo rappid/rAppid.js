@@ -1,5 +1,3 @@
-var requirejs = (typeof requirejs === "undefined" ? require("requirejs") : requirejs);
-
 requirejs(["rAppid"], function (rAppid) {
 
     rAppid.defineClass("js.core.Component",
@@ -11,19 +9,18 @@ requirejs(["rAppid"], function (rAppid) {
             var Component = Element.inherit(
                 /** @lends Component# */
 
-
                 {
                 /***
                  * What up??
                  * @param attributes The attributes of the component
                  * @param {String} attributes.style The style of the component
                  * @param {Node} descriptor
-                 * @param {String} applicationDomain
+                 * @param {SystemManager} systemManager
                  * @param {Element} parentScope
                  * @param {Element} rootScope
                  * @constructs
                  */
-                ctor: function (attributes, descriptor, applicationDomain, parentScope, rootScope) {
+                ctor: function (attributes, descriptor, systemManager, parentScope, rootScope) {
 
                     this.$components = [];
 
@@ -69,12 +66,17 @@ requirejs(["rAppid"], function (rAppid) {
                         // synchronous singleton instantiation of Injection,
                         // because if module requires injection, application also depends on
                         // Injection.js and class should be installed.
-                        var injection = this.$applicationDomain.createInstance("js.core.Injection");
-                        for (var name in inject) {
-                            if (inject.hasOwnProperty(name)) {
-                                this.$[name] = injection.getInstance(inject[name]);
+                        var injection = this.$systemManager.$injection;
+                        if (injection) {
+                            for (var name in inject) {
+                                if (inject.hasOwnProperty(name)) {
+                                    this.$[name] = injection.getInstance(inject[name]);
+                                }
                             }
+                        } else {
+                            throw "injection not available in systemManager";
                         }
+
                     }
 
                 },
@@ -313,7 +315,7 @@ requirejs(["rAppid"], function (rAppid) {
                 },
                 /***
                  * Create {@link Component} for DOM Node with given attributes
-                 * @param Dome Node
+                 * @param DOM Node
                  * @param attributes for new Component
                  */
                 _createComponentForNode: function (node, attributes) {
@@ -321,13 +323,13 @@ requirejs(["rAppid"], function (rAppid) {
 
                     attributes = attributes || {};
                     // only instantiation and construction but no initialization
-                    var appDomain = this.$applicationDomain;
+                    var appDomain = this.$systemManager.$applicationDomain;
 
                     if (node.nodeType == 1) { // Elements
                         var fqClassName = appDomain.getFqClassName(node.namespaceURI, this._localNameFromDomNode(node), true);
                         var className = appDomain.getFqClassName(node.namespaceURI, this._localNameFromDomNode(node), false);
 
-                        return appDomain.createInstance(fqClassName, [attributes, node, appDomain, this, this.$rootScope], className);
+                        return appDomain.createInstance(fqClassName, [attributes, node, this.$systemManager, this, this.$rootScope], className);
 
                     } else if (node.nodeType == 3) { // Textnodes
                         // remove whitespaces from text textnodes
@@ -336,7 +338,7 @@ requirejs(["rAppid"], function (rAppid) {
                             node.textContent = text;
                         }
                         // only instantiation and construction but no initialization
-                        return appDomain.createInstance("js.core.TextElement", [null, node, appDomain, this, this.$rootScope]);
+                        return appDomain.createInstance("js.core.TextElement", [null, node, this.$systemManager, this, this.$rootScope]);
                     }
 
                     return null;

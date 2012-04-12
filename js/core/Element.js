@@ -1,5 +1,3 @@
-var requirejs = (typeof requirejs === "undefined" ? require("requirejs") : requirejs);
-
 requirejs(["rAppid"], function (rAppid) {
 
     rAppid.defineClass("js.core.Element",
@@ -26,7 +24,7 @@ requirejs(["rAppid"], function (rAppid) {
             }
 
             return Bindable.inherit({
-                ctor: function (attributes, descriptor, applicationDomain, parentScope, rootScope) {
+                ctor: function (attributes, descriptor, systemManager, parentScope, rootScope) {
 
                     attributes = attributes || {};
 
@@ -38,7 +36,7 @@ requirejs(["rAppid"], function (rAppid) {
                     }
 
                     this.$descriptor = descriptor;
-                    this.$applicationDomain = applicationDomain;
+                    this.$systemManager = systemManager;
                     this.$parentScope = parentScope || null;
                     this.$rootScope = rootScope || null;
 

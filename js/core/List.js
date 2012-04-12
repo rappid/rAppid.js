@@ -1,5 +1,3 @@
-var requirejs = (typeof requirejs === "undefined" ? require("requirejs") : requirejs);
-
 requirejs(["rAppid"], function (rAppid) {
     rAppid.defineClass("js.core.List", ["js.core.EventDispatcher","js.core.Bindable"], function(EventDispatcher, Bindable) {
         return EventDispatcher.inherit({

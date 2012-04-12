@@ -1,5 +1,3 @@
-var requirejs = (typeof requirejs === "undefined" ? require("requirejs") : requirejs);
-
 requirejs(["rAppid"], function (rAppid) {
     rAppid.defineClass("js.ui.View",
         ["js.html.DomElement", "js.core.Template", "js.core.Content"], function (DomElement, Template, Content) {

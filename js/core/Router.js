@@ -1,5 +1,3 @@
-var requirejs = (typeof requirejs === "undefined" ? require("requirejs") : requirejs);
-
 requirejs(["rAppid"], function (rAppid) {
     rAppid.defineClass("js.core.Router", ["js.core.Component"],
 
@@ -19,7 +17,7 @@ requirejs(["rAppid"], function (rAppid) {
                     if (this.$.history) {
                         this.history = this.$.history;
                     } else {
-                        this.history = rAppid.systemManager.application.history;
+                        this.history = this.$systemManager.$application.history;
                     }
 
                     this.history.addRouter(this);

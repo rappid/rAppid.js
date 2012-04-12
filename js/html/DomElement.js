@@ -1,8 +1,6 @@
-var requirejs = (typeof requirejs === "undefined" ? require("requirejs") : requirejs);
-
 requirejs(["rAppid"], function (rAppid) {
     rAppid.defineClass("js.html.DomElement",
-        ["js.core.Component", "js.core.Content", "js.core.Binding"], function (Component, Content, Binding) {
+        ["js.core.Component", "js.core.Content", "js.core.Binding", "inherit"], function (Component, Content, Binding, inherit) {
 
             var rspace = /\s+/;
             var domEvents = ['click','dblclick','keyup', 'keydown' , 'change'];
@@ -13,7 +11,7 @@ requirejs(["rAppid"], function (rAppid) {
                     selectable:false
                 },
                 $behavesAsDomElement:true,
-                ctor:function (attributes, descriptor, applicationDomain, parentScope, rootScope) {
+                ctor:function (attributes, descriptor, systemManager, parentScope, rootScope) {
                     this.$renderMap = {};
                     this.$childViews = [];
                     this.$contentChildren = [];
@@ -126,7 +124,7 @@ requirejs(["rAppid"], function (rAppid) {
 
                     this.$renderedChildren = [];
 
-                    this.$el = rAppid.document.createElement(this.$tagName);
+                    this.$el = this.$systemManager.$document.createElement(this.$tagName);
                     this.$el.owner = this;
 
                     // TODO: read layout and create renderMAP
@@ -350,20 +348,17 @@ requirejs(["rAppid"], function (rAppid) {
                         this.$el.attachEvent("on" + type, eventHandle);
                     }
                 },
-                removeEvent:rAppid.document.removeEventListener ?
-                    function (type, handle) {
-                        if (this.$el.removeEventListener) {
-                            this.$el.removeEventListener(type, handle, false);
-                        }
-                    } :
-                    function (type, handle) {
-                        if (this.$el.detachEvent) {
-                            this.$el.detachEvent("on" + type, handle);
-                        }
+                removeEvent: function (type, handle) {
+                    if (this.$el.removeEventListener) {
+                        this.$el.removeEventListener(type, handle, false);
+                    } else if (this.$el.detachEvent) {
+                        this.$el.detachEvent("on" + type, handle);
                     }
+
+                }
             };
 
-            var DomManipulation = rAppid.inherit.Base.inherit(rAppid._.extend({
+            var DomManipulation = inherit.Base.inherit(rAppid._.extend({
                 ctor:function (elm) {
                     this.$el = elm;
                 }

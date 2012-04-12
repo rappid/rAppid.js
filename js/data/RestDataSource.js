@@ -1,5 +1,3 @@
-var requirejs = (typeof requirejs === "undefined" ? require("requirejs") : requirejs);
-
 requirejs(["rAppid"], function (rAppid) {
     rAppid.defineClass("js.data.RestDataSource",
         ["js.data.DataSource", "js.core.Base", "js.core.List"], function (DataSource, Base, List) {
@@ -260,7 +258,7 @@ requirejs(["rAppid"], function (rAppid) {
 
                 // TODO: how to handle errors here? require.onError?
                 // some unique hash and extending of requirejs required
-                rAppid.require(requiredClasses, function () {
+                rAppid.$requirejsContext(requiredClasses, function () {
                     var factories = Array.prototype.slice.call(arguments);
 
                     for (var i = 0; i < referenceInformation.length; i++) {

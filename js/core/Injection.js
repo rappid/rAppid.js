@@ -1,26 +1,24 @@
-var requirejs = (typeof requirejs === "undefined" ? require("requirejs") : requirejs);
-
 requirejs(["rAppid"], function (rAppid) {
     rAppid.defineClass("js.core.Injection", ["js.core.Component"], function (Component) {
 
-        var singleton;
 
         function factoryInheritsFrom(factory, type) {
             return factory == type || factory.prototype instanceof type;
         }
 
-
         return Component.inherit({
-            ctor: function () {
-                if (!singleton) {
+            ctor: function (attributes, descriptor, systemManager, parentScope, rootScope) {
+
+                if (!systemManager.$injection) {
                     this.callBase();
                     this.$singletonInstanceCache = [];
                     this.$factories = [];
 
-                    singleton = this;
+                    systemManager.$injection = this;
                 }
 
-                return singleton;
+                return systemManager.$injection;
+
             },
 
             _initializeChildren: function(childComponents) {
@@ -103,7 +101,7 @@ requirejs(["rAppid"], function (rAppid) {
 
                 if (!factory.factory) {
                     // get factory from class
-                    var fac = this.$applicationDomain.getDefinition(factory.type);
+                    var fac = this.$systemManager.$applicationDomain.getDefinition(factory.type);
                     if (!fac) {
                         throw "factory for type '" + factory.type + "' not found";
                     }
