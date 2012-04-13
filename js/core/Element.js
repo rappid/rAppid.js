@@ -154,7 +154,18 @@ requirejs(["rAppid"], function (rAppid) {
                     this.$initialized = true;
                 },
                 _getTextContentFromDescriptor:function (desc) {
-                    return desc.textContent || desc.text || desc.data;
+                    var textContent = desc.textContent || desc.text || desc.data;
+                    if(!textContent){
+                        textContent = "";
+                        for (var i = 0; i < desc.childNodes.length; i++) {
+                            var node = desc.childNodes[i];
+                            // element or cdata node
+                            if(node.nodeType == 1 || node.nodeType == 4){
+                                textContent += this._getTextContentFromDescriptor(node);
+                            }
+                        }
+                    }
+                    return textContent || "";
                 }
             });
         }
