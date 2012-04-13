@@ -165,7 +165,7 @@ requirejs(["rAppid"], function (rAppid) {
                             }
                         }
                     }
-                    return textContent || "";
+                    return textContent;
                 }
             });
         }
