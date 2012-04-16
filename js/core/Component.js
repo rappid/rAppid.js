@@ -1,9 +1,9 @@
 requirejs(["rAppid"], function (rAppid) {
 
     rAppid.defineClass("js.core.Component",
-        ["js.core.Element", "js.core.TextElement", "js.core.Binding", "js.core.Var"],
+        ["js.core.Element", "js.core.TextElement", "js.core.Binding"],
 
-        function (Element, TextElement, Binding, Var) {
+        function (Element, TextElement, Binding) {
 
 
             var Component = Element.inherit(
