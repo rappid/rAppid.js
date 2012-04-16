@@ -77,7 +77,7 @@ requirejs(["rAppid"], function (rAppid) {
 
                         if (child.className === "js.ui.ContentPlaceHolder") {
                             ret.push(child);
-                        } else {
+                        } else if(child instanceof DomElement){
                             ret = ret.concat(child.getContentPlaceHolders());
                         }
                     }

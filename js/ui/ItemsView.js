@@ -83,7 +83,6 @@ requirejs(["rAppid"], function (rAppid) {
                 },
                 _renderItem: function (item,i) {
                     var comp = this.$templates['item'].createComponents({$item: item, $index: i})[0];
-                    console.log(comp);
                     // add to rendered item map
                     this.$renderedItems.push({
                         item: item,
