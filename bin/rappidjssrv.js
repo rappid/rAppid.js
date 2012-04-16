@@ -49,7 +49,7 @@ flow()
         });
     })
     .seq("applicationContext", function(cb){
-        rAppid.createApplicationContext(requirejs, null, "app/Grid.xml", this.vars.applicationConfig, cb);
+        rAppid.createApplicationContext(requirejs, null, applicationFile, this.vars.applicationConfig, cb);
     })
     .seq(function(){
         this.vars.applicationContext.document = jsdom.jsdom('<html></html>');
