@@ -45,7 +45,7 @@ requirejs(["rAppid"], function (rAppid) {
 
                     if (string) {
                         var placeholders = findPlaceholders(string);
-                        var ph, start = 0;
+                        var ph, start = -1;
                         for (var i = 0; i < placeholders.length; i++) {
                             ph = placeholders[i];
 
@@ -79,9 +79,11 @@ requirejs(["rAppid"], function (rAppid) {
                             } else{
                                 this.$el.appendChild(this.$systemManager.$document.createTextNode(ph.text));
                             }
-
-
                         }
+                        if(start < string.length){
+                            this.$el.appendChild(this.$systemManager.$document.createTextNode(string.substr(start + 1)));
+                        }
+
                     }
                 }
             });
