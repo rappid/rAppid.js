@@ -1,7 +1,8 @@
 var path = require('path'),
-    rAppidJsNode = require('lib/rAppidJsNode.js'),
+    rAppidJsNode = require('./lib/rAppidJsNode.js'),
     jsdom = require('jsdom').jsdom,
-    flow = require('flow');
+    flow = require('flow.js').flow;
+
 
 var optimize = function (args, callback) {
     if (args.length >= 2 && args.length <= 4) {
@@ -21,7 +22,7 @@ var optimize = function (args, callback) {
                 var doc = jsdom('<html><head></head><body></body></html>');
 
                 this.vars.applicationContext.createApplicationInstance(doc, function (err, systemManager, application) {
-                    cb(null, systemManager);
+                    cb(err, systemManager);
                 });
             })
             .seq(function(cb) {
@@ -32,7 +33,7 @@ var optimize = function (args, callback) {
                 if (err) {
                     console.log(err);
                 } else {
-                    console.log(results.systemManager.$applicationDomain);
+                    console.log(results.systemManager.$applicationDomain.$ns);
                 }
             });
 
@@ -43,9 +44,10 @@ var optimize = function (args, callback) {
 };
 
 optimize.usage = "rappidjs optimize <directory> <applicationMain> [applicationBaseUrl] [configFile]" +
-                    "\tdirectory - public directory of the application" +
-                    "\tapplicationMain - application file" +
-                    "\tconfigFile - config file [config.json]";
+                    "\n\tdirectory - public directory of the application" +
+                    "\n\tapplicationMain - application file" +
+                    "\n\tapplicationBaseUrl - application url" +
+                    "\n\tconfigFile - config file [config.json]";
 
 module.exports = optimize;
 

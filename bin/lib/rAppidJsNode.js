@@ -1,9 +1,10 @@
-var flow = require('flow'),
+var flow = require('flow.js').flow,
     fs = require('fs'),
     path = require('path'),
     _ = require('underscore'),
     jsdom = require('jsdom').jsdom,
-    rAppid = require(path.join(__dirname, '../../rAppid.js')).rAppid;
+    rAppid = require(path.join(__dirname, '../../rAppid.js')).rAppid,
+    requirejs = require('requirejs');
 
 var bootStrap = function() {
 
@@ -37,7 +38,7 @@ var createApplicationContext = function(applicationDir, applicationFilename, con
         }).
         exec(function(err, results) {
             if (callback) {
-                callback(err, results.applicationcontext);
+                callback(err, results.applicationContext);
             }
         });
 };

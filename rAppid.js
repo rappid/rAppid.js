@@ -499,6 +499,7 @@ if(!String.prototype.trim){
         ctor: function(applicationDomain, requirejsContext, config) {
             this.callBase(applicationDomain, requirejsContext);
             this.$config = config;
+            this.$applicationContext = this;
         },
 
         createApplicationInstance: function(document, callback) {
@@ -508,6 +509,7 @@ if(!String.prototype.trim){
             var systemManager = new SystemManager(this.$applicationDomain, this.$requirejsContext, this, document);
 
             this.$requirejsContext(["js/core/Application"], function(Application) {
+
                 var application = new applicationFactory(null, false, systemManager, null, null);
 
                 if (application instanceof Application) {
