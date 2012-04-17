@@ -22,7 +22,6 @@ requirejs(["rAppid"], function (rAppid) {
                 }
                 return str;
             }
-
             return Bindable.inherit({
                 ctor: function (attributes, descriptor, systemManager, parentScope, rootScope) {
 

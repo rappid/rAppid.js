@@ -50,6 +50,7 @@ describe('js.core.Binding', function () {
 
             var b1 = new Binding({scope: model, path: 'a', target: target, targetKey: "val"});
             model.set("a", "A");
+
             target.get('val').should.equal('A');
 
         });
@@ -100,6 +101,7 @@ describe('js.core.Binding', function () {
             model.set("a", "A");
             model.get('a').should.equal("A");
             target.set({val:'TargetValue'});
+
             model.get("a").should.equal("TargetValue");
         });
 

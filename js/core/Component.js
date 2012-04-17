@@ -270,7 +270,7 @@ requirejs(["rAppid"], function (rAppid) {
                     var attributes = this.$;
 
                     var self = this;
-                    var binding, twoWay;
+                    var binding, twoWay, eValue;
                     // Resolve bindings and events
                     for (var key in attributes) {
 
@@ -294,16 +294,9 @@ requirejs(["rAppid"], function (rAppid) {
                                 }
 
                                 delete attributes[key];
-                            } else if (Binding.matches(value)) {
-                                binding = Binding.create(value, this, key);
-                                if(binding){
-                                    this.$[key] = binding.getValue();
-                                }else{
-                                    throw "Binding " + value + " couldn't be created";
-                                }
-
+                            } else {
+                                this.$[key] = Binding.evaluateText(value,this,key);
                             }
-
                         }
                     }
 
