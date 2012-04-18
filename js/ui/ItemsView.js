@@ -88,7 +88,7 @@ requirejs(["rAppid"], function (rAppid) {
                         ri = this.$renderedItems[i];
                         if (ri.item === item) {
                             this.$el.removeChild(ri.component.$el);
-                            this.$renderedItems.slice(i,1);
+                            this.$renderedItems.splice(i,1);
                             return;
                         }
                     }
