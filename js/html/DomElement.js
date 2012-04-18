@@ -7,8 +7,8 @@ requirejs(["rAppid"], function (rAppid) {
 
             var DomElementFunctions = {
                 defaults:{
-                    selected:false,
-                    selectable:false
+                    selected:undefined,
+                    selectable:undefined
                 },
                 $behavesAsDomElement:true,
                 ctor:function (attributes, descriptor, systemManager, parentScope, rootScope) {

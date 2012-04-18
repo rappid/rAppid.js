@@ -17,7 +17,7 @@ requirejs(["rAppid"], function (rAppid) {
                     }
 
                     this.$el = this.$systemManager.$document.createTextNode("");
-                    if(this.$.textContent){
+                    if(!rAppid._.isUndefined(this.$.textContent)){
                         this._renderTextContent(this.$.textContent);
 
                     }

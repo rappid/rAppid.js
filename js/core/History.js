@@ -60,6 +60,7 @@ requirejs(["rAppid"], function (rAppid) {
 
                 this.fragment = this.getFragment();
                 this.navigate(this.fragment, true, true, callback);
+                this.processUrl = true;
 
             },
 
@@ -91,7 +92,7 @@ requirejs(["rAppid"], function (rAppid) {
                         return false;
                     }
 
-                    this.triggerRoute(currentFragment, emptyCallback);
+                    this.navigate(currentFragment, true, true, emptyCallback);
                 }
 
                 this.processUrl = true;
