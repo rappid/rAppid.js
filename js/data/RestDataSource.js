@@ -405,6 +405,8 @@ requirejs(["rAppid"], function (rAppid) {
 
                 var params = {};
 
+                rAppid._.defaults(params, (options || {}).params);
+
                 if (page.$limit) {
                     params.limit = page.$limit;
                 }

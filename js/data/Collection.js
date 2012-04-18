@@ -158,7 +158,7 @@ requirejs(["rAppid"], function (rAppid) {
                 page.fetch(options, function(err, page) {
 
                     // insert data into items if not already inserted
-                    if (!page.itemsInsertedIntoCollection) {
+                    if (!err && !page.itemsInsertedIntoCollection) {
                         page.itemsInsertedIntoCollection = true;
 
                         for (var pageIndex = 0; pageIndex < self.$pageOrderForItems.length; pageIndex++) {

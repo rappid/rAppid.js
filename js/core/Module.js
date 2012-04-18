@@ -6,8 +6,11 @@ requirejs(["rAppid"], function (rAppid) {
              * @param callback
              */
             start: function (callback) {
-                callback();
+                if (callback) {
+                    callback();
+                }
             },
+
             render: function (target) {
                 // module won't render anything, but delivers content via js:Content
                 // content is rendered inside ContentPlaceHolders

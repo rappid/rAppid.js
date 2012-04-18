@@ -87,8 +87,16 @@ if(!String.prototype.trim){
                     return flow;
                 });
 
+                define("flow.js", function () {
+                    return flow;
+                });
+
                 define("inherit", function () {
                     return inherit;
+                });
+
+                define("underscore", function() {
+                    return underscore;
                 });
 
                 // define js.core.Base
