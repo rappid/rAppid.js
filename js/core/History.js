@@ -151,8 +151,13 @@ requirejs(["rAppid"], function (rAppid) {
 
                 this.fragment = fragment;
 
+                var ret;
                 if (triggerRoute) {
-                    return this.triggerRoute(fragment, callback);
+                    ret = this.triggerRoute(fragment, callback);
+                }
+
+                if (!ret && callback) {
+                    callback();
                 }
 
             }
