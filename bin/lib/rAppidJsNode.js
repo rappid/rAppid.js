@@ -10,25 +10,36 @@ var bootStrap = function() {
 
 };
 
-var createApplicationContext = function(applicationDir, applicationFilename, configFilename, applicationBaseUrl, callback) {
+var createApplicationContext = function(applicationDir, applicationFilename, config, applicationBaseUrl, callback) {
 
     flow()
         .seq("applicationConfig", function (cb) {
-            fs.readFile(path.join(applicationDir, configFilename), function (err, data) {
-                if (!err) {
-                    data = JSON.parse(data);
-                    _.extend(data, {
 
-                        baseUrl: applicationDir,
-                        nodeRequire: require,
+            function extendConfig(err, conf) {
+                conf = conf || {};
 
-                        applicationDir: applicationDir,
-                        applicationUrl: applicationBaseUrl
-                    });
-                }
+                cb(err, _.defaults(conf, {
 
-                cb(err, data);
-            });
+                    baseUrl: applicationDir,
+                    nodeRequire: require,
+
+                    applicationDir: applicationDir,
+                    applicationUrl: applicationBaseUrl
+                }));
+            }
+
+            if (_.isString(config)) {
+                fs.readFile(path.join(applicationDir, config), function (err, data) {
+                    if (!err) {
+                        data = JSON.parse(data);
+                    }
+
+                    extendConfig(err, data);
+                });
+            } else {
+                extendConfig(null, config);
+            }
+
         })
         .seq("applicationContext", function (cb) {
             rAppid.createApplicationContext(requirejs, null, applicationFilename, this.vars.applicationConfig, cb);
@@ -43,5 +54,27 @@ var createApplicationContext = function(applicationDir, applicationFilename, con
         });
 };
 
+var requireInTestContext = function(applicationDir, classes, callback) {
+
+    if (_.isArray(applicationDir)) {
+        callback = classes;
+        classes = applicationDir;
+        applicationDir = null;
+    }
+
+    applicationDir = applicationDir || path.join(__dirname, "..", "..");
+
+    createApplicationContext(applicationDir, null, null, null, function (err, applicationContext) {
+        if (err) {
+            callback(err);
+        } else {
+            applicationContext.require(classes, function(){
+                callback.apply(applicationContext, Array.prototype.slice.call(arguments));
+            });
+        }
+    })
+};
+
 module.exports.bootStrapApplication = bootStrap;
 module.exports.createApplicationContext = createApplicationContext;
+module.exports.requireInTestContext = requireInTestContext;

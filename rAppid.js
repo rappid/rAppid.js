@@ -118,6 +118,14 @@ if(!String.prototype.trim){
 
                 requirejsContext.config(config);
 
+                var applicationContext = new ApplicationContext(applicationDomain, requirejsContext, config);
+                //applicationContext.document = document;
+                applicationContext._ = underscore;
+
+                define("rAppid", function () {
+                    return applicationContext;
+                });
+
 
                 if (mainClass) {
                     var parts = xamlApplication.exec(mainClass);
@@ -129,15 +137,6 @@ if(!String.prototype.trim){
                         mainClass = mainClass.replace(/\./g, "/");
                     }
 
-                    var applicationContext = new ApplicationContext(applicationDomain, requirejsContext, config);
-                    //applicationContext.document = document;
-                    applicationContext._ = underscore;
-
-                    define("rAppid", function () {
-                        return applicationContext;
-                    });
-
-
                     requirejsContext(["require"], function(){
                         requirejsContext(["./js/core/Imports"], function () {
                             requirejsContext([mainClass], function (applicationFactory) {
@@ -148,7 +147,7 @@ if(!String.prototype.trim){
                     });
 
                 } else {
-                    callback("MainClass missing");
+                    callback(null, applicationContext);
                 }
 
             };
@@ -564,8 +563,16 @@ if(!String.prototype.trim){
             this.$applicationDomain.getDefinition(fqClassName);
         },
 
+        require: function(classes, callback) {
+            for (var i = 0; i < classes.length; i++) {
+                classes[i] = this.makeRequireName(classes[i].replace(/\./g, "/"));
+            }
+
+            this.$requirejsContext(classes, callback);
+        },
+
         makeRequireName: function (module) {
-            if (underscore.indexOf(this.$config.xamlClasses, module)) {
+            if (underscore.indexOf(this.$config.xamlClasses, module) !== -1) {
                 module = "xaml!" + module;
             }
 
