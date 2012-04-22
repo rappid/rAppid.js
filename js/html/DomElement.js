@@ -73,7 +73,7 @@ define(["js/core/Component", "js/core/Content", "js/core/Binding", "inherit", "u
                 for (var i = 0; i < this.$children.length; i++) {
                     child = this.$children[i];
 
-                    if (child.className === "js.ui.ContentPlaceHolder") {
+                    if (child instanceof require("js/ui/ContentPlaceHolder")) {
                         ret.push(child);
                     } else if (child instanceof DomElement) {
                         ret = ret.concat(child.getContentPlaceHolders());
