@@ -13,7 +13,7 @@ define(["require","js/core/Component", "js/core/Content", "js/core/Binding", "in
             },
             $behavesAsDomElement: true,
             ctor: function (attributes, descriptor, systemManager, parentScope, rootScope) {
-                ContentPlaceHolder = require("js/ui/ContentPlaceHolder");
+                ContentPlaceHolder = ContentPlaceHolder || require("js/ui/ContentPlaceHolder");
                 this.$renderMap = {};
                 this.$childViews = [];
                 this.$contentChildren = [];
