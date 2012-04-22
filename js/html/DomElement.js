@@ -386,7 +386,7 @@ define(["js/core/Component", "js/core/Content", "js/core/Binding", "inherit", "u
                 this.$el = elm;
             }
         }, DomManipulationFunctions));
-        var DomElement = Component.inherit("js.core.DomElement",
+        var DomElement = Component.inherit("js.html.DomElement",
             _.extend(DomElementFunctions, DomManipulationFunctions));
         return DomElement;
     }

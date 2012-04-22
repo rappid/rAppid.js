@@ -1,6 +1,6 @@
 define(
     ["js/core/UIComponent", "js/core/History"], function (UIComponent, History) {
-        return UIComponent.inherit("js.core.UIComponent", {
+        return UIComponent.inherit("js.core.Application", {
             ctor: function () {
                 this.history = new History();
 
