@@ -1,13 +1,13 @@
-define(["js/core/Bindable"], function (Bindable) {
+define(["js/core/Bindable", "underscore"], function (Bindable, _) {
 
         var undef;
 
         function stringToPrimitive(str) {
             // if it's not a string
-            if (rAppid._.isString(str)) {
+            if (_.isString(str)) {
 
                 var n = parseFloat(str);
-                if (!rAppid._.isNaN(n)) {
+                if (!_.isNaN(n)) {
                     return n;
                 }
 
@@ -38,7 +38,7 @@ define(["js/core/Bindable"], function (Bindable) {
                 this.$rootScope = rootScope || null;
 
 
-                rAppid._.extend(attributes, this._getAttributesFromDescriptor(descriptor), this._getAttributesFromDescriptor(this._$descriptor));
+                _.extend(attributes, this._getAttributesFromDescriptor(descriptor), this._getAttributesFromDescriptor(this._$descriptor));
 
                 this.callBase(attributes);
 
@@ -126,7 +126,7 @@ define(["js/core/Bindable"], function (Bindable) {
                 var value = this.$[key];
 
                 // if value was found
-                if (!rAppid._.isUndefined(value)) {
+                if (!_.isUndefined(value)) {
                     return this;
                 } else if (this.$parentScope) {
                     return this.$parentScope.getScopeForKey(key);
@@ -136,7 +136,7 @@ define(["js/core/Bindable"], function (Bindable) {
             },
             getScopeForFncName: function (fncName) {
                 var fnc = this[fncName];
-                if (!rAppid._.isUndefined(fnc) && rAppid._.isFunction(fnc)) {
+                if (!_.isUndefined(fnc) && _.isFunction(fnc)) {
                     return this;
                 } else if (this.$parentScope) {
                     return this.$parentScope.getScopeForFncName(fncName);

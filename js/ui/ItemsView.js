@@ -1,5 +1,5 @@
 define(
-    ["js/ui/View", "js/core/Template", "js/core/List"], function (View, Template, List) {
+    ["js/ui/View", "js/core/Template", "js/core/List", "underscore"], function (View, Template, List,_) {
         return View.inherit({
             defaults: {
                 tagName: "div",
@@ -33,7 +33,7 @@ define(
                     items.bind('add', this._onItemAdd, this);
                     items.bind('remove', this._onItemRemove, this);
                     this._innerRenderItems(items.$items);
-                } else if (rAppid._.isArray(items)) {
+                } else if (_.isArray(items)) {
                     this._innerRenderItems(items);
                 }
             },

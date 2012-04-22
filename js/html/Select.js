@@ -1,4 +1,4 @@
-define(["js/ui/SelectionView"], function (SelectionView) {
+define(["js/ui/SelectionView","underscore"], function (SelectionView,_) {
         return SelectionView.inherit("js.html.Select", {
             defaults: {
                 multiSelect: false,
@@ -14,7 +14,7 @@ define(["js/ui/SelectionView"], function (SelectionView) {
                 for (var i = 0; i < this.$renderedItems.length; i++) {
                     ri = this.$renderedItems[i];
                     comp = ri.component;
-                    comp.set({selected: rAppid._.contains(items, ri.item)});
+                    comp.set({selected: _.contains(items, ri.item)});
                 }
             },
             _bindDomEvents: function () {

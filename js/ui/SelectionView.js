@@ -1,5 +1,5 @@
 define(
-    ["js.ui.ItemsView", "js.html.DomElement"], function (ItemsView, DomElement) {
+    ["js.ui.ItemsView", "js.html.DomElement", "underscore"], function (ItemsView, DomElement, _) {
         return ItemsView.inherit({
             defaults: {
                 tagName: "div",
@@ -53,7 +53,7 @@ define(
                 var item;
                 for (var i = 0; i < this.$renderedItems.length; i++) {
                     item = this.$renderedItems[i].item;
-                    this.$renderedItems[i].component.set({selected: rAppid._.contains(items, item)});
+                    this.$renderedItems[i].component.set({selected: _.contains(items, item)});
                 }
 
 

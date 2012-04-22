@@ -1,5 +1,5 @@
 define(
-    ["js/html/DomElement", "js/core/Template", "js/core/Content"], function (DomElement, Template, Content) {
+    ["js/html/DomElement", "js/core/Template", "js/core/Content", "underscore"], function (DomElement, Template, Content, _) {
         return DomElement.inherit({
             defaults: {
                 tagName: "div"
@@ -43,7 +43,7 @@ define(
                 }
             },
             _renderLayoutClass: function (layoutClass, oldLayoutClass) {
-                rAppid._.each(this.$renderedChildren, function (child) {
+                _.each(this.$renderedChildren, function (child) {
                     if (oldLayoutClass) {
                         child.removeClass(oldLayoutClass);
                     }

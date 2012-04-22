@@ -1,5 +1,5 @@
 define(
-    ["js/core/Element", "js/core/Binding"], function (Element, Binding) {
+    ["js/core/Element", "js/core/Binding", "underscore"], function (Element, Binding, _) {
 
         return Element.inherit("js.core.TextElement", {
             _initializeBindings: function () {
@@ -15,7 +15,7 @@ define(
                 }
 
                 this.$el = this.$systemManager.$document.createTextNode("");
-                if (!rAppid._.isUndefined(this.$.textContent)) {
+                if (!_.isUndefined(this.$.textContent)) {
                     this._renderTextContent(this.$.textContent);
 
                 }
@@ -27,7 +27,7 @@ define(
             },
             _commitChangedAttributes: function (attributes) {
                 if (this.$el) {
-                    if (!rAppid._.isUndefined(attributes.textContent)) {
+                    if (!_.isUndefined(attributes.textContent)) {
                         this._renderTextContent(attributes.textContent);
                     }
                 }

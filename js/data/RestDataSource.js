@@ -1,10 +1,10 @@
-define(["require", "js/data/DataSource", "js/core/Base", "js/core/List"], function (require, DataSource, Base, List) {
+define(["require", "js/data/DataSource", "js/core/Base", "js/core/List", "underscore"], function (require, DataSource, Base, List, _) {
 
     var RestContext = DataSource.Context.inherit("js.data.RestDataSource.Context", {
 
         createCollection: function (factory, options, type) {
             options = options || {};
-            rAppid._.defaults(options, {
+            _.defaults(options, {
                 pageSize: this.$datasource.$.collectionPageSize
             });
 
@@ -57,7 +57,7 @@ define(["require", "js/data/DataSource", "js/core/Base", "js/core/List"], functi
         },
 
         getClass: function (type) {
-            if (rAppid._.isFunction(type)) {
+            if (_.isFunction(type)) {
                 return type;
             } else {
                 return rAppid.getDefinition(this.getFqClassName(type));
@@ -69,7 +69,7 @@ define(["require", "js/data/DataSource", "js/core/Base", "js/core/List"], functi
         },
 
         loadClass: function (type, callback) {
-            if (rAppid._.isFunction(type)) {
+            if (_.isFunction(type)) {
                 callback(null, type);
             } else {
                 var className = this.getFqClassName(type);
@@ -151,11 +151,11 @@ define(["require", "js/data/DataSource", "js/core/Base", "js/core/List"], functi
          */
         isReferencedModel: function (obj) {
             return obj[this.$.identifierProperty] && obj[this.$.referenceProperty] &&
-                rAppid._.keys(obj).length == 2;
+                _.keys(obj).length == 2;
         },
 
         isReferencedCollection: function (obj) {
-            return obj[this.$.referenceProperty] && rAppid._.keys(obj).length == 1;
+            return obj[this.$.referenceProperty] && _.keys(obj).length == 1;
         },
 
         getContextPropertiesFromReference: function (reference) {
@@ -246,7 +246,7 @@ define(["require", "js/data/DataSource", "js/core/Base", "js/core/List"], functi
                 var info = referenceInformation[i];
                 var requiredClassname = this.$systemManager.$applicationContext.getFqClassName(info.modelClassName);
 
-                if (rAppid._.indexOf(requiredClasses, requiredClassname) == -1) {
+                if (_.indexOf(requiredClasses, requiredClassname) == -1) {
                     requiredClasses.push(requiredClassname);
                 }
             }
@@ -260,7 +260,7 @@ define(["require", "js/data/DataSource", "js/core/Base", "js/core/List"], functi
 
                 for (var i = 0; i < referenceInformation.length; i++) {
                     var info = referenceInformation[i];
-                    var factory = factories[rAppid._.indexOf(requiredClasses, info.requireClassName)];
+                    var factory = factories[_.indexOf(requiredClasses, info.requireClassName)];
 
                     if (factory) {
                         // create instance in correct context
@@ -320,7 +320,7 @@ define(["require", "js/data/DataSource", "js/core/Base", "js/core/List"], functi
             uri = uri.concat(modelPathComponents);
 
             // get queryParameter
-            var params = rAppid._.defaults(model.$context.getQueryParameter(), this.getQueryParameter());
+            var params = _.defaults(model.$context.getQueryParameter(), this.getQueryParameter());
 
             // create url
             var url = uri.join("/");
@@ -402,7 +402,7 @@ define(["require", "js/data/DataSource", "js/core/Base", "js/core/List"], functi
 
             var params = {};
 
-            rAppid._.defaults(params, (options || {}).params);
+            _.defaults(params, (options || {}).params);
 
             if (page.$limit) {
                 params.limit = page.$limit;
@@ -413,7 +413,7 @@ define(["require", "js/data/DataSource", "js/core/Base", "js/core/List"], functi
             }
 
             // get queryParameter
-            params = rAppid._.defaults(params, page.$collection.$context.getQueryParameter(), this.getQueryParameter());
+            params = _.defaults(params, page.$collection.$context.getQueryParameter(), this.getQueryParameter());
 
             // create url
             var url = uri.join("/");

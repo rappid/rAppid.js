@@ -1,4 +1,4 @@
-define(["js/core/Bindable", "js/core/EventDispatcher", "js/core/BindingParser"], function (Bindable, EventDispatcher, Parser) {
+define(["js/core/Bindable", "js/core/EventDispatcher", "js/core/BindingParser", "underscore"], function (Bindable, EventDispatcher, Parser, _) {
     var contextToString = function (context) {
         var str = "", el;
         for (var i = 0; i < context.length; i++) {
@@ -61,7 +61,7 @@ define(["js/core/Bindable", "js/core/EventDispatcher", "js/core/BindingParser"],
                     var fncName = this.$.key.name;
                     this.$parameters = this.$.key.parameter;
 
-                    if (rAppid._.isFunction(scope[fncName])) {
+                    if (_.isFunction(scope[fncName])) {
                         var fnc = scope[fncName];
                         var events = [];
                         if (fnc._events) {
@@ -82,7 +82,7 @@ define(["js/core/Bindable", "js/core/EventDispatcher", "js/core/BindingParser"],
                         var para;
                         for (var j = 0; j < this.$parameters.length; j++) {
                             para = this.$parameters[j];
-                            if (rAppid._.isObject(para)) {
+                            if (_.isObject(para)) {
                                 this.$parameters[j] = Binding.create(para, this.$.target, cb);
                             }
 
@@ -244,7 +244,7 @@ define(["js/core/Bindable", "js/core/EventDispatcher", "js/core/BindingParser"],
                     var parameters = pathElement.parameters;
                     for (var i = 0; i < parameters.length; i++) {
                         var param = parameters[i];
-                        if (rAppid._.isObject(param)) {
+                        if (_.isObject(param)) {
                             param.type = "static";
                             var binding = Binding.create(param, scope, "", context);
                             if (binding instanceof Binding) {
@@ -264,7 +264,7 @@ define(["js/core/Bindable", "js/core/EventDispatcher", "js/core/BindingParser"],
         } else {
 
             var cb;
-            if (rAppid._.isFunction(attrKey)) {
+            if (_.isFunction(attrKey)) {
                 cb = attrKey;
             }
 
@@ -284,7 +284,7 @@ define(["js/core/Bindable", "js/core/EventDispatcher", "js/core/BindingParser"],
     };
 
     Binding.evaluateText = function (text, scope, attrKey) {
-        if (!rAppid._.isString(text)) return text;
+        if (!_.isString(text)) return text;
         var bindingDefs = Parser.parse(text, "text");
         var binding;
         var bindings = [];

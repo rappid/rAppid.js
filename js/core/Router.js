@@ -1,6 +1,6 @@
-define(["js/core/Component"],
+define(["js/core/Component","underscore"],
 
-    function (Component) {
+    function (Component,_) {
 
         return Component.inherit("js.core.Router", {
             ctor: function () {
@@ -56,7 +56,7 @@ define(["js/core/Component"],
                     route.fn = this.$rootScope[route.onexec];
                 }
 
-                rAppid._.defaults(route, {
+                _.defaults(route, {
                     name: null,
                     route: null,
                     fn: null

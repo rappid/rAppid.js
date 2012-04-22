@@ -1,5 +1,5 @@
-define(["js/core/UIComponent", "js/ui/ContentPlaceHolder", "js/core/Module"],
-    function (UIComponent, ContentPlaceHolder, Module) {
+define(["js/core/UIComponent", "js/ui/ContentPlaceHolder", "js/core/Module", "underscore"],
+    function (UIComponent, ContentPlaceHolder, Module, _) {
         var ModuleLoader = UIComponent.inherit("js.core.ModuleLoader", {
 
             ctor: function (attributes) {
@@ -22,7 +22,7 @@ define(["js/core/UIComponent", "js/ui/ContentPlaceHolder", "js/core/Module"],
             },
 
             addModule: function (module) {
-                rAppid._.defaults(module, {
+                _.defaults(module, {
                     name: null,
                     moduleClass: null,
                     route: null,

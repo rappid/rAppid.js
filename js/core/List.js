@@ -1,4 +1,4 @@
-define(["js/core/Bindable"], function (Bindable) {
+define(["js/core/Bindable", "underscore"], function (Bindable, _) {
     return Bindable.inherit("js.core.List", {
         ctor: function (items, attributes) {
             this.$items = [];
@@ -44,11 +44,11 @@ define(["js/core/Bindable"], function (Bindable) {
 
 
             options = options || {};
-            rAppid._.defaults(options, {silent: false, index: this.$items.length});
+            _.defaults(options, {silent: false, index: this.$items.length});
 
             var index = options.index;
 
-            if (!rAppid._.isArray(items)) {
+            if (!_.isArray(items)) {
                 items = [items];
             }
             var item, itemIndex;
@@ -69,7 +69,7 @@ define(["js/core/Bindable"], function (Bindable) {
         },
         remove: function (items, options) {
 
-            if (!rAppid._.isArray(items)) {
+            if (!_.isArray(items)) {
                 items = [items];
             }
             for (var i = 0; i < items.length; i++) {

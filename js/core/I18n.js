@@ -1,4 +1,4 @@
-define(["require", "js/core/Component"], function (require, Component) {
+define(["require", "js/core/Component", "underscore"], function (require, Component, _) {
     return Component.inherit("js.core.I18n", {
         defaults: {
             path: 'app/locale',
@@ -47,7 +47,7 @@ define(["require", "js/core/Component"], function (require, Component) {
 
             var args = Array.prototype.slice.call(arguments);
             var key = args.shift(), isPlural;
-            if (rAppid._.isNumber(key)) {
+            if (_.isNumber(key)) {
                 isPlural = key !== 1;
                 key = args.shift();
             }

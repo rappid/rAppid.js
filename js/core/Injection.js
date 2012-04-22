@@ -1,4 +1,4 @@
-define(["js/core/Component"], function (Component) {
+define(["js/core/Component", "underscore"], function (Component, _) {
 
 
     function factoryInheritsFrom(factory, type) {
@@ -40,7 +40,7 @@ define(["js/core/Component"], function (Component) {
             // TODO: add class hierarchy distance check
             var instance;
 
-            if (rAppid._.isString(type)) {
+            if (_.isString(type)) {
                 // inject by key
                 if (this.$singletonInstanceCache.hasOwnProperty(type)) {
                     return this.$singletonInstanceCache[type];
@@ -92,7 +92,7 @@ define(["js/core/Component"], function (Component) {
                 }
             }
 
-            rAppid._.defaults(factory, {
+            _.defaults(factory, {
                 "type": null,
                 "factory": null,
                 "singleton": false

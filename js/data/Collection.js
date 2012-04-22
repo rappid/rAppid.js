@@ -1,4 +1,4 @@
-define(["js/core/List", "js/data/Model", "flow"], function (List, Model, flow) {
+define(["js/core/List", "js/data/Model", "flow", "underscore"], function (List, Model, flow, _) {
 
     var cid = 0;
 
@@ -17,7 +17,7 @@ define(["js/core/List", "js/data/Model", "flow"], function (List, Model, flow) {
             this.callBase(items);
             this.$cid = ++cid;
 
-            rAppid._.defaults(options, {
+            _.defaults(options, {
                 rootCollection: null,
                 pageSize: null,
                 queryParameters: {},
@@ -63,7 +63,7 @@ define(["js/core/List", "js/data/Model", "flow"], function (List, Model, flow) {
             };
 
             // different queryParameter, same options
-            rAppid._.defaults(options, this.$options);
+            _.defaults(options, this.$options);
 
             return new Collection(null, options);
         },
@@ -292,7 +292,7 @@ define(["js/core/List", "js/data/Model", "flow"], function (List, Model, flow) {
                     // execute callbacks
                     pageFetchedComplete(err, page, callback);
 
-                    rAppid._.each(self._fetch.callbacks, function (cb) {
+                    _.each(self._fetch.callbacks, function (cb) {
                         cb(err, page);
                     });
                 });

@@ -1,5 +1,5 @@
 define(
-    ["js.core.UIComponent", "js.core.Content"], function (UIComponent, Content) {
+    ["js/core/UIComponent", "js/core/Content", "underscore"], function (UIComponent, Content, _) {
         return UIComponent.inherit({
             render: function () {
                 if (this.isRendered()) {
@@ -18,7 +18,7 @@ define(
                 var children;
                 if (content instanceof Content) {
                     children = content.$children;
-                } else if (rAppid._.isArray(content)) {
+                } else if (_.isArray(content)) {
                     children = content;
                 } else {
                     children = [content];

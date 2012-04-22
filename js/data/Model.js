@@ -1,4 +1,4 @@
-define(["js/core/Bindable", "js/core/List", "flow"], function (Bindable, List, flow) {
+define(["js/core/Bindable", "js/core/List", "flow", "underscore"], function (Bindable, List, flow, _) {
 
     var cid = 0;
 
@@ -55,7 +55,7 @@ define(["js/core/Bindable", "js/core/List", "flow"], function (Bindable, List, f
                     // execute callbacks
                     modelFetchedComplete(err, model, options, callback);
 
-                    rAppid._.each(self._fetch.callbacks, function (cb) {
+                    _.each(self._fetch.callbacks, function (cb) {
                         cb(err, model);
                     });
 
@@ -77,7 +77,7 @@ define(["js/core/Bindable", "js/core/List", "flow"], function (Bindable, List, f
             for (var key in this.$) {
                 if (this.$.hasOwnProperty(key)) {
                     var value = this.$[key];
-                    if (!rAppid._.isFunction(value)) {
+                    if (!_.isFunction(value)) {
                         ret[key] = value;
                     }
                 }
@@ -99,7 +99,7 @@ define(["js/core/Bindable", "js/core/List", "flow"], function (Bindable, List, f
                     if (obj.hasOwnProperty(prop)) {
                         var value = obj[prop];
 
-                        if (rAppid._.isArray(value)) {
+                        if (_.isArray(value)) {
                             // convert array to js.core.List
                             obj[prop] = new List(value);
 
@@ -131,7 +131,7 @@ define(["js/core/Bindable", "js/core/List", "flow"], function (Bindable, List, f
     });
 
     function fetchSubModels(attributes, subModelTypes, delegates) {
-        rAppid._.each(attributes, function (value) {
+        _.each(attributes, function (value) {
             if (value instanceof Model) {
                 // check if the model is required
                 var subModelTypeEntry = subModelTypes[value.className];
@@ -174,7 +174,7 @@ define(["js/core/Bindable", "js/core/List", "flow"], function (Bindable, List, f
                 fetchSubModels(model.$, subModelTypes, delegates);
 
                 // check that all subResources where found
-                var missingSubModels = rAppid._.filter(subModelTypes, function (subModel) {
+                var missingSubModels = _.filter(subModelTypes, function (subModel) {
                     return !subModel.found;
                 });
 
@@ -200,7 +200,7 @@ define(["js/core/Bindable", "js/core/List", "flow"], function (Bindable, List, f
         var ret = {},
             subModelParser = /^([\w][\w.]*)(?:\/([\w][\w.]*))?$/;
 
-        rAppid._.each(subModels, function (item) {
+        _.each(subModels, function (item) {
             var parts = subModelParser.exec(item);
             if (parts) {
                 var subModelType = model.$context.$datasource.getModelClassNameForAlias(parts[1]);

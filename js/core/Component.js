@@ -1,7 +1,7 @@
 define(
-    ["require", "js/core/Element", "js/core/TextElement", "js/core/Binding"],
+    ["require", "js/core/Element", "js/core/TextElement", "js/core/Binding", "underscore"],
 
-    function (require, Element, TextElement, Binding) {
+    function (require, Element, TextElement, Binding, _) {
 
         var Template,
             Configuration;
@@ -63,7 +63,7 @@ define(
 
                     var inject = this._injectChain();
 
-                    if (rAppid._.keys(inject).length > 0) {
+                    if (_.keys(inject).length > 0) {
                         // we need to inject at least on item
 
                         // synchronous singleton instantiation of Injection,
@@ -336,7 +336,7 @@ define(
                             node.textContent = text;
                         }
                         // only instantiation and construction but no initialization
-                        return appDomain.createInstance("js.core.TextElement", [null, node, this.$systemManager, this, this.$rootScope]);
+                        return this.$systemManager.$applicationContext.createInstance("js/core/TextElement", [null, node, this.$systemManager, this, this.$rootScope]);
                     }
 
                     return null;

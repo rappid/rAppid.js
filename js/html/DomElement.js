@@ -1,4 +1,4 @@
-define(["js/core/Component", "js/core/Content", "js/core/Binding", "inherit"], function (Component, Content, Binding, inherit) {
+define(["js/core/Component", "js/core/Content", "js/core/Binding", "inherit", "underscore"], function (Component, Content, Binding, inherit, _) {
 
         var rspace = /\s+/;
         var domEvents = ['click', 'dblclick', 'keyup', 'keydown' , 'change'];
@@ -177,7 +177,7 @@ define(["js/core/Component", "js/core/Content", "js/core/Binding", "inherit"], f
                 }
             },
             _renderChild: function (child) {
-                if (rAppid._.isFunction(child.render)) {
+                if (_.isFunction(child.render)) {
                     var el = child.render();
                     this.$renderedChildren.push(child);
                     if (el) {
@@ -236,13 +236,13 @@ define(["js/core/Component", "js/core/Content", "js/core/Binding", "inherit"], f
                 var method = this.$renderMap[key];
                 var prev = this.$previousAttributes[key];
 
-                if (rAppid._.isUndefined(method)) {
+                if (_.isUndefined(method)) {
                     // generic call of render functions
                     var k = key[0].toUpperCase() + key.substr(1);
                     var methodName = "_render" + k;
                     method = this[methodName];
 
-                    if (!rAppid._.isFunction(method)) {
+                    if (!_.isFunction(method)) {
                         method = false;
                     }
 
@@ -381,13 +381,13 @@ define(["js/core/Component", "js/core/Content", "js/core/Binding", "inherit"], f
             }
         };
 
-        var DomManipulation = inherit.Base.inherit(rAppid._.extend({
+        var DomManipulation = inherit.Base.inherit(_.extend({
             ctor: function (elm) {
                 this.$el = elm;
             }
         }, DomManipulationFunctions));
         var DomElement = Component.inherit("js.core.DomElement",
-            rAppid._.extend(DomElementFunctions, DomManipulationFunctions));
+            _.extend(DomElementFunctions, DomManipulationFunctions));
         return DomElement;
     }
 );

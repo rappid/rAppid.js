@@ -1,8 +1,8 @@
-define(["js/core/EventDispatcher"],
+define(["js/core/EventDispatcher","underscore"],
     /**
      * @export js.core.Bindable
      */
-        function (EventDispatcher) {
+        function (EventDispatcher, _) {
 
         /**
          * @class js.core.Bindable
@@ -16,14 +16,14 @@ define(["js/core/EventDispatcher"],
 
                 this.$ = {};
 
-                rAppid._.extend(this._eventAttributes, this.base._eventAttributes || {});
+                _.extend(this._eventAttributes, this.base._eventAttributes || {});
 
                 attributes = attributes || {};
 
-                rAppid._.defaults(attributes, this._defaultAttributes());
+                _.defaults(attributes, this._defaultAttributes());
 
                 this.$ = attributes;
-                this.$previousAttributes = rAppid._.clone(attributes);
+                this.$previousAttributes = _.clone(attributes);
 
 
                 var self = this, fnc;
@@ -47,13 +47,13 @@ define(["js/core/EventDispatcher"],
                     base = this.base;
 
                 while (base) {
-                    rAppid._.defaults(ret, base[property]);
+                    _.defaults(ret, base[property]);
                     base = base.base;
                 }
                 // clone all attributes
                 for (var k in ret) {
-                    if (ret.hasOwnProperty(k) && !rAppid._.isFunction(ret[k])) {
-                        ret[k] = rAppid._.clone(ret[k]);
+                    if (ret.hasOwnProperty(k) && !_.isFunction(ret[k])) {
+                        ret[k] = _.clone(ret[k]);
                     }
                 }
 
@@ -69,7 +69,7 @@ define(["js/core/EventDispatcher"],
             set: function (key, value, options) {
                 var attributes = {};
 
-                if (rAppid._.isString(key)) {
+                if (_.isString(key)) {
                     // check for path
                     var path = key.split(".");
                     if (path.length > 1) {
@@ -109,7 +109,7 @@ define(["js/core/EventDispatcher"],
                         if (options.unset === true) {
                             delete now[key];
                         } else {
-                            if (!rAppid._.isEqual(now[key], attributes[key])) {
+                            if (!_.isEqual(now[key], attributes[key])) {
                                 this.$previousAttributes[key] = now[key];
 
                                 now[key] = attributes[key];
@@ -122,7 +122,7 @@ define(["js/core/EventDispatcher"],
                 }
                 this._commitChangedAttributes(changedAttributes);
 
-                if (options.silent === false && rAppid._.size(changedAttributes) > 0) {
+                if (options.silent === false && _.size(changedAttributes) > 0) {
                     for (key in changedAttributes) {
                         if (changedAttributes.hasOwnProperty(key)) {
                             this.trigger('change:' + key, changedAttributes[key], this);
@@ -194,7 +194,7 @@ define(["js/core/EventDispatcher"],
                 return this.splitPathOutSide(path, del, left, right)[0];
             },
             findMatchesIn: function (str, left, right, depth) {
-                if (!rAppid._.isString(str)) return [];
+                if (!_.isString(str)) return [];
                 var cl, cr, stack = [], content, ret = [], r;
                 for (var i = 0; i < str.length; i++) {
                     cl = str.substr(i, left.length);

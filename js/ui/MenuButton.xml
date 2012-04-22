@@ -3,10 +3,11 @@
     <js:Imports>
         js.core.Content;
         js.ui.Button;
+        underscore;
     </js:Imports>
     <js:Script type="text/javascript">
         <![CDATA[
-        (function (Content, Button) {
+        (function (Content, Button, _) {
             return {
                 defaults: {
                     tagName: 'div',
@@ -50,7 +51,7 @@
 
                 },
                 _bindDomEvents: function (el) {
-                    if (!rAppid._.contains(this.$instances, this)) {
+                    if (!_.contains(this.$instances, this)) {
                         this.$instances.push(this);
                     }
                     var self = this;

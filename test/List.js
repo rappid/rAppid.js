@@ -1,19 +1,9 @@
-global.inherit = require(__dirname + '/../lib/inherit.js').inherit;
-global.flow = require(__dirname + '/../lib/flow.js').flow;
-
+global.inherit = require(__dirname + '/../js/lib/inherit.js').inherit;
+global.flow = require(__dirname + '/../js/lib/flow.js').flow;
 var should = require('chai').should();
-var requirejs = global.requirejs = require('requirejs');
-var underscore = global.underscore = require(__dirname + '/../lib/underscore-min.js')._;
+var underscore = global.underscore = require(__dirname + '/../js/lib/underscore-min.js')._;
 
-var rAppid = require(__dirname + '/../src/rAppid.js').rAppid;
-
-requirejs.define("rAppid", function () {
-    return rAppid;
-});
-
-requirejs.define("underscore", function () {
-    return underscore;
-});
+var rAppid = require(__dirname + '/../js/lib/rAppid.js').rAppid;
 
 describe('js.core.List', function () {
 

@@ -4,7 +4,7 @@
  *
  * @class js.data.ListView
  */
-define(["js/core/List"], function (List) {
+define(["js/core/List", "underscore"], function (List, _) {
 
     return List.inherit("js.data.ListView", {
 
@@ -52,7 +52,7 @@ define(["js/core/List"], function (List) {
         },
         _onItemChanged: function (e) {
             var keep = this._filterItem(e.$.item, e.$.index);
-            var included = rAppid._.include(this.$items, e.$.item);
+            var included = _.include(this.$items, e.$.item);
             if (included && keep === false) {
                 List.prototype.remove.call(this, e.$.item, e.$.index);
             } else if (!included && keep === true) {

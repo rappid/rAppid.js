@@ -7,7 +7,7 @@ if(!String.prototype.trim){
     };
 }
 
-(function (exports, inherit, requirejs, define, underscore, XMLHttpRequest, flow, document) {
+(function (exports, inherit, requirejs, define, _, XMLHttpRequest, flow, document) {
 
     if (!requirejs) {
         throw "require.js is needed";
@@ -17,7 +17,7 @@ if(!String.prototype.trim){
         throw "define is needed";
     }
 
-    if (!underscore) {
+    if (!_) {
         throw "underscore is needed"
     }
 
@@ -96,7 +96,7 @@ if(!String.prototype.trim){
                 });
 
                 define("underscore", function() {
-                    return underscore;
+                    return _;
                 });
 
                 // define js.core.Base
@@ -104,7 +104,7 @@ if(!String.prototype.trim){
                     return Base;
                 });
 
-                underscore.extend(config, {
+                _.extend(config, {
                     paths: {
                         "xaml": "js/plugins/xaml",
                         "json": "js/plugins/json"
@@ -120,7 +120,6 @@ if(!String.prototype.trim){
 
                 var applicationContext = new ApplicationContext(requirejsContext, config);
                 //applicationContext.document = document;
-                applicationContext._ = underscore;
 
                 define("rAppid", function () {
                     return applicationContext;
@@ -192,15 +191,15 @@ if(!String.prototype.trim){
                 url: url
             };
 
-            rAppid._.extend(s, options, _rAppid.ajaxSettings);
+            _.extend(s, options, _rAppid.ajaxSettings);
 
-            if (s.data && !rAppid._.isString(s.data)) {
+            if (s.data && !_.isString(s.data)) {
                 throw "data must be a string";
             }
 
             s.hasContent = !/^(?:GET|HEAD)$/.test(s.type);
             
-            if (s.queryParameter && underscore.keys(s.queryParameter).length > 0) {
+            if (s.queryParameter && _.keys(s.queryParameter).length > 0) {
                 // append query parameter to url
                 s.url += /\?/.test(s.url) ? "&" : "?" + this.createQueryString(s.queryParameter);
             }
@@ -257,14 +256,7 @@ if(!String.prototype.trim){
             }
 
             return xhr;
-        },
-
-        // export underscore
-        _: underscore,
-        // export inherit
-        inherit: inherit,
-        require: requirejs,
-        document: document
+        }
     };
 
     var rheaders = /^(.*?):[ \t]*([^\r\n]*)\r?$/mg; // IE leaves an \r character at EOL
@@ -553,7 +545,7 @@ if(!String.prototype.trim){
                 fqClassName = (namespace || className).replace(/\./g, '/');
             }
 
-            if (underscore.indexOf(this.$config.xamlClasses, fqClassName) !== -1) {
+            if (_.indexOf(this.$config.xamlClasses, fqClassName) !== -1) {
                 fqClassName = 'xaml!'+ fqClassName;
             }
 

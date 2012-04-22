@@ -1,5 +1,5 @@
-define(["js/core/Component", "js/core/Base", "js/data/Collection"],
-    function (Component, Base, Collection) {
+define(["js/core/Component", "js/core/Base", "js/data/Collection", "underscore"],
+    function (Component, Base, Collection, _) {
 
         var Context = Base.inherit("js.data.DataSource", {
             ctor: function (datasource, properties, parentContext) {
@@ -29,7 +29,7 @@ define(["js/core/Component", "js/core/Base", "js/data/Collection"],
 
             createModel: function (factory, id, type) {
 
-                if (rAppid._.isFunction(factory)) {
+                if (_.isFunction(factory)) {
 
                     type = type || factory.prototype.constructor.name;
 
@@ -58,10 +58,10 @@ define(["js/core/Component", "js/core/Base", "js/data/Collection"],
             createCollection: function (factory, options, type) {
                 options = options || {};
 
-                if (rAppid._.isFunction(factory)) {
+                if (_.isFunction(factory)) {
                     type = type || factory.prototype.constructor.name;
 
-                    rAppid._.defaults(options, {
+                    _.defaults(options, {
                         factory: factory,
                         type: type
                     });
@@ -185,11 +185,11 @@ define(["js/core/Component", "js/core/Base", "js/data/Collection"],
 
             createContextCacheId: function (properties, parentProperties) {
                 var ret = [];
-                rAppid._.each(rAppid._.extend({}, parentProperties, properties), function (value, key) {
+                _.each(_.extend({}, parentProperties, properties), function (value, key) {
                     ret.push(key + "=" + value);
                 });
 
-                rAppid._.sortBy(ret, function (value) {
+                _.sortBy(ret, function (value) {
                     return value;
                 });
 
