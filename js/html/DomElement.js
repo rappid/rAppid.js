@@ -1,7 +1,10 @@
-define(["js/core/Component", "js/core/Content", "js/core/Binding", "inherit", "underscore"], function (Component, Content, Binding, inherit, _) {
+define(["require","js/core/Component", "js/core/Content", "js/core/Binding", "inherit", "underscore"],
+    function (require,Component, Content, Binding, inherit, _) {
 
         var rspace = /\s+/;
         var domEvents = ['click', 'dblclick', 'keyup', 'keydown' , 'change'];
+
+        var ContentPlaceHolder;
 
         var DomElementFunctions = {
             defaults: {
@@ -10,6 +13,7 @@ define(["js/core/Component", "js/core/Content", "js/core/Binding", "inherit", "u
             },
             $behavesAsDomElement: true,
             ctor: function (attributes, descriptor, systemManager, parentScope, rootScope) {
+                ContentPlaceHolder = require("js/ui/ContentPlaceHolder");
                 this.$renderMap = {};
                 this.$childViews = [];
                 this.$contentChildren = [];
@@ -73,7 +77,7 @@ define(["js/core/Component", "js/core/Content", "js/core/Binding", "inherit", "u
                 for (var i = 0; i < this.$children.length; i++) {
                     child = this.$children[i];
 
-                    if (child instanceof require("js/ui/ContentPlaceHolder")) {
+                    if (child instanceof ContentPlaceHolder) {
                         ret.push(child);
                     } else if (child instanceof DomElement) {
                         ret = ret.concat(child.getContentPlaceHolders());
