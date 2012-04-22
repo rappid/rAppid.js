@@ -1,4 +1,4 @@
-define(["js/core/EventDispatcher","underscore"],
+define(["js/core/EventDispatcher", "underscore"],
     /**
      * @export js.core.Bindable
      */

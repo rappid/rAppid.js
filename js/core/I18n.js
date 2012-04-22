@@ -27,13 +27,13 @@ define(["require", "js/core/Component", "underscore"], function (require, Compon
 
             var self = this;
             require(['json!' + this.$.path + '/' + this.$.locale + this.$.suffix], function (translations) {
-                if (callback) {
-                    callback();
-                }
-
                 self.set({
                     translations: translations
                 });
+
+                if (callback) {
+                    callback();
+                }
             });
         },
 

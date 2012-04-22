@@ -1,4 +1,4 @@
-define(["js/ui/SelectionView","underscore"], function (SelectionView,_) {
+define(["js/ui/SelectionView", "underscore"], function (SelectionView, _) {
         return SelectionView.inherit("js.html.Select", {
             defaults: {
                 multiSelect: false,

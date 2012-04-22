@@ -1,5 +1,5 @@
-define(["js/core/UIComponent", "js/ui/ContentPlaceHolder", "js/core/Module", "underscore"],
-    function (UIComponent, ContentPlaceHolder, Module, _) {
+define(["require", "js/core/UIComponent", "js/ui/ContentPlaceHolder", "js/core/Module", "underscore", "js/conf/Module"],
+    function (require, UIComponent, ContentPlaceHolder, Module, _, ModuleConfiguration) {
         var ModuleLoader = UIComponent.inherit("js.core.ModuleLoader", {
 
             ctor: function (attributes) {
@@ -14,7 +14,7 @@ define(["js/core/UIComponent", "js/ui/ContentPlaceHolder", "js/core/Module", "un
                 for (var i = 0; i < this.$configurations.length; i++) {
                     var config = this.$configurations[i];
 
-                    if (config && config.className == "js.conf.Module") {
+                    if (config instanceof ModuleConfiguration) {
                         this.addModule(config.$);
                     }
                 }
@@ -113,7 +113,7 @@ define(["js/core/UIComponent", "js/ui/ContentPlaceHolder", "js/core/Module", "un
                 if (!eventResult.isDefaultPrevented) {
                     // load module
 
-                    this.$systemManager.$requirejsContext([rAppid.makeRequireName(moduleFqClassName)], function (moduleBaseClass) {
+                    require([this.$systemManager.$applicationContext.getFqClassName(moduleFqClassName)], function (moduleBaseClass) {
                         var moduleInstance = new moduleBaseClass(null, false, self.$systemManager, null, null);
 
                         if (moduleInstance instanceof Module) {

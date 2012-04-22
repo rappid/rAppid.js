@@ -179,6 +179,7 @@ define(["require", "js/data/DataSource", "js/core/Base", "js/core/List", "unders
                         return {
                             context: this.getContextPropertiesFromReference(reference),
                             modelClassName: config.$.modelClassName,
+                            requireClassName: this.$systemManager.$applicationContext.getFqClassName(config.$.modelClassName),
                             type: config.$.alias,
                             id: id,
                             path: path
@@ -244,7 +245,7 @@ define(["require", "js/data/DataSource", "js/core/Base", "js/core/List", "unders
             var requiredClasses = [];
             for (var i = 0; i < referenceInformation.length; i++) {
                 var info = referenceInformation[i];
-                var requiredClassname = this.$systemManager.$applicationContext.getFqClassName(info.modelClassName);
+                var requiredClassname = info.requireClassName;
 
                 if (_.indexOf(requiredClasses, requiredClassname) == -1) {
                     requiredClasses.push(requiredClassname);

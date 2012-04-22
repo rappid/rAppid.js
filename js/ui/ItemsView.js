@@ -1,5 +1,5 @@
 define(
-    ["js/ui/View", "js/core/Template", "js/core/List", "underscore"], function (View, Template, List,_) {
+    ["js/ui/View", "js/core/Template", "js/core/List", "underscore"], function (View, Template, List, _) {
         return View.inherit({
             defaults: {
                 tagName: "div",

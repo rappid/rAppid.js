@@ -165,8 +165,6 @@ define(
                         // FIRST ADD CHILD
                         var child = childComponents[i];
 
-                        console.log([child.constructor.name, child.classname]);
-
                         if (child instanceof Template) {
                             this.addTemplate(child);
                         } else if (child instanceof Configuration) {
