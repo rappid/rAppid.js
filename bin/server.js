@@ -17,16 +17,6 @@ var port = 8080,
     applicationFile = 'app/Grid.xml',
     configFile = 'config.json';
 
-
-//var requireJsContext = requirejs.config({
-//
-//    baseUrl: applicationDir,
-//    nodeRequire: require,
-//
-//    applicationDir: applicationDir,
-//    applicationUrl: baseUrl
-//});
-
 flow()
     .seq("indexContent", function(cb){
         fs.readFile(path.join(applicationDir, indexFile), cb);
@@ -49,7 +39,7 @@ flow()
         });
     })
     .seq("applicationContext", function(cb){
-        rAppid.createApplicationContext(requirejs, null, applicationFile, this.vars.applicationConfig, cb);
+        rAppid.createApplicationContext(null, applicationFile, this.vars.applicationConfig, cb);
     })
     .seq(function(){
         this.vars.applicationContext.document = jsdom.jsdom('<html></html>');
@@ -76,7 +66,6 @@ flow()
                     });
 
                     return doc;
-
                 })
                 .seq("app", function(cb){
                     applicationContext.createApplicationInstance(cb.vars.doc, function(err, systemManager, application){

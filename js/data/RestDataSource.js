@@ -329,7 +329,7 @@ define(["require", "js/data/DataSource", "js/core/Base", "js/core/List", "unders
             var self = this;
 
             // send request
-            rAppid.ajax(url, {
+            this.$systemManager.$applicationContext.ajax(url, {
                 type: "GET",
                 queryParameter: params
             }, function (err, xhr) {
@@ -422,7 +422,7 @@ define(["require", "js/data/DataSource", "js/core/Base", "js/core/List", "unders
             var self = this;
 
             // send request
-            rAppid.ajax(url, {
+            this.$systemManager.$applicationContext.ajax(url, {
                 type: "GET",
                 queryParameter: params
             }, function (err, xhr) {

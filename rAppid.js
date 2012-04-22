@@ -61,7 +61,7 @@ if(!String.prototype.trim){
 
     var _rAppid = {
 
-        createApplicationContext: function(requirejsContext, applicationDomain, mainClass, config, callback) {
+        createApplicationContext: function(applicationDomain, mainClass, config, callback) {
 
             config = config || {};
 
@@ -97,7 +97,7 @@ if(!String.prototype.trim){
                 // and add it to config object, so it can used from xaml.js
                 config.applicationDomain = applicationDomain;
 
-                requirejsContext.config(config);
+                var requirejsContext = requirejs.config(config);
 
                 var applicationContext = new ApplicationContext(requirejsContext, config);
                 //applicationContext.document = document;
@@ -118,9 +118,11 @@ if(!String.prototype.trim){
                         mainClass = mainClass.replace(/\./g, "/");
                     }
 
-                    requirejsContext([mainClass], function (applicationFactory) {
-                        applicationContext.$applicationFactory = applicationFactory;
-                        callback(null, applicationContext);
+                    requirejsContext(["require"], function () {
+                        requirejsContext([mainClass], function (applicationFactory) {
+                            applicationContext.$applicationFactory = applicationFactory;
+                            callback(null, applicationContext);
+                        });
                     });
 
                 } else {
@@ -140,7 +142,7 @@ if(!String.prototype.trim){
         },
 
         bootStrap: function (mainClass, config, callback) {
-            _rAppid.createApplicationContext(requirejs, null, mainClass, config, function(err, applicationContext){
+            _rAppid.createApplicationContext(null, mainClass, config, function(err, applicationContext){
                 if (err || !applicationContext) {
                     callback(err || "ApplicationContext missing");
                 } else {
@@ -184,11 +186,6 @@ if(!String.prototype.trim){
 
             if (s.data && s.hasContent && s.contentType !== false) {
                 xhr.setRequestHeader("Content-Type", s.contentType);
-            }
-
-            // TODO: don't use requirejs for this, use a rAppid instance and config these
-            if (requirejs.config.applicationUrl) {
-                url = requirejs.config.applicationUrl + "/" + url;
             }
 
             // create new xhr
@@ -371,7 +368,7 @@ if(!String.prototype.trim){
 
             fqClassName = fqClassName.replace(/\./g, "/");
 
-            var classDefinition = require(fqClassName);
+            var classDefinition = this.$requirejsContext(fqClassName);
 
             function construct(constructor, args) {
                 function F() {
@@ -392,7 +389,6 @@ if(!String.prototype.trim){
 
             return ret;
         },
-
 
         ajax: function(url, options, callback) {
 

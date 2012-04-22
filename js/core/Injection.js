@@ -30,9 +30,10 @@ define(["js/core/Component", "underscore"], function (Component, _) {
             for (var c = 0; c < this.$configurations.length; c++) {
                 var config = this.$configurations[c];
 
-                if (config.className == "js.conf.Factory") {
-                    this.addFactory(config.$);
-                }
+
+                // TEST type of configuration
+                this.addFactory(config.$);
+
             }
         },
 
