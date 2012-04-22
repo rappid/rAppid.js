@@ -1,22 +1,19 @@
-requirejs(["rAppid"], function (rAppid) {
+define(
+    ["js/ui/View"], function (View) {
 
-    rAppid.defineClass("js.ui.HTMLView",
-        ["js.ui.View"], function (View) {
+        return View.inherit({
+            _getChildrenFromDescriptor: function (descriptor) {
+                return [];
+            },
+            _renderChildren: function () {
 
-            return View.inherit({
-                _getChildrenFromDescriptor: function(descriptor){
-                    return [];
-                },
-                _renderChildren:function () {
+            },
+            _renderContentChildren: function () {
 
-                },
-                _renderContentChildren:function () {
-
-                },
-                _renderHTML:function (html, oldString) {
-                    this.$el.innerHTML = html;
-                }
-            });
-        }
-    );
-});
+            },
+            _renderHTML: function (html, oldString) {
+                this.$el.innerHTML = html;
+            }
+        });
+    }
+);

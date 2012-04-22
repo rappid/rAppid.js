@@ -8,21 +8,21 @@ define(function () {
          * which the parser was generated (see |PEG.buildParser|). If the parsing is
          * unsuccessful, throws |PEG.parser.SyntaxError| describing the error.
          */
-        parse:function (input, startRule) {
+        parse: function (input, startRule) {
             var parseFunctions = {
-                "binding":parse_binding,
-                "fnc":parse_fnc,
-                "number":parse_number,
-                "parameter":parse_parameter,
-                "parameterArray":parse_parameterArray,
-                "path":parse_path,
-                "pathElement":parse_pathElement,
-                "staticBinding":parse_staticBinding,
-                "string":parse_string,
-                "text":parse_text,
-                "twoWayBinding":parse_twoWayBinding,
-                "var":parse_var,
-                "varName":parse_varName
+                "binding": parse_binding,
+                "fnc": parse_fnc,
+                "number": parse_number,
+                "parameter": parse_parameter,
+                "parameterArray": parse_parameterArray,
+                "path": parse_path,
+                "pathElement": parse_pathElement,
+                "staticBinding": parse_staticBinding,
+                "string": parse_string,
+                "text": parse_text,
+                "twoWayBinding": parse_twoWayBinding,
+                "var": parse_var,
+                "varName": parse_varName
             };
 
             if (startRule !== undefined) {
@@ -173,8 +173,8 @@ define(function () {
 
 
                 cache[cacheKey] = {
-                    nextPos:pos,
-                    result:result0
+                    nextPos: pos,
+                    result: result0
                 };
                 return result0;
             }
@@ -192,7 +192,7 @@ define(function () {
                 var result1 = parse_varName();
                 var result2 = result1 !== null
                     ? (function (n) {
-                    return {name:n, type:'var'};
+                    return {name: n, type: 'var'};
                 })(result1)
                     : null;
                 if (result2 !== null) {
@@ -204,8 +204,8 @@ define(function () {
 
 
                 cache[cacheKey] = {
-                    nextPos:pos,
-                    result:result0
+                    nextPos: pos,
+                    result: result0
                 };
                 return result0;
             }
@@ -315,8 +315,8 @@ define(function () {
 
 
                 cache[cacheKey] = {
-                    nextPos:pos,
-                    result:result0
+                    nextPos: pos,
+                    result: result0
                 };
                 return result0;
             }
@@ -371,8 +371,8 @@ define(function () {
 
 
                 cache[cacheKey] = {
-                    nextPos:pos,
-                    result:result0
+                    nextPos: pos,
+                    result: result0
                 };
                 return result0;
             }
@@ -414,8 +414,8 @@ define(function () {
 
 
                 cache[cacheKey] = {
-                    nextPos:pos,
-                    result:result0
+                    nextPos: pos,
+                    result: result0
                 };
                 return result0;
             }
@@ -530,8 +530,8 @@ define(function () {
 
 
                 cache[cacheKey] = {
-                    nextPos:pos,
-                    result:result0
+                    nextPos: pos,
+                    result: result0
                 };
                 return result0;
             }
@@ -591,7 +591,7 @@ define(function () {
                 }
                 var result2 = result1 !== null
                     ? (function (n, pa) {
-                    return {name:n, type:'fnc', parameter:pa };
+                    return {name: n, type: 'fnc', parameter: pa };
                 })(result1[0], result1[2])
                     : null;
                 if (result2 !== null) {
@@ -603,8 +603,8 @@ define(function () {
 
 
                 cache[cacheKey] = {
-                    nextPos:pos,
-                    result:result0
+                    nextPos: pos,
+                    result: result0
                 };
                 return result0;
             }
@@ -634,8 +634,8 @@ define(function () {
 
 
                 cache[cacheKey] = {
-                    nextPos:pos,
-                    result:result0
+                    nextPos: pos,
+                    result: result0
                 };
                 return result0;
             }
@@ -749,8 +749,8 @@ define(function () {
 
 
                 cache[cacheKey] = {
-                    nextPos:pos,
-                    result:result0
+                    nextPos: pos,
+                    result: result0
                 };
                 return result0;
             }
@@ -803,7 +803,7 @@ define(function () {
                 }
                 var result2 = result1 !== null
                     ? (function (path) {
-                    return path ? {path:path, type:'normal'} : false;
+                    return path ? {path: path, type: 'normal'} : false;
                 })(result1[1])
                     : null;
                 if (result2 !== null) {
@@ -815,8 +815,8 @@ define(function () {
 
 
                 cache[cacheKey] = {
-                    nextPos:pos,
-                    result:result0
+                    nextPos: pos,
+                    result: result0
                 };
                 return result0;
             }
@@ -882,8 +882,8 @@ define(function () {
 
 
                 cache[cacheKey] = {
-                    nextPos:pos,
-                    result:result0
+                    nextPos: pos,
+                    result: result0
                 };
                 return result0;
             }
@@ -935,8 +935,8 @@ define(function () {
 
 
                 cache[cacheKey] = {
-                    nextPos:pos,
-                    result:result0
+                    nextPos: pos,
+                    result: result0
                 };
                 return result0;
             }
@@ -1035,8 +1035,8 @@ define(function () {
 
 
                 cache[cacheKey] = {
-                    nextPos:pos,
-                    result:result0
+                    nextPos: pos,
+                    result: result0
                 };
                 return result0;
             }
@@ -1105,7 +1105,7 @@ define(function () {
                     }
                 }
 
-                return { line:line, column:column };
+                return { line: line, column: column };
             }
 
 
@@ -1148,7 +1148,7 @@ define(function () {
         },
 
         /* Returns the parser source code. */
-        toSource:function () {
+        toSource: function () {
             return this._source;
         }
     };

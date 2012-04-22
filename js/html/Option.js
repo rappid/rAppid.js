@@ -1,11 +1,9 @@
-requirejs(["rAppid"], function (rAppid) {
-    rAppid.defineClass("js.html.Option",
-        ["js.html.DomElement"], function (DomElement) {
-            return DomElement.inherit({
-                _renderSelected: function(selected){
-                    this.$el.selected = selected;
-                }
-            });
-        }
-    );
-});
+define(
+    ["js/html/DomElement"], function (DomElement) {
+        return DomElement.inherit("js.html.Option", {
+            _renderSelected: function (selected) {
+                this.$el.selected = selected;
+            }
+        });
+    }
+);

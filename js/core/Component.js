@@ -1,15 +1,15 @@
-requirejs(["rAppid"], function (rAppid) {
+define(
+    ["require", "js/core/Element", "js/core/TextElement", "js/core/Binding"],
 
-    rAppid.defineClass("js.core.Component",
-        ["js.core.Element", "js.core.TextElement", "js.core.Binding"],
+    function (require, Element, TextElement, Binding) {
 
-        function (Element, TextElement, Binding) {
+        var Template,
+            Configuration;
 
+        var Component = Element.inherit("js.core.Component",
+            /** @lends Component# */
 
-            var Component = Element.inherit(
-                /** @lends Component# */
-
-                {
+            {
                 /***
                  * What up??
                  * @param attributes The attributes of the component
@@ -21,6 +21,9 @@ requirejs(["rAppid"], function (rAppid) {
                  * @constructs
                  */
                 ctor: function (attributes, descriptor, systemManager, parentScope, rootScope) {
+
+                    Template = Template || require('js/core/Template');
+                    Configuration = Configuration || require('js/conf/Configuration');
 
                     this.$components = [];
 
@@ -38,7 +41,7 @@ requirejs(["rAppid"], function (rAppid) {
                  * @param {String} e.$.value Your value
                  *
                  */
-                events:[
+                events: [
                     "ontest"
 
                 ],
@@ -47,7 +50,7 @@ requirejs(["rAppid"], function (rAppid) {
                  * @key {String} name of the variable for this.$key
                  * @value {Required Class}
                  */
-                inject:{},
+                inject: {},
                 _injectChain: function () {
                     return this._generateDefaultsChain("inject");
                 },
@@ -162,9 +165,11 @@ requirejs(["rAppid"], function (rAppid) {
                         // FIRST ADD CHILD
                         var child = childComponents[i];
 
-                        if (child.constructor.name == "js.core.Template") {
+                        console.log([child.constructor.name, child.classname]);
+
+                        if (child instanceof Template) {
                             this.addTemplate(child);
-                        } else if (child.className.indexOf("js.conf") == 0) {
+                        } else if (child instanceof Configuration) {
                             this.addConfiguration(child);
                         } else {
                             this.addChild(childComponents[i]);
@@ -208,7 +213,6 @@ requirejs(["rAppid"], function (rAppid) {
                         current = current.base;
                     }
 
-
                     // and add outside descriptor
                     descriptors.push(this.$descriptor);
                     var desc, node, text;
@@ -222,7 +226,7 @@ requirejs(["rAppid"], function (rAppid) {
 
                     this._childrenInitialized();
                 },
-                _cleanUpDescriptor: function(desc){
+                _cleanUpDescriptor: function (desc) {
                     if (desc) {
                         var node, text;
                         // remove empty text nodes
@@ -241,7 +245,7 @@ requirejs(["rAppid"], function (rAppid) {
                 /**
                  * an array of attributes names, which will expect handler functions
                  */
-                _isEventAttribute:function (attributeName) {
+                _isEventAttribute: function (attributeName) {
                     return attributeName.indexOf("on") == 0;
                     // return this._eventAttributes.hasOwnProperty(attributeName);
                 },
@@ -249,15 +253,15 @@ requirejs(["rAppid"], function (rAppid) {
                  * Returns true if event is defined in Component event list
                  * @param event
                  */
-                _isComponentEvent: function(event){
-                    for(var i = 0 ; i < this.events.length; i++){
-                        if(event == this.events[i]){
+                _isComponentEvent: function (event) {
+                    for (var i = 0; i < this.events.length; i++) {
+                        if (event == this.events[i]) {
                             return true;
                         }
                     }
                     return false;
                 },
-                _getEventTypeForAttribute:function (eventName) {
+                _getEventTypeForAttribute: function (eventName) {
                     // TODO: implement eventAttribites as hash
                     return this._eventAttributes[eventName];
                 },
@@ -278,30 +282,30 @@ requirejs(["rAppid"], function (rAppid) {
                             var value = attributes[key];
 
                             if (this._isEventAttribute(key)) {
-                                if(this.$rootScope[value]){
+                                if (this.$rootScope[value]) {
 
                                     this.$eventDefinitions.push({
-                                        name:key,
-                                        scope:this.$rootScope,
-                                        fncName:value
+                                        name: key,
+                                        scope: this.$rootScope,
+                                        fncName: value
                                     });
-                                    if(this._isComponentEvent(key.substr(2))){
-                                        this.bind(key,this.$rootScope[value], this.$rootScope);
+                                    if (this._isComponentEvent(key.substr(2))) {
+                                        this.bind(key, this.$rootScope[value], this.$rootScope);
                                     }
-                                    
-                                }else{
+
+                                } else {
                                     throw "Couldn't find callback " + value + " for " + key + " event";
                                 }
 
                                 delete attributes[key];
                             } else {
-                                this.$[key] = Binding.evaluateText(value,this,key);
+                                this.$[key] = Binding.evaluateText(value, this, key);
                             }
                         }
                     }
 
                     for (var c = 0; c < this.$components.length; c++) {
-                       this.$components[c]._initializeBindings();
+                        this.$components[c]._initializeBindings();
                     }
 
                     this.callBase();
@@ -312,17 +316,18 @@ requirejs(["rAppid"], function (rAppid) {
                  * @param attributes for new Component
                  */
                 _createComponentForNode: function (node, attributes) {
-                    if(!node) return null;
+                    if (!node) return null;
 
                     attributes = attributes || {};
                     // only instantiation and construction but no initialization
                     var appDomain = this.$systemManager.$applicationDomain;
 
                     if (node.nodeType == 1) { // Elements
-                        var fqClassName = appDomain.getFqClassName(node.namespaceURI, this._localNameFromDomNode(node), true);
-                        var className = appDomain.getFqClassName(node.namespaceURI, this._localNameFromDomNode(node), false);
 
-                        return appDomain.createInstance(fqClassName, [attributes, node, this.$systemManager, this, this.$rootScope], className);
+                        var fqClassName = this.$systemManager.$applicationContext.getFqClassName(node.namespaceURI, this._localNameFromDomNode(node), true);
+                        var className = this.$systemManager.$applicationContext.getFqClassName(node.namespaceURI, this._localNameFromDomNode(node), false);
+
+                        return this.$systemManager.$applicationContext.createInstance(fqClassName, [attributes, node, this.$systemManager, this, this.$rootScope], className);
 
                     } else if (node.nodeType == 3) { // Textnodes
                         // remove whitespaces from text textnodes
@@ -340,14 +345,14 @@ requirejs(["rAppid"], function (rAppid) {
                  * Converts all child nodes of a descriptor to instances of Components or TextElement
                  * @param descriptor
                  */
-                _getChildrenFromDescriptor:function (descriptor) {
+                _getChildrenFromDescriptor: function (descriptor) {
                     var childrenFromDescriptor = [], node, component;
 
                     if (descriptor) {
                         for (var i = 0; i < descriptor.childNodes.length; i++) {
                             node = descriptor.childNodes[i];
                             component = this._createComponentForNode(node);
-                            if(component){
+                            if (component) {
                                 childrenFromDescriptor.push(component);
                             }
                         }
@@ -380,7 +385,6 @@ requirejs(["rAppid"], function (rAppid) {
                 }
             });
 
-            return Component;
-        }
-    );
-});
+        return Component;
+    }
+);

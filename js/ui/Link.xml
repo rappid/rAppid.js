@@ -3,19 +3,19 @@
     <js:Script><![CDATA[
         (function () {
             return {
-                defaults:{
-                    tagName:'a',
-                    href:null,
-                    label:' '
+                defaults: {
+                    tagName: 'a',
+                    href: null,
+                    label: ' '
                 },
-                _renderIconClass:function (iconClass, oldIconClass) {
+                _renderIconClass: function (iconClass, oldIconClass) {
                     if (iconClass) {
-                        this._renderTemplateToPlaceHolder('iconTemplate', 'icon', {$iconClass:iconClass});
+                        this._renderTemplateToPlaceHolder('iconTemplate', 'icon', {$iconClass: iconClass});
                     } else {
                         this.getPlaceHolder("icon").clear();
                     }
                 },
-                _renderHref:function (href) {
+                _renderHref: function (href) {
                     if (this.$tagName == "a") {
                         this.$el.setAttribute("href", href || "#");
                         if (!href) {

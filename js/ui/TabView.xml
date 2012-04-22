@@ -9,12 +9,12 @@
         <![CDATA[
         (function (View, SelectionView, SegmentedView) {
             return {
-                defaults:{
-                    selectedIndex:0,
-                    selectedView:null,
+                defaults: {
+                    selectedIndex: 0,
+                    selectedView: null,
                     tabClassName: 'nav nav-tabs'
                 },
-                _initializeLayoutChildren:function (children) {
+                _initializeLayoutChildren: function (children) {
                     var child;
                     var self = this;
                     for (var i = 0; i < children.length; i++) {
@@ -29,7 +29,7 @@
                     }
                     this.callBase();
                 },
-                _renderChild:function (child) {
+                _renderChild: function (child) {
                     if (child instanceof View && child != this.$selectionView && child != this.$segmentedView) {
                         this.$selectionView.addItem(child);
                         this.$segmentedView.addChild(child);
@@ -37,16 +37,16 @@
                         this.callBase();
                     }
                 },
-                _onTabChange:function (e) {
+                _onTabChange: function (e) {
                     if (e.$.length > 0) {
-                        this.$segmentedView.set({visibleView:e.$[0].$.$item});
+                        this.$segmentedView.set({visibleView: e.$[0].$.$item});
                     }
                 },
-                _renderSelectedIndex:function (index) {
-                    this.$selectionView.set({selectedIndex:index});
+                _renderSelectedIndex: function (index) {
+                    this.$selectionView.set({selectedIndex: index});
                 },
-                _renderSelectedView:function (view) {
-                    this.$selectionView.set({selectedView:view});
+                _renderSelectedView: function (view) {
+                    this.$selectionView.set({selectedView: view});
                 }
 
             }
@@ -56,7 +56,9 @@
     <js:Template name="layout">
         <ui:SelectionView tagName="ul" class="{tabClassName}" needsSelection="true" forceSelectable="true">
             <js:Template name="item">
-                <ui:View tagName="li"><ui:Link label="{$item.title}"/></ui:View>
+                <ui:View tagName="li">
+                    <ui:Link label="{$item.title}"/>
+                </ui:View>
             </js:Template>
         </ui:SelectionView>
         <ui:SegmentedView/>

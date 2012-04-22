@@ -1,20 +1,18 @@
-requirejs(["rAppid"], function (rAppid) {
-    /***
-     *
-     * Filters items inside a list
-     *
-     * @class js.data.ListView
-     */
-    rAppid.defineClass("js.data.ListView", ["js.core.List"], function (List) {
+/***
+ *
+ * Filters items inside a list
+ *
+ * @class js.data.ListView
+ */
+define(["js/core/List"], function (List) {
 
-        return List.inherit({
-            ctor: function() {
+    return List.inherit("js.data.FilterListView", {
+        ctor: function () {
 
-            },
+        },
 
-            a: function(x, y, z) {
+        a: function (x, y, z) {
 
-            }
-        });
+        }
     });
 });

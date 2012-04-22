@@ -3,11 +3,11 @@
     <js:Script>
         (function () {
             return {
-                defaults:{
-                    tagName:'button',
-                    'class':'btn'
+                defaults: {
+                    tagName: 'button',
+                    'class': 'btn'
                 },
-                _renderIconClass:function (iconClass) {
+                _renderIconClass: function (iconClass) {
                     if (iconClass) {
                         if (!this.$iconComponent) {
                             // get Icon Template
@@ -15,11 +15,11 @@
                             // TODO: remove this shop!
                             tpl._initialize();
                             // render icon template
-                            this.$iconComponent = tpl.createComponent({$iconClass:iconClass});
+                            this.$iconComponent = tpl.createComponent({$iconClass: iconClass});
                             this.$iconComponent.initialize();
-                            this.getPlaceholderByCid('icon').set({content:this.$iconComponent});
+                            this.getPlaceholderByCid('icon').set({content: this.$iconComponent});
                         } else {
-                            this.$iconComponent.set({$iconClass:iconClass});
+                            this.$iconComponent.set({$iconClass: iconClass});
                         }
                         // append as child first child
                     } else {
@@ -27,15 +27,15 @@
                         delete this.$iconComponent;
                     }
                 },
-                _renderLabel:function (label) {
+                _renderLabel: function (label) {
                     if (label) {
                         if (!this.$labelComponent) {
                             var tpl = this.getTemplate('label');
                             if (tpl) {
                                 tpl._initialize();
-                                this.$labelComponent = tpl.createComponent({$label:label});
+                                this.$labelComponent = tpl.createComponent({$label: label});
                                 this.$labelComponent.initialize();
-                                this.getPlaceholderByCid('label').set({content:this.$labelComponent});
+                                this.getPlaceholderByCid('label').set({content: this.$labelComponent});
                             }
                         }
                     }
@@ -54,7 +54,7 @@
 
 
     <js:Template name="layout">
-        <js:Template ref="left" />
+        <js:Template ref="left"/>
         <js:Template ref="right"/>
     </js:Template>
     <!-- DEFAULT ICON CLASS TEMPLATE-->

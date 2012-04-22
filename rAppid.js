@@ -36,9 +36,9 @@ if(!String.prototype.trim){
 
     var Base = inherit.Base.inherit({
         ctor: function () {
-            if (!this.className) {
-                this.className = this.constructor.name;
-            }
+//            if (!this.className) {
+//                this.className = this.constructor.name;
+//            }
         },
         runsInBrowser: function () {
             return typeof window !== "undefined";
@@ -68,7 +68,7 @@ if(!String.prototype.trim){
             new Rewrite(/^js.html.(textarea)$/, "js.html.TextArea"),
             new Rewrite(/^js.html.(option)$/, "js.html.Option"),
             new Rewrite(/^js.html.(.+)$/, "js.html.DomElement"),
-            new Rewrite(/^js.conf.(.+)$/, "js.core.Component")
+            new Rewrite(/^js.conf.(.+)$/, "js.conf.Configuration")
         ];
 
     var _rAppid = {
@@ -111,14 +111,14 @@ if(!String.prototype.trim){
                     }
                 });
 
-                applicationDomain = applicationDomain || new ApplicationDomain(config.namespaceMap, config.rewriteMap);
+//                applicationDomain = applicationDomain || new ApplicationDomain(config.namespaceMap, config.rewriteMap);
 
                 // and add it to config object, so it can used from xaml.js
                 config.applicationDomain = applicationDomain;
 
                 requirejsContext.config(config);
 
-                var applicationContext = new ApplicationContext(applicationDomain, requirejsContext, config);
+                var applicationContext = new ApplicationContext(requirejsContext, config);
                 //applicationContext.document = document;
                 applicationContext._ = underscore;
 
@@ -315,185 +315,184 @@ if(!String.prototype.trim){
         }
     };
 
-    var ApplicationDomain = _rAppid.ApplicationDomain = inherit.Base.inherit({
-        ctor: function(namespaceMap, rewriteMap, parentDomain) {
-            this.$namespaceMap = namespaceMap || {};
-            this.$rewriteMap = rewriteMap || defaultRewriteMap;
-            this.$ns = {};
-            this.$parentDomain = parentDomain;
-        },
-        /**
-         *
-         * loads all dependencies and defines a class under the given fqClassname
-         *
-         * @param fqClassName full qualified classname (e.g. js.ui.myComponent)
-         * @param dependencies as hash or array
-         * @param generateFactor a function that return the factory function invoked after all dependencies are loaded
-         */
-        defineClass: function (fqClassName, dependencies, generateFactor) {
-            // create the namespace and install the class
-            if (!fqClassName || fqClassName == "") {
-                throw "Full qualified class name '" + fqClassName + "' in wrong format. Use dot notation.";
-            }
-
-            var self = this;
-            var realDependencies = [];
-
-            if (dependencies) {
-                for (var i = 0; i < dependencies.length; i++) {
-                    realDependencies.push(dependencies[i].replace(/\./g, "/"));
-                }
-            }
-
-            define(fqClassName.replace(/\./g, "/"), realDependencies, function () {
-
-                var factory = generateFactor.apply(this, arguments);
-                factory.prototype.constructor.name = fqClassName;
-
-                if (!self.installClass(self.$ns, fqClassName.split("."), factory)) {
-                    throw "Class '" + fqClassName + "' could not be installed";
-                }
-
-                return factory;
-            });
-
-        },
-
-        /**
-         * registers an XAML component
-         *
-         * differs from normal class registration because, dependencies are loaded
-         * and class has to be installed immedently
-         *
-         * @param fqClassName
-         * @param dependencies
-         * @param factory
-         */
-        defineXamlClass: function (fqClassName, dependencies, factory) {
-            // create the namespace and install the class
-            if (!fqClassName || fqClassName == "") {
-                throw "Full qualified class name '" + fqClassName + "' in wrong format. Use dot notation.";
-            }
-
-            var normalizeRegex = /\//g;
-
-            fqClassName = fqClassName.replace(normalizeRegex, ".");
-            factory.prototype.constructor.name = fqClassName;
-
-            if (!this.installClass(this.$ns, fqClassName.split("."), factory)) {
-                throw "Class '" + fqClassName + "' could not be installed";
-            }
-
-            define(fqClassName.replace(/\./g, "/"), dependencies, function () {
-                return factory;
-            });
-
-        },
-
-        getDefinition: function (fqClassName) {
-
-            function getDefinition (currentNamespace, classPath) {
-
-                if (classPath.length > 0) {
-                    var part = classPath.shift();
-                    if (currentNamespace.hasOwnProperty(part)) {
-                        var value = currentNamespace[part];
-
-                        if (value instanceof Function) {
-                            if (classPath.length == 0) {
-                                return value;
-                            } else {
-                                throw "unterminated classpath";
-                            }
-                        } else {
-                            return getDefinition.call(this, currentNamespace[part], classPath);
-                        }
-                    }
-                }
-
-                return null;
-            }
-
-            return getDefinition.call(this, this.$ns, fqClassName.split("."));
-        },
-        hasDefinition: function (fqClassName) {
-            return this.getDefinition(fqClassName) ? true : false;
-        },
-
-        createInstance: function (fqClassName, args, className) {
-            className = className || fqClassName;
-            args = args || [];
-
-            var classDefinition = this.getDefinition(fqClassName);
-
-            function construct(constructor, args) {
-                function F() {
-                    return constructor.apply(this, args);
-                }
-
-                F.prototype = constructor.prototype;
-                return new F();
-            }
-
-            var ret;
-            try {
-                ret = construct(classDefinition, args);
-                ret.className = className;
-            } catch (e) {
-                console.log("Cannot create instance of '" + fqClassName + "'");
-            }
-
-            return ret;
-        },
-
-        getFqClassName: function (namespace, className, useRewriteMap) {
-            if (useRewriteMap == undefined || useRewriteMap == null) {
-                useRewriteMap = true;
-            }
-
-            var fqClassName = [this.$namespaceMap[namespace] || namespace, className].join(".");
-
-            if (useRewriteMap) {
-                for (var i = 0; i < this.$rewriteMap.length; i++) {
-                    var entry = this.$rewriteMap[i];
-                    if (entry instanceof rAppid.rewriteMapEntry) {
-                        if (entry.$from.test(fqClassName)) {
-                            return fqClassName.replace(entry.$from, entry.$to);
-                        }
-                    }
-                }
-            }
-
-            return fqClassName;
-        },
-
-        installClass: function (currentNamespace, path, value) {
-
-            if (path.length == 0) {
-                return false;
-            }
-
-            var part = path.shift();
-
-            if (!currentNamespace.hasOwnProperty(part)) {
-                if (path.length == 0) {
-                    // create class
-                    currentNamespace[part] = value;
-                    return true;
-                } else {
-                    // create namespace
-                    currentNamespace[part] = {};
-                }
-            }
-
-            // step into namespace
-            return this.installClass(currentNamespace[part], path, value);
-        }
-    });
+//    var ApplicationDomain = _rAppid.ApplicationDomain = inherit.Base.inherit({
+//        ctor: function(namespaceMap, rewriteMap, parentDomain) {
+//            this.$namespaceMap = namespaceMap || {};
+//            this.$rewriteMap = rewriteMap || defaultRewriteMap;
+//            this.$ns = {};
+//            this.$parentDomain = parentDomain;
+//        },
+//        /**
+//         *
+//         * loads all dependencies and defines a class under the given fqClassname
+//         *
+//         * @param fqClassName full qualified classname (e.g. js.ui.myComponent)
+//         * @param dependencies as hash or array
+//         * @param generateFactor a function that return the factory function invoked after all dependencies are loaded
+//         */
+//        defineClass: function (fqClassName, dependencies, generateFactor) {
+//            // create the namespace and install the class
+//            if (!fqClassName || fqClassName == "") {
+//                throw "Full qualified class name '" + fqClassName + "' in wrong format. Use dot notation.";
+//            }
+//
+//            var self = this;
+//            var realDependencies = [];
+//
+//            if (dependencies) {
+//                for (var i = 0; i < dependencies.length; i++) {
+//                    realDependencies.push(dependencies[i].replace(/\./g, "/"));
+//                }
+//            }
+//
+//            define(fqClassName.replace(/\./g, "/"), realDependencies, function () {
+//
+//                var factory = generateFactor.apply(this, arguments);
+//                factory.prototype.constructor.name = fqClassName;
+//
+//                if (!self.installClass(self.$ns, fqClassName.split("."), factory)) {
+//                    throw "Class '" + fqClassName + "' could not be installed";
+//                }
+//
+//                return factory;
+//            });
+//
+//        },
+//
+//        /**
+//         * registers an XAML component
+//         *
+//         * differs from normal class registration because, dependencies are loaded
+//         * and class has to be installed immedently
+//         *
+//         * @param fqClassName
+//         * @param dependencies
+//         * @param factory
+//         */
+//        defineXamlClass: function (fqClassName, dependencies, factory) {
+//            // create the namespace and install the class
+//            if (!fqClassName || fqClassName == "") {
+//                throw "Full qualified class name '" + fqClassName + "' in wrong format. Use dot notation.";
+//            }
+//
+//            var normalizeRegex = /\//g;
+//
+//            fqClassName = fqClassName.replace(normalizeRegex, ".");
+//            factory.prototype.constructor.name = fqClassName;
+//
+//            if (!this.installClass(this.$ns, fqClassName.split("."), factory)) {
+//                throw "Class '" + fqClassName + "' could not be installed";
+//            }
+//
+//            define(fqClassName.replace(/\./g, "/"), dependencies, function () {
+//                return factory;
+//            });
+//
+//        },
+//
+//        getDefinition: function (fqClassName) {
+//
+//            function getDefinition (currentNamespace, classPath) {
+//
+//                if (classPath.length > 0) {
+//                    var part = classPath.shift();
+//                    if (currentNamespace.hasOwnProperty(part)) {
+//                        var value = currentNamespace[part];
+//
+//                        if (value instanceof Function) {
+//                            if (classPath.length == 0) {
+//                                return value;
+//                            } else {
+//                                throw "unterminated classpath";
+//                            }
+//                        } else {
+//                            return getDefinition.call(this, currentNamespace[part], classPath);
+//                        }
+//                    }
+//                }
+//
+//                return null;
+//            }
+//
+//            return getDefinition.call(this, this.$ns, fqClassName.split("."));
+//        },
+//        hasDefinition: function (fqClassName) {
+//            return this.getDefinition(fqClassName) ? true : false;
+//        },
+//
+//        createInstance: function (fqClassName, args, className) {
+//            className = className || fqClassName;
+//            args = args || [];
+//
+//            var classDefinition = this.getDefinition(fqClassName);
+//
+//            function construct(constructor, args) {
+//                function F() {
+//                    return constructor.apply(this, args);
+//                }
+//
+//                F.prototype = constructor.prototype;
+//                return new F();
+//            }
+//
+//            var ret;
+//            try {
+//                ret = construct(classDefinition, args);
+//                ret.className = className;
+//            } catch (e) {
+//                console.log("Cannot create instance of '" + fqClassName + "'");
+//            }
+//
+//            return ret;
+//        },
+//
+//        getFqClassName: function (namespace, className, useRewriteMap) {
+//            if (useRewriteMap == undefined || useRewriteMap == null) {
+//                useRewriteMap = true;
+//            }
+//
+//            var fqClassName = [this.$namespaceMap[namespace] || namespace, className].join(".");
+//
+//            if (useRewriteMap) {
+//                for (var i = 0; i < this.$rewriteMap.length; i++) {
+//                    var entry = this.$rewriteMap[i];
+//                    if (entry instanceof rAppid.rewriteMapEntry) {
+//                        if (entry.$from.test(fqClassName)) {
+//                            return fqClassName.replace(entry.$from, entry.$to);
+//                        }
+//                    }
+//                }
+//            }
+//
+//            return fqClassName;
+//        },
+//
+//        installClass: function (currentNamespace, path, value) {
+//
+//            if (path.length == 0) {
+//                return false;
+//            }
+//
+//            var part = path.shift();
+//
+//            if (!currentNamespace.hasOwnProperty(part)) {
+//                if (path.length == 0) {
+//                    // create class
+//                    currentNamespace[part] = value;
+//                    return true;
+//                } else {
+//                    // create namespace
+//                    currentNamespace[part] = {};
+//                }
+//            }
+//
+//            // step into namespace
+//            return this.installClass(currentNamespace[part], path, value);
+//        }
+//    });
 
     var SystemManager = _rAppid.SystemManager = inherit.Base.inherit({
-        ctor: function (applicationDomain, requirejsContext, applicationContext, document) {
-            this.$applicationDomain = applicationDomain;
+        ctor: function (requirejsContext, applicationContext, document) {
             this.$requirejsContext = requirejsContext;
             this.$applicationContext = applicationContext;
             this.$applicationFactory = null;
@@ -503,8 +502,8 @@ if(!String.prototype.trim){
 
     var ApplicationContext = _rAppid.ApplicationContext = SystemManager.inherit({
 
-        ctor: function(applicationDomain, requirejsContext, config) {
-            this.callBase(applicationDomain, requirejsContext);
+        ctor: function(requirejsContext, config) {
+            this.callBase(requirejsContext);
             this.$config = config;
             this.$applicationContext = this;
         },
@@ -513,7 +512,7 @@ if(!String.prototype.trim){
             // create instance
             var applicationFactory = this.$applicationFactory;
 
-            var systemManager = new SystemManager(this.$applicationDomain, this.$requirejsContext, this, document);
+            var systemManager = new SystemManager(this.$requirejsContext, this, document);
 
             this.$requirejsContext(["js/core/Application"], function(Application) {
 
@@ -542,6 +541,65 @@ if(!String.prototype.trim){
 
         },
 
+        getFqClassName: function (namespace, className, useRewriteMap) {
+            if (useRewriteMap == undefined || useRewriteMap == null) {
+                useRewriteMap = true;
+            }
+
+            if (namespace && className) {
+                namespace = (this.$config.namespaceMap[namespace] || namespace).replace(/\./g, '/');
+                var fqClassName = [namespace, className].join("/");
+            } else {
+                fqClassName = (namespace || className).replace(/\./g, '/');
+            }
+
+            if (underscore.indexOf(this.$config.xamlClasses, fqClassName) !== -1) {
+                fqClassName = 'xaml!'+ fqClassName;
+            }
+
+            if (useRewriteMap) {
+                for (var i = 0; i < this.$config.rewriteMap.length; i++) {
+                    var entry = this.$config.rewriteMap[i];
+                    if (entry instanceof rAppid.rewriteMapEntry) {
+                        if (entry.$from.test(fqClassName)) {
+                            return fqClassName.replace(entry.$from, entry.$to);
+                        }
+                    }
+                }
+            }
+
+            return fqClassName;
+        },
+
+        createInstance: function (fqClassName, args, className) {
+            className = className || fqClassName;
+            args = args || [];
+
+            fqClassName = fqClassName.replace(/\./g, "/");
+
+            var classDefinition = require(fqClassName);
+
+            function construct(constructor, args) {
+                function F() {
+                    return constructor.apply(this, args);
+                }
+
+                F.prototype = constructor.prototype;
+                return new F();
+            }
+
+            var ret;
+            try {
+                ret = construct(classDefinition, args);
+                ret.className = className;
+            } catch (e) {
+                console.log("Cannot create instance of '" + fqClassName + "'");
+            }
+
+            return ret;
+        },
+
+
         ajax: function(url, options, callback) {
 
             if (!(/^http.*$/.test(url)) && this.$config.applicationUrl) {
@@ -551,34 +609,13 @@ if(!String.prototype.trim){
             _rAppid.ajax(url, options, callback);
         },
 
-        defineClass: function (fqName, dependencies, generateFactory) {
-            this.$applicationDomain.defineClass(fqName, dependencies, generateFactory);
-        },
-
         defineXamlClass: function (fqClassName, dependencies, factory) {
             this.$applicationDomain.defineXamlClass(fqClassName, dependencies, factory);
         },
 
         getDefinition: function (fqClassName) {
             this.$applicationDomain.getDefinition(fqClassName);
-        },
-
-        require: function(classes, callback) {
-            for (var i = 0; i < classes.length; i++) {
-                classes[i] = this.makeRequireName(classes[i].replace(/\./g, "/"));
-            }
-
-            this.$requirejsContext(classes, callback);
-        },
-
-        makeRequireName: function (module) {
-            if (underscore.indexOf(this.$config.xamlClasses, module) !== -1) {
-                module = "xaml!" + module;
-            }
-
-            return module;
         }
-
 
     });
 

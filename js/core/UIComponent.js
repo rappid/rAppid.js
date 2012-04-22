@@ -1,12 +1,8 @@
-requirejs(["rAppid"], function (rAppid) {
-    rAppid.defineClass("js.core.UIComponent",
-        ["js.html.DomElement"], function (DomElement) {
-            return DomElement.inherit({
-                defaults: {
-                    tagName: "div"
-                },
-                $behavesAsDomElement: false
-            });
-        }
-    );
+define(["js/html/DomElement"], function (DomElement) {
+    return DomElement.inherit("js.core.UIComponent", {
+        defaults: {
+            tagName: "div"
+        },
+        $behavesAsDomElement: false
+    });
 });

@@ -19,11 +19,11 @@
          * IE8 FIXES
          * @param domNode
          */
-        var localNameFromDomNode = function(domNode){
-            if(domNode.localName) return domNode.localName;
+        var localNameFromDomNode = function (domNode) {
+            if (domNode.localName) return domNode.localName;
 
             var st = domNode.tagName.split(":");
-            return st[st.length-1];
+            return st[st.length - 1];
         };
 
         return {
@@ -77,8 +77,11 @@
 
             },
 
-            getDependency: function(namespace, localName, namespaceMap, xamlClasses, rewriteMap) {
-                var fqClassName = [namespaceMap[namespace] || namespace, localName].join(".");
+            getDependency: function (namespace, localName, namespaceMap, xamlClasses, rewriteMap) {
+
+                namespace = (namespaceMap[namespace] || namespace).replace(/\./g, '/');
+                var fqClassName = [namespace, localName].join("/");
+
 
                 for (var i = 0; i < rewriteMap.length; i++) {
                     var entry = rewriteMap[i];
@@ -116,9 +119,9 @@
                                 // text node
                                 var m;
                                 var textContent = importNode.textContent ? importNode.textContent : importNode.text;
-                                while ((m = importRegEx.exec(textContent+" ")) != null) {
-                                    var importClass =  m[0].replace(/\./g, "/");
-                                    if(importClass !== "undefined"){
+                                while ((m = importRegEx.exec(textContent + " ")) != null) {
+                                    var importClass = m[0].replace(/\./g, "/");
+                                    if (importClass !== "undefined") {
                                         if (ret.indexOf(importClass) == -1) {
                                             ret.push(importClass);
                                         }
@@ -156,7 +159,7 @@
                 return ret;
             },
 
-            findScripts: function(xaml, namespaceMap, xamlClasses, rewriteMap) {
+            findScripts: function (xaml, namespaceMap, xamlClasses, rewriteMap) {
                 var ret = [];
 
                 for (var i = 0; i < xaml.childNodes.length; i++) {
@@ -171,7 +174,7 @@
                 return ret;
             },
 
-            getDeclarationFromScripts: function(scripts) {
+            getDeclarationFromScripts: function (scripts) {
                 var ret = {};
 
                 if (scripts) {
@@ -222,18 +225,20 @@
                                 dependencies.splice(1, 0, "js/core/Script");
                             }
 
-                            if(imports.length > 0){
+                            if (imports.length > 0) {
                                 dependencies = dependencies.concat(imports);
                             }
 
+
                             // first item should be the dependency of the document element
-                            req(dependencies, function() {
+                            req(dependencies, function () {
                                 // dependencies are loaded
+
                                 var baseClass = arguments[0],
                                     Script = arguments[1];
 
                                 var args = [];
-                                for(var i = 1; i < arguments.length; i++){
+                                for (var i = 1; i < arguments.length; i++) {
                                     args.push(arguments[i]);
                                 }
 
@@ -261,10 +266,8 @@
 
                                 xamlFactory.prototype._$descriptor = xhr.responseXML.documentElement;
 
-                                if (config.applicationDomain) {
-                                    config.applicationDomain.defineXamlClass(name, dependencies, xamlFactory);
-                                    onLoad(xamlFactory);
-                                }
+                                onLoad(xamlFactory);
+
 
                             });
 
@@ -280,4 +283,4 @@
 
     });
 }(typeof document === "undefined" ? require("xmlhttprequest").XMLHttpRequest : XMLHttpRequest,
-  typeof document === "undefined" ? require("libxml") : null));
+    typeof document === "undefined" ? require("libxml") : null));
