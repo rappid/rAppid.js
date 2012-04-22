@@ -1,23 +1,13 @@
 var should = require('chai').should();
-var rAppidNode = require(__dirname + '/../bin/lib/rAppidJsNode');
+var requirejs = require('./TestRunner').require;
+
+var Binding = requirejs("js/core/Binding"),
+    Bindable = requirejs("js/core/Bindable");
 
 describe('js.core.Binding', function () {
 
-    var Binding,
-        Bindable;
-
     var target;
     var model;
-
-    before(function (done) {
-        rAppidNode.requireInTestContext(['js.core.Binding', 'js.core.Bindable'], function(BindingClass, BindableClass) {
-            Binding = BindingClass;
-            Bindable = BindableClass;
-
-            done();
-        });
-
-    });
 
     beforeEach(function () {
         target = new Bindable({val: null});

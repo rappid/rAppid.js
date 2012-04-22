@@ -34,17 +34,6 @@ if(!String.prototype.trim){
         return this;
     };
 
-    var Base = inherit.Base.inherit({
-        ctor: function () {
-//            if (!this.className) {
-//                this.className = this.constructor.name;
-//            }
-        },
-        runsInBrowser: function () {
-            return typeof window !== "undefined";
-        }
-    });
-
     // global requirejs setup
     requirejs.config({
         paths: {
@@ -96,11 +85,6 @@ if(!String.prototype.trim){
 
                 define("underscore", function() {
                     return underscore;
-                });
-
-                // define js.core.Base
-                define("js/core/Base", [], function () {
-                    return Base;
                 });
 
                 underscore.extend(config, {
@@ -255,7 +239,7 @@ if(!String.prototype.trim){
 
     var rheaders = /^(.*?):[ \t]*([^\r\n]*)\r?$/mg; // IE leaves an \r character at EOL
 
-    var rAppidXhr = Base.inherit({
+    var rAppidXhr = inherit.Base.inherit({
         ctor: function(xhr) {
             this.xhr = xhr;
             this.status = xhr.status;
