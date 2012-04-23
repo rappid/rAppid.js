@@ -12,7 +12,7 @@ var args = process.argv.splice(2),
 
 var port = 8080,
     baseUrl = 'http://grid.js',
-    applicationDir = '/Users/tony/Development/js/grid/public',
+    applicationDir = '/Users/mkre/dev/discovery/grid/public',
     indexFile = 'index.html',
     applicationFile = 'app/Grid.xml',
     configFile = 'config.json';
@@ -101,7 +101,7 @@ flow()
 
                     response.writeHead(status, {
                         'Content-Length': buf.length,
-                        'Content-Type': 'text/html' });
+                        'Content-Type': 'text/html; charset=utf-8' });
                     response.write(buf);
                     response.end();
 
