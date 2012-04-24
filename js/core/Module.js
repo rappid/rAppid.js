@@ -3,8 +3,9 @@ define(["js/core/UIComponent"], function (UIComponent) {
         /**
          * loads the
          * @param callback
+         * @param [routeContext]
          */
-        start: function (callback) {
+        start: function (callback, routeContext) {
             if (callback) {
                 callback();
             }

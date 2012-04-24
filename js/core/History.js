@@ -81,7 +81,8 @@ define(["js/core/Bindable"], function (Bindable) {
         },
 
         addRouter: function (router) {
-            this.$routers.push(router);
+            // add router to first position
+            this.$routers.unshift(router);
         },
 
         checkUrl: function (e) {

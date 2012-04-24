@@ -96,7 +96,8 @@ define(["js/core/Component", "underscore", "js/conf/Route"],
                         var routeContext = {
                             callback: cb,
                             router: this,
-                            params: params
+                            params: params,
+                            fragment: fragment
                         };
 
                         params.unshift(routeContext);

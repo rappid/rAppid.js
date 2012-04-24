@@ -216,7 +216,10 @@ define(
                     }
 
                     // and add outside descriptor
-                    descriptors.push(this.$descriptor);
+                    if (this.$descriptor) {
+                        descriptors.push(this.$descriptor);
+                    }
+
                     var desc, node, text;
                     for (var d = 0; d < descriptors.length; d++) {
                         desc = descriptors[d];

@@ -59,7 +59,7 @@ define(["js/core/List", "js/data/Model", "flow", "underscore"], function (List, 
 
             var options = {
                 queryParameter: queryParameter,
-                rootCollection: this.getRootCollection
+                rootCollection: this.getRootCollection()
             };
 
             // different queryParameter, same options
@@ -150,7 +150,7 @@ define(["js/core/List", "js/data/Model", "flow", "underscore"], function (List, 
 
             var page = this.$pageCache[pageIndex];
             if (!page) {
-                page = this.$pageCache[pageIndex] = new Page(null, this, pageIndex);
+                page = this.$pageCache[pageIndex] = new Page(null, this.getRootCollection(), pageIndex);
             }
 
             var self = this;
@@ -245,25 +245,14 @@ define(["js/core/List", "js/data/Model", "flow", "underscore"], function (List, 
 
                 if (options.fetchModels || options.fetchSubModels) {
 
-                    // TODO: replace with flow.parEach
-                    // TODO: introduce poolsize parameter for par, and parEach
+                    // TODO: introduce poolSize parameter for par, and parEach
 
-                    var delegates = [];
-
-                    function addToDelegate(model) {
-                        delegates.push(function (cb) {
+                    flow()
+                        .parEach(page.$items, function(model, cb) {
                             model.fetch({
                                 fetchSubModels: options.fetchSubModels
                             }, cb);
-                        });
-                    }
-
-                    for (var i = 0; i < page.$items.length; i++) {
-                        addToDelegate(page.$items[i]);
-                    }
-
-                    flow()
-                        .par(delegates)
+                        })
                         .exec(function (err) {
                             callback(err, page);
                         });

@@ -61,9 +61,9 @@ define(["require", "js/core/UIComponent", "js/ui/ContentPlaceHolder", "js/core/M
 
                             // load module
                             if (module.name) {
-                                self.loadModuleByName(module.name, routeContext.callback);
+                                self.loadModuleByName(module.name, routeContext.callback, routeContext);
                             } else {
-                                self.loadModule(module.moduleClass, routeContext.callback);
+                                self.loadModule(module.moduleClass, routeContext.callback, routeContext);
                             }
 
                         }.async()
@@ -72,7 +72,7 @@ define(["require", "js/core/UIComponent", "js/ui/ContentPlaceHolder", "js/core/M
 
             },
 
-            loadModuleByName: function (moduleName, callback) {
+            loadModuleByName: function (moduleName, callback, routeContext) {
                 if (this.$modules.hasOwnProperty(moduleName)) {
 
                     var module = this.$modules[moduleName];
@@ -80,7 +80,7 @@ define(["require", "js/core/UIComponent", "js/ui/ContentPlaceHolder", "js/core/M
                     if (module.cacheInstance && module.moduleInstance) {
                         // TODO: load instance from cache
                     } else {
-                        this.loadModule(module.moduleClass, callback);
+                        this.loadModule(module.moduleClass, callback, routeContext);
                     }
 
                 } else {
@@ -88,7 +88,7 @@ define(["require", "js/core/UIComponent", "js/ui/ContentPlaceHolder", "js/core/M
                 }
             },
 
-            loadModule: function (moduleFqClassName, callback) {
+            loadModule: function (moduleFqClassName, callback, routeContext) {
 
                 var eventResult = this.trigger("loadModule", {
                     moduleClass: moduleFqClassName
@@ -131,7 +131,7 @@ define(["require", "js/core/UIComponent", "js/ui/ContentPlaceHolder", "js/core/M
                             }
 
                             // start module
-                            moduleInstance.start(internalCallback);
+                            moduleInstance.start(internalCallback, routeContext);
 
                         } else {
                             internalCallback("Module '" + moduleFqClassName + "' isn't an instance of js.core.Module");
