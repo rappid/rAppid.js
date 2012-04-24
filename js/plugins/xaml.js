@@ -270,8 +270,11 @@ define([], function () {
 
                     if (config.isBuild) {
 
+                        dependencies.splice(1, 0, "js/core/Element");
+                        importStartIndex++;
+
                         var text = "(function () {define(%dependencies%, %function%)}).call(this);";
-                        var fn = "function(baseClass%parameter%){return baseClass.inherit({ %classDefinition% _$descriptor: %descriptor%})}";
+                        var fn = "function(baseClass, ELEMENT %parameter%){return baseClass.inherit({ %classDefinition% _$descriptor: ELEMENT.xmlStringToDom(%descriptor%)})}";
 
                         for (var i = 0; i < dependencies.length; i++) {
                             dependencies[i] = "'" + dependencies[i] + "'";

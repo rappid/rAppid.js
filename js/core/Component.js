@@ -229,7 +229,7 @@ define(
                     this._childrenInitialized();
                 },
                 _cleanUpDescriptor: function (desc) {
-                    if (desc) {
+                    if (desc && desc.childNodes) {
                         var node, text;
                         // remove empty text nodes
                         for (var i = desc.childNodes.length - 1; i >= 0; i--) {
@@ -242,6 +242,8 @@ define(
 
                             }
                         }
+                    }else{
+                        console.warn("Descriptor not defined or not correct");
                     }
                 },
                 /**

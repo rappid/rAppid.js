@@ -20,7 +20,7 @@ define(["js/core/Bindable", "underscore"], function (Bindable, _) {
             return str;
         }
 
-        return Bindable.inherit("js.core.Element", {
+        var Element = Bindable.inherit("js.core.Element", {
             ctor: function (attributes, descriptor, systemManager, parentScope, rootScope) {
 
                 attributes = attributes || {};
@@ -165,5 +165,23 @@ define(["js/core/Bindable", "underscore"], function (Bindable, _) {
                 return textContent;
             }
         });
+
+        Element.xmlStringToDom = function(xmlString) {
+
+            if (window && window.DOMParser) {
+                return (new DOMParser()).parseFromString(xmlString, "text/xml").documentElement;
+            } else if (typeof(ActiveXObject) !== "undefined") {
+                var xmlDoc = new ActiveXObject("Microsoft.XMLDOM");
+                xmlDoc.async = false;
+                xmlDoc.loadXML(xmlString);
+                return xmlDoc.documentElement;
+            } else {
+                throw "Couldn't parse xml string";
+            }
+
+
+        };
+
+        return Element;
     }
 );
