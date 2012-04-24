@@ -1,13 +1,15 @@
 define(["require", "js/core/UIComponent", "js/ui/ContentPlaceHolder", "js/core/Module", "underscore", "js/conf/Module"],
     function (require, UIComponent, ContentPlaceHolder, Module, _, ModuleConfiguration) {
         var ModuleLoader = UIComponent.inherit("js.core.ModuleLoader", {
-
+            $behavesAsDomElement: true,
+            $classAttributes: [
+                'router'
+            ],
             ctor: function (attributes) {
                 this.callBase();
 
                 this.$modules = {};
             },
-
             _initializationComplete: function () {
                 this.callBase();
 
