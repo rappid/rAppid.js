@@ -28,6 +28,7 @@ For a demo of bindings and controls visit [http://demo.rappidjs.com/src/ui.html]
 * Abstract data access layer, which will later supports MongoDb
 * i18n
 * support rendering on node for SEO
+* optimize build
 
 ## Installation
 The installation of rAppid.js is simple done via [npm](http://npmjs.org/).
