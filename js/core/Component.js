@@ -6,6 +6,13 @@ define(
         var Template,
             Configuration;
 
+        require(['js/core/Template'],function(TClass){
+            Template = TClass;
+        });
+        require(['js/conf/Configuration'],function(TClass){
+            Configuration = TClass;
+        });
+
         var Component = Element.inherit("js.core.Component",
             /** @lends Component# */
 
@@ -21,9 +28,6 @@ define(
                  * @constructs
                  */
                 ctor: function (attributes, descriptor, systemManager, parentScope, rootScope) {
-
-                    Template = Template || require('js/core/Template');
-                    Configuration = Configuration || require('js/conf/Configuration');
 
                     this.$components = [];
 
@@ -165,9 +169,9 @@ define(
                         // FIRST ADD CHILD
                         var child = childComponents[i];
 
-                        if (child instanceof Template) {
+                        if (Template && child instanceof Template) {
                             this.addTemplate(child);
-                        } else if (child instanceof Configuration) {
+                        } else if (Configuration && child instanceof Configuration) {
                             this.addConfiguration(child);
                         } else {
                             this.addChild(childComponents[i]);
