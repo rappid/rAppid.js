@@ -2,6 +2,6 @@
 <app:<%= appName %>Class xmlns="http://www.w3.org/1999/xhtml"
                xmlns:js="js.core" xmlns:ui="js.ui" xmlns:app="app">
     <div class="container">
-        Your <strong><%= appName %></strong> Application is running!
+        Your Application {appName} is running!
     </div>
 </app:<%= appName %>Class>

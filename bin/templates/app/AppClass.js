@@ -1,27 +1,25 @@
-requirejs(["rAppid"], function (rAppid) {
-    rAppid.defineClass("app.<%= appName %>Class",
-        ["js.core.Application"],
-        function (Application) {
+define(
+    ["js.core.Application"],
+    function (Application) {
 
-            return Application.inherit({
-                /**
-                 *  initializes the application variables
-                 */
-                initialize: function(){
-                    // TODO: set initial variables for markup (xaml)
-                },
-                /***
-                 * Starts the application
-                 * @param parameter
-                 * @param callback
-                 */
-                start: function (parameter, callback) {
-                    // false - disables autostart
-                    this.callBase(parameter, false);
+        return Application.inherit({
+            /**
+             *  initializes the application variables
+             */
+            initialize:function () {
+                this.set('appName','<%= appName %>');
+            },
+            /***
+             * Starts the application
+             * @param parameter
+             * @param callback
+             */
+            start:function (parameter, callback) {
+                // false - disables autostart
+                this.callBase(parameter, false);
 
-                    callback();
-                }
-            });
-        }
-    );
-});
+                callback();
+            }
+        });
+    }
+);
