@@ -15,6 +15,7 @@ define(["require","js/core/Component", "js/core/Content", "js/core/Binding", "in
                 selected: undefined,
                 selectable: undefined
             },
+            $classAttributes:[],
             $behavesAsDomElement: true,
             ctor: function (attributes, descriptor, systemManager, parentScope, rootScope) {
                 this.$renderMap = {};
@@ -240,6 +241,9 @@ define(["require","js/core/Component", "js/core/Content", "js/core/Binding", "in
                 }
             },
             _renderAttribute: function (key, attr) {
+                if(_.contains(this.$classAttributes, key)){
+                    return;
+                }
                 var method = this.$renderMap[key];
                 var prev = this.$previousAttributes[key];
 
@@ -257,7 +261,7 @@ define(["require","js/core/Component", "js/core/Content", "js/core/Binding", "in
                 }
                 if (method !== false) {
                     method.call(this, attr, prev);
-                } else if (this.$behavesAsDomElement) {
+                } else if (this.$behavesAsDomElement && !_.isUndefined(attr)) {
                     this.$el.setAttribute(key, attr);
                 }
             },
