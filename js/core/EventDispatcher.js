@@ -5,12 +5,14 @@ define(["js/core/Base"],
          * @param {arguments} eventTypes
          * */
         Function.prototype.on = function () {
+
             var events = Array.prototype.slice.call(arguments, 0);
-            this._events = [];
+            this._events = this._events || [];
             for (var i = 0; i < events.length; i++) {
                 var event = events[i];
                 this._events.push(event);
             }
+
             return this;
         };
 
@@ -20,7 +22,7 @@ define(["js/core/Base"],
          * */
         Function.prototype.onChange = function () {
             var events = Array.prototype.slice.call(arguments, 0);
-            this._events = [];
+            this._events = this._events || [];
             for (var i = 0; i < events.length; i++) {
                 var event = events[i];
                 event = "change:" + event;
