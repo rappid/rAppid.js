@@ -1,6 +1,6 @@
 define(
-    ["js.ui.ItemsView", "js.html.DomElement", "underscore"], function (ItemsView, DomElement, _) {
-        return ItemsView.inherit({
+    ["js/ui/ItemsView", "js/html/DomElement", "underscore"], function (ItemsView, DomElement, _) {
+        return ItemsView.inherit("js.ui.SelectionView",{
             defaults: {
                 tagName: "div",
                 needsSelection: false,
