@@ -1,5 +1,5 @@
 define(
-    ["js.ui.View"], function (View) {
+    ["js/ui/View"], function (View) {
 
         var findPlaceholders = function (str) {
             var placeholders = [], p;
