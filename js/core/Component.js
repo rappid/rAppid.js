@@ -6,13 +6,6 @@ define(
         var Template,
             Configuration;
 
-        require(['js/core/Template'],function(TClass){
-            Template = TClass;
-        });
-        require(['js/conf/Configuration'],function(TClass){
-            Configuration = TClass;
-        });
-
         var Component = Element.inherit("js.core.Component",
             /** @lends Component# */
 
@@ -28,6 +21,23 @@ define(
                  * @constructs
                  */
                 ctor: function (attributes, descriptor, systemManager, parentScope, rootScope) {
+                    if(_.isUndefined(Template)){
+                        try {
+                            Template = require('js/core/Template');
+                        } catch (e) {
+                            Template = null;
+                        }
+                    }
+
+                    if(_.isUndefined(Configuration)){
+                        try {
+                            Configuration = require('js/conf/Configuration');
+                        } catch(e) {
+                            Configuration = null;
+                        }
+                    }
+
+
 
                     this.$components = [];
 
