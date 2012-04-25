@@ -88,6 +88,7 @@ define(["js/core/Bindable", "js/core/EventDispatcher", "js/core/BindingParser", 
 
                         }
                         this.$.fnc = fnc;
+                        this.$.fnc.trigger = this.trigger;
                     }
 
                 } else {
