@@ -64,7 +64,7 @@ function init(appName, dir) {
                 }
 
                 try {
-                    fs.symlinkSync(path.join(rappidDir, "js"), path.join(publicDir, "js"));
+                    fs.symlinkSync(path.join(rappidDir, "js"), path.join(publicDir, "js"), 'dir');
                 } catch (e) {
                     console.warn("js dir is already linked");
                 }

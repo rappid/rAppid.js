@@ -150,12 +150,13 @@ define(["require", "js/data/DataSource", "js/core/Base", "js/core/List", "unders
          * @param obj
          */
         isReferencedModel: function (obj) {
-            return obj[this.$.identifierProperty] && obj[this.$.referenceProperty] &&
-                _.keys(obj).length == 2;
+            return obj.hasOwnProperty(this.$.identifierProperty) && obj.hasOwnProperty(this.$.referenceProperty)
+                && obj[this.$.referenceProperty].indexOf(this.$.endPoint) === 0;
         },
 
         isReferencedCollection: function (obj) {
-            return obj[this.$.referenceProperty] && _.keys(obj).length == 1;
+            return !obj.hasOwnProperty(this.$.identifierProperty) && obj.hasOwnProperty(this.$.referenceProperty)
+                && obj[this.$.referenceProperty].indexOf(this.$.endPoint) === 0;
         },
 
         getContextPropertiesFromReference: function (reference) {
@@ -459,6 +460,7 @@ define(["require", "js/data/DataSource", "js/core/Base", "js/core/List", "unders
                         var data = self.extractListData(page, payload, options);
 
                         self.resolveReferences(page, data, options, function (err, resolvedData) {
+
                             // add data to list
                             page.add(resolvedData);
 

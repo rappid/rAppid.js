@@ -10,7 +10,6 @@ var sys = require('util')
 var child_process = require('child_process');
 var fs = require("fs"),
     path = require("path"),
-    readJson = require("npm/lib/utils/read-json.js"),
     flow = require("flow.js").flow,
     child;
 
@@ -48,6 +47,14 @@ function install(args, callback) {
     });
 }
 
+function readJson(path, callback) {
+    try {
+        callback(null, JSON.parse(fs.readFileSync(path)));
+    } catch (e) {
+        callback(e);
+    }
+}
+
 
 function linkPackage(dir, packageName, version ,callback){
     var publicDir = path.join(dir, "public");
@@ -58,7 +65,7 @@ function linkPackage(dir, packageName, version ,callback){
             var libDir = path.join(publicDir, data.lib);
 
             if (!path.existsSync(libDir)) {
-                fs.symlinkSync(path.join(packageDir, data.lib), libDir);
+                fs.symlinkSync(path.join(packageDir, data.lib), libDir, 'dir');
             }
             var packageFile = path.join(dir, "package.json");
             readJson(packageFile, function(err,data){
