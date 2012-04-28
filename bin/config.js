@@ -29,8 +29,6 @@ var config = function(args, callback) {
             findFiles(dir, exclude_dirs, ["xml"], 0).forEach(function(file){
                 // make it relative
                 file = path.relative(dir, file);
-                // split ext
-                file = rRemoveExtension.exec(file)[1].replace(/\//g, ".");
 
                 config.xamlClasses.push(file);
             });
