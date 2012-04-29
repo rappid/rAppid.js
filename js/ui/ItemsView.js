@@ -3,7 +3,9 @@ define(
         return View.inherit({
             defaults: {
                 tagName: "div",
-                items: null
+                items: null,
+                itemKey: '$item',
+                indexKey: '$index'
             },
             hasItems: function () {
                 if (this.$.items) {
@@ -72,7 +74,8 @@ define(
 
             },
             _innerRenderItem: function (item, i) {
-                var comp = this.$templates['item'].createComponents({$item: item, $index: i})[0];
+                var attr = {}; attr[this.$.itemKey] = item; attr[this.$.indexKey]  = i;
+                var comp = this.$templates['item'].createComponents(attr)[0];
                 // add to rendered item map
                 this.$renderedItems.push({
                     item: item,
