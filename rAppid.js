@@ -52,11 +52,11 @@ if(!String.prototype.trim){
             "http://www.w3.org/1999/xhtml": "js.html"
         },
         defaultRewriteMap = [
-            new Rewrite(/^js.html.(input)$/, "js.html.Input"),
-            new Rewrite(/^js.html.(select)$/, "js.html.Select"),
-            new Rewrite(/^js.html.(textarea)$/, "js.html.TextArea"),
-            new Rewrite(/^js.html.(option)$/, "js.html.Option"),
-            new Rewrite(/^js.html.(.+)$/, "js.html.DomElement")
+            new Rewrite(/^js.html.(input)$/, "js/html/Input"),
+            new Rewrite(/^js.html.(select)$/, "js/html/Select"),
+            new Rewrite(/^js.html.(textarea)$/, "js/html/TextArea"),
+            new Rewrite(/^js.html.(option)$/, "js/html/Option"),
+            new Rewrite(/^js.html.(.+)$/, "js/html/DomElement")
         ];
 
     var _rAppid = {

@@ -11,9 +11,8 @@ var config = function(args, callback) {
         // test that we are in the public folder
         var dir = path.dirname(configFile);
 
-        console.log(dir, path.dirname(dir));
 
-        if (path.basename(dir) !== "public") {
+        if (!args[0] && path.basename(dir) !== "public") {
             callback("config must be created within public directory");
         } else {
             var config = {};
@@ -30,7 +29,7 @@ var config = function(args, callback) {
                 // make it relative
                 file = path.relative(dir, file);
 
-                config.xamlClasses.push(file);
+                config.xamlClasses.push(file.replace(/^(.*).xml$/, "$1"));
             });
 
             fs.writeFileSync(configFile, JSON.stringify(config));
