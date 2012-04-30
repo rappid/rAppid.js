@@ -242,7 +242,7 @@ define(["js/core/Bindable", "js/core/EventDispatcher", "js/core/BindingParser", 
                 pathElement = path.shift();
                 if (pathElement.type == "fnc") {
                     var fnc = scope[pathElement.name];
-                    var parameters = pathElement.parameters;
+                    var parameters = pathElement.parameter;
                     for (var i = 0; i < parameters.length; i++) {
                         var param = parameters[i];
                         if (_.isObject(param)) {
