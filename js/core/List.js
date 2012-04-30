@@ -3,7 +3,7 @@ define(["js/core/Bindable", "underscore"], function (Bindable, _) {
         ctor: function (items, attributes) {
             this.$items = [];
 
-            this.callBase(this, attributes);
+            this.callBase(attributes);
 
             if (items) {
                 this.add(items);
