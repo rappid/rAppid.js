@@ -59,8 +59,12 @@
                     return false;
                 },
                 _startTracking: function (x, y) {
-                    clearInterval(this.$speedInterval["x"]);
-                    clearInterval(this.$speedInterval["y"]);
+                    if (this.$speedInterval["x"]) {
+                        clearInterval(this.$speedInterval["x"]);
+                    }
+                    if (this.$speedInterval["y"]) {
+                        clearInterval(this.$speedInterval["y"]);
+                    }
 
                     this.$t = new Date().getTime();
                     this.$mousePos.x = x;
@@ -136,7 +140,7 @@
                         if (self.$.horizontal) keepInBounce("x");
                         if (self.$.vertical) keepInBounce("y");
                     }, 20);
-
+//
                     this.$trackSpeedInterval = setInterval(function () {
                         if (self.$isMouseDown) {
                             self.$t = (new Date().getTime());
@@ -144,7 +148,7 @@
                         self.$trackedPos.x = self.$newPos.x;
                         self.$trackedPos.y = self.$newPos.y;
 
-                    }, 50);
+                    }, 100);
 
                     return el;
                 },
@@ -217,13 +221,13 @@
                     if (el.hasOwnProperty('ontouchstart')) {
                         // were on a mobile device
 
-                        el.addEventListener('touchstart', function(e){
+                        el.addEventListener('touchstart', function (e) {
                             if (e.touches.length == 1) {
                                 self._startTracking(e.touches[0].clientX, e.touches[0].clientY);
                                 e.preventDefault();
                             }
                         });
-                        el.addEventListener('touchmove', function(e){
+                        el.addEventListener('touchmove', function (e) {
                             if (e.touches.length == 1) {
                                 if (self.$isMouseDown) {
                                     self._moveBy(e.touches[0].clientX - self.$mousePos.x, e.touches[0].clientY - self.$mousePos.y);
@@ -232,7 +236,7 @@
                                 }
                             }
                         });
-                        el.addEventListener('touchend', function(e){
+                        el.addEventListener('touchend', function (e) {
                             self._stopTracking();
                         });
                     }
