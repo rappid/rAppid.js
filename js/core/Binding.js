@@ -1,4 +1,8 @@
 define(["js/core/Bindable", "js/core/EventDispatcher", "js/core/BindingParser", "underscore"], function (Bindable, EventDispatcher, Parser, _) {
+    var TYPE_FNC = "fnc";
+    var TYPE_VAR = "var";
+    var TYPE_STATIC = "static";
+
     var contextToString = function (context) {
         var str = "", el;
         for (var i = 0; i < context.length; i++) {
@@ -16,7 +20,7 @@ define(["js/core/Bindable", "js/core/EventDispatcher", "js/core/BindingParser", 
         var str = [];
         for (var i = 0; i < path.length; i++) {
             var el = path[i];
-            if (el.type == "var") {
+            if (el.type == TYPE_VAR) {
                 str.push(el.name);
             } else {
                 return false;
@@ -57,7 +61,7 @@ define(["js/core/Bindable", "js/core/EventDispatcher", "js/core/BindingParser", 
                 // split up first key
                 this.$.key = this.$.path[0];
 
-                if (this.$.key.type == "fnc") {
+                if (this.$.key.type == TYPE_FNC) {
                     var fncName = this.$.key.name;
                     this.$parameters = this.$.key.parameter;
 
@@ -230,23 +234,23 @@ define(["js/core/Bindable", "js/core/EventDispatcher", "js/core/BindingParser", 
             searchScope = searchScope.$parentScope;
         }
 
-        if (pathElement.type == "fnc") {
+        if (pathElement.type == TYPE_FNC) {
             scope = searchScope.getScopeForFncName(pathElement.name);
         } else {
             scope = searchScope.getScopeForKey(pathElement.name);
         }
 
-        if (bindingDef.type == "static") {
+        if (bindingDef.type == TYPE_STATIC) {
             var nScope = scope;
             while (nScope && path.length > 0) {
                 pathElement = path.shift();
-                if (pathElement.type == "fnc") {
-                    var fnc = scope[pathElement.name];
+                if (pathElement.type == TYPE_FNC) {
+                    var fnc = nScope[pathElement.name];
                     var parameters = pathElement.parameter;
                     for (var i = 0; i < parameters.length; i++) {
                         var param = parameters[i];
                         if (_.isObject(param)) {
-                            param.type = "static";
+                            param.type = TYPE_STATIC;
                             var binding = Binding.create(param, targetScope, "", context);
                             if (binding instanceof Binding) {
                                 parameters[i] = binding.getValue();
@@ -256,8 +260,8 @@ define(["js/core/Bindable", "js/core/EventDispatcher", "js/core/BindingParser", 
 
                         }
                     }
-                    nScope = fnc.apply(scope, parameters);
-                } else if (pathElement.type = "var") {
+                    nScope = fnc.apply(nScope, parameters);
+                } else if (pathElement.type == TYPE_VAR) {
                     nScope = nScope.get(pathElement.name);
                 }
             }
