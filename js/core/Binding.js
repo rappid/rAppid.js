@@ -247,7 +247,7 @@ define(["js/core/Bindable", "js/core/EventDispatcher", "js/core/BindingParser", 
                         var param = parameters[i];
                         if (_.isObject(param)) {
                             param.type = "static";
-                            var binding = Binding.create(param, scope, "", context);
+                            var binding = Binding.create(param, targetScope, "", context);
                             if (binding instanceof Binding) {
                                 parameters[i] = binding.getValue();
                             } else {
@@ -256,7 +256,7 @@ define(["js/core/Bindable", "js/core/EventDispatcher", "js/core/BindingParser", 
 
                         }
                     }
-                    nScope = fnc.apply(this, parameters);
+                    nScope = fnc.apply(scope, parameters);
                 } else if (pathElement.type = "var") {
                     nScope = nScope.get(pathElement.name);
                 }
