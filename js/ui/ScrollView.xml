@@ -37,6 +37,7 @@
                         x: "offsetWidth",
                         y: "offsetHeight"
                     };
+                    this.$fixAxis = {x: false, y: false};
                     this.$transformProperty = null;
 
                 },
@@ -178,20 +179,23 @@
 
                 },
                 _moveBy: function (dx, dy) {
-                    dx = this._calculateDelta(dx * this.$.horizontal, "x");
-                    dy = this._calculateDelta(dy * this.$.vertical, "y");
+                    var ndx = this._calculateDelta(dx * this.$.horizontal, "x");
+                    var ndy = this._calculateDelta(dy * this.$.vertical, "y");
 
+                    if(Math.abs(dx) > Math.abs(dy)) {
+                        ndy = 0;
+                    }else{
+                        ndx = 0;
+                    }
 
-                    this.$newPos.x = this.$currentPos.x + dx;
-                    this.$newPos.y = this.$currentPos.y + dy;
+                    this.$newPos.x = this.$currentPos.x + ndx;
+                    this.$newPos.y = this.$currentPos.y + ndy;
 
 
                     this._setCssTranslate(this.$newPos.x, this.$newPos.y);
 
                     this.$currentPos.x = this.$newPos.x;
                     this.$currentPos.y = this.$newPos.y;
-
-                    return true;
                 },
                 _posToCss: function (x, y) {
                     return 'translate3d(' + x + "px," + y + "px,0px)";
@@ -205,6 +209,7 @@
                     if (this.$.mouseTracking) {
                         this.addEventListener('mousemove', function (e) {
                             if (self.$isMouseDown) {
+
                                 self._moveBy(e.clientX - self.$mousePos.x, e.clientY - self.$mousePos.y);
                                 self.$mousePos.x = e.clientX;
                                 self.$mousePos.y = e.clientY;
@@ -230,7 +235,9 @@
                         el.addEventListener('touchmove', function (e) {
                             if (e.touches.length == 1) {
                                 if (self.$isMouseDown) {
-                                    self._moveBy(e.touches[0].clientX - self.$mousePos.x, e.touches[0].clientY - self.$mousePos.y);
+                                    if (self._moveBy(e.touches[0].clientX - self.$mousePos.x, e.touches[0].clientY - self.$mousePos.y)) {
+                                        e.stopPropagation();
+                                    }
                                     self.$mousePos.x = e.touches[0].clientX;
                                     self.$mousePos.y = e.touches[0].clientY;
                                 }
@@ -247,7 +254,7 @@
         })
         ]]>
     </js:Script>
-    <div class="{scrollPaneClass}" >
+    <div class="{scrollPaneClass}">
         <ui:PlaceHolder name="content"/>
     </div>
 </ui:View>
