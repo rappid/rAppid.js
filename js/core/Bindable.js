@@ -1,237 +1,184 @@
 define(["js/core/EventDispatcher", "underscore"],
-    /**
-     * @export js.core.Bindable
-     */
-        function (EventDispatcher, _) {
+    function (EventDispatcher, _) {
 
-        /**
-         * @class js.core.Bindable
-         * @extends js.core.EventDispatcher
-         */
+        /** @class */
+        var Bindable = EventDispatcher.inherit("js.core.EventDispatcher",
+            /** @lends Bindable.prototype */
+            {
+                /**
+                 * @class A Bindable triggers every change of his attributes as 'change' event.
+                 * @constructs
+                 * @params {Object} attributes a key, value hash
+                 */
+                ctor: function (attributes) {
+                    // call the base class constructor
+                    this.callBase(null);
 
-        var Bindable = EventDispatcher.inherit("js.core.EventDispatcher", {
-            ctor: function (attributes) {
-                // call the base class constructor
-                this.callBase(null);
+                    this.$ = {};
 
-                this.$ = {};
+                    _.extend(this._eventAttributes, this.base._eventAttributes || {});
 
-                _.extend(this._eventAttributes, this.base._eventAttributes || {});
+                    attributes = attributes || {};
 
-                attributes = attributes || {};
+                    _.defaults(attributes, this._defaultAttributes());
 
-                _.defaults(attributes, this._defaultAttributes());
-
-                this.$ = attributes;
-                this.$previousAttributes = _.clone(attributes);
+                    this.$ = attributes;
+                    this.$previousAttributes = _.clone(attributes);
 
 
-                var self = this, fnc;
+                    var self = this, fnc;
 
-                var bind = function (key, targetKey, method) {
-                    self.bind('change:' + key, function () {
-                        self.set(targetKey, method.call(self));
-                    });
-                };
-            },
+                    var bind = function (key, targetKey, method) {
+                        self.bind('change:' + key, function () {
+                            self.set(targetKey, method.call(self));
+                        });
+                    };
+                },
+                /**
+                 * Here you can define the default attributes of the instance.
+                 *
+                 * @static
+                 */
+                defaults: {
+                },
 
-            defaults: {
-            },
+                _defaultAttributes: function () {
+                    return this._generateDefaultsChain("defaults");
+                },
 
-            _defaultAttributes: function () {
-                return this._generateDefaultsChain("defaults");
-            },
+                _generateDefaultsChain: function (property) {
+                    var ret = this[property],
+                        base = this.base;
 
-            _generateDefaultsChain: function (property) {
-                var ret = this[property],
-                    base = this.base;
-
-                while (base) {
-                    _.defaults(ret, base[property]);
-                    base = base.base;
-                }
-                // clone all attributes
-                for (var k in ret) {
-                    if (ret.hasOwnProperty(k) && !_.isFunction(ret[k])) {
-                        ret[k] = _.clone(ret[k]);
+                    while (base) {
+                        _.defaults(ret, base[property]);
+                        base = base.base;
                     }
-                }
+                    // clone all attributes
+                    for (var k in ret) {
+                        if (ret.hasOwnProperty(k) && !_.isFunction(ret[k])) {
+                            ret[k] = _.clone(ret[k]);
+                        }
+                    }
 
-                return ret;
-            },
+                    return ret;
+                },
 
-            /**
-             *
-             * @param key
-             * @param value
-             * @param options
-             */
-            set: function (key, value, options) {
-                var attributes = {};
+                /**
+                 * Call this to set attributes
+                 * @param {String} key The attribute key
+                 * @param {String} value The attribute value
+                 * @param {Object} options A hash of options
+                 * @param {Boolean} options.silent If true no event is triggered on change
+                 * @param {Boolean} options.unset If true the attribute gets deleted
+                 */
+                set: function (key, value, options) {
+                    var attributes = {};
 
-                if (_.isString(key)) {
-                    // check for path
-                    var path = key.split(".");
-                    if (path.length > 1) {
-                        var scope = this.get(path.shift());
-                        if (scope && scope.set) {
-                            scope.set(path.join("."), value, options);
-                            return this;
+                    if (_.isString(key)) {
+                        // check for path
+                        var path = key.split(".");
+                        if (path.length > 1) {
+                            var scope = this.get(path.shift());
+                            if (scope && scope.set) {
+                                scope.set(path.join("."), value, options);
+                                return this;
+                            }
+
                         }
 
+                        attributes[key] = value;
+                    } else {
+                        options = value;
+                        attributes = key;
                     }
 
-                    attributes[key] = value;
-                } else {
-                    options = value;
-                    attributes = key;
-                }
+                    options = options || {silent: false, unset: false};
 
-                options = options || {silent: false, unset: false};
+                    // for unsetting attributes
+                    if (options.unset) {
+                        for (key in attributes) {
+                            attributes[key] = void 0;
+                        }
+                    }
 
-                // for unsetting attributes
-                if (options.unset) {
+                    var changedAttributes = {},
+                        equal = true,
+                        now = this.$,
+                        val;
+
                     for (key in attributes) {
-                        attributes[key] = void 0;
+                        if (attributes.hasOwnProperty(key)) {
+                            // get the value
+                            val = attributes[key];
+                            // unset attribute or change it ...
+                            if (options.unset === true) {
+                                delete now[key];
+                            } else {
+                                if (!_.isEqual(now[key], attributes[key])) {
+                                    this.$previousAttributes[key] = now[key];
+
+                                    now[key] = attributes[key];
+                                    changedAttributes[key] = now[key];
+                                }
+                            }
+                            // if attribute has changed and there is no async changing process in the background, fire the event
+
+                        }
                     }
-                }
+                    this._commitChangedAttributes(changedAttributes);
 
-                var changedAttributes = {},
-                    equal = true,
-                    now = this.$,
-                    val;
-
-                for (key in attributes) {
-                    if (attributes.hasOwnProperty(key)) {
-                        // get the value
-                        val = attributes[key];
-                        // unset attribute or change it ...
-                        if (options.unset === true) {
-                            delete now[key];
-                        } else {
-                            if (!_.isEqual(now[key], attributes[key])) {
-                                this.$previousAttributes[key] = now[key];
-
-                                now[key] = attributes[key];
-                                changedAttributes[key] = now[key];
+                    if (options.silent === false && _.size(changedAttributes) > 0) {
+                        for (key in changedAttributes) {
+                            if (changedAttributes.hasOwnProperty(key)) {
+                                this.trigger('change:' + key, changedAttributes[key], this);
                             }
                         }
-                        // if attribute has changed and there is no async changing process in the background, fire the event
+                        this.trigger('change', changedAttributes, this);
 
                     }
+
+                    return this;
+                },
+                /**
+                 *
+                 * @param {String} key Attribute key
+                 * @returns Attribute value
+                 */
+                get: function (key) {
+                    return this.$[key];
+                },
+                /**
+                 *
+                 * @param {String} key
+                 * @returns true if attribute is not undefined
+                 */
+                has: function (key) {
+                    return !_.isUndefined(this.$[key]);
+                },
+                /**
+                 * This method when attributes have changed after a set
+                 * @param {Object} hash of changed attributes
+                 */
+                _commitChangedAttributes: function (attributes) {
+                    // override
+                },
+                /**
+                 * Unsets on attribute key
+                 * @param {String} attribute key
+                 * @param {Object} options
+                 */
+                unset: function (key, options) {
+                    (options || (options = {})).unset = true;
+                    return this.set(key, null, options);
+                },
+                /**
+                 * clears all attributes
+                 */
+                clear: function () {
+                    return this.set(this.$, {unset: true});
                 }
-                this._commitChangedAttributes(changedAttributes);
-
-                if (options.silent === false && _.size(changedAttributes) > 0) {
-                    for (key in changedAttributes) {
-                        if (changedAttributes.hasOwnProperty(key)) {
-                            this.trigger('change:' + key, changedAttributes[key], this);
-                        }
-                    }
-                    this.trigger('change', changedAttributes, this);
-
-                }
-
-                return this;
-            },
-            get: function (key) {
-                //var path = key.split(".");
-                return this.$[key];
-                /*
-                 var key;
-                 while (path.length > 0 && prop != null) {
-                 key = path.shift();
-                 if (prop instanceof Bindable) {
-                 prop = prop.get(key);
-                 } else if (typeof(prop[key]) !== "undefined") {
-                 prop = prop[key];
-                 } else {
-                 return null;
-                 }
-                 }  */
-            },
-            has: function (key) {
-                return typeof(this.$[key]) !== "undefined" && this.$[key] !== null;
-            },
-            _commitChangedAttributes: function (attributes) {
-
-            },
-            unset: function (key, options) {
-                (options || (options = {})).unset = true;
-                return this.set(key, null, options);
-            },
-            clear: function () {
-                return this.set(this.$, {unset: true});
-            }
-        });
-
-        Bindable.StringParser = {
-            $fncRegEx: /^([a-z$_]\w*)\((.*)\)$/i,
-            splitPathOutSide: function (path, del, left, right) {
-                var counter = 0, matches = [], c, cl, cr, last = 0;
-                for (var i = 0; i < path.length - 1; i++) {
-                    c = path.charAt(i);
-                    cl = path.substr(i, left.length);
-                    cr = path.substr(i, right.length);
-
-                    if (cl == left) counter++;
-                    if (cr == right) counter--;
-
-                    if (counter === 0 && del == c) {
-                        matches.push(path.substring(last, i));
-                        last = i + 1;
-                    }
-                }
-                if (last > 0) {
-                    matches.push(path.substr(last));
-                } else {
-                    return [path];
-                }
-                return matches;
-
-            },
-            splitFirst: function (path, del, left, right) {
-                return this.splitPathOutSide(path, del, left, right)[0];
-            },
-            findMatchesIn: function (str, left, right, depth) {
-                if (!_.isString(str)) return [];
-                var cl, cr, stack = [], content, ret = [], r;
-                for (var i = 0; i < str.length; i++) {
-                    cl = str.substr(i, left.length);
-                    cr = str.substr(i, right.length);
-                    if (cl == left) {
-                        stack.push(i);
-                    } else if (cr == right && stack.length > 0) {
-                        r = stack.pop();
-                        if (stack.length == depth) {
-                            content = str.substring(r, i + 1);
-                            ret.push(content);
-                            cl = cr = null;
-                        }
-                    }
-                }
-                return ret;
-            },
-            // Expects something like foo() foo(asdasd()) asd as dasd asd asd();
-            isFunctionDefinition: function (str) {
-                return this.findMatchesIn(str, "(", ")", 0).length > 0;
-            },
-            getFunctionInfo: function (fncDef) {
-                var matches = fncDef.match(Parser.$fncRegEx);
-                return {
-                    name: matches[1],
-                    parameters: this.splitPathOutSide(matches[2], ",", "(", ")")
-                };
-            },
-            extract: function (str, left, right) {
-                var l = str.indexOf(left);
-                var r = str.lastIndexOf(right);
-                if (l < r) {
-                    return str.substring(l + left.length, r);
-                }
-                return null;
-            }
-        };
+            });
 
         return Bindable;
 

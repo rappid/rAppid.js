@@ -4,7 +4,6 @@ define(
             defaults: {
                 tagName: "div"
             },
-            $behavesAsDomElement: false,
             render: function () {
                 // look if the component has a layout defined
                 var layout = this.$templates['layout'];

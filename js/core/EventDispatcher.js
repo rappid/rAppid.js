@@ -33,13 +33,13 @@ define(["js/core/Base"],
 
         var undefinedValue;
 
+        /** @class */
         var EventDispatcher = Base.inherit("js.core.EventDispatcher",
-            /** @lends EventDispatcher# */
+            /** @lends EventDispatcher.prototype */
             {
 
                 /**
-                 * Description of constructor.
-                 * @class Description of class.
+                 * @class Allows binding and triggering of custom events
                  * @constructs
                  */
                 ctor: function () {
@@ -48,8 +48,9 @@ define(["js/core/Base"],
                 },
                 /**
                  * Binds a callback and a scope to a given eventType
+                 * @public
                  * @param {String} eventType The name of the event
-                 * @param {Function} callback The callback function
+                 * @param {Function} callback The callback function - signature callback({@link EventDispatcher.Event},[caller])
                  * @param {Object} [scope]  This sets the scope for the callback function
                  */
                 bind: function (eventType, callback, scope) {
@@ -63,8 +64,9 @@ define(["js/core/Base"],
                 },
                 /**
                  * Triggers an event
+                 * @public
                  * @param {String} eventType
-                 * @param {js.core.EventDispatcher.Event|Object} event If you use an Object the object is wrapped in an js.core.EventDispatcher.Event
+                 * @param {EventDispatcher.Event|Object} event If you use an Object the object is wrapped in an Event
                  * @param caller
                  */
                 trigger: function (eventType, event, caller) {
@@ -104,6 +106,7 @@ define(["js/core/Base"],
                 },
                 /***
                  * Unbinds callbacks for events
+                 * @public
                  * @param {String} eventType
                  * @param {Function} callback
                  */
@@ -126,12 +129,13 @@ define(["js/core/Base"],
             });
 
         EventDispatcher.Event = Base.inherit(
-            /** @lends EventDispatcher.Event# */
+            /** @lends EventDispatcher.Event.prototype */
             {
                 /**
                  * Description of constructor.
                  * @class Description of class.
                  * @constructs
+                 * @params {Object} attributes Hash of attributes
                  */
                 ctor: function (attributes) {
                     this.$ = attributes;
@@ -141,6 +145,10 @@ define(["js/core/Base"],
                     this.isImmediatePropagationStopped = false;
 
                 },
+                /**
+                 * Prevent default triggering
+                 * @public
+                 */
                 preventDefault: function () {
                     this.isDefaultPrevented = true;
 
@@ -154,6 +162,10 @@ define(["js/core/Base"],
                         }
                     }
                 },
+                /**
+                 * Call this to stop propagation
+                 * @public
+                 */
                 stopPropagation: function () {
                     this.isPropagationStopped = true;
 
@@ -165,21 +177,39 @@ define(["js/core/Base"],
                         e.cancelBubble = true;
                     }
                 },
+                /**
+                 * @public
+                 */
                 stopImmediatePropagation: function () {
                     this.isImmediatePropagationStopped = true;
                     this.stopPropagation();
                 }
             });
 
-        EventDispatcher.EventHandler = Base.inherit({
-            ctor: function (callback, scope) {
-                this.scope = scope;
-                this.$callback = callback;
-            },
-            trigger: function (event, caller) {
-                this.$callback.call(this.scope, event, caller);
-            }
-        });
+
+        EventDispatcher.EventHandler = Base.inherit(
+            /** @lends EventDispatcher.EventHandler.prototype */
+            {
+                /**
+                 * Simple EventHandler
+                 * @class
+                 * @constructs
+                 * @params {Function} callback The callback function
+                 * @params {Object} scope The callback scope
+                 */
+                ctor: function (callback, scope) {
+                    this.scope = scope;
+                    this.$callback = callback;
+                },
+                /**
+                 *
+                 * @param {EventDispatcher.Event} event
+                 * @param {Object} caller
+                 */
+                trigger: function (event, caller) {
+                    this.$callback.call(this.scope, event, caller);
+                }
+            });
 
         return EventDispatcher;
     }

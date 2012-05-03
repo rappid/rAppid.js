@@ -7,6 +7,10 @@ define(
                 itemKey: 'item',
                 indexKey: 'index'
             },
+            $classAttributes: [
+                'itemKey', 'indexKey'
+            ],
+
             hasItems: function () {
                 if (this.$.items) {
                     return this.$.items.length;

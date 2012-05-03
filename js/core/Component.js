@@ -7,8 +7,7 @@ define(
             Configuration;
 
         var Component = Element.inherit("js.core.Component",
-            /** @lends Component# */
-
+            /** @lends Component */
             {
                 /***
                  * What up??

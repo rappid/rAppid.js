@@ -15,12 +15,26 @@ define(["require","js/core/Component", "js/core/Content", "js/core/Binding", "in
                 selected: undefined,
                 selectable: undefined
             },
-            $classAttributes:[],
-            $behavesAsDomElement: true,
+            $classAttributes:[
+                /^\$/,
+                /^data/,
+                /^xmlns/
+            ],
             ctor: function (attributes, descriptor, systemManager, parentScope, rootScope) {
                 this.$renderMap = {};
                 this.$childViews = [];
                 this.$contentChildren = [];
+
+                // go inherit tree up and search for descriptors
+                var current = this;
+                while (current) {
+                    if (current.$classAttributes) {
+                        this.$classAttributes = this.$classAttributes.concat(current.$classAttributes);
+                    }
+                    current = current.base;
+                }
+
+
                 this.callBase();
 
                 if (descriptor) {
@@ -234,16 +248,13 @@ define(["require","js/core/Component", "js/core/Content", "js/core/Binding", "in
             _renderAttributes: function (attributes) {
                 var attr;
                 for (var key in attributes) {
-                    if (attributes.hasOwnProperty(key) && key.indexOf("$") !== 0 && key.indexOf("data") !== 0) {
+                    if (attributes.hasOwnProperty(key)) {
                         attr = attributes[key];
                         this._renderAttribute(key, attr);
                     }
                 }
             },
             _renderAttribute: function (key, attr) {
-                if(_.contains(this.$classAttributes, key)){
-                    return;
-                }
                 var method = this.$renderMap[key];
                 var prev = this.$previousAttributes[key];
 
@@ -261,8 +272,24 @@ define(["require","js/core/Component", "js/core/Content", "js/core/Binding", "in
                 }
                 if (method !== false) {
                     method.call(this, attr, prev);
-                } else if (this.$behavesAsDomElement && !_.isUndefined(attr)) {
-                    this.$el.setAttribute(key, attr);
+                } else {
+                    var cAttr;
+                    for(var i = 0; i < this.$classAttributes.length; i++){
+                        cAttr = this.$classAttributes[i];
+                        if(cAttr instanceof RegExp){
+                            if(cAttr.test(key)){
+                                return;
+                            }
+                        } else {
+                            if(cAttr == key){
+                                return;
+                            }
+                        }
+                    }
+
+                    if (!_.isUndefined(attr)) {
+                        this.$el.setAttribute(key, attr);
+                    }
                 }
             },
 
