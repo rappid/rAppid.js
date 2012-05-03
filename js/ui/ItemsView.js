@@ -4,8 +4,8 @@ define(
             defaults: {
                 tagName: "div",
                 items: null,
-                itemKey: '$item',
-                indexKey: '$index'
+                itemKey: 'item',
+                indexKey: 'index'
             },
             hasItems: function () {
                 if (this.$.items) {
@@ -74,7 +74,7 @@ define(
 
             },
             _innerRenderItem: function (item, i) {
-                var attr = {}; attr[this.$.itemKey] = item; attr[this.$.indexKey]  = i;
+                var attr = {}; attr["$"+this.$.itemKey] = item; attr["$"+this.$.indexKey]  = i;
                 var comp = this.$templates['item'].createComponents(attr)[0];
                 // add to rendered item map
                 this.$renderedItems.push({
