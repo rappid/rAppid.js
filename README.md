@@ -8,10 +8,9 @@ rAppid.js is a declarative JavaScript web application for rapid web application 
 rAppid.js is currently under rapid development. The core features and life cycles are defined, but might be modified.
 For more information and documentation of <rAppid.js /> lookup the [wiki](https://github.com/it-ony/rAppid.js/wiki).
 
-An easy todo application written with rAppid.js can be found under [http://todo.rappidjs.com](http://todo.rappidjs.com).
-For a demo of bindings and controls visit [http://demo.rappidjs.com/src/ui.html](http://demo.rappidjs.com/src/ui.html).
-
-
+## Code examples
+* TodoMVC application [Sources](https://github.com/krebbl/rappidjs-todomvc) - [Demo](http://todo.rappidjs.com)
+* Shop application [Sources](https://github.com/it-ony/SprdShop) (in developement)
 
 ## Features 
 * Dependency loading (via requirejs)
