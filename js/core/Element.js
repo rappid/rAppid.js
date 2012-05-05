@@ -152,6 +152,10 @@ define(["js/core/Bindable", "underscore"], function (Bindable, _) {
 
             },
             _initializationComplete: function () {
+
+                // call commitChangedAttributes for all attributes
+                this._commitChangedAttributes(this.$);
+
                 this.$initialized = true;
             },
             _getTextContentFromDescriptor: function (desc) {
