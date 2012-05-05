@@ -35,16 +35,24 @@ function install(args, callback) {
 
     dir = path.resolve(dir.replace(/^~\//, process.env.HOME + '/'));
 
-    child = child_process.exec(["npm","install",what,"-d"].join(" "),{cwd:dir}, function (err, stdout, stderr) {
-        sys.print('stdout: ' + stdout);
-        sys.print('stderr: ' + stderr);
 
-        if(!err){
-            linkPackage(dir, packageName, version, callback);
-        }else{
-            callback(err);
-        }
-    });
+    if (!path.existsSync(path.join(dir,"node_modules", packageName))) {
+        child = child_process.exec(["npm", "install", what, "-d"].join(" "), {cwd: dir}, function (err, stdout, stderr) {
+            sys.print('stdout: ' + stdout);
+            sys.print('stderr: ' + stderr);
+
+            if (!err) {
+                linkPackage(dir, packageName, version, callback);
+            } else {
+                callback(err);
+            }
+        });
+    }else{
+        callback();
+    }
+
+
+
 }
 
 function readJson(path, callback) {
@@ -63,11 +71,11 @@ function linkPackage(dir, packageName, version ,callback){
     readJson(path.join(packageDir, "package.json"), function (err, data) {
         if (!err){
             var libDir = path.join(publicDir, data.lib);
-
             if (!path.existsSync(libDir)) {
                 fs.symlinkSync(path.join(packageDir, data.lib), libDir, 'dir');
             }
             var packageFile = path.join(dir, "package.json");
+
             readJson(packageFile, function(err,data){
                if(!err) {
                    if(!data.rAppid){
@@ -76,10 +84,10 @@ function linkPackage(dir, packageName, version ,callback){
                    if(!data.rAppid.dependencies){
                        data.rAppid.dependencies = {};
                    }
-
-                   data.rAppid.dependencies[packageName] = version;
-
-                   fs.writeFileSync(packageFile, JSON.stringify(data, null, '\t'));
+                   if(data.rAppid.dependencies[packageName] != version){
+                       data.rAppid.dependencies[packageName] = version;
+                       fs.writeFileSync(packageFile, JSON.stringify(data, null, '\t'));
+                   }
                }else{
                    console.log(err);
                }
@@ -102,6 +110,7 @@ function linkPackage(dir, packageName, version ,callback){
             f.exec(function (err) {
                 // if all dependencies are installed
                 if (!err) {
+                    callback();
                     // process.chdir(originalWD);
                     require(path.join(__dirname, 'config.js'))([path.join(publicDir, "config.json")], callback);
                 } else {

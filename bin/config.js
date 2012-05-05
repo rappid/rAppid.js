@@ -38,6 +38,7 @@ var config = function(args, callback) {
             config.xamlClasses.forEach(function(xaml){
                 console.log("\t" + xaml);
             });
+            callback();
 
         }
 
