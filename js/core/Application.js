@@ -31,8 +31,13 @@ define(
             start: function (parameter, callback) {
                 parameter = parameter || {};
 
-                this.history.start(callback, parameter.initialHash);
+                this.startHistory(callback, parameter.initialHash);
             },
+
+            startHistory: function(callback, initialHash) {
+                this.history.start(callback, initialHash);
+            },
+
             render: function (target) {
                 var dom = this.callBase(null);
 

@@ -96,7 +96,7 @@ define(["js/core/Component", "underscore", "js/conf/Route"],
                         var routeContext = {
                             callback: cb,
                             router: this,
-                            params: params,
+                            params: _.clone(params),
                             fragment: fragment
                         };
 
