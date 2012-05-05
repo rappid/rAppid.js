@@ -152,7 +152,9 @@ define(["js/core/Bindable", "js/core/EventDispatcher", "js/core/BindingParser", 
             },
             _revCallback: function (e) {
                 if (this.$.fnc) {
-                    this.$.fnc.call(this.$.scope, e.$, this.$.target);
+                    var params = this._getFncParameters();
+                    params.unshift(e.$);
+                    this.$.fnc.apply(this.$.scope, params);
                 } else {
                     this.$.scope.set(pathToString(this.$.path), e.$);
                 }
@@ -186,20 +188,24 @@ define(["js/core/Bindable", "js/core/EventDispatcher", "js/core/BindingParser", 
                     }
                 }
             },
+            _getFncParameters: function(){
+                var parameters = [];
+                for (var i = 0; i < this.$parameters.length; i++) {
+                    var para = this.$parameters[i];
+                    if (para instanceof Binding) {
+                        para = para.getValue();
+                    }
+                    parameters.push(para);
+                }
+                return parameters;
+            },
             getValue: function () {
                 if (this.$subBinding) {
                     return this.$subBinding.getValue();
                 } else {
                     if (this.$.fnc) {
-                        var parameters = [];
-                        for (var i = 0; i < this.$parameters.length; i++) {
-                            var para = this.$parameters[i];
-                            if (para instanceof Binding) {
-                                para = para.getValue();
-                            }
-                            parameters.push(para);
-                        }
-                        return this.$.fnc.apply(this.$.scope, parameters);
+
+                        return this.$.fnc.apply(this.$.scope, this._getFncParameters());
                     } else if (this.$.path.length == 1) {
                         return this.$.scope.get(this.$.key.name);
                     } else {
