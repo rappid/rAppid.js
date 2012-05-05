@@ -204,7 +204,6 @@ define(["js/core/Bindable", "js/core/EventDispatcher", "js/core/BindingParser", 
                     return this.$subBinding.getValue();
                 } else {
                     if (this.$.fnc) {
-
                         return this.$.fnc.apply(this.$.scope, this._getFncParameters());
                     } else if (this.$.path.length == 1) {
                         return this.$.scope.get(this.$.key.name);
@@ -301,7 +300,9 @@ define(["js/core/Bindable", "js/core/EventDispatcher", "js/core/BindingParser", 
     };
 
     Binding.evaluateText = function (text, scope, attrKey) {
-        if (!_.isString(text)) return text;
+        if (!_.isString(text)) {
+            return text;
+        }
         var bindingDefs = Parser.parse(text, "text");
         var binding;
         var bindings = [];
