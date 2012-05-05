@@ -60,7 +60,11 @@ define(["js/core/Bindable", "underscore"], function (Bindable, _) {
 
                     for (var a = 0; a < descriptor.attributes.length; a++) {
                         node = descriptor.attributes[a];
-                        attributes[node.nodeName] = stringToPrimitive(node.value);
+                        // don't add xmlns attributes
+                        if(node.nodeName.indexOf("xmlns") !== 0){
+                            attributes[node.nodeName] = stringToPrimitive(node.value);
+                        }
+
                     }
                 }
 

@@ -234,6 +234,10 @@ define(
                         desc = descriptors[d];
                         this._cleanUpDescriptor(desc);
                         children = children.concat(this._getChildrenFromDescriptor(desc));
+                        // only extend attributes from super descriptors
+                        if(desc !== this.$descriptor){
+                            _.extend(this.$, this._getAttributesFromDescriptor(desc));
+                        }
                     }
 
                     this._initializeChildren(children);
