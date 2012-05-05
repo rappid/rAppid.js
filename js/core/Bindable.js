@@ -19,20 +19,11 @@ define(["js/core/EventDispatcher", "underscore"],
                     _.extend(this._eventAttributes, this.base._eventAttributes || {});
 
                     attributes = attributes || {};
-
                     _.defaults(attributes, this._defaultAttributes());
 
                     this.$ = attributes;
                     this.$previousAttributes = _.clone(attributes);
 
-
-                    var self = this, fnc;
-
-                    var bind = function (key, targetKey, method) {
-                        self.bind('change:' + key, function () {
-                            self.set(targetKey, method.call(self));
-                        });
-                    };
                 },
                 /**
                  * Here you can define the default attributes of the instance.
@@ -141,6 +132,7 @@ define(["js/core/EventDispatcher", "underscore"],
 
                         }
                     }
+
                     this._commitChangedAttributes(changedAttributes);
 
                     if (options.silent === false && _.size(changedAttributes) > 0) {
@@ -150,7 +142,6 @@ define(["js/core/EventDispatcher", "underscore"],
                             }
                         }
                         this.trigger('change', changedAttributes, this);
-
                     }
 
                     return this;
