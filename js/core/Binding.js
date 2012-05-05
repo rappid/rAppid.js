@@ -100,12 +100,14 @@ define(["js/core/Bindable", "js/core/EventDispatcher", "js/core/BindingParser", 
 
                     // on change of this key
                     scope.bind(this.$.event, this._callback, this);
-
-                    if (this.$.twoWay === true) {
-                        this.$.targetEvent = 'change:' + this.$.targetKey;
-                        this.$.target.bind(this.$.targetEvent, this._revCallback, this);
-                    }
                 }
+
+                if (this.$.twoWay === true && this.$.path.length === 1) {
+                    this.$.targetEvent = 'change:' + this.$.targetKey;
+
+                    this.$.target.bind(this.$.targetEvent, this._revCallback, this);
+                }
+
                 this._createSubBinding();
             },
             _checkAttributes: function () {
@@ -144,12 +146,16 @@ define(["js/core/Bindable", "js/core/EventDispatcher", "js/core/BindingParser", 
                     // get value for first child
                     if (nScope && (nScope instanceof EventDispatcher)) {
                         // init new binding, which triggers this binding
-                        this.$subBinding = new Binding({scope: nScope, path: this.$.path.slice(1), target: this.$.target, targetKey: this.$.targetKey, rootScope: this.$.rootScope, callback: this.$.callback, context: this.$.context});
+                        this.$subBinding = new Binding({scope: nScope, path: this.$.path.slice(1), target: this.$.target, targetKey: this.$.targetKey, rootScope: this.$.rootScope, callback: this.$.callback, context: this.$.context, twoWay: this.$.twoWay});
                     }
                 }
             },
             _revCallback: function (e) {
-                this.$.scope.set(pathToString(this.$.path), this.$.transformBack(e.$, this.$.target));
+                if (this.$.fnc) {
+                    this.$.fnc.call(this.$.scope, e.$, this.$.target);
+                } else {
+                    this.$.scope.set(pathToString(this.$.path), e.$);
+                }
             },
             _callback: function () {
                 // remove subBindings!
