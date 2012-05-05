@@ -346,7 +346,8 @@ define([], function () {
                                         var scriptInstance = new Script(null, scripts[s]);
                                         scriptObjects.push(scriptInstance.evaluate(importedClasses));
                                     } catch (e) {
-                                        throw "Script cannot be loaded";
+
+                                        throw name + ": Script cannot be loaded";
                                     }
                                 }
                             }
