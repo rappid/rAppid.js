@@ -1,0 +1,184 @@
+define(["js/core/Component", "js/core/List", "js/data/Collection", "flow"], function (Component, List, Collection, flow) {
+
+    return Component.inherit("js.data.PagedDataView", {
+
+        defaults: {
+            page: null,
+            pageCount: null,
+            baseList: null,
+            pageSize: 20
+        },
+
+        initialize: function() {
+
+            this.set('list', new List());
+
+            this.callBase();
+        },
+
+        _commitChangedAttributes: function (attributes) {
+
+            this.callBase(attributes);
+
+            if (!attributes) {
+                return;
+            }
+
+            if (attributes.hasOwnProperty("list") && this.$initialized) {
+                throw "list cannot be set. It is readonly.";
+            }
+
+            if (attributes.hasOwnProperty("baseList")) {
+                // unbind old list
+
+                var baseList = this.$previousAttributes.baseList;
+                this._unbindList(baseList);
+
+                baseList = attributes.baseList;
+
+                if (baseList && (!(baseList instanceof List ) || !(baseList instanceof Collection))) {
+                    throw "baseList must be a List or a Collection";
+                }
+
+                // bind to new list
+                this._bindList(baseList);
+
+                // remove all items from list
+                this.$.list.clear();
+
+                // and show the current page
+                this.showPage(attributes.page || this.$.page, null, true);
+            }
+
+            if (attributes.hasOwnProperty("page")) {
+                this.showPage(attributes.page, null, attributes.page !== this.$previousAttributes.page);
+            }
+
+        },
+
+        /***
+         * navigates to page
+         * @param {Number} pageIndex
+         * @param {Function} [callback] callback if navigation completes
+         */
+        showPage: function (pageIndex, callback, noPageCheck) {
+            var i;
+            pageIndex = pageIndex || 0;
+
+            if (!this.$.baseList || (!noPageCheck && pageIndex === this.$.page)) {
+                // nothing to do
+                if (callback) {
+                    callback();
+                }
+                return;
+            }
+
+            var list = this.$.list;
+            var baseList = this.$.baseList;
+
+            list.clear();
+
+            // add items
+            var startIndex = this.$.pageSize * pageIndex;
+            for (i = 0; i < this.$.pageSize; i++) {
+                list.add(baseList.at(startIndex + i));
+            }
+
+            if (baseList instanceof Collection) {
+                // determinate pages to load based on the page size
+                var collectionPageSize = this.$.baseList.$options.pageSize;
+
+                var collectionStartPage = this._itemIndexToPageIndex(this._pageIndexToItemIndex(pageIndex), collectionPageSize);
+                var collectionEndPage = this._itemIndexToPageIndex(this._pageIndexToItemIndex(pageIndex + 1) - 1, collectionPageSize);
+
+                var pageIndices = [];
+                for (i = collectionStartPage; i <= collectionEndPage; i++) {
+                    pageIndices.push(i);
+                }
+
+                flow()
+                    .parEach(pageIndices, function (pageIndex, cb) {
+                        baseList.fetchPage(pageIndex, null, cb);
+                    })
+                    .exec(callback);
+
+            }
+
+
+
+            this.set('page', pageIndex);
+        },
+
+        _currentPageIndex: function () {
+            return this.$.page || 0;
+        },
+
+        previousPage: function (callback) {
+            var page = this._currentPageIndex() - 1;
+            page = Math.max(0, page);
+
+            this.showPage(page, callback);
+        },
+
+        nextPage: function (callback) {
+            var page = this._currentPageIndex() + 1;
+            // TODO top range
+
+            this.showPage(page, callback);
+        },
+
+        _pageIndexToItemIndex: function (pageIndex, pageSize) {
+            pageSize = pageSize || this.$.pageSize;
+            return pageIndex * pageSize;
+        },
+
+        _itemIndexToPageIndex: function (itemIndex, pageSize) {
+            pageSize = pageSize || this.$.pageSize;
+            return Math.floor(itemIndex / pageSize);
+        },
+
+        _unbindList: function (list) {
+            if (list) {
+                list.unbind('add', this._onItemAdded);
+                list.unbind('remove', this._onItemRemoved);
+                list.unbind('change', this._onItemChange);
+                list.unbind('reset', this._onReset);
+                list.unbind('sort', this._onSort);
+            }
+        },
+
+        _bindList: function (list) {
+            if (list) {
+                list.bind('add', this._onItemAdded, this);
+                list.bind('remove', this._onItemRemoved, this);
+                list.bind('change', this._onItemChanged, this);
+                list.bind('reset', this._onReset, this);
+                list.bind('sort', this._onSort);
+            }
+        },
+
+        _onItemAdded: function (e) {
+            // transform index from baseList to real list
+            var index = e.$.index,
+                currentPageIndex = this._currentPageIndex();
+
+            if ((index >= currentPageIndex * this.$.pageSize) && (index < (currentPageIndex + 1) * this.$.pageSize)) {
+
+                index = index - currentPageIndex * this.$.pageSize;
+                if (e.$.item !== this.$.list.at(index)) {
+                    this.$.list.removeAt(index);
+                    this.$.list.add(e.$.item, {
+                        index: index
+                    });
+
+                    // remove out of range items
+                    for (var i = this.$.list.size(); i > this.$.pageSize; i--) {
+                        this.$.list.removeAt(i);
+                    }
+                }
+            }
+
+
+        }
+    });
+});
