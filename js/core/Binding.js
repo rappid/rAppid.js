@@ -146,9 +146,17 @@ define(["js/core/Bindable", "js/core/EventDispatcher", "js/core/BindingParser", 
                     // get value for first child
                     if (nScope && (nScope instanceof EventDispatcher)) {
                         // init new binding, which triggers this binding
-                        this.$subBinding = new Binding({scope: nScope, path: this.$.path.slice(1), target: this.$.target, targetKey: this.$.targetKey, rootScope: this.$.rootScope, callback: this.$.callback, context: this.$.context, twoWay: this.$.twoWay});
+                        this.$subBinding = new Binding({scope: nScope, path: this.$.path.slice(1), target: this.$.target, targetKey: this.$.targetKey, rootScope: this.$.rootScope, callback: this.$.callback, context: this.$.context, twoWay: this.$.twoWay, transform: this.$.transform, transformBack: this.$.transformBack});
                     }
                 }
+            },
+            _findTransformFnc: function(path){
+                var el = path.shift();
+                while(path.length > 0){
+
+                }
+
+
             },
             _revCallback: function (e) {
                 if (this.$.fnc) {
@@ -156,7 +164,7 @@ define(["js/core/Bindable", "js/core/EventDispatcher", "js/core/BindingParser", 
                     params.unshift(e.$);
                     this.$.fnc.apply(this.$.scope, params);
                 } else {
-                    this.$.scope.set(pathToString(this.$.path), e.$);
+                    this.$.scope.set(pathToString(this.$.path), this.$.transformBack(e.$));
                 }
             },
             _callback: function () {
@@ -224,9 +232,9 @@ define(["js/core/Bindable", "js/core/EventDispatcher", "js/core/BindingParser", 
                 // get value
                 var val = this.getContextValue();
                 if (this.$.targetKey) {
-                    this.$.target.set(this.$.targetKey, this.$.transform(val, this.$.rootScope));
+                    this.$.target.set(this.$.targetKey, this.$.transform(val));
                 } else if (this.$.callback) {
-                    this.$.callback.call(this.$.target, this.$.transform(val, this.$.rootScope));
+                    this.$.callback.call(this.$.target, this.$.transform(val));
                 }
 
             },
@@ -234,6 +242,27 @@ define(["js/core/Bindable", "js/core/EventDispatcher", "js/core/BindingParser", 
                 return this.getValue();
             }
         });
+
+    function findTransformFunction(path, scope) {
+        var pathElement = path[0];
+        if (pathElement.type == TYPE_FNC) {
+            scope = scope.getScopeForFncName(pathElement.name);
+        } else {
+            scope = scope.getScopeForKey(pathElement.name);
+        }
+
+        var nScope = scope;
+        while (nScope && path.length > 0) {
+            pathElement = path.shift();
+            if (pathElement.type == TYPE_FNC) {
+                return nScope[pathElement.name];
+            } else if (pathElement.type == TYPE_VAR) {
+                nScope = nScope.get(pathElement.name);
+            }
+        }
+
+        return false;
+    };
 
     Binding.create = function (bindingDef, targetScope, attrKey, context) {
         var path = bindingDef.path;
@@ -287,7 +316,26 @@ define(["js/core/Bindable", "js/core/EventDispatcher", "js/core/BindingParser", 
 
             if (scope) {
                 var twoWay = (bindingDef.type == "twoWay");
+
+
                 var options = {scope: scope, path: path, target: targetScope, twoWay: twoWay, context: context};
+
+                if (twoWay) {
+                    if (bindingDef.transform) {
+                        var transformFnc = findTransformFunction(bindingDef.transform, searchScope);
+                        if(transformFnc){
+                            options.transform = transformFnc;
+                        }
+                    }
+
+                    if (bindingDef.transformBack) {
+                        var transformBackFnc = findTransformFunction(bindingDef.transformBack, searchScope);
+                        if (transformBackFnc) {
+                            options.transformBack = transformBackFnc;
+                        }
+                    }
+                }
+
                 if (cb) {
                     options['callback'] = cb;
                 } else {
