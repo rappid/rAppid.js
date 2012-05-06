@@ -96,7 +96,7 @@ define(["js/core/Component", "js/core/Base", "js/data/Collection", "underscore"]
         };
 
         Context.generateCacheIdFromModel = function (model) {
-            return Context.generateCacheId(model.className, model.$.id);
+            return Context.generateCacheId(model.modelClassName, model.$.id);
         };
 
         Context.generateCacheIdFromCollection = function (collection) {
