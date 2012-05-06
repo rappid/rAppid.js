@@ -270,7 +270,7 @@ define(["js/core/Bindable", "js/core/EventDispatcher", "js/core/BindingParser", 
 
         var scope;
         var searchScope = targetScope;
-        if (attrKey == pathElement.name) {
+        if (pathElement.type != TYPE_FNC && attrKey == pathElement.name) {
             searchScope = searchScope.$parentScope;
         }
 
