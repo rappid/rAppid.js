@@ -832,29 +832,109 @@ define(function () {
 
                 var savedPos0 = pos;
                 var savedPos1 = pos;
-                if (input.substr(pos, 1) === "{") {
-                    var result3 = "{";
-                    pos += 1;
+                if (input.substr(pos, 2) === "{{") {
+                    var result3 = "{{";
+                    pos += 2;
                 } else {
                     var result3 = null;
                     if (reportMatchFailures) {
-                        matchFailed("\"{\"");
+                        matchFailed("\"{{\"");
                     }
                 }
                 if (result3 !== null) {
-                    var result4 = parse_binding();
+                    var result4 = parse_path();
                     if (result4 !== null) {
-                        if (input.substr(pos, 1) === "}") {
-                            var result5 = "}";
+                        var savedPos4 = pos;
+                        var savedPos5 = pos;
+                        if (input.substr(pos, 1) === "|") {
+                            var result16 = "|";
                             pos += 1;
                         } else {
-                            var result5 = null;
+                            var result16 = null;
                             if (reportMatchFailures) {
-                                matchFailed("\"}\"");
+                                matchFailed("\"|\"");
                             }
                         }
+                        if (result16 !== null) {
+                            var result17 = parse_path();
+                            if (result17 !== null) {
+                                var result14 = [result16, result17];
+                            } else {
+                                var result14 = null;
+                                pos = savedPos5;
+                            }
+                        } else {
+                            var result14 = null;
+                            pos = savedPos5;
+                        }
+                        var result15 = result14 !== null
+                            ? (function (p) {
+                            return p;
+                        })(result14[1])
+                            : null;
+                        if (result15 !== null) {
+                            var result13 = result15;
+                        } else {
+                            var result13 = null;
+                            pos = savedPos4;
+                        }
+                        var result5 = result13 !== null ? result13 : '';
                         if (result5 !== null) {
-                            var result1 = [result3, result4, result5];
+                            var savedPos2 = pos;
+                            var savedPos3 = pos;
+                            if (input.substr(pos, 1) === "|") {
+                                var result11 = "|";
+                                pos += 1;
+                            } else {
+                                var result11 = null;
+                                if (reportMatchFailures) {
+                                    matchFailed("\"|\"");
+                                }
+                            }
+                            if (result11 !== null) {
+                                var result12 = parse_path();
+                                if (result12 !== null) {
+                                    var result9 = [result11, result12];
+                                } else {
+                                    var result9 = null;
+                                    pos = savedPos3;
+                                }
+                            } else {
+                                var result9 = null;
+                                pos = savedPos3;
+                            }
+                            var result10 = result9 !== null
+                                ? (function (p) {
+                                return p;
+                            })(result9[1])
+                                : null;
+                            if (result10 !== null) {
+                                var result8 = result10;
+                            } else {
+                                var result8 = null;
+                                pos = savedPos2;
+                            }
+                            var result6 = result8 !== null ? result8 : '';
+                            if (result6 !== null) {
+                                if (input.substr(pos, 2) === "}}") {
+                                    var result7 = "}}";
+                                    pos += 2;
+                                } else {
+                                    var result7 = null;
+                                    if (reportMatchFailures) {
+                                        matchFailed("\"}}\"");
+                                    }
+                                }
+                                if (result7 !== null) {
+                                    var result1 = [result3, result4, result5, result6, result7];
+                                } else {
+                                    var result1 = null;
+                                    pos = savedPos1;
+                                }
+                            } else {
+                                var result1 = null;
+                                pos = savedPos1;
+                            }
                         } else {
                             var result1 = null;
                             pos = savedPos1;
@@ -868,10 +948,9 @@ define(function () {
                     pos = savedPos1;
                 }
                 var result2 = result1 !== null
-                    ? (function (b) {
-                    b.type = 'twoWay';
-                    return b;
-                })(result1[1])
+                    ? (function (path, a, b) {
+                    return path ? {path: path, type: 'twoWay', transformBack: a || false, transform: b || false} : false;
+                })(result1[1], result1[2], result1[3])
                     : null;
                 if (result2 !== null) {
                     var result0 = result2;
