@@ -49,23 +49,15 @@ define(["require", "js/data/DataSource", "js/data/ReferenceDataSource", "js/core
             return new RestContext(this, properties, parentContext);
         },
 
-        getRestPathForModel: function (modelClassName) {
+        getRestPathForModel: function (alias) {
 
             var typeConfig,
                 i;
 
-            // first search via className
-            for (i = 0; i < this.$configuredTypes.length; i++) {
-                typeConfig = this.$configuredTypes[i];
-                if (typeConfig.$.modelClassName == modelClassName) {
-                    return typeConfig.$.path;
-                }
-            }
-
             // search via alias
             for (i = 0; i < this.$configuredTypes.length; i++) {
                 typeConfig = this.$configuredTypes[i];
-                if (typeConfig.$.alias == modelClassName) {
+                if (typeConfig.$.alias == alias) {
                     return typeConfig.$.path;
                 }
             }
@@ -74,7 +66,7 @@ define(["require", "js/data/DataSource", "js/data/ReferenceDataSource", "js/core
         },
 
         getPathComponentsForModel: function (model) {
-            var path = this.getRestPathForModel(model.modelClassName);
+            var path = this.getRestPathForModel(model.$alias);
 
             if (path) {
                 var ret = [path];

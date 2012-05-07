@@ -27,12 +27,19 @@ define(["js/core/Component", "js/core/Base", "js/data/Collection", "underscore"]
                 return this.$cache[cacheId];
             },
 
-            createModel: function (factory, id, type) {
+
+            createModel: function (factory, id, alias) {
 
                 if (_.isFunction(factory)) {
-                    type = type || factory.prototype.constructor.name;
 
-                    var cachedItem = this.getInstanceByCacheId(Context.generateCacheId(type, id));
+                    var modelClassName = factory.prototype.constructor.name;
+                    alias = alias || this.$datasource.getAliasForModelClassName(modelClassName);
+
+                    if (!alias) {
+                        throw "Alias for '" + modelClassName + "' not found";
+                    }
+
+                    var cachedItem = this.getInstanceByCacheId(Context.generateCacheId(alias, id));
 
                     if (!cachedItem) {
                         // create new Collection
@@ -41,7 +48,7 @@ define(["js/core/Component", "js/core/Base", "js/data/Collection", "underscore"]
                         });
                         // set context
                         cachedItem.$context = this;
-                        cachedItem.modelClassName = type;
+                        cachedItem.$alias = alias;
 
                         // and add it to the cache
                         this.addModelToCache(cachedItem);
@@ -54,25 +61,31 @@ define(["js/core/Component", "js/core/Base", "js/data/Collection", "underscore"]
                 }
             },
 
-            createCollection: function (factory, options, type) {
+            createCollection: function (factory, options, alias) {
                 options = options || {};
 
                 if (_.isFunction(factory)) {
-                    type = type || factory.prototype.constructor.name;
+
+                    var modelClassName = factory.prototype.constructor.name;
+                    alias = alias || this.$datasource.getAliasForModelClassName(modelClassName);
+
+                    if (!alias) {
+                        throw "Alias for '" + modelClassName + "' not found";
+                    }
 
                     _.defaults(options, {
                         factory: factory,
-                        type: type
+                        type: alias
                     });
 
-                    var cachedCollection = this.getInstanceByCacheId(Context.generateCacheId(type));
+                    var cachedCollection = this.getInstanceByCacheId(Context.generateCacheId(alias));
 
                     if (!cachedCollection) {
                         // create new Collection
                         cachedCollection = new Collection(null, options);
                         // set context
                         cachedCollection.$context = this;
-                        cachedCollection.className = type;
+                        cachedCollection.$alias = alias;
 
                         // and add it to the cache
                         this.addCollectionToCache(cachedCollection);
@@ -95,7 +108,7 @@ define(["js/core/Component", "js/core/Base", "js/data/Collection", "underscore"]
         };
 
         Context.generateCacheIdFromModel = function (model) {
-            return Context.generateCacheId(model.modelClassName, model.$.id);
+            return Context.generateCacheId(model.$alias, model.$.id);
         };
 
         Context.generateCacheIdFromCollection = function (collection) {
@@ -121,13 +134,24 @@ define(["js/core/Component", "js/core/Base", "js/data/Collection", "underscore"]
                 }
             },
 
+            getAliasForModelClassName: function (modelClassName) {
+                for (var i = 0; i < this.$configuredTypes.length; i++) {
+                    var config = this.$configuredTypes[i];
+                    if (config.$.modelClassName === modelClassName) {
+                        return config.$.alias;
+                    }
+                }
+
+                return null;
+            },
+
             addTypeConfiguration: function (configuration) {
 
                 if (!configuration.$.modelClassName && !configuration.$.alias) {
                     throw "neither modelClassName nor alias defined";
                 }
 
-                if (configuration.$.className && !configuration.$.alias) {
+                if (configuration.$.modelClassName && !configuration.$.alias) {
                     configuration.$.alias = configuration.$.modelClassName.split(".").pop();
                 }
 
@@ -147,16 +171,6 @@ define(["js/core/Component", "js/core/Base", "js/data/Collection", "underscore"]
                         return typeConfig.$.modelClassName;
                     }
                 }
-            },
-
-            getModelClassNameForAlias: function (alias) {
-                var fqClassname = this.getFqClassName(alias) || alias;
-
-                if (fqClassname == "js.data.Model") {
-                    return alias;
-                }
-
-                return fqClassname;
             },
 
             getContext: function (properties, parentContext) {
