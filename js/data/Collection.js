@@ -28,7 +28,6 @@ define(["js/core/List", "js/data/Model", "flow", "underscore"], function (List, 
             this.$itemsCount = null;
             this.$queryCollectionsCache = {};
             this.$pageCache = [];
-            this.$pageOrderForItems = [];
             this.$options = options;
         },
 
@@ -160,23 +159,10 @@ define(["js/core/List", "js/data/Model", "flow", "underscore"], function (List, 
                 if (!err && !page.itemsInsertedIntoCollection) {
                     page.itemsInsertedIntoCollection = true;
 
-                    for (var pageIndex = 0; pageIndex < self.$pageOrderForItems.length; pageIndex++) {
-                        var pageAtIndex = self.$pageOrderForItems[pageIndex];
-                        if (page.$pageIndex < pageAtIndex.$pageIndex) {
-                            // found the gab
-                            pageIndex++;
-                            break;
-                        }
-                    }
-
-                    // insert the page in the pageOrder
-                    self.$pageOrderForItems.splice(pageAtIndex, 0, page);
-
                     // add items to collection
                     self.add(page.$items, {
-                        index: (pageAtIndex || 0)* self.$options.pageSize
+                        index: (pageIndex || 0) * self.$options.pageSize
                     });
-
                 }
 
                 if (callback) {
