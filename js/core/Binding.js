@@ -302,7 +302,12 @@ define(["js/core/Bindable", "js/core/EventDispatcher", "js/core/BindingParser", 
                     }
                     nScope = fnc.apply(nScope, parameters);
                 } else if (pathElement.type == TYPE_VAR) {
-                    nScope = nScope.get(pathElement.name);
+                    if(nScope instanceof Bindable){
+                        nScope = nScope.get(pathElement.name);
+                    }else{
+                        nScope = nScope[pathElement.name];
+                    }
+
                 }
             }
             return nScope;
@@ -351,9 +356,7 @@ define(["js/core/Bindable", "js/core/EventDispatcher", "js/core/BindingParser", 
         if (!_.isString(text)) {
             return text;
         }
-        var bindingDefs = Parser.parse(text, "text");
-        var binding;
-        var bindings = [];
+        var bindingDefs = Parser.parse(text, "text"), binding, bindings = [], containsText = false;
         for (var i = 0; i < bindingDefs.length; i++) {
             var bindingDef = bindingDefs[i];
             if (bindingDef.length) {
@@ -371,6 +374,9 @@ define(["js/core/Bindable", "js/core/EventDispatcher", "js/core/BindingParser", 
         if (bindings.length > 0) {
             return bindings[0].getContextValue();
         } else if (bindingDefs.length > 0) {
+            if(bindingDefs.length === 1) {
+                return bindingDefs[0];
+            }
             return contextToString(bindingDefs);
         } else {
             return text;

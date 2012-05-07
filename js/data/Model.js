@@ -134,7 +134,7 @@ define(["js/core/Bindable", "js/core/List", "flow", "underscore"], function (Bin
         _.each(attributes, function (value) {
             if (value instanceof Model) {
                 // check if the model is required
-                var subModelTypeEntry = subModelTypes[value.className];
+                var subModelTypeEntry = subModelTypes[value.modelClassName];
 
                 if (subModelTypeEntry) {
                     // model required -> create delegate
