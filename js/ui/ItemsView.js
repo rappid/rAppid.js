@@ -18,7 +18,9 @@ define(
                 return 0;
             }.on('items'),
             render: function () {
-                this.$renderedItems = [];
+                if(!this.isRendered()){
+                    this.$renderedItems = [];
+                }
                 return this.callBase();
             },
             clear: function () {
