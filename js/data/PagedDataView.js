@@ -2,6 +2,12 @@ define(["js/core/Component", "js/core/List", "js/data/Collection", "flow"], func
 
     return Component.inherit("js.data.PagedDataView", {
 
+
+        ctor: function() {
+            this.callBase();
+            this.$execId = 0;
+        },
+
         defaults: {
             page: null,
             pageCount: null,
@@ -10,7 +16,6 @@ define(["js/core/Component", "js/core/List", "js/data/Collection", "flow"], func
         },
 
         initialize: function() {
-
             this.set('list', new List());
 
             this.callBase();
@@ -95,16 +100,45 @@ define(["js/core/Component", "js/core/List", "js/data/Collection", "flow"], func
                 var collectionStartPage = this._itemIndexToPageIndex(this._pageIndexToItemIndex(pageIndex), collectionPageSize);
                 var collectionEndPage = this._itemIndexToPageIndex(this._pageIndexToItemIndex(pageIndex + 1) - 1, collectionPageSize);
 
-                var pageIndices = [];
+                var pageIndices = {};
                 for (i = collectionStartPage; i <= collectionEndPage; i++) {
-                    pageIndices.push(i);
+                    pageIndices[i] = i;
                 }
 
+                var self = this;
+
                 flow()
+                    .seq("execId", function() {
+                        return ++self.$execId
+                    })
                     .parEach(pageIndices, function (pageIndex, cb) {
                         baseList.fetchPage(pageIndex, null, cb);
                     })
-                    .exec(callback);
+                    .exec(function (err, results) {
+
+                        if (!err && results.execId == self.$execId) {
+                            var items = [];
+                            for (i = collectionStartPage; i <= collectionEndPage; i++) {
+                                items = items.concat(results[i].$items);
+                            }
+
+                            var viewStartIndex = self._pageIndexToItemIndex(pageIndex, self.$.pageSize);
+                            viewStartIndex -= collectionStartPage * collectionPageSize;
+
+                            // remove overlapping at start and end
+                            items = items.slice(viewStartIndex, viewStartIndex + self.$.pageSize);
+
+                            // and reset list
+                            self.$.list.reset(items);
+
+                        }
+
+                        if (callback) {
+                            callback(err);
+                        }
+                    });
+
+
 
             } else {
                 if (callback) {
@@ -164,30 +198,30 @@ define(["js/core/Component", "js/core/List", "js/data/Collection", "flow"], func
                 list.bind('reset', this._onReset, this);
                 list.bind('sort', this._onSort);
             }
-        },
-
-        _onItemAdded: function (e) {
-            // transform index from baseList to real list
-            var index = e.$.index,
-                currentPageIndex = this.currentPageIndex();
-
-            if ((index >= currentPageIndex * this.$.pageSize) && (index < (currentPageIndex + 1) * this.$.pageSize)) {
-
-                index = index - currentPageIndex * this.$.pageSize;
-                if (e.$.item !== this.$.list.at(index)) {
-                    this.$.list.removeAt(index);
-                    this.$.list.add(e.$.item, {
-                        index: index
-                    });
-
-                    // remove out of range items
-                    for (var i = this.$.list.size(); i > this.$.pageSize; i--) {
-                        this.$.list.removeAt(i);
-                    }
-                }
-            }
-
-
         }
+
+//        _onItemAdded: function (e) {
+//            // transform index from baseList to real list
+//            var index = e.$.index,
+//                currentPageIndex = this.currentPageIndex();
+//
+//            if ((index >= currentPageIndex * this.$.pageSize) && (index < (currentPageIndex + 1) * this.$.pageSize)) {
+//
+//                index = index - currentPageIndex * this.$.pageSize;
+//                if (e.$.item !== this.$.list.at(index)) {
+//                    this.$.list.removeAt(index);
+//                    this.$.list.add(e.$.item, {
+//                        index: index
+//                    });
+//
+//                    // remove out of range items
+//                    for (var i = this.$.list.size(); i > this.$.pageSize; i--) {
+//                        this.$.list.removeAt(i);
+//                    }
+//                }
+//            }
+//
+//
+//        }
     });
 });
