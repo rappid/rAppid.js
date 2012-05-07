@@ -109,23 +109,9 @@ define(["js/core/EventDispatcher", "underscore"],
                                 delete now[key];
                             } else {
                                 if (!_.isEqual(now[key], attributes[key])) {
-
-                                    var hasChanged = true;
-
-                                    // look for a _commitAttributeName function
-                                    var commitName = "_commit" + key[0].toUpperCase() + key.substr(1);
-                                    if (_.isFunction(this[commitName])) {
-                                        // execute commit function (commitValue, currentValue
-                                        if (this[commitName](attributes[key], now[key]) === false) {
-                                            hasChanged = false;
-                                        }
-                                    }
-
-                                    if (hasChanged) {
-                                        this.$previousAttributes[key] = now[key];
-                                        now[key] = attributes[key];
-                                        changedAttributes[key] = now[key];
-                                    }
+                                    this.$previousAttributes[key] = now[key];
+                                    now[key] = attributes[key];
+                                    changedAttributes[key] = now[key];
                                 }
                             }
                             // if attribute has changed and there is no async changing process in the background, fire the event
