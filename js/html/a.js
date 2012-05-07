@@ -29,7 +29,7 @@ define(['js/html/DomElement'], function (DomElement) {
         },
 
         _renderTarget: function(target) {
-            if (target !== "external") {
+            if (target && target !== "external") {
                 this.$el.setAttribute("target", target);
             }
         }
