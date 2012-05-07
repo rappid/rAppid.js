@@ -1,12 +1,13 @@
-define(["require", "js/core/UIComponent", "js/ui/ContentPlaceHolder", "js/core/Module", "underscore", "js/conf/Module"],
-    function (require, UIComponent, ContentPlaceHolder, Module, _, ModuleConfiguration) {
+define(["require", "js/core/UIComponent", "js/ui/ContentPlaceHolder", "js/core/Module", "underscore", "js/conf/Module", "flow"],
+    function (require, UIComponent, ContentPlaceHolder, Module, _, ModuleConfiguration, flow) {
         var ModuleLoader = UIComponent.inherit("js.core.ModuleLoader", {
 
             $classAttributes: ['router'],
             ctor: function (attributes) {
                 this.callBase();
-
                 this.$modules = {};
+                this.$moduleCache = {};
+                this.$currentModuleName = null;
             },
             _initializationComplete: function () {
                 this.callBase();
@@ -18,32 +19,28 @@ define(["require", "js/core/UIComponent", "js/ui/ContentPlaceHolder", "js/core/M
                         this.addModule(config.$);
                     }
                 }
-
             },
 
             addModule: function (module) {
                 _.defaults(module, {
                     name: null,
                     moduleClass: null,
-                    route: null,
-                    cacheInstance: true
+                    route: null
                 });
 
-                if (!module.name && !module.route) {
-                    throw "module cannot be added: route or at least name is required";
+                if (!module.name) {
+                    throw "module cannot be added: module name is required";
                 }
 
                 if (!module.moduleClass) {
                     throw "no moduleClass defined for module";
                 }
 
-                if (module.name) {
-                    if (this.$modules.hasOwnProperty(module.name)) {
-                        throw "module with name '" + module.name + "' already registered"
-                    }
-
-                    this.$modules[module.name] = module;
+                if (this.$modules.hasOwnProperty(module.name)) {
+                    throw "module with name '" + module.name + "' already registered"
                 }
+
+                this.$modules[module.name] = module;
 
                 if (module.route) {
                     if (!this.$.router) {
@@ -55,93 +52,97 @@ define(["require", "js/core/UIComponent", "js/ui/ContentPlaceHolder", "js/core/M
                         name: module.name,
                         route: module.route,
                         fn: function (routeContext) {
-                            // route triggered
 
-                            // load module
-                            if (module.name) {
-                                self.loadModuleByName(module.name, routeContext.callback, routeContext);
-                            } else {
-                                self.loadModule(module.moduleClass, routeContext.callback, routeContext);
-                            }
-
+                            // route triggered -> load module
+                            self.loadModule(module, routeContext.callback, routeContext);
                         }.async()
                     });
                 }
 
             },
 
-            loadModuleByName: function (moduleName, callback, routeContext) {
-                if (this.$modules.hasOwnProperty(moduleName)) {
+            _startModule: function (moduleName, moduleInstance, callback, routeContext, cachedInstance) {
 
-                    var module = this.$modules[moduleName];
+                this.$currentModuleName = moduleName;
 
-                    if (module.cacheInstance && module.moduleInstance) {
-                        // TODO: load instance from cache
-                    } else {
-                        this.loadModule(module.moduleClass, callback, routeContext);
-                    }
+                var contentPlaceHolders = this.getContentPlaceHolders();
 
-                } else {
-                    throw "Module '" + moduleName + "' not found";
+                // set content
+                for (var i = 0; i < contentPlaceHolders.length; i++) {
+                    var contentPlaceHolder = contentPlaceHolders[i];
+                    contentPlaceHolder.set("content", moduleInstance.findContent(contentPlaceHolder.$.name));
                 }
-            },
 
-            loadModule: function (moduleFqClassName, callback, routeContext) {
-
-                var eventResult = this.trigger("loadModule", {
-                    moduleClass: moduleFqClassName
-                });
-
-                var self = this;
-                var internalCallback = function (err) {
-
-                    if (err) {
-                        self.trigger('moduleLoadError', {
-                            moduleClassName: moduleFqClassName
-                        });
-                    } else {
-                        self.trigger('moduleLoaded', {
-                            moduleClassName: moduleFqClassName
-                        });
-                    }
-
+                var internalCallback = function(err) {
                     if (callback) {
                         callback(err);
                     }
                 };
 
-                if (!eventResult.isDefaultPrevented) {
-                    // load module
+                // start module
+                moduleInstance.start(function (err) {
 
-                    require([this.$systemManager.$applicationContext.getFqClassName(moduleFqClassName)], function (moduleBaseClass) {
-                        var moduleInstance = new moduleBaseClass(null, false, self.$systemManager, null, null);
+                    if (err || cachedInstance) {
+                        internalCallback(err);
+                    } else {
+                        if (routeContext) {
+                            // fresh instance with maybe new routers -> exec routes for new router
+                            var routeExecutionStack = [];
 
-                        if (moduleInstance instanceof Module) {
-
-                            moduleInstance._initialize("auto");
-
-                            var contentPlaceHolders = self.getContentPlaceHolders();
-
-                            // set content
-                            for (var i = 0; i < contentPlaceHolders.length; i++) {
-                                var contentPlaceHolder = contentPlaceHolders[i];
-                                contentPlaceHolder.set("content", moduleInstance.findContent(contentPlaceHolder.$.name));
+                            for (var i = 0; i < moduleInstance.$routers.length; i++) {
+                                routeExecutionStack = routeExecutionStack.concat(moduleInstance.$routers[i].generateRoutingStack(routeContext.fragment));
                             }
 
-                            // start module
-                            moduleInstance.start(internalCallback, routeContext);
+                            flow()
+                                .seqEach(routeExecutionStack, function(routingFunction, cb) {
+                                    routingFunction(cb);
+                                })
+                                .exec(internalCallback);
 
                         } else {
-                            internalCallback("Module '" + moduleFqClassName + "' isn't an instance of js.core.Module");
+                            internalCallback();
                         }
 
-                    });
+                    }
+                }, routeContext);
 
-                    // TODO cache model instances
+            },
 
-                    // Trigger events
+            loadModule: function (module, callback, routeContext) {
+                if (module.name === this.$currentModuleName) {
+                    // module already shown
+                    if (callback) {
+                        callback();
+                    }
+                } else {
+                    if (this.$moduleCache.hasOwnProperty(module.name)) {
+                        this._startModule(module.name, this.$moduleCache[module.name], callback, routeContext, true);
+                    } else {
 
+                        var self = this;
+                        // load module
+
+                        require([this.$systemManager.$applicationContext.getFqClassName(module.moduleClass)], function (moduleBaseClass) {
+                            var moduleInstance = new moduleBaseClass(null, false, self.$systemManager, null, null);
+
+                            if (moduleInstance instanceof Module) {
+                                moduleInstance._initialize("auto");
+
+                                // cache instance
+                                self.$moduleCache[module.name] = moduleInstance;
+
+                                self._startModule(module.name, moduleInstance, callback, routeContext, false);
+
+                            } else {
+                                if (callback) {
+                                    callback("Module '" + module.moduleClass + "' isn't an instance of js.core.Module");
+                                }
+                            }
+
+                        });
+                    }
                 }
+
             },
 
             removeChild: function (child) {

@@ -1,4 +1,4 @@
-define(["js/core/Bindable"], function (Bindable) {
+define(["js/core/Bindable", "flow"], function (Bindable, flow) {
 
 
     var routeStripper = /^#\/?/,
@@ -81,8 +81,7 @@ define(["js/core/Bindable"], function (Bindable) {
         },
 
         addRouter: function (router) {
-            // add router to first position
-            this.$routers.unshift(router);
+            this.$routers.push(router);
         },
 
         checkUrl: function (e) {
@@ -102,13 +101,26 @@ define(["js/core/Bindable"], function (Bindable) {
 
         triggerRoute: function (fragment, callback) {
 
+            var routeExecutionStack = [];
+
             for (var i = 0; i < this.$routers.length; i++) {
-                if (this.$routers[i].executeRoute(fragment, callback)) {
-                    return true;
-                }
+                routeExecutionStack = routeExecutionStack.concat(this.$routers[i].generateRoutingStack(fragment));
             }
 
-            console.log("no route for '" + fragment + "' found.");
+            if (routeExecutionStack.length === 0) {
+                console.log("no route for '" + fragment + "' found.");
+                // no route found but
+                if (callback) {
+                    // execute callback
+                    callback();
+                }
+            } else {
+                flow()
+                    .seqEach(routeExecutionStack, function(routingFunction, cb){
+                        routingFunction(cb);
+                    })
+                    .exec(callback)
+            }
         },
 
         navigate: function (fragment, createHistoryEntry, triggerRoute, callback) {
@@ -152,13 +164,8 @@ define(["js/core/Bindable"], function (Bindable) {
 
             this.fragment = fragment;
 
-            var ret;
             if (triggerRoute) {
-                ret = this.triggerRoute(fragment, callback);
-            }
-
-            if (!ret && callback) {
-                callback();
+                this.triggerRoute(fragment, callback);
             }
 
         }

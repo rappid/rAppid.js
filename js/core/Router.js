@@ -78,6 +78,62 @@ define(["js/core/Component", "underscore", "js/conf/Route"],
                 this.$routes.push(route);
             },
 
+            generateRoutingStack: function(fragment) {
+
+                var delegates = [],
+                    rootScope = this.$rootScope,
+                    self = this;
+
+                function addDelegate(route, params) {
+
+                    delegates.push(function(cb) {
+
+                        var fragment = params.shift();
+                        var routeContext = {
+                            callback: cb,
+                            router: self,
+                            params: _.clone(params),
+                            fragment: fragment,
+                            // breaks the routeStack execution
+                            end: function() {
+                                cb.end();
+                            }
+                        };
+
+                        params.unshift(routeContext);
+
+                        if (route.fn._async) {
+                            try {
+                                route.fn.apply(rootScope, params);
+                            } catch (e) {
+                                cb(e);
+                            }
+                        } else {
+                            // exec route sync, call callback after execution
+                            try {
+                                cb(null, route.fn.apply(rootScope, params));
+                            } catch (e) {
+                                cb(e);
+                            }
+                        }
+                    });
+                }
+
+                for (var i = 0; i < this.$routes.length; i++) {
+                    // get the route
+                    var route = this.$routes[i];
+                    // and test against regexp
+                    var params = route.route.exec(fragment);
+
+                    if (params) {
+                        // route matches
+                        addDelegate(route, params);
+                    }
+                }
+
+                return delegates;
+            },
+
             executeRoute: function (fragment, callback) {
                 // Test routes and call callback
                 for (var i = 0; i < this.$routes.length; i++) {
