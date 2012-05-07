@@ -54,11 +54,15 @@ define(["js/core/Base"],
                  * @param {Object} [scope]  This sets the scope for the callback function
                  */
                 bind: function (eventType, callback, scope) {
-                    scope = scope || this;
-                    // get the list for the event
-                    var list = this._eventHandlers[eventType] || (this._eventHandlers[eventType] = []);
-                    // and push the callback function
-                    list.push(new EventDispatcher.EventHandler(callback, scope));
+                    if (callback) {
+                        scope = scope || this;
+                        // get the list for the event
+                        var list = this._eventHandlers[eventType] || (this._eventHandlers[eventType] = []);
+                        // and push the callback function
+                        list.push(new EventDispatcher.EventHandler(callback, scope));
+                    } else {
+                        console.warn('no eventHandler for "' + eventType + '"');
+                    }
 
                     return this;
                 },
