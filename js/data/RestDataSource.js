@@ -1,4 +1,4 @@
-define(["require", "js/data/DataSource", "js/core/Base", "js/core/List", "underscore"], function (require, DataSource, Base, List, _) {
+define(["require", "js/data/DataSource", "js/data/ReferenceDataSource", "js/core/Base", "js/core/List", "underscore"], function (require, DataSource, ReferenceDataSource, Base, List, _) {
 
     var RestContext = DataSource.Context.inherit("js.data.RestDataSource.Context", {
 
@@ -19,16 +19,7 @@ define(["require", "js/data/DataSource", "js/core/Base", "js/core/List", "unders
         }
     });
 
-    var referenceCollectionTypeExtractor = /^.*\/([^/]+)$/i,
-        referenceModelTypeExtractor = /^.*\/([^/]+)\/(\w+)$/i;
-
-    var RestDataSource = DataSource.inherit("js.data.RestDataSource", {
-        ctor: function () {
-            this.callBase();
-
-            this.$processors = [];
-            this.initializeProcessors();
-        },
+    var RestDataSource = ReferenceDataSource.inherit("js.data.RestDataSource", {
 
         initializeProcessors: function () {
             this.$processors.push({
@@ -39,9 +30,7 @@ define(["require", "js/data/DataSource", "js/core/Base", "js/core/List", "unders
 
         defaults: {
             endPoint: null,
-            gateway: null,
-            identifierProperty: "id",
-            referenceProperty: "href"
+            gateway: null
         },
 
         initialize: function () {
@@ -56,31 +45,8 @@ define(["require", "js/data/DataSource", "js/core/Base", "js/core/List", "unders
 
         },
 
-        getClass: function (type) {
-            if (_.isFunction(type)) {
-                return type;
-            } else {
-                return rAppid.getDefinition(this.getFqClassName(type));
-            }
-        },
-
         createContext: function (properties, parentContext) {
             return new RestContext(this, properties, parentContext);
-        },
-
-        loadClass: function (type, callback) {
-            if (_.isFunction(type)) {
-                callback(null, type);
-            } else {
-                var className = this.getFqClassName(type);
-                if (className) {
-                    require(className, function (klass) {
-                        callback(null, klass);
-                    });
-                } else {
-                    callback("className not found for type '" + type + "'");
-                }
-            }
         },
 
         getRestPathForModel: function (modelClassName) {
@@ -123,182 +89,12 @@ define(["require", "js/data/DataSource", "js/core/Base", "js/core/List", "unders
             return null;
         },
 
-
-        /**
-         * serialize the data
-         * @param data
-         */
-        serialize: function (data) {
-            return JSON.stringify(data);
-        },
-
-        /**
-         * deserialize
-         * @param input
-         */
-        deserialize: function (input) {
-            // TODO: enable IE7 and FF3 support? Or should the user add json2.js lib
-            return JSON.parse(input);
-        },
-
         getQueryParameter: function () {
             return {};
         },
 
-        /**
-         *
-         * @param obj
-         */
-        isReferencedModel: function (obj) {
-            return obj.hasOwnProperty(this.$.identifierProperty) && obj.hasOwnProperty(this.$.referenceProperty)
-                && obj[this.$.referenceProperty].indexOf(this.$.endPoint) === 0;
-        },
-
-        isReferencedCollection: function (obj) {
-            return !obj.hasOwnProperty(this.$.identifierProperty) && obj.hasOwnProperty(this.$.referenceProperty)
-                && obj[this.$.referenceProperty].indexOf(this.$.endPoint) === 0;
-        },
-
         getContextPropertiesFromReference: function (reference) {
             return null;
-        },
-
-        getReferenceInformation: function (reference, id) {
-            // url is something like
-            // http://example.com/api/context/resourceType/id
-
-            var extractor = id ? referenceModelTypeExtractor : referenceCollectionTypeExtractor;
-
-            var match = extractor.exec(reference);
-            if (match) {
-                var path = match[1];
-
-                for (var i = 0; i < this.$configuredTypes.length; i++) {
-                    var config = this.$configuredTypes[i];
-
-                    if (config.$.path == path) {
-                        return {
-                            context: this.getContextPropertiesFromReference(reference),
-                            modelClassName: config.$.modelClassName,
-                            requireClassName: this.$systemManager.$applicationContext.getFqClassName(config.$.modelClassName),
-                            type: config.$.alias,
-                            id: id,
-                            path: path
-                        }
-                    }
-                }
-            }
-
-            // could not retrieve reference information
-            return null;
-        },
-
-        /***
-         *
-         * @param [js.data.Model|js.data.Collection] target
-         * @param data data containing the references
-         * @param options
-         * @param callback
-         */
-        resolveReferences: function (target, data, options, callback) {
-            // in REST models and collections will be referenced by href
-
-            // first identify all needed model classes
-            var referenceInformation = [],
-                self = this;
-
-            function findReferences(obj, api) {
-
-                for (var prop in obj) {
-                    if (obj.hasOwnProperty(prop)) {
-                        var value = obj[prop];
-
-                        // TODO: test if we need also go through array value and convert them
-                        // or if this is actually done
-
-                        if (value instanceof List) {
-                            value.each(function (item) {
-                                findReferences(item, api);
-                            });
-                        } else if (value instanceof Object) {
-                            // value is object and could contain sub objects with references
-                            // first resolve references
-
-                            findReferences(value, api);
-
-                            if (self.isReferencedModel(value) || self.isReferencedCollection(value)) {
-                                var info = self.getReferenceInformation(value[self.$.referenceProperty], value[self.$.identifierProperty]);
-                                if (info) {
-                                    info.referenceObject = obj;
-                                    info.propertyName = prop;
-                                    referenceInformation.push(info);
-                                } else {
-                                    throw "Cannot determinate referenceInformation for reference '" + value[self.$.referenceProperty] + "'.";
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            findReferences(data);
-
-            var requiredClasses = [];
-            for (var i = 0; i < referenceInformation.length; i++) {
-                var info = referenceInformation[i];
-                var requiredClassname = info.requireClassName;
-
-                if (_.indexOf(requiredClasses, requiredClassname) == -1) {
-                    requiredClasses.push(requiredClassname);
-                }
-            }
-
-            // require model classes
-
-            // TODO: how to handle errors here? require.onError?
-            // some unique hash and extending of requirejs required
-            require(requiredClasses, function () {
-                var factories = Array.prototype.slice.call(arguments);
-
-                for (var i = 0; i < referenceInformation.length; i++) {
-                    var info = referenceInformation[i];
-                    var factory = factories[_.indexOf(requiredClasses, info.requireClassName)];
-
-                    if (factory) {
-                        // create instance in correct context
-
-                        var context = self.getContext(info.context, target.$context);
-
-                        var isModel = info.id;
-
-                        var referenceInstance = isModel ?
-                            self.createModel(factory, info.id, info.type, context) :
-                            self.createCollection(factory, {
-                                path: info.path
-                            }, info.type, context);
-
-                        if (referenceInstance) {
-                            var value = info.referenceObject[info.propertyName];
-                            info.referenceObject[info.propertyName] = referenceInstance;
-
-                            if (isModel) {
-                                referenceInstance.set(value);
-                            } else {
-                                // TODO: set loaded data for collection, if available in payload
-                            }
-
-                        } else {
-                            callback("Instance for model '" + info.className + "' couldn't be created");
-                        }
-
-                    } else {
-                        callback("Factory for class '" + info.className + "' missing");
-                    }
-
-                }
-
-                callback(null, data);
-            });
         },
 
         /**
@@ -359,11 +155,13 @@ define(["require", "js/data/DataSource", "js/core/Base", "js/core/List", "unders
                         data = model.parse(data);
 
                         self.resolveReferences(model, data, options, function (err, resolvedData) {
-                            // set data
-                            model.set(resolvedData);
+                            if (!err) {
+                                // set data
+                                model.set(resolvedData);
+                            }
 
                             // and return
-                            callback(null, model, options);
+                            callback(err, model, options);
                         });
 
                     } catch (e) {

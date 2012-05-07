@@ -30,7 +30,6 @@ define(["js/core/Component", "js/core/Base", "js/data/Collection", "underscore"]
             createModel: function (factory, id, type) {
 
                 if (_.isFunction(factory)) {
-
                     type = type || factory.prototype.constructor.name;
 
                     var cachedItem = this.getInstanceByCacheId(Context.generateCacheId(type, id));
@@ -159,7 +158,6 @@ define(["js/core/Component", "js/core/Base", "js/data/Collection", "underscore"]
 
                 return fqClassname;
             },
-
 
             getContext: function (properties, parentContext) {
 

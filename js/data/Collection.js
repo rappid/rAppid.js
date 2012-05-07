@@ -173,7 +173,9 @@ define(["js/core/List", "js/data/Model", "flow", "underscore"], function (List, 
                     self.$pageOrderForItems.splice(pageAtIndex, 0, page);
 
                     // add items to collection
-                    self.add(page.$items, pageAtIndex * self.$options.pageSize);
+                    self.add(page.$items, {
+                        index: (pageAtIndex || 0)* self.$options.pageSize
+                    });
 
                 }
 

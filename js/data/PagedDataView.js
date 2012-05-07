@@ -46,11 +46,15 @@ define(["js/core/Component", "js/core/List", "js/data/Collection", "flow"], func
                 // remove all items from list
                 this.$.list.clear();
 
-                // and show the current page
-                this.showPage(attributes.page || this.$.page, null, true);
+                var pageIndex = attributes.page || this.$.page;
+                if (pageIndex) {
+                    // and show the current page
+                    this.showPage(pageIndex, null, true);
+                }
+
             }
 
-            if (attributes.hasOwnProperty("page")) {
+            if (attributes.hasOwnProperty("page") && attributes.page) {
                 this.showPage(attributes.page, null, attributes.page !== this.$previousAttributes.page);
             }
 
@@ -102,29 +106,34 @@ define(["js/core/Component", "js/core/List", "js/data/Collection", "flow"], func
                     })
                     .exec(callback);
 
+            } else {
+                if (callback) {
+                    callback()
+                }
             }
-
-
 
             this.set('page', pageIndex);
         },
 
-        _currentPageIndex: function () {
-            return this.$.page || 0;
-        },
+        previousPageIndex: function () {
+            return Math.max((this.$.page || 0) - 1, 0);
+        }.onChange('page'),
+
+        nextPageIndex: function () {
+            // TODO top range
+            return (this.$.page || 0) + 1;
+        }.onChange('page'),
+
+        currentPageIndex: function() {
+            return (this.$.page || 0)
+        }.onChange('page'),
 
         previousPage: function (callback) {
-            var page = this._currentPageIndex() - 1;
-            page = Math.max(0, page);
-
-            this.showPage(page, callback);
+            this.showPage(this.previousPageIndex(), callback);
         },
 
         nextPage: function (callback) {
-            var page = this._currentPageIndex() + 1;
-            // TODO top range
-
-            this.showPage(page, callback);
+            this.showPage(this.nextPageIndex(), callback);
         },
 
         _pageIndexToItemIndex: function (pageIndex, pageSize) {
@@ -160,7 +169,7 @@ define(["js/core/Component", "js/core/List", "js/data/Collection", "flow"], func
         _onItemAdded: function (e) {
             // transform index from baseList to real list
             var index = e.$.index,
-                currentPageIndex = this._currentPageIndex();
+                currentPageIndex = this.currentPageIndex();
 
             if ((index >= currentPageIndex * this.$.pageSize) && (index < (currentPageIndex + 1) * this.$.pageSize)) {
 
