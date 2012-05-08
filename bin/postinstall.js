@@ -24,7 +24,12 @@ var postinstall = function (args, callback) {
             try {
                 fs.symlinkSync(libraries[lib], path.join(libDir, lib));
             } catch (e) {
-                console.log(e);
+                console.warn('Error while sym linking, trying to copy libs');
+                // try to copy
+                var inStr = fs.createReadStream(libraries[lib]);
+                var outStr = fs.createWriteStream(path.join(libDir, lib));
+
+                inStr.pipe(outStr);
             }
         }
     }
