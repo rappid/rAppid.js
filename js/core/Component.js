@@ -300,7 +300,6 @@ define(
                                         scope: rootScope,
                                         fncName: value
                                     });
-                                    console.log(key);
                                     if (this._isComponentEvent(key)) {
                                         this.bind(key.substr(2), rootScope[value], rootScope);
                                     }
