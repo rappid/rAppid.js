@@ -150,14 +150,6 @@ define(["js/core/Bindable", "js/core/EventDispatcher", "js/core/BindingParser", 
                     }
                 }
             },
-            _findTransformFnc: function(path){
-                var el = path.shift();
-                while(path.length > 0){
-
-                }
-
-
-            },
             _revCallback: function (e) {
                 if (this.$.fnc) {
                     var params = this._getFncParameters();
@@ -262,7 +254,7 @@ define(["js/core/Bindable", "js/core/EventDispatcher", "js/core/BindingParser", 
         }
 
         return false;
-    };
+    }
 
     Binding.create = function (bindingDef, targetScope, attrKey, context) {
         var path = bindingDef.path;
