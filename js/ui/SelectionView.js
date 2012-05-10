@@ -1,8 +1,10 @@
 define(
     ["js/ui/ItemsView", "js/html/DomElement", "underscore"], function (ItemsView, DomElement, _) {
         return ItemsView.inherit("js.ui.SelectionView",{
+            $classAttributes: [
+                "needsSelection", "multiSelect","selectedViews","selectedItems","selectedIndex","items", "forceSelectable"
+            ],
             defaults: {
-                tagName: "div",
                 needsSelection: false,
                 multiSelect: false,
                 selectedViews: [],
@@ -32,13 +34,16 @@ define(
                     child.set({selected: true});
                 } else {
                     // get item for child, if item is in selectedItems, select child!
-
-                    if (child.has("$item")) {
+                    var item = child.get(this._getItemKey());
+                    if (item) {
                         for (var i = 0; i < this.$.selectedItems.length; i++) {
-                            if (child.$.$item === this.$.selectedItems[i] || child.$.$item === this.$.selectedItem) {
+                            if (item === this.$.selectedItems[i]) {
                                 child.set({selected: true});
                                 break;
                             }
+                        }
+                        if(item === this.$.selectedItem){
+                            child.set({selected: true});
                         }
                     }
                 }
@@ -73,7 +78,7 @@ define(
                 var selectedItems = [];
                 var selectedIndex, selectedItem = null;
                 for (i = 0; i < this.$renderedChildren.length; i++) {
-                    c = this.$children[i];
+                    c = this.$renderedChildren[i];
                     if (checkMultiSelect) {
                         if (c != child && c.$.selected === true) {
                             correctSelection = true;
@@ -88,9 +93,10 @@ define(
 
                         selectedIndex = i;
                         selectedChildren.push(c);
-                        if (c.has("$item")) {
-                            selectedItems.push(c.$.$item);
-                            selectedItem = c.$.$item;
+                        var item = c.get(this._getItemKey());
+                        if (item) {
+                            selectedItems.push(item);
+                            selectedItem = item;
                         }
                     }
                 }

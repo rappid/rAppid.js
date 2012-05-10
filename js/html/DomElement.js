@@ -18,7 +18,8 @@ define(["require","js/core/Component", "js/core/Content", "js/core/Binding", "in
             $classAttributes:[
                 /^\$/,
                 /^data/,
-                /^xmlns/
+                /^xmlns/,
+                /^on/
             ],
             ctor: function (attributes, descriptor, systemManager, parentScope, rootScope) {
                 this.$renderMap = {};

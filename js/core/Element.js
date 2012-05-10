@@ -37,9 +37,6 @@ define(["js/core/Bindable", "underscore"], function (Bindable, _) {
                 this.$parentScope = parentScope || null;
                 this.$rootScope = rootScope || null;
 
-
-                _.extend(attributes, this._getAttributesFromDescriptor(descriptor), this._getAttributesFromDescriptor(this._$descriptor));
-
                 this.callBase(attributes);
 
                 this._initializeAttributes(this.$);
@@ -107,10 +104,6 @@ define(["js/core/Bindable", "underscore"], function (Bindable, _) {
 
             _initializeBindings: function () {
                 this._initializationComplete();
-            },
-
-            _initializeDescriptor: function (descriptor) {
-
             },
             initialize: function () {
 

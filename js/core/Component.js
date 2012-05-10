@@ -35,14 +35,33 @@ define(
                             Configuration = null;
                         }
                     }
+                    this.$eventDefinitions = [];
+                    this.$internalDescriptors = [];
+                    this.$xamlDefaults = {};
+                    this.$xamlAttributes = {};
+                    var current = this, last;
+                    while (current) {
+                        if (current._$descriptor && last != current) {
+                            this._cleanUpDescriptor(current._$descriptor);
+                            this.$internalDescriptors.unshift(current._$descriptor);
 
+                            _.extend(this.$xamlDefaults,this._getAttributesFromDescriptor(current._$descriptor));
+                        }
+                        current = current.base;
+                    }
 
+                    if(descriptor){
+                        this._cleanUpDescriptor(descriptor);
+                        this.$xamlAttributes = this._getAttributesFromDescriptor(descriptor);
+                    }
 
                     this.$components = [];
 
                     this.$templates = {};
                     this.$configurations = [];
                     this.$children = [];
+
+                    _.extend(attributes,this.$xamlAttributes,this.$xamlDefaults);
 
                     this.callBase();
                 },
@@ -55,8 +74,7 @@ define(
                  *
                  */
                 events: [
-                    "ontest"
-
+                    "onchange"
                 ],
                 /**
                  * values to be injected
@@ -211,38 +229,22 @@ define(
                  *  Initializes all internal and external descriptors
                  */
                 _initializeDescriptors: function () {
-
                     var children = [];
-                    var descriptors = [];
 
-                    // go inherit tree up and search for descriptors
-                    var current = this;
-                    while (current) {
-                        if (current._$descriptor) {
-                            descriptors.unshift(current._$descriptor);
-                        }
-                        current = current.base;
-                    }
-
-                    // and add outside descriptor
-                    if (this.$descriptor) {
-                        descriptors.push(this.$descriptor);
-                    }
-
-                    var desc, node, text;
-                    for (var d = 0; d < descriptors.length; d++) {
-                        desc = descriptors[d];
-                        this._cleanUpDescriptor(desc);
+                    var desc;
+                    for (var d = 0; d < this.$internalDescriptors.length; d++) {
+                        desc = this.$internalDescriptors[d];
                         children = children.concat(this._getChildrenFromDescriptor(desc));
-                        // only extend attributes from super descriptors
-                        if(desc !== this.$descriptor){
-                            _.extend(this.$, this._getAttributesFromDescriptor(desc));
-                        }
                     }
+
+                    children = children.concat(this._getChildrenFromDescriptor(this.$descriptor));
 
                     this._initializeChildren(children);
 
                     this._childrenInitialized();
+
+                    this._initializeEventAttributes(this.$xamlDefaults,this);
+                    this._initializeEventAttributes(this.$xamlAttributes,this.$rootScope);
                 },
                 _cleanUpDescriptor: function (desc) {
                     if (desc && desc.childNodes) {
@@ -285,42 +287,43 @@ define(
                     // TODO: implement eventAttribites as hash
                     return this._eventAttributes[eventName];
                 },
-                /***
-                 * Initialize all Binding and Event attributes
-                 */
-                _initializeBindings: function () {
-                    this.$bindings = [];
-                    this.$eventDefinitions = [];
-                    var attributes = this.$;
-
-                    var self = this;
-                    var binding, twoWay, eValue;
-                    // Resolve bindings and events
+                _initializeEventAttributes: function(attributes,rootScope){
                     for (var key in attributes) {
-
                         if (attributes.hasOwnProperty(key)) {
                             var value = attributes[key];
 
                             if (this._isEventAttribute(key)) {
-                                if (this.$rootScope[value]) {
+                                if (rootScope[value]) {
 
                                     this.$eventDefinitions.push({
                                         name: key,
-                                        scope: this.$rootScope,
+                                        scope: rootScope,
                                         fncName: value
                                     });
-                                    if (this._isComponentEvent(key.substr(2))) {
-                                        this.bind(key, this.$rootScope[value], this.$rootScope);
+                                    if (this._isComponentEvent(key)) {
+                                        this.bind(key.substr(2), rootScope[value], rootScope);
                                     }
 
                                 } else {
                                     throw "Couldn't find callback " + value + " for " + key + " event";
                                 }
-
-                                delete attributes[key];
-                            } else {
-                                this.$[key] = Binding.evaluateText(value, this, key);
                             }
+                        }
+                    }
+                },
+                /***
+                 * Initialize all Binding and Event attributes
+                 */
+                _initializeBindings: function () {
+                    var attributes = this.$;
+
+                    var value;
+                    // Resolve bindings and events
+                    for (var key in attributes) {
+
+                        if (attributes.hasOwnProperty(key)) {
+                            value = attributes[key];
+                            this.$[key] = Binding.evaluateText(value, this, key);
                         }
                     }
 
