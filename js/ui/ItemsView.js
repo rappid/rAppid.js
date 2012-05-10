@@ -80,21 +80,31 @@ define(
 
             },
             _innerRenderItem: function (item, i) {
-                var attr = {}; attr["$"+this.$.itemKey] = item; attr["$"+this.$.indexKey]  = i;
+                var attr = {}; attr[this._getItemKey()] = item; attr[this._getIndexKey()]  = i;
                 var comp = this.$templates['item'].createComponents(attr)[0];
+
                 // add to rendered item map
                 this.$renderedItems.push({
                     item: item,
                     component: comp
                 });
+
                 this.addChild(comp);
+
+
+            },
+            _getItemKey: function(){
+                return "$"+this.$.itemKey;
+            },
+            _getIndexKey: function(){
+                return "$"+this.$.indexKey;
             },
             _removeRenderedItem: function (item) {
                 var ri;
                 for (var i = 0; i < this.$renderedItems.length; i++) {
                     ri = this.$renderedItems[i];
                     if (ri.item === item) {
-                        this.$el.removeChild(ri.component.$el);
+                        this.removeChild(ri.component);
                         this.$renderedItems.splice(i, 1);
                         return;
                     }
