@@ -7,7 +7,12 @@ define(["js/core/Bindable", "js/core/EventDispatcher", "js/core/BindingParser", 
         var str = "", el;
         for (var i = 0; i < context.length; i++) {
             el = context[i];
-            str += el instanceof Object ? el.toString() : el;
+            if (el instanceof Object) {
+                el = el.toString();
+            }
+            if(el !== null && typeof(el) !== "undefined") {
+                str += el;
+            }
         }
         return str;
     };
