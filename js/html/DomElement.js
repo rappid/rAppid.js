@@ -146,7 +146,6 @@ define(["require","js/core/Component", "js/core/Content", "js/core/Binding", "in
                 this.$renderedChildren = [];
 
                 this.$el = this.$systemManager.$document.createElement(this.$tagName);
-                this.$el.owner = this;
 
                 // TODO: read layout and create renderMAP
                 /**
