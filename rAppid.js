@@ -7,6 +7,13 @@ if(!String.prototype.trim){
     };
 }
 
+if(!console){
+    var console = {
+        log : function(){},
+        warn: function(){}
+    }
+}
+
 (function (exports, inherit, requirejs, define, underscore, XMLHttpRequest, flow, document) {
 
     if (!requirejs) {
