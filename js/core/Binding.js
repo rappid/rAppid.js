@@ -10,11 +10,16 @@ define(["js/core/Bindable", "js/core/EventDispatcher", "js/core/BindingParser", 
             if (el instanceof Binding) {
                 el = el.getValue();
             }
-            if(el !== null && typeof(el) !== "undefined") {
+            if (el !== null && typeof(el) !== "undefined") {
                 str += el;
             }
         }
         return str;
+    };
+
+    var bindToChangeEvent = function (scope, _attributes, binding) {
+
+
     };
 
     /**
@@ -57,14 +62,17 @@ define(["js/core/Bindable", "js/core/EventDispatcher", "js/core/BindingParser", 
             initialize: function () {
                 this._checkAttributes();
                 this.$parameters = [];
+                this.$events = [];
                 this.$subBinding = null;
 
                 if (!this.$.rootScope) {
                     this.$.rootScope = this;
                 }
                 var scope = this.$.scope;
+
                 // split up first key
                 this.$.key = this.$.path[0];
+                var self = this;
 
                 if (this.$.key.type == TYPE_FNC) {
                     var fncName = this.$.key.name;
@@ -73,17 +81,23 @@ define(["js/core/Bindable", "js/core/EventDispatcher", "js/core/BindingParser", 
                     if (_.isFunction(scope[fncName])) {
                         var fnc = scope[fncName];
                         var events = [];
-                        if (fnc._events) {
-                            events = fnc._events;
+                        if (fnc._attributes && fnc._attributes.length > 0) {
+                            this.$.scope.bind("change", this._changeCallback, this);
+                            this.$events.push({eventType: "change", callback: this._changeCallback});
                         } else {
-                            events = ['change'];
+                            if (fnc._events) {
+                                events = fnc._events;
+                            } else {
+                                events = [];
+                            }
+
+                            for (var i = 0; i < events.length; i++) {
+                                var event = events[i];
+                                scope.bind(event, this._callback, this);
+                                this.$events.push({eventType: event, callback: this._callback});
+                            }
                         }
 
-                        for (var i = 0; i < events.length; i++) {
-                            var event = events[i];
-                            scope.bind(event, this._callback, this);
-                        }
-                        var self = this;
                         var cb = function () {
                             self.trigger();
                         };
@@ -97,14 +111,14 @@ define(["js/core/Bindable", "js/core/EventDispatcher", "js/core/BindingParser", 
 
                         }
                         this.$.fnc = fnc;
-                        this.$.fnc.trigger = function(){
+                        this.$.fnc.trigger = function () {
                             self.trigger();
                         };
                     }
 
                 } else {
                     this.$.event = "change:" + this.$.key.name;
-
+                    this.$events.push({eventType: this.$.event, callback: this._callback});
                     // on change of this key
                     scope.bind(this.$.event, this._callback, this);
                 }
@@ -116,7 +130,12 @@ define(["js/core/Bindable", "js/core/EventDispatcher", "js/core/BindingParser", 
                 }
 
                 this._createSubBinding();
-                if(this.$.path.length === 1){
+                scope.bind('destroy', function () {
+                    self.destroy();
+                });
+
+
+                if (this.$.path.length === 1) {
                     this.trigger();
                 }
             },
@@ -169,6 +188,14 @@ define(["js/core/Bindable", "js/core/EventDispatcher", "js/core/BindingParser", 
                     this.$.scope.set(pathToString(this.$.path), this.$.transformBack(e.$));
                 }
             },
+            _changeCallback: function (event) {
+                for (var i = 0; i < this.$.fnc._attributes.length; i++) {
+                    if (!_.isUndefined(event.$[this.$.fnc._attributes[i]])) {
+                        this.trigger();
+                        return;
+                    }
+                }
+            },
             _callback: function () {
                 // remove subBindings!
                 if (this.$subBinding) {
@@ -182,12 +209,18 @@ define(["js/core/Bindable", "js/core/EventDispatcher", "js/core/BindingParser", 
                 this.trigger();
             },
             destroy: function () {
-                this.$.scope.unbind(this.$.event, this._callback);
+                var e;
+                for (var j = 0; j < this.$events.length; j++) {
+                    e = this.$events[j];
+                    this.$.scope.unbind(e.eventType, e.callback);
+                }
+
                 if (this.$.twoWay === true) {
                     this.$.target.unbind(this.$.targetEvent, this._revCallback);
                 }
                 if (this.$subBinding) {
                     this.$subBinding.destroy();
+
                     delete this.$subBinding;
                 }
 
@@ -199,7 +232,7 @@ define(["js/core/Bindable", "js/core/EventDispatcher", "js/core/BindingParser", 
                     }
                 }
             },
-            _getFncParameters: function(){
+            _getFncParameters: function () {
                 var parameters = [];
                 for (var i = 0; i < this.$parameters.length; i++) {
                     var para = this.$parameters[i];
@@ -305,9 +338,9 @@ define(["js/core/Bindable", "js/core/EventDispatcher", "js/core/BindingParser", 
                     }
                     nScope = fnc.apply(nScope, parameters);
                 } else if (pathElement.type == TYPE_VAR) {
-                    if(nScope instanceof Bindable){
+                    if (nScope instanceof Bindable) {
                         nScope = nScope.get(pathElement.name);
-                    }else{
+                    } else {
                         nScope = nScope[pathElement.name];
                     }
 
@@ -331,7 +364,7 @@ define(["js/core/Bindable", "js/core/EventDispatcher", "js/core/BindingParser", 
                 if (twoWay) {
                     if (bindingDef.transform) {
                         var transformFnc = findTransformFunction(bindingDef.transform, searchScope);
-                        if(transformFnc){
+                        if (transformFnc) {
                             options.transform = transformFnc;
                         }
                     }
@@ -377,7 +410,7 @@ define(["js/core/Bindable", "js/core/EventDispatcher", "js/core/BindingParser", 
         if (bindings.length > 0) {
             return bindings[0].getContextValue();
         } else if (bindingDefs.length > 0) {
-            if(bindingDefs.length === 1) {
+            if (bindingDefs.length === 1) {
                 return bindingDefs[0];
             }
             return contextToString(bindingDefs);
