@@ -1,7 +1,7 @@
 {
     "name": "rAppid.js",
     "preferGlobal": "false",
-    "version": "0.2.6",
+    "version": "0.2.7",
     "author": "rAppid <support@rappidjs.com> (http://rappidjs.com)",
     "contributors": [
         "Tony Findeisen <tony@rappidjs.com>",
@@ -40,7 +40,7 @@
         "chai": "*",
         "mocha": "*"
     },
-    "license": "CC BY-NC-SA 3.0",
+    "license": "MIT",
     "engine": {
         "node": ">=0.4"
     },
