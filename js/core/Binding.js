@@ -7,8 +7,8 @@ define(["js/core/Bindable", "js/core/EventDispatcher", "js/core/BindingParser", 
         var str = "", el;
         for (var i = 0; i < context.length; i++) {
             el = context[i];
-            if (el instanceof Object) {
-                el = el.toString();
+            if (el instanceof Binding) {
+                el = el.getValue();
             }
             if(el !== null && typeof(el) !== "undefined") {
                 str += el;
@@ -97,7 +97,9 @@ define(["js/core/Bindable", "js/core/EventDispatcher", "js/core/BindingParser", 
 
                         }
                         this.$.fnc = fnc;
-                        this.$.fnc.trigger = this.trigger;
+                        this.$.fnc.trigger = function(){
+                            self.trigger();
+                        };
                     }
 
                 } else {
@@ -114,6 +116,9 @@ define(["js/core/Bindable", "js/core/EventDispatcher", "js/core/BindingParser", 
                 }
 
                 this._createSubBinding();
+                if(this.$.path.length === 1){
+                    this.trigger();
+                }
             },
             _checkAttributes: function () {
                 // check infrastructur
@@ -183,6 +188,7 @@ define(["js/core/Bindable", "js/core/EventDispatcher", "js/core/BindingParser", 
                 }
                 if (this.$subBinding) {
                     this.$subBinding.destroy();
+                    delete this.$subBinding;
                 }
 
                 // destroy parameter bindings
