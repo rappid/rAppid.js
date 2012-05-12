@@ -181,7 +181,7 @@ define(["js/core/Component", "js/core/List", "js/data/Collection", "flow"], func
         },
 
         _unbindList: function (list) {
-            if (list) {
+            if (list && list instanceof List) {
                 list.unbind('add', this._onItemAdded);
                 list.unbind('remove', this._onItemRemoved);
                 list.unbind('change', this._onItemChange);
@@ -191,7 +191,7 @@ define(["js/core/Component", "js/core/List", "js/data/Collection", "flow"], func
         },
 
         _bindList: function (list) {
-            if (list) {
+            if (list && list instanceof List) {
                 list.bind('add', this._onItemAdded, this);
                 list.bind('remove', this._onItemRemoved, this);
                 list.bind('change', this._onItemChanged, this);
