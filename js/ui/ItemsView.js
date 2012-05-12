@@ -71,6 +71,7 @@ define(
                     for (var j = this.$renderedItems.length - 1; j >= 0; j--) {
                         c = this.$renderedItems[j];
                         this.$el.removeChild(c.component.$el);
+                        c.component.destroy();
                     }
                 }
                 this.$renderedItems = [];
@@ -106,7 +107,7 @@ define(
                     if (ri.item === item) {
                         this.removeChild(ri.component);
                         this.$renderedItems.splice(i, 1);
-                        delete ri.component;
+                        ri.component.destroy();
                         return;
                     }
                 }
