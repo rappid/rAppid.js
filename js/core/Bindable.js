@@ -169,6 +169,10 @@ define(["js/core/EventDispatcher", "underscore"],
                  */
                 clear: function () {
                     return this.set(this.$, {unset: true});
+                },
+                destroy: function() {
+                    this.trigger('destroy',this);
+                    return this;
                 }
             });
 
