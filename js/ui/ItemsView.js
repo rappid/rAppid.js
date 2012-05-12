@@ -106,6 +106,7 @@ define(
                     if (ri.item === item) {
                         this.removeChild(ri.component);
                         this.$renderedItems.splice(i, 1);
+                        delete ri.component;
                         return;
                     }
                 }
