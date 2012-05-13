@@ -66,6 +66,14 @@ define(["require", "js/core/Component", "js/core/Content", "js/core/Binding", "i
                     this.$contentChildren.push(child);
                 }
             },
+            removeChild: function(child){
+                this.callBase();
+                if (child instanceof DomElement || child.render) {
+                    if (this.isRendered()) {
+                        this._removeRenderedChild(child);
+                    }
+                }
+            },
 
             getPlaceHolder: function (name) {
 
@@ -314,13 +322,17 @@ define(["require", "js/core/Component", "js/core/Content", "js/core/Binding", "i
             },
             _renderSelectable: function (selectable) {
                 if (selectable === true) {
-                    var self = this;
-                    this.addEventListener('click', function (e) {
-                        // e.preventDefault();
-                        self.set({selected: !self.$.selected});
-                    });
+                    if(!this._onSelect){
+                        var self = this;
+                        this._onSelect = function () {
+                            self.set({selected: !self.$.selected});
+                        };
+                    }
+                    this.addEventListener('click', this._onSelect);
                 } else {
-                    this.set({selected: false});
+                    if(this._onSelect){
+                        this.removeEvent('click', this._onSelect);
+                    }
                 }
             },
             _renderWidth: function (width) {
