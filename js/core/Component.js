@@ -234,7 +234,7 @@ define(
                     var desc;
                     for (var d = 0; d < this.$internalDescriptors.length; d++) {
                         desc = this.$internalDescriptors[d];
-                        children = children.concat(this._getChildrenFromDescriptor(desc));
+                        children = children.concat(this._getChildrenFromDescriptor(desc, this));
                     }
 
                     children = children.concat(this._getChildrenFromDescriptor(this.$descriptor));
@@ -338,10 +338,11 @@ define(
                  * @param DOM Node
                  * @param attributes for new Component
                  */
-                _createComponentForNode: function (node, attributes) {
+                _createComponentForNode: function (node, attributes, rootScope) {
                     if (!node) return null;
 
                     attributes = attributes || {};
+                    rootScope = rootScope || this.$rootScope;
                     // only instantiation and construction but no initialization
                     var appDomain = this.$systemManager.$applicationDomain;
 
@@ -350,7 +351,7 @@ define(
                         var fqClassName = this.$systemManager.$applicationContext.getFqClassName(node.namespaceURI, this._localNameFromDomNode(node), true);
                         var className = this.$systemManager.$applicationContext.getFqClassName(node.namespaceURI, this._localNameFromDomNode(node), false);
 
-                        return this.$systemManager.$applicationContext.createInstance(fqClassName, [attributes, node, this.$systemManager, this, this.$rootScope], className);
+                        return this.$systemManager.$applicationContext.createInstance(fqClassName, [attributes, node, this.$systemManager, this, rootScope], className);
 
                     } else if (node.nodeType == 3) { // Textnodes
                         // remove whitespaces from text textnodes
@@ -359,7 +360,7 @@ define(
                             node.textContent = text;
                         }
                         // only instantiation and construction but no initialization
-                        return this.$systemManager.$applicationContext.createInstance("js/core/TextElement", [null, node, this.$systemManager, this, this.$rootScope]);
+                        return this.$systemManager.$applicationContext.createInstance("js/core/TextElement", [null, node, this.$systemManager, this, rootScope]);
                     }
 
                     return null;
@@ -368,13 +369,13 @@ define(
                  * Converts all child nodes of a descriptor to instances of Components or TextElement
                  * @param descriptor
                  */
-                _getChildrenFromDescriptor: function (descriptor) {
+                _getChildrenFromDescriptor: function (descriptor, rootScope) {
                     var childrenFromDescriptor = [], node, component;
 
                     if (descriptor) {
                         for (var i = 0; i < descriptor.childNodes.length; i++) {
                             node = descriptor.childNodes[i];
-                            component = this._createComponentForNode(node);
+                            component = this._createComponentForNode(node, null, rootScope);
                             if (component) {
                                 childrenFromDescriptor.push(component);
                             }
