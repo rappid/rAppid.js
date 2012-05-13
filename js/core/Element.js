@@ -110,8 +110,8 @@ define(["js/core/Bindable", "underscore"], function (Bindable, _) {
             },
             find: function (key) {
                 var scope = this.getScopeForKey(key);
-                if (this == scope) {
-                    return this.callBase();
+                if (this === scope) {
+                    return this.get(key);
                 } else if (scope != null) {
                     return scope.get(key);
                 } else {
