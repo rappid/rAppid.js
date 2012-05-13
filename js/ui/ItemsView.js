@@ -28,14 +28,14 @@ define(
             },
             _renderItems: function (items, oldItems) {
                 if (oldItems && oldItems instanceof List) {
-                    oldItems.unbind('sort', this._onSort);
-                    oldItems.unbind('reset', this._onReset);
-                    oldItems.unbind('add', this._onItemAdd);
-                    oldItems.unbind('remove', this._onItemRemove);
+                    oldItems.unbind('sort', this._onSort, this);
+                    oldItems.unbind('reset', this._onReset, this);
+                    oldItems.unbind('add', this._onItemAdd, this);
+                    oldItems.unbind('remove', this._onItemRemove, this);
+
                 }
 
                 if (items instanceof List) {
-
                     items.bind('sort', this._onSort, this);
                     items.bind('reset', this._onReset, this);
                     items.bind('add', this._onItemAdd, this);
@@ -91,8 +91,6 @@ define(
                 });
 
                 this.addChild(comp);
-
-
             },
             _getItemKey: function(){
                 return "$"+this.$.itemKey;
