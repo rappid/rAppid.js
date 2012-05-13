@@ -1,11 +1,11 @@
-define(["require","js/core/Component", "js/core/Content", "js/core/Binding", "inherit", "underscore"],
-    function (require,Component, Content, Binding, inherit, _) {
+define(["require", "js/core/Component", "js/core/Content", "js/core/Binding", "inherit", "underscore"],
+    function (require, Component, Content, Binding, inherit, _) {
 
         var rspace = /\s+/;
         var domEvents = ['click', 'dblclick', 'keyup', 'keydown' , 'change'];
 
         var ContentPlaceHolder;
-        require(["js/ui/ContentPlaceHolder"],function(CP){
+        require(["js/ui/ContentPlaceHolder"], function (CP) {
             ContentPlaceHolder = CP;
         });
 
@@ -15,7 +15,7 @@ define(["require","js/core/Component", "js/core/Content", "js/core/Binding", "in
                 selected: undefined,
                 selectable: undefined
             },
-            $classAttributes:[
+            $classAttributes: [
                 /^\$/,
                 /^data/,
                 /^xmlns/,
@@ -274,14 +274,14 @@ define(["require","js/core/Component", "js/core/Content", "js/core/Binding", "in
                     method.call(this, attr, prev);
                 } else {
                     var cAttr;
-                    for(var i = 0; i < this.$classAttributes.length; i++){
+                    for (var i = 0; i < this.$classAttributes.length; i++) {
                         cAttr = this.$classAttributes[i];
-                        if(cAttr instanceof RegExp){
-                            if(cAttr.test(key)){
+                        if (cAttr instanceof RegExp) {
+                            if (cAttr.test(key)) {
                                 return;
                             }
                         } else {
-                            if(cAttr == key){
+                            if (cAttr == key) {
                                 return;
                             }
                         }
@@ -342,6 +342,15 @@ define(["require","js/core/Component", "js/core/Content", "js/core/Binding", "in
             _commitChangedAttributes: function (attributes) {
                 if (this.isRendered()) {
                     this._renderAttributes(attributes);
+                }
+            },
+            destroy: function () {
+                this.callBase();
+
+                if (this.$childViews) {
+                    for(var i = 0; i < this.$childViews.length; i++){
+                        this.$childViews[i].destroy();
+                    }
                 }
             },
             html: function () {

@@ -89,9 +89,12 @@ define(["js/core/Component", "js/core/List", "js/data/Collection", "flow"], func
 
             // add items
             var startIndex = this.$.pageSize * pageIndex;
-            for (i = 0; i < this.$.pageSize; i++) {
-                list.add(baseList.at(startIndex + i));
+            if(baseList.$items.length > startIndex){
+                for (i = 0; i < this.$.pageSize; i++) {
+                    list.add(baseList.at(startIndex + i));
+                }
             }
+
 
             if (baseList instanceof Collection) {
                 // determinate pages to load based on the page size
