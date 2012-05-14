@@ -1,7 +1,9 @@
 var path = require('path'),
     fs = require('fs'),
     exclude_dirs = ["node_modules", "bin", "doc", "test"],
-    rRemoveExtension = /^(.*?)\.[^.]+$/;
+    rRemoveExtension = /^(.*?)\.[^.]+$/,
+    removeXMLSuffix = /^(.*).xml$/,
+    backslashes = /\/g;
 
 var config = function(args, callback) {
 
@@ -29,7 +31,11 @@ var config = function(args, callback) {
                 // make it relative
                 file = path.relative(dir, file);
 
-                config.xamlClasses.push(file.replace(/^(.*).xml$/, "$1"));
+                file = file.replace(removeXMLSuffix, "$1");
+                // issue #19
+                file = file.replace(backslashes, "/");
+
+                config.xamlClasses.push(file);
             });
 
             fs.writeFileSync(configFile, JSON.stringify(config));
