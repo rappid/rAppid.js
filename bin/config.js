@@ -3,7 +3,7 @@ var path = require('path'),
     exclude_dirs = ["node_modules", "bin", "doc", "test"],
     rRemoveExtension = /^(.*?)\.[^.]+$/,
     removeXMLSuffix = /^(.*).xml$/,
-    backslashes = /\/g;
+    backslashes = /\\/g;
 
 var config = function(args, callback) {
 
