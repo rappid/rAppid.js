@@ -3,10 +3,11 @@
     <js:Script><![CDATA[
         (function () {
             return {
+                $classAttributes: ['label'],
                 defaults: {
                     tagName: 'a',
                     href: null,
-                    label: ' '
+                    label: ''
                 },
                 _renderIconClass: function (iconClass, oldIconClass) {
                     if (iconClass) {

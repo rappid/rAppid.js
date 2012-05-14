@@ -25,11 +25,11 @@ define(["js/core/Component", "js/core/List" ,"underscore"], function (Component,
         },
         _unbindList: function (list) {
             if (list) {
-                list.unbind('add', this._onItemAdded);
-                list.unbind('remove', this._onItemRemoved);
-                list.unbind('change', this._onItemChange);
-                list.unbind('reset', this._onReset);
-                list.unbind('sort', this._onSort);
+                list.unbind('add', this._onItemAdded, this);
+                list.unbind('remove', this._onItemRemoved, this);
+                list.unbind('change', this._onItemChange, this);
+                list.unbind('reset', this._onReset, this);
+                list.unbind('sort', this._onSort, this);
             }
         },
         _bindList: function (list) {

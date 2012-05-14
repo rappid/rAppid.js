@@ -117,7 +117,7 @@ define(["js/core/Base"],
                  * @param {String} eventType
                  * @param {Function} callback
                  */
-                unbind: function (eventType, callback) {
+                unbind: function (eventType, callback, scope) {
                     if (!eventType) {
                         // remove all events
                         this._eventHandlers = {};
@@ -127,7 +127,7 @@ define(["js/core/Base"],
                     } else if (this._eventHandlers[eventType]) {
                         var list = this._eventHandlers[eventType];
                         for (var i = list.length - 1; i >= 0; i--) {
-                            if (list[i].$callback == callback) {
+                            if (list[i].$callback == callback && (!scope || scope === list[i].scope)) {
                                 list.splice(i, 1);  // delete callback
                             }
                         }

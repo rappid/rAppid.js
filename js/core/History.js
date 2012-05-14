@@ -149,16 +149,15 @@ define(["js/core/Bindable", "flow"], function (Bindable, flow) {
                 if (this.runsInBrowser()) {
                     window.location.hash = "/" + fragment;
                 } else {
-                    this.$history.push(fragment);
                     this.checkUrl(null);
                 }
+                this.$history.push(fragment);
             } else {
                 if (this.runsInBrowser()) {
                     // replace hash
                     window.location.replace("#/" + fragment);
-                } else {
-                    this.$history[this.$history.length - 1] = fragment;
                 }
+                this.$history[this.$history.length - 1] = fragment;
 
             }
 
@@ -167,7 +166,6 @@ define(["js/core/Bindable", "flow"], function (Bindable, flow) {
             if (triggerRoute) {
                 this.triggerRoute(fragment, callback);
             }
-
         }
     });
 });
