@@ -74,7 +74,6 @@ define(
                  *
                  */
                 events: [
-                    "onchange"
                 ],
                 /**
                  * values to be injected
