@@ -1,0 +1,26 @@
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+        xmlns:js="js.core"
+        targetNamespace="js.core">
+
+    <complexType name="Component">
+        <attribute name="cid" type="string" use="optional"/>
+    </complexType>
+
+    <complexType name="Router">
+        <complexContent>
+            <extension base="js:Component">
+                <sequence>
+                    <element name="Route" minOccurs="0" maxOccurs="unbounded">
+                        <complexType>
+                            <attribute name="name" use="optional" type="string"/>
+                            <attribute name="route" use="required" type="string"/>
+                            <attribute name="foo" use="required" type="string"/>
+
+                            <attribute name="onexec" use="optional" type="string"/>
+                        </complexType>
+                    </element>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+</schema>
