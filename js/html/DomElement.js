@@ -19,7 +19,8 @@ define(["require", "js/core/Component", "js/core/Content", "js/core/Binding", "i
                 /^\$/,
                 /^data/,
                 /^xmlns/,
-                /^on/
+                /^on/,
+                "cid"
             ],
             ctor: function (attributes, descriptor, systemManager, parentScope, rootScope) {
                 this.$renderMap = {};
