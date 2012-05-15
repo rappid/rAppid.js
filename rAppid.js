@@ -411,6 +411,11 @@ if(!console){
 
 
     rAppid = exports.rAppid = _rAppid;
+    exports.defaultNamespaceMap = defaultNamespaceMap;
+    exports.defaultRewriteMap = defaultRewriteMap;
+    exports.SystemManager = SystemManager;
+    exports.ApplicationContext = ApplicationContext;
+
 
 })(typeof exports === "undefined" ? this : exports,
    typeof inherit === "undefined" ? require('inherit.js').inherit : inherit,
