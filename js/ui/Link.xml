@@ -21,6 +21,8 @@
                         this.$el.setAttribute("href", href || "#");
                         if (!href) {
                             this.$el.setAttribute('onclick', "return false;");
+                        }else{
+                            this.$el.removeAttribute('onclick');
                         }
 
                     }

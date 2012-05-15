@@ -25,9 +25,9 @@ define(["js/html/DomElement"], function (DomElement) {
                     this.addEventListener('change', function (e) {
                         var val = parseInt(self.$el.value);
                         if(isNaN(val)){
-                            self.$el.value = self.$.value;
+                            val = self.$.value;
                         }
-                        self.set('value', self.$el.value);
+                        self.set('value', val);
                     });
                 }
 
