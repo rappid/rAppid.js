@@ -162,7 +162,7 @@ define(["require", "js/data/DataSource", "js/data/ReferenceDataSource", "js/core
 
                 } else {
                     // TODO: better error handling
-                    err = err || "wrong status code";
+                    err = err || "Got status code " + xhr.status + " for '" + url + "'";
                     callback(err, null, options);
                 }
             });
