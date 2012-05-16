@@ -118,10 +118,12 @@ define(["js/core/Component", "js/core/Base", "js/data/Collection", "underscore"]
         var DataSource = Component.inherit({
 
             ctor: function () {
-                this.callBase();
 
                 this.$configuredTypes = [];
                 this.$contextCache = {};
+
+                this.callBase();
+
             },
 
             _childrenInitialized: function () {
@@ -252,6 +254,12 @@ define(["js/core/Component", "js/core/Base", "js/data/Collection", "underscore"]
             loadCollectionPage: function (list, options, callback) {
                 if (callback) {
                     callback("Abstact method", list);
+                }
+            },
+
+            saveModel: function(model, options, callback) {
+                if (callback) {
+                    callback("Abstract method", model);
                 }
             },
 

@@ -1,5 +1,5 @@
-define(["require", "js/data/DataSource", "js/core/Base", "js/core/List", "underscore"],
-    function (require, DataSource, Base, List, _) {
+define(["require", "js/data/DataSource", "js/core/Base", "js/core/List", "underscore", "js/data/Model", "js/data/Collection"],
+    function (require, DataSource, Base, List, _, Model, Collection) {
 
 
         var referenceCollectionTypeExtractor = /^.*\/([^/]+)$/i,
@@ -119,7 +119,7 @@ define(["require", "js/data/DataSource", "js/core/Base", "js/core/List", "unders
                 var referenceInformation = [],
                     self = this;
 
-                function findReferences(obj, api) {
+                function findReferences(obj) {
 
                     for (var prop in obj) {
                         if (obj.hasOwnProperty(prop)) {
@@ -127,13 +127,13 @@ define(["require", "js/data/DataSource", "js/core/Base", "js/core/List", "unders
 
                             if (value instanceof List) {
                                 value.each(function (item) {
-                                    findReferences(item, api);
+                                    findReferences(item);
                                 });
                             } else if (value instanceof Object || value instanceof Array) {
                                 // value is object and could contain sub objects with references
                                 // first resolve references
 
-                                findReferences(value, api);
+                                findReferences(value);
 
                                 // then check the value
                                 if (self.isReferencedModel(value) || self.isReferencedCollection(value)) {
@@ -216,6 +216,43 @@ define(["require", "js/data/DataSource", "js/core/Base", "js/core/List", "unders
                 });
             },
 
+            createReferences: function(target, data, options, callback) {
+
+                function createReference(obj) {
+
+                    for (var prop in obj) {
+                        if (obj.hasOwnProperty(prop)) {
+                            var value = obj[prop];
+
+                            if (value instanceof List) {
+                                value.each(function (item) {
+                                    createReference(item);
+                                });
+                            } else if (value instanceof Object || value instanceof Array) {
+                                // value is object and could contain sub objects with references
+                                // first resolve references
+
+                                createReference(value);
+
+                                // then check the value
+                                if (value instanceof Model || value instanceof Collection) {
+//                                    var info = self.getReferenceInformation(value[self.$.referenceProperty], value[self.$.identifierProperty]);
+//                                    if (info) {
+//                                        info.referenceObject = obj;
+//                                        info.propertyName = prop;
+//                                        referenceInformation.push(info);
+//                                    } else {
+//                                        throw "Cannot determinate referenceInformation for reference '" + value[self.$.referenceProperty] + "'.";
+//                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                createReference(data);
+            },
+
             /**
              *
              * @param model
@@ -223,7 +260,6 @@ define(["require", "js/data/DataSource", "js/core/Base", "js/core/List", "unders
              * @param callback function(err, model, options)
              */
             loadModel: function (model, options, callback) {
-
             }
 
         });

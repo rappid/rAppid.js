@@ -1,4 +1,4 @@
-define(["require", "js/data/DataSource", "js/data/ReferenceDataSource", "js/core/Base", "js/core/List", "underscore"], function (require, DataSource, ReferenceDataSource, Base, List, _) {
+define(["require", "js/data/DataSource", "js/data/ReferenceDataSource", "js/core/Base", "js/core/List", "underscore", "js/data/Model"], function (require, DataSource, ReferenceDataSource, Base, List, _, Model) {
 
     var RestContext = DataSource.Context.inherit("js.data.RestDataSource.Context", {
 
@@ -71,7 +71,7 @@ define(["require", "js/data/DataSource", "js/data/ReferenceDataSource", "js/core
             if (path) {
                 var ret = [path];
 
-                if (model.status() == "CREATED") {
+                if (model.status() === Model.STATE.CREATED) {
                     ret.push(model.$.id);
                 }
 
@@ -167,6 +167,9 @@ define(["require", "js/data/DataSource", "js/data/ReferenceDataSource", "js/core
                 }
             });
 
+        },
+
+        saveModel: function (model, options, callback) {
         },
 
         extractListMetaData: function (list, payload, options) {

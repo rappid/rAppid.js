@@ -2,11 +2,17 @@ define(["js/core/Bindable", "js/core/List", "flow", "underscore"], function (Bin
 
     var cid = 0;
 
-    var State = {
+    var FETCHSTATE = {
         CREATED: 0,
         LOADING: 1,
         LOADED: 2,
         ERROR: -1
+    };
+
+    var STATE = {
+        NEW: 0,
+        CREATED: 1,
+        DELETED: -1
     };
 
     var Model = Bindable.inherit("js.data.Model", {
@@ -19,12 +25,22 @@ define(["js/core/Bindable", "js/core/List", "flow", "underscore"], function (Bin
             // stores the current fetch state
             this._fetch = {
                 callbacks: [],
-                state: State.CREATED
+                state: FETCHSTATE.CREATED
             };
         },
 
         save: function (options, callback) {
-            this.$context.$datasource.save(options, callback);
+
+            var status = this.status();
+
+            if (status === STATE.NEW) {
+                this.$context.$datasource.saveModel(options, callback);
+            } else if (status == STATE.CREATED) {
+                this.$context.$datasource.updateModel(options, callback);
+            } else {
+                throw "status '" + status + "' doesn't allow save";
+            }
+
         },
 
         /**
@@ -37,20 +53,20 @@ define(["js/core/Bindable", "js/core/List", "flow", "underscore"], function (Bin
 
             var self = this;
 
-            if (this._fetch.state === State.LOADING) {
+            if (this._fetch.state === FETCHSTATE.LOADING) {
                 // currently fetching -> register callback
                 this._fetch.callbacks.push(function (err, model) {
                     modelFetchedComplete(err, model, options, callback);
                 });
-            } else if (this._fetch.state == State.LOADED) {
+            } else if (this._fetch.state == FETCHSTATE.LOADED) {
                 // completed loaded -> execute
                 modelFetchedComplete(null, this, options, callback);
             } else {
                 // set state and start loading
-                self._fetch.state = State.LOADING;
+                self._fetch.state = FETCHSTATE.LOADING;
 
                 this.$context.$datasource.loadModel(this, options, function (err, model) {
-                    self._fetch.state = err ? State.ERROR : State.LOADED;
+                    self._fetch.state = err ? FETCHSTATE.ERROR : FETCHSTATE.LOADED;
 
                     // execute callbacks
                     modelFetchedComplete(err, model, options, callback);
@@ -71,19 +87,8 @@ define(["js/core/Bindable", "js/core/List", "flow", "underscore"], function (Bin
          * prepares the data for serialisation
          * @return {Object} all data that should be serialized
          */
-        prepare: function () {
-            var ret = {};
-
-            for (var key in this.$) {
-                if (this.$.hasOwnProperty(key)) {
-                    var value = this.$[key];
-                    if (!_.isFunction(value)) {
-                        ret[key] = value;
-                    }
-                }
-            }
-
-            return ret;
+        prepare: function (attributes) {
+            return attributes;
         },
 
         /**
@@ -122,12 +127,11 @@ define(["js/core/Bindable", "js/core/List", "flow", "underscore"], function (Bin
 
         status: function () {
             if (this.$.id === false) {
-                return "DELETED";
+                return STATE.DELETED;
             } else {
-                return this.$.id ? "CREATED" : "NEW";
+                return this.$.id ? STATE.CREATED : STATE.NEW;
             }
         }.on("id")
-
     });
 
     function fetchSubModels(attributes, subModelTypes, delegates) {
@@ -226,6 +230,9 @@ define(["js/core/Bindable", "js/core/List", "flow", "underscore"], function (Bin
 
         return ret;
     }
+
+    Model.STATE = STATE;
+    Model.FETCHSTATE = FETCHSTATE;
 
     return Model;
 });
