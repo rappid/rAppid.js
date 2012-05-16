@@ -161,6 +161,7 @@ define(["require", "js/core/Component", "js/core/Content", "js/core/Binding", "i
                  * <js:Template name="layout"><placeholder cid="icon"/><placeholder cid="label"/></js:Template>
                  */
 
+                this._initializeRenderer(this.$el);
                 this._renderChildren(this.$childViews);
                 this._renderContentChildren(this.$contentChildren);
                 this._renderAttributes(this.$);
@@ -188,6 +189,11 @@ define(["require", "js/core/Component", "js/core/Content", "js/core/Binding", "i
 
                 }
             },
+
+            _initializeRenderer: function(el) {
+                // hook
+            },
+
             _renderChildren: function (children) {
                 // for all children
                 var child;
