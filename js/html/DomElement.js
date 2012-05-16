@@ -20,7 +20,8 @@ define(["require", "js/core/Component", "js/core/Content", "js/core/Binding", "i
                 /^data/,
                 /^xmlns/,
                 /^on/,
-                "cid"
+                "cid",
+                /^_/ // private attributes
             ],
             ctor: function (attributes, descriptor, systemManager, parentScope, rootScope) {
                 this.$renderMap = {};
@@ -48,6 +49,20 @@ define(["require", "js/core/Component", "js/core/Content", "js/core/Binding", "i
                     }
                 }
             },
+
+            _inject: function () {
+                this.callBase();
+
+                var inject = this._injectChain();
+
+                for (var name in inject) {
+                    if (inject.hasOwnProperty(name)) {
+                        this.$classAttributes.push(name);
+                    }
+                }
+
+            },
+
             _initializeAttributes: function (attributes) {
                 this.callBase();
 
