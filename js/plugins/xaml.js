@@ -36,6 +36,10 @@ define([], function () {
 
     function getDependency(namespace, localName, namespaceMap, xamlClasses, rewriteMap) {
 
+        namespaceMap = namespaceMap || {};
+        rewriteMap = rewriteMap || {};
+        xamlClasses = xamlClasses || [];
+
         namespace = (namespaceMap[namespace] || namespace).replace(/\./g, '/');
         var fqClassName = [namespace, localName].join("/");
 
