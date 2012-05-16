@@ -134,11 +134,22 @@ define(["js/core/EventDispatcher", "underscore"],
                 },
                 /**
                  *
-                 * @param {String} key Attribute key
+                 * @param {String} key Attribute key or path
                  * @returns Attribute value
                  */
                 get: function (key) {
-                    return this.$[key];
+                    var path = key.split(".");
+                    var nScope = this, val;
+                    while(path.length > 0 && !_.isUndefined(nScope)){
+                        key = path.shift();
+                        if(nScope instanceof Bindable){
+                            val = nScope.$[key];
+                        }else{
+                            val = nScope[key];
+                        }
+                        nScope = val;
+                    }
+                    return val;
                 },
                 /**
                  *
