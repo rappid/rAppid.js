@@ -1,7 +1,12 @@
-define(["js/core/Component", "js/core/Base", "js/data/Collection", "underscore"],
-    function (Component, Base, Collection, _) {
+define(["js/core/Component", "js/core/Base", "js/data/Collection", "underscore", "js/data/Model", "js/data/Entity"],
+    function (Component, Base, Collection, _, Model, Entity) {
 
         var Context = Base.inherit("js.data.DataSource", {
+
+            defaults: {
+                collectionPageSize: null
+            },
+
             ctor: function (datasource, properties, parentContext) {
                 this.callBase();
 
@@ -9,14 +14,11 @@ define(["js/core/Component", "js/core/Base", "js/data/Collection", "underscore"]
                 this.$properties = properties;
                 this.$parent = parentContext;
                 this.$cache = {};
+
             },
 
-            defaults: {
-                collectionPageSize: null
-            },
-
-            addModelToCache: function (model) {
-                this.$cache[Context.generateCacheIdFromModel(model)] = model;
+            addEntityToCache: function (model) {
+                this.$cache[Context.generateCacheIdFromEntity(model)] = model;
             },
 
             addCollectionToCache: function (collection) {
@@ -28,21 +30,21 @@ define(["js/core/Component", "js/core/Base", "js/data/Collection", "underscore"]
             },
 
 
-            createModel: function (factory, id, alias) {
+            createEntity: function (factory, id, alias) {
 
                 if (_.isFunction(factory)) {
 
-                    var modelClassName = factory.prototype.constructor.name;
-                    alias = alias || this.$datasource.getAliasForModelClassName(modelClassName);
+                    var entityClassName = factory.prototype.constructor.name;
+                    alias = alias || this.$datasource.getAliasForModelClassName(entityClassName);
 
-                    if (!alias) {
-                        throw "Alias for '" + modelClassName + "' not found";
+                    if ((factory === Model || factory.prototype instanceof Model) && !alias) {
+                        throw "Alias for '" + entityClassName + "' not found";
                     }
 
                     var cachedItem = this.getInstanceByCacheId(Context.generateCacheId(alias, id));
 
                     if (!cachedItem) {
-                        // create new Collection
+                        // create new Entity
                         cachedItem = new factory({
                             id: id
                         });
@@ -51,7 +53,7 @@ define(["js/core/Component", "js/core/Base", "js/data/Collection", "underscore"]
                         cachedItem.$alias = alias;
 
                         // and add it to the cache
-                        this.addModelToCache(cachedItem);
+                        this.addEntityToCache(cachedItem);
                     }
 
                     return cachedItem;
@@ -66,11 +68,11 @@ define(["js/core/Component", "js/core/Base", "js/data/Collection", "underscore"]
 
                 if (_.isFunction(factory)) {
 
-                    var modelClassName = factory.prototype.constructor.name;
-                    alias = alias || this.$datasource.getAliasForModelClassName(modelClassName);
+                    var collectionClassName = factory.prototype.constructor.name;
+                    alias = alias || this.$datasource.getAliasForCollectionClassName(collectionClassName);
 
                     if (!alias) {
-                        throw "Alias for '" + modelClassName + "' not found";
+                        throw "Alias for '" + collectionClassName + "' not found";
                     }
 
                     _.defaults(options, {
@@ -82,7 +84,7 @@ define(["js/core/Component", "js/core/Base", "js/data/Collection", "underscore"]
 
                     if (!cachedCollection) {
                         // create new Collection
-                        cachedCollection = new Collection(null, options);
+                        cachedCollection = new factory(null, options);
                         // set context
                         cachedCollection.$context = this;
                         cachedCollection.$alias = alias;
@@ -107,8 +109,8 @@ define(["js/core/Component", "js/core/Base", "js/data/Collection", "underscore"]
             }
         };
 
-        Context.generateCacheIdFromModel = function (model) {
-            return Context.generateCacheId(model.$alias, model.$.id);
+        Context.generateCacheIdFromEntity = function (entity) {
+            return Context.generateCacheId(entity.$alias, entity.$.id);
         };
 
         Context.generateCacheIdFromCollection = function (collection) {
@@ -121,9 +123,20 @@ define(["js/core/Component", "js/core/Base", "js/data/Collection", "underscore"]
 
                 this.$configuredTypes = [];
                 this.$contextCache = {};
+                this.$processors = [];
 
                 this.callBase();
 
+                this.initializeProcessors();
+            },
+
+
+            $modelFactory: Model,
+            $entityFactory: Entity,
+            $collectionFactory: Collection,
+
+            initializeProcessors: function () {
+                // hook
             },
 
             _childrenInitialized: function () {
@@ -146,6 +159,18 @@ define(["js/core/Component", "js/core/Base", "js/data/Collection", "underscore"]
 
                 return null;
             },
+
+            getAliasForCollectionClassName: function (collectionClassName) {
+                for (var i = 0; i < this.$configuredTypes.length; i++) {
+                    var config = this.$configuredTypes[i];
+                    if (config.$.collectionClassName === collectionClassName) {
+                        return config.$.alias;
+                    }
+                }
+
+                return null;
+            },
+
 
             addTypeConfiguration: function (configuration) {
 
@@ -214,10 +239,10 @@ define(["js/core/Component", "js/core/Base", "js/data/Collection", "underscore"]
                 return ret.join("&");
             },
 
-            createModel: function (factory, id, type, context) {
+            createEntity: function (factory, id, type, context) {
                 context = context || this.getContext();
 
-                return context.createModel(factory, id, type);
+                return context.createEntity(factory, id, type);
             },
 
             createCollection: function (factory, options, type, context) {
@@ -253,13 +278,13 @@ define(["js/core/Component", "js/core/Base", "js/data/Collection", "underscore"]
              */
             loadCollectionPage: function (list, options, callback) {
                 if (callback) {
-                    callback("Abstact method", list);
+                    callback("Abstact method loadCollectionPage", list);
                 }
             },
 
             saveModel: function(model, options, callback) {
                 if (callback) {
-                    callback("Abstract method", model);
+                    callback("Abstract method saveModel", model);
                 }
             },
 
