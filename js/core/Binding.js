@@ -17,11 +17,6 @@ define(["js/core/Bindable", "js/core/EventDispatcher", "js/core/BindingParser", 
         return str;
     };
 
-    var bindToChangeEvent = function (scope, _attributes, binding) {
-
-
-    };
-
     /**
      * Returns false if path includes function
      * @param path
@@ -69,7 +64,9 @@ define(["js/core/Bindable", "js/core/EventDispatcher", "js/core/BindingParser", 
                     this.$.rootScope = this;
                 }
                 var scope = this.$.scope;
-
+                if(_.isString(this.$.path)){
+                    this.$.path = Parser.parse(this.$.path,'path');
+                }
                 // split up first key
                 this.$.key = this.$.path[0];
                 var self = this;
@@ -173,7 +170,7 @@ define(["js/core/Bindable", "js/core/EventDispatcher", "js/core/BindingParser", 
                     }
                     // if keys are left and has value && is bindable
                     // get value for first child
-                    if (nScope && (nScope instanceof EventDispatcher)) {
+                    if (nScope && (nScope instanceof Bindable)) {
                         // init new binding, which triggers this binding
                         this.$subBinding = new Binding({scope: nScope, path: this.$.path.slice(1), target: this.$.target, targetKey: this.$.targetKey, rootScope: this.$.rootScope, callback: this.$.callback, context: this.$.context, twoWay: this.$.twoWay, transform: this.$.transform, transformBack: this.$.transformBack});
                     }
