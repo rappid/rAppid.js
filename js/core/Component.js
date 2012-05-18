@@ -62,6 +62,7 @@ define(
                     this.$configurations = [];
                     this.$children = [];
 
+                    attributes = attributes || {};
                     _.extend(attributes, this.$xamlAttributes, this.$xamlDefaults);
 
                     this.callBase();
