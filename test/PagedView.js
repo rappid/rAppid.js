@@ -1,5 +1,5 @@
 var should = require('chai').should();
-var requirejs = require('./TestRunner').require;
+var requirejs = require('./../lib/TestRunner').require;
 
 var PagedView = requirejs("js/data/PagedView"),
     Collection = requirejs("js/data/Collection");

@@ -1,5 +1,5 @@
 var should = require('chai').should();
-var requirejs = require('./TestRunner').require;
+var requirejs = require('./../lib/TestRunner').require;
 var flow = require('flow.js').flow;
 
 var Parser = requirejs("js/core/BindingParser");

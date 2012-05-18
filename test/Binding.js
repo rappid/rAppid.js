@@ -1,5 +1,5 @@
 var should = require('chai').should();
-var requirejs = require('./TestRunner').require;
+var requirejs = require('./../lib/TestRunner').require;
 
 var Binding = requirejs("js/core/Binding"),
     Bindable = requirejs("js/core/Bindable"),
