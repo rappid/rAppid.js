@@ -1,7 +1,7 @@
 define(
-    ["require", "js/core/Element", "js/core/TextElement", "js/core/Binding", "underscore"],
+    ["require", "js/core/Element", "js/core/TextElement", "js/core/Binding", "js/core/Bindable", "js/core/EventDispatcher", "underscore"],
 
-    function (require, Element, TextElement, Binding, _) {
+    function (require, Element, TextElement, Binding, Bindable, EventDispatcher, _) {
 
         var Template,
             Configuration;
@@ -20,21 +20,22 @@ define(
                  * @constructs
                  */
                 ctor: function (attributes, descriptor, systemManager, parentScope, rootScope) {
-                    if(_.isUndefined(Template)){
+                    if (_.isUndefined(Template)) {
                         try {
                             Template = require('js/core/Template');
-                        } catch (e) {
+                        } catch(e) {
                             Template = null;
                         }
                     }
 
-                    if(_.isUndefined(Configuration)){
+                    if (_.isUndefined(Configuration)) {
                         try {
                             Configuration = require('js/conf/Configuration');
                         } catch(e) {
                             Configuration = null;
                         }
                     }
+                    this.$eventBindables = [];
                     this.$eventDefinitions = [];
                     this.$internalDescriptors = [];
                     this.$xamlDefaults = {};
@@ -45,12 +46,12 @@ define(
                             this._cleanUpDescriptor(current._$descriptor);
                             this.$internalDescriptors.unshift(current._$descriptor);
 
-                            _.extend(this.$xamlDefaults,this._getAttributesFromDescriptor(current._$descriptor));
+                            _.extend(this.$xamlDefaults, this._getAttributesFromDescriptor(current._$descriptor));
                         }
                         current = current.base;
                     }
 
-                    if(descriptor){
+                    if (descriptor) {
                         this._cleanUpDescriptor(descriptor);
                         this.$xamlAttributes = this._getAttributesFromDescriptor(descriptor);
                     }
@@ -61,7 +62,7 @@ define(
                     this.$configurations = [];
                     this.$children = [];
 
-                    _.extend(attributes,this.$xamlAttributes,this.$xamlDefaults);
+                    _.extend(attributes, this.$xamlAttributes, this.$xamlDefaults);
 
                     this.callBase();
                 },
@@ -242,8 +243,8 @@ define(
 
                     this._childrenInitialized();
 
-                    this._initializeEventAttributes(this.$xamlDefaults,this);
-                    this._initializeEventAttributes(this.$xamlAttributes,this.$rootScope);
+                    this._initializeEventAttributes(this.$xamlDefaults, this);
+                    this._initializeEventAttributes(this.$xamlAttributes, this.$rootScope);
                 },
                 _cleanUpDescriptor: function (desc) {
                     if (desc && desc.childNodes) {
@@ -259,7 +260,7 @@ define(
 
                             }
                         }
-                    }else{
+                    } else {
                         console.warn("Descriptor not defined or not correct");
                     }
                 },
@@ -286,7 +287,7 @@ define(
                     // TODO: implement eventAttribites as hash
                     return this._eventAttributes[eventName];
                 },
-                _initializeEventAttributes: function(attributes,rootScope){
+                _initializeEventAttributes: function (attributes, rootScope) {
                     for (var key in attributes) {
                         if (attributes.hasOwnProperty(key)) {
                             var value = attributes[key];
@@ -405,8 +406,65 @@ define(
 
                     var st = domNode.tagName.split(":");
                     return st[st.length - 1];
+                },
+                bind: function (path, event, callback, scope) {
+                    if (event instanceof Function) {
+                        this.callBase(path, event, callback);
+                    } else {
+                        var eb = new EventBindable({
+                            event: event,
+                            scope: scope,
+                            callback: callback,
+                            value: null
+                        });
+                        eb.set('binding', new Binding({path: path, scope: this, target: eb, targetKey: 'value'}));
+                        this.$eventBindables.push(eb);
+                    }
+                },
+                unbind: function (path, event, callback, scope) {
+                    if (event instanceof Function) {
+                        callback = event;
+                        scope = callback;
+                        this.callBase(path, callback, scope);
+                    } else {
+                        var eb;
+                        for (var i = this.$eventBindables.length - 1; i >= 0; i--) {
+                            eb = this.$eventBindables[i];
+                            if (eb.$.scope === scope && eb.$.path === path && eb.$.event === event && eb.$.callback === callback) {
+                                // unbind
+                                eb.destroy();
+                                this.$eventBindables.slice(i, 1);
+                            }
+                        }
+                    }
                 }
             });
+
+        var EventBindable = Bindable.inherit({
+            _commitChangedAttributes: function (attributes) {
+                this.callBase();
+                this._unbindEvent(this.$previousAttributes['value']);
+                if (!_.isUndefined(attributes.value)) {
+                    this._bindEvent(attributes.value);
+                }
+            },
+            _unbindEvent: function (value) {
+                if (value && value instanceof EventDispatcher) {
+                    value.unbind(this.$.event, this.$.callback, this.$.scope);
+                }
+            },
+            _bindEvent: function (value) {
+                if (value && value instanceof EventDispatcher) {
+                    value.bind(this.$.event, this.$.callback, this.$.scope);
+                }
+            },
+            destroy: function () {
+                this._unbindEvent(this.$.value);
+                this.$.binding.destroy();
+
+                this.callBase();
+            }
+        });
 
         return Component;
     }
