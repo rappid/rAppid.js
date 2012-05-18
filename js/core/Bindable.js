@@ -1,8 +1,11 @@
 define(["js/core/EventDispatcher", "underscore"],
     function (EventDispatcher, _) {
 
+        var indexExtractor = /^(.*)\[(\d+)\]$/,
+            undefined, List;
+
         /** @class */
-        var Bindable = EventDispatcher.inherit("js.core.EventDispatcher",
+        var Bindable = EventDispatcher.inherit("js.core.Bindable",
             /** @lends Bindable.prototype */
             {
                 /**
@@ -11,6 +14,7 @@ define(["js/core/EventDispatcher", "underscore"],
                  * @params {Object} attributes a key, value hash
                  */
                 ctor: function (attributes) {
+
                     // call the base class constructor
                     this.callBase(null);
 
@@ -132,25 +136,89 @@ define(["js/core/EventDispatcher", "underscore"],
 
                     return this;
                 },
-                /**
+
+
+                /***
                  *
-                 * @param {String} key Attribute key or path
+                 * @param {Object} [scope]
+                 * @param {String} key
                  * @returns Attribute value
                  */
-                get: function (key) {
-                    var path = key.split(".");
-                    var nScope = this, val;
-                    while(path.length > 0 && !_.isUndefined(nScope)){
-                        key = path.shift();
-                        if(nScope instanceof Bindable){
-                            val = nScope.$[key];
-                        }else{
-                            val = nScope[key];
-                        }
-                        nScope = val;
+                get: function(scope, key) {
+
+                    if (arguments.length === 1) {
+                        key = scope;
+                        scope = this;
                     }
+
+                    function getValue(scope, key) {
+                        if (!key) {
+                            return scope;
+                        }
+
+                        if (scope instanceof Bindable) {
+                            if (scope.$) {
+                                return scope.$[key];
+                            } else {
+                                return undefined;
+                            }
+                        } else {
+                            return scope[key];
+                        }
+                    }
+
+                    key = key || "";
+
+                    var path = key.split("."),
+                        val, index;
+
+                    while (path.length > 0) {
+                        if (scope === false) {
+                            return null;
+                        } else if (!scope) {
+                            return scope;
+                        }
+
+                        key = path.shift();
+
+                        var params = indexExtractor.exec(key);
+                        if (params) {
+                            // we got a list
+                            key = params[1];
+                            index = params[2];
+
+                            var list = getValue(scope, key);
+
+                            if (list instanceof Array) {
+                                scope = val = list[index];
+                            } else if (list) {
+                                if (!List) {
+                                    // circular dependency
+                                    try {
+                                        List = require('js/core/List');
+                                    } catch (e) {
+                                    }
+                                }
+
+                                if (list instanceof List) {
+                                    scope = val = list.at(index);
+                                } else {
+                                    return undefined;
+                                }
+
+                            } else {
+                                return undefined;
+                            }
+                        } else {
+                            scope = val = getValue(scope, key);
+                        }
+
+                    }
+
                     return val;
+
                 },
+
                 /**
                  *
                  * @param {String} key
