@@ -1,4 +1,4 @@
-define(["js/core/List", "js/data/Model", "flow", "underscore"], function (List, Model, flow, _) {
+define(['require', "js/core/List", "js/data/Model", "flow", "underscore"], function (require, List, Model, flow, _) {
 
     var cid = 0;
 
@@ -11,7 +11,10 @@ define(["js/core/List", "js/data/Model", "flow", "underscore"], function (List, 
 
     var Collection = List.inherit("js.data.Collection", {
 
+        $modelFactory: Model,
+
         ctor: function (items, options) {
+
             options = options || {};
 
             this.callBase(items);
@@ -21,7 +24,7 @@ define(["js/core/List", "js/data/Model", "flow", "underscore"], function (List, 
                 rootCollection: null,
                 pageSize: null,
                 queryParameters: {},
-                factory: Model,
+                factory: this.$modelFactory || require('js/data/Model'),
                 type: null
             });
 
@@ -141,6 +144,35 @@ define(["js/core/List", "js/data/Model", "flow", "underscore"], function (List, 
             }
         },
 
+        getContextForChildren: function(childFactory) {
+            if (childFactory.prototype.$cacheInRootContext) {
+                return this.$context.$datasource.getContext();
+            }
+
+            return this.$context;
+        },
+
+        parse: function(data, type) {
+            if (!(data instanceof Array)) {
+                throw "data has to be an array";
+            }
+
+            var factory = this.$modelFactory;
+            var alias = (factory === this.$context.$datasource.$entityFactory ||
+                factory === this.$context.$datasource.$modelFactory) ? type : null;
+
+            for (var i = 0; i < data.length; i++) {
+                var value = data[i];
+                var entity = this.getContextForChildren(factory).createEntity(factory, value.id, alias, type);
+                entity.set(entity.parse(value));
+
+                data[i] = entity;
+            }
+
+            return data;
+        },
+
+
         fetchPage: function (pageIndex, options, callback) {
 
             if (pageIndex < 0) {
@@ -166,7 +198,7 @@ define(["js/core/List", "js/data/Model", "flow", "underscore"], function (List, 
                 }
 
                 if (callback) {
-                    callback(err, page);
+                    callback(err, self, options);
                 }
             });
         },
@@ -209,6 +241,11 @@ define(["js/core/List", "js/data/Model", "flow", "underscore"], function (List, 
                 state: State.CREATED
             };
 
+        },
+
+
+        parse: function (data, type) {
+            return this.$collection.parse.call(this.$collection, data, type);
         },
 
         /***
@@ -276,6 +313,12 @@ define(["js/core/List", "js/data/Model", "flow", "underscore"], function (List, 
             }
         }
     });
+
+    Collection.of = function(modelFactory) {
+        return Collection.inherit(Collection.prototype.constructor.name + '[' + modelFactory.prototype.constructor.name + ']', {
+            $modelFactory: modelFactory
+        });
+    };
 
     return Collection;
 });
