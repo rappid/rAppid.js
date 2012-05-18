@@ -1,25 +1,6 @@
-define(["require", "js/data/DataSource", "js/data/ReferenceDataSource", "js/core/Base", "js/core/List", "underscore", "js/data/Model"], function (require, DataSource, ReferenceDataSource, Base, List, _, Model) {
+define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore"], function (DataSource, Base, Model, _) {
 
-    var RestContext = DataSource.Context.inherit("js.data.RestDataSource.Context", {
-
-        createCollection: function (factory, options, type) {
-            options = options || {};
-            _.defaults(options, {
-                pageSize: this.$datasource.$.collectionPageSize
-            });
-
-            return this.callBase(factory, options, type);
-        },
-
-        getPathComponents: function () {
-            return [];
-        },
-        getQueryParameter: function () {
-            return {};
-        }
-    });
-
-    var RestDataSource = ReferenceDataSource.inherit("js.data.RestDataSource", {
+    var RestDataSource = DataSource.inherit("js.data.RestDataSource", {
 
         initializeProcessors: function () {
             this.$processors.push({
@@ -45,11 +26,27 @@ define(["require", "js/data/DataSource", "js/data/ReferenceDataSource", "js/core
 
         },
 
+        /***
+         * creates the context as RestContext
+         *
+         * @param properties
+         * @param parentContext
+         * @return {js.core.RestDataSource.RestContext}
+         */
         createContext: function (properties, parentContext) {
-            return new RestContext(this, properties, parentContext);
+            return new RestDataSource.RestContext(this, properties, parentContext);
         },
 
-        getRestPathForModel: function (alias) {
+        /***
+         * global query parameter for each REST action
+         * @action {String} Rest action [GET, PUT, DELETE, POST]
+         * @return {Object}
+         */
+        getQueryParameter: function (action) {
+            return {};
+        },
+
+        getRestPathForAlias: function (alias) {
 
             var typeConfig,
                 i;
@@ -66,26 +63,15 @@ define(["require", "js/data/DataSource", "js/data/ReferenceDataSource", "js/core
         },
 
         getPathComponentsForModel: function (model) {
-            var path = this.getRestPathForModel(model.$alias);
 
-            if (path) {
-                var ret = [path];
+            if (model && model.status() === Model.STATE.CREATED) {
+                var path = this.getRestPathForAlias(model.$alias);
 
-                if (model.status() === Model.STATE.CREATED) {
-                    ret.push(model.$.id);
+                if (path) {
+                    return [path, model.$.id];
                 }
-
-                return ret;
             }
 
-            return null;
-        },
-
-        getQueryParameter: function () {
-            return {};
-        },
-
-        getContextPropertiesFromReference: function (reference) {
             return null;
         },
 
@@ -110,7 +96,8 @@ define(["require", "js/data/DataSource", "js/data/ReferenceDataSource", "js/core
             uri = uri.concat(modelPathComponents);
 
             // get queryParameter
-            var params = _.defaults(model.$context.getQueryParameter(), this.getQueryParameter());
+            var params = _.defaults(model.$context.getQueryParameter(),
+                this.getQueryParameter(RestDataSource.ACTIONS.GET));
 
             // create url
             var url = uri.join("/");
@@ -119,20 +106,13 @@ define(["require", "js/data/DataSource", "js/data/ReferenceDataSource", "js/core
 
             // send request
             this.$systemManager.$applicationContext.ajax(url, {
-                type: "GET",
+                type: RestDataSource.ACTIONS.GET,
                 queryParameter: params
             }, function (err, xhr) {
                 if (!err && (xhr.status == 200 || xhr.status == 304)) {
                     // find processor that matches the content-type
-                    var processor,
-                        contentType = xhr.getResponseHeader("Content-Type");
-                    for (var i = 0; i < self.$processors.length; i++) {
-                        var processorEntry = self.$processors[i];
-                        if (processorEntry.regex.test(contentType)) {
-                            processor = processorEntry.processor;
-                            break;
-                        }
-                    }
+                    var contentType = xhr.getResponseHeader("Content-Type");
+                    var processor = self.getProcessorForContentType(contentType);
 
                     if (!processor) {
                         callback("No processor for content type '" + contentType + "' found", null, options);
@@ -146,15 +126,9 @@ define(["require", "js/data/DataSource", "js/data/ReferenceDataSource", "js/core
                         // parse data inside model
                         data = model.parse(data);
 
-                        self.resolveReferences(model, data, options, function (err, resolvedData) {
-                            if (!err) {
-                                // set data
-                                model.set(resolvedData);
-                            }
+                        model.set(data);
 
-                            // and return
-                            callback(err, model, options);
-                        });
+                        callback(null, model, options);
 
                     } catch (e) {
                         callback(e, null, options);
@@ -169,21 +143,10 @@ define(["require", "js/data/DataSource", "js/data/ReferenceDataSource", "js/core
 
         },
 
-        saveModel: function (model, options, callback) {
-        },
-
-        extractListMetaData: function (list, payload, options) {
-            return payload;
-        },
-
-        extractListData: function (list, payload, options) {
-            return payload.data;
-        },
-
         loadCollectionPage: function (page, options, callback) {
 
-
-            var modelPathComponents = page.$collection.$options.path ? page.$collection.$options.path : this.getPathComponentsForModel(page.$collection.$options.factory);
+            var modelPathComponents = page.$collection.$options.path ?
+                page.$collection.$options.path : this.getRestPathForAlias(page.$collection.$alias);
 
             if (!modelPathComponents) {
                 callback("path for model unknown", null, options);
@@ -208,7 +171,7 @@ define(["require", "js/data/DataSource", "js/data/ReferenceDataSource", "js/core
             }
 
             // get queryParameter
-            params = _.defaults(params, page.$collection.$context.getQueryParameter(), this.getQueryParameter());
+            params = _.defaults(params, page.$collection.$context.getQueryParameter(), this.getQueryParameter(RestDataSource.ACTIONS.GET));
 
             // create url
             var url = uri.join("/");
@@ -217,20 +180,13 @@ define(["require", "js/data/DataSource", "js/data/ReferenceDataSource", "js/core
 
             // send request
             this.$systemManager.$applicationContext.ajax(url, {
-                type: "GET",
+                type: RestDataSource.ACTIONS.GET,
                 queryParameter: params
             }, function (err, xhr) {
                 if (!err && (xhr.status == 200 || xhr.status == 304)) {
                     // find processor that matches the content-type
-                    var processor,
-                        contentType = xhr.getResponseHeader("Content-Type");
-                    for (var i = 0; i < self.$processors.length; i++) {
-                        var processorEntry = self.$processors[i];
-                        if (processorEntry.regex.test(contentType)) {
-                            processor = processorEntry.processor;
-                            break;
-                        }
-                    }
+                    var contentType = xhr.getResponseHeader("Content-Type");
+                    var processor = self.getProcessorForContentType(contentType);
 
                     if (!processor) {
                         callback("No processor for content type '" + contentType + "' found", null, options);
@@ -252,17 +208,14 @@ define(["require", "js/data/DataSource", "js/data/ReferenceDataSource", "js/core
                         // extract data from list result
                         var data = self.extractListData(page, payload, options);
 
-                        self.resolveReferences(page, data, options, function (err, resolvedData) {
+                        data = page.parse(data);
+                        page.add(data);
 
-                            // add data to list
-                            page.add(resolvedData);
-
-                            // and return
-                            callback(null, page, options);
-                        });
+                        callback(null, page, options)
 
                     } catch (e) {
-                        callback(e, null, options);
+                        self.log(e, 'error');
+                        callback(e, page, options);
                     }
 
                 } else {
@@ -271,10 +224,46 @@ define(["require", "js/data/DataSource", "js/data/ReferenceDataSource", "js/core
                     callback(err, page, options);
                 }
             });
+        },
+
+        getProcessorForContentType: function(contentType) {
+            for (var i = 0; i < this.$processors.length; i++) {
+                var processorEntry = this.$processors[i];
+                if (processorEntry.regex.test(contentType)) {
+                    return processorEntry.processor;
+                }
+            }
+
+            return null;
         }
     });
 
-    RestDataSource.RestContext = RestContext;
+    RestDataSource.RestContext = DataSource.Context.inherit("js.data.RestDataSource.Context", {
+
+        createCollection: function (factory, options, type) {
+            options = options || {};
+            _.defaults(options, {
+                pageSize: this.$datasource.$.collectionPageSize || 100
+            });
+
+            return this.callBase(factory, options, type);
+        },
+
+        getPathComponents: function () {
+            return [];
+        },
+        getQueryParameter: function () {
+            return {};
+        }
+    });
+
+
+    RestDataSource.ACTIONS = {
+        GET: 'GET',
+        POST: 'POST',
+        PUT: 'PUT',
+        DELETE: 'DELETE'
+    };
 
     RestDataSource.Processor = Base.inherit("js.data.RestDataSource.Processor", {
         serialize: function (data) {
@@ -294,6 +283,15 @@ define(["require", "js/data/DataSource", "js/data/ReferenceDataSource", "js/core
         }
     });
 
-    return RestDataSource;
+    // TODO: implement XmlProcessor
+    RestDataSource.XmlProcessor = RestDataSource.Processor.inherit("js.data.RestDataSource.XmlProcessor", {
+        serialize: function (data) {
+            throw "not implemented";
+        },
+        deserialize: function (responses) {
+            throw "not implemented";
+        }
+    });
 
+    return RestDataSource;
 });

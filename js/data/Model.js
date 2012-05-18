@@ -1,4 +1,4 @@
-define(["js/core/Bindable", "js/core/List", "flow", "underscore"], function (Bindable, List, flow, _) {
+define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entity, List, flow, _) {
 
     var cid = 0;
 
@@ -15,11 +15,12 @@ define(["js/core/Bindable", "js/core/List", "flow", "underscore"], function (Bin
         DELETED: -1
     };
 
-    var Model = Bindable.inherit("js.data.Model", {
+    var Model = Entity.inherit("js.data.Model", {
         ctor: function (attributes) {
+            // set model class name
             this.modelClassName = this.constructor.name;
 
-            this.callBase(attributes);
+            // generate unique id
             this.$cid = ++cid;
 
             // stores the current fetch state
@@ -27,6 +28,9 @@ define(["js/core/Bindable", "js/core/List", "flow", "underscore"], function (Bin
                 callbacks: [],
                 state: FETCHSTATE.CREATED
             };
+
+            this.callBase(attributes);
+
         },
 
         save: function (options, callback) {
@@ -83,47 +87,27 @@ define(["js/core/Bindable", "js/core/List", "flow", "underscore"], function (Bin
         remove: function (options, callback) {
             this.$context.$datasource.remove(options, callback);
         },
-        /**
-         * prepares the data for serialisation
-         * @return {Object} all data that should be serialized
-         */
-        prepare: function (attributes) {
-            return attributes;
-        },
 
-        /**
-         * parse the deserializied data
-         * @param data
-         */
-        parse: function (data) {
-
-            // convert all arrays to List
-            function convertArrayToList(obj) {
-
-                for (var prop in obj) {
-                    if (obj.hasOwnProperty(prop)) {
-                        var value = obj[prop];
-
-                        if (_.isArray(value)) {
-                            // convert array to js.core.List
-                            obj[prop] = new List(value);
-
-                            for (var i = 0; i < value.length; i++) {
-                                convertArrayToList(value[i]);
-                            }
-
-                        } else if (value instanceof Object) {
-                            convertArrayToList(value);
-                        }
-                    }
-                }
-            }
-
-            convertArrayToList(data);
-
-            return data;
-        },
-
+//        _convertToBindableAndList: function (obj) {
+//            for (var prop in obj) {
+//                if (obj.hasOwnProperty(prop)) {
+//                    var value = obj[prop];
+//
+//                    if (_.isArray(value)) {
+//                        // convert array to js.core.List
+//                        obj[prop] = new List(value);
+//
+//                        for (var i = 0; i < value.length; i++) {
+//                            this._convertToBindableAndList(value[i]);
+//                        }
+//
+//                    } else if (value instanceof Object && !(value instanceof Bindable)) {
+//                        var bindable = obj[prop] = new Bindable(value);
+//                        this._convertToBindableAndList(bindable.$);
+//                    }
+//                }
+//            }
+//        },
 
         status: function () {
             if (this.$.id === false) {
@@ -173,7 +157,7 @@ define(["js/core/Bindable", "js/core/List", "flow", "underscore"], function (Bin
             if (options.fetchSubModels && options.fetchSubModels.length > 0) {
 
                 // for example fetch an article with ["currency", "product/design", "product/productType"]
-                var subModelTypes = createSubModelLoadingChain(model, options.fetchSubModels);
+                var subModelTypes = Model.createSubModelLoadingChain(model, options.fetchSubModels);
 
                 fetchSubModels(model.$, subModelTypes, delegates);
 
@@ -200,7 +184,7 @@ define(["js/core/Bindable", "js/core/List", "flow", "underscore"], function (Bin
         }
     }
 
-    function createSubModelLoadingChain(model, subModels) {
+    Model.createSubModelLoadingChain = function (model, subModels) {
         var ret = {},
             subModelParser = /^([\w][\w.]*)(?:\/([\w][\w.]*))?$/;
 
@@ -229,7 +213,7 @@ define(["js/core/Bindable", "js/core/List", "flow", "underscore"], function (Bin
         });
 
         return ret;
-    }
+    };
 
     Model.STATE = STATE;
     Model.FETCHSTATE = FETCHSTATE;
