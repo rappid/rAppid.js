@@ -82,6 +82,24 @@ describe('js.core.Bindable', function () {
             val.should.eql(1);
         });
 
+        it('#return array', function () {
+
+            var a = b.$.foo = [1, 2, 3];
+
+            var val = b.get('foo');
+            should.exist(val);
+            a.should.eql(val);
+        });
+
+        it('#return List', function () {
+
+            var a = b.$.foo = new C.List([1, 2, 3]);
+
+            var val = b.get('foo');
+            should.exist(val);
+            a.should.eql(val);
+        });
+
         it('#List ', function () {
             b.$.foo = new C.List([3, 4, 5, 6]);
 
