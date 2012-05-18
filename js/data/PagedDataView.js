@@ -141,8 +141,6 @@ define(["js/core/Component", "js/core/List", "js/data/Collection", "flow"], func
                         }
                     });
 
-
-
             } else {
                 if (callback) {
                     callback()
@@ -203,28 +201,6 @@ define(["js/core/Component", "js/core/List", "js/data/Collection", "flow"], func
             }
         }
 
-//        _onItemAdded: function (e) {
-//            // transform index from baseList to real list
-//            var index = e.$.index,
-//                currentPageIndex = this.currentPageIndex();
-//
-//            if ((index >= currentPageIndex * this.$.pageSize) && (index < (currentPageIndex + 1) * this.$.pageSize)) {
-//
-//                index = index - currentPageIndex * this.$.pageSize;
-//                if (e.$.item !== this.$.list.at(index)) {
-//                    this.$.list.removeAt(index);
-//                    this.$.list.add(e.$.item, {
-//                        index: index
-//                    });
-//
-//                    // remove out of range items
-//                    for (var i = this.$.list.size(); i > this.$.pageSize; i--) {
-//                        this.$.list.removeAt(i);
-//                    }
-//                }
-//            }
-//
-//
-//        }
+        // TODO: item added, removed, sort events handling
     });
 });
