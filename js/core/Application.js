@@ -30,7 +30,7 @@ define(
              */
             start: function (parameter, callback) {
                 parameter = parameter || {};
-
+                this.$systemManager.$parameter = parameter;
                 this.startHistory(callback, parameter.initialHash);
             },
 
