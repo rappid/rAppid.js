@@ -23,9 +23,21 @@ define(["js/core/EventDispatcher", "underscore"],
                     _.extend(this._eventAttributes, this.base._eventAttributes || {});
 
                     attributes = attributes || {};
-                    _.defaults(attributes, this._defaultAttributes());
+
+                    var defaultAttributes = this._defaultAttributes();
+                    for (var key in defaultAttributes) {
+                        if (defaultAttributes.hasOwnProperty(key)) {
+                            if (_.isFunction(defaultAttributes[key])) {
+                                // Function as default -> construct new Object
+                                defaultAttributes[key] = new (defaultAttributes[key])();
+                            }
+                        }
+                    }
+
+                    _.defaults(attributes, defaultAttributes);
 
                     this.$ = attributes;
+                    // TODO: clone and keep prototype for attribute the same -> write own clone method
                     this.$previousAttributes = _.clone(attributes);
 
                 },

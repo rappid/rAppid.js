@@ -40,13 +40,7 @@ define(["js/core/Bindable", "js/core/EventDispatcher", "js/core/BindingParser", 
             defaults: {
                 event: 'change',
                 path: null,
-                twoWay: false,
-                transform: function (val) {
-                    return val;
-                },
-                transformBack: function (val) {
-                    return val;
-                }
+                twoWay: false
             },
 
             ctor: function () {
@@ -54,6 +48,15 @@ define(["js/core/Bindable", "js/core/EventDispatcher", "js/core/BindingParser", 
 
                 this.initialize();
             },
+
+            transform: function (val) {
+                return val;
+            },
+
+            transformBack: function (val) {
+                return val;
+            },
+
             initialize: function () {
                 this._checkAttributes();
                 this.$parameters = [];
@@ -182,7 +185,7 @@ define(["js/core/Bindable", "js/core/EventDispatcher", "js/core/BindingParser", 
                     params.unshift(e.$);
                     this.$.fnc.apply(this.$.scope, params);
                 } else {
-                    this.$.scope.set(pathToString(this.$.path), this.$.transformBack(e.$));
+                    this.$.scope.set(pathToString(this.$.path), this.transformBack(e.$));
                 }
             },
             _changeCallback: function (event) {
@@ -265,9 +268,9 @@ define(["js/core/Bindable", "js/core/EventDispatcher", "js/core/BindingParser", 
                 // get value
                 var val = this.getContextValue();
                 if (this.$.targetKey) {
-                    this.$.target.set(this.$.targetKey, this.$.transform(val));
+                    this.$.target.set(this.$.targetKey, this.transform(val));
                 } else if (this.$.callback) {
-                    this.$.callback.call(this.$.target, this.$.transform(val));
+                    this.$.callback.call(this.$.target, this.transform(val));
                 }
 
             },
