@@ -1,4 +1,4 @@
-define(["js/core/Component", "js/core/List", "js/data/Collection", "flow"], function (Component, List, Collection, flow) {
+define(["js/core/Component", "js/core/List", "js/data/Collection", "flow", "underscore"], function (Component, List, Collection, flow, _) {
 
     return Component.inherit("js.data.PagedDataView", {
 
@@ -17,7 +17,10 @@ define(["js/core/Component", "js/core/List", "js/data/Collection", "flow"], func
 
         initialize: function() {
             this.set('list', new List());
-
+            var self = this;
+            this.bind('baseList','add', function(){
+                self.hasNextPage.trigger();
+            });
             this.callBase();
         },
 
@@ -71,85 +74,108 @@ define(["js/core/Component", "js/core/List", "js/data/Collection", "flow"], func
          * @param {Function} [callback] callback if navigation completes
          */
         showPage: function (pageIndex, callback, noPageCheck) {
-            var i;
-            pageIndex = pageIndex || 0;
+            if(this.hasPage(pageIndex)){
+                var i;
+                pageIndex = pageIndex || 0;
 
-            if (!this.$.baseList || (!noPageCheck && pageIndex === this.$.page)) {
-                // nothing to do
-                if (callback) {
-                    callback();
-                }
-                return;
-            }
-
-            var list = this.$.list;
-            var baseList = this.$.baseList;
-
-            list.clear();
-
-            // add items
-            var startIndex = this.$.pageSize * pageIndex;
-            if(baseList.$items.length > startIndex){
-                for (i = 0; i < this.$.pageSize; i++) {
-                    list.add(baseList.at(startIndex + i));
-                }
-            }
-
-
-            if (baseList instanceof Collection) {
-                // determinate pages to load based on the page size
-                var collectionPageSize = this.$.baseList.$options.pageSize;
-
-                var collectionStartPage = this._itemIndexToPageIndex(this._pageIndexToItemIndex(pageIndex), collectionPageSize);
-                var collectionEndPage = this._itemIndexToPageIndex(this._pageIndexToItemIndex(pageIndex + 1) - 1, collectionPageSize);
-
-                var pageIndices = {};
-                for (i = collectionStartPage; i <= collectionEndPage; i++) {
-                    pageIndices[i] = i;
+                if (!this.$.baseList || (!noPageCheck && pageIndex === this.$.page)) {
+                    // nothing to do
+                    if (callback) {
+                        callback();
+                    }
+                    return;
                 }
 
-                var self = this;
+                var list = this.$.list;
+                var baseList = this.$.baseList;
 
-                flow()
-                    .seq("execId", function() {
-                        return ++self.$execId
-                    })
-                    .parEach(pageIndices, function (pageIndex, cb) {
-                        baseList.fetchPage(pageIndex, null, cb);
-                    })
-                    .exec(function (err, results) {
+                list.clear();
 
-                        if (!err && results.execId == self.$execId) {
-                            var items = [];
-                            for (i = collectionStartPage; i <= collectionEndPage; i++) {
-                                items = items.concat(results[i].$items);
+                // add items
+                var startIndex = this.$.pageSize * pageIndex;
+                if (baseList.$items.length > startIndex) {
+                    for (i = 0; i < this.$.pageSize; i++) {
+                        list.add(baseList.at(startIndex + i));
+                    }
+                }
+
+
+                if (baseList instanceof Collection) {
+                    // determinate pages to load based on the page size
+                    var collectionPageSize = this.$.baseList.$options.pageSize;
+
+                    var collectionStartPage = this._itemIndexToPageIndex(this._pageIndexToItemIndex(pageIndex), collectionPageSize);
+                    var collectionEndPage = this._itemIndexToPageIndex(this._pageIndexToItemIndex(pageIndex + 1) - 1, collectionPageSize);
+
+                    var pageIndices = {};
+                    for (i = collectionStartPage; i <= collectionEndPage; i++) {
+                        pageIndices[i] = i;
+                    }
+
+                    var self = this;
+
+                    flow()
+                        .seq("execId", function () {
+                            return ++self.$execId
+                        })
+                        .parEach(pageIndices, function (pageIndex, cb) {
+                            baseList.fetchPage(pageIndex, null, cb);
+                        })
+                        .exec(function (err, results) {
+
+                            if (!err && results.execId == self.$execId) {
+                                var items = [];
+                                for (i = collectionStartPage; i <= collectionEndPage; i++) {
+                                    items = items.concat(results[i].$items);
+                                }
+
+                                var viewStartIndex = self._pageIndexToItemIndex(pageIndex, self.$.pageSize);
+                                if (viewStartIndex < items.length) {
+                                    // viewStartIndex -= collectionStartPage * collectionPageSize;
+
+
+                                    // remove overlapping at start and end
+                                    items = items.slice(viewStartIndex, viewStartIndex + self.$.pageSize);
+
+                                    // and reset list
+                                    self.$.list.reset(items);
+                                }
+
+
                             }
 
-                            var viewStartIndex = self._pageIndexToItemIndex(pageIndex, self.$.pageSize);
-                            viewStartIndex -= collectionStartPage * collectionPageSize;
+                            if (callback) {
+                                callback(err);
+                            }
+                        });
 
-                            // remove overlapping at start and end
-                            items = items.slice(viewStartIndex, viewStartIndex + self.$.pageSize);
+                } else {
+                    if (callback) {
+                        callback()
+                    }
+                }
 
-                            // and reset list
-                            self.$.list.reset(items);
-
-                        }
-
-                        if (callback) {
-                            callback(err);
-                        }
-                    });
-
+                this.set('page', pageIndex);
             } else {
                 if (callback) {
                     callback()
                 }
             }
 
-            this.set('page', pageIndex);
         },
 
+        hasPreviousPage: function(){
+            return this.$.page > 0;
+        }.onChange('page'),
+        hasPage: function(pageIndex){
+            if(this.$.baseList){
+                return this.$.baseList.$itemsCount === null || this.$.baseList.$itemsCount > (pageIndex) * this.$.pageSize;
+            }
+            return true;
+        },
+        hasNextPage: function(){
+            return this.hasPage(this.$.page + 1);
+        }.onChange('page','pageSize', 'baseList'),
         previousPageIndex: function () {
             return Math.max((this.$.page || 0) - 1, 0);
         }.onChange('page'),
