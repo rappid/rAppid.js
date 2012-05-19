@@ -1,8 +1,13 @@
 define(['require', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 'js/data/Model'], function(require, Bindable, List, Collection, Model) {
+    var cid = 0;
 
     var Entity = Bindable.inherit('js.core.Entity', {
 
         ctor: function(attributes) {
+
+            // generate unique id
+            this.$cid = ++cid;
+
 
             if (!Collection) {
                 Collection = require('js/data/Collection');

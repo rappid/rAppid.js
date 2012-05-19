@@ -1,7 +1,5 @@
 define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entity, List, flow, _) {
 
-    var cid = 0;
-
     var FETCHSTATE = {
         CREATED: 0,
         LOADING: 1,
@@ -19,9 +17,6 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
         ctor: function (attributes) {
             // set model class name
             this.modelClassName = this.constructor.name;
-
-            // generate unique id
-            this.$cid = ++cid;
 
             // stores the current fetch state
             this._fetch = {
