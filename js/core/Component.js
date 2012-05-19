@@ -413,6 +413,7 @@ define(
                         this.callBase(path, event, callback);
                     } else {
                         var eb = new EventBindable({
+                            path: path,
                             event: event,
                             scope: scope,
                             callback: callback,
