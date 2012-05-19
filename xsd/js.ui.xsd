@@ -2,5 +2,8 @@
         targetNamespace="js.ui">
 
 
+    <SelectionView>
+
+    </SelectionView>
 
 </schema>
