@@ -140,8 +140,6 @@ define(["js/core/Component", "js/core/List", "js/data/Collection", "flow", "unde
                                     // and reset list
                                     self.$.list.reset(items);
                                 }
-
-
                             }
 
                             if (callback) {
