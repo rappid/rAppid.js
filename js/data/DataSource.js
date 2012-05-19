@@ -7,10 +7,10 @@ define(["js/core/Component", "js/core/Base", "js/data/Collection", "underscore",
                 collectionPageSize: null
             },
 
-            ctor: function (datasource, properties, parentContext) {
+            ctor: function (dataSource, properties, parentContext) {
                 this.callBase();
 
-                this.$datasource = datasource;
+                this.$datasource = dataSource;
                 this.$properties = properties;
                 this.$parent = parentContext;
                 this.$cache = {};
@@ -35,9 +35,9 @@ define(["js/core/Component", "js/core/Base", "js/data/Collection", "underscore",
                 if (_.isFunction(factory)) {
 
                     var entityClassName = factory.prototype.constructor.name;
-                    alias = alias || this.$datasource.getAliasForModelClassName(entityClassName);
+                    alias = alias || (factory.classof(Model) ? this.$datasource.getAliasForModelClassName(entityClassName) : entityClassName);
 
-                    if ((factory === Model || factory.prototype instanceof Model) && !alias) {
+                    if (factory.classof(Model) && !alias) {
                         throw "Alias for '" + entityClassName + "' not found";
                     }
 
@@ -150,6 +150,7 @@ define(["js/core/Component", "js/core/Base", "js/data/Collection", "underscore",
             },
 
             getAliasForModelClassName: function (modelClassName) {
+
                 for (var i = 0; i < this.$configuredTypes.length; i++) {
                     var config = this.$configuredTypes[i];
                     if (config.$.modelClassName === modelClassName) {

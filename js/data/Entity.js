@@ -17,6 +17,8 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 'js
 
         $context: null,
 
+        $dependentObjectContext: null,
+
         $cacheInRootContext: false,
 
         _extendSchema: function () {
@@ -39,7 +41,16 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 'js
                 return this.$context.$datasource.getContext();
             }
 
-            // TODO create a cache context for dependend objects
+            if (childFactory && childFactory.classof(Entity) && !childFactory.classof(Model)) {
+                // dependent object, which should be cached in context of the current entity
+                if (!this.$dependentObjectContext) {
+                    // create a new non-cached context for dependent objects
+                    this.$dependentObjectContext = this.$context.$datasource.createContext();
+                }
+
+                return this.$dependentObjectContext;
+            }
+
 
             return this.$context;
         },
