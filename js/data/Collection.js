@@ -172,6 +172,9 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore"], funct
             return data;
         },
 
+        createItem: function(id, type) {
+            return this.getContextForChildren(this.$modelFactory).createEntity(this.$modelFactory, id, type);
+        },
 
         fetchPage: function (pageIndex, options, callback) {
 
