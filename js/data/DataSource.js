@@ -229,9 +229,7 @@ define(["js/core/Component", "js/core/Base", "js/data/Collection", "underscore",
                     ret.push(key + "=" + value);
                 });
 
-                _.sortBy(ret, function (value) {
-                    return value;
-                });
+                ret.sort();
 
                 if (ret.length == 0) {
                     return "root";

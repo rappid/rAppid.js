@@ -131,8 +131,6 @@ define(["js/data/DataView", "js/core/List", "js/data/Collection", "flow", "under
                                     // and reset list
                                     self.$.list.reset(items);
                                 }
-
-
                             }
 
                             if (callback) {

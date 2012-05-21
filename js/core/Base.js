@@ -26,7 +26,7 @@ define(["inherit"], function(inherit){
                     Base.logger[i].log(message, level);
                 }
             } else if (typeof console !== "undefined") {
-                (console[level] || console.log)(message);
+                (console[level] || console.log).call(console, message);
             }
         }
     });
