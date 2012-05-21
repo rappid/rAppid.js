@@ -1,5 +1,7 @@
 define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore"], function (DataSource, Base, Model, _) {
 
+    var rIdExtractor = /http.+\/([^/]+)$/;
+
     var RestDataSource = DataSource.inherit("js.data.RestDataSource", {
 
         initializeProcessors: function () {
@@ -64,11 +66,18 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore"], fu
 
         getPathComponentsForModel: function (model) {
 
-            if (model && model.status() === Model.STATE.CREATED) {
+            if (model) {
                 var path = this.getRestPathForAlias(model.$alias);
 
                 if (path) {
-                    return [path, model.$.id];
+
+                    var ret = [path];
+
+                    if (model.status() === Model.STATE.CREATED) {
+                        ret.push(model.$.id);
+                    }
+
+                    return ret;
                 }
             }
 
@@ -139,6 +148,129 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore"], fu
                     err = err || "Got status code " + xhr.status + " for '" + url + "'";
                     callback(err, null, options);
                 }
+            });
+
+        },
+
+        /***
+         *
+         * @param request.url
+         * @param request.queryParameter
+         * @param request.model
+         * @param request.options
+         * @param xhr
+         * @param callback
+         */
+        handleCreationError: function (request, xhr, callback) {
+            if (callback) {
+                callback({
+                    status: xhr.status,
+                    statusText: xhr.statusText
+                });
+            }
+        },
+
+        /***
+         *
+         * @param request.url
+         * @param request.queryParameter
+         * @param request.model
+         * @param request.options
+         * @param xhr
+         * @param callback
+         */
+        handleCreationSuccess: function (request, xhr, callback) {
+
+            var model = request.model;
+
+            var cb = function(err) {
+                if (callback) {
+                    callback(err, model, request.options);
+                }
+            };
+
+            try { // get location header
+                var location = xhr.getResponseHeader('Location');
+
+                if (location) {
+                    // extract id
+                    var id = this.extractIdFromLocation(location, request);
+
+                    if (id || id === 0) {
+                        model.set('id', id);
+                        // TODO: Put content
+                        cb(null);
+                    } else {
+                        cb("Id couldn't be extracted");
+                    }
+
+                } else {
+                    cb('Location header not found');
+                }
+
+            } catch (e) {
+                cb(e || true);
+            }
+        },
+
+        extractIdFromLocation: function(location, request) {
+            var param = rIdExtractor.exec(location);
+
+            if (param) {
+                return param[1];
+            }
+
+            return null;
+        },
+
+
+        saveModel: function (model, options, callback) {
+
+            // map model to url
+            var modelPathComponents = this.getPathComponentsForModel(model);
+
+            if (!modelPathComponents) {
+                callback("path for model unknown", null, options);
+                return;
+            }
+
+            // build uri
+            var uri = [this.$.gateway];
+            uri = uri.concat(model.$context.getPathComponents());
+            uri = uri.concat(modelPathComponents);
+
+            // get queryParameter
+            var params = _.defaults(model.$context.getQueryParameter(),
+                this.getQueryParameter(RestDataSource.ACTIONS.POST));
+
+            // TODO: create hook, which can modify url and queryParameter
+
+            // create url
+            var url = uri.join("/");
+
+            var self = this;
+
+            // send request
+            this.$systemManager.$applicationContext.ajax(url, {
+                type: RestDataSource.ACTIONS.POST,
+                queryParameter: params,
+                data: '{}'
+            }, function (err, xhr) {
+
+                var request = {
+                    url: url,
+                    queryParameter: params,
+                    model: model,
+                    options: options
+                };
+
+                if (!err && xhr.status === 201) {
+                    self.handleCreationSuccess(request, xhr, callback)
+                } else {
+                    // error handling
+                    self.handleCreationError(request, xhr, callback);
+                }
+
             });
 
         },
@@ -236,6 +368,7 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore"], fu
 
             return null;
         }
+
     });
 
     RestDataSource.RestContext = DataSource.Context.inherit("js.data.RestDataSource.Context", {
