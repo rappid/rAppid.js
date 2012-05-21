@@ -33,9 +33,9 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
             var status = this.status();
 
             if (status === STATE.NEW) {
-                this.$context.$datasource.saveModel(options, callback);
+                this.$context.$datasource.saveModel(this, options, callback);
             } else if (status == STATE.CREATED) {
-                this.$context.$datasource.updateModel(options, callback);
+                this.$context.$datasource.updateModel(this, options, callback);
             } else {
                 throw "status '" + status + "' doesn't allow save";
             }
