@@ -1,7 +1,7 @@
 var should = require('chai').should();
 var requirejs = require('./../lib/TestRunner').require;
 
-var PagedView = requirejs("js/data/PagedView"),
+var PagedDataView = requirejs("js/data/PagedDataView"),
     Collection = requirejs("js/data/Collection");
 
 var CollectionMock = Collection.inherit({
@@ -36,7 +36,7 @@ describe('js.data.PagedView', function () {
                 }
 
             });
-            var pw = new PagedView(c, {
+            var pw = new PagedDataView(c, {
                 pageSize: pageSize
             });
 
@@ -74,7 +74,7 @@ describe('js.data.PagedView', function () {
                 }
             });
 
-            var pw =  new PagedView(c);
+            var pw =  new PagedDataView(c);
             pw.set({
                 page: 2
             });
