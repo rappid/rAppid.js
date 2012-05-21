@@ -1,6 +1,6 @@
-define(["js/core/Component", "js/core/List", "js/data/Collection", "flow", "underscore"], function (Component, List, Collection, flow, _) {
+define(["js/data/DataView", "js/core/List", "js/data/Collection", "flow", "underscore"], function (DataView, List, Collection, flow, _) {
 
-    return Component.inherit("js.data.PagedDataView", {
+    return DataView.inherit("js.data.PagedDataView", {
 
 
         ctor: function() {
@@ -17,10 +17,7 @@ define(["js/core/Component", "js/core/List", "js/data/Collection", "flow", "unde
 
         initialize: function() {
             this.set('list', new List());
-            var self = this;
-            this.bind('baseList','add', function(){
-                self.hasNextPage.trigger();
-            });
+            this.bind('baseList','add', this.hasNextPage.trigger);
             this.callBase();
         },
 
@@ -39,17 +36,11 @@ define(["js/core/Component", "js/core/List", "js/data/Collection", "flow", "unde
             if (attributes.hasOwnProperty("baseList")) {
                 // unbind old list
 
-                var baseList = this.$previousAttributes.baseList;
-                this._unbindList(baseList);
-
-                baseList = attributes.baseList;
+                var baseList = attributes.baseList;
 
                 if (baseList && (!(baseList instanceof List ) || !(baseList instanceof Collection))) {
                     throw "baseList must be a List or a Collection";
                 }
-
-                // bind to new list
-                this._bindList(baseList);
 
                 // remove all items from list
                 this.$.list.clear();
@@ -206,25 +197,9 @@ define(["js/core/Component", "js/core/List", "js/data/Collection", "flow", "unde
             pageSize = pageSize || this.$.pageSize;
             return Math.floor(itemIndex / pageSize);
         },
-
-        _unbindList: function (list) {
-            if (list && list instanceof List) {
-                list.unbind('add', this._onItemAdded);
-                list.unbind('remove', this._onItemRemoved);
-                list.unbind('change', this._onItemChange);
-                list.unbind('reset', this._onReset);
-                list.unbind('sort', this._onSort);
-            }
-        },
-
-        _bindList: function (list) {
-            if (list && list instanceof List) {
-                list.bind('add', this._onItemAdded, this);
-                list.bind('remove', this._onItemRemoved, this);
-                list.bind('change', this._onItemChanged, this);
-                list.bind('reset', this._onReset, this);
-                list.bind('sort', this._onSort);
-            }
+        destroy: function(){
+            this.unbind('baseList', 'add', this.hasNextPage.trigger);
+            this.callBase();
         }
 
         // TODO: item added, removed, sort events handling
