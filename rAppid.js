@@ -179,7 +179,7 @@ if(!console){
                 url: url
             };
 
-            underscore.extend(s, options, _rAppid.ajaxSettings);
+            underscore.extend(s,_rAppid.ajaxSettings, options);
 
             if (s.data && !underscore.isString(s.data)) {
                 throw "data must be a string";
@@ -192,13 +192,15 @@ if(!console){
                 s.url += /\?/.test(s.url) ? "&" : "?" + this.createQueryString(s.queryParameter);
             }
 
-            if (s.data && s.hasContent && s.contentType !== false) {
-                xhr.setRequestHeader("Content-Type", s.contentType);
-            }
-
             // create new xhr
             var xhr = s.xhr();
             xhr.open(s.type, s.url, s.async);
+
+            if (s.hasContent && s.contentType !== false) {
+                xhr.setRequestHeader("Content-Type", s.contentType);
+                xhr.setRequestHeader("Content-Length", s.data ? s.data.length.toString() : "0");
+            }
+
 
             try {
                 for (var header in s.headers) {
@@ -208,7 +210,7 @@ if(!console){
                 }
             } catch (e) {} // FF3
 
-            xhr.send();
+            xhr.send(s.data);
 
             var xhrCallback = function(_, isAbort) {
 
@@ -287,7 +289,8 @@ if(!console){
             return new XMLHttpRequest();
         },
         headers: {
-        }
+        },
+        data: null
     };
 
     var SystemManager = _rAppid.SystemManager = inherit.Base.inherit({
