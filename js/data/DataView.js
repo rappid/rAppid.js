@@ -15,30 +15,14 @@ define(["js/core/Component", "js/core/List" ,"underscore"], function (Component,
         },
         initialize: function(){
             this.$.list = new List();
+            this.bind('baseList','add', this._onItemAdded, this);
+            this.bind('baseList','remove', this._onItemRemoved, this);
+            this.bind('baseList','change', this._onItemChange, this);
+            this.bind('baseList','reset', this._onReset, this);
+            this.bind('baseList','sort', this._onSort, this);
 
             if (this.$.baseList && this.$.baseList instanceof List) {
-                this._bindList(this.$.baseList);
                 this._innerReset(this.$.baseList.$items);
-            } else {
-                throw "No baseList defined!";
-            }
-        },
-        _unbindList: function (list) {
-            if (list) {
-                list.unbind('add', this._onItemAdded, this);
-                list.unbind('remove', this._onItemRemoved, this);
-                list.unbind('change', this._onItemChange, this);
-                list.unbind('reset', this._onReset, this);
-                list.unbind('sort', this._onSort, this);
-            }
-        },
-        _bindList: function (list) {
-            if (list) {
-                list.bind('add', this._onItemAdded, this);
-                list.bind('remove', this._onItemRemoved, this);
-                list.bind('change', this._onItemChanged, this);
-                list.bind('reset', this._onReset, this);
-                list.bind('sort', this._onSort);
             }
         },
         _onReset: function (e) {
@@ -50,15 +34,14 @@ define(["js/core/Component", "js/core/List" ,"underscore"], function (Component,
         _innerReset: function (items) {
             // implement!
         },
-        _commitChangedAttributes: function (attributes) {
+        destroy: function(){
+            this.unbind('baseList', 'add', this._onItemAdded, this);
+            this.unbind('baseList', 'remove', this._onItemRemoved, this);
+            this.unbind('baseList', 'change', this._onItemChange, this);
+            this.unbind('baseList', 'reset', this._onReset, this);
+            this.unbind('baseList', 'sort', this._onSort, this);
+
             this.callBase();
-
-            if (attributes.baseList) {
-                this._unbindList(this.$previousAttributes.baseList);
-                this._bindList(attributes.baseList);
-            }
-
-            this._innerReset(this.$.baseList.$items);
         }
     })
 });
