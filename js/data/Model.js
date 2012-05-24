@@ -30,13 +30,12 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
 
         save: function (options, callback) {
 
+            // TODO: handle multiple access
             try {
                 var status = this.status();
 
-                if (status === STATE.NEW) {
+                if (status === STATE.NEW || status === STATE.CREATED) {
                     this.$context.$datasource.saveModel(this, options, callback);
-                } else if (status == STATE.CREATED) {
-                    this.$context.$datasource.updateModel(this, options, callback);
                 } else {
                     throw "status '" + status + "' doesn't allow save";
                 }
@@ -98,6 +97,8 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
 
 
         },
+
+
         remove: function (options, callback) {
             this.$context.$datasource.remove(options, callback);
         },
