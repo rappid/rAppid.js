@@ -1,7 +1,7 @@
-define(["js/core/Component", "js/core/Base", "js/data/Collection", "underscore", "js/data/Model", "js/data/Entity"],
-    function (Component, Base, Collection, _, Model, Entity) {
+define(["js/core/Component", "js/core/Base", "js/data/Collection", "underscore", "js/data/Model", "js/data/Entity", "js/core/List", "flow"],
+    function (Component, Base, Collection, _, Model, Entity, List, flow) {
 
-        var Context = Base.inherit("js.data.DataSource", {
+        var Context = Base.inherit("js.data.DataSource.Context", {
 
             defaults: {
                 collectionPageSize: null
@@ -114,29 +114,130 @@ define(["js/core/Component", "js/core/Base", "js/data/Collection", "underscore",
         };
 
         Context.generateCacheIdFromCollection = function (collection) {
-            return Context.generateCacheId(collection.className);
+            return Context.generateCacheId(collection.$alias);
         };
 
-        var DataSource = Component.inherit({
+        var Processor = Base.inherit("js.data.DataSource.Processor", {
+            ctor: function(dataSource) {
+                if (!dataSource) {
+                    throw "dataSource is required for Processor";
+                }
+
+                this.$datasource = dataSource;
+            },
+
+            /***
+             * prepares the data for being serialized
+             * @param {JSON} data
+             * @param {js.data.DataSource.ACTION} action
+             * @return {JSON}
+             */
+            serialize: function(data, action) {
+                return data;
+            },
+
+            /***
+             *
+             * parses the deserialized data
+             *
+             * @param {JSON} data
+             * @param {js.data.DataSource.ACTION} action
+             * @return {JSON}
+             */
+            deserialize: function(data, action) {
+                return data;
+            },
+
+
+            /***
+             * saves sub models
+             */
+            saveSubModels: function(model, options, callback) {
+                // TODO: handle circular dependencies
+
+//                flow()
+//                    .parEach(this.getSubModelsForModel(model), function(model, cb) {
+//                        model.save(options, cb);
+//                    })
+//                    .exec(callback);
+
+                // TODO: uncomment
+                callback();
+            },
+
+            getSubModelsForModel: function (model) {
+
+                var ret = [];
+
+                function getSubModel(obj) {
+
+                    if (obj === model) {
+                        return;
+                    }
+
+                    if (_.indexOf(ret, obj) !== -1) {
+                        // already in list
+                        return;
+                    }
+
+                    if (obj instanceof Model) {
+                        ret.push(obj);
+                        return;
+                    }
+
+                    for (var key in obj) {
+                        if (obj.hasOwnProperty(key)) {
+                            var value = obj[key];
+
+                            if (value instanceof Array) {
+                                for (var i = 0; i < value.length; i++) {
+                                    getSubModel(value[i]);
+                                }
+                            } else if (value instanceof List) {
+                                value.each(function(v) {
+                                    getSubModel(v);
+                                });
+                            } else if (value instanceof Object) {
+                                getSubModel(value);
+                            }
+                        }
+                    }
+                }
+
+                getSubModel(model.$);
+
+                return ret;
+
+            }
+        });
+
+        var DataSource = Component.inherit('js.data.DataSource', {
 
             ctor: function () {
 
                 this.$configuredTypes = [];
                 this.$contextCache = {};
-                this.$processors = [];
+                this.$formatProcessors = [];
+                this.$processors = {};
 
                 this.callBase();
 
+                this.initializeFormatProcessors();
                 this.initializeProcessors();
             },
-
 
             $modelFactory: Model,
             $entityFactory: Entity,
             $collectionFactory: Collection,
+            $defaultProcessorFactory: Processor,
+            $defaultProcessor: null,
+
+            initializeFormatProcessors: function () {
+                // hook
+            },
 
             initializeProcessors: function () {
-                // hook
+                this.$defaultProcessor = new (this.$defaultProcessorFactory)(this);
             },
 
             _childrenInitialized: function () {
@@ -287,6 +388,71 @@ define(["js/core/Component", "js/core/Base", "js/data/Collection", "underscore",
                 }
             },
 
+            /***
+             * returns the configuration entry for the model class
+             * @param modelClassName
+             * @return {Configuration} configuration matching the model class name
+             */
+            getConfigurationForModelClass: function (modelClassName) {
+
+                for (var i = 0; i < this.$configuredTypes.length; i++) {
+                    var config = this.$configuredTypes[i];
+                    if (config.$.modelClassName === modelClassName) {
+                        return config;
+                    }
+                }
+
+                return null;
+            },
+
+            /***
+             *
+             * returns a configuration entry by matching the alias
+             *
+             * @param alias
+             * @return {*}
+             */
+            getConfigurationByAlias: function(alias) {
+                for (var i = 0; i < this.$datasource.$configuredTypes.length; i++) {
+                    var config = this.$datasource.$configuredTypes[i];
+                    if (config.$.alias === alias) {
+                        return config;
+                    }
+                }
+
+                return null;
+            },
+
+            getProcessorForModel: function (model, options) {
+
+                if (model) {
+
+                    var config;
+                    if (model.constructor === this.$modelFactory) {
+                        // default model -> working with alias
+                        config = this.getConfigurationByAlias(model.$alias);
+                    } else {
+                        config = this.getConfigurationForModelClass(model.$modelClassName);
+                    }
+
+                    if (config && config.$.processor) {
+                        var processor = this.$processors[config.$.processor];
+
+                        if (!(processor instanceof (DataSource.Processor))) {
+                            throw "Processor for '" + config.$.processor + "' not an instance of js.data.DataSource.Processor."
+                        }
+
+                        return processor;
+                    }
+                }
+
+                return this.$defaultProcessor;
+            },
+
+            getFormatProcessor: function(action) {
+                return this.$formatProcessors[0];
+            },
+
             update: function (data, callback) {
             },
             remove: function (data, callback) {
@@ -295,7 +461,25 @@ define(["js/core/Component", "js/core/Base", "js/data/Collection", "underscore",
             }
         });
 
+
+        DataSource.FormatProcessor = Base.inherit("js.data.DataSource.FormatProcessor", {
+            serialize: function (data) {
+                throw "abstract method";
+            },
+            deserialize: function (responses) {
+                throw "abstract method";
+            }
+        });
+
         DataSource.Context = Context;
+
+        DataSource.Processor = Processor;
+
+        DataSource.ACTION = {
+            CREATE: 'create',
+            UPDATE: 'update',
+            DELETE: 'delete'
+        };
 
         return DataSource;
     });
