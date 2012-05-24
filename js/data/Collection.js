@@ -159,7 +159,7 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore"], funct
 
             var factory = this.$modelFactory;
             var alias = (factory === this.$context.$datasource.$entityFactory ||
-                factory === this.$context.$datasource.$modelFactory) ? type : null;
+                factory === this.$context.$datasource.$modelFactory) ? type : this.$alias;
 
             for (var i = 0; i < data.length; i++) {
                 var value = data[i];
@@ -318,9 +318,21 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore"], funct
     });
 
     Collection.of = function(modelFactory) {
-        return Collection.inherit(Collection.prototype.constructor.name + '[' + modelFactory.prototype.constructor.name + ']', {
-            $modelFactory: modelFactory
-        });
+
+        if (modelFactory instanceof Function) {
+            return Collection.inherit(Collection.prototype.constructor.name + '[' + modelFactory.prototype.constructor.name + ']', {
+                $modelFactory: modelFactory
+            });
+        } else if (_.isString(modelFactory)) {
+            return Collection.inherit(Collection.prototype.constructor.name + '[' + modelFactory + ']', {
+                $alias: modelFactory,
+                $modelFactory: Model || require('js/data/Model')
+            });
+        } else {
+            throw "Cannot create Collection of '" + modelFactory + "'.";
+        }
+
+
     };
 
     return Collection;
