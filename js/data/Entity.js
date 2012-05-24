@@ -121,14 +121,15 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 'js
                             // set alias to type if generic collection
                             alias = (schemaType === this.$context.$datasource.$collectionFactory) ? type : schemaType.prototype.$alias;
 
-                            list = data[type] = this.getContextForChildren(schemaType).createCollection(schemaType, null, alias);
+                            var contextForChildren = this.getContextForChildren(schemaType);
+                            list = data[type] = contextForChildren.createCollection(schemaType, null, alias);
                             list.set(value);
 
                             if (value instanceof Array || value === null) {
 
                                 for (i = 0; i < value.length; i++) {
                                     // create new entity based on collection type
-                                    entity = new list.$modelFactory();
+                                    entity = contextForChildren.createEntity(list.$modelFactory);
                                     entity.set(entity.parse(value[i]));
                                     // and add it to the collection
                                     list.add(entity);
