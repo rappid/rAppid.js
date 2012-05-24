@@ -96,6 +96,9 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
             // map model to url
             var modelPathComponents = this.getPathComponentsForModel(model);
 
+            var processor;
+            var self = this;
+
             if (!modelPathComponents) {
                 callback("path for model unknown", null, options);
                 return;
@@ -108,50 +111,59 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
 
             // get queryParameter
             var params = _.defaults(model.$context.getQueryParameter(),
-                this.getQueryParameter(RestDataSource.ACTIONS.GET));
+                this.getQueryParameter(RestDataSource.METHOD.GET));
 
             // create url
             var url = uri.join("/");
 
-            var self = this;
+            flow()
+                .seq("processor", function(cb) {
+                    self.getProcessorForModel(model, options, cb);
+                })
+                .seq("xhr", function(cb) {
+                    // send request
+                    self.$systemManager.$applicationContext.ajax(url, {
+                        type: RestDataSource.METHOD.GET,
+                        queryParameter: params
+                    }, cb);
+                })
+                .seq(function(cb) {
+                    var xhr = this.vars.xhr;
 
-            // send request
-            this.$systemManager.$applicationContext.ajax(url, {
-                type: RestDataSource.ACTIONS.GET,
-                queryParameter: params
-            }, function (err, xhr) {
-                if (!err && (xhr.status == 200 || xhr.status == 304)) {
-                    // find processor that matches the content-type
-                    var contentType = xhr.getResponseHeader("Content-Type");
-                    var processor = self.getFormatProcessorForContentType(contentType);
+                    if (xhr.status === 200 || xhr.status === 304) {
+                        // find processor that matches the content-type
+                        var contentType = xhr.getResponseHeader("Content-Type");
+                        var formatProcessor = self.getFormatProcessorForContentType(contentType);
 
-                    if (!processor) {
-                        callback("No processor for content type '" + contentType + "' found", null, options);
-                        return;
-                    }
+                        if (!formatProcessor) {
+                            callback("No formatProcessor for content type '" + contentType + "' found", null, options);
+                            return;
+                        }
 
-                    try {
-                        // deserialize data with processor
-                        var data = processor.deserialize(xhr.responses);
+                        // deserialize data with format processor
+                        var data = formatProcessor.deserialize(xhr.responses);
+
+                        // deserialize with model processor
+                        data = this.vars.processor.deserialize(data);
 
                         // parse data inside model
                         data = model.parse(data);
 
+                        // set data
                         model.set(data);
 
-                        callback(null, model, options);
+                        cb(null, model, options);
 
-                    } catch (e) {
-                        self.log(e, 'error');
-                        callback(e, null, options);
+                    } else {
+                        // TODO: better error handling
+                        cb("Got status code " + xhr.status + " for '" + url + "'", xhr, null, options);
                     }
-
-                } else {
-                    // TODO: better error handling
-                    err = err || "Got status code " + xhr.status + " for '" + url + "'";
-                    callback(err, null, options);
-                }
-            });
+                })
+                .exec(function(err) {
+                    if (callback) {
+                        callback(err, model, options);
+                    }
+                });
 
         },
 
@@ -164,7 +176,7 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
          * @param xhr
          * @param callback
          */
-        handleCreationError: function (request, xhr, callback) {
+        handleSaveError: function (request, xhr, callback) {
             if (callback) {
                 callback({
                     status: xhr.status,
@@ -217,6 +229,24 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
             }
         },
 
+        /***
+         *
+         * @param request.url
+         * @param request.queryParameter
+         * @param request.model
+         * @param request.options
+         * @param xhr
+         * @param callback
+         */
+        handleUpdateSuccess: function (request, xhr, callback) {
+
+            var model = request.model;
+
+            if (callback) {
+                callback(null, model, request.options);
+            }
+        },
+
         extractIdFromLocation: function(location, request) {
             var param = rIdExtractor.exec(location);
 
@@ -230,13 +260,26 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
 
         saveModel: function (model, options, callback) {
 
-            var processor = this.getProcessorForModel(model, options);
-            var formatProcessor = this.getFormatProcessor(DataSource.ACTION.CREATE);
+            var action = DataSource.ACTION.UPDATE,
+                method = RestDataSource.METHOD.PUT;
+
+            if (model.status() === Model.STATE.NEW) {
+                action = DataSource.ACTION.CREATE;
+                method = RestDataSource.METHOD.POST;
+            }
+
+            var processor;
+            var formatProcessor = this.getFormatProcessor(action);
             var self = this;
 
             // call save of the processor to save submodels
             flow()
+                .seq('processor', function(cb) {
+                    // load processor
+                    self.getProcessorForModel(model, options, cb);
+                })
                 .seq(function(cb) {
+                    processor = this.vars.processor;
                     processor.saveSubModels(model, options, cb)
                 })
                 .seq(function(cb) {
@@ -255,15 +298,15 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
 
                     // get queryParameter
                     var params = _.defaults(model.$context.getQueryParameter(),
-                        self.getQueryParameter(RestDataSource.ACTIONS.POST));
+                        self.getQueryParameter(method));
 
                     // TODO: create hook, which can modify url and queryParameter
 
                     // prepare data in model
-                    var data = model.prepare(model.$, DataSource.ACTION.CREATE);
+                    var data = model.prepare(model.$, action);
 
                     // generate payload in processor
-                    data = processor.serialize(data, DataSource.ACTION.CREATE);
+                    data = processor.serialize(data, action);
 
                     // format payload
                     var payload = formatProcessor.serialize(data);
@@ -273,7 +316,7 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
 
                     // send request
                     self.$systemManager.$applicationContext.ajax(url, {
-                        type: RestDataSource.ACTIONS.POST,
+                        type: method,
                         queryParameter: params,
                         data: payload
                     }, function (err, xhr) {
@@ -285,11 +328,14 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
                             options: options
                         };
 
-                        if (!err && xhr.status === 201) {
+                        if (!err && action === DataSource.ACTION.CREATE && xhr.status === 201) {
                             self.handleCreationSuccess(request, xhr, cb)
-                        } else {
+                        } else if (!err && action === DataSource.ACTION.UPDATE && xhr.status === 200) {
+                            self.handleUpdateSuccess(request, xhr, cb);
+                        }
+                        else {
                             // error handling
-                            self.handleCreationError(request, xhr, cb);
+                            self.handleSaveError(request, xhr, cb);
                         }
 
                     });
@@ -329,7 +375,7 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
             }
 
             // get queryParameter
-            params = _.defaults(params, page.$collection.$context.getQueryParameter(), this.getQueryParameter(RestDataSource.ACTIONS.GET));
+            params = _.defaults(params, page.$collection.$context.getQueryParameter(), this.getQueryParameter(RestDataSource.METHOD.GET));
 
             // create url
             var url = uri.join("/");
@@ -338,7 +384,7 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
 
             // send request
             this.$systemManager.$applicationContext.ajax(url, {
-                type: RestDataSource.ACTIONS.GET,
+                type: RestDataSource.METHOD.GET,
                 queryParameter: params
             }, function (err, xhr) {
                 if (!err && (xhr.status == 200 || xhr.status == 304)) {
@@ -417,7 +463,7 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
     });
 
 
-    RestDataSource.ACTIONS = {
+    RestDataSource.METHOD = {
         GET: 'GET',
         POST: 'POST',
         PUT: 'PUT',
