@@ -5,6 +5,8 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 'js
 
         ctor: function(attributes) {
 
+            Model = Model || require('js/data/Model');
+
             // generate unique id
             this.$cid = ++cid;
 
@@ -114,10 +116,10 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 'js
                             } else {
                                 throw 'Schema for type "' + type + '" requires to be an array';
                             }
-                        } else if (schemaType === Collection || schemaType.prototype instanceof Collection) {
+                        } else if (schemaType.classof(Collection)) {
 
                             // set alias to type if generic collection
-                            alias = (schemaType === this.$context.$datasource.$collectionFactory) ? type : null;
+                            alias = (schemaType === this.$context.$datasource.$collectionFactory) ? type : schemaType.prototype.$alias;
 
                             list = data[type] = this.getContextForChildren(schemaType).createCollection(schemaType, null, alias);
                             list.set(value);
@@ -158,11 +160,13 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 'js
             return data;
         },
 
-        /**
+        /***
          * prepares the data for serialisation
+         * @param attributes
+         * @param action
          * @return {Object} all data that should be serialized
          */
-        prepare: function (attributes) {
+        prepare: function (attributes, action) {
             return attributes;
         }
 
