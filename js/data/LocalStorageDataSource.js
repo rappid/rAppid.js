@@ -204,7 +204,7 @@ define(["js/data/DataSource", "js/core/List", "underscore"], function(DataSource
                         var isModel = info.id;
 
                         var referenceInstance = isModel ?
-                            self.createModel(factory, info.id, info.type, context) :
+                            self.createEntity(factory, info.id, info.type, context) :
                             self.createCollection(factory, {
                                 path: info.path
                             }, info.type, context);

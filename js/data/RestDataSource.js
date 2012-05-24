@@ -142,6 +142,7 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
                         callback(null, model, options);
 
                     } catch (e) {
+                        self.log(e, 'error');
                         callback(e, null, options);
                     }
 
@@ -200,8 +201,9 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
 
                     if (id || id === 0) {
                         model.set('id', id);
-                        // TODO: Put content
-                        cb(null);
+                        // TODO: ask processor if i should call save again to put content
+                        // PUT Content
+                        model.save(request.options, cb);
                     } else {
                         cb("Id couldn't be extracted");
                     }

@@ -41,7 +41,7 @@ define(["js/core/Component", "js/core/Base", "js/data/Collection", "underscore",
                         throw "Alias for '" + entityClassName + "' not found";
                     }
 
-                    var cachedItem = this.getInstanceByCacheId(Context.generateCacheId(alias, id));
+                    var cachedItem = this.getInstanceByCacheId(Context.generateCacheIdForEntity(alias, id));
 
                     if (!cachedItem) {
                         // create new Entity
@@ -80,7 +80,7 @@ define(["js/core/Component", "js/core/Base", "js/data/Collection", "underscore",
                         type: alias
                     });
 
-                    var cachedCollection = this.getInstanceByCacheId(Context.generateCacheId(alias));
+                    var cachedCollection = this.getInstanceByCacheId(Context.generateCacheIdForCollection(alias));
 
                     if (!cachedCollection) {
                         // create new Collection
@@ -101,20 +101,20 @@ define(["js/core/Component", "js/core/Base", "js/data/Collection", "underscore",
             }
         });
 
-        Context.generateCacheId = function (type, id) {
-            if (id) {
-                return type + "_" + id;
-            } else {
-                return type;
-            }
+        Context.generateCacheIdForCollection = function (type, id) {
+            return type;
+        };
+
+        Context.generateCacheIdForEntity = function(type, id) {
+            return type + "_" + id;
         };
 
         Context.generateCacheIdFromEntity = function (entity) {
-            return Context.generateCacheId(entity.$alias, entity.$.id);
+            return Context.generateCacheIdForEntity(entity.$alias, entity.$.id);
         };
 
         Context.generateCacheIdFromCollection = function (collection) {
-            return Context.generateCacheId(collection.$alias);
+            return Context.generateCacheIdForCollection(collection.$alias);
         };
 
         var Processor = Base.inherit("js.data.DataSource.Processor", {
