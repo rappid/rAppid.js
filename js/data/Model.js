@@ -16,7 +16,7 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
     var Model = Entity.inherit("js.data.Model", {
         ctor: function (attributes) {
             // set model class name
-            this.modelClassName = this.constructor.name;
+            this.$modelClassName = this.constructor.name;
 
             // stores the current fetch state
             this._fetch = {
@@ -30,15 +30,34 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
 
         save: function (options, callback) {
 
-            var status = this.status();
+            try {
+                var status = this.status();
 
-            if (status === STATE.NEW) {
-                this.$context.$datasource.saveModel(this, options, callback);
-            } else if (status == STATE.CREATED) {
-                this.$context.$datasource.updateModel(this, options, callback);
-            } else {
-                throw "status '" + status + "' doesn't allow save";
+                if (status === STATE.NEW) {
+                    this.$context.$datasource.saveModel(this, options, callback);
+                } else if (status == STATE.CREATED) {
+                    this.$context.$datasource.updateModel(this, options, callback);
+                } else {
+                    throw "status '" + status + "' doesn't allow save";
+                }
+            } catch (e) {
+                if (callback) {
+                    callback(e);
+                }
             }
+
+        },
+
+
+        prepare: function(attributes, action) {
+            attributes = this.callBase();
+
+            if (action === "create") {
+                // remove id
+                delete(attributes.id);
+            }
+
+            return attributes;
 
         },
 
@@ -82,27 +101,6 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
         remove: function (options, callback) {
             this.$context.$datasource.remove(options, callback);
         },
-
-//        _convertToBindableAndList: function (obj) {
-//            for (var prop in obj) {
-//                if (obj.hasOwnProperty(prop)) {
-//                    var value = obj[prop];
-//
-//                    if (_.isArray(value)) {
-//                        // convert array to js.core.List
-//                        obj[prop] = new List(value);
-//
-//                        for (var i = 0; i < value.length; i++) {
-//                            this._convertToBindableAndList(value[i]);
-//                        }
-//
-//                    } else if (value instanceof Object && !(value instanceof Bindable)) {
-//                        var bindable = obj[prop] = new Bindable(value);
-//                        this._convertToBindableAndList(bindable.$);
-//                    }
-//                }
-//            }
-//        },
 
         status: function () {
             if (this.$.id === false) {
