@@ -1,14 +1,16 @@
-define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore"], function (DataSource, Base, Model, _) {
+define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "flow"], function (DataSource, Base, Model, _, flow) {
 
     var rIdExtractor = /http.+\/([^/]+)$/;
 
     var RestDataSource = DataSource.inherit("js.data.RestDataSource", {
 
-        initializeProcessors: function () {
-            this.$processors.push({
-                regex: /json/,
-                processor: new RestDataSource.JsonProcessor()
-            });
+        initializeFormatProcessors: function () {
+
+            var jsonProcessor = new RestDataSource.JsonFormatProcessor();
+            jsonProcessor.regex = /json/;
+
+            this.$formatProcessors.push(jsonProcessor);
+
         },
 
         defaults: {
@@ -121,7 +123,7 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore"], fu
                 if (!err && (xhr.status == 200 || xhr.status == 304)) {
                     // find processor that matches the content-type
                     var contentType = xhr.getResponseHeader("Content-Type");
-                    var processor = self.getProcessorForContentType(contentType);
+                    var processor = self.getFormatProcessorForContentType(contentType);
 
                     if (!processor) {
                         callback("No processor for content type '" + contentType + "' found", null, options);
@@ -226,52 +228,74 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore"], fu
 
         saveModel: function (model, options, callback) {
 
-            // map model to url
-            var modelPathComponents = this.getPathComponentsForModel(model);
-
-            if (!modelPathComponents) {
-                callback("path for model unknown", null, options);
-                return;
-            }
-
-            // build uri
-            var uri = [this.$.gateway];
-            uri = uri.concat(model.$context.getPathComponents());
-            uri = uri.concat(modelPathComponents);
-
-            // get queryParameter
-            var params = _.defaults(model.$context.getQueryParameter(),
-                this.getQueryParameter(RestDataSource.ACTIONS.POST));
-
-            // TODO: create hook, which can modify url and queryParameter
-
-            // create url
-            var url = uri.join("/");
-
+            var processor = this.getProcessorForModel(model, options);
+            var formatProcessor = this.getFormatProcessor(DataSource.ACTION.CREATE);
             var self = this;
 
-            // send request
-            this.$systemManager.$applicationContext.ajax(url, {
-                type: RestDataSource.ACTIONS.POST,
-                queryParameter: params,
-                data: '{}'
-            }, function (err, xhr) {
+            // call save of the processor to save submodels
+            flow()
+                .seq(function(cb) {
+                    processor.saveSubModels(model, options, cb)
+                })
+                .seq(function(cb) {
+                    // map model to url
+                    var modelPathComponents = self.getPathComponentsForModel(model);
 
-                var request = {
-                    url: url,
-                    queryParameter: params,
-                    model: model,
-                    options: options
-                };
+                    if (!modelPathComponents) {
+                        cb("path for model unknown");
+                        return;
+                    }
 
-                if (!err && xhr.status === 201) {
-                    self.handleCreationSuccess(request, xhr, callback)
-                } else {
-                    // error handling
-                    self.handleCreationError(request, xhr, callback);
-                }
+                    // build uri
+                    var uri = [self.$.gateway];
+                    uri = uri.concat(model.$context.getPathComponents());
+                    uri = uri.concat(modelPathComponents);
 
-            });
+                    // get queryParameter
+                    var params = _.defaults(model.$context.getQueryParameter(),
+                        self.getQueryParameter(RestDataSource.ACTIONS.POST));
+
+                    // TODO: create hook, which can modify url and queryParameter
+
+                    // prepare data in model
+                    var data = model.prepare(model.$, DataSource.ACTION.CREATE);
+
+                    // generate payload in processor
+                    data = processor.serialize(data, DataSource.ACTION.CREATE);
+
+                    // format payload
+                    var payload = formatProcessor.serialize(data);
+
+                    // create url
+                    var url = uri.join("/");
+
+                    // send request
+                    self.$systemManager.$applicationContext.ajax(url, {
+                        type: RestDataSource.ACTIONS.POST,
+                        queryParameter: params,
+                        data: payload
+                    }, function (err, xhr) {
+
+                        var request = {
+                            url: url,
+                            queryParameter: params,
+                            model: model,
+                            options: options
+                        };
+
+                        if (!err && xhr.status === 201) {
+                            self.handleCreationSuccess(request, xhr, cb)
+                        } else {
+                            // error handling
+                            self.handleCreationError(request, xhr, cb);
+                        }
+
+                    });
+                })
+                .exec(function(err){
+                    callback(err, model, options);
+                })
+
 
         },
 
@@ -318,7 +342,7 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore"], fu
                 if (!err && (xhr.status == 200 || xhr.status == 304)) {
                     // find processor that matches the content-type
                     var contentType = xhr.getResponseHeader("Content-Type");
-                    var processor = self.getProcessorForContentType(contentType);
+                    var processor = self.getFormatProcessorForContentType(contentType);
 
                     if (!processor) {
                         callback("No processor for content type '" + contentType + "' found", null, options);
@@ -358,11 +382,11 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore"], fu
             });
         },
 
-        getProcessorForContentType: function(contentType) {
-            for (var i = 0; i < this.$processors.length; i++) {
-                var processorEntry = this.$processors[i];
+        getFormatProcessorForContentType: function(contentType) {
+            for (var i = 0; i < this.$formatProcessors.length; i++) {
+                var processorEntry = this.$formatProcessors[i];
                 if (processorEntry.regex.test(contentType)) {
-                    return processorEntry.processor;
+                    return processorEntry;
                 }
             }
 
@@ -398,16 +422,7 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore"], fu
         DELETE: 'DELETE'
     };
 
-    RestDataSource.Processor = Base.inherit("js.data.RestDataSource.Processor", {
-        serialize: function (data) {
-            throw "abstract method";
-        },
-        deserialize: function (responses) {
-            throw "abstract method";
-        }
-    });
-
-    RestDataSource.JsonProcessor = RestDataSource.Processor.inherit("js.data.RestDataSource.JsonProcessor", {
+    RestDataSource.JsonFormatProcessor = DataSource.FormatProcessor.inherit("js.data.RestDataSource.JsonFormatProcessor", {
         serialize: function (data) {
             return JSON.stringify(data);
         },
@@ -417,7 +432,7 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore"], fu
     });
 
     // TODO: implement XmlProcessor
-    RestDataSource.XmlProcessor = RestDataSource.Processor.inherit("js.data.RestDataSource.XmlProcessor", {
+    RestDataSource.XmlFormatProcessor = DataSource.FormatProcessor.inherit("js.data.RestDataSource.XmlFormatProcessor", {
         serialize: function (data) {
             throw "not implemented";
         },
