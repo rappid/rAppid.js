@@ -1,5 +1,5 @@
-define(["js/core/Component", "js/core/Base", "js/data/Collection", "underscore", "js/data/Model", "js/data/Entity", "js/core/List", "flow"],
-    function (Component, Base, Collection, _, Model, Entity, List, flow) {
+define(["require", "js/core/Component", "js/core/Base", "js/data/Collection", "underscore", "js/data/Model", "js/data/Entity", "js/core/List", "flow"],
+    function (require, Component, Base, Collection, _, Model, Entity, List, flow) {
 
         var Context = Base.inherit("js.data.DataSource.Context", {
 
@@ -41,7 +41,12 @@ define(["js/core/Component", "js/core/Base", "js/data/Collection", "underscore",
                         throw "Alias for '" + entityClassName + "' not found";
                     }
 
-                    var cachedItem = this.getInstanceByCacheId(Context.generateCacheIdForEntity(alias, id));
+                    var cachedItem;
+
+                    // only get from cache if we got an id
+                    if (id) {
+                        cachedItem = this.getInstanceByCacheId(Context.generateCacheIdForEntity(alias, id));
+                    }
 
                     if (!cachedItem) {
                         // create new Entity
@@ -101,7 +106,7 @@ define(["js/core/Component", "js/core/Base", "js/data/Collection", "underscore",
             }
         });
 
-        Context.generateCacheIdForCollection = function (type, id) {
+        Context.generateCacheIdForCollection = function (type) {
             return type;
         };
 
@@ -223,7 +228,11 @@ define(["js/core/Component", "js/core/Base", "js/data/Collection", "underscore",
                 this.callBase();
 
                 this.initializeFormatProcessors();
-                this.initializeProcessors();
+
+                if (this.$defaultProcessorFactory instanceof Function) {
+                    this.$defaultProcessor = new this.$defaultProcessorFactory(this);
+                }
+
             },
 
             $modelFactory: Model,
@@ -234,10 +243,6 @@ define(["js/core/Component", "js/core/Base", "js/data/Collection", "underscore",
 
             initializeFormatProcessors: function () {
                 // hook
-            },
-
-            initializeProcessors: function () {
-                this.$defaultProcessor = new (this.$defaultProcessorFactory)(this);
             },
 
             _childrenInitialized: function () {
@@ -423,10 +428,22 @@ define(["js/core/Component", "js/core/Base", "js/data/Collection", "underscore",
                 return null;
             },
 
-            getProcessorForModel: function (model, options) {
+            getProcessorForModel: function (model, options, callback) {
+
+                var cb = function(err, processor) {
+                    if (callback) {
+                        callback(err, processor)
+                    }
+                };
+
+                var self = this;
+                function returnDefaultProcessor() {
+                    if (self.$defaultProcessor) {
+                        cb(null, self.$defaultProcessor);
+                    }
+                }
 
                 if (model) {
-
                     var config;
                     if (model.constructor === this.$modelFactory) {
                         // default model -> working with alias
@@ -435,18 +452,32 @@ define(["js/core/Component", "js/core/Base", "js/data/Collection", "underscore",
                         config = this.getConfigurationForModelClass(model.$modelClassName);
                     }
 
-                    if (config && config.$.processor) {
-                        var processor = this.$processors[config.$.processor];
+                    var processorClassName = config.$.processorClassName;
 
-                        if (!(processor instanceof (DataSource.Processor))) {
-                            throw "Processor for '" + config.$.processor + "' not an instance of js.data.DataSource.Processor."
+                    if (config && processorClassName) {
+
+                        if (this.$processors[processorClassName]) {
+                            cb(null, this.$processors[processorClassName]);
+                        } else {
+                            require([processorClassName.replace(/\./g, "/")], function (processor) {
+                                var err;
+
+                                if (processor && processor.classof(DataSource.Processor)) {
+                                    // cache the processor
+                                    processor = self.$processors[processorClassName] = new processor(self);
+                                } else {
+                                    err = "Processor for '" + processorClassName + "' not an instance of js.data.DataSource.Processor."
+                                }
+
+                                cb(err, processor);
+                            });
                         }
-
-                        return processor;
+                    } else {
+                        returnDefaultProcessor();
                     }
+                } else {
+                    returnDefaultProcessor();
                 }
-
-                return this.$defaultProcessor;
             },
 
             getFormatProcessor: function(action) {
@@ -476,6 +507,7 @@ define(["js/core/Component", "js/core/Base", "js/data/Collection", "underscore",
         DataSource.Processor = Processor;
 
         DataSource.ACTION = {
+            LOAD: 'load',
             CREATE: 'create',
             UPDATE: 'update',
             DELETE: 'delete'
