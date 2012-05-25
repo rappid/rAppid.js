@@ -223,18 +223,15 @@ define(["require", "js/core/Component", "js/core/Base", "js/data/Collection", "u
                 this.$configuredTypes = [];
                 this.$contextCache = {};
                 this.$formatProcessors = [];
-                this.$processors = {};
 
                 this.callBase();
 
                 this.initializeFormatProcessors();
-
-                if (this.$defaultProcessorFactory instanceof Function) {
-                    this.$defaultProcessor = new this.$defaultProcessorFactory(this);
-                }
+                this.initializeProcessors();
 
             },
 
+            $processors: {},
             $modelFactory: Model,
             $entityFactory: Entity,
             $collectionFactory: Collection,
@@ -243,6 +240,17 @@ define(["require", "js/core/Component", "js/core/Base", "js/data/Collection", "u
 
             initializeFormatProcessors: function () {
                 // hook
+            },
+
+            initializeProcessors: function () {
+                this.$defaultProcessor = new this.$defaultProcessorFactory(this);
+
+                for (var key in this.$processors) {
+                    if (this.$processors.hasOwnProperty(key) && this.$processors[key] instanceof Function) {
+                        // Factory instead of instance, create processor instance
+                        this.$processors[key] = new (this.$processors[key])(this);
+                    }
+                }
             },
 
             _childrenInitialized: function () {
@@ -428,20 +436,7 @@ define(["require", "js/core/Component", "js/core/Base", "js/data/Collection", "u
                 return null;
             },
 
-            getProcessorForModel: function (model, options, callback) {
-
-                var cb = function(err, processor) {
-                    if (callback) {
-                        callback(err, processor)
-                    }
-                };
-
-                var self = this;
-                function returnDefaultProcessor() {
-                    if (self.$defaultProcessor) {
-                        cb(null, self.$defaultProcessor);
-                    }
-                }
+            getProcessorForModel: function (model, options) {
 
                 if (model) {
                     var config;
@@ -452,32 +447,18 @@ define(["require", "js/core/Component", "js/core/Base", "js/data/Collection", "u
                         config = this.getConfigurationForModelClass(model.$modelClassName);
                     }
 
-                    var processorClassName = config.$.processorClassName;
+                    var processorName = config.$.processor;
 
-                    if (config && processorClassName) {
-
-                        if (this.$processors[processorClassName]) {
-                            cb(null, this.$processors[processorClassName]);
+                    if (config && processorName) {
+                        if (this.$processors[processorName]) {
+                            return this.$processors[processorName];
                         } else {
-                            require([processorClassName.replace(/\./g, "/")], function (processor) {
-                                var err;
-
-                                if (processor && processor.classof(DataSource.Processor)) {
-                                    // cache the processor
-                                    processor = self.$processors[processorClassName] = new processor(self);
-                                } else {
-                                    err = "Processor for '" + processorClassName + "' not an instance of js.data.DataSource.Processor."
-                                }
-
-                                cb(err, processor);
-                            });
+                            throw "Processor for '" + processorName + "' not an instance of js.data.DataSource.Processor."
                         }
-                    } else {
-                        returnDefaultProcessor();
                     }
-                } else {
-                    returnDefaultProcessor();
                 }
+
+                return this.$defaultProcessor;
             },
 
             getFormatProcessor: function(action) {

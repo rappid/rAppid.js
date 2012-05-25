@@ -96,8 +96,8 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
             // map model to url
             var modelPathComponents = this.getPathComponentsForModel(model);
 
-            var processor;
             var self = this;
+            var processor = self.getProcessorForModel(model, options);
 
             if (!modelPathComponents) {
                 callback("path for model unknown", null, options);
@@ -117,9 +117,6 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
             var url = uri.join("/");
 
             flow()
-                .seq("processor", function(cb) {
-                    self.getProcessorForModel(model, options, cb);
-                })
                 .seq("xhr", function(cb) {
                     // send request
                     self.$systemManager.$applicationContext.ajax(url, {
@@ -144,7 +141,7 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
                         var data = formatProcessor.deserialize(xhr.responses);
 
                         // deserialize with model processor
-                        data = this.vars.processor.deserialize(data);
+                        data = processor.deserialize(data, DataSource.ACTION.LOAD);
 
                         // parse data inside model
                         data = model.parse(data);
@@ -268,18 +265,13 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
                 method = RestDataSource.METHOD.POST;
             }
 
-            var processor;
+            var processor = this.getProcessorForModel(model, options);
             var formatProcessor = this.getFormatProcessor(action);
             var self = this;
 
             // call save of the processor to save submodels
             flow()
-                .seq('processor', function(cb) {
-                    // load processor
-                    self.getProcessorForModel(model, options, cb);
-                })
                 .seq(function(cb) {
-                    processor = this.vars.processor;
                     processor.saveSubModels(model, options, cb)
                 })
                 .seq(function(cb) {
