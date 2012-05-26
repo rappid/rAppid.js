@@ -1,18 +1,66 @@
-var should = require('chai').should();
-var rAppid = require('..');
+var chai = require('chai'),
+    should = chai.should(),
+    expect = chai.expect,
+    rAppid = require('..');
 
 var C = {};
 
 
+
 describe('js.core.Bindable', function () {
 
-    before(function(done) {
+    before(function (done) {
         rAppid.requireClasses({
             Bindable: 'js/core/Bindable',
             List: 'js/core/List'
         }, C, done);
+
     });
 
+    describe('#defaults', function() {
+
+        var BindableWithDefaults;
+
+        before(function () {
+            BindableWithDefaults = C.Bindable.inherit({
+                defaults: {
+                    foo: "bar",
+                    x: 1,
+                    list: C.List
+                }
+            });
+        });
+
+        it('new instance should have default attributes without modification of defaults', function() {
+            var b = new BindableWithDefaults();
+            expect(b).to.exist;
+            expect(b.$.foo).to.exist.and.to.be.equal('bar');
+            expect(b.$.x).to.exist.and.to.be.equal(1);
+            expect(b.$.list).to.an.instanceof(C.List);
+
+        });
+
+        it('attributes set, should not be overwritten by defaults', function () {
+            var b = new BindableWithDefaults({
+                foo: 'foo'
+            });
+
+            expect(b).to.exist;
+            expect(b.$.foo).to.exist.and.to.be.equal('foo');
+            expect(b.$.x).to.exist.and.to.be.equal(1);
+            expect(b.$.list).to.an.instanceof(C.List);
+
+        });
+
+        it('defaults should not be modified', function() {
+
+            expect(BindableWithDefaults.prototype.defaults.foo).to.exist.and.to.be.equal('bar');
+            expect(BindableWithDefaults.prototype.defaults.x).to.exist.and.to.be.equal(1);
+            expect(BindableWithDefaults.prototype.defaults.list).to.exist.and.to.be.equal(C.List);
+        })
+
+
+    });
 
     describe('get', function () {
 

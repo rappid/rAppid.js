@@ -27,14 +27,16 @@ define(["js/core/EventDispatcher", "underscore"],
                     var defaultAttributes = this._defaultAttributes();
                     for (var key in defaultAttributes) {
                         if (defaultAttributes.hasOwnProperty(key)) {
-                            if (_.isFunction(defaultAttributes[key])) {
-                                // Function as default -> construct new Object
-                                defaultAttributes[key] = new (defaultAttributes[key])();
+                            if (!attributes.hasOwnProperty(key)) {
+                                if (_.isFunction(defaultAttributes[key])) {
+                                    // Function as default -> construct new Object
+                                    attributes[key] = new (defaultAttributes[key])();
+                                } else {
+                                    attributes[key] = _.clone(defaultAttributes[key]);
+                                }
                             }
                         }
                     }
-
-                    _.defaults(attributes, defaultAttributes);
 
                     this.$ = attributes;
                     // TODO: clone and keep prototype for attribute the same -> write own clone method
@@ -60,12 +62,6 @@ define(["js/core/EventDispatcher", "underscore"],
                     while (base) {
                         _.defaults(ret, base[property]);
                         base = base.base;
-                    }
-                    // clone all attributes
-                    for (var k in ret) {
-                        if (ret.hasOwnProperty(k) && !_.isFunction(ret[k])) {
-                            ret[k] = _.clone(ret[k]);
-                        }
                     }
 
                     return ret;
@@ -112,7 +108,6 @@ define(["js/core/EventDispatcher", "underscore"],
                     }
 
                     var changedAttributes = {},
-                        equal = true,
                         now = this.$,
                         val;
 
