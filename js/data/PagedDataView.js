@@ -121,10 +121,8 @@ define(["js/data/DataView", "js/core/List", "js/data/Collection", "flow", "under
                                 }
 
                                 var viewStartIndex = self._pageIndexToItemIndex(pageIndex, self.$.pageSize);
+                                viewStartIndex -= collectionStartPage * collectionPageSize;
                                 if (viewStartIndex < items.length) {
-                                    // viewStartIndex -= collectionStartPage * collectionPageSize;
-
-
                                     // remove overlapping at start and end
                                     items = items.slice(viewStartIndex, viewStartIndex + self.$.pageSize);
 
