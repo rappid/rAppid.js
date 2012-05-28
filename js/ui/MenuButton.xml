@@ -9,41 +9,42 @@
         <![CDATA[
         (function (Content, Button, _) {
             return {
-                defaults:{
-                    'tagName':'div',
-                    'componentClass':'btn-group',
-                    'menuClassName':"dropdown-menu",
-                    'menuVisible':false
+                $classAttributes: ['menuVisible', 'menuClassName'],
+                defaults: {
+                    'tagName': 'div',
+                    'componentClass': 'btn-group',
+                    'menuClassName': "dropdown-menu",
+                    'menuVisible': false
                 },
-                $instances:[],
+                $instances: [],
 
-                addChild:function (child) {
+                addChild: function (child) {
                     if (child instanceof Button) {
                         this._collectButton(child);
                     }
                     this.callBase();
                 },
-                _collectButton:function (child) {
+                _collectButton: function (child) {
                     this.$button = child;
                     this.$toggleButton = child;
                 },
-                _renderType:function (type) {
-                    this.$button.set({type:type});
+                _renderType: function (type) {
+                    this.$button.set({type: type});
                 },
-                _renderIconClass:function (iconClass) {
-                    this.$button.set({iconClass:iconClass});
+                _renderIconClass: function (iconClass) {
+                    this.$button.set({iconClass: iconClass});
                 },
-                _renderLabel:function (label) {
-                    if(this.$button){
-                        this.$button.set({label:label});
+                _renderLabel: function (label) {
+                    if (this.$button) {
+                        this.$button.set({label: label});
                     }
 
                 },
-                _renderMenuVisible:function (visible) {
+                _renderMenuVisible: function (visible) {
                     if (visible === true) {
                         for (var i = 0; i < this.$instances.length; i++) {
                             if (this.$instances[i] != this) {
-                                this.$instances[i].set({menuVisible:false});
+                                this.$instances[i].set({menuVisible: false});
                             }
                         }
                         this.addClass('open');
@@ -52,20 +53,20 @@
                     }
 
                 },
-                _bindDomEvents:function (el) {
+                _bindDomEvents: function (el) {
                     if (!_.contains(this.$instances, this)) {
                         this.$instances.push(this);
                     }
                     var self = this;
 
                     this.addEventListener('click', function (e) {
-                        self.set({menuVisible:false});
+                        self.set({menuVisible: false});
                     });
 
                     this.$toggleButton.addEventListener('click', function (e) {
                         e.stopPropagation();
                         e.preventDefault();
-                        self.set({menuVisible:!self.$.menuVisible});
+                        self.set({menuVisible: !self.$.menuVisible});
                     });
 
                     this.$button.addEventListener('click', function (e) {
@@ -73,11 +74,14 @@
                     });
 
                     this.dom(document).addEventListener('click', function (e) {
-                        self.set({menuVisible:false});
+                        self.set({menuVisible: false});
                     });
                 },
-                _preventDefault: function(e){
+                _preventDefault: function (e) {
                     e.$.stopPropagation();
+                },
+                closeMenu: function () {
+                    this.set('menuVisible', false);
                 }
             }
         })
