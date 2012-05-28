@@ -10,6 +10,14 @@ define(["xaml!js/ui/Link", "js/core/Content"], function (Link) {
                 if (type) {
                     this.addClass("btn-" + type);
                 }
+            },
+            _renderSize: function(size, oldSize){
+                if (size) {
+                    this.removeClass("btn-" + size);
+                }
+                if (oldSize) {
+                    this.addClass("btn-" + oldSize);
+                }
             }
         });
     }
