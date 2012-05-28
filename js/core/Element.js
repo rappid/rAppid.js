@@ -147,7 +147,6 @@ define(["js/core/Bindable", "underscore"], function (Bindable, _) {
             _initializationComplete: function () {
 
                 // call commitChangedAttributes for all attributes
-                this.$previousAttributes = this.$;
                 this._commitChangedAttributes(this.$);
 
                 this.$initialized = true;
