@@ -201,7 +201,7 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore"], funct
                 }
 
                 if (callback) {
-                    callback(err, self, options);
+                    callback(err, page, options);
                 }
             });
         },
