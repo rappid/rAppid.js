@@ -1,21 +1,4 @@
-define(["js/core/Bindable", "js/core/EventDispatcher", "js/core/BindingParser", "underscore"], function (Bindable, EventDispatcher, Parser, _) {
-    var TYPE_FNC = "fnc";
-    var TYPE_VAR = "var";
-    var TYPE_STATIC = "static";
-
-    var contextToString = function (context) {
-        var str = "", el;
-        for (var i = 0; i < context.length; i++) {
-            el = context[i];
-            if (el instanceof Binding) {
-                el = el.getValue();
-            }
-            if (el !== null && typeof(el) !== "undefined") {
-                str += el;
-            }
-        }
-        return str;
-    };
+define(["js/core/EventDispatcher", "js/core/BindingParser", "underscore"], function (EventDispatcher, Parser, _) {
 
     /**
      * Returns false if path includes function
@@ -33,8 +16,8 @@ define(["js/core/Bindable", "js/core/EventDispatcher", "js/core/BindingParser", 
         }
         return str.join(".");
     };
-
-    var Binding = Bindable.inherit("js.core.Binding",
+    var Bindable;
+    var Binding = EventDispatcher.inherit("js.core.Binding",
         /** @lends Binding */
         {
             defaults: {
@@ -43,8 +26,18 @@ define(["js/core/Bindable", "js/core/EventDispatcher", "js/core/BindingParser", 
                 twoWay: false
             },
 
-            ctor: function () {
+            ctor: function (attributes) {
+                if(!Bindable){
+                    try {
+                        Bindable = requirejs('js/core/Bindable');
+                    } catch(e) {
+                        Bindable = null;
+                    }
+                }
                 this.callBase();
+
+                this.$ = attributes;
+                _.defaults(this.$,this.defaults);
 
                 this.initialize();
             },
@@ -91,8 +84,9 @@ define(["js/core/Bindable", "js/core/EventDispatcher", "js/core/BindingParser", 
                                 events = [];
                             }
 
+                            var event, path;
                             for (var i = 0; i < events.length; i++) {
-                                var event = events[i];
+                                event = events[i];
                                 scope.bind(event, this._callback, this);
                                 this.$events.push({eventType: event, callback: this._callback});
                             }
@@ -106,7 +100,7 @@ define(["js/core/Bindable", "js/core/EventDispatcher", "js/core/BindingParser", 
                         for (var j = 0; j < this.$parameters.length; j++) {
                             para = this.$parameters[j];
                             if (_.isObject(para)) {
-                                this.$parameters[j] = Binding.create(para, this.$.target, cb);
+                                this.$parameters[j] = this.$.bindingCreator.create(para, this.$.target, cb);
                             }
 
                         }
@@ -162,6 +156,11 @@ define(["js/core/Bindable", "js/core/EventDispatcher", "js/core/BindingParser", 
                     }
 
                 }
+
+                if(!this.$.bindingCreator){
+                    this.$.bindingCreator = this;
+
+                }
             },
             _createSubBinding: function () {
                 if (this.$.path.length > 1) {
@@ -175,7 +174,7 @@ define(["js/core/Bindable", "js/core/EventDispatcher", "js/core/BindingParser", 
                     // get value for first child
                     if (nScope && (nScope instanceof Bindable)) {
                         // init new binding, which triggers this binding
-                        this.$subBinding = new Binding({scope: nScope, path: this.$.path.slice(1), target: this.$.target, targetKey: this.$.targetKey, rootScope: this.$.rootScope, callback: this.$.callback, context: this.$.context, twoWay: this.$.twoWay, transform: this.$.transform, transformBack: this.$.transformBack});
+                        this.$subBinding = new Binding({scope: nScope, path: this.$.path.slice(1), target: this.$.target, targetKey: this.$.targetKey, rootScope: this.$.rootScope, callback: this.$.callback, context: this.$.context, twoWay: this.$.twoWay, transform: this.$.transform, transformBack: this.$.transformBack, bindingCreator: this.$.bindingCreator});
                     }
                 }
             },
@@ -258,7 +257,7 @@ define(["js/core/Bindable", "js/core/EventDispatcher", "js/core/BindingParser", 
             },
             getContextValue: function () {
                 if (this.$.context && this.$.context.length > 1) {
-                    return contextToString(this.$.context);
+                    return Binding.contextToString(this.$.context);
                 } else {
                     return this.getValue();
                 }
@@ -276,147 +275,47 @@ define(["js/core/Bindable", "js/core/EventDispatcher", "js/core/BindingParser", 
             },
             toString: function () {
                 return this.getValue();
-            }
-        });
+            },
+            create: function(bindingDef, target, callback){
+                var options = {scope: this.$.scope, target: target, callback: callback, path: bindingDef.path, twoWay : bindingDef.type === TYPE_TWOWAY, bindingCreator: this.$.bindingCreator};
 
-    function findTransformFunction(path, scope) {
-        var pathElement = path[0];
-        if (pathElement.type == TYPE_FNC) {
-            scope = scope.getScopeForFncName(pathElement.name);
-        } else {
-            scope = scope.getScopeForKey(pathElement.name);
-        }
-
-        var nScope = scope;
-        while (nScope && path.length > 0) {
-            pathElement = path.shift();
-            if (pathElement.type == TYPE_FNC) {
-                return nScope[pathElement.name];
-            } else if (pathElement.type == TYPE_VAR) {
-                nScope = nScope.get(pathElement.name);
-            }
-        }
-
-        return false;
-    }
-
-    Binding.create = function (bindingDef, targetScope, attrKey, context) {
-        var path = bindingDef.path;
-        var pathElement = path[0];
-
-        var scope;
-        var searchScope = targetScope;
-        if (pathElement.type != TYPE_FNC && attrKey == pathElement.name) {
-            searchScope = searchScope.$parentScope;
-        }
-
-        if (pathElement.type == TYPE_FNC) {
-            scope = searchScope.getScopeForFncName(pathElement.name);
-        } else {
-            scope = searchScope.getScopeForKey(pathElement.name);
-        }
-
-        if (bindingDef.type == TYPE_STATIC) {
-            var nScope = scope;
-            while (nScope && path.length > 0) {
-                pathElement = path.shift();
-                if (pathElement.type == TYPE_FNC) {
-                    var fnc = nScope[pathElement.name];
-                    var parameters = pathElement.parameter;
-                    for (var i = 0; i < parameters.length; i++) {
-                        var param = parameters[i];
-                        if (_.isObject(param)) {
-                            param.type = TYPE_STATIC;
-                            var binding = Binding.create(param, targetScope, "", context);
-                            if (binding instanceof Binding) {
-                                parameters[i] = binding.getValue();
-                            } else {
-                                parameters[i] = binding;
-                            }
-
-                        }
-                    }
-                    nScope = fnc.apply(nScope, parameters);
-                } else if (pathElement.type == TYPE_VAR) {
-                    if (nScope instanceof Bindable) {
-                        nScope = nScope.get(pathElement.name);
-                    } else {
-                        nScope = nScope[pathElement.name];
-                    }
-
-                }
-            }
-            return nScope;
-        } else {
-
-            var cb;
-            if (_.isFunction(attrKey)) {
-                cb = attrKey;
-            }
-
-
-            if (scope) {
-                var twoWay = (bindingDef.type == "twoWay");
-
-
-                var options = {scope: scope, path: path, target: targetScope, twoWay: twoWay, context: context};
-
-                if (twoWay) {
-                    if (bindingDef.transform) {
-                        var transformFnc = findTransformFunction(bindingDef.transform, searchScope);
-                        if (transformFnc) {
-                            options.transform = transformFnc;
-                        }
-                    }
-
-                    if (bindingDef.transformBack) {
-                        var transformBackFnc = findTransformFunction(bindingDef.transformBack, searchScope);
-                        if (transformBackFnc) {
-                            options.transformBack = transformBackFnc;
-                        }
+                var fncEl;
+                var fncScope;
+                if(bindingDef.transform) {
+                    fncEl = bindingDef.transform.pop();
+                    fncScope = this.get(bindingDef.transform);
+                    if(fncScope){
+                        options.transform = fncScope[fncEl.name];
                     }
                 }
-
-                if (cb) {
-                    options['callback'] = cb;
-                } else {
-                    options['targetKey'] = attrKey;
+                if(bindingDef.transformBack){
+                    fncEl = bindingDef.transformBack.pop();
+                    fncScope = this.get(bindingDef.transform);
+                    if (fncScope) {
+                        options.transformBack = fncScope[fncEl.name];
+                    }
                 }
                 return new Binding(options);
             }
+        });
 
-        }
-    };
+    var TYPE_FNC = Binding.TYPE_FNC = "fnc";
+    var TYPE_VAR = Binding.TYPE_VAR = "var";
+    var TYPE_STATIC = Binding.TYPE_STATIC ="static";
+    var TYPE_TWOWAY = Binding.TYPE_TWOWAY ="twoWay";
 
-    Binding.evaluateText = function (text, scope, attrKey) {
-        if (!_.isString(text)) {
-            return text;
-        }
-        var bindingDefs = Parser.parse(text, "text"), binding, bindings = [], containsText = false;
-        for (var i = 0; i < bindingDefs.length; i++) {
-            var bindingDef = bindingDefs[i];
-            if (bindingDef.length) {
-                bindingDefs[i] = bindingDef;
-            } else {
-                binding = Binding.create(bindingDef, scope, attrKey, bindingDefs);
-                if (binding instanceof Binding) {
-                    bindings.push(binding);
-                }
-                bindingDefs[i] = binding;
+    Binding.contextToString = function (context) {
+        var str = "", el;
+        for (var i = 0; i < context.length; i++) {
+            el = context[i];
+            if (el instanceof Binding) {
+                el = el.getValue();
             }
-
-        }
-
-        if (bindings.length > 0) {
-            return bindings[0].getContextValue();
-        } else if (bindingDefs.length > 0) {
-            if (bindingDefs.length === 1) {
-                return bindingDefs[0];
+            if (el !== null && typeof(el) !== "undefined") {
+                str += el;
             }
-            return contextToString(bindingDefs);
-        } else {
-            return text;
         }
+        return str;
     };
 
     return Binding;

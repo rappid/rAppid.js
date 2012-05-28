@@ -1,10 +1,12 @@
 define(
-    ["require", "js/core/Element", "js/core/TextElement", "js/core/Binding", "js/core/Bindable", "js/core/EventDispatcher", "underscore"],
+    ["require", "js/core/Element", "js/core/TextElement", "js/core/BindingCreator", "js/core/Bindable", "js/core/EventDispatcher", "underscore"],
 
-    function (require, Element, TextElement, Binding, Bindable, EventDispatcher, _) {
+    function (require, Element, TextElement, BindingCreator, Bindable, EventDispatcher, _) {
 
         var Template,
             Configuration;
+
+        var bindingCreator = new BindingCreator();
 
         var Component = Element.inherit("js.core.Component",
             /** @lends Component */
@@ -35,7 +37,6 @@ define(
                             Configuration = null;
                         }
                     }
-                    this.$eventBindables = [];
                     this.$eventDefinitions = [];
                     this.$internalDescriptors = [];
                     this.$xamlDefaults = {};
@@ -324,7 +325,7 @@ define(
 
                         if (attributes.hasOwnProperty(key)) {
                             value = attributes[key];
-                            this.$[key] = Binding.evaluateText(value, this, key);
+                            this.$[key] = bindingCreator.evaluate(value, this, key);
                         }
                     }
 
@@ -407,66 +408,8 @@ define(
 
                     var st = domNode.tagName.split(":");
                     return st[st.length - 1];
-                },
-                bind: function (path, event, callback, scope) {
-                    if (event instanceof Function) {
-                        this.callBase(path, event, callback);
-                    } else {
-                        var eb = new EventBindable({
-                            path: path,
-                            event: event,
-                            scope: scope,
-                            callback: callback,
-                            value: null
-                        });
-                        eb.set('binding', new Binding({path: path, scope: this, target: eb, targetKey: 'value'}));
-                        this.$eventBindables.push(eb);
-                    }
-                },
-                unbind: function (path, event, callback, scope) {
-                    if (event instanceof Function) {
-                        callback = event;
-                        scope = callback;
-                        this.callBase(path, callback, scope);
-                    } else {
-                        var eb;
-                        for (var i = this.$eventBindables.length - 1; i >= 0; i--) {
-                            eb = this.$eventBindables[i];
-                            if (eb.$.scope === scope && eb.$.path === path && eb.$.event === event && eb.$.callback === callback) {
-                                // unbind
-                                eb.destroy();
-                                this.$eventBindables.slice(i, 1);
-                            }
-                        }
-                    }
                 }
             });
-
-        var EventBindable = Bindable.inherit({
-            _commitChangedAttributes: function (attributes) {
-                this.callBase();
-                this._unbindEvent(this.$previousAttributes['value']);
-                if (!_.isUndefined(attributes.value)) {
-                    this._bindEvent(attributes.value);
-                }
-            },
-            _unbindEvent: function (value) {
-                if (value && value instanceof EventDispatcher) {
-                    value.unbind(this.$.event, this.$.callback, this.$.scope);
-                }
-            },
-            _bindEvent: function (value) {
-                if (value && value instanceof EventDispatcher) {
-                    value.bind(this.$.event, this.$.callback, this.$.scope);
-                }
-            },
-            destroy: function () {
-                this._unbindEvent(this.$.value);
-                this.$.binding.destroy();
-
-                this.callBase();
-            }
-        });
 
         return Component;
     }

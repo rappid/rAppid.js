@@ -1,5 +1,5 @@
-define(["js/core/EventDispatcher", "underscore"],
-    function (EventDispatcher, _) {
+define(["js/core/EventDispatcher", "js/core/BindingParser", "js/core/Binding","underscore"],
+    function (EventDispatcher, BindingParser, Binding, _) {
 
         var indexExtractor = /^(.*)\[(\d+)\]$/,
             undefined, List;
@@ -14,6 +14,7 @@ define(["js/core/EventDispatcher", "underscore"],
                  * @params {Object} attributes a key, value hash
                  */
                 ctor: function (attributes) {
+                    this.$eventBindables = [];
 
                     // call the base class constructor
                     this.callBase(null);
@@ -109,7 +110,7 @@ define(["js/core/EventDispatcher", "underscore"],
 
                     var changedAttributes = {},
                         now = this.$,
-                        val;
+                        val, prev;
 
                     for (key in attributes) {
                         if (attributes.hasOwnProperty(key)) {
@@ -120,7 +121,8 @@ define(["js/core/EventDispatcher", "underscore"],
                                 delete now[key];
                             } else {
                                 if (!_.isEqual(now[key], attributes[key])) {
-                                    this.$previousAttributes[key] = now[key];
+                                    prev = now[key];
+                                    this.$previousAttributes[key] = prev;
                                     now[key] = attributes[key];
                                     changedAttributes[key] = now[key];
                                 }
@@ -152,78 +154,67 @@ define(["js/core/EventDispatcher", "underscore"],
                  * @returns Attribute value
                  */
                 get: function(scope, key) {
-
-                    if (arguments.length === 1) {
+                    if(!key){
                         key = scope;
                         scope = this;
                     }
 
-                    function getValue(scope, key) {
-                        if (!key) {
-                            return scope;
-                        }
-
-                        if (scope instanceof Bindable) {
-                            if (scope.$) {
-                                return scope.$[key];
-                            } else {
-                                return undefined;
-                            }
-                        } else {
-                            return scope[key];
-                        }
+                    if(!key) {
+                        return null;
                     }
 
-                    key = key || "";
+                    var path;
 
-                    var path = key.split("."),
-                        val, index;
+                    // if we have a path object
+                    if(_.isArray(key)){
+                        path = key;
+                    // path element
+                    }else if(_.isObject(key)){
+                        path = [key];
+                    }else{
+                        path = BindingParser.parse(key, "path");
+                    }
 
-                    while (path.length > 0) {
-                        if (scope === false) {
-                            return null;
-                        } else if (!scope) {
-                            return scope;
-                        }
 
-                        key = path.shift();
-
-                        var params = indexExtractor.exec(key);
-                        if (params) {
-                            // we got a list
-                            key = params[1];
-                            index = params[2];
-
-                            var list = getValue(scope, key);
-
-                            if (list instanceof Array) {
-                                scope = val = list[index];
-                            } else if (list) {
-                                if (!List) {
-                                    // circular dependency
-                                    try {
-                                        List = require('js/core/List');
-                                    } catch (e) {
-                                    }
+                    var pathElement;
+                    // go through the path
+                    while (scope && path.length > 0) {
+                        pathElement = path.shift();
+                        if (pathElement.type == "fnc") {
+                            var fnc = scope[pathElement.name];
+                            var parameters = pathElement.parameter;
+                            for (var i = 0; i < parameters.length; i++) {
+                                var param = parameters[i];
+                                if (_.isObject(param)) {
+                                    param.type = "static";
+                                    parameters[i] = this.get(param.path);
                                 }
-
-                                if (list instanceof List) {
-                                    scope = val = list.at(index);
-                                } else {
-                                    return undefined;
+                            }
+                            scope = fnc.apply(scope, parameters);
+                        } else if (pathElement.type == "var") {
+                            if (scope instanceof Bindable) {
+                                if(path.length === 0){
+                                    scope = scope.$[pathElement.name];
+                                }else{
+                                    scope = scope.get(pathElement.name);
                                 }
 
                             } else {
-                                return undefined;
+                                scope = scope[pathElement.name];
                             }
-                        } else {
-                            scope = val = getValue(scope, key);
                         }
 
+                        if(scope && pathElement.index !== ''){
+                            // if it's an array
+                            if(_.isArray(scope)){
+                                scope = scope[pathElement.index];
+                            // if it's a list
+                            }else if(scope.at){
+                                scope = scope.at(pathElement.index);
+                            }
+                        }
                     }
-
-                    return val;
-
+                    return scope;
                 },
 
                 /**
@@ -232,7 +223,7 @@ define(["js/core/EventDispatcher", "underscore"],
                  * @returns true if attribute is not undefined
                  */
                 has: function (key) {
-                    return !_.isUndefined(this.$[key]);
+                    return !_.isUndefined(this.get(key));
                 },
                 /**
                  * This method when attributes have changed after a set
@@ -250,17 +241,100 @@ define(["js/core/EventDispatcher", "underscore"],
                     (options || (options = {})).unset = true;
                     return this.set(key, null, options);
                 },
-                /**
-                 * clears all attributes
+                /***
+                 * Clears all attributes
                  */
                 clear: function () {
                     return this.set(this.$, {unset: true});
                 },
+                /***
+                 *
+                 * @param {String} path a.b.c
+                 * @param {String} event
+                 * @param {Function} callback
+                 * @param {Object} scope
+                 */
+                bind: function (path, event, callback, scope) {
+                    if (event instanceof Function && _.isString(path)) {
+                        this.callBase(path, event, callback);
+                    } else {
+                        if(_.isArray(path) && path.length > 0){
+                            scope = callback;
+                            callback = event;
+                            event = path[1];
+                            path = path[2];
+                        }
+                        var eb = new EventBindable({
+                            path: path,
+                            event: event,
+                            scope: scope,
+                            callback: callback,
+                            value: null
+                        });
+                        eb.set('binding', new Binding({path: path, scope: this, target: eb, targetKey: 'value'}));
+                        this.$eventBindables.push(eb);
+                    }
+                },
+                /***
+                 * Unbinds an event.
+                 * @param {String} [path]
+                 * @param {String} event
+                 * @param {Function} callback
+                 * @param {Object} [scope]
+                 */
+                unbind: function (path, event, callback, scope) {
+                    if (event instanceof Function) {
+                        this.callBase(path, event, callback);
+                    } else {
+                        var eb;
+                        for (var i = this.$eventBindables.length - 1; i >= 0; i--) {
+                            eb = this.$eventBindables[i];
+                            if (eb.$.scope === scope && eb.$.path === path && eb.$.event === event && eb.$.callback === callback) {
+                                // unbind
+                                eb.destroy();
+                                this.$eventBindables.slice(i, 1);
+                            }
+                        }
+                    }
+                },
+                /***
+                 * Destroys all event bindings and triggers a destroy event
+                 */
                 destroy: function() {
+                    for(var i = 0; i < this.$eventBindables.length; i++){
+                        this.$eventBindables[i].destroy();
+                    }
+
                     this.trigger('destroy',this);
                     return this;
                 }
             });
+
+        var EventBindable = Bindable.inherit({
+            _commitChangedAttributes: function (attributes) {
+                this.callBase();
+                this._unbindEvent(this.$previousAttributes['value']);
+                if (!_.isUndefined(attributes.value)) {
+                    this._bindEvent(attributes.value);
+                }
+            },
+            _unbindEvent: function (value) {
+                if (value && value instanceof EventDispatcher) {
+                    value.unbind(this.$.event, this.$.callback, this.$.scope);
+                }
+            },
+            _bindEvent: function (value) {
+                if (value && value instanceof EventDispatcher) {
+                    value.bind(this.$.event, this.$.callback, this.$.scope);
+                }
+            },
+            destroy: function () {
+                this._unbindEvent(this.$.value);
+                this.$.binding.destroy();
+
+                this.callBase();
+            }
+        });
 
         return Bindable;
 

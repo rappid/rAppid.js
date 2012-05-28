@@ -153,15 +153,15 @@ describe('js.core.Binding', function () {
         var fncBinding2 = "bar({m1.a},{m1.b})";
         it(fncBinding2 + ' should be triggered if m1.a or m1.b is changing', function () {
             var extendedTarget = new ExtendedClass();
-            extendedTarget.set('m1', new ExtendedClass({}));
-
+            // extendedTarget.set('m1', new ExtendedClass({}));
+            extendedModel.set('m1',extendedTarget);
             new Binding({scope: extendedModel, path: Parser.parse(fncBinding2, PATH_RULE), target: extendedTarget, targetKey: 'val'});
             extendedTarget.get('val').should.equal(false);
 
-            extendedTarget.$.m1.set({'a':parStr, 'b': parNum});
+            extendedTarget.set({'a':parStr, 'b': parNum});
             extendedTarget.get('val').should.equal(true);
 
-            extendedTarget.set('m1', new ExtendedClass({
+            extendedModel.set('m1', new ExtendedClass({
                 a: 'a',
                 b: 'b'
             }));

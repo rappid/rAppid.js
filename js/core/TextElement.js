@@ -1,11 +1,13 @@
 define(
-    ["js/core/Element", "js/core/Binding", "underscore"], function (Element, Binding, _) {
+    ["js/core/Element", "js/core/BindingCreator", "underscore"], function (Element, BindingCreator, _) {
+
+        var bindingCreator = new BindingCreator();
 
         return Element.inherit("js.core.TextElement", {
             _initializeBindings: function () {
                 if (this.$descriptor) {
                     var textContent = this._getTextContentFromDescriptor(this.$descriptor);
-                    this.$.textContent = Binding.evaluateText(textContent, this, "textContent");
+                    this.$.textContent = bindingCreator.evaluate(textContent, this, "textContent");
                 }
 
             },

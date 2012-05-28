@@ -115,6 +115,18 @@ describe('js.core.Bindable', function () {
             should.not.exist(val);
         });
 
+        it('#fnc value foo.bar()', function(){
+            var input = {
+                foo: {
+                    bar: function(){
+                        return "hello"
+                    }
+                }
+            };
+            var val = b.get(input, 'foo.bar()');
+            val.should.eql('hello');
+        });
+
         it('#array ', function () {
             b.$.foo = [1, 2, 3];
 

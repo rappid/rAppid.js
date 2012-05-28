@@ -38,6 +38,58 @@ describe('js.core.BindingParser', function () {
         });
     });
 
+    describe('#parse number', function () {
+        var RULE = "number", parsed;
+
+        it('should parse a number', function () {
+            var number = 6;
+            var numberDef = "" + number;
+
+            parsed = Parser.parse(numberDef, RULE);
+            parsed.should.equal(number);
+        });
+
+        it('should parse a negative number', function () {
+            var number = 6;
+            var numberDef = "-" + number;
+
+            parsed = Parser.parse(numberDef, RULE);
+            parsed.should.equal(-1 * number);
+        })
+    });
+
+    describe('#parse float', function () {
+        var RULE = "float", parsed;
+
+        it('should parse a float', function () {
+            var number = 6.4;
+            var numberDef = "" + number;
+
+            parsed = Parser.parse(numberDef, RULE);
+            parsed.should.equal(number);
+        });
+
+        it('should parse a negative float', function () {
+            var number = 6.4;
+            var numberDef = "-" + number;
+
+            parsed = Parser.parse(numberDef, RULE);
+            parsed.should.equal(-1 * number);
+        })
+    });
+
+    describe('#parse index', function() {
+       var RULE = "index", parsed;
+
+        it('should return a number', function(){
+            var index = 6;
+            var indexDef = "["+index+"]";
+
+            parsed = Parser.parse(indexDef,RULE);
+            parsed.should.equal(index);
+        })
+    });
+
     describe('#parse var', function () {
 
         var RULE = "var", parsed;
@@ -48,6 +100,18 @@ describe('js.core.BindingParser', function () {
             parsed = Parser.parse(varName, RULE);
             parsed.type.should.equal('var');
             parsed.name.should.equal(varName);
+            parsed.index.should.equal('');
+        });
+
+        it('should return a object with name, type and index', function () {
+            var varName = "a";
+            var index = 1;
+            var indexDef = "[" + index + "]";
+
+            parsed = Parser.parse(varName + indexDef, RULE);
+            parsed.type.should.equal('var');
+            parsed.name.should.equal(varName);
+            parsed.index.should.equal(index);
         });
 
     });
@@ -62,15 +126,19 @@ describe('js.core.BindingParser', function () {
             parsed.type.should.equal('fnc');
             parsed.name.should.equal(fncName);
             parsed.parameter.length.should.equal(0);
+            parsed.index.should.equal('');
         });
 
-        it('should return a object with name, type and parameter', function () {
+        it('should return a object with name, type, parameter and index', function () {
             var fncName = "abc";
+            var index = 188;
+            var indexDef = "[" + index + "]";
 
-            parsed = Parser.parse(fncName + "()", RULE);
+            parsed = Parser.parse(fncName + "()" + indexDef, RULE);
             parsed.type.should.equal('fnc');
             parsed.name.should.equal(fncName);
             parsed.parameter.length.should.equal(0);
+            parsed.index.should.equal(index);
         });
 
         it('should return a object with an array of parameters', function () {
@@ -80,6 +148,7 @@ describe('js.core.BindingParser', function () {
             parsed.type.should.equal('fnc');
             parsed.name.should.equal(fncName);
             parsed.parameter.length.should.equal(3);
+            parsed.index.should.equal('');
         });
 
     });
@@ -177,6 +246,18 @@ describe('js.core.BindingParser', function () {
 
             parsed[1].type.should.equal("var");
             parsed[1].name.should.equal("b");
+        });
+
+        it('should parse an index def', function(){
+           var path = ["[1]","[2]"];
+            var parsed = Parser.parse(path.join("."), RULE);
+
+            parsed.length.should.equal(path.length);
+            parsed[0].type.should.equal("index");
+            parsed[0].index.should.equal(1);
+
+            parsed[1].type.should.equal("index");
+            parsed[1].index.should.equal(2);
 
         });
 
