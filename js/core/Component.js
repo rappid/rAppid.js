@@ -290,6 +290,7 @@ define(
                     return this._eventAttributes[eventName];
                 },
                 _initializeEventAttributes: function (attributes, rootScope) {
+                    var event = '';
                     for (var key in attributes) {
                         if (attributes.hasOwnProperty(key)) {
                             var value = attributes[key];
@@ -302,8 +303,9 @@ define(
                                         scope: rootScope,
                                         fncName: value
                                     });
-                                    if (this._isComponentEvent(key)) {
-                                        this.bind(key.substr(2), rootScope[value], rootScope);
+                                    event = key.substr(2);
+                                    if (this._isComponentEvent(event)) {
+                                        this.bind(event, rootScope[value], rootScope);
                                     }
 
                                 } else {
