@@ -7,6 +7,14 @@
 define(["js/data/DataView"], function (DataView) {
 
     return DataView.inherit("js.data.FilterListView", {
+        initialize: function(){
+            this.callBase();
+            this.bind('change:filter', this._onFilterChanged, this);
+            this.bind('filterFnc', this._onFilterChanged, this);
+        },
+        _onFilterChanged: function(){
+            this._innerReset(this.$.baseList.$items);
+        },
         _onItemAdded: function (e) {
             var ret = this._filterItem(e.$.item, e.index);
             if (ret === true) {
@@ -36,7 +44,10 @@ define(["js/data/DataView"], function (DataView) {
             this.$.list.reset(filtered);
         },
         _filterItem: function (item, index) {
-            return this.$.filterFnc.call(this, item, index, this.$.list);
+            if(this.$.filterFnc){
+                return this.$.filterFnc.call(this, item, index, this.$.list);
+            }
+            return true;
         }
     });
 });

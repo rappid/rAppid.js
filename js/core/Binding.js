@@ -159,8 +159,17 @@ define(["js/core/EventDispatcher", "js/core/BindingParser", "underscore"], funct
 
                 if(!this.$.bindingCreator){
                     this.$.bindingCreator = this;
-
                 }
+
+                if(this.$.transform){
+                    this.transform = this.$.transform;
+                }
+
+                if (this.$.transformBack) {
+                    this.transformBack = this.$.transformBack;
+                }
+
+
             },
             _createSubBinding: function () {
                 if (this.$.path.length > 1) {
