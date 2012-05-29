@@ -1,17 +1,18 @@
-define(['require', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 'js/data/Model'], function(require, Bindable, List, Collection, Model) {
-    var cid = 0;
+define(['require', 'js/core/Bindable', 'js/core/List', 'js/data/Collection'],
+    function(require, Bindable, List, Collection) {
+    var cid = 0,
+        undefined;
 
     var Entity = Bindable.inherit('js.core.Entity', {
 
         ctor: function(attributes) {
-
-            Model = Model || require('js/data/Model');
 
             // generate unique id
             this.$cid = ++cid;
 
 
             if (!Collection) {
+                // circular dependency between Collection <-> Model
                 Collection = require('js/data/Collection');
             }
 
@@ -27,6 +28,8 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 'js
         $dependentObjectContext: null,
 
         $cacheInRootContext: false,
+
+        $isDependentObject: true,
 
         _extendSchema: function () {
             var base = this.base;
@@ -48,7 +51,8 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 'js
                 return this.$context.$datasource.getContext();
             }
 
-            if (childFactory && childFactory.classof(Entity) && !childFactory.classof(Model)) {
+            // TODO: this is the circle dependency. check different than use model
+            if (this._isChildFactoryDependentObject(childFactory)) {
                 // dependent object, which should be cached in context of the current entity
                 if (!this.$dependentObjectContext) {
                     // create a new non-cached context for dependent objects
@@ -62,11 +66,18 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 'js
             return this.$context;
         },
 
+        _isChildFactoryDependentObject: function(childFactory) {
+            return childFactory && childFactory.$isDependentObject;
+        },
+
         /**
          * parse the deserializied data
          * @param data
          */
-        parse: function (data) {
+        parse: function (data, action, options) {
+
+            var processor = this.$context.$datasource.getProcessorForModel(this);
+            data = processor.parse(data, action, options);
 
             var schema = this.$schema;
 
@@ -108,7 +119,7 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 'js
                                 if (value) {
                                     for (i = 0; i < value.length; i++) {
                                         entity = this.getContextForChildren(factory).createEntity(factory, value[i].id, alias);
-                                        entity.set(entity.parse(value[i]));
+                                        entity.set(entity.parse(value[i], action, options));
                                         list.add(entity);
                                     }
                                 }
@@ -130,7 +141,7 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 'js
                                 for (i = 0; i < value.length; i++) {
                                     // create new entity based on collection type
                                     entity = contextForChildren.createEntity(list.$modelFactory);
-                                    entity.set(entity.parse(value[i]));
+                                    entity.set(entity.parse(value[i], action, options));
                                     // and add it to the collection
                                     list.add(entity);
                                 }
@@ -151,29 +162,41 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 'js
                                 factory === this.$context.$datasource.$modelFactory) ? type : null;
 
                             data[type] = entity = this.getContextForChildren(factory).createEntity(factory, this.$.id, alias);
-                            entity.set(entity.parse(value));
+                            entity.set(entity.parse(value, action, options));
                         }
                     }
                 }
             }
 
-
             return data;
         },
 
+        prepare: function(action, options) {
+            return this.$;
+        },
+
         /***
-         * prepares the data for serialisation
-         * @param attributes
+         * composes the data for serialisation
          * @param action
+         * @param options
          * @return {Object} all data that should be serialized
          */
-        prepare: function (attributes, action) {
-            return attributes;
+        compose: function (action, options) {
+            return this.prepare(action, options);
         }
+
+//        preCompose: function (data, action, options) {
+//            var processor = this.$context.$datasource.getProcessorForModel(this);
+//            return processor.preCompose(data, action, options);
+//        },
+//
+//        postCompose: function (data, action, options) {
+//            var processor = this.$context.$datasource.getProcessorForModel(this);
+//            return processor.postCompose(data, action, options);
+//        }
 
     });
 
-    Entity.schema = {};
 
     return Entity;
 

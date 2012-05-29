@@ -97,7 +97,6 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
             var modelPathComponents = this.getPathComponentsForModel(model);
 
             var self = this;
-            var processor = self.getProcessorForModel(model, options);
 
             if (!modelPathComponents) {
                 callback("path for model unknown", null, options);
@@ -140,11 +139,8 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
                         // deserialize data with format processor
                         var data = formatProcessor.deserialize(xhr.responses);
 
-                        // deserialize with model processor
-                        data = processor.deserialize(data, DataSource.ACTION.LOAD);
-
                         // parse data inside model
-                        data = model.parse(data);
+                        data = model.parse(data, DataSource.ACTION.LOAD, options);
 
                         // set data
                         model.set(data);
@@ -211,8 +207,7 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
                     if (id || id === 0) {
                         model.set('id', id);
                         // TODO: ask processor if i should call save again to put content
-                        // PUT Content
-                        model.save(request.options, cb);
+                        cb(null);
                     } else {
                         cb("Id couldn't be extracted");
                     }
@@ -294,11 +289,8 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
 
                     // TODO: create hook, which can modify url and queryParameter
 
-                    // prepare data in model
-                    var data = model.prepare(model.$, action);
-
-                    // generate payload in processor
-                    data = processor.serialize(data, action);
+                    // compose data in model and in processor
+                    var data = model.compose(action, options);
 
                     // format payload
                     var payload = formatProcessor.serialize(data);

@@ -28,6 +28,8 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
 
         },
 
+        $isDependentObject: false,
+
         save: function (options, callback) {
 
             // TODO: handle multiple access
@@ -58,6 +60,13 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
 
             return attributes;
 
+        },
+
+        compose: function(action, options) {
+            var data = this.callBase();
+
+            var processor = this.$context.$datasource.getProcessorForModel(this, options);
+            return processor.compose(data, action, options);
         },
 
         /**

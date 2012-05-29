@@ -1,7 +1,8 @@
 define(["require", "js/core/Component", "js/core/Base", "js/data/Collection", "underscore", "js/data/Model", "js/data/Entity", "js/core/List", "flow"],
     function (require, Component, Base, Collection, _, Model, Entity, List, flow) {
 
-        var Context = Base.inherit("js.data.DataSource.Context", {
+        var undefined,
+            Context = Base.inherit("js.data.DataSource.Context", {
 
             defaults: {
                 collectionPageSize: null
@@ -110,7 +111,7 @@ define(["require", "js/core/Component", "js/core/Base", "js/data/Collection", "u
             return type;
         };
 
-        Context.generateCacheIdForEntity = function(type, id) {
+        Context.generateCacheIdForEntity = function (type, id) {
             return type + "_" + id;
         };
 
@@ -123,7 +124,8 @@ define(["require", "js/core/Component", "js/core/Base", "js/data/Collection", "u
         };
 
         var Processor = Base.inherit("js.data.DataSource.Processor", {
-            ctor: function(dataSource) {
+
+            ctor: function (dataSource) {
                 if (!dataSource) {
                     throw "dataSource is required for Processor";
                 }
@@ -137,27 +139,65 @@ define(["require", "js/core/Component", "js/core/Base", "js/data/Collection", "u
              * @param {js.data.DataSource.ACTION} action
              * @return {JSON}
              */
-            serialize: function(data, action) {
-                return data;
+            compose: function (data, action, options) {
+                return this._composeObject(data, action, options);
             },
 
-            /***
-             *
-             * parses the deserialized data
-             *
-             * @param {JSON} data
-             * @param {js.data.DataSource.ACTION} action
-             * @return {JSON}
-             */
-            deserialize: function(data, action) {
-                return data;
+            _composeObject: function (obj, action, options) {
+
+                var ret = {};
+
+                for (var key in obj) {
+                    if (obj.hasOwnProperty(key)) {
+                        var value = this._getCompositionValue(obj[key], action, options);
+
+                        if (value !== undefined) {
+                            ret[key] = value;
+                        }
+                    }
+                }
+
+                return ret;
             },
 
+            _getCompositionValue: function (value, action, options) {
+                if (value instanceof Model) {
+                    return this._composeSubModel(value, action, options);
+                } else if (value instanceof Collection) {
+                    return this._composeCollection(value, action, options);
+                } else if (value instanceof Entity) {
+                    return value.compose(action, options);
+                } else if (value instanceof List) {
+                    var ret = [];
+                    var self = this;
+                    value.each(function (v) {
+                        ret.push(self._getCompositionValue(v, action, options));
+                    });
+                    return ret;
+                } else if (value instanceof Object) {
+                    return this._composeObject(value);
+                }
+                else {
+                    return value;
+                }
+            },
+
+            _composeSubModel: function (model, action, options) {
+                return model.compose(action, options);
+            },
+
+            _composeCollection: function(collection, action, options) {
+                return undefined;
+            },
+
+            parse: function (data, action, options) {
+                return data;
+            },
 
             /***
              * saves sub models
              */
-            saveSubModels: function(model, options, callback) {
+            saveSubModels: function (model, options, callback) {
                 // TODO: handle circular dependencies
 
 //                flow()
@@ -199,7 +239,7 @@ define(["require", "js/core/Component", "js/core/Base", "js/data/Collection", "u
                                     getSubModel(value[i]);
                                 }
                             } else if (value instanceof List) {
-                                value.each(function(v) {
+                                value.each(function (v) {
                                     getSubModel(v);
                                 });
                             } else if (value instanceof Object) {
@@ -395,7 +435,7 @@ define(["require", "js/core/Component", "js/core/Base", "js/data/Collection", "u
                 }
             },
 
-            saveModel: function(model, options, callback) {
+            saveModel: function (model, options, callback) {
                 if (callback) {
                     callback("Abstract method saveModel", model);
                 }
@@ -408,6 +448,7 @@ define(["require", "js/core/Component", "js/core/Base", "js/data/Collection", "u
              */
             getConfigurationForModelClass: function (modelClassName) {
 
+                // TODO: cache
                 for (var i = 0; i < this.$configuredTypes.length; i++) {
                     var config = this.$configuredTypes[i];
                     if (config.$.modelClassName === modelClassName) {
@@ -425,7 +466,9 @@ define(["require", "js/core/Component", "js/core/Base", "js/data/Collection", "u
              * @param alias
              * @return {*}
              */
-            getConfigurationByAlias: function(alias) {
+            getConfigurationByAlias: function (alias) {
+
+                // TODO: cache it
                 for (var i = 0; i < this.$datasource.$configuredTypes.length; i++) {
                     var config = this.$datasource.$configuredTypes[i];
                     if (config.$.alias === alias) {
@@ -447,9 +490,8 @@ define(["require", "js/core/Component", "js/core/Base", "js/data/Collection", "u
                         config = this.getConfigurationForModelClass(model.$modelClassName);
                     }
 
-                    var processorName = config.$.processor;
-
-                    if (config && processorName) {
+                    if (config && config.$.processor) {
+                        var processorName = config.$.processor;
                         if (this.$processors[processorName]) {
                             return this.$processors[processorName];
                         } else {
@@ -461,7 +503,7 @@ define(["require", "js/core/Component", "js/core/Base", "js/data/Collection", "u
                 return this.$defaultProcessor;
             },
 
-            getFormatProcessor: function(action) {
+            getFormatProcessor: function (action) {
                 return this.$formatProcessors[0];
             },
 
