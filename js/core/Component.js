@@ -362,11 +362,16 @@ define(
                             node.textContent = text;
                         }
                         // only instantiation and construction but no initialization
-                        return this.$systemManager.$applicationContext.createInstance("js/core/TextElement", [null, node, this.$systemManager, this, rootScope]);
+                        return this._createTextElement(node, rootScope);
                     }
 
                     return null;
                 },
+
+                _createTextElement: function(node, rootScope) {
+                    return this.$systemManager.$applicationContext.createInstance('js/core/TextElement', [null, node, this.$systemManager, this, rootScope]);
+                },
+
                 /***
                  * Converts all child nodes of a descriptor to instances of Components or TextElement
                  * @param descriptor
