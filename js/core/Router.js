@@ -97,6 +97,9 @@ define(["js/core/Component", "underscore", "js/conf/Route"],
                             // breaks the routeStack execution
                             end: function() {
                                 cb.end();
+                            },
+                            navigate: function(fragment, createHistoryEntry, triggerRoute)  {
+                                self.navigate(fragment, createHistoryEntry, triggerRoute, cb);
                             }
                         };
 
