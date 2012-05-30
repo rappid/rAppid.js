@@ -325,9 +325,9 @@ define(["require", "js/core/Component", "js/core/Content", "js/core/Binding", "i
 
             _renderVisible: function (visible) {
                 if (visible === true) {
-                    this.removeClass('hidden');
+                    this.removeClass('hide');
                 } else if (visible === false) {
-                    this.addClass('hidden');
+                    this.addClass('hide');
                 }
             },
             _renderHidden: function (hidden) {
