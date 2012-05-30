@@ -99,6 +99,10 @@ define(["js/core/Component", "underscore", "js/conf/Route"],
                                 cb.end();
                             },
                             navigate: function(fragment, createHistoryEntry, triggerRoute)  {
+                                if (_.isUndefined(createHistoryEntry)) {
+                                    createHistoryEntry = false;
+                                }
+
                                 self.navigate(fragment, createHistoryEntry, triggerRoute, cb);
                             }
                         };
