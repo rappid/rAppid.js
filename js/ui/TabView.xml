@@ -1,18 +1,21 @@
 <?xml version="1.0"?>
 <ui:ItemsView xmlns="http://www.w3.org/1999/xhtml" xmlns:js="js.core" xmlns:ui="js.ui">
     <js:Imports>
-        js.ui.View;
+        js.html.DomElement;
         js.ui.SelectionView;
         js.ui.SegmentedView;
+        js.core.List;
     </js:Imports>
     <js:Script>
         <![CDATA[
-        (function (View, SelectionView, SegmentedView) {
+        (function (DomElement, SelectionView, SegmentedView, List) {
             return {
+                $classAttributes: ['tabItems', 'tabClassName', 'selectedIndex', 'selectedViews'],
                 defaults: {
                     selectedIndex: 0,
                     selectedView: null,
-                    tabClassName: 'nav nav-tabs'
+                    tabClassName: 'nav nav-tabs',
+                    tabItems: List
                 },
                 _initializeLayoutChildren: function (children) {
                     var child;
@@ -21,7 +24,7 @@
                         child = children[i];
                         if (!this.$selectionView && child instanceof SelectionView) {
                             this.$selectionView = child;
-                            this.$selectionView.set({items: []});
+                            this.$selectionView.set({items: this.$.tabItems});
                             this.$selectionView.bind('change:selectedViews', this._onTabChange, this);
                         } else if (!this.$segmentedView && child instanceof SegmentedView) {
                             this.$segmentedView = child;
@@ -30,8 +33,8 @@
                     this.callBase();
                 },
                 _renderChild: function (child) {
-                    if (child instanceof View && child != this.$selectionView && child != this.$segmentedView) {
-                        this.$selectionView.addItem(child);
+                    if (child instanceof DomElement && child != this.$selectionView && child != this.$segmentedView) {
+                        this.$.tabItems.add(child);
                         this.$segmentedView.addChild(child);
                     } else {
                         this.callBase();
