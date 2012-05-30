@@ -3,11 +3,11 @@
 <head>
     <title><%= appName %></title>
 
-    <script type="text/javascript" src="js/lib/require.js"></script>
-    <script type="text/javascript" src="js/lib/inherit.js"></script>
-    <script type="text/javascript" src="js/lib/underscore-min.js"></script>
-    <script type="text/javascript" src="js/lib/flow.js"></script>
-    <script type="text/javascript" src="js/lib/rAppid.js"></script>
+    <script type="text/javascript" src="js/lib/require.js" data-usage="lib"></script>
+    <script type="text/javascript" src="js/lib/inherit.js" data-usage="lib"></script>
+    <script type="text/javascript" src="js/lib/underscore-min.js" data-usage="lib"></script>
+    <script type="text/javascript" src="js/lib/flow.js" data-usage="lib"></script>
+    <script type="text/javascript" src="js/lib/rAppid.js" data-usage="lib"></script>
 
     <meta name="fragment" content="!">
 
@@ -18,7 +18,7 @@
 
 </head>
 <body>
-<script type="text/javascript" data-usage="bootStrap">
+<script type="text/javascript" data-usage="bootstrap">
     rAppid.bootStrap("app/<%= appName %>.xml", "config.json",
             function (err, systemManager, application) {
                 if (!err) {
