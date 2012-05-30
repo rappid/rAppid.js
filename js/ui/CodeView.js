@@ -36,7 +36,7 @@ define(
                 for(var l = 0; l < lines.length; l++){
                     lines[l] = lines[l].substr(j-1);
                 }
-                var ret = hljs.highlightAuto(lines.join("\n"));
+                var ret = escape(lines.join("\n"));
                 el.innerHTML = ret.value;
 
                 return el;
