@@ -1,4 +1,4 @@
-define(['js/core/EventDispatcher','js/core/BindingParser','js/core/Binding'], function(EventDispatcher,Parser, Binding){
+define(['js/core/EventDispatcher','js/core/BindingParser','js/core/Binding', 'underscore'], function(EventDispatcher,Parser, Binding, _){
 
     function findTransformFunction(path, scope) {
         var pathElement = path[0];
