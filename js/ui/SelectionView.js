@@ -2,7 +2,7 @@ define(
     ["js/ui/ItemsView", "js/html/DomElement", "underscore"], function (ItemsView, DomElement, _) {
         return ItemsView.inherit("js.ui.SelectionView",{
             $classAttributes: [
-                "needsSelection", "multiSelect","selectedViews","selectedItems","selectedIndex","items", "forceSelectable"
+                "needsSelection", "multiSelect", "selectedView","selectedViews","selectedItems","selectedIndex","items", "forceSelectable"
             ],
             defaults: {
                 needsSelection: false,
