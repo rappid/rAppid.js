@@ -1,5 +1,5 @@
 define(
-    ["js.ui.ItemsView", "js.html.DomElement"], function (ItemsView, DomElement) {
+    ["js/ui/ItemsView", "js/html/DomElement"], function (ItemsView, DomElement) {
         return ItemsView.inherit({
             defaults: {
                 tagName: "div",
