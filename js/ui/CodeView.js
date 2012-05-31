@@ -1,6 +1,5 @@
 define(
-    ["js/ui/View"], function (View) {
-
+    ["js/ui/View", "js/lib/highlight/highlight", "js/lib/highlight/languages/xml", "js/lib/highlight/languages/javascript"], function (View, hljs) {
         function escape(html, encode) {
             return html
                 .replace(!encode ? /&(?!#?\w+;)/g : /&/g, '&amp;')
@@ -36,7 +35,7 @@ define(
                 for(var l = 0; l < lines.length; l++){
                     lines[l] = lines[l].substr(j-1);
                 }
-                var ret = escape(lines.join("\n"));
+                var ret = hljs.highlightAuto(lines.join("\n"));
                 el.innerHTML = ret.value;
 
                 return el;
