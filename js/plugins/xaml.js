@@ -346,12 +346,10 @@ define([], function () {
                             if (scripts.length > 0) {
                                 for (var s = 0; s < scripts.length; s++) {
                                     try {
-
                                         var scriptInstance = new Script(null, scripts[s]);
                                         scriptObjects.push(scriptInstance.evaluate(importedClasses));
                                     } catch (e) {
-
-                                        throw name + ": Script cannot be loaded";
+                                        load.error(new Error(name + ": Script cannot be loaded" + e));
                                     }
                                 }
                             }
@@ -363,10 +361,12 @@ define([], function () {
                             xamlFactory.prototype._$descriptor = xml.documentElement;
 
                             load(xamlFactory);
+                        }, function(err) {
+                            load.error(err);
                         });
                     }
                 } else {
-                    throw err || "XML not found";
+                    load.error(new Error("XML not found"));
                 }
             });
         }
