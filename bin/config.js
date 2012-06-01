@@ -44,9 +44,14 @@ var config = function(args, callback) {
                 for(var key in moduleConf){
                     if(moduleConf.hasOwnProperty(key)){
                         if(config[key]){
-                            _.extend(config[key], moduleConf[key]);
+                            if(_.isArray(config[key])){
+                                _.defaults(config[key], moduleConf[key]);
+                            }else{
+                                _.extend(config[key], moduleConf[key]);
+                            }
+
                         }else{
-                            _.defaults(config[key], moduleConf[key]);
+                            config[key] = moduleConf[key];
                         }
                     }
                 }
