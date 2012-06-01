@@ -1,36 +1,13 @@
-var rAppid;
+(function(exports, requirejs, define, document, XMLHttpRequest){
 
-/** ECMA SCRIPT COMPLIANT**/
-if(!String.prototype.trim){
-    String.prototype.trim = function () {
-        return this.replace(/^\s+|\s+$/g, '');
-    };
-}
-
-if(!console){
-    var console = {
-        log : function(){},
-        warn: function(){}
-    }
-}
-
-(function (exports, inherit, requirejs, define, underscore, XMLHttpRequest, flow, document) {
-
-    if (!requirejs) {
-        throw "require.js is needed";
+    /** ECMA SCRIPT COMPLIANT**/
+    if (!String.prototype.trim) {
+        String.prototype.trim = function () {
+            return this.replace(/^\s+|\s+$/g, '');
+        };
     }
 
-    if (!define) {
-        throw "define is needed";
-    }
-
-    if (!underscore) {
-        throw "underscore is needed"
-    }
-
-    if (!flow) {
-        throw "flow.js is needed";
-    }
+    var underscore;
 
     /***
      * marks a function to be executed asycn
@@ -40,14 +17,6 @@ if(!console){
         this._async = true;
         return this;
     };
-
-    // global requirejs setup
-    requirejs.config({
-        paths: {
-            "xaml": "js/plugins/xaml",
-            "json": "js/plugins/json"
-        }
-    });
 
     var xamlApplication = /^(xaml!)?(.+?)(\.xml)?$/;
 
@@ -67,9 +36,9 @@ if(!console){
             new Rewrite(/^js\/html\/(.+)$/, "js/html/DomElement")
         ];
 
-    var _rAppid = {
+    var rAppid = {
 
-        createApplicationContext: function(applicationDomain, mainClass, config, callback) {
+        createApplicationContext: function (mainClass, config, callback) {
 
             config = config || {};
 
@@ -79,36 +48,8 @@ if(!console){
                 config.namespaceMap = config.namespaceMap || defaultNamespaceMap;
                 config.rewriteMap = config.rewriteMap || defaultRewriteMap;
 
-                define("flow", function () {
-                    return flow;
-                });
-
-                define("flow.js", function () {
-                    return flow;
-                });
-
-                define("inherit", function () {
-                    return inherit;
-                });
-
-                define("underscore", function() {
-                    return underscore;
-                });
-
-                underscore.extend(config, {
-                    paths: {
-                        "xaml": "js/plugins/xaml",
-                        "json": "js/plugins/json"
-                    }
-                });
-
-                // and add it to config object, so it can used from xaml.js
-                config.applicationDomain = applicationDomain;
-
-                var requirejsContext = requirejs.config(config);
-
-                var applicationContext = new ApplicationContext(requirejsContext, config);
-                //applicationContext.document = document;
+                var requirejsContext = requirejs.config(config),
+                    applicationContext = new ApplicationContext(requirejsContext, config);
 
                 define("rAppid", function () {
                     return applicationContext;
@@ -126,11 +67,18 @@ if(!console){
                         mainClass = mainClass.replace(/\./g, "/");
                     }
 
-                    requirejsContext(["require"], function () {
-                        requirejsContext([mainClass], function (applicationFactory) {
-                            applicationContext.$applicationFactory = applicationFactory;
-                            callback(null, applicationContext);
-                        });
+                    requirejsContext(["inherit", "underscore"], function (inherit, _) {
+                        // we have to load inherit.js in order that inheritance is working
+                        underscore = _;
+
+                        if (inherit && _) {
+                            requirejsContext([mainClass], function (applicationFactory) {
+                                applicationContext.$applicationFactory = applicationFactory;
+                                callback(null, applicationContext);
+                            });
+                        } else {
+                            callback("inherit or underscore missing");
+                        }
                     });
 
                 } else {
@@ -140,7 +88,7 @@ if(!console){
             };
 
             if (Object.prototype.toString.call(config) == '[object String]') {
-                requirejs(["json!" + config], function (config) {
+                requirejs(["js/plugins/json!" + config], function (config) {
                     internalCreateApplicationContext(config);
                 });
             } else {
@@ -150,9 +98,9 @@ if(!console){
         },
 
         bootStrap: function (mainClass, config, callback) {
-            _rAppid.createApplicationContext(null, mainClass, config, function(err, applicationContext){
-                if (err || !applicationContext) {
-                    callback(err || "ApplicationContext missing");
+            rAppid.createApplicationContext(mainClass, config, function (err, applicationContext) {
+                if (err || !document) {
+                    callback(err || "target document missing");
                 } else {
                     applicationContext.createApplicationInstance(document, callback);
                 }
@@ -161,7 +109,7 @@ if(!console){
 
         rewriteMapEntry: Rewrite,
 
-        createQueryString: function(parameter) {
+        createQueryString: function (parameter) {
             var ret = [];
 
             for (var key in parameter) {
@@ -173,20 +121,20 @@ if(!console){
             return ret.join("&");
         },
 
-        ajax: function(url, options, callback) {
+        ajax: function (url, options, callback) {
 
             var s = {
                 url: url
             };
 
-            underscore.extend(s,_rAppid.ajaxSettings, options);
+            underscore.extend(s, rAppid.ajaxSettings, options);
 
             if (s.data && !underscore.isString(s.data)) {
                 throw "data must be a string";
             }
 
             s.hasContent = !/^(?:GET|HEAD)$/.test(s.type);
-            
+
             if (s.queryParameter && underscore.keys(s.queryParameter).length > 0) {
                 // append query parameter to url
                 s.url += /\?/.test(s.url) ? "&" : "?" + this.createQueryString(s.queryParameter);
@@ -208,11 +156,12 @@ if(!console){
                         xhr.setRequestHeader(header, s.headers[header]);
                     }
                 }
-            } catch (e) {} // FF3
+            } catch (e) {
+            } // FF3
 
             xhr.send(s.data);
 
-            var xhrCallback = function(_, isAbort) {
+            var xhrCallback = function (_, isAbort) {
 
                 var wrappedXhr;
 
@@ -246,46 +195,44 @@ if(!console){
 
     var rheaders = /^(.*?):[ \t]*([^\r\n]*)\r?$/mg; // IE leaves an \r character at EOL
 
-    var rAppidXhr = inherit.Base.inherit({
-        ctor: function(xhr) {
-            this.xhr = xhr;
-            this.status = xhr.status;
-            this.$nativeResponseHeaders = xhr.getAllResponseHeaders();
-            this.responses = {};
+    var rAppidXhr = function (xhr) {
+        this.xhr = xhr;
+        this.status = xhr.status;
+        this.$nativeResponseHeaders = xhr.getAllResponseHeaders();
+        this.responses = {};
 
-            var xml = xhr.responseXML;
+        var xml = xhr.responseXML;
 
-            // Construct response list
-            if (xml && xml.documentElement) {
-                this.responses.xml = xml;
-            }
-            this.responses.text = xhr.responseText;
-
-            try {
-                this.statusText = xhr.statusText;
-            } catch (e) {
-                this.statusText = "";
-            }
-        },
-        getResponseHeader: function(key) {
-            var match;
-            if (!this.$responseHeaders) {
-                this.$responseHeaders = {};
-                while (( match = rheaders.exec(this.$nativeResponseHeaders) )) {
-                    this.$responseHeaders[match[1].toLowerCase()] = match[2];
-                }
-            }
-            return this.$responseHeaders[key.toLowerCase()];
+        // Construct response list
+        if (xml && xml.documentElement) {
+            this.responses.xml = xml;
         }
+        this.responses.text = xhr.responseText;
 
-    });
+        try {
+            this.statusText = xhr.statusText;
+        } catch (e) {
+            this.statusText = "";
+        }
+    };
 
-    _rAppid.ajaxSettings = {
+    rAppidXhr.prototype.getResponseHeader = function (key) {
+        var match;
+        if (!this.$responseHeaders) {
+            this.$responseHeaders = {};
+            while (( match = rheaders.exec(this.$nativeResponseHeaders) )) {
+                this.$responseHeaders[match[1].toLowerCase()] = match[2];
+            }
+        }
+        return this.$responseHeaders[key.toLowerCase()];
+    };
+
+
+    rAppid.ajaxSettings = {
         type: "GET",
         contentType: "application/x-www-form-urlencoded",
         async: true,
-        // TODO: add ie7 support for local file requests via ActiveX
-        xhr: function() {
+        xhr: function () {
             return new XMLHttpRequest();
         },
         headers: {
@@ -293,30 +240,37 @@ if(!console){
         data: null
     };
 
-    var SystemManager = _rAppid.SystemManager = inherit.Base.inherit({
-        ctor: function (requirejsContext, applicationContext, document) {
-            this.$requirejsContext = requirejsContext;
-            this.$applicationContext = applicationContext;
-            this.$applicationFactory = null;
-            this.$document = document;
-        }
-    });
 
-    var ApplicationContext = _rAppid.ApplicationContext = SystemManager.inherit({
+    function inherit(o) {
+        function F() {} // Dummy constructor
+        F.prototype = o;
+        return new F();
+    }
 
-        ctor: function(requirejsContext, config) {
-            this.callBase(requirejsContext);
-            this.$config = config;
-            this.$applicationContext = this;
-        },
+    var SystemManager = function (requirejsContext, applicationContext, document) {
+        this.$requirejsContext = requirejsContext;
+        this.$applicationContext = applicationContext;
+        this.$applicationFactory = null;
+        this.$document = document;
+    };
 
-        createApplicationInstance: function(document, callback) {
+    var ApplicationContext = function (requirejsContext, config) {
+        SystemManager.call(this, requirejsContext);
+
+        this.$config = config;
+        this.$applicationContext = this;
+    };
+
+    ApplicationContext.prototype = inherit(SystemManager.prototype);
+    ApplicationContext.prototype.constructor = ApplicationContext;
+
+    ApplicationContext.prototype.createApplicationInstance = function (document, callback) {
             // create instance
             var applicationFactory = this.$applicationFactory;
 
             var systemManager = new SystemManager(this.$requirejsContext, this, document);
 
-            this.$requirejsContext(["js/core/Application"], function(Application) {
+            this.$requirejsContext(["js/core/Application"], function (Application) {
 
                 var application = new applicationFactory(null, false, systemManager, null, null);
 
@@ -341,9 +295,9 @@ if(!console){
                 }
             });
 
-        },
+        };
 
-        getFqClassName: function (namespace, className, useRewriteMap) {
+    ApplicationContext.prototype.getFqClassName = function (namespace, className, useRewriteMap) {
             if (useRewriteMap == undefined || useRewriteMap == null) {
                 useRewriteMap = true;
             }
@@ -356,7 +310,7 @@ if(!console){
             }
 
             if (underscore.indexOf(this.$config.xamlClasses, fqClassName) !== -1) {
-                fqClassName = 'xaml!'+ fqClassName;
+                fqClassName = 'xaml!' + fqClassName;
             }
 
             if (useRewriteMap) {
@@ -371,9 +325,9 @@ if(!console){
             }
 
             return fqClassName;
-        },
+        };
 
-        createInstance: function (fqClassName, args, className) {
+    ApplicationContext.prototype.createInstance = function (fqClassName, args, className) {
             className = className || fqClassName;
             args = args || [];
 
@@ -399,32 +353,54 @@ if(!console){
             }
 
             return ret;
-        },
+        };
 
-        ajax: function(url, options, callback) {
+    ApplicationContext.prototype.ajax = function (url, options, callback) {
 
-            if (!(/^http.*$/.test(url)) && this.$config.applicationUrl) {
-                url = this.$config.applicationUrl + '/' + url;
-            }
-
-            _rAppid.ajax(url, options, callback);
+        if (!(/^http.*$/.test(url)) && this.$config.applicationUrl) {
+            url = this.$config.applicationUrl + '/' + url;
         }
 
-    });
+        rAppid.ajax(url, options, callback);
+    };
 
+    rAppid.defaultNamespaceMap = defaultNamespaceMap;
+    rAppid.defaultRewriteMap = defaultRewriteMap;
+    rAppid.SystemManager = SystemManager;
+    rAppid.ApplicationContext = ApplicationContext;
+    rAppid.Rewrite = Rewrite;
 
-    rAppid = exports.rAppid = _rAppid;
-    exports.defaultNamespaceMap = defaultNamespaceMap;
-    exports.defaultRewriteMap = defaultRewriteMap;
-    exports.SystemManager = SystemManager;
-    exports.ApplicationContext = ApplicationContext;
+    exports.rAppid = rAppid;
 
+}(  typeof exports !== "undefined" ? exports : window,
+    typeof requirejs !== "undefined" ? requirejs : require('requirejs'),
+    typeof requirejs !== "undefined" ? define : require('requirejs').define,
+    typeof window !== "undefined" ? window.document : null,
+    typeof window !== "undefined" ? window.XMLHttpRequest : require('xmlhttprequest').XMLHttpRequest));
 
-})(typeof exports === "undefined" ? this : exports,
-   typeof inherit === "undefined" ? require('inherit.js').inherit : inherit,
-    typeof requirejs === "undefined" ? require('requirejs') : requirejs,
-    typeof requirejs === "undefined" ? require('requirejs').define : define,
-    typeof this._ === "undefined" ? require('underscore') : this._,
-    typeof window === "undefined" ? require('xmlhttprequest').XMLHttpRequest : window.XMLHttpRequest,
-    typeof flow === "undefined" ? require('flow.js').flow : flow,
-    typeof document === "undefined" ? (new (require('xmldom').DOMParser)()) : document);
+//var rAppid;
+
+//
+//(function (exports, inherit, requirejs, define, underscore, XMLHttpRequest, flow, document) {
+//
+//    if (!requirejs) {
+//        throw "require.js is needed";
+//    }
+//
+//    if (!define) {
+//        throw "define is needed";
+//    }
+//
+//
+//
+//
+//
+//
+//})(typeof exports === "undefined" ? this : exports,
+//   typeof inherit === "undefined" ? require('inherit.js').inherit : inherit,
+//    typeof requirejs === "undefined" ? require('requirejs') : requirejs,
+//    typeof requirejs === "undefined" ? require('requirejs').define : define,
+//    typeof this._ === "undefined" ? require('underscore') : this._,
+//    typeof window === "undefined" ? require('xmlhttprequest').XMLHttpRequest : window.XMLHttpRequest,
+//    typeof flow === "undefined" ? require('flow.js').flow : flow,
+//    typeof document === "undefined" ? (new (require('xmldom').DOMParser)()) : document);
