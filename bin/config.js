@@ -1,5 +1,6 @@
 var path = require('path'),
     fs = require('fs'),
+    _ = require('underscore'),
     exclude_dirs = ["node_modules", "bin", "doc", "test"],
     rRemoveExtension = /^(.*?)\.[^.]+$/,
     removeXMLSuffix = /^(.*).xml$/,
@@ -12,7 +13,6 @@ var config = function(args, callback) {
 
         // test that we are in the public folder
         var dir = path.dirname(configFile);
-
 
         if (!args[0] && path.basename(dir) !== "public") {
             callback("config must be created within public directory");
@@ -38,14 +38,29 @@ var config = function(args, callback) {
                 config.xamlClasses.push(file);
             });
 
+            var moduleConf;
+            findConfigs(dir, 0).forEach(function (file) {
+                moduleConf = JSON.parse(fs.readFileSync(file));
+                for(var key in moduleConf){
+                    if(moduleConf.hasOwnProperty(key)){
+                        if(config[key]){
+                            _.extend(config[key], moduleConf[key]);
+                        }else{
+                            _.defaults(config[key], moduleConf[key]);
+                        }
+                    }
+                }
+            });
+
             fs.writeFileSync(configFile, JSON.stringify(config));
+
+
 
             console.log("xamlClasses written to '" + configFile +  "'");
             config.xamlClasses.forEach(function(xaml){
                 console.log("\t" + xaml);
             });
             callback();
-
         }
 
     } else {
@@ -53,6 +68,33 @@ var config = function(args, callback) {
     }
 };
 
+
+function findConfigs(dir, dept){
+    var ret = [];
+
+    fs.readdirSync(dir).forEach(function (name) {
+
+        if (name.substring(0, 1) !== ".") {
+            name = path.join(dir, name);
+
+            var stat = fs.lstatSync(name);
+
+            if(stat.isSymbolicLink()){
+                if(dept === 0){
+                    ret = ret.concat(findConfigs(path.join(fs.realpathSync(path.join(name, ".")),".."), dept + 1));
+                }
+            }else if(dept > 0){
+                if(path.basename(name) === "config.json"){
+                    ret.push(name);
+                }
+
+            }
+        }
+    });
+
+    return ret;
+
+}
 
 function findFiles(dir, exclude_dirs, types, dept) {
 
