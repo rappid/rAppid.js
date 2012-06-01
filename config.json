@@ -1,5 +1,21 @@
 {
     "xamlClasses": ["js.ui.Link", "js.ui.MenuButton", "js.ui.SplitButton" , "js.ui.TabView"],
-    "namespaceMap": null,
-    "rewriteMap": null
+    "paths": {
+        "xaml": "js/plugins/xaml",
+        "json": "js/plugins/json",
+        "flow": "js/lib/flow",
+        "inherit": "js/lib/inherit",
+        "underscore": "js/lib/underscore"
+    },
+    "shim": {
+        "inherit": {
+            "exports": "inherit"
+        },
+        "flow": {
+            "exports": "flow"
+        },
+        "underscore": {
+            "exports": "_"
+        }
+    }
 }
