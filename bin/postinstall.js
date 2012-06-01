@@ -12,7 +12,7 @@ var postinstall = function (args, callback) {
         "require.js":path.join(nodeModules, "requirejs", "require.js"),
         "flow.js":path.join(nodeModules, "flow.js", "lib", "flow.js"),
         "inherit.js":path.join(nodeModules, "inherit.js", "inherit.js"),
-        "underscore-min.js":path.join(nodeModules, "underscore", "underscore-min.js")
+        "underscore.js":path.join(nodeModules, "underscore", "underscore.js")
     };
 
     if (!path.existsSync(libDir)) {
