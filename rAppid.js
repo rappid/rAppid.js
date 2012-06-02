@@ -56,34 +56,35 @@
                 });
 
 
-                if (mainClass) {
-                    //TODO: have a look at xamlClasses
-                    var parts = xamlApplication.exec(mainClass);
-                    if (parts) {
-                        // mainClass is xaml
-                        mainClass = "xaml!" + parts[2];
-                    } else {
-                        // mainClass is javascript factory
-                        mainClass = mainClass.replace(/\./g, "/");
-                    }
+                requirejsContext(["inherit", "underscore"], function (inherit, _) {
+                    // we have to load inherit.js in order that inheritance is working
+                    underscore = _;
 
-                    requirejsContext(["inherit", "underscore"], function (inherit, _) {
-                        // we have to load inherit.js in order that inheritance is working
-                        underscore = _;
+                    if (inherit && _) {
 
-                        if (inherit && _) {
+                        if (mainClass) {
+                            //TODO: have a look at xamlClasses
+                            var parts = xamlApplication.exec(mainClass);
+                            if (parts) {
+                                // mainClass is xaml
+                                mainClass = "xaml!" + parts[2];
+                            } else {
+                                // mainClass is javascript factory
+                                mainClass = mainClass.replace(/\./g, "/");
+                            }
+
                             requirejsContext([mainClass], function (applicationFactory) {
                                 applicationContext.$applicationFactory = applicationFactory;
                                 callback(null, applicationContext);
                             });
                         } else {
-                            callback("inherit or underscore missing");
+                            callback(null, applicationContext);
                         }
-                    });
 
-                } else {
-                    callback(null, applicationContext);
-                }
+                    } else {
+                        callback("inherit or underscore missing");
+                    }
+                });
 
             };
 
@@ -377,30 +378,3 @@
     typeof requirejs !== "undefined" ? define : require('requirejs').define,
     typeof window !== "undefined" ? window.document : null,
     typeof window !== "undefined" ? window.XMLHttpRequest : require('xmlhttprequest').XMLHttpRequest));
-
-//var rAppid;
-
-//
-//(function (exports, inherit, requirejs, define, underscore, XMLHttpRequest, flow, document) {
-//
-//    if (!requirejs) {
-//        throw "require.js is needed";
-//    }
-//
-//    if (!define) {
-//        throw "define is needed";
-//    }
-//
-//
-//
-//
-//
-//
-//})(typeof exports === "undefined" ? this : exports,
-//   typeof inherit === "undefined" ? require('inherit.js').inherit : inherit,
-//    typeof requirejs === "undefined" ? require('requirejs') : requirejs,
-//    typeof requirejs === "undefined" ? require('requirejs').define : define,
-//    typeof this._ === "undefined" ? require('underscore') : this._,
-//    typeof window === "undefined" ? require('xmlhttprequest').XMLHttpRequest : window.XMLHttpRequest,
-//    typeof flow === "undefined" ? require('flow.js').flow : flow,
-//    typeof document === "undefined" ? (new (require('xmldom').DOMParser)()) : document);
