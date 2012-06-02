@@ -5,11 +5,13 @@ define(
 
         return Element.inherit("js.core.TextElement", {
             _initializeBindings: function () {
+                this.$.textContent = bindingCreator.evaluate(this.$.textContent || "", this, "textContent");
+                this.callBase();
+            },
+            _initializeDescriptors: function(){
                 if (this.$descriptor) {
-                    var textContent = this._getTextContentFromDescriptor(this.$descriptor);
-                    this.$.textContent = bindingCreator.evaluate(textContent, this, "textContent");
+                    this.$.textContent = this._getTextContentFromDescriptor(this.$descriptor);
                 }
-
             },
             render: function () {
                 if (!this.$initialized) {
