@@ -3,6 +3,7 @@
     "paths": {
         "xaml": "js/plugins/xaml",
         "json": "js/plugins/json",
+        "raw": "js/plugins/raw",
         "flow": "js/lib/flow",
         "inherit": "js/lib/inherit",
         "underscore": "js/lib/underscore"
