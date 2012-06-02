@@ -39,13 +39,13 @@ define(['js/core/EventDispatcher','js/core/BindingParser','js/core/Binding', 'un
                 scope = searchScope.getScopeForKey(pathElement.name);
             }
 
-            if (bindingDef.type !== "static") {
-                var cb;
-                if (_.isFunction(attrKey)) {
-                    cb = attrKey;
-                }
+            if(scope){
+                if (bindingDef.type !== "static") {
+                    var cb;
+                    if (_.isFunction(attrKey)) {
+                        cb = attrKey;
+                    }
 
-                if (scope) {
                     var twoWay = (bindingDef.type == Binding.TYPE_TWOWAY);
 
 
@@ -73,10 +73,14 @@ define(['js/core/EventDispatcher','js/core/BindingParser','js/core/Binding', 'un
                         options['targetKey'] = attrKey;
                     }
                     return new Binding(options);
+
+                } else {
+                    return scope.get(bindingDef.path);
                 }
-            } else {
-                return scope.get(bindingDef.path);
+            }else{
+                throw "Couldn't find scope for " + pathElement.name;
             }
+
         },
 
         evaluate: function (text, scope, attrKey) {
