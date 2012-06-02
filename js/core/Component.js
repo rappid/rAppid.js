@@ -357,7 +357,7 @@ define(
 
                         return this.$systemManager.$applicationContext.createInstance(fqClassName, [attributes, node, this.$systemManager, this, rootScope], className);
 
-                    } else if (node.nodeType == 3) { // Textnodes
+                    } else if (node.nodeType == 3 || node.nodeType == 4) { // Textnodes
                         // remove whitespaces from text textnodes
                         var text = node.textContent ? node.textContent : node.text;
                         if (node.textContent) {
