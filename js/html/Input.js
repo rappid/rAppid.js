@@ -1,8 +1,10 @@
 define(["js/html/DomElement"], function (DomElement) {
         return DomElement.inherit("js.html.Input", {
+            $classAttributes: ['updateOnEvent','checked'],
             defaults: {
                 type: 'text',
-                checked: false
+                checked: false,
+                updateOnEvent: 'keyup'
             },
             _renderValue: function (value) {
                 this.$el.value = value;
@@ -14,7 +16,7 @@ define(["js/html/DomElement"], function (DomElement) {
 
                 var self = this;
                 if (this.$.type === "text" || this.$.type === "password") {
-                    this.addEventListener('change', function (e) {
+                    this.addEventListener(this.$.updateOnEvent, function (e) {
                         self.set('value', self.$el.value);
                     });
                 } else if (this.$.type === "checkbox" || this.$.type === "radio") {
