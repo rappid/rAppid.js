@@ -1,26 +1,35 @@
-var should = require('chai').should();
-var requirejs = require('./../lib/TestRunner').require;
+var should = require('chai').should(),
+    testRunner = require('..').TestRunner.setup();
 
-var PagedDataView = requirejs("js/data/PagedDataView"),
-    Collection = requirejs("js/data/Collection");
-
-var CollectionMock = Collection.inherit({
-
-    ctor: function (pageSize, fetchPageCallback) {
-        this.callBase(null, {
-            pageSize: pageSize
-        });
-
-        this.fetchPageCallback = fetchPageCallback;
-    },
-
-    fetchPage: function (pageIndex, options, callback) {
-        this.fetchPageCallback(pageIndex);
-    }
-});
-
+var C = {},
+    CollectionMock;
 
 describe('js.data.PagedView', function () {
+
+    before(function(done){
+        testRunner.requireClasses({
+            PagedDataView: 'js/data/PagedDataView',
+            Collection: 'js/data/Collection'
+        }, C, function() {
+
+            CollectionMock = C.Collection.inherit({
+
+                ctor: function (pageSize, fetchPageCallback) {
+                    this.callBase(null, {
+                        pageSize: pageSize
+                    });
+
+                    this.fetchPageCallback = fetchPageCallback;
+                },
+
+                fetchPage: function (pageIndex, options, callback) {
+                    this.fetchPageCallback(pageIndex);
+                }
+            });
+
+            done();
+        })
+    });
 
     describe('#page Translation', function () {
 
@@ -36,7 +45,7 @@ describe('js.data.PagedView', function () {
                 }
 
             });
-            var pw = new PagedDataView(c, {
+            var pw = new C.PagedDataView(c, {
                 pageSize: pageSize
             });
 
@@ -74,7 +83,7 @@ describe('js.data.PagedView', function () {
                 }
             });
 
-            var pw =  new PagedDataView(c);
+            var pw =  new C.PagedDataView(c);
             pw.set({
                 page: 2
             });

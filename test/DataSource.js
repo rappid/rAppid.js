@@ -1,6 +1,6 @@
 var chai = require('chai'),
     expect = chai.expect,
-    rAppid = require('..');
+    testRunner = require('..').TestRunner.setup();
 
 var C = {};
 
@@ -9,7 +9,7 @@ describe('#DataSource', function () {
     var ds;
 
     before(function (done) {
-        rAppid.requireClasses({
+        testRunner.requireClasses({
             DataSource: 'js/data/DataSource',
             Model: 'js/data/Model',
             Entity: 'js/data/Entity',

@@ -1,7 +1,7 @@
 var chai = require('chai'),
     should = chai.should(),
     expect = chai.expect,
-    rAppid = require('..');
+    testRunner = require('..').TestRunner.setup();
 
 var C = {};
 
@@ -10,7 +10,7 @@ var C = {};
 describe('js.core.Bindable', function () {
 
     before(function (done) {
-        rAppid.requireClasses({
+        testRunner.requireClasses({
             Bindable: 'js/core/Bindable',
             List: 'js/core/List'
         }, C, done);

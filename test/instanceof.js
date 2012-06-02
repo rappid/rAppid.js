@@ -1,25 +1,27 @@
 var should = require('chai').should();
-var requirejs = require('./../lib/TestRunner').require;
-
-var List = requirejs("js/core/List");
+var testRunner = require('..').TestRunner.setup();
 
 describe('js.core.List', function () {
 
     describe('#instanceof check', function () {
 
-        it ('Create an instance and check with instance of', function() {
+        it ('Create an instance and check with instance of', function(done) {
 
-            var l = new List();
-            (l instanceof List).should.be.ok;
+            testRunner.require(['js/core/List'], function(List) {
+                var l = new List();
+                (l instanceof List).should.be.ok;
+                done();
+            });
+
 
         });
 
-        it('Check if class inherits from class without instance creation', function () {
+        it('Check if class inherits from class without instance creation', function (done) {
 
-            var Base = requirejs('js/core/Base'),
-                Router = requirejs('js/core/Router');
-
-            (Router.prototype instanceof Base).should.be.ok;
+            testRunner.require(['js/core/Base', 'js/core/Router'], function(Base, Router) {
+                (Router.prototype instanceof Base).should.be.ok;
+                done();
+            });
 
         });
     });
