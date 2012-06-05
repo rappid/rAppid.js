@@ -1,5 +1,5 @@
-define(["js/html/DomElement", "js/core/TextElement"], function (DomElement, TextElement) {
-        return DomElement.inherit("js.html.TextArea", {
+define(["js/html/HtmlElement", "js/core/TextElement"], function (HtmlElement, TextElement) {
+        return HtmlElement.inherit("js.html.TextArea", {
             _renderChild: function (child) {
                 if (child instanceof TextElement) {
                     // contains two way binding ...

@@ -1,5 +1,5 @@
-define(["js/html/DomElement"], function (DomElement) {
-        return DomElement.inherit("js.html.Input", {
+define(["js/html/HtmlElement"], function (HtmlElement) {
+        return HtmlElement.inherit("js.html.Input", {
             $classAttributes: ['updateOnEvent','checked'],
             defaults: {
                 type: 'text',

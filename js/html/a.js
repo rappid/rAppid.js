@@ -1,10 +1,10 @@
-define(['js/html/DomElement'], function (DomElement) {
+define(['js/html/HtmlElement'], function (HtmlElement) {
 
     var externalLink = /^(([^:]+:\/\/)|(javascript:))/i,
         startsWithHash = /^#/,
         hashBankUrl = /^#?(.*)$/;
 
-    return DomElement.inherit("js.html.a", {
+    return HtmlElement.inherit("js.html.a", {
         defaults: {
             tagName: 'a',
             target: null,

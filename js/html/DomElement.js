@@ -5,16 +5,9 @@ define(["require", "js/core/Component", "js/core/Content", "js/core/Binding", "i
         var domEvents = ['click', 'dblclick', 'keyup', 'keydown' , 'change'];
 
         var ContentPlaceHolder;
-        require(["js/ui/ContentPlaceHolder"], function (CP) {
-            ContentPlaceHolder = CP;
-        });
-
 
         var DomElementFunctions = {
-            defaults: {
-                selected: undefined,
-                selectable: undefined
-            },
+
             $classAttributes: [
                 /^\$/,
                 /^data/,
@@ -23,6 +16,7 @@ define(["require", "js/core/Component", "js/core/Content", "js/core/Binding", "i
                 "cid",
                 /^_/ // private attributes
             ],
+
             ctor: function (attributes, descriptor, systemManager, parentScope, rootScope) {
                 this.$renderMap = {};
                 this.$childViews = [];
@@ -82,7 +76,7 @@ define(["require", "js/core/Component", "js/core/Content", "js/core/Binding", "i
                     this.$contentChildren.push(child);
                 }
             },
-            removeChild: function(child){
+            removeChild: function (child) {
                 this.callBase();
                 if (child instanceof DomElement || child.render) {
                     if (this.isRendered()) {
@@ -113,6 +107,10 @@ define(["require", "js/core/Component", "js/core/Content", "js/core/Binding", "i
 
 
             getContentPlaceHolders: function () {
+
+                if (!ContentPlaceHolder) {
+                    ContentPlaceHolder = require('js/ui/ContentPlaceHolder');
+                }
 
                 var ret = [];
 
@@ -169,7 +167,11 @@ define(["require", "js/core/Component", "js/core/Content", "js/core/Binding", "i
 
                 this.$renderedChildren = [];
 
-                this.$el = this.$systemManager.$document.createElement(this.$tagName);
+                if (this.$systemManager.$document.createElementNS && this.$namespace && /^http/.test(this.$namespace)) {
+                    this.$el = this.$systemManager.$document.createElementNS(this.$namespace, this.$tagName);
+                } else {
+                    this.$el = this.$systemManager.$document.createElement(this.$tagName);
+                }
 
                 // TODO: read layout and create renderMAP
                 /**
@@ -205,7 +207,7 @@ define(["require", "js/core/Component", "js/core/Content", "js/core/Binding", "i
                 }
             },
 
-            _initializeRenderer: function(el) {
+            _initializeRenderer: function (el) {
                 // hook
             },
 
@@ -217,6 +219,7 @@ define(["require", "js/core/Component", "js/core/Content", "js/core/Binding", "i
                     this._renderChild(child);
                 }
             },
+
             _renderContentChildren: function (children) {
                 var child;
                 for (var i = 0; i < children.length; i++) {
@@ -228,6 +231,7 @@ define(["require", "js/core/Component", "js/core/Content", "js/core/Binding", "i
                     }
                 }
             },
+
             _renderChild: function (child) {
                 if (_.isFunction(child.render)) {
                     var el = child.render();
@@ -237,6 +241,7 @@ define(["require", "js/core/Component", "js/core/Content", "js/core/Binding", "i
                     }
                 }
             },
+
             _removeRenderedChild: function (child) {
                 if (this.isRendered()) {
                     var rc;
@@ -250,6 +255,7 @@ define(["require", "js/core/Component", "js/core/Content", "js/core/Binding", "i
                     }
                 }
             },
+
             _clearRenderedChildren: function () {
                 if (this.isRendered()) {
                     var rc;
@@ -260,6 +266,7 @@ define(["require", "js/core/Component", "js/core/Content", "js/core/Binding", "i
                 }
                 this.$renderedChildren = [];
             },
+
             _getIndexOfPlaceHolder: function (placeHolder) {
                 if (this.$layoutTpl) {
                     var child;
@@ -272,9 +279,11 @@ define(["require", "js/core/Component", "js/core/Content", "js/core/Binding", "i
                 }
                 return -1;
             },
+
             isRendered: function () {
                 return typeof (this.$el) !== "undefined";
             },
+
             _renderAttributes: function (attributes) {
                 var attr;
                 for (var key in attributes) {
@@ -284,13 +293,15 @@ define(["require", "js/core/Component", "js/core/Content", "js/core/Binding", "i
                     }
                 }
             },
+
             _renderAttribute: function (key, attr) {
                 var method = this.$renderMap[key];
                 var prev = this.$previousAttributes[key];
 
                 if (_.isUndefined(method)) {
                     // generic call of render functions
-                    var k = key[0].toUpperCase() + key.substr(1);
+
+                    var k = key.charAt(0).toUpperCase() + key.substr(1);
                     var methodName = "_render" + k;
                     method = this[methodName];
 
@@ -323,56 +334,7 @@ define(["require", "js/core/Component", "js/core/Content", "js/core/Binding", "i
                 }
             },
 
-            _renderVisible: function (visible) {
-                if (visible === true) {
-                    this.removeClass('hide');
-                } else if (visible === false) {
-                    this.addClass('hide');
-                }
-            },
-            _renderHidden: function (hidden) {
-                if (typeof(hidden) !== "undefined") {
-                    this.set({visible: !hidden});
-                }
-            },
-            _renderSelected: function (selected) {
-                if (selected === true) {
-                    this.addClass('active');
-                } else if (selected === false) {
-                    this.removeClass('active');
-                }
-            },
-            _renderSelectable: function (selectable) {
-                if (selectable === true) {
-                    if(!this._onSelect){
-                        var self = this;
-                        this._onSelect = function () {
-                            self.set({selected: !self.$.selected});
-                        };
-                    }
-                    this.addEventListener('click', this._onSelect);
-                } else {
-                    if(this._onSelect){
-                        this.removeEvent('click', this._onSelect);
-                    }
-                }
-            },
-            _renderWidth: function (width) {
-                if (width) {
-                    if (typeof(width) !== "string") {
-                        width += "px";
-                    }
-                    this.$el.style.width = width;
-                }
-            },
-            _renderHeight: function (height) {
-                if (height) {
-                    if (typeof(height) !== "string") {
-                        height += "px";
-                    }
-                    this.$el.style.height = height;
-                }
-            },
+
             _commitChangedAttributes: function (attributes) {
                 if (this.isRendered()) {
                     this._renderAttributes(attributes);
@@ -382,7 +344,7 @@ define(["require", "js/core/Component", "js/core/Content", "js/core/Binding", "i
                 this.callBase();
 
                 if (this.$childViews) {
-                    for(var i = 0; i < this.$childViews.length; i++){
+                    for (var i = 0; i < this.$childViews.length; i++) {
                         this.$childViews[i].destroy();
                     }
                 }
@@ -401,10 +363,12 @@ define(["require", "js/core/Component", "js/core/Content", "js/core/Binding", "i
         };
 
         var DomManipulationFunctions = {
+
             hasClass: function (value) {
                 // var classes = this.$el.className.split(" "+value+" ");
 
             },
+
             addClass: function (value) {
                 var classNames = value.split(rspace);
 
@@ -423,8 +387,10 @@ define(["require", "js/core/Component", "js/core/Content", "js/core/Binding", "i
 
                 }
             },
+
             removeClass: function (value) {
-                if (this.$el.className.length === 0) {
+
+                if (!(this.$el.className && this.$el.className.length !== 0)) {
                     return;
                 }
                 var removeClasses = value.split(rspace);
@@ -444,6 +410,7 @@ define(["require", "js/core/Component", "js/core/Content", "js/core/Binding", "i
                     this.$el.className = classes.join(" ");
                 }
             },
+
             addEventListener: function (type, eventHandle) {
                 if (this.$el.addEventListener) {
                     this.$el.addEventListener(type, eventHandle, false);
@@ -452,6 +419,7 @@ define(["require", "js/core/Component", "js/core/Content", "js/core/Binding", "i
                     this.$el.attachEvent("on" + type, eventHandle);
                 }
             },
+
             removeEvent: function (type, handle) {
                 if (this.$el.removeEventListener) {
                     this.$el.removeEventListener(type, handle, false);
@@ -467,6 +435,7 @@ define(["require", "js/core/Component", "js/core/Content", "js/core/Binding", "i
                 this.$el = elm;
             }
         }, DomManipulationFunctions));
+
         var DomElement = Component.inherit("js.html.DomElement",
             _.extend(DomElementFunctions, DomManipulationFunctions));
         return DomElement;
