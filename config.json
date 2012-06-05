@@ -6,7 +6,8 @@
         "raw": "js/plugins/raw",
         "flow": "js/lib/flow",
         "inherit": "js/lib/inherit",
-        "underscore": "js/lib/underscore"
+        "underscore": "js/lib/underscore",
+        "JSON": "js/lib/json2.js"
     },
     "shim": {
         "inherit": {
@@ -17,6 +18,9 @@
         },
         "underscore": {
             "exports": "_"
+        },
+        "JSON": {
+            "exports": "JSON"
         }
     }
 }
