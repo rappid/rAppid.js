@@ -1,5 +1,5 @@
-define(["js/html/DomElement"], function (DomElement) {
-    return DomElement.inherit("js.core.UIComponent", {
+define(["js/html/HtmlElement"], function (HtmlElement) {
+    return HtmlElement.inherit("js.core.UIComponent", {
         defaults: {
             tagName: "div"
         }
