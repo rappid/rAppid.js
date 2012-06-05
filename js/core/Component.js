@@ -1,5 +1,4 @@
-define(
-    ["require", "js/core/Element", "js/core/TextElement", "js/core/BindingCreator", "js/core/Bindable", "js/core/EventDispatcher", "underscore"],
+define(["require", "js/core/Element", "js/core/TextElement", "js/core/BindingCreator", "js/core/Bindable", "js/core/EventDispatcher", "underscore"],
 
     function (require, Element, TextElement, BindingCreator, Bindable, EventDispatcher, _) {
 
