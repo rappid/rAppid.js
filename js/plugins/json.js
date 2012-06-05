@@ -1,4 +1,4 @@
-define([], function () {
+define(['JSON'], function (JSON) {
     var fs, createXhr,
         progIds = ['Msxml2.XMLHTTP', 'Microsoft.XMLHTTP', 'Msxml2.XMLHTTP.4.0'],
         fetchJSON = function (url, callback) {
@@ -87,17 +87,12 @@ define([], function () {
         load: function (name, parentRequire, load, config) {
 
             var url = parentRequire.toUrl(name);
-            console.log(url,name);
-            var jsonParse = (typeof JSON !== 'undefined' && typeof JSON.parse === 'function') ? JSON.parse : function (val) {
-                return eval('(' + val + ')');
-            };
 
             fetchJSON(url, function (err, raw) {
-
                 if (!err) {
-                    load(jsonParse(raw));
+                    load(JSON.parse(raw));
                 } else {
-                    load.error(new Error("Raw for " + url + " not found"));
+                    load.error(new Error("Json for " + url + " not found"));
                 }
             });
         }
