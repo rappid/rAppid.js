@@ -1,5 +1,5 @@
 define(
-    ["js/ui/ItemsView", "js/html/DomElement"], function (ItemsView, DomElement) {
+    ["js/ui/ItemsView", "js/html/HtmlElement"], function (ItemsView, HtmlElement) {
         return ItemsView.inherit({
             defaults: {
                 tagName: "div",
@@ -12,7 +12,7 @@ define(
             },
             addChild: function (child) {
                 this.callBase();
-                if (child instanceof DomElement) {
+                if (child instanceof HtmlElement) {
                     this.$childViews.push(child);
                 }
             },

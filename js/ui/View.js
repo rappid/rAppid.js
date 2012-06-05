@@ -1,6 +1,5 @@
-define(
-    ["js/html/DomElement", "js/core/Template", "js/core/Content", "underscore"], function (DomElement, Template, Content, _) {
-        return DomElement.inherit({
+define(["js/html/HtmlElement", "js/core/Content", "underscore"], function (HtmlElement, Content, _) {
+        return HtmlElement.inherit({
             defaults: {
                 tagName: "div"
             },

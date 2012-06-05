@@ -1,5 +1,5 @@
 define(
-    ["js/ui/ItemsView", "js/html/DomElement", "underscore"], function (ItemsView, DomElement, _) {
+    ["js/ui/ItemsView", "js/html/HtmlElement", "underscore"], function (ItemsView, HtmlElement, _) {
         return ItemsView.inherit("js.ui.SelectionView",{
             $classAttributes: [
                 "needsSelection", "multiSelect", "selectedView","selectedViews","selectedItems","selectedIndex","items", "forceSelectable"
@@ -20,7 +20,7 @@ define(
                 return this.$.selectedViews.length > 0;
             }.onChange('selectedViews'),
             _renderChild: function (child) {
-                if (child instanceof DomElement) {
+                if (child instanceof HtmlElement) {
                     var self = this;
                     if (this.$.forceSelectable === true) {
                         child.set({selectable: true});

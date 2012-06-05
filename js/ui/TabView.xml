@@ -1,14 +1,14 @@
 <?xml version="1.0"?>
 <ui:ItemsView xmlns="http://www.w3.org/1999/xhtml" xmlns:js="js.core" xmlns:ui="js.ui">
     <js:Imports>
-        js.html.DomElement;
+        js.html.HtmlElement;
         js.ui.SelectionView;
         js.ui.SegmentedView;
         js.core.List;
     </js:Imports>
     <js:Script>
         <![CDATA[
-        (function (DomElement, SelectionView, SegmentedView, List) {
+        (function (HtmlElement, SelectionView, SegmentedView, List) {
             return {
                 $classAttributes: ['tabItems', 'tabClassName', 'selectedIndex', 'selectedViews'],
                 defaults: {
@@ -33,7 +33,7 @@
                     this.callBase();
                 },
                 _renderChild: function (child) {
-                    if (child instanceof DomElement && child != this.$selectionView && child != this.$segmentedView) {
+                    if (child instanceof HtmlElement && child != this.$selectionView && child != this.$segmentedView) {
                         this.$.tabItems.add(child);
                         this.$segmentedView.addChild(child);
                     } else {
