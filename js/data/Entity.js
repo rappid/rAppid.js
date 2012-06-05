@@ -67,7 +67,7 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'js/data/Collection'],
         },
 
         _isChildFactoryDependentObject: function(childFactory) {
-            return childFactory && childFactory.$isDependentObject;
+            return childFactory && childFactory.prototype.$isDependentObject;
         },
 
         /**
