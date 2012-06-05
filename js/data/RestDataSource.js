@@ -1,4 +1,4 @@
-define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "flow"], function (DataSource, Base, Model, _, flow) {
+define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "flow", "JSON"], function (DataSource, Base, Model, _, flow, JSON) {
 
     var rIdExtractor = /http.+\/([^/]+)$/;
 
