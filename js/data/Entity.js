@@ -1,7 +1,7 @@
-define(['require', 'js/core/Bindable', 'js/core/List', 'js/data/Collection'],
-    function(require, Bindable, List, Collection) {
+define(['require', 'js/core/Bindable', 'js/core/List'],
+    function(require, Bindable, List) {
     var cid = 0,
-        undefined;
+        Collection;
 
     var Entity = Bindable.inherit('js.core.Entity', {
 
@@ -10,11 +10,6 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'js/data/Collection'],
             // generate unique id
             this.$cid = ++cid;
 
-
-            if (!Collection) {
-                // circular dependency between Collection <-> Model
-                Collection = require('js/data/Collection');
-            }
 
             this._extendSchema();
 
@@ -76,6 +71,15 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'js/data/Collection'],
          */
         parse: function (data, action, options) {
 
+            if (!Collection) {
+                try {
+                    Collection = require('js/data/Collection');
+                } catch (e) {
+                    // because a circular dependency from Entity -> Collection and Collection -> Model -> Entity
+                    // we require Collection here, and if Collection is specified as schema, we can use it here
+                }
+            }
+
             var processor = this.$context.$datasource.getProcessorForModel(this);
             data = processor.parse(data, action, options);
 
@@ -127,7 +131,12 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'js/data/Collection'],
                             } else {
                                 throw 'Schema for type "' + type + '" requires to be an array';
                             }
-                        } else if (schemaType.classof(Collection)) {
+
+
+                        // TODO: check if collection here, removed requireing of circular dependency
+                        // FIXME
+
+                        } else if (Collection && schemaType.classof(Collection)) {
 
                             // set alias to type if generic collection
                             alias = (schemaType === this.$context.$datasource.$collectionFactory) ? type : schemaType.prototype.$alias;
