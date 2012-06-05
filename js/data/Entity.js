@@ -133,9 +133,6 @@ define(['require', 'js/core/Bindable', 'js/core/List'],
                             }
 
 
-                        // TODO: check if collection here, removed requireing of circular dependency
-                        // FIXME
-
                         } else if (Collection && schemaType.classof(Collection)) {
 
                             // set alias to type if generic collection
