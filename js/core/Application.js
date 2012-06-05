@@ -1,5 +1,4 @@
-define(
-    ["js/core/UIComponent", "js/core/History"], function (UIComponent, History) {
+define(["js/core/UIComponent", "js/core/History"], function (UIComponent, History) {
         return UIComponent.inherit("js.core.Application", {
             $classAttributes: [/.+/],
             ctor: function () {
