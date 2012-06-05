@@ -25,7 +25,8 @@
             this.$to = to;
         },
         defaultNamespaceMap = {
-            "http://www.w3.org/1999/xhtml": "js.html"
+            "http://www.w3.org/1999/xhtml": "js.html",
+            "http://www.w3.org/2000/svg": "js.svg"
         },
         defaultRewriteMap = [
             new Rewrite(/^js\/html\/(a)$/, "js/html/a"),
@@ -33,8 +34,26 @@
             new Rewrite(/^js\/html\/(select)$/, "js/html/Select"),
             new Rewrite(/^js\/html\/(textarea)$/, "js/html/TextArea"),
             new Rewrite(/^js\/html\/(option)$/, "js/html/Option"),
-            new Rewrite(/^js\/html\/(.+)$/, "js/html/DomElement")
+            new Rewrite(/^js\/html\/(.+)$/, "js/html/HtmlElement"),
+            new Rewrite(/^js\/svg\/(.+)$/, "js/svg/SvgElement")
         ];
+
+    if (typeof JSON !== "undefined") {
+        define("JSON", function () {
+            return JSON;
+        });
+    } else {
+        requirejs.config({
+            paths: {
+                JSON: "js/lib/json2"
+            },
+            shim: {
+                JSON: {
+                    exports: "JSON"
+                }
+            }
+        });
+    }
 
     var rAppid = {
 
@@ -55,6 +74,11 @@
                     return applicationContext;
                 });
 
+                if (typeof JSON !== "undefined") {
+                    define("JSON", function() {
+                        return JSON;
+                    });
+                }
 
                 requirejsContext(["inherit", "underscore"], function (inherit, _) {
                     // we have to load inherit.js in order that inheritance is working
@@ -76,6 +100,8 @@
                             requirejsContext([mainClass], function (applicationFactory) {
                                 applicationContext.$applicationFactory = applicationFactory;
                                 callback(null, applicationContext);
+                            }, function(err) {
+                                callback(err);
                             });
                         } else {
                             callback(null, applicationContext);
