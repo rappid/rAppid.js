@@ -30,6 +30,9 @@ define(["require", "js/core/Component", "js/core/Base", "js/data/Collection", "u
                 return this.$cache[cacheId];
             },
 
+            getPathComponents: function () {
+                return [];
+            },
 
             createEntity: function (factory, id, alias) {
 
@@ -469,8 +472,8 @@ define(["require", "js/core/Component", "js/core/Base", "js/data/Collection", "u
             getConfigurationByAlias: function (alias) {
 
                 // TODO: cache it
-                for (var i = 0; i < this.$datasource.$configuredTypes.length; i++) {
-                    var config = this.$datasource.$configuredTypes[i];
+                for (var i = 0; i < this.$configuredTypes.length; i++) {
+                    var config = this.$configuredTypes[i];
                     if (config.$.alias === alias) {
                         return config;
                     }

@@ -1,238 +1,189 @@
-define(["js/data/DataSource", "js/core/List", "underscore"], function(DataSource, List, _){
+define(["js/data/DataSource", "js/data/Model", "flow", "JSON"],
+    function (DataSource, Model, flow, JSON) {
 
-    var undef,
-        referenceCollectionTypeExtractor = /^.*\/([^/]+)$/i,
-        referenceModelTypeExtractor = /^.*\/([^/]+)\/(\w+)$/i;
+        var createUUID = (function (uuidRegEx, uuidReplacer) {
+            return function () {
+                return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(uuidRegEx, uuidReplacer).toUpperCase();
+            };
+        })(/[xy]/g, function (c) {
+            var r = Math.random() * 16 | 0,
+                v = c == "x" ? r : (r & 3 | 8);
+            return v.toString(16);
+        });
 
-    return DataSource.inherit("js.data.LocalStorageDataSource", {
+        return DataSource.inherit("js.data.LocalStorageDataSource", {
+            defaults : {
+                name: 'default'
+            },
+            ctor: function() {
+                this.callBase();
 
-        loadModel: function(model, options, callback) {
+                this.$storage = this._getStorage();
 
-            if (!model) {
-                throw "model not defined";
-            }
-
-            if (model.status != "CREATED") {
-                throw "model not created";
-            }
-
-            if (!(window && window.localStorage)) {
-                // local storage not supported
-                if (callback) {
-                    callback("local storage not supported");
+                if (!this.$storage) {
+                    throw "Storage not available";
                 }
-                return;
-            }
+                // this.$storage.removeItem(this.$.name);
+                var value = this.$storage.getItem(this.$.name);
+                this.$data = (value && JSON.parse(value)) || {};
+            },
 
-            try {
-                var cacheId = model.modelClassName + "_" + model.$.id;
-                var data = localStorage.getItem(cacheId);
-
-                if (data === undef) {
-                    // data not found in local storage
-                    if (callback) {
-                        callback("data not found");
+            getPathComponentsForModel: function (model) {
+                if (model) {
+                    var conf = this.getConfigurationByAlias(model.$alias);
+                    if (conf) {
+                        return [conf.$.path];
                     }
+                }
+                return null;
+            },
 
+            getPathForAlias: function (alias) {
+
+                var typeConfig,
+                    i;
+
+                // search via alias
+                for (i = 0; i < this.$configuredTypes.length; i++) {
+                    typeConfig = this.$configuredTypes[i];
+                    if (typeConfig.$.alias == alias) {
+                        return typeConfig.$.path;
+                    }
+                }
+
+                return null;
+            },
+
+            _getStorage: function() {
+                if (typeof window !== "undefined" && window.localStorage) {
+                    return window.localStorage;
+                }
+
+                return null;
+            },
+            loadCollectionPage: function (page, options, callback) {
+                callback = callback || function(){};
+
+                var modelPathComponents = page.$collection.$options.path ?
+                    page.$collection.$options.path : this.getPathForAlias(page.$collection.$alias);
+
+                if (!modelPathComponents) {
+                    callback("path for model unknown", null, options);
                     return;
                 }
 
-                self.resolveReferences(model, data, options, function (err, resolvedData) {
-                    if (!err) {
-                        model.set(resolvedData);
-                    }
+                // build uri
+                var uri = [];
+                uri = uri.concat(page.$collection.$context.getPathComponents());
+                uri = uri.concat(modelPathComponents);
 
-                    callback(err, model, options);
-                });
-
-            } catch (e) {
-                if (callback) {
-                    callback(e);
-                }
-            }
-
-        },
-
-        loadCollectionPage: function(page, options, callback) {
-            if (!(window && window.localStorage)) {
-                // local storage not supported
-                if (callback) {
-                    callback("local storage not supported");
+                var data = [], collection = this.$data[uri.join(":")] || [];
+                for (var i = 0; i < collection.length; i++) {
+                    data.push(this.$data[collection[i]]);
                 }
 
-                return;
-            }
+                data = page.parse(data);
+                page.add(data);
 
-            var cacheId = page.$collection.$options.type;
-            var data = localStorage.getItem(cacheId);
 
-            if (data !== undef) {
-                if (data instanceof Array) {
-                    // set meta data
-                    page.$collection.$itemsCount = data.length;
+                callback(null, page, options);
+            },
+            saveModel: function (model, options, callback) {
 
-                    this.resolveReferences(page, data, options, function(err, resolvedData) {
-                        if (!err) {
-                            page.add(resolvedData);
+                callback = callback || function(){
+                };
+
+
+                var action = DataSource.ACTION.UPDATE;
+
+                if (model._status() === Model.STATE.NEW) {
+                    action = DataSource.ACTION.CREATE;
+                }
+
+                var processor = this.getProcessorForModel(model, options);
+                var formatProcessor = this.getFormatProcessor(action);
+                var self = this;
+
+                // call save of the processor to save submodels
+                flow()
+                    .seq(function (cb) {
+                        processor.saveSubModels(model, options, cb)
+                    })
+                    .seq(function (cb) {
+                        // compose data in model and in processor
+                        var payload = model.compose(action, options);
+                        if (model._status() === Model.STATE.NEW) {
+                            payload.id = createUUID();
                         }
 
-                        callback(err, page, options);
+                        if (formatProcessor) {
+                            payload = formatProcessor.serialize(payload);
+                        }
+                        self.$data[payload.id] = payload;
+
+                        // add
+                        if(action === DataSource.ACTION.CREATE){
+                            // get collection url for url
+                            var modelPathComponents = self.getPathComponentsForModel(model);
+
+                            if (!modelPathComponents) {
+                                cb("path for model unknown");
+                                return;
+                            }
+
+                            // build uri
+                            var uri = [];
+                            uri = uri.concat(model.$context.getPathComponents());
+                            uri = uri.concat(modelPathComponents);
+
+                            var collection = self.$data[uri.join(":")] || [];
+                            // TODO: check it its already in
+                            collection.push(payload.id);
+                            self.$data[uri.join(":")] = collection;
+                        }
+
+                        self._saveStorage();
+                        model.set('id',payload.id);
+                        cb();
+                    })
+                    .exec(function (err) {
+                        callback(err, model, options);
                     })
 
+
+            },
+            loadModel: function(model, options, callback){
+                callback = callback || function(){};
+
+                var formatProcessor = this.getFormatProcessor(DataSource.ACTION.LOAD);
+
+                var payload;
+                if (model.$.id) {
+                    payload = this.$data[model.$.id];
                 } else {
-                    callback("collection data not an array");
+                    callback("Model has no id");
+                    return;
                 }
-            } else {
-                callback(null, page, options);
-            }
-        },
 
-
-        isReferencedModel: function (obj) {
-            return obj.hasOwnProperty("id") && obj.hasOwnProperty("href") &&
-                _.keys(obj).length === 2 && obj["href"].indexOf("localStorage://") === 0;
-        },
-
-        isReferencedCollection: function (obj) {
-            return !obj.hasOwnProperty("id") && obj.hasOwnProperty("href") &&
-                _.keys(obj).length === 2 && obj["href"].indexOf("localStorage://") === 0;
-        },
-
-        getReferenceInformation: function (reference, id) {
-            // url is something like
-            // http://example.com/api/context/resourceType/id
-
-            var extractor = id ? referenceModelTypeExtractor : referenceCollectionTypeExtractor;
-
-            var match = extractor.exec(reference);
-            if (match) {
-                var path = match[1];
-
-                for (var i = 0; i < this.$configuredTypes.length; i++) {
-                    var config = this.$configuredTypes[i];
-
-                    if (config.$.path == path) {
-                        return {
-                            context: this.getContextPropertiesFromReference(reference),
-                            modelClassName: config.$.modelClassName,
-                            requireClassName: this.$systemManager.$applicationContext.getFqClassName(config.$.modelClassName),
-                            type: config.$.alias,
-                            id: id,
-                            path: path
-                        }
-                    }
+                if(!payload){
+                    callback("Could not find model");
+                    return;
                 }
+
+                if (formatProcessor) {
+                    payload = formatProcessor.deserialize(payload);
+                }
+
+                payload = model.parse(payload);
+
+                // TODO: resolve references
+                model.set(payload);
+
+                callback(null, model, options);
+            },
+            _saveStorage: function(){
+                this.$storage.setItem(this.$.name,JSON.stringify(this.$data));
             }
 
-            // could not retrieve reference information
-            return null;
-        },
-
-
-        /***
-         *
-         * @param {js.data.Model|js.data.Collection} target
-         * @param data data containing the references
-         * @param options
-         * @param callback
-         */
-        resolveReferences: function (target, data, options, callback) {
-
-            // first identify all needed model classes
-            var referenceInformation = [],
-                self = this;
-
-            function findReferences(obj, api) {
-
-                for (var prop in obj) {
-                    if (obj.hasOwnProperty(prop)) {
-                        var value = obj[prop];
-
-                        if (value instanceof List) {
-                            value.each(function (item) {
-                                findReferences(item, api);
-                            });
-                        } else if (value instanceof Object) {
-                            // value is object and could contain sub objects with references
-                            // first resolve references
-
-                            findReferences(value, api);
-
-                            if (self.isReferencedModel(value) || self.isReferencedCollection(value)) {
-                                var info = self.getReferenceInformation(value[self.$.referenceProperty], value[self.$.identifierProperty]);
-                                if (info) {
-                                    info.referenceObject = obj;
-                                    info.propertyName = prop;
-                                    referenceInformation.push(info);
-                                } else {
-                                    throw "Cannot determinate referenceInformation for reference '" + value[self.$.referenceProperty] + "'.";
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            findReferences(data);
-
-            var requiredClasses = [];
-            for (var i = 0; i < referenceInformation.length; i++) {
-                var info = referenceInformation[i];
-                var requiredClassname = info.requireClassName;
-
-                if (_.indexOf(requiredClasses, requiredClassname) == -1) {
-                    requiredClasses.push(requiredClassname);
-                }
-            }
-
-            // require model classes
-
-            // TODO: how to handle errors here? require.onError?
-            // some unique hash and extending of requirejs required
-            require(requiredClasses, function () {
-                var factories = Array.prototype.slice.call(arguments);
-
-                for (var i = 0; i < referenceInformation.length; i++) {
-                    var info = referenceInformation[i];
-                    var factory = factories[_.indexOf(requiredClasses, info.requireClassName)];
-
-                    if (factory) {
-                        // create instance in correct context
-
-                        var context = self.getContext(info.context, target.$context);
-
-                        var isModel = info.id;
-
-                        var referenceInstance = isModel ?
-                            self.createEntity(factory, info.id, info.type, context) :
-                            self.createCollection(factory, {
-                                path: info.path
-                            }, info.type, context);
-
-                        if (referenceInstance) {
-                            var value = info.referenceObject[info.propertyName];
-                            info.referenceObject[info.propertyName] = referenceInstance;
-
-                            if (isModel) {
-                                referenceInstance.set(value);
-                            } else {
-                                // TODO: set loaded data for collection, if available in payload
-                            }
-
-                        } else {
-                            callback("Instance for model '" + info.className + "' couldn't be created");
-                        }
-
-                    } else {
-                        callback("Factory for class '" + info.className + "' missing");
-                    }
-
-                }
-
-                callback(null, data);
-            });
-        }
-
-
+        });
     });
-});
