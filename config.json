@@ -21,6 +21,9 @@
         },
         "JSON": {
             "exports": "JSON"
+        },
+        "js/lib/parser": {
+            "exports": "parser"
         }
     }
 }

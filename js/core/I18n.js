@@ -26,18 +26,18 @@ define(["require", "js/core/Component", "underscore"], function (require, Compon
             }
 
             var self = this;
-            if(callback){
-                callback();
-            }
-//            require(['json!' + this.$.path + '/' + this.$.locale], function (translations) {
-//                self.set({
-//                    translations: translations
-//                });
-//
-//                if (callback) {
-//                    callback();
-//                }
-//            });
+//            if(callback){
+//                callback();
+//            }
+            require(['json!' + this.$.path + '/' + this.$.locale], function (translations) {
+                self.set({
+                    translations: translations
+                });
+
+                if (callback) {
+                    callback();
+                }
+            });
         },
 
         /**

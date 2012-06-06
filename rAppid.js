@@ -55,6 +55,12 @@
         });
     }
 
+    requirejs.config({
+        paths: {
+            json: "js/plugins/json"
+        }
+    });
+
     var rAppid = {
 
         createApplicationContext: function (mainClass, config, callback) {
@@ -115,7 +121,7 @@
             };
 
             if (Object.prototype.toString.call(config) == '[object String]') {
-                requirejs(["js/plugins/json!" + config], function (config) {
+                requirejs(["json!" + config], function (config) {
                     internalCreateApplicationContext(config);
                 });
             } else {

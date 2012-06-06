@@ -38,7 +38,9 @@
     },
     "devDependencies": {
         "chai": "*",
-        "mocha": "*"
+        "mocha": "*" ,
+        "pegjs": "*"
+
     },
     "license": "MIT",
     "engine": {

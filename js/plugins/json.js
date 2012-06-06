@@ -4,7 +4,8 @@ define(['JSON'], function (JSON) {
         fetchJSON = function (url, callback) {
             throw new Error('Environment unsupported.');
         },
-        buildMap = {};
+        buildMap = {},
+        rSuffix = /^(.+)\.json$/i;
 
 
     if ((typeof window !== "undefined" && window.navigator && window.document) || typeof importScripts !== "undefined") {
@@ -86,7 +87,11 @@ define(['JSON'], function (JSON) {
 
         load: function (name, parentRequire, load, config) {
 
-            var url = parentRequire.toUrl(name);
+
+            name = name.replace(rSuffix,"$1");
+            name = name + ".json";
+
+            var url = parentRequire.toUrl(name );
 
             fetchJSON(url, function (err, raw) {
                 if (!err) {
