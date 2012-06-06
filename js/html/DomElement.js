@@ -328,8 +328,21 @@ define(["require", "js/core/Component", "js/core/Content", "js/core/Binding", "i
                         }
                     }
 
-                    if (!_.isUndefined(attr)) {
-                        this.$el.setAttribute(key, attr);
+                    this._setAttribute(key, attr);
+
+                }
+            },
+
+            _setAttribute: function(key, value, namespaceUri) {
+
+                if (!_.isUndefined(value)) {
+
+                    namespaceUri = namespaceUri || this.$attributesNamespace[key];
+
+                    if (this.$el.setAttributeNS && namespaceUri) {
+                        this.$el.setAttributeNS(namespaceUri, key, value)
+                    } else {
+                        this.$el.setAttribute(key, value);
                     }
                 }
             },
