@@ -1,17 +1,14 @@
 define(["js/core/Bindable", "underscore"], function (Bindable, _) {
 
-        var undef;
-        var floatRegEx = /^[0-9]+\.?[0-9]*$/;
+        var undefined;
 
         function stringToPrimitive(str) {
             // if it's not a string
             if (_.isString(str)) {
 
-                if(floatRegEx.test(str)){
-                    var n = parseFloat(str);
-                    if (!_.isNaN(n)) {
-                        return n;
-                    }
+                var num = Number(str);
+                if (!isNaN(num)) {
+                    return num;
                 }
 
                 if (str === "true") {
@@ -39,19 +36,22 @@ define(["js/core/Bindable", "underscore"], function (Bindable, _) {
                 this.$systemManager = systemManager;
                 this.$parentScope = parentScope || null;
                 this.$rootScope = rootScope || null;
+                this.$attributesNamespace = this.$attributesNamespace || {};
 
                 this.callBase(attributes);
 
                 this._initializeAttributes(this.$);
 
                 // manually constructed
-                if (descriptor === undef || descriptor === null) {
+                if (descriptor === undefined || descriptor === null) {
                     this._initialize(this.$creationPolicy);
                 }
 
             },
 
             _getAttributesFromDescriptor: function (descriptor) {
+
+                this.$attributesNamespace = this.$attributesNamespace || {};
 
                 var attributes = {};
 
@@ -63,6 +63,11 @@ define(["js/core/Bindable", "underscore"], function (Bindable, _) {
                         // don't add xmlns attributes
                         if(node.nodeName.indexOf("xmlns") !== 0){
                             attributes[node.nodeName] = stringToPrimitive(node.value);
+
+                            if (node.namespaceURI) {
+                                this.$attributesNamespace[node.localName] = node.namespaceURI;
+                            }
+
                         }
 
                     }
