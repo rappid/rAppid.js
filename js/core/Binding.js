@@ -1,4 +1,4 @@
-define(["js/core/EventDispatcher", "js/core/BindingParser", "underscore"], function (EventDispatcher, Parser, _) {
+define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (EventDispatcher, Parser, _) {
 
     /**
      * Returns false if path includes function

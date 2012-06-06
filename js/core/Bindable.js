@@ -1,5 +1,5 @@
-define(["js/core/EventDispatcher", "js/core/BindingParser", "js/core/Binding","underscore"],
-    function (EventDispatcher, BindingParser, Binding, _) {
+define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding","underscore"],
+    function (EventDispatcher, Parser, Binding, _) {
 
         var indexExtractor = /^(.*)\[(\d+)\]$/,
             undefined, List;
@@ -172,7 +172,7 @@ define(["js/core/EventDispatcher", "js/core/BindingParser", "js/core/Binding","u
                     }else if(_.isObject(key)){
                         path = [key];
                     }else{
-                        path = BindingParser.parse(key, "path");
+                        path = Parser.parse(key, "path");
                     }
 
 

@@ -1,15 +1,14 @@
 var should = require('chai').should(),
     testRunner = require('..').TestRunner.setup(),
     flow = require('flow.js').flow;
-
 var C = {};
 
 
-describe('js.core.BindingParser', function () {
+describe('parser test', function () {
 
     before(function(done) {
         testRunner.requireClasses({
-            Parser: "js/core/BindingParser"
+            Parser: "js/lib/parser"
         }, C, done);
     });
 
