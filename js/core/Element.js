@@ -62,7 +62,7 @@ define(["js/core/Bindable", "underscore"], function (Bindable, _) {
                         node = descriptor.attributes[a];
                         // don't add xmlns attributes
                         if(node.nodeName.indexOf("xmlns") !== 0){
-                            attributes[node.nodeName] = stringToPrimitive(node.value);
+                            attributes[node.localName] = stringToPrimitive(node.value);
 
                             if (node.namespaceURI) {
                                 this.$attributesNamespace[node.localName] = node.namespaceURI;
