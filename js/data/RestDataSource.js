@@ -75,7 +75,7 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
 
                     var ret = [path];
 
-                    if (model.status() === Model.STATE.CREATED) {
+                    if (model._status() === Model.STATE.CREATED) {
                         ret.push(model.$.id);
                     }
 
@@ -255,7 +255,7 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
             var action = DataSource.ACTION.UPDATE,
                 method = RestDataSource.METHOD.PUT;
 
-            if (model.status() === Model.STATE.NEW) {
+            if (model._status() === Model.STATE.NEW) {
                 action = DataSource.ACTION.CREATE;
                 method = RestDataSource.METHOD.POST;
             }
@@ -438,9 +438,6 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
             return this.callBase(factory, options, type);
         },
 
-        getPathComponents: function () {
-            return [];
-        },
         getQueryParameter: function () {
             return {};
         }

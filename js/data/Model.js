@@ -34,7 +34,7 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
 
             // TODO: handle multiple access
             try {
-                var status = this.status();
+                var status = this._status();
 
                 if (status === STATE.NEW || status === STATE.CREATED) {
                     this.$context.$datasource.saveModel(this, options, callback);
@@ -112,13 +112,13 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
             this.$context.$datasource.remove(options, callback);
         },
 
-        status: function () {
+        _status: function () {
             if (this.$.id === false) {
                 return STATE.DELETED;
             } else {
                 return this.$.id ? STATE.CREATED : STATE.NEW;
             }
-        }.on("id")
+        }
     });
 
     function fetchSubModels(attributes, subModelTypes, delegates) {
