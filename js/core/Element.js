@@ -1,14 +1,17 @@
 define(["js/core/Bindable", "underscore"], function (Bindable, _) {
 
         var undef;
+        var floatRegEx = /^[0-9]+\.?[0-9]*$/;
 
         function stringToPrimitive(str) {
             // if it's not a string
             if (_.isString(str)) {
 
-                var n = parseFloat(str);
-                if (!_.isNaN(n)) {
-                    return n;
+                if(floatRegEx.test(str)){
+                    var n = parseFloat(str);
+                    if (!_.isNaN(n)) {
+                        return n;
+                    }
                 }
 
                 if (str === "true") {
