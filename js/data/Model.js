@@ -25,7 +25,6 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
             };
 
             this.callBase(attributes);
-
         },
 
         $isDependentObject: false,
@@ -103,13 +102,27 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
 
                 });
             }
-
-
         },
-
-
         remove: function (options, callback) {
-            this.$context.$datasource.remove(options, callback);
+            // TODO: handle multiple access
+            try {
+                var status = this._status();
+                var self = this;
+                if (status === STATE.CREATED) {
+                    this.$context.$datasource.removeModel(this, options, function(err){
+                        if(!err){
+                            self.set('id', false);
+                        }
+                        callback(err);
+                    });
+                } else {
+                    throw "status '" + status + "' doesn't allow delete";
+                }
+            } catch(e) {
+                if (callback) {
+                    callback(e);
+                }
+            }
         },
 
         _status: function () {
@@ -118,7 +131,7 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
             } else {
                 return this.$.id ? STATE.CREATED : STATE.NEW;
             }
-        }
+        }.onChange('id')
     });
 
     function fetchSubModels(attributes, subModelTypes, delegates) {

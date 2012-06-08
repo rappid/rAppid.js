@@ -17,8 +17,10 @@ define(["js/data/DataView", "js/core/List", "js/data/Collection", "flow", "under
 
         initialize: function() {
             this.set('list', new List());
-            this.bind('baseList','add', this.hasNextPage.trigger);
+            this.bind('baseList', 'add', this.hasNextPage.trigger);
+            this.bind('change:pageSize', this._onPageSizeChange, this);
             this.callBase();
+
         },
 
         _commitChangedAttributes: function (attributes) {
@@ -57,6 +59,10 @@ define(["js/data/DataView", "js/core/List", "js/data/Collection", "flow", "under
                 this.showPage(attributes.page, null, attributes.page !== this.$previousAttributes.page);
             }
 
+
+        },
+        _onPageSizeChange: function(){
+            this.showPage(this.$.page, null, true);
         },
 
         /***

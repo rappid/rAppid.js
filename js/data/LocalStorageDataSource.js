@@ -1,15 +1,7 @@
-define(["js/data/DataSource", "js/data/Model", "flow", "JSON"],
-    function (DataSource, Model, flow, JSON) {
+define(["js/data/DataSource", "js/data/Model", "flow"],
+    function (DataSource, Model, flow) {
 
-        var createUUID = (function (uuidRegEx, uuidReplacer) {
-            return function () {
-                return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(uuidRegEx, uuidReplacer).toUpperCase();
-            };
-        })(/[xy]/g, function (c) {
-            var r = Math.random() * 16 | 0,
-                v = c == "x" ? r : (r & 3 | 8);
-            return v.toString(16);
-        });
+        var jsonFormatProcessor = new DataSource.JsonFormatProcessor();
 
         return DataSource.inherit("js.data.LocalStorageDataSource", {
             defaults : {
@@ -23,11 +15,12 @@ define(["js/data/DataSource", "js/data/Model", "flow", "JSON"],
                 if (!this.$storage) {
                     throw "Storage not available";
                 }
-                // this.$storage.removeItem(this.$.name);
                 var value = this.$storage.getItem(this.$.name);
-                this.$data = (value && JSON.parse(value)) || {};
+                this.$data = (value && this.getFormatProcessor(null).deserialize(value)) || {};
             },
-
+            getFormatProcessor: function(action){
+                return jsonFormatProcessor;
+            },
             getPathComponentsForModel: function (model) {
                 if (model) {
                     var conf = this.getConfigurationByAlias(model.$alias);
@@ -61,25 +54,36 @@ define(["js/data/DataSource", "js/data/Model", "flow", "JSON"],
 
                 return null;
             },
-            loadCollectionPage: function (page, options, callback) {
-                callback = callback || function(){};
-
-                var modelPathComponents = page.$collection.$options.path ?
-                    page.$collection.$options.path : this.getPathForAlias(page.$collection.$alias);
-
-                if (!modelPathComponents) {
+            _getCollectionData : function(path, contextPath){
+                if (!path) {
                     callback("path for model unknown", null, options);
                     return;
                 }
 
                 // build uri
                 var uri = [];
-                uri = uri.concat(page.$collection.$context.getPathComponents());
-                uri = uri.concat(modelPathComponents);
+                if(contextPath){
+                    uri = uri.concat(contextPath);
+                }
+                uri = uri.concat(path);
 
-                var data = [], collection = this.$data[uri.join(":")] || [];
-                for (var i = 0; i < collection.length; i++) {
-                    data.push(this.$data[collection[i]]);
+                return this.$data[uri.join(":")] || {};
+            },
+            loadCollectionPage: function (page, options, callback) {
+                callback = callback || function(){};
+
+                var path = page.$collection.$options.path ?
+                    page.$collection.$options.path : this.getPathForAlias(page.$collection.$alias);
+
+                var contextPath = page.$collection.$context.getPathComponents();
+
+
+
+                var data = [], collection = this._getCollectionData(path, contextPath);
+                for (var key in collection) {
+                    if(collection.hasOwnProperty(key)){
+                        data.push(this.$data[key]);
+                    }
                 }
 
                 data = page.parse(data);
@@ -113,11 +117,7 @@ define(["js/data/DataSource", "js/data/Model", "flow", "JSON"],
                         // compose data in model and in processor
                         var payload = model.compose(action, options);
                         if (model._status() === Model.STATE.NEW) {
-                            payload.id = createUUID();
-                        }
-
-                        if (formatProcessor) {
-                            payload = formatProcessor.serialize(payload);
+                            payload.id = DataSource.IdGenerator.genId();
                         }
                         self.$data[payload.id] = payload;
 
@@ -136,9 +136,8 @@ define(["js/data/DataSource", "js/data/Model", "flow", "JSON"],
                             uri = uri.concat(model.$context.getPathComponents());
                             uri = uri.concat(modelPathComponents);
 
-                            var collection = self.$data[uri.join(":")] || [];
-                            // TODO: check it its already in
-                            collection.push(payload.id);
+                            var collection = self.$data[uri.join(":")] || {};
+                            collection[payload.id] = true;
                             self.$data[uri.join(":")] = collection;
                         }
 
@@ -170,10 +169,6 @@ define(["js/data/DataSource", "js/data/Model", "flow", "JSON"],
                     return;
                 }
 
-                if (formatProcessor) {
-                    payload = formatProcessor.deserialize(payload);
-                }
-
                 payload = model.parse(payload);
 
                 // TODO: resolve references
@@ -181,8 +176,29 @@ define(["js/data/DataSource", "js/data/Model", "flow", "JSON"],
 
                 callback(null, model, options);
             },
+            removeModel: function(model, options, callback){
+                callback = callback || function () {
+                };
+
+                var payload;
+                if (model.$.id) {
+                    delete this.$data[model.$.id];
+
+                    var collection = this._getCollectionData(this.getPathComponentsForModel(model));
+                    if(collection){
+                        delete collection[model.$.id];
+                    }
+                } else {
+                    callback("Model has no id");
+                    return;
+                }
+                this._saveStorage();
+
+                callback(null, model, options);
+            },
+
             _saveStorage: function(){
-                this.$storage.setItem(this.$.name,JSON.stringify(this.$data));
+                this.$storage.setItem(this.$.name,this.getFormatProcessor(null).serialize(this.$data));
             }
 
         });

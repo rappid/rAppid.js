@@ -1,22 +1,14 @@
-define(["js/html/HtmlElement", "js/core/TextElement"], function (HtmlElement, TextElement) {
+define(["js/html/HtmlElement", "js/core/TextElement", "js/core/BindingCreator"], function (HtmlElement, TextElement, BindingCreator) {
         return HtmlElement.inherit("js.html.TextArea", {
             _renderChild: function (child) {
                 if (child instanceof TextElement) {
                     // contains two way binding ...
-                    var text = this._getTextContentFromDescriptor(child.$descriptor);
-                    /*
-                     if(this._isBindingDefinition(text)){
-                     this._initBinding(text,"value");
-                     } */
+                    var text = this.$bindingCreator.evaluate(this._getTextContentFromDescriptor(child.$descriptor), this, "value");
+                    this.set('value', text);
                 }
             },
             _renderValue: function (value) {
-                if (Element.textContent) {
-                    this.$el.textContent = value;
-                } else {
-                    this.$el.innerText = value;
-                }
-
+                this.$el.value = String(value);
             },
             _bindDomEvents: function () {
                 var self = this;

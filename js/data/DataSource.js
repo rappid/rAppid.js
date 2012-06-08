@@ -1,114 +1,114 @@
-define(["require", "js/core/Component", "js/core/Base", "js/data/Collection", "underscore", "js/data/Model", "js/data/Entity", "js/core/List", "flow"],
-    function (require, Component, Base, Collection, _, Model, Entity, List, flow) {
+define(["require", "js/core/Component", "js/core/Base", "js/data/Collection", "underscore", "js/data/Model", "js/data/Entity", "js/core/List", "flow", "JSON"],
+    function (require, Component, Base, Collection, _, Model, Entity, List, flow, JSON) {
 
         var undefined,
             Context = Base.inherit("js.data.DataSource.Context", {
 
-            defaults: {
-                collectionPageSize: null
-            },
+                defaults: {
+                    collectionPageSize: null
+                },
 
-            ctor: function (dataSource, properties, parentContext) {
-                this.callBase();
+                ctor: function (dataSource, properties, parentContext) {
+                    this.callBase();
 
-                this.$datasource = dataSource;
-                this.$properties = properties;
-                this.$parent = parentContext;
-                this.$cache = {};
+                    this.$datasource = dataSource;
+                    this.$properties = properties;
+                    this.$parent = parentContext;
+                    this.$cache = {};
 
-            },
+                },
 
-            addEntityToCache: function (model) {
-                this.$cache[Context.generateCacheIdFromEntity(model)] = model;
-            },
+                addEntityToCache: function (model) {
+                    this.$cache[Context.generateCacheIdFromEntity(model)] = model;
+                },
 
-            addCollectionToCache: function (collection) {
-                this.$cache[Context.generateCacheIdFromCollection(collection)] = collection;
-            },
+                addCollectionToCache: function (collection) {
+                    this.$cache[Context.generateCacheIdFromCollection(collection)] = collection;
+                },
 
-            getInstanceByCacheId: function (cacheId) {
-                return this.$cache[cacheId];
-            },
+                getInstanceByCacheId: function (cacheId) {
+                    return this.$cache[cacheId];
+                },
 
-            getPathComponents: function () {
-                return [];
-            },
+                getPathComponents: function () {
+                    return [];
+                },
 
-            createEntity: function (factory, id, alias) {
+                createEntity: function (factory, id, alias) {
 
-                if (_.isFunction(factory)) {
+                    if (_.isFunction(factory)) {
 
-                    var entityClassName = factory.prototype.constructor.name;
-                    alias = alias || (factory.classof(Model) ? this.$datasource.getAliasForModelClassName(entityClassName) : entityClassName);
+                        var entityClassName = factory.prototype.constructor.name;
+                        alias = alias || (factory.classof(Model) ? this.$datasource.getAliasForModelClassName(entityClassName) : entityClassName);
 
-                    if (factory.classof(Model) && !alias) {
-                        throw "Alias for '" + entityClassName + "' not found";
+                        if (factory.classof(Model) && !alias) {
+                            throw "Alias for '" + entityClassName + "' not found";
+                        }
+
+                        var cachedItem;
+
+                        // only get from cache if we got an id
+                        if (id) {
+                            cachedItem = this.getInstanceByCacheId(Context.generateCacheIdForEntity(alias, id));
+                        }
+
+                        if (!cachedItem) {
+                            // create new Entity
+                            cachedItem = new factory({
+                                id: id
+                            });
+                            // set context
+                            cachedItem.$context = this;
+                            cachedItem.$alias = alias;
+
+                            // and add it to the cache
+                            this.addEntityToCache(cachedItem);
+                        }
+
+                        return cachedItem;
+
+                    } else {
+                        throw "Factory has to be a function";
                     }
+                },
 
-                    var cachedItem;
+                createCollection: function (factory, options, alias) {
+                    options = options || {};
 
-                    // only get from cache if we got an id
-                    if (id) {
-                        cachedItem = this.getInstanceByCacheId(Context.generateCacheIdForEntity(alias, id));
-                    }
+                    if (_.isFunction(factory)) {
 
-                    if (!cachedItem) {
-                        // create new Entity
-                        cachedItem = new factory({
-                            id: id
+                        var collectionClassName = factory.prototype.constructor.name;
+                        alias = alias || this.$datasource.getAliasForCollectionClassName(collectionClassName);
+
+                        if (!alias) {
+                            throw "Alias for '" + collectionClassName + "' not found";
+                        }
+
+                        _.defaults(options, {
+                            factory: factory,
+                            type: alias
                         });
-                        // set context
-                        cachedItem.$context = this;
-                        cachedItem.$alias = alias;
 
-                        // and add it to the cache
-                        this.addEntityToCache(cachedItem);
+                        var cachedCollection = this.getInstanceByCacheId(Context.generateCacheIdForCollection(alias));
+
+                        if (!cachedCollection) {
+                            // create new Collection
+                            cachedCollection = new factory(null, options);
+                            // set context
+                            cachedCollection.$context = this;
+                            cachedCollection.$alias = alias;
+
+                            // and add it to the cache
+                            this.addCollectionToCache(cachedCollection);
+                        }
+
+                        return cachedCollection;
+
+                    } else {
+                        throw "Factory has to be a function";
                     }
-
-                    return cachedItem;
-
-                } else {
-                    throw "Factory has to be a function";
                 }
-            },
-
-            createCollection: function (factory, options, alias) {
-                options = options || {};
-
-                if (_.isFunction(factory)) {
-
-                    var collectionClassName = factory.prototype.constructor.name;
-                    alias = alias || this.$datasource.getAliasForCollectionClassName(collectionClassName);
-
-                    if (!alias) {
-                        throw "Alias for '" + collectionClassName + "' not found";
-                    }
-
-                    _.defaults(options, {
-                        factory: factory,
-                        type: alias
-                    });
-
-                    var cachedCollection = this.getInstanceByCacheId(Context.generateCacheIdForCollection(alias));
-
-                    if (!cachedCollection) {
-                        // create new Collection
-                        cachedCollection = new factory(null, options);
-                        // set context
-                        cachedCollection.$context = this;
-                        cachedCollection.$alias = alias;
-
-                        // and add it to the cache
-                        this.addCollectionToCache(cachedCollection);
-                    }
-
-                    return cachedCollection;
-
-                } else {
-                    throw "Factory has to be a function";
-                }
-            }
-        });
+            });
 
         Context.generateCacheIdForCollection = function (type) {
             return type;
@@ -189,7 +189,7 @@ define(["require", "js/core/Component", "js/core/Base", "js/data/Collection", "u
                 return model.compose(action, options);
             },
 
-            _composeCollection: function(collection, action, options) {
+            _composeCollection: function (collection, action, options) {
                 return undefined;
             },
 
@@ -443,6 +443,11 @@ define(["require", "js/core/Component", "js/core/Base", "js/data/Collection", "u
                     callback("Abstract method saveModel", model);
                 }
             },
+            removeModel: function (model, options, callback) {
+                if (callback) {
+                    callback("Abstract method removeModel", model);
+                }
+            },
 
             /***
              * returns the configuration entry for the model class
@@ -512,8 +517,7 @@ define(["require", "js/core/Component", "js/core/Base", "js/data/Collection", "u
 
             update: function (data, callback) {
             },
-            remove: function (data, callback) {
-            },
+
             find: function (data, callback) {
             }
         });
@@ -528,6 +532,15 @@ define(["require", "js/core/Component", "js/core/Base", "js/data/Collection", "u
             }
         });
 
+        DataSource.JsonFormatProcessor = DataSource.FormatProcessor.inherit("js.data.DataSource.JsonFormatProcessor", {
+            serialize: function (data) {
+                return JSON.stringify(data);
+            },
+            deserialize: function (text) {
+                return JSON.parse(text);
+            }
+        });
+
         DataSource.Context = Context;
 
         DataSource.Processor = Processor;
@@ -537,6 +550,18 @@ define(["require", "js/core/Component", "js/core/Base", "js/data/Collection", "u
             CREATE: 'create',
             UPDATE: 'update',
             DELETE: 'delete'
+        };
+
+        DataSource.IdGenerator = {
+            genId: (function (uuidRegEx, uuidReplacer) {
+                return function () {
+                    return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(uuidRegEx, uuidReplacer).toUpperCase();
+                };
+            })(/[xy]/g, function (c) {
+                var r = Math.random() * 16 | 0,
+                    v = c == "x" ? r : (r & 3 | 8);
+                return v.toString(16);
+            })
         };
 
         return DataSource;

@@ -1,11 +1,10 @@
-define(["require", "js/core/Element", "js/core/TextElement", "js/core/BindingCreator", "js/core/Bindable", "js/core/EventDispatcher", "underscore"],
+define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable", "js/core/EventDispatcher", "underscore"],
 
-    function (require, Element, TextElement, BindingCreator, Bindable, EventDispatcher, _) {
+    function (require, Element, TextElement, Bindable, EventDispatcher, _) {
 
         var Template,
             Configuration;
 
-        var bindingCreator = new BindingCreator();
 
         var Component = Element.inherit("js.core.Component",
             /** @lends Component */
@@ -326,7 +325,7 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/BindingCre
 
                         if (attributes.hasOwnProperty(key)) {
                             value = attributes[key];
-                            this.$[key] = bindingCreator.evaluate(value, this, key);
+                            this.$[key] = this.$bindingCreator.evaluate(value, this, key);
                         }
                     }
 
