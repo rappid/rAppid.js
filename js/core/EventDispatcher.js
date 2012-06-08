@@ -132,6 +132,10 @@ define(["js/core/Base"],
                             }
                         }
                     }
+                },
+                destroy: function(){
+                    // remove all events
+                    this._eventHandlers = {};
                 }
             });
 

@@ -301,6 +301,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding","underscor
                  * Destroys all event bindings and triggers a destroy event
                  */
                 destroy: function() {
+                    this.callBase();
                     for(var i = 0; i < this.$eventBindables.length; i++){
                         this.$eventBindables[i].destroy();
                     }
