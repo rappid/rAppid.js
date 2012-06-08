@@ -80,8 +80,10 @@ define(
                 }
 
             },
-            _innerRenderItem: function (item, i) {
-                var attr = {}; attr[this._getItemKey()] = item; attr[this._getIndexKey()]  = i;
+            _createComponentForItem: function(item, i){
+                var attr = {};
+                attr[this._getItemKey()] = item;
+                attr[this._getIndexKey()] = i;
                 var comp = this.$templates['item'].createComponents(attr)[0];
 
                 // add to rendered item map
@@ -89,8 +91,10 @@ define(
                     item: item,
                     component: comp
                 });
-
-                this.addChild(comp);
+                return comp;
+            },
+            _innerRenderItem: function (item, i) {
+                this.addChild(this._createComponentForItem(item, i));
             },
             _getItemKey: function(){
                 return "$"+this.$.itemKey;

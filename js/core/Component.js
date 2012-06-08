@@ -55,7 +55,7 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                         this.$xamlAttributes = this._getAttributesFromDescriptor(descriptor);
                     }
 
-                    this.$components = [];
+                    this.$elements = [];
 
                     this.$templates = {};
                     this.$configurations = [];
@@ -114,33 +114,31 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                     }
 
                 },
-                addComponent: function (component) {
-                    if (!component) {
-                        throw "component null";
-                    }
-
-                    this.$components.push(component);
-
-                    if (this.$rootScope && component.$.cid) {
-                        // register component by cid in the root scope
-                        this.$rootScope.set(component.$.cid, component);
-                    }
-                },
-
-                removeComponent: function (component) {
-                    // TODO: implement and remove cid from rootscope
-                },
-
                 addChild: function (child) {
                     if (!(child instanceof Element)) {
                         throw "only children of type js.core.Component can be added"
                     }
 
-                    this.addComponent(child);
+                    if (this.$rootScope && child.$.cid) {
+                        // register component by cid in the root scope
+                        this.$rootScope.set(child.$.cid, child);
+                    }
 
                     child.$parent = this;
-                    this.$children.push(child);
+                    // save under elements
+                    this.$elements.push(child);
 
+                    // handle special elements
+                    if (Template && child instanceof Template) {
+                        this._addTemplate(child);
+                    } else if (Configuration && child instanceof Configuration) {
+                        this._addConfiguration(child);
+                    }
+
+                    // initialize auto
+                    if (this.$creationPolicy == "auto") {
+                        child._initialize(this.$creationPolicy);
+                    }
                 },
 
                 removeChild: function (child) {
@@ -148,11 +146,11 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                         throw "only children of type js.core.Component can be removed"
                     }
 
-                    var index = this.$children.indexOf(child);
+                    var index = this.$elements.indexOf(child);
                     if (index != -1) {
                         // child found
                         child.$parent = null;
-                        this.$children.splice(index, 1);
+                        this.$elements.splice(index, 1);
                     }
 
                     if (this.$templates.hasOwnProperty(child.$.name)) {
@@ -160,24 +158,21 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                         delete this.$templates[child.$.name];
                     }
 
-                    index = this.$children.indexOf(child);
+                    index = this.$elements.indexOf(child);
                     if (index != -1) {
                         this.$configurations.splice(index, 1);
                     }
 
                 },
 
-                addTemplate: function (template) {
+                _addTemplate: function (template) {
                     if (!template.$.name) {
                         throw "template without name";
                     }
-
-                    this.addComponent(template);
                     this.$templates[template.$.name] = template;
                 },
 
-                addConfiguration: function (config) {
-                    this.addComponent(config);
+                _addConfiguration: function (config) {
                     this.$configurations.push(config);
                 },
 
@@ -193,21 +188,8 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                 },
                 _initializeChildren: function (childComponents) {
                     for (var i = 0; i < childComponents.length; i++) {
-                        // FIRST ADD CHILD
-                        var child = childComponents[i];
-
-                        if (Template && child instanceof Template) {
-                            this.addTemplate(child);
-                        } else if (Configuration && child instanceof Configuration) {
-                            this.addConfiguration(child);
-                        } else {
-                            this.addChild(childComponents[i]);
-                        }
-
-                        // THEN INITIALIZE !
-                        if (this.$creationPolicy == "auto") {
-                            child._initialize(this.$creationPolicy);
-                        }
+                        // add the children
+                        this.addChild(childComponents[i]);
                     }
                 },
                 /***
@@ -329,8 +311,8 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                         }
                     }
 
-                    for (var c = 0; c < this.$components.length; c++) {
-                        this.$components[c]._initializeBindings();
+                    for (var c = 0; c < this.$elements.length; c++) {
+                        this.$elements[c]._initializeBindings();
                     }
 
                     this.callBase();

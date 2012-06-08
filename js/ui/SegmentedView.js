@@ -7,13 +7,13 @@ define(
                 visibleView: null
             },
             ctor: function () {
-                this.$childViews = [];
+                this.$children = [];
                 this.callBase();
             },
             addChild: function (child) {
                 this.callBase();
                 if (child instanceof HtmlElement) {
-                    this.$childViews.push(child);
+                    this.$children.push(child);
                 }
             },
             _renderChild: function (child) {
@@ -37,8 +37,8 @@ define(
 
             },
             _renderVisibleIndex: function (index) {
-                if (index > -1 && index < this.$childViews.length) {
-                    this.set({visibleView: this.$childViews[index]});
+                if (index > -1 && index < this.$children.length) {
+                    this.set({visibleView: this.$children[index]});
                 } else if (this.$.visibleView) {
                     this.$.visibleView.set({visible: false});
                 }

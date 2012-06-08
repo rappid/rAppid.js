@@ -24,8 +24,8 @@ define(["js/ui/SelectionView", "underscore"], function (SelectionView, _) {
                 });
             },
             _checkOptions: function () {
-                for (var i = 0; i < this.$childViews.length; i++) {
-                    this.$childViews[i].set({selected: this.$childViews[i].$el.selected});
+                for (var i = 0; i < this.$children.length; i++) {
+                    this.$children[i].set({selected: this.$children[i].$el.selected});
                 }
             }
         });

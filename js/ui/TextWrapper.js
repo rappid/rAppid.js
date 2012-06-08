@@ -72,7 +72,7 @@ define(
                             if (!childView.isRendered()) {
                                 childView.render();
                             }
-                            this.$childViews.push(childView);
+                            this.$children.push(childView);
                             this.$el.appendChild(childView.$el);
                         } else {
                             this.$el.appendChild(this.$systemManager.$document.createTextNode(ph.text));

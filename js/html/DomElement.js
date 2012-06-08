@@ -19,9 +19,8 @@ define(["require", "js/core/Component", "js/core/Content", "js/core/Binding", "i
 
             ctor: function (attributes, descriptor, systemManager, parentScope, rootScope) {
                 this.$renderMap = {};
-                this.$childViews = [];
+                this.$children = [];
                 this.$contentChildren = [];
-
                 // go inherit tree up and search for descriptors
                 var current = this;
                 while (current) {
@@ -70,7 +69,7 @@ define(["require", "js/core/Component", "js/core/Content", "js/core/Binding", "i
                 this.callBase();
 
                 if (child instanceof DomElement || child.render) {
-                    this.$childViews.push(child);
+                    this.$children.push(child);
                     if (this.isRendered()) {
                         this._renderChild(child);
                     }
@@ -85,11 +84,12 @@ define(["require", "js/core/Component", "js/core/Content", "js/core/Binding", "i
                     if (this.isRendered()) {
                         this._removeRenderedChild(child);
                     }
+                    var i = this.$children.indexOf(child);
+                    this.$children.splice(i, 1);
                 }
             },
 
             getPlaceHolder: function (name) {
-
                 for (var i = 0; i < this.$children.length; i++) {
                     if (this.$children[i].$.name === name) {
                         return this.$children[i];
@@ -108,7 +108,7 @@ define(["require", "js/core/Component", "js/core/Content", "js/core/Binding", "i
                 return null;
             },
 
-            remove: function() {
+            remove: function () {
                 if (this.$parent) {
                     this.$parent.removeChild(this);
                 }
@@ -181,13 +181,8 @@ define(["require", "js/core/Component", "js/core/Content", "js/core/Binding", "i
                     this.$el = this.$systemManager.$document.createElement(this.$tagName);
                 }
 
-                // TODO: read layout and create renderMAP
-                /**
-                 * <js:Template name="layout"><placeholder cid="icon"/><placeholder cid="label"/></js:Template>
-                 */
-
                 this._initializeRenderer(this.$el);
-                this._renderChildren(this.$childViews);
+                this._renderChildren(this.$children);
                 this._renderContentChildren(this.$contentChildren);
                 this._renderAttributes(this.$);
                 this._bindDomEvents(this.$el);
@@ -335,13 +330,10 @@ define(["require", "js/core/Component", "js/core/Content", "js/core/Binding", "i
                             }
                         }
                     }
-
                     this._setAttribute(key, attr);
-
                 }
             },
-
-            _setAttribute: function(key, value, namespaceUri) {
+            _setAttribute: function (key, value, namespaceUri) {
 
                 if (!_.isUndefined(value)) {
 
@@ -364,9 +356,9 @@ define(["require", "js/core/Component", "js/core/Content", "js/core/Binding", "i
             destroy: function () {
                 this.callBase();
 
-                if (this.$childViews) {
-                    for (var i = 0; i < this.$childViews.length; i++) {
-                        this.$childViews[i].destroy();
+                if (this.$children) {
+                    for (var i = 0; i < this.$children.length; i++) {
+                        this.$children[i].destroy();
                     }
                 }
             },
@@ -379,17 +371,41 @@ define(["require", "js/core/Component", "js/core/Content", "js/core/Binding", "i
             }.on('change'),
             dom: function (element) {
                 return new DomManipulation(element || this);
+            },
+            setChildIndex: function (child, index) {
+                var oldIndex = this.$children.indexOf(child);
+                if (oldIndex !== index) {
+                    this.$children.splice(oldIndex, 1);
+                    this.$children.splice(index, 0, child);
+                    if (this.isRendered() && child.isRendered()) {
+                        if (this.$renderedChildren.length > 1) {
+                            this.$el.removeChild(child.$el);
+                            if (index < this.$el.childNodes.length) {
+                                this.$el.insertBefore(child.$el, this.$el.childNodes[index]);
+                            } else {
+                                this.$el.appendChild(child.$el);
+                            }
+                        }
+                    }
+                }
+            },
+            bringToFront: function () {
+                if (this.$parent) {
+                    this.$parent.setChildIndex(this, this.$parent.$children.length - 1);
+                }
+            },
+            sendToBack: function () {
+                if (this.$parent) {
+                    this.$parent.setChildIndex(this, 0);
+                }
             }
 
         };
 
         var DomManipulationFunctions = {
-
             hasClass: function (value) {
-                // var classes = this.$el.className.split(" "+value+" ");
-
+                return this.$el.className.split(" " + value + " ").length != 1;
             },
-
             addClass: function (value) {
                 var classNames = value.split(rspace);
 
@@ -447,7 +463,6 @@ define(["require", "js/core/Component", "js/core/Content", "js/core/Binding", "i
                 } else if (this.$el.detachEvent) {
                     this.$el.detachEvent("on" + type, handle);
                 }
-
             }
         };
 
