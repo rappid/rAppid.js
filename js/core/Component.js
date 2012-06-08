@@ -40,6 +40,7 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/BindingCre
                     this.$internalDescriptors = [];
                     this.$xamlDefaults = {};
                     this.$xamlAttributes = {};
+                    this.$defaultBindingCreator = bindingCreator;
                     var current = this, last;
                     while (current) {
                         if (current._$descriptor && last != current) {
@@ -326,7 +327,7 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/BindingCre
 
                         if (attributes.hasOwnProperty(key)) {
                             value = attributes[key];
-                            this.$[key] = bindingCreator.evaluate(value, this, key);
+                            this.$[key] = this.$defaultBindingCreator.evaluate(value, this, key);
                         }
                     }
 
