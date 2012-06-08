@@ -18,16 +18,18 @@ define(
                     this._initialize(this.$creationPolicy);
                 }
 
-                this.$el = this.$systemManager.$document.createTextNode("");
-                if (!_.isUndefined(this.$.textContent)) {
-                    this._renderTextContent(this.$.textContent);
+                this.$el = this.$systemManager.$document.createTextNode();
+                this._renderTextContent(this.$.textContent);
 
-                }
 
                 return this.$el;
             },
             _renderTextContent: function (textContent) {
-                this.$el.data = textContent;
+                if(_.isUndefined(this.$.textContent) || textContent === null){
+                    textContent = "";
+                }
+                this.$el.nodeValue = textContent;
+
             },
             _commitChangedAttributes: function (attributes) {
                 if (this.$el) {
