@@ -35,6 +35,8 @@
             new Rewrite(/^js\/html\/(textarea)$/, "js/html/TextArea"),
             new Rewrite(/^js\/html\/(option)$/, "js/html/Option"),
             new Rewrite(/^js\/html\/(.+)$/, "js/html/HtmlElement"),
+
+            new Rewrite(/^js\/svg\/svg$/, "js/svg/Svg"),
             new Rewrite(/^js\/svg\/(.+)$/, "js/svg/SvgElement")
         ];
 
@@ -361,32 +363,39 @@
         };
 
     ApplicationContext.prototype.createInstance = function (fqClassName, args, className) {
-            className = className || fqClassName;
-            args = args || [];
+        args = args || [];
 
+        var classDefinition;
+
+        if (fqClassName instanceof Function) {
+            classDefinition = fqClassName;
+            fqClassName = classDefinition.prototype.constructor.name;
+        } else {
             fqClassName = fqClassName.replace(/\./g, "/");
+            classDefinition = this.$requirejsContext(fqClassName);
+        }
 
-            var classDefinition = this.$requirejsContext(fqClassName);
+        className = className || fqClassName;
 
-            function construct(constructor, args) {
-                function F() {
-                    return constructor.apply(this, args);
-                }
-
-                F.prototype = constructor.prototype;
-                return new F();
+        function construct(constructor, args) {
+            function F() {
+                return constructor.apply(this, args);
             }
 
-            var ret;
-            try {
-                ret = construct(classDefinition, args);
-                ret.className = className;
-            } catch (e) {
-                console.log("Cannot create instance of '" + fqClassName + "'");
-            }
+            F.prototype = constructor.prototype;
+            return new F();
+        }
 
-            return ret;
-        };
+        var ret;
+        try {
+            ret = construct(classDefinition, args);
+            ret.className = className;
+        } catch (e) {
+            console.log("Cannot create instance of '" + fqClassName + "'");
+        }
+
+        return ret;
+    };
 
     ApplicationContext.prototype.ajax = function (url, options, callback) {
 
