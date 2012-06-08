@@ -1,6 +1,7 @@
-define(["js/core/Bindable", "underscore"], function (Bindable, _) {
+define(["js/core/Bindable", "underscore", "js/core/BindingCreator"], function (Bindable, _, BindingCreator) {
 
         var undefined;
+        var bindingCreator = new BindingCreator();
 
         function stringToPrimitive(str) {
             // if it's not a string
@@ -37,6 +38,7 @@ define(["js/core/Bindable", "underscore"], function (Bindable, _) {
                 this.$parentScope = parentScope || null;
                 this.$rootScope = rootScope || null;
                 this.$attributesNamespace = this.$attributesNamespace || {};
+                this.$bindingCreator = bindingCreator;
 
                 this.callBase(attributes);
 
