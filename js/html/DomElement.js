@@ -65,8 +65,10 @@ define(["require", "js/core/Component", "js/core/Content", "js/core/Binding", "i
                     delete(attributes.tagName);
                 }
             },
+
             addChild: function (child) {
                 this.callBase();
+
                 if (child instanceof DomElement || child.render) {
                     this.$childViews.push(child);
                     if (this.isRendered()) {
@@ -76,6 +78,7 @@ define(["require", "js/core/Component", "js/core/Content", "js/core/Binding", "i
                     this.$contentChildren.push(child);
                 }
             },
+
             removeChild: function (child) {
                 this.callBase();
                 if (child instanceof DomElement || child.render) {
@@ -105,6 +108,11 @@ define(["require", "js/core/Component", "js/core/Content", "js/core/Binding", "i
                 return null;
             },
 
+            remove: function() {
+                if (this.$parent) {
+                    this.$parent.removeChild(this);
+                }
+            },
 
             getContentPlaceHolders: function () {
 
