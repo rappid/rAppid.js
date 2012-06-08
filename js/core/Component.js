@@ -369,6 +369,11 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/BindingCre
                     return null;
                 },
 
+                createComponent: function(factory, attributes) {
+                    attributes = attributes || [];
+                    return this.$systemManager.$applicationContext.createInstance(factory, [attributes, null, this.$systemManager, this, this.$rootScope]);
+                },
+
                 _createTextElement: function(node, rootScope) {
                     return this.$systemManager.$applicationContext.createInstance('js/core/TextElement', [null, node, this.$systemManager, this, rootScope]);
                 },
