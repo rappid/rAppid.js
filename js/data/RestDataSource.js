@@ -6,7 +6,7 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
 
         initializeFormatProcessors: function () {
 
-            var jsonProcessor = new RestDataSource.JsonFormatProcessor();
+            var jsonProcessor = new DataSource.JsonFormatProcessor();
             jsonProcessor.regex = /json/;
 
             this.$formatProcessors.push(jsonProcessor);
@@ -137,7 +137,7 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
                         }
 
                         // deserialize data with format processor
-                        var data = formatProcessor.deserialize(xhr.responses);
+                        var data = formatProcessor.deserialize(xhr.responses.text);
 
                         // parse data inside model
                         data = model.parse(data, DataSource.ACTION.LOAD, options);
@@ -383,7 +383,7 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
 
                     try {
                         // deserialize data with processor
-                        var payload = processor.deserialize(xhr.responses);
+                        var payload = processor.deserialize(xhr.responses.text);
 
                         // extract meta data
                         var metaData = self.extractListMetaData(page, payload, options);
@@ -450,15 +450,6 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
         PUT: 'PUT',
         DELETE: 'DELETE'
     };
-
-    RestDataSource.JsonFormatProcessor = DataSource.FormatProcessor.inherit("js.data.RestDataSource.JsonFormatProcessor", {
-        serialize: function (data) {
-            return JSON.stringify(data);
-        },
-        deserialize: function (responses) {
-            return JSON.parse(responses.text);
-        }
-    });
 
     // TODO: implement XmlProcessor
     RestDataSource.XmlFormatProcessor = DataSource.FormatProcessor.inherit("js.data.RestDataSource.XmlFormatProcessor", {
