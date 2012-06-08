@@ -56,16 +56,17 @@ define(["js/core/Bindable", "underscore"], function (Bindable, _) {
                 var attributes = {};
 
                 if (descriptor && descriptor.attributes) {
-                    var node;
+                    var node, localName;
 
                     for (var a = 0; a < descriptor.attributes.length; a++) {
                         node = descriptor.attributes[a];
                         // don't add xmlns attributes
                         if(node.nodeName.indexOf("xmlns") !== 0){
-                            attributes[node.localName] = stringToPrimitive(node.value);
+                            localName = this._getLocalNameFromNode(node);
+                            attributes[localName] = stringToPrimitive(node.value);
 
                             if (node.namespaceURI) {
-                                this.$attributesNamespace[node.localName] = node.namespaceURI;
+                                this.$attributesNamespace[localName] = node.namespaceURI;
                             }
 
                         }
@@ -75,7 +76,9 @@ define(["js/core/Bindable", "underscore"], function (Bindable, _) {
 
                 return attributes;
             },
-
+            _getLocalNameFromNode: function(node){
+                return node.localName ? node.localName : node.name.split(":").pop();
+            },
             defaults: {
                 creationPolicy: "auto"
             },
