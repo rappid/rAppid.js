@@ -26,7 +26,7 @@ define(["js/data/DataView"], function (DataView) {
         },
         _onItemChanged: function (e) {
             var keep = this._filterItem(e.$.item, e.$.index);
-            var included = _.include(this.$.baseList.$items, e.$.item);
+            var included = _.include(this.$.list.$items, e.$.item);
             if (included && keep === false) {
                 this.$.list.remove(e.$.item, e.$.index);
             } else if (!included && keep === true) {
