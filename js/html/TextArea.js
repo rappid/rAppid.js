@@ -3,7 +3,7 @@ define(["js/html/HtmlElement", "js/core/TextElement", "js/core/BindingCreator"],
             _renderChild: function (child) {
                 if (child instanceof TextElement) {
                     // contains two way binding ...
-                    var text = this.$defaultBindingCreator.evaluate(this._getTextContentFromDescriptor(child.$descriptor), this, "value");
+                    var text = this.$bindingCreator.evaluate(this._getTextContentFromDescriptor(child.$descriptor), this, "value");
                     this.set('value', text);
                 }
             },
