@@ -39,8 +39,9 @@ define(
 
             },
             _renderString: function (string, oldString) {
-                this.$el.innerHTML = "";
-
+                for(var k = 0; k < this.$el.childNodes.length; k++){
+                    this.$el.removeChild(this.$el.childNodes[k]);
+                }
                 if (string) {
                     var placeholders = findPlaceholders(string);
                     var ph, start = -1;
@@ -62,7 +63,6 @@ define(
                             if (childView) {
                                 childView.$parentScope = this.$parentScope;
                                 childView.$rootScope = this.$rootScope;
-
                                 this.$viewMap[key] = childView;
                             }
                         }
