@@ -6,7 +6,7 @@ define(["js/ui/View"], function (View) {
         _renderContent: function (content) {
             this._clearRenderedChildren();
             if (content) {
-                this._renderChildren(content.$children);
+                this._renderChildren(content.getChildren());
             }
         }
     }));
