@@ -70,7 +70,7 @@ define(
                     var c;
                     for (var j = this.$renderedItems.length - 1; j >= 0; j--) {
                         c = this.$renderedItems[j];
-                        this.$el.removeChild(c.component.$el);
+                        this.removeChild(c.component);
                         c.component.destroy();
                     }
                 }
