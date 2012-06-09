@@ -22,7 +22,7 @@ define(["js/core/UIComponent", "js/core/Router"], function (UIComponent, Router)
             // content is rendered inside ContentPlaceHolders
         },
 
-        addComponent: function(component) {
+        addChild: function(component) {
             this.callBase();
 
             if (component instanceof Router) {
