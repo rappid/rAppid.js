@@ -142,15 +142,15 @@ define(["require", "js/core/Component", "js/core/Content", "js/core/Binding", "i
                 var child,
                     content;
 
-                for (var i = 0; i < this.$children.length; i++) {
-                    child = this.$children[i];
+                for (var i = 0; i < this.$elements.length; i++) {
+                    child = this.$elements[i];
                     if (child instanceof Content && child.$.name === name) {
                         return child;
                     }
                 }
 
-                for (i = 0; i < this.$children.length; i++) {
-                    child = this.$children[i];
+                for (i = 0; i < this.$elements.length; i++) {
+                    child = this.$elements[i];
                     if (child.findContent) {
                         content = child.findContent(name);
                         if (content) {
@@ -373,6 +373,12 @@ define(["require", "js/core/Component", "js/core/Content", "js/core/Binding", "i
                 return new DomManipulation(element || this);
             },
             setChildIndex: function (child, index) {
+                if(index < 0){
+                    index += this.$children.length;
+                }
+                if(index >= this.$children.length ){
+                    index -= this.$children.length;
+                }
                 var oldIndex = this.$children.indexOf(child);
                 if (oldIndex !== index) {
                     this.$children.splice(oldIndex, 1);
