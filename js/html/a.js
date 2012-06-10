@@ -13,7 +13,7 @@ define(['js/html/HtmlElement'], function (HtmlElement) {
         _renderHref: function (href) {
             href = href || "javascript:void(0);";
 
-            if (!(this.$.target === "external" || externalLink.test(href))) {
+            if (!(this.$.target === "external" || externalLink.test(href) || this.$.target === "_blank")) {
                 // ajax link
                 if (!startsWithHash.test(href)) {
                     href = "#" + href;

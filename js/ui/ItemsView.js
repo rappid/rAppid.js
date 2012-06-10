@@ -7,6 +7,7 @@ define(
                 itemKey: 'item',
                 indexKey: 'index'
             },
+
             $classAttributes: [
                 'itemKey', 'indexKey'
             ],
@@ -17,15 +18,14 @@ define(
                 }
                 return 0;
             }.on('items'),
+
             render: function () {
-                if(!this.isRendered()){
+                if (!this.isRendered()) {
                     this.$renderedItems = [];
                 }
                 return this.callBase();
             },
-            clear: function () {
 
-            },
             _renderItems: function (items, oldItems) {
                 if (oldItems && oldItems instanceof List) {
                     oldItems.unbind('sort', this._onSort, this);
@@ -56,15 +56,19 @@ define(
                     }
                 }
             },
+
             _onReset: function (e) {
                 this._innerRenderItems(e.$.items);
             },
+
             _onItemAdd: function (e) {
                 this._innerRenderItem(e.$.item, e.$.index);
             },
+
             _onItemRemove: function (e) {
                 this._removeRenderedItem(e.$.item);
             },
+
             _innerRenderItems: function (items) {
                 if (this.$renderedItems) {
                     var c;
@@ -80,7 +84,8 @@ define(
                 }
 
             },
-            _createComponentForItem: function(item, i){
+
+            _createComponentForItem: function (item, i) {
                 var attr = {};
                 attr[this._getItemKey()] = item;
                 attr[this._getIndexKey()] = i;
@@ -93,15 +98,19 @@ define(
                 });
                 return comp;
             },
+
             _innerRenderItem: function (item, i) {
                 this.addChild(this._createComponentForItem(item, i));
             },
-            _getItemKey: function(){
-                return "$"+this.$.itemKey;
+
+            _getItemKey: function () {
+                return "$" + this.$.itemKey;
             },
-            _getIndexKey: function(){
-                return "$"+this.$.indexKey;
+
+            _getIndexKey: function () {
+                return "$" + this.$.indexKey;
             },
+
             _removeRenderedItem: function (item) {
                 var ri;
                 for (var i = 0; i < this.$renderedItems.length; i++) {
@@ -114,6 +123,7 @@ define(
                     }
                 }
             },
+
             getComponentForItem: function (item) {
                 var ri;
                 for (var i = 0; i < this.$renderedItems.length; i++) {
