@@ -16,7 +16,7 @@ define(
                     this._initialize(this.$creationPolicy);
                 }
 
-                this.$el = this.$systemManager.$document.createTextNode();
+                this.$el = this.$systemManager.$document.createTextNode("");
                 this._renderTextContent(this.$.textContent);
 
 
