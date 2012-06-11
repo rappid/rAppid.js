@@ -119,9 +119,14 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                         throw "only children of type js.core.Component can be added"
                     }
 
-                    if (this.$rootScope && child.$.cid) {
+                    // initialize auto
+                    if (this.$creationPolicy == "auto") {
+                        child._initialize(this.$creationPolicy);
+                    }
+
+                    if (child.$rootScope && child.$.cid) {
                         // register component by cid in the root scope
-                        this.$rootScope.set(child.$.cid, child);
+                        child.$rootScope.set(child.$.cid, child);
                     }
 
                     child.$parent = this;
@@ -133,11 +138,6 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                         this._addTemplate(child);
                     } else if (Configuration && child instanceof Configuration) {
                         this._addConfiguration(child);
-                    }
-
-                    // initialize auto
-                    if (this.$creationPolicy == "auto") {
-                        child._initialize(this.$creationPolicy);
                     }
                 },
 

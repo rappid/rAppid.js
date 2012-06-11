@@ -181,9 +181,15 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
                     }
                     // if keys are left and has value && is bindable
                     // get value for first child
-                    if (nScope && (nScope instanceof Bindable)) {
-                        // init new binding, which triggers this binding
-                        this.$subBinding = new Binding({scope: nScope, path: this.$.path.slice(1), target: this.$.target, targetKey: this.$.targetKey, rootScope: this.$.rootScope, callback: this.$.callback, context: this.$.context, twoWay: this.$.twoWay, transform: this.$.transform, transformBack: this.$.transformBack, bindingCreator: this.$.bindingCreator});
+                    if (nScope) {
+                        if(nScope instanceof Bindable){
+                            // init new binding, which triggers this binding
+                            this.$subBinding = new Binding({scope: nScope, path: this.$.path.slice(1), target: this.$.target, targetKey: this.$.targetKey, rootScope: this.$.rootScope, callback: this.$.callback, context: this.$.context, twoWay: this.$.twoWay, transform: this.$.transform, transformBack: this.$.transformBack, bindingCreator: this.$.bindingCreator});
+                        } else {
+                            // TODO: find next bindable var
+                        }
+
+
                     }
                 }
             },

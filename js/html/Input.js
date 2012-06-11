@@ -7,7 +7,9 @@ define(["js/html/HtmlElement"], function (HtmlElement) {
                 updateOnEvent: 'keyup'
             },
             _renderValue: function (value) {
-                this.$el.value = value;
+                if(value !== this.$el.value){
+                    this.$el.value = value;
+                }
             },
             _renderChecked: function (checked) {
                 this.$el.checked = checked;
@@ -15,11 +17,11 @@ define(["js/html/HtmlElement"], function (HtmlElement) {
             _bindDomEvents: function () {
 
                 var self = this;
-                if (this.$.type == "text" || this.$.type == "password") {
+                if (this.$.type === "text" || this.$.type === "password") {
                     this.addEventListener(this.$.updateOnEvent, function (e) {
                         self.set('value', self.$el.value);
                     });
-                } else if (this.$.type == "checkbox" || this.$.type == "radio") {
+                } else if (this.$.type === "checkbox" || this.$.type === "radio") {
                     this.addEventListener('click', function (e) {
                         self.set('checked', self.$el.checked);
                     });
