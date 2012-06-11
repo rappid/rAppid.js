@@ -1,7 +1,7 @@
 define(["js/core/Bindable", "flow"], function (Bindable, flow) {
 
 
-    var routeStripper = /^#?\/?/,
+    var routeStripper = /^#?!?\/?/,
         undef,
         emptyCallback = function () {
         };
