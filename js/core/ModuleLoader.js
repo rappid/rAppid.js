@@ -139,6 +139,10 @@ define(["require", "js/core/UIComponent", "js/ui/ContentPlaceHolder", "js/core/M
                                 }
                             }
 
+                        }, function(err) {
+                            if (callback) {
+                                callback(err);
+                            }
                         });
                     }
                 }
