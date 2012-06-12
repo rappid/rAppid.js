@@ -366,7 +366,7 @@ define([], function () {
                         });
                     }
                 } else {
-                    load.error(new Error("XML " + url + " not found"));
+                    load.error(new Error("XML " + url + " not found." + err));
                 }
             });
         }
