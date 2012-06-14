@@ -1,5 +1,5 @@
-define(["require", "js/core/Component", "js/core/Content", "js/core/Binding", "inherit", "underscore"],
-    function (require, Component, Content, Binding, inherit, _) {
+define(["require", "js/core/EventDispatcher","js/core/Component", "js/core/Content", "js/core/Binding", "inherit", "underscore"],
+    function (require, EventDispatcher, Component, Content, Binding, inherit, _) {
 
         var rspace = /\s+/;
         var domEvents = ['click', 'dblclick', 'keyup', 'keydown' , 'change'];
@@ -21,6 +21,7 @@ define(["require", "js/core/Component", "js/core/Content", "js/core/Binding", "i
                 this.$renderMap = {};
                 this.$children = [];
                 this.$contentChildren = [];
+                this.$domEventHandler = {};
                 // go inherit tree up and search for descriptors
                 var current = this;
                 while (current) {
@@ -190,21 +191,13 @@ define(["require", "js/core/Component", "js/core/Content", "js/core/Binding", "i
                 return this.$el;
             },
             _bindDomEvents: function (el) {
-                var self = this, domEvent;
+                var eventDef, es;
 
-                function bindDomEvent(eventName, scope, fncName) {
-                    self.bind(eventName, scope[fncName], scope);
-                    domEvent = eventName.substr(2);
-                    self.addEventListener(domEvent, function (e) {
-                        self.trigger(eventName, e, self);
-                    });
-                }
-
-                var eventDef;
                 for (var i = 0; i < this.$eventDefinitions.length; i++) {
                     eventDef = this.$eventDefinitions[i];
-                    if (!this._isComponentEvent(eventDef.name.substr(2))) {
-                        bindDomEvent(eventDef.name, eventDef.scope, eventDef.fncName);
+                    es = eventDef.name.substr(2);
+                    if (!this._isComponentEvent(es)) {
+                        this.addEventListener(es, eventDef.scope[eventDef.fncName], eventDef.scope);
                     }
 
                 }
@@ -405,7 +398,6 @@ define(["require", "js/core/Component", "js/core/Content", "js/core/Binding", "i
                     this.$parent.setChildIndex(this, 0);
                 }
             }
-
         };
 
         var DomManipulationFunctions = {
@@ -453,21 +445,41 @@ define(["require", "js/core/Component", "js/core/Content", "js/core/Binding", "i
                     this.$el.className = classes.join(" ");
                 }
             },
+            addEventListener: function (type, eventHandler, scope) {
+                var self = this;
 
-            addEventListener: function (type, eventHandle) {
-                if (this.$el.addEventListener) {
-                    this.$el.addEventListener(type, eventHandle, false);
+                this.bind(type, eventHandler, scope);
+                if(!this.$domEventHandler[type]){
+                    var cb = this.$domEventHandler[type] = function (originalEvent) {
+                        var e = new DomElement.Event(originalEvent);
+                        try {
+                            self.trigger(type, e, self);
+                        } catch(e) {
+                        }
+                        // for ie
+                        if (e.isPropagationStopped) {
+                            return false;
+                        }
+                    };
+                    if (this.$el.addEventListener) {
+                        this.$el.addEventListener(type, cb, false);
 
-                } else if (this.$el.attachEvent) {
-                    this.$el.attachEvent("on" + type, eventHandle);
+                    } else if (this.$el.attachEvent) {
+                        this.$el.attachEvent("on" + type, cb);
+                    }
                 }
             },
 
-            removeEvent: function (type, handle) {
-                if (this.$el.removeEventListener) {
-                    this.$el.removeEventListener(type, handle, false);
-                } else if (this.$el.detachEvent) {
-                    this.$el.detachEvent("on" + type, handle);
+            removeEventListener: function (type, handle, scope) {
+                this.unbind(type,handle, scope);
+                var handlers = this._eventHandlers[type];
+                if(handlers.length === 0){
+                    var cb = this.$domEventHandler[type];
+                    if (this.$el.removeEventListener) {
+                        this.$el.removeEventListener(type, cb, false);
+                    } else if (this.$el.detachEvent) {
+                        this.$el.detachEvent("on" + type, cb);
+                    }
                 }
             }
         };
@@ -480,6 +492,36 @@ define(["require", "js/core/Component", "js/core/Content", "js/core/Binding", "i
 
         var DomElement = Component.inherit("js.html.DomElement",
             _.extend(DomElementFunctions, DomManipulationFunctions));
+
+        DomElement.Event = EventDispatcher.Event.inherit({
+            ctor: function (domEvent) {
+                this.domEvent = domEvent;
+                this.callBase(domEvent);
+            },
+            stopPropagation: function () {
+                this.callBase();
+
+                var e = this.domEvent;
+                if (e) {
+                    if (e.stopPropagation) {
+                        e.stopPropagation();
+                    }
+                    e.cancelBubble = true;
+                }
+            },
+            preventDefault: function () {
+                this.callBase();
+                var e = this.domEvent;
+                if (e) {
+                    if (e.preventDefault) {
+                        e.preventDefault();
+                    } else {
+                        e.returnValue = false;  // IE
+                    }
+                }
+            }
+        });
+
         return DomElement;
     }
 );

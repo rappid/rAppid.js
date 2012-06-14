@@ -74,25 +74,25 @@ define(["js/core/Base"],
                  * @public
                  * @param {String} eventType
                  * @param {EventDispatcher.Event|Object} event If you use an Object the object is wrapped in an Event
-                 * @param caller
+                 * @param target
                  */
-                trigger: function (eventType, event, caller) {
+                trigger: function (eventType, event, target) {
 
                     if (this._eventHandlers[eventType]) {
                         if (!(event instanceof EventDispatcher.Event)) {
                             event = new EventDispatcher.Event(event);
                         }
 
-                        if (!caller) {
-                            caller = arguments.callee.caller;
+                        if (!target) {
+                            target = arguments.callee.caller;
                         }
-
+                        event.target = target;
                         event.type = eventType;
 
                         var list = this._eventHandlers[eventType];
                         for (var i = 0; i < list.length; i++) {
                             if (list[i]) {
-                                var result = list[i].trigger(event, caller);
+                                var result = list[i].trigger(event, target);
 
                                 if (result !== undefinedValue) {
                                     ret = result;
@@ -148,9 +148,10 @@ define(["js/core/Base"],
                  * @constructs
                  * @params {Object} attributes Hash of attributes
                  */
-                ctor: function (attributes) {
+                ctor: function (attributes, target) {
                     this.$ = attributes;
 
+                    this.target = target;
                     this.isDefaultPrevented = false;
                     this.isPropagationStopped = false;
                     this.isImmediatePropagationStopped = false;
@@ -163,7 +164,7 @@ define(["js/core/Base"],
                 preventDefault: function () {
                     this.isDefaultPrevented = true;
 
-                    var e = this.orginalEvent;
+                    var e = this.$.orginalEvent;
 
                     if (e) {
                         if (e.preventDefault) {
@@ -179,14 +180,6 @@ define(["js/core/Base"],
                  */
                 stopPropagation: function () {
                     this.isPropagationStopped = true;
-
-                    var e = this.originalEvent;
-                    if (e) {
-                        if (e.stopPropagation) {
-                            e.stopPropagation();
-                        }
-                        e.cancelBubble = true;
-                    }
                 },
                 /**
                  * @public
@@ -219,6 +212,7 @@ define(["js/core/Base"],
                  */
                 trigger: function (event, caller) {
                     this.$callback.call(this.scope, event, caller);
+                    return !event.isPropagationStopped;
                 }
             });
 
