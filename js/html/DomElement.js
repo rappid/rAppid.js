@@ -2,7 +2,6 @@ define(["require", "js/core/EventDispatcher","js/core/Component", "js/core/Conte
     function (require, EventDispatcher, Component, Content, Binding, inherit, _) {
 
         var rspace = /\s+/;
-        var domEvents = ['click', 'dblclick', 'keyup', 'keydown' , 'change'];
 
         var ContentPlaceHolder;
 
@@ -196,10 +195,7 @@ define(["require", "js/core/EventDispatcher","js/core/Component", "js/core/Conte
                 for (var i = 0; i < this.$eventDefinitions.length; i++) {
                     eventDef = this.$eventDefinitions[i];
                     es = eventDef.name.substr(2);
-                    if (!this._isComponentEvent(es)) {
-                        this.addEventListener(es, eventDef.scope[eventDef.fncName], eventDef.scope);
-                    }
-
+                    this.bind(es, eventDef.scope[eventDef.fncName], eventDef.scope);
                 }
             },
 
@@ -397,6 +393,33 @@ define(["require", "js/core/EventDispatcher","js/core/Component", "js/core/Conte
                 if (this.$parent) {
                     this.$parent.setChildIndex(this, 0);
                 }
+            },
+            bind: function (type, eventHandler, scope) {
+                var self = this;
+                this.callBase();
+                if (this.isRendered() && !this.$domEventHandler[type] && !this._isComponentEvent(type))  {
+                    var cb = this.$domEventHandler[type] = function (originalEvent) {
+                        var e = new DomElement.Event(originalEvent);
+                        try {
+                            self.trigger(type, e, self);
+                        } catch(e) {}
+                        if (e.isPropagationStopped) {
+                            return false;
+                        }
+                    };
+                    this.bindDomEvent(type,cb);
+                }
+            },
+
+            unbind: function (type, handle, scope) {
+                this.callBase();
+                var handlers = this._eventHandlers[type];
+                if (handlers && handlers.length === 0) {
+                    var cb = this.$domEventHandler[type];
+                    if(cb){
+                        this.unbindDomEvent(type,cb);
+                    }
+                }
             }
         };
 
@@ -445,41 +468,19 @@ define(["require", "js/core/EventDispatcher","js/core/Component", "js/core/Conte
                     this.$el.className = classes.join(" ");
                 }
             },
-            addEventListener: function (type, eventHandler, scope) {
-                var self = this;
+            bindDomEvent: function (type, cb) {
+                if (this.$el.addEventListener) {
+                    this.$el.addEventListener(type, cb, false);
 
-                this.bind(type, eventHandler, scope);
-                if(!this.$domEventHandler[type]){
-                    var cb = this.$domEventHandler[type] = function (originalEvent) {
-                        var e = new DomElement.Event(originalEvent);
-                        try {
-                            self.trigger(type, e, self);
-                        } catch(e) {
-                        }
-                        // for ie
-                        if (e.isPropagationStopped) {
-                            return false;
-                        }
-                    };
-                    if (this.$el.addEventListener) {
-                        this.$el.addEventListener(type, cb, false);
-
-                    } else if (this.$el.attachEvent) {
-                        this.$el.attachEvent("on" + type, cb);
-                    }
+                } else if (this.$el.attachEvent) {
+                    this.$el.attachEvent("on" + type, cb);
                 }
             },
-
-            removeEventListener: function (type, handle, scope) {
-                this.unbind(type,handle, scope);
-                var handlers = this._eventHandlers[type];
-                if(handlers.length === 0){
-                    var cb = this.$domEventHandler[type];
-                    if (this.$el.removeEventListener) {
-                        this.$el.removeEventListener(type, cb, false);
-                    } else if (this.$el.detachEvent) {
-                        this.$el.detachEvent("on" + type, cb);
-                    }
+            unbindDomEvent: function (type, cb) {
+                if (this.$el.removeEventListener) {
+                    this.$el.removeEventListener(type, cb, false);
+                } else if (this.$el.detachEvent) {
+                    this.$el.detachEvent("on" + type, cb);
                 }
             }
         };

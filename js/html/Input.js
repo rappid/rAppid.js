@@ -18,15 +18,15 @@ define(["js/html/HtmlElement"], function (HtmlElement) {
 
                 var self = this;
                 if (this.$.type === "text" || this.$.type === "password") {
-                    this.addEventListener(this.$.updateOnEvent, function (e) {
+                    this.bindDomEvent(this.$.updateOnEvent, function (e) {
                         self.set('value', self.$el.value);
                     });
                 } else if (this.$.type === "checkbox" || this.$.type === "radio") {
-                    this.addEventListener('click', function (e) {
+                    this.bindDomEvent('click', function (e) {
                         self.set('checked', self.$el.checked);
                     });
                 } else if(this.$.type == "number" ){
-                    this.addEventListener(this.$.updateOnEvent, function (e) {
+                    this.bindDomEvent(this.$.updateOnEvent, function (e) {
                         var val = parseInt(self.$el.value);
                         if(isNaN(val)){
                             val = self.$.value;

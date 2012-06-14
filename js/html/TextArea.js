@@ -11,8 +11,9 @@ define(["js/html/HtmlElement", "js/core/TextElement", "js/core/BindingCreator"],
                 this.$el.value = String(value);
             },
             _bindDomEvents: function () {
+                this.callBase();
                 var self = this;
-                this.addEventListener('change', function (e) {
+                this.bindDomEvent('change', function (e) {
                     self.set('value', e.target ? e.target.value : self.$el.innerText);
                 });
             }

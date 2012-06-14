@@ -70,13 +70,15 @@ define(
             },
             _onChildSelected: function (child) {
                 var c, i;
-                var checkMultiSelect = (child.$.selected === true && this.$.multiSelect === false);
-                var checkMinSelect = !checkMultiSelect && (child.$.selected === false && this.$.needsSelection === true);
-                var correctSelection = false;
-                var somethingSelected = false;
-                var selectedChildren = [];
-                var selectedItems = [];
-                var selectedIndex, selectedItem = null;
+                var checkMultiSelect = (child.$.selected === true && this.$.multiSelect === false),
+                    checkMinSelect = !checkMultiSelect && (child.$.selected === false && this.$.needsSelection === true),
+                    correctSelection = false,
+                    somethingSelected = false,
+                    selectedChildren = [],
+                    selectedItems = [],
+                    selectedIndex,
+                    selectedItem = null;
+
                 for (i = 0; i < this.$renderedChildren.length; i++) {
                     c = this.$renderedChildren[i];
                     if (checkMultiSelect) {
@@ -84,13 +86,10 @@ define(
                             correctSelection = true;
                             c.set({selected: false});
                         }
-                    } else if (checkMinSelect) {
-                        if (c.$.selected === true) {
-                            somethingSelected = true;
-                        }
+                    } else if (checkMinSelect && c.$.selected === true) {
+                        somethingSelected = true;
                     }
                     if (c.$.selected === true) {
-
                         selectedIndex = i;
                         selectedChildren.push(c);
                         var item = c.get(this._getItemKey());

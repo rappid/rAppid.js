@@ -37,10 +37,10 @@ define(['js/html/DomElement'], function(DomElement) {
                         self.set({selected: !self.$.selected});
                     };
                 }
-                this.addEventListener('click', this._onSelect);
+                this.bindDomEvent('click', this._onSelect);
             } else {
                 if (this._onSelect) {
-                    this.removeEvent('click', this._onSelect);
+                    this.unbindDomEvent('click', this._onSelect);
                 }
             }
         },

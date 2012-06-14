@@ -19,7 +19,7 @@ define(["js/ui/SelectionView", "underscore"], function (SelectionView, _) {
             },
             _bindDomEvents: function () {
                 var self = this;
-                this.addEventListener('change', function (e) {
+                this.bindDomEvent('change', function (e) {
                     self._checkOptions();
                 });
             },

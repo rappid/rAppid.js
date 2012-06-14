@@ -59,21 +59,21 @@
                     }
                     var self = this;
 
-                    this.addEventListener('click', function (e) {
+                    this.bindDomEvent('click', function (e) {
                         self.set({menuVisible: false});
                     });
 
-                    this.$toggleButton.addEventListener('click', function (e) {
+                    this.$toggleButton.bindDomEvent('click', function (e) {
                         e.stopPropagation();
                         e.preventDefault();
                         self.set({menuVisible: !self.$.menuVisible});
                     });
 
-                    this.$button.addEventListener('click', function (e) {
+                    this.$button.bindDomEvent('click', function (e) {
                         self.trigger('onclick', e, self);
                     });
 
-                    this.dom(document).addEventListener('click', function (e) {
+                    this.dom(document).bindDomEvent('click', function (e) {
                         self.set({menuVisible: false});
                     });
                 },
