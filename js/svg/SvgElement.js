@@ -1,4 +1,4 @@
-define(['js/html/DomElement'], function(DomElement) {
+define(['js/core/DomElement'], function(DomElement) {
 
     var SvgElement = DomElement.inherit("js/svg/SvgElement", {
 
