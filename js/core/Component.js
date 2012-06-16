@@ -89,7 +89,20 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                     this.callBase();
 
                     this._inject();
+                    this._bindBus();
                 },
+
+                _bindBus: function() {
+                    for (var f in this) {
+                        var fn = this[f];
+                        if (fn instanceof Function && fn._busEvents) {
+                            for (var i = 0; i < fn._busEvents.length; i++) {
+                                this.$systemManager.$bus.bind(fn._busEvents[i], fn, this);
+                            }
+                        }
+                    }
+                },
+
                 _inject: function () {
 
                     var inject = this._injectChain();

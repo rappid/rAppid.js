@@ -7,7 +7,8 @@
         };
     }
 
-    var underscore;
+    var underscore,
+        Bus;
 
     /***
      * marks a function to be executed asycn
@@ -88,9 +89,10 @@
                     });
                 }
 
-                requirejsContext(["inherit", "underscore"], function (inherit, _) {
+                requirejsContext(["inherit", "underscore", "js/core/Bus"], function (inherit, _, b) {
                     // we have to load inherit.js in order that inheritance is working
                     underscore = _;
+                    Bus = b;
 
                     if (inherit && _) {
 
@@ -275,29 +277,18 @@
         data: null
     };
 
-
-    function inherit(o) {
-        function F() {} // Dummy constructor
-        F.prototype = o;
-        return new F();
-    }
-
     var SystemManager = function (requirejsContext, applicationContext, document) {
         this.$requirejsContext = requirejsContext;
         this.$applicationContext = applicationContext;
         this.$applicationFactory = null;
         this.$document = document;
+        this.$bus = new Bus();
     };
 
     var ApplicationContext = function (requirejsContext, config) {
-        SystemManager.call(this, requirejsContext);
-
+        this.$requirejsContext = requirejsContext;
         this.$config = config;
-        this.$applicationContext = this;
     };
-
-    ApplicationContext.prototype = inherit(SystemManager.prototype);
-    ApplicationContext.prototype.constructor = ApplicationContext;
 
     ApplicationContext.prototype.createApplicationInstance = function (document, callback) {
             // create instance
