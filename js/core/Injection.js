@@ -13,6 +13,11 @@ define(["js/core/Component", "underscore"], function (Component, _) {
                 this.$singletonInstanceCache = [];
                 this.$factories = [];
 
+                if (systemManager.$bus) {
+                    // make the bus available for injection
+                    this.$factories.push(systemManager.$bus);
+                }
+
                 systemManager.$injection = this;
             }
 
