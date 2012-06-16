@@ -3,32 +3,28 @@
 
 rAppid.js is a declarative JavaScript web application for rapid web application development. It uses XML to define the structure of applications, modules, components and views and JavaScript for the business logic of the application. The XML (xaml) gets translated to javascript components during runtime which will render itself as HTML5 DOM elements. This enables a rapid development of applications.
 
+Visit http://www.rappidjs.com for quick start and documentation.
+
 ## Development
 
 rAppid.js is currently under rapid development. The core features and life cycles are defined, but might be modified.
-For more information and documentation of <rAppid.js /> lookup the [wiki](https://github.com/it-ony/rAppid.js/wiki).
+For more information and documentation of <rAppid.js /> lookup our project home http://www.rappidjs.com.
 
 ## Features 
 * Dependency loading (via requirejs)
 * Combination of XAML-Components and HTML5
-* Code behind XML
-* Model-View Binding
-* Two-Way Binding
+* Code behind + XML
+* Model-View Binding, Two-Way Binding, Function Binding
 * Dependency Injection
 * Inline JavaScript usage in XAML
 * Virtual / Computed Attributes
 * Active Record Pattern for Models
 * Single Instance Model Stores
-* Datasources with Processors (RestDataSource + JSON Processor, XMLProcessor in future)
-* Abstract data access layer, which will later supports MongoDb
+* Abstract data access layer
+* Datasources with Processors and Format Processors (RestDataSource, LocalStorageDataSource, ...)
 * i18n
-* support rendering on node for SEO
+* Server side rendering with rAppid.js-server for SEO
 * optimize build
-
-## Code examples
-* TodoMVC application [Sources](https://github.com/krebbl/rappidjs-todomvc) - [Demo](http://todo.rappidjs.com)
-* Shop application [Sources](https://github.com/it-ony/SprdShop) (in developement)
-
 
 ## Installation
 The installation of rAppid.js is simple done via [npm](http://npmjs.org/).
