@@ -1,4 +1,4 @@
-define(["js/core/UIComponent", "js/core/History"], function (UIComponent, History) {
+define(["js/core/UIComponent", "js/core/History", "js/core/Bus"], function (UIComponent, History, Bus) {
         return UIComponent.inherit("js.core.Application", {
             $classAttributes: [/.+/],
             ctor: function () {
@@ -43,6 +43,8 @@ define(["js/core/UIComponent", "js/core/History"], function (UIComponent, Histor
                 if (target) {
                     target.appendChild(dom);
                 }
+
+                this.$systemManager.$bus.trigger('Application.Rendered');
 
                 return dom;
             },
