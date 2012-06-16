@@ -1,10 +1,13 @@
 define(['js/core/DomElement'], function(DomElement) {
 
-    return DomElement.inherit("js/html/HtmlElement", {
+    var HTML_Namespace = "http://www.w3.org/1999/xhtml";
+
+    var HtmlElement = DomElement.inherit("js/html/HtmlElement", {
 
         defaults: {
             selected: undefined,
-            selectable: undefined
+            selectable: undefined,
+            namespace: HTML_Namespace
         },
 
         _renderVisible: function (visible) {
@@ -62,4 +65,8 @@ define(['js/core/DomElement'], function(DomElement) {
         }
 
     });
+
+    HtmlElement.HTML_Namespace = HTML_Namespace;
+
+    return HtmlElement;
 });

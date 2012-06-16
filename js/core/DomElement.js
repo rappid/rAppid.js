@@ -63,6 +63,11 @@ define(["require", "js/core/EventDispatcher","js/core/Component", "js/core/Conte
                     this.$tagName = attributes.tagName;
                     delete(attributes.tagName);
                 }
+
+                if (attributes.namespace) {
+                    this.$namespace = attributes.namespace;
+                    delete (attributes.namespace);
+                }
             },
 
             addChild: function (child) {
