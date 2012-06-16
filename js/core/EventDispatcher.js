@@ -34,6 +34,17 @@ define(["js/core/Base"],
             return this;
         };
 
+        Function.prototype.bus = function() {
+
+            var events = Array.prototype.slice.call(arguments);
+            this._busEvents = this._busEvents || [];
+            for (var i = 0; i < events.length; i++) {
+                this._busEvents.push(events[i]);
+            }
+
+            return this;
+        };
+
         var undefinedValue;
 
         /** @class */
