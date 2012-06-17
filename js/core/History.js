@@ -6,18 +6,23 @@ define(["js/core/Bindable", "flow"], function (Bindable, flow) {
         emptyCallback = function () {
         };
 
-    return Bindable.inherit("js.core.History", {
+    var History = Bindable.inherit("js.core.History", {
 
         ctor: function () {
             this.callBase();
             this.$routers = [];
-            this.processUrl = true;
+            this.$processUrl = true;
 
             this.$history = [];
         },
 
         defaults: {
             interval: 50
+        },
+
+        // TODO: make this bindable so that i can call this.fragment.triggerChange()
+        fragment: function() {
+            return this.$fragment;
         },
 
         getFragment: function () {
@@ -58,9 +63,9 @@ define(["js/core/Bindable", "flow"], function (Bindable, flow) {
                 this.$history.push(initialHash || "");
             }
 
-            this.fragment = this.getFragment();
-            this.navigate(this.fragment, true, true, callback);
-            this.processUrl = true;
+            this.$fragment = this.getFragment();
+            this.navigate(this.$fragment, true, true, callback);
+            this.$processUrl = true;
 
         },
 
@@ -86,16 +91,16 @@ define(["js/core/Bindable", "flow"], function (Bindable, flow) {
 
         checkUrl: function (e) {
 
-            if (this.processUrl) {
+            if (this.$processUrl) {
                 var currentFragment = this.getFragment();
-                if (currentFragment == this.fragment) {
+                if (currentFragment == this.$fragment) {
                     return false;
                 }
 
                 this.navigate(currentFragment, true, true, emptyCallback);
             }
 
-            this.processUrl = true;
+            this.$processUrl = true;
 
         },
 
@@ -125,6 +130,8 @@ define(["js/core/Bindable", "flow"], function (Bindable, flow) {
 
         navigate: function (fragment, createHistoryEntry, triggerRoute, callback) {
 
+            var self = this;
+
             if (!callback && createHistoryEntry instanceof Function) {
                 callback = createHistoryEntry;
                 createHistoryEntry = null;
@@ -143,7 +150,15 @@ define(["js/core/Bindable", "flow"], function (Bindable, flow) {
                 triggerRoute = true;
             }
 
-            this.processUrl = false;
+            var eventData = {
+                fragment: fragment,
+                createHistoryEntry: createHistoryEntry,
+                triggerRoute: triggerRoute
+            };
+
+            this.trigger(History.EVENTS.NAVIGATION_START, eventData);
+
+            this.$processUrl = false;
 
             if (createHistoryEntry) {
                 if (this.runsInBrowser()) {
@@ -161,11 +176,23 @@ define(["js/core/Bindable", "flow"], function (Bindable, flow) {
 
             }
 
-            this.fragment = fragment;
+            this.$fragment = fragment;
 
             if (triggerRoute) {
-                this.triggerRoute(fragment, callback);
+                this.triggerRoute(fragment, function() {
+                    self.trigger(History.EVENTS.NAVIGATION_COMPLETE, eventData);
+                    callback.apply(arguments);
+                });
+            } else {
+                this.trigger(History.EVENTS.NAVIGATION_COMPLETE, eventData);
             }
         }
     });
+
+    History.EVENTS = {
+        NAVIGATION_START: "navigationStart",
+        NAVIGATION_COMPLETE: "navigationComplete"
+    };
+
+    return History;
 });
