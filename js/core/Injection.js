@@ -25,18 +25,13 @@ define(["js/core/Component", "underscore"], function (Component, _) {
 
         },
 
-        _initializeChildren: function (childComponents) {
-            this.callBase();
-        },
-
         _childrenInitialized: function () {
             this.callBase();
 
             for (var c = 0; c < this.$configurations.length; c++) {
                 var config = this.$configurations[c];
 
-
-                // TEST type of configuration
+                // TODO: TEST type of configuration
                 this.addFactory(config.$);
 
             }
