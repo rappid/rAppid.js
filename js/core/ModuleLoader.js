@@ -2,12 +2,14 @@ define(["require", "js/core/UIComponent", "js/ui/ContentPlaceHolder", "js/core/M
     function (require, UIComponent, ContentPlaceHolder, Module, _, ModuleConfiguration, flow) {
         var ModuleLoader = UIComponent.inherit("js.core.ModuleLoader", {
 
-            $classAttributes: ['router'],
+            $classAttributes: ['router', 'currentModuleName'],
+            defaults: {
+                currentModuleName:  null
+            },
             ctor: function (attributes) {
                 this.callBase();
                 this.$modules = {};
                 this.$moduleCache = {};
-                this.$currentModuleName = null;
             },
             _initializationComplete: function () {
                 this.callBase();
@@ -63,7 +65,7 @@ define(["require", "js/core/UIComponent", "js/ui/ContentPlaceHolder", "js/core/M
 
             _startModule: function (moduleName, moduleInstance, callback, routeContext, cachedInstance) {
 
-                this.$currentModuleName = moduleName;
+                this.set('currentModuleName',moduleName);
 
                 var contentPlaceHolders = this.getContentPlaceHolders();
 
@@ -109,7 +111,7 @@ define(["require", "js/core/UIComponent", "js/ui/ContentPlaceHolder", "js/core/M
             },
 
             loadModule: function (module, callback, routeContext) {
-                if (module.name === this.$currentModuleName) {
+                if (module.name === this.$.currentModuleName) {
                     // module already shown
                     if (callback) {
                         callback();
@@ -158,7 +160,16 @@ define(["require", "js/core/UIComponent", "js/ui/ContentPlaceHolder", "js/core/M
 
                 }
             },
-
+            moduleNames: function(){
+                var modules = [], conf;
+                for(var i = 0; i < this.$configurations.length; i++){
+                    conf = this.$configurations[i];
+                    if(conf instanceof ModuleConfiguration){
+                        modules.push(conf.$.name);
+                    }
+                }
+                return modules;
+            },
             render: function () {
                 // render the ContentPlaceHolder
                 return this.callBase();
