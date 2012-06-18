@@ -181,7 +181,9 @@ define(["js/core/Bindable", "flow"], function (Bindable, flow) {
             if (triggerRoute) {
                 this.triggerRoute(fragment, function() {
                     self.trigger(History.EVENTS.NAVIGATION_COMPLETE, eventData);
-                    callback.apply(arguments);
+                    if (callback) {
+                        callback.apply(arguments);
+                    }
                 });
             } else {
                 this.trigger(History.EVENTS.NAVIGATION_COMPLETE, eventData);
