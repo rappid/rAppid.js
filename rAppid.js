@@ -296,8 +296,8 @@
 
             var systemManager = new SystemManager(this.$requirejsContext, this, document);
 
-            this.$requirejsContext(["js/core/Application"], function (Application) {
-
+            this.$requirejsContext(["js/core/Application", "js/core/HeadManager"], function (Application, HeadManager) {
+                systemManager.$headManager = new HeadManager(document.head);
                 var application = new applicationFactory(null, false, systemManager, null, null);
 
                 if (application instanceof Application) {

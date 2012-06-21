@@ -45,7 +45,7 @@ define(['JSON'], function (JSON) {
                 xhr.open('GET', url, true);
                 xhr.onreadystatechange = function () {
                     if (xhr.readyState === 4) {
-                        if (xhr.responseText) {
+                        if ((xhr.status === 200 || xhr.status === 304) && xhr.responseText) {
                             callback(null, xhr.responseText);
                         } else {
                             callback("no responseXML found");
