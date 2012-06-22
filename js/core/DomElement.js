@@ -168,7 +168,7 @@ define(["require", "js/core/EventDispatcher","js/core/Component", "js/core/Conte
                 return null;
             },
 
-            render: function () {
+            render: function (el) {
 
                 if (!this.$initialized) {
                     this._initialize(this.$creationPolicy);
@@ -180,10 +180,14 @@ define(["require", "js/core/EventDispatcher","js/core/Component", "js/core/Conte
 
                 this.$renderedChildren = [];
 
-                if (this.$systemManager.$document.createElementNS && this.$namespace && /^http/.test(this.$namespace)) {
-                    this.$el = this.$systemManager.$document.createElementNS(this.$namespace, this.$tagName);
-                } else {
-                    this.$el = this.$systemManager.$document.createElement(this.$tagName);
+                if(!el){
+                    if (this.$systemManager.$document.createElementNS && this.$namespace && /^http/.test(this.$namespace)) {
+                        this.$el = this.$systemManager.$document.createElementNS(this.$namespace, this.$tagName);
+                    } else {
+                        this.$el = this.$systemManager.$document.createElement(this.$tagName);
+                    }
+                }else{
+                    this.$el = el;
                 }
 
                 this._initializeRenderer(this.$el);

@@ -38,11 +38,7 @@ define(["js/core/UIComponent", "js/core/History", "js/core/Bus"], function (UICo
             },
 
             render: function (target) {
-                var dom = this.callBase(null);
-
-                if (target) {
-                    target.appendChild(dom);
-                }
+                var dom = this.callBase(target);
 
                 this.$systemManager.$bus.trigger('Application.Rendered');
 

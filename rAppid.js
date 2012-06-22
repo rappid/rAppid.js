@@ -296,7 +296,7 @@
 
             var systemManager = new SystemManager(this.$requirejsContext, this, document);
 
-            this.$requirejsContext(["js/core/Application"], function (Application) {
+            this.$requirejsContext(["js/core/Application", "js/core/Stage"], function (Application, Stage) {
 
                 var application = new applicationFactory(null, false, systemManager, null, null);
 
@@ -308,7 +308,17 @@
 
                     // return rAppid instance
                     if (callback) {
-                        callback(null, systemManager, application);
+                        systemManager.$stage = new Stage(null, false, systemManager, null, null);
+                        // TODO: replace target
+                        systemManager.$stage.render(document.body);
+
+                        var el = systemManager.$stage.createWindow('main');
+                        application.start(null, function(err){
+                            if(!err){
+                                application.render(el);
+                            }
+                            callback(err, systemManager, application);
+                        });
                     }
 
                 } else {
