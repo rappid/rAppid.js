@@ -342,8 +342,8 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                 },
                 /***
                  * Create {@link Component} for DOM Node with given attributes
-                 * @param DOM Node
-                 * @param attributes for new Component
+                 * @param {DOM} node
+                 * @param [attributes] for new Component
                  */
                 _createComponentForNode: function (node, attributes, rootScope) {
                     if (!node) return null;
@@ -351,7 +351,6 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                     attributes = attributes || {};
                     rootScope = rootScope || this.$rootScope;
                     // only instantiation and construction but no initialization
-                    var appDomain = this.$stage.$applicationDomain;
 
                     if (node.nodeType == 1) { // Elements
 
@@ -360,8 +359,8 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
 
                         return this.$stage.$applicationContext.createInstance(fqClassName, [attributes, node, this.$stage, this, rootScope], className);
 
-                    } else if (node.nodeType == 3 || node.nodeType == 4) { // Textnodes
-                        // remove whitespaces from text textnodes
+                    } else if (node.nodeType == 3 || node.nodeType == 4) { // Text nodes
+                        // remove whitespaces from text text nodes
                         var text = node.textContent ? node.textContent : node.text;
                         if (node.textContent) {
                             node.textContent = text;
