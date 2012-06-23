@@ -1,8 +1,13 @@
 define(["inherit"], function(inherit){
 
+    var cid = 0;
+
     var Base = inherit.Base.inherit("js.core.Base",{
-        /** @lends Base **/
+
         ctor: function () {
+            // generate unique id
+            this.$cid = ++cid;
+
         },
 
         runsInBrowser: function () {
