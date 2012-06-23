@@ -41,20 +41,7 @@ define(["js/html/HtmlElement", "js/core/Content", "underscore"], function (HtmlE
                     }
                 });
             },
-            _renderComponentClass: function (cls, oldCls) {
-                if (oldCls) {
-                    this.removeClass(oldCls);
-                }
-                if (cls) {
-                    this.addClass(cls);
-                }
-            },
-            _renderClass: function (className) {
-                if (className) {
-                    this.addClass(className);
-                }
 
-            },
             _renderTemplateToPlaceHolder: function (templateName, placeholderName, attributes) {
                 this.$renderedPlaceholders = this.$renderedPlaceholders || {};
                 var renderedComponent = this.$renderedPlaceholders[placeholderName];
