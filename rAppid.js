@@ -356,6 +356,8 @@
                 stage.$application = application;
                 stage._initialize("auto");
 
+                application._initialize("auto");
+
                 // return rAppid instance
                 if (callback) {
                     callback(null, stage, application);
