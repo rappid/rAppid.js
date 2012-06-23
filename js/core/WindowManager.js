@@ -11,32 +11,21 @@ define(['js/html/HtmlElement', 'underscore'], function(HtmlElement, _){
         },
 
         defaults: {
-            tagName: 'div'
+            tagName: 'div',
+            'class': 'window-manager'
         },
 
-        createChildren: function() {
-
-            this.$windowContainer = this.createComponent(HtmlElement, {
-                tagName: 'div'
-            });
-            this.$modalWindowContainer = this.createComponent(HtmlElement, {
-                tagName: 'div'
-            });
-
-            return [this.$windowContainer, this.$modalWindowContainer];
-
-        },
 
         show: function(window, callback, modal) {
 
-            var container = modal ? this.$modalWindowContainer : this.$windowContainer,
+            var self = this,
                 list = modal ? this.$windows : this.$modalWindows;
 
-            container.addChild(window);
+            this.addChild(window);
             list.push(window);
 
             var closeHandler = function(e) {
-                container.removeChild(window);
+                self.removeChild(window);
                 list.splice(_.indexOf(list, window), 1);
 
                 window.unbind('close', closeHandler);
