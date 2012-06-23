@@ -375,7 +375,7 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
 
                 createComponent: function(factory, attributes) {
                     attributes = attributes || [];
-                    return this.$stage.$applicationContext.createInstance(factory, [attributes, null, this.$stage, this, this.$rootScope]);
+                    return this.$stage.$applicationContext.createInstance(factory, [attributes, false, this.$stage, this, this.$rootScope]);
                 },
 
                 _createTextElement: function(node, rootScope) {
