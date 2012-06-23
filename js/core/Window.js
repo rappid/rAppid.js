@@ -13,7 +13,11 @@ define(['js/html/HtmlElement'], function(HtmlElement) {
          * @param {Boolean} [modal=false]
          */
         show: function(callback, modal) {
-            this.$stage.$windowManager.show(this);
+            this.$stage.$windowManager.show(this, callback, modal);
+        },
+
+        showModal: function(callback) {
+            this.show(callback, true);
         },
 
         close: function(state) {

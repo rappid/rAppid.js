@@ -19,13 +19,28 @@ define(['js/html/HtmlElement', 'underscore'], function(HtmlElement, _){
         show: function(window, callback, modal) {
 
             var self = this,
-                list = modal ? this.$windows : this.$modalWindows;
+                list = modal ? this.$windows : this.$modalWindows,
+                child = window;
 
-            this.addChild(window);
+            if (modal) {
+                child = this.createComponent(HtmlElement, {
+                    tagName: 'div',
+                    componentClass: 'modal'
+                });
+
+                child.addChild(this.createComponent(HtmlElement, {
+                    tagName: 'div',
+                    class: 'back-drop'
+                }));
+
+                child.addChild(window);
+            }
+
+            this.addChild(child);
             list.push(window);
 
             var closeHandler = function(e) {
-                self.removeChild(window);
+                self.removeChild(child);
                 list.splice(_.indexOf(list, window), 1);
 
                 window.unbind('close', closeHandler);
