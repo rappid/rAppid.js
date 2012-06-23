@@ -1,4 +1,9 @@
 define(["js/core/UIComponent", "js/core/History", "js/core/Bus"], function (UIComponent, History, Bus) {
+
+        /***
+         * @class js.core.Application
+         * @inherit js.core.UIComponent
+         */
         return UIComponent.inherit("js.core.Application", {
             $classAttributes: [/.+/],
             ctor: function () {
@@ -37,6 +42,11 @@ define(["js/core/UIComponent", "js/core/History", "js/core/Bus"], function (UICo
                 this.history.start(callback, initialHash);
             },
 
+            /***
+             *
+             * @param {Element} [target] the native Element where the rendered element will be appended
+             * @return {Element} the rendered Element
+             */
             render: function (target) {
                 var dom = this.callBase(null);
 
