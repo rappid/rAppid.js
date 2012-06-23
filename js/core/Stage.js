@@ -1,19 +1,37 @@
-define(["js/html/HtmlElement", "js/core/UIComponent"], function (HtmlElement, UIComponent) {
+define(["js/html/HtmlElement", "js/core/UIComponent", "js/core/Bus", "js/core/WindowManager"], function (HtmlElement, UIComponent, Bus, WindowManager) {
     return HtmlElement.inherit("js.core.Stage", {
         $containerOrder: {
             'windows' : 0,
             'popups': 1,
             'tooltips' : 2
         },
+
         defaults: {
             tagName: "div"
         },
-        ctor: function(){
+
+        ctor: function(requireJsContext, applicationContext, document){
+
+            this.$requirejsContext = requireJsContext;
+            this.$applicationContext = applicationContext;
+            this.$applicationFactory = null;
+            this.$document = document;
+            this.$bus = new Bus();
+
             this.$containers = {};
             this.$elements = {};
-            this.callBase();
+
+            this.callBase(null, null, this, null, this);
 
         },
+
+        createChildren: function() {
+
+            this.$windowManager = this.createComponent(WindowManager);
+            return [this.$windowManager];
+
+        },
+
         render: function(target){
             var dom = this.callBase(null);
             if (target) {
@@ -49,7 +67,7 @@ define(["js/html/HtmlElement", "js/core/UIComponent"], function (HtmlElement, UI
         },
         createContainer: function(attributes){
             attributes = attributes || {};
-            return this.$systemManager.$applicationContext.createInstance(UIComponent, [attributes, null, this.$systemManager, this, this]);
+            return this.$stage.$applicationContext.createInstance(UIComponent, [attributes, null, this.$stage, this, this]);
         }
 
     });
