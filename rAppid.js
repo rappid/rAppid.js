@@ -354,8 +354,7 @@
             if (application instanceof Application) {
 
                 stage.$application = application;
-
-                application._initialize("auto");
+                stage._initialize("auto");
 
                 // return rAppid instance
                 if (callback) {
