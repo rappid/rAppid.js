@@ -3,7 +3,8 @@ define(['js/html/HtmlElement'], function(HtmlElement) {
     return HtmlElement.inherit('js.core.Window', {
 
         defaults: {
-            tagName: 'div'
+            tagName: 'div',
+            componentClass: 'window'
         },
 
         /***
