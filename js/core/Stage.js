@@ -7,7 +7,8 @@ define(["js/html/HtmlElement", "js/core/UIComponent", "js/core/Bus", "js/core/Wi
         },
 
         defaults: {
-            tagName: "div"
+            tagName: "div",
+            'class': 'stage'
         },
 
         ctor: function(requireJsContext, applicationContext, document){
@@ -21,7 +22,7 @@ define(["js/html/HtmlElement", "js/core/UIComponent", "js/core/Bus", "js/core/Wi
             this.$containers = {};
             this.$elements = {};
 
-            this.callBase(null, null, this, null, this);
+            this.callBase(null, false, this, null, this);
 
         },
 
