@@ -55,6 +55,10 @@ define(['js/core/DomElement'], function(DomElement) {
         // render each href Element in xlink namespace
         _renderHref: function(href, oldHref) {
             this._setAttribute("href", href, SvgElement.XLINK_NAMESPACE);
+        },
+
+        _renderClass: function(value) {
+            this._setAttribute('class', value);
         }
     });
 
