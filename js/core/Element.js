@@ -109,7 +109,7 @@ define(["js/core/Bindable", "underscore", "js/core/BindingCreator"], function (B
 
                 this._initializeDescriptors();
 
-                if (this == this.$rootScope || withBindings) {
+                if (this == this.$rootScope || withBindings || this.$descriptor === false) {
                     this._initializeBindings();
                 }
 
