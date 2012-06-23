@@ -97,7 +97,7 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                         var fn = this[f];
                         if (fn instanceof Function && fn._busEvents) {
                             for (var i = 0; i < fn._busEvents.length; i++) {
-                                this.$systemManager.$bus.bind(fn._busEvents[i], fn, this);
+                                this.$stage.$bus.bind(fn._busEvents[i], fn, this);
                             }
                         }
                     }
@@ -113,7 +113,7 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                         // synchronous singleton instantiation of Injection,
                         // because if module requires injection, application also depends on
                         // Injection.js and class should be installed.
-                        var injection = this.$systemManager.$injection;
+                        var injection = this.$stage.$injection;
                         if (injection) {
                             for (var name in inject) {
                                 if (inject.hasOwnProperty(name)) {
@@ -234,6 +234,11 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
 
                     children = children.concat(this._getChildrenFromDescriptor(this.$descriptor));
 
+                    var extraChildren = this.createChildren();
+                    if (extraChildren) {
+                        children = children.concat(extraChildren);
+                    }
+
                     this._initializeChildren(children);
 
                     this._childrenInitialized();
@@ -241,6 +246,11 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                     this._initializeEventAttributes(this.$xamlDefaults, this);
                     this._initializeEventAttributes(this.$xamlAttributes, this.$rootScope);
                 },
+
+                createChildren: function() {
+
+                },
+
                 _cleanUpDescriptor: function (desc) {
                     if (desc && desc.childNodes) {
                         var node, text;
@@ -341,14 +351,14 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                     attributes = attributes || {};
                     rootScope = rootScope || this.$rootScope;
                     // only instantiation and construction but no initialization
-                    var appDomain = this.$systemManager.$applicationDomain;
+                    var appDomain = this.$stage.$applicationDomain;
 
                     if (node.nodeType == 1) { // Elements
 
-                        var fqClassName = this.$systemManager.$applicationContext.getFqClassName(node.namespaceURI, this._localNameFromDomNode(node), true);
-                        var className = this.$systemManager.$applicationContext.getFqClassName(node.namespaceURI, this._localNameFromDomNode(node), false);
+                        var fqClassName = this.$stage.$applicationContext.getFqClassName(node.namespaceURI, this._localNameFromDomNode(node), true);
+                        var className = this.$stage.$applicationContext.getFqClassName(node.namespaceURI, this._localNameFromDomNode(node), false);
 
-                        return this.$systemManager.$applicationContext.createInstance(fqClassName, [attributes, node, this.$systemManager, this, rootScope], className);
+                        return this.$stage.$applicationContext.createInstance(fqClassName, [attributes, node, this.$stage, this, rootScope], className);
 
                     } else if (node.nodeType == 3 || node.nodeType == 4) { // Textnodes
                         // remove whitespaces from text textnodes
@@ -365,11 +375,11 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
 
                 createComponent: function(factory, attributes) {
                     attributes = attributes || [];
-                    return this.$systemManager.$applicationContext.createInstance(factory, [attributes, null, this.$systemManager, this, this.$rootScope]);
+                    return this.$stage.$applicationContext.createInstance(factory, [attributes, null, this.$stage, this, this.$rootScope]);
                 },
 
                 _createTextElement: function(node, rootScope) {
-                    return this.$systemManager.$applicationContext.createInstance('js/core/TextElement', [null, node, this.$systemManager, this, rootScope]);
+                    return this.$stage.$applicationContext.createInstance('js/core/TextElement', [null, node, this.$stage, this, rootScope]);
                 },
 
                 /***

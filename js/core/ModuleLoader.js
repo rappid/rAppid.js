@@ -124,8 +124,8 @@ define(["require", "js/core/UIComponent", "js/ui/ContentPlaceHolder", "js/core/M
                         var self = this;
                         // load module
 
-                        require([this.$systemManager.$applicationContext.getFqClassName(module.moduleClass)], function (moduleBaseClass) {
-                            var moduleInstance = new moduleBaseClass(null, false, self.$systemManager, null, null);
+                        require([this.$stage.$applicationContext.getFqClassName(module.moduleClass)], function (moduleBaseClass) {
+                            var moduleInstance = new moduleBaseClass(null, false, self.$stage, null, null);
 
                             if (moduleInstance instanceof Module) {
                                 moduleInstance._initialize("auto");

@@ -49,7 +49,7 @@ define(
                         ph = placeholders[i];
 
                         if (ph.start > start) {
-                            this.$el.appendChild(this.$systemManager.$document.createTextNode(string.substring(start + 1, ph.start)));
+                            this.$el.appendChild(this.$stage.$document.createTextNode(string.substring(start + 1, ph.start)));
                         }
 
                         start = ph.end;
@@ -75,11 +75,11 @@ define(
                             this.$children.push(childView);
                             this.$el.appendChild(childView.$el);
                         } else {
-                            this.$el.appendChild(this.$systemManager.$document.createTextNode(ph.text));
+                            this.$el.appendChild(this.$stage.$document.createTextNode(ph.text));
                         }
                     }
                     if (start < string.length) {
-                        this.$el.appendChild(this.$systemManager.$document.createTextNode(string.substr(start + 1)));
+                        this.$el.appendChild(this.$stage.$document.createTextNode(string.substr(start + 1)));
                     }
 
                 }

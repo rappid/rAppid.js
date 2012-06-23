@@ -1,5 +1,6 @@
-define(["js/core/UIComponent", "js/core/History", "js/core/Bus"], function (UIComponent, History, Bus) {
-        return UIComponent.inherit("js.core.Application", {
+define(["js/core/Window", "js/core/UIComponent", "js/core/History", "js/core/Bus"], function (Window, UIComponent, History, Bus) {
+
+        return Window.inherit("js.core.Application", {
             $classAttributes: [/.+/],
             ctor: function () {
                 this.history = new History();
@@ -29,7 +30,9 @@ define(["js/core/UIComponent", "js/core/History", "js/core/Bus"], function (UICo
              */
             start: function (parameter, callback) {
                 parameter = parameter || {};
-                this.$systemManager.$parameter = parameter;
+                this.$stage.$parameter = parameter;
+                this.show();
+
                 this.startHistory(callback, parameter.initialHash);
             },
 
@@ -40,7 +43,7 @@ define(["js/core/UIComponent", "js/core/History", "js/core/Bus"], function (UICo
             render: function (target) {
                 var dom = this.callBase(target);
 
-                this.$systemManager.$bus.trigger('Application.Rendered');
+                this.$stage.$bus.trigger('Application.Rendered');
 
                 return dom;
             },

@@ -34,7 +34,7 @@ define(["js/core/Bindable", "underscore", "js/core/BindingCreator"], function (B
                 }
 
                 this.$descriptor = descriptor;
-                this.$systemManager = systemManager;
+                this.$stage = systemManager;
                 this.$parentScope = parentScope || null;
                 this.$rootScope = rootScope || null;
                 this.$attributesNamespace = this.$attributesNamespace || {};

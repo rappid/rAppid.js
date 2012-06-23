@@ -101,7 +101,7 @@ define(["js/core/Component", "underscore"], function (Component, _) {
 
             if (!factory.factory) {
                 // get factory from class
-                var fac = this.$systemManager.$applicationDomain.getDefinition(factory.type);
+                var fac = this.$stage.$applicationDomain.getDefinition(factory.type);
                 if (!fac) {
                     throw "factory for type '" + factory.type + "' not found";
                 }
