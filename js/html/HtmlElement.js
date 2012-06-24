@@ -2,7 +2,7 @@ define(['js/core/DomElement'], function(DomElement) {
 
     var HTML_Namespace = "http://www.w3.org/1999/xhtml";
 
-    var HtmlElement = DomElement.inherit("js/html/HtmlElement", {
+    var HtmlElement = DomElement.inherit("js.html.HtmlElement", {
 
         defaults: {
             selected: undefined,
