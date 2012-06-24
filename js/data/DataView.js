@@ -8,11 +8,6 @@ define(["js/core/Component", "js/core/List" ,"underscore"], function (Component,
 
     return Component.inherit("js.data.DataView", {
 
-        defaults: {
-            filterFnc: function (item, index, list) {
-                return true;
-            }
-        },
         initialize: function(){
             this.$.list = new List();
             this.bind('baseList','add', this._onItemAdded, this);
@@ -21,10 +16,18 @@ define(["js/core/Component", "js/core/List" ,"underscore"], function (Component,
             this.bind('baseList','reset', this._onReset, this);
             this.bind('baseList','sort', this._onSort, this);
 
+
+        },
+
+        _initializationComplete: function() {
+
             if (this.$.baseList && this.$.baseList instanceof List) {
                 this._innerReset(this.$.baseList.$items);
             }
+
+            this.callBase();
         },
+
         _onItemChanged: function () {
             // implement
         },
