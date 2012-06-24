@@ -108,6 +108,10 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
             uri = uri.concat(model.$context.getPathComponents());
             uri = uri.concat(modelPathComponents);
 
+            if (this.$.suffix) {
+                uri[uri.length - 1] = uri[uri.length - 1] + "." + this.$.suffix;
+            }
+
             // get queryParameter
             var params = _.defaults(model.$context.getQueryParameter(),
                 this.getQueryParameter(RestDataSource.METHOD.GET));
