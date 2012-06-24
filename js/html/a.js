@@ -1,7 +1,7 @@
 define(['js/html/HtmlElement'], function (HtmlElement) {
 
     var externalLink = /^(([^:]+:\/\/)|(javascript:))/i,
-        startsWithHash = /^#/,
+        stripHashSlash = /^#?\/?/,
         hashBankUrl = /^#?(.*)$/;
 
     return HtmlElement.inherit("js.html.a", {
@@ -14,10 +14,8 @@ define(['js/html/HtmlElement'], function (HtmlElement) {
             href = href || "javascript:void(0);";
 
             if (!(this.$.target === "external" || externalLink.test(href) || this.$.target === "_blank")) {
-                // ajax link
-                if (!startsWithHash.test(href)) {
-                    href = "#" + href;
-                }
+
+                href = "#/" + href.replace(stripHashSlash, '');
 
                 if (!this.runsInBrowser()) {
                     // node rendering -> hash bang url
