@@ -6,7 +6,7 @@
  */
 define(["js/data/DataView"], function (DataView) {
 
-    return DataView.inherit("js.data.FilterListView", {
+    return DataView.inherit("js.data.FilterDataView", {
         initialize: function(){
             this.callBase();
             this.bind('change:filter', this._onFilterChanged, this);
