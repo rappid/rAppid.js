@@ -21,11 +21,21 @@ define(["js/core/Bindable", "flow"], function (Bindable, flow) {
         },
 
         // TODO: make this bindable so that i can call this.fragment.triggerChange()
+
+        /***
+         * @Bindable
+         * @return {String}
+         */
         fragment: function() {
             return this.$fragment;
         },
 
-        getFragment: function () {
+        /***
+         * determinate the current fragment
+         * @return {String} the current fragment without the starting #/
+         * @private
+         */
+        _getFragment: function () {
             var fragment;
 
             if (this.runsInBrowser()) {
@@ -63,7 +73,7 @@ define(["js/core/Bindable", "flow"], function (Bindable, flow) {
                 this.$history.push(initialHash || "");
             }
 
-            this.$fragment = this.getFragment();
+            this.$fragment = this._getFragment();
             this.navigate(this.$fragment, true, true, callback);
             this.$processUrl = true;
 
@@ -92,7 +102,7 @@ define(["js/core/Bindable", "flow"], function (Bindable, flow) {
         checkUrl: function (e) {
 
             if (this.$processUrl) {
-                var currentFragment = this.getFragment();
+                var currentFragment = this._getFragment();
                 if (currentFragment == this.$fragment) {
                     return false;
                 }
