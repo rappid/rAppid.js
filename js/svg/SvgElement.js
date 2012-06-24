@@ -1,6 +1,6 @@
 define(['js/core/DomElement'], function(DomElement) {
 
-    var SvgElement = DomElement.inherit("js/svg/SvgElement", {
+    var SvgElement = DomElement.inherit("js.svg.SvgElement", {
 
         ctor: function() {
             // default namespace
