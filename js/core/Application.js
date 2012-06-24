@@ -8,11 +8,6 @@ define(["js/core/Window", "js/core/UIComponent", "js/core/History", "js/core/Bus
                 this.callBase();
             },
 
-            initialize: function () {
-                // set up application wide vars
-                this.callBase();
-            },
-
             _inject: function () {
                 // overwrite and call inside start
             },
@@ -23,9 +18,9 @@ define(["js/core/Window", "js/core/UIComponent", "js/core/History", "js/core/Bus
             },
 
             /**
-             * Method called, when application is initialized
+             * Starts the application after the application is bootstrapped
              *
-             * @param {Object} parameter
+             * @param {Object} parameter - parameter configuring the application
              * @param {Function} callback
              */
             start: function (parameter, callback) {
@@ -33,10 +28,17 @@ define(["js/core/Window", "js/core/UIComponent", "js/core/History", "js/core/Bus
                 this.$stage.$parameter = parameter;
                 this.show();
 
-                this.startHistory(callback, parameter.initialHash);
+                this._startHistory(callback, parameter.initialHash);
             },
 
-            startHistory: function(callback, initialHash) {
+            /***
+             * Starts the history, which is responsible for navigation
+             *
+             * @param {Function} [callback] callback function, which is invoked after the history has started
+             * @param {String} [initialHash=null] starts the history with this fragment
+             * @private
+             */
+            _startHistory: function(callback, initialHash) {
                 this.history.start(callback, initialHash);
             },
 
@@ -46,10 +48,8 @@ define(["js/core/Window", "js/core/UIComponent", "js/core/History", "js/core/Bus
                 this.$stage.$bus.trigger('Application.Rendered');
 
                 return dom;
-            },
-            toString: function () {
-                return "js.core.Application";
             }
+
         });
     }
 );
