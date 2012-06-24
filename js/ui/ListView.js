@@ -1,5 +1,5 @@
 define(['js/ui/ItemsView', 'js/html/HtmlElement'], function(ItemsView, HtmlElement) {
-    return ItemsView.inherit('js/ui/ListView', {
+    return ItemsView.inherit('js.ui.ListView', {
         defaults: {
             tagName: 'ul'
         },
