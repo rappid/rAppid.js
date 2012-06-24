@@ -7,19 +7,19 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
 
 
         var Component = Element.inherit("js.core.Component",
-            /** @lends Component */
+
             {
                 /***
                  * What up??
                  * @param attributes The attributes of the component
                  * @param {String} attributes.style The style of the component
                  * @param {Node} descriptor
-                 * @param {SystemManager} systemManager
+                 * @param {js.core.Stage} stage
                  * @param {Element} parentScope
                  * @param {Element} rootScope
                  * @constructs
                  */
-                ctor: function (attributes, descriptor, systemManager, parentScope, rootScope) {
+                ctor: function (attributes, descriptor, stage, parentScope, rootScope) {
                     if (_.isUndefined(Template)) {
                         try {
                             Template = require('js/core/Template');
