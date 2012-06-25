@@ -10,14 +10,20 @@ define(["inherit"], function(inherit){
 
         },
 
+        /***
+         * determinate if the application runs in the browser or on node
+         *
+         * @return {Boolean} true if the application runs in a browser
+         */
         runsInBrowser: function () {
             return typeof window !== "undefined";
         },
 
         /***
+         * logs messages to configured logging functions
          *
-         * @param {String|Array} message
-         * @param {String} [level="info"]
+         * @param {String|Array} message the message to log
+         * @param {String} [level="info"] the service level of (debug, info, warn, error)
          */
         log: function(message, level) {
             level = level || Base.LOGLEVEL.INFO;
