@@ -16,7 +16,8 @@ var args = process.argv.splice(2),
         "config",
         "interactive",
         "optimize",
-        "export"
+        "export",
+        "doc"
     ],
     allCmds = cmdList.concat(Object.keys(aliases));
 

@@ -1,99 +1,114 @@
-#!/usr/bin/env node
+var help = function(args, callback) {
 
-var fs = require("fs"),
-    path = require("path"),
-    args = process.argv.splice(2),
-    util = require('util'),
-    exec = require('child_process');
+    var amdDoc = require('./lib/doc.js'),
+        fs = require('fs'),
+        path = require('path'),
+        argv = require('optimist')(args)
+            .usage(help.usage)
+            .demand(1)
+            .options('o', {
+                alias: 'output'
+            })
+            .options('s', {
+                alias: 'suffix',
+                default: '.json'
+            })
+            .options('x', {
+                alias: 'exclude'
+            })
+            .describe({
+                o: 'output directory where the my.class.suffix files will be saved',
+                x: 'excludes files or folders from getting parsed'
+            })
+            .argv,
 
-var dox = require("dox");
+            outputDir;
 
-var targetDir = path.join(process.cwd(), "doc", "docs");
-var dir = ".";
-var exclude_dirs = ["node_modules", "bin", "doc", "test"];
-var excludes = ["atlassian-ide-plugin.xml"];
+        outputDir = argv.o ? argv.o.replace(/^~\//, process.env.HOME + '/') : null;
 
-var types = ["xml", "js"];
+    generateDocumentation(argv._[0]);
 
-fs.mkdirParent = function (dirPath) {
-    if (!path.existsSync(dirPath)) {
-        var parentDir = path.normalize(path.join(dirPath, ".."));
-        if (!path.existsSync(parentDir)) {
-            fs.mkdirParent(parentDir);
+    function generateDocumentation(startFile) {
+
+        var documentation = new amdDoc.Documentation(),
+            paths,
+            stat;
+
+        startFile = startFile.replace(/^~\//, process.env.HOME + '/');
+
+        stat = fs.statSync(startFile);
+
+        if (stat.isDirectory()) {
+            paths = findFiles(startFile);
+            paths.forEach(function (p) {
+                var shortPath = path.relative(path.join(startFile, '..'), p),
+                    code = fs.readFileSync(p, 'UTF-8');
+
+                var defaultFqClassName = shortPath.replace(/\//g, '.').replace(/\.js$/, '');
+                documentation.generateDocumentationsForFile('js', code, defaultFqClassName, true);
+
+
+            });
+        } else if (stat.isFile()) {
+            documentation.generateDocumentationsForFile('js', fs.readFileSync(startFile, 'UTF-8'), startFile, true);
         }
 
-        fs.mkdirSync(dirPath);
+        var output = documentation.process();
+
+        if (!outputDir) {
+            console.log(JSON.stringify(output, null, 4));
+        } else {
+            // output directory specified
+
+            // generate index.json
+            var index = Object.keys(output);
+            index.sort();
+
+            writeFile(path.join(outputDir, 'index.json'), index);
+
+            for (var fqClassName in output) {
+                if (output.hasOwnProperty(fqClassName)) {
+                    writeFile(path.join(outputDir, fqClassName + '.json'), output[fqClassName]);
+                }
+            }
+
+        }
+
+    }
+
+    function writeFile(path, data) {
+
+        fs.writeFileSync(path, JSON.stringify(data, null, 4))
+    }
+
+    function findFiles(dir) {
+
+        var ret = [],
+            files = fs.readdirSync(dir);
+
+        for (var i = 0; i < files.length; i++) {
+            var file = path.join(dir, files[i]);
+            var stat = fs.statSync(file);
+
+            if (stat.isDirectory() && !isExcluded(file)) {
+                ret = ret.concat(findFiles(file));
+            } else if (stat.isFile() && path.extname(file) === '.js' && !isExcluded(file)) {
+                // javascript file
+                ret.push(file);
+            }
+        }
+
+        return ret;
+
+    }
+
+    function isExcluded(path) {
+        // TODO: implement
+        return false;
     }
 };
 
+help.usage = "rappidjs doc <dir>";
 
-// generate targetDir
-if (!path.existsSync(targetDir)) {
-    fs.mkdirParent(targetDir);
-}
+module.exports = help;
 
-function findJsFiles(dir) {
-
-    var ret = [];
-
-    fs.readdirSync(dir).forEach(function(name) {
-
-        if (exclude_dirs.indexOf(name) === -1 && name.substring(0, 1) !== ".") {
-            name = path.join(dir, name);
-
-            var exclude = false;
-            excludes.forEach(function(item) {
-                if (item instanceof RegExp) {
-                    if (item.test(name)) {
-                        exclude = true;
-                    }
-                } else if (name === item){
-                    exclude = true;
-                }
-            });
-
-            if (!exclude) {
-                var stat = fs.statSync(name);
-
-                if (stat.isDirectory()) {
-                    ret = ret.concat(findJsFiles(name));
-                } else {
-
-                    var ext = path.extname(name).toLowerCase().substring(1);
-                    if (types.indexOf(ext) !== -1) {
-                        ret.push({
-                            type: ext,
-                            path: name,
-                            className: name.replace(/\//g, ".")
-                        });
-                    }
-                }
-            }
-        }
-    });
-
-    return ret;
-}
-
-var modules = findJsFiles(dir);
-fs.writeFileSync(path.join(targetDir, "index.json"), JSON.stringify(modules));
-
-
-modules.forEach(function(module){
-
-    var out;
-    try {
-        out = dox.parseComments(fs.readFileSync(module.path, "utf-8"));
-    } catch (e) {
-        util.debug("Couldn't generate documentation for '" + module.path + "'.");
-    }
-
-    out = out || {};
-
-    fs.writeFileSync(path.join(targetDir, module.className + ".json"), JSON.stringify(out));
-
-});
-
-
-
-console.log(modules);

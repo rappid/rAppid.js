@@ -34,13 +34,16 @@
         "requirejs": ">=2.0.1",
         "flow.js": ">=0.2.2",
         "inherit.js": ">=0.1.5",
-        "ejs": "latest"
+        "ejs": "latest",
+        "optimist": ">=0.3.4"
+    },
+    "optionalDependencies": {
+        "esprima": "latest"
     },
     "devDependencies": {
         "chai": "*",
         "mocha": "*" ,
         "pegjs": "*"
-
     },
     "license": "MIT",
     "engine": {
@@ -50,5 +53,4 @@
         "node": "*"
     },
     "homepage": "http://rappidjs.com",
-    "optionalDependencies": {}
 }
