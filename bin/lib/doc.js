@@ -1,5 +1,6 @@
 var esprima = require('esprima'),
     inherit = require('inherit.js').inherit,
+    _ = require('underscore'),
     CONST = {
         AssignmentExpression: 'AssignmentExpression',
         ArrayExpression: 'ArrayExpression',
@@ -110,6 +111,11 @@ var esprima = require('esprima'),
                             classDocumentation.inheritancePath = classDocumentation.generateInheritancePath(this.documentations);
                         }
                     }
+
+                    if (classDocumentation.inheritancePath) {
+                        // find inherit methods
+                        classDocumentation.addInheritMethods(this.documentations);
+                    }
                 }
             }
 
@@ -131,6 +137,19 @@ var esprima = require('esprima'),
             }
         },
 
+        getParameterByNameForMethod: function(parameterName, methodName) {
+            if (this.methods.hasOwnProperty(methodName)) {
+                for (var i = 0; i < this.methods[methodName].parameter.length; i++) {
+                    var parameter = this.methods[methodName].parameter[i];
+                    if (parameter.name === parameterName) {
+                        return parameter;
+                    }
+                }
+            }
+
+            return null;
+        },
+
         generateInheritancePath: function (documentations) {
 
             var ret = [];
@@ -150,6 +169,64 @@ var esprima = require('esprima'),
             }
 
             return ret;
+        },
+
+        addInheritMethods: function(documentations) {
+
+            var nativeMethods = [],
+                methodName;
+
+            for (methodName in this.methods) {
+                if (this.methods.hasOwnProperty(methodName)) {
+                    nativeMethods.push(methodName);
+                }
+            }
+
+            if (this.inheritancePath instanceof Array) {
+                for (var i = 0; i < this.inheritancePath.length; i++) {
+                    var baseClassFqClassName = this.inheritancePath[i];
+
+                    if (documentations.hasOwnProperty(baseClassFqClassName)) {
+
+                        var baseClass = documentations[baseClassFqClassName];
+
+                        for (methodName in baseClass.methods) {
+                            if (baseClass.methods.hasOwnProperty(methodName)) {
+
+                                var currentMethod = this.methods[methodName];
+
+                                if (!currentMethod) {
+                                    // inherit method
+                                    currentMethod = this.methods[methodName] = _.clone(baseClass.methods[methodName]);
+                                }
+
+                                currentMethod.definedBy = baseClassFqClassName;
+
+                                if (nativeMethods.indexOf(methodName) !== -1) {
+                                    // overwrite methodName
+                                    currentMethod.overwritesMethod = true;
+                                }
+
+                                for (var j = 0; j < currentMethod.parameter.length; j++) {
+                                    var localParameter = currentMethod.parameter[j];
+
+                                    if (Object.keys(localParameter).length === 1) {
+                                        // only the name of the parameter defined -> extend parameter properties
+
+                                        var inheritParameter = baseClass.getParameterByNameForMethod(localParameter.name, methodName);
+                                        if (inheritParameter) {
+                                            _.defaults(localParameter, inheritParameter);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                    }
+
+                }
+            }
+
         }
     }),
 
@@ -164,6 +241,7 @@ var esprima = require('esprima'),
             this.prototypeAnnotationProcessors = [
                 new Documentation.Processors.Parameter(),
                 new Documentation.Processors.Return(),
+                new Documentation.Processors.General('private'),
                 new Documentation.Processors.General('see'),
                 new Documentation.Processors.Description()
             ];
@@ -354,12 +432,13 @@ var esprima = require('esprima'),
                         annotation.processor.mapAnnotationToItem(annotation, item, annotations);
                     }
 
+                    prototype[property.key.name] = item;
 
                 } else {
                     // TODO:
                 }
 
-                prototype[property.key.name] = item;
+
 
             }
 
@@ -464,14 +543,14 @@ Documentation.Processors.General = Documentation.AnnotationProcessor.inherit({
 
     parse: function (line) {
 
-        var result = Documentation.Processors.Parameter.Parser.exec(line),
+        var result = Documentation.Processors.General.Parser.exec(line),
             self = this;
 
         if (result && result[1] === this.type) {
 
             return {
                 type: this.type,
-                processor: self.type,
+                processor: self,
                 value: result[2]
             }
         }
@@ -485,7 +564,7 @@ Documentation.Processors.General = Documentation.AnnotationProcessor.inherit({
         item[this.type] = annotation.value;
     }
 }, {
-    Parser: /^\s*\*\s*@(\S+)\s+(\S+)\s*$/
+    Parser: /^\s*\*\s*@(\S+)\s*(\S*)\s*$/
 });
 
 Documentation.Processors.Parameter = Documentation.AnnotationProcessor.inherit({
