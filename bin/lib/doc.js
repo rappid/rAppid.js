@@ -640,7 +640,7 @@ Documentation.Processors.Return = Documentation.AnnotationProcessor.inherit({
         item.returns = annotation.value;
     }
 }, {
-    Parser: /\*\s{0,4}@return\s+?(?:\{(.+)?\})?\s*-?\s*(.+)?$/
+    Parser: /\*\s{0,4}@return[s]?\s+?(?:\{(.+)?\})?\s*-?\s*(.+)?$/
 });
 
 Documentation.Processors.Description = Documentation.AnnotationProcessor.inherit({
