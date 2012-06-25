@@ -8,9 +8,11 @@ define(['js/html/HtmlElement'], function(HtmlElement) {
         },
 
         /***
-         *
+         * shows the window by adding it to the WindowManager
          * @param {Function} [callback]
          * @param {Boolean} [modal=false]
+         *
+         * @see js.core.WindowManager
          */
         show: function(callback, modal) {
             this.$stage.$windowManager.show(this, callback, modal);
