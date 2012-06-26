@@ -68,8 +68,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
                 var self = this;
 
                 if (this.$.key.type == TYPE_FNC) {
-                    var fncName = this.$.key.name;
-                    this.$parameters = this.$.key.parameter;
+                    var fncName = this.$.key.name, parameters = this.$.key.parameter;
 
                     if (_.isFunction(scope[fncName])) {
                         var fnc = scope[fncName];
@@ -97,11 +96,13 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
                         };
 
                         var para;
-                        for (var j = 0; j < this.$parameters.length; j++) {
-                            para = this.$parameters[j];
-                            if (_.isObject(para)) {
-                                this.$parameters[j] = this.$.bindingCreator.create(para, this.$.target, cb);
+                        this.$parameters = [];
+                        for (var j = 0; j < parameters.length; j++) {
+                            para = parameters[j];
+                            if(_.isObject(para)) {
+                                para = this.$.bindingCreator.create(para, this.$.target, cb);
                             }
+                            this.$parameters.push(para);
 
                         }
                         this.$.fnc = fnc;
