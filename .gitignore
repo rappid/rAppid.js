@@ -1,1 +1,5 @@
 node_modules
+.idea
+atlassian-ide-plugin.xml
+generateGraph
+rAppid.js.iml
