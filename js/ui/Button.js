@@ -11,7 +11,7 @@ define(["xaml!js/ui/Link", "js/core/Content"], function (Link) {
                     this.addClass("btn-" + type);
                 }
             },
-            _renderSize: function(size, oldSize){
+            _renderSize: function (size, oldSize) {
                 if (size) {
                     this.removeClass("btn-" + size);
                 }

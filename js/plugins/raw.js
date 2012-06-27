@@ -92,7 +92,7 @@ define([], function () {
                 if (!err) {
                     load(raw);
                 } else {
-                    load.error(new Error("Raw for " + url +  " not found"));
+                    load.error(new Error("Raw for " + url + " not found"));
                 }
             });
         }
