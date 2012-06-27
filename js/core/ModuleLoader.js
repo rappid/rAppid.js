@@ -6,11 +6,13 @@ define(["require", "js/core/UIComponent", "js/ui/ContentPlaceHolder", "js/core/M
             defaults: {
                 currentModuleName:  null
             },
+
             ctor: function (attributes) {
                 this.callBase();
                 this.$modules = {};
                 this.$moduleCache = {};
             },
+
             _initializationComplete: function () {
                 this.callBase();
 
@@ -23,6 +25,11 @@ define(["require", "js/core/UIComponent", "js/ui/ContentPlaceHolder", "js/core/M
                 }
             },
 
+            /***
+             * adds a module to the list of known modules
+             *
+             * @param {js.conf.Module} module
+             */
             addModule: function (module) {
                 _.defaults(module, {
                     name: null,
@@ -110,6 +117,13 @@ define(["require", "js/core/UIComponent", "js/ui/ContentPlaceHolder", "js/core/M
 
             },
 
+            /***
+             * loads an module instance into the module loader and starts the module
+             *
+             * @param {js.conf.Module} module - the module to load
+             * @param {Function} [callback] - a callback function which gets invoked after the module is loaded or an error occurred
+             * @param {js.core.Router.RouteContext} [routeContext]
+             */
             loadModule: function (module, callback, routeContext) {
                 if (module.name === this.$.currentModuleName) {
                     // module already shown
@@ -151,15 +165,12 @@ define(["require", "js/core/UIComponent", "js/ui/ContentPlaceHolder", "js/core/M
 
             },
 
-            removeChild: function (child) {
-                this.callBase();
+            // TODO: remove this method and make the modules bindable
 
-                var index = this.$modules.indexOf(child);
-                if (index != -1) {
-                    // TODO: remove route from router
-
-                }
-            },
+            /***
+             * @deprecated will be removed soon
+             * @return {Array}
+             */
             moduleNames: function(){
                 var modules = [], conf;
                 for(var i = 0; i < this.$configurations.length; i++){
