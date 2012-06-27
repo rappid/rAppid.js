@@ -243,6 +243,8 @@ var esprima = require('esprima'),
                 new Documentation.Processors.Return(),
                 new Documentation.Processors.General('private'),
                 new Documentation.Processors.General('public'),
+                new Documentation.Processors.General('deprecated'),
+                new Documentation.Processors.General('ignore'),
                 new Documentation.Processors.General('see'),
                 new Documentation.Processors.Description()
             ];
@@ -433,7 +435,10 @@ var esprima = require('esprima'),
                         annotation.processor.mapAnnotationToItem(annotation, item, annotations);
                     }
 
-                    prototype[property.key.name] = item;
+                    if (!item.hasOwnProperty('ignore')) {
+                        prototype[property.key.name] = item;
+                    }
+
 
                 } else {
                     // TODO:
