@@ -242,6 +242,7 @@ var esprima = require('esprima'),
                 new Documentation.Processors.Parameter(),
                 new Documentation.Processors.Return(),
                 new Documentation.Processors.General('private'),
+                new Documentation.Processors.General('public'),
                 new Documentation.Processors.General('see'),
                 new Documentation.Processors.Description()
             ];
