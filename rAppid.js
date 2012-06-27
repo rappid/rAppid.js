@@ -328,14 +328,6 @@
         data: null
     };
 
-//    var SystemManager = function (requirejsContext, applicationContext, document) {
-//        this.$requirejsContext = requirejsContext;
-//        this.$applicationContext = applicationContext;
-//        this.$applicationFactory = null;
-//        this.$document = document;
-//        this.$bus = new Bus();
-//    };
-
     var ApplicationContext = function (requirejsContext, config) {
         this.$requirejsContext = requirejsContext;
         this.$config = config;
@@ -347,9 +339,9 @@
 
         var stage = new Stage(this.$requirejsContext, this, document);
 
-        this.$requirejsContext(["js/core/Application"], function (Application) {
-
-            var application = new applicationFactory(null, false, stage, null, null);
+            this.$requirejsContext(["js/core/Application", "js/core/HeadManager"], function (Application, HeadManager) {
+                stage.$headManager = new HeadManager(document.head);
+                var application = new applicationFactory(null, false, stage, null, null);
 
             if (application instanceof Application) {
 

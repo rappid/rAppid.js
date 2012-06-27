@@ -1,4 +1,4 @@
-define(["js/core/Window", "js/core/UIComponent", "js/core/History", "js/core/Bus"], function (Window, UIComponent, History, Bus) {
+define(["js/core/Window", "js/core/UIComponent", "js/core/History"], function (Window, UIComponent, History) {
 
         return Window.inherit("js.core.Application", {
             $classAttributes: [/.+/],
@@ -42,6 +42,11 @@ define(["js/core/Window", "js/core/UIComponent", "js/core/History", "js/core/Bus
                 this.history.start(callback, initialHash);
             },
 
+            /***
+             *
+             * @param {Element} [target] the native Element where the rendered element will be appended
+             * @return {Element} the rendered Element
+             */
             render: function (target) {
                 var dom = this.callBase(target);
 
