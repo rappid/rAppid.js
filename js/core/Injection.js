@@ -9,23 +9,14 @@ define(["js/core/Component", "underscore"], function (Component, _) {
         ctor: function (attributes, descriptor, stage, parentScope, rootScope) {
 
             if (!stage.$injection) {
-                this.callBase();
                 this.$singletonInstanceCache = [];
                 this.$factories = [];
+            } else {
+                this.$singletonInstanceCache = stage.$injection.$singletonInstanceCache;
+                this.$factories = stage.$injection.$factories;
 
-                if (stage.$bus) {
-                    // make the bus available for injection
-                    this.$singletonInstanceCache.push(stage.$bus);
-                }
-
-                if(stage.$history){
-                    this.$singletonInstanceCache.push(stage.$history);
-                }
-
-                stage.$injection = this;
+                this.callBase();
             }
-
-            return stage.$injection;
 
         },
 

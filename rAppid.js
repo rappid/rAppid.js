@@ -339,9 +339,16 @@
 
         var stage = new Stage(this.$requirejsContext, this, document);
 
-            this.$requirejsContext(["js/core/Application", "js/core/HeadManager", "js/core/History"], function (Application, HeadManager, History) {
+            this.$requirejsContext(["js/core/Application", "js/core/HeadManager", "js/core/History", "js/core/Injection"], function (Application, HeadManager, History, Injection) {
                 stage.$headManager = new HeadManager(document.head);
+                stage.$bus = new Bus();
                 stage.$history = new History();
+                var injection = stage.$injection = new Injection(null, null, stage);
+
+                injection.addInstance(stage.$bus);
+                injection.addInstance(stage.$history);
+                injection.addInstance(stage.$headManager);
+
                 var application = new applicationFactory(null, false, stage, null, null);
 
             if (application instanceof Application) {
