@@ -9,8 +9,7 @@ define(["js/data/DataView"], function (DataView) {
     return DataView.inherit("js.data.FilterDataView", {
         initialize: function(){
             this.callBase();
-            this.bind('change:filter', this._onFilterChanged, this);
-            this.bind('filterFnc', this._onFilterChanged, this);
+            this.bind('change', this._onFilterChanged, this);
         },
         _onFilterChanged: function(){
             this._innerReset(this.$.baseList.$items);
@@ -45,7 +44,7 @@ define(["js/data/DataView"], function (DataView) {
         },
         _filterItem: function (item, index) {
             if(this.$.filterFnc){
-                return this.$.filterFnc.call(this, item, index, this.$.list);
+                return this.$.filterFnc.call(this, item, index, this);
             }
             return true;
         }

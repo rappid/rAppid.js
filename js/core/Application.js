@@ -1,10 +1,8 @@
-define(["js/core/Window", "js/core/UIComponent", "js/core/History"], function (Window, UIComponent, History) {
+define(["js/core/Window", "js/core/UIComponent"], function (Window, UIComponent) {
 
         return Window.inherit("js.core.Application", {
             $classAttributes: [/.+/],
             ctor: function () {
-                this.history = new History();
-
                 this.callBase();
             },
 
@@ -39,7 +37,7 @@ define(["js/core/Window", "js/core/UIComponent", "js/core/History"], function (W
              * @private
              */
             _startHistory: function(callback, initialHash) {
-                this.history.start(callback, initialHash);
+                this.$stage.$history.start(callback, initialHash);
             },
 
             /***

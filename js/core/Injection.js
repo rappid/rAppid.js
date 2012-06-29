@@ -6,22 +6,26 @@ define(["js/core/Component", "underscore"], function (Component, _) {
     }
 
     return Component.inherit("js.core.Injection", {
-        ctor: function (attributes, descriptor, systemManager, parentScope, rootScope) {
+        ctor: function (attributes, descriptor, stage, parentScope, rootScope) {
 
-            if (!systemManager.$injection) {
+            if (!stage.$injection) {
                 this.callBase();
                 this.$singletonInstanceCache = [];
                 this.$factories = [];
 
-                if (systemManager.$bus) {
+                if (stage.$bus) {
                     // make the bus available for injection
-                    this.$factories.push(systemManager.$bus);
+                    this.$singletonInstanceCache.push(stage.$bus);
                 }
 
-                systemManager.$injection = this;
+                if(stage.$history){
+                    this.$singletonInstanceCache.push(stage.$history);
+                }
+
+                stage.$injection = this;
             }
 
-            return systemManager.$injection;
+            return stage.$injection;
 
         },
 

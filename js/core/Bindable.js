@@ -139,8 +139,6 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding","underscor
                                     changedAttributes[key] = now[key];
                                 }
                             }
-                            // if attribute has changed and there is no async changing process in the background, fire the event
-
                         }
                     }
 
