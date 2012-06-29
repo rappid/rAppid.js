@@ -285,7 +285,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding","underscor
                             thisArg = callback;
                             callback = event;
                             event = path[1];
-                            path = path[2];
+                            path = path[0];
                         }
                         var eb = new EventBindable({
                             path: path,
