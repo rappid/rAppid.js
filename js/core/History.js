@@ -28,7 +28,7 @@ define(["js/core/Bindable", "flow"], function (Bindable, flow) {
          */
         fragment: function() {
             return this.$fragment;
-        },
+        }.on('change:fragment'),
 
         /***
          * determinate the current fragment
@@ -186,7 +186,11 @@ define(["js/core/Bindable", "flow"], function (Bindable, flow) {
 
             }
 
-            this.$fragment = fragment;
+            if(this.$fragment !== fragment){
+                this.$fragment = fragment;
+                this.trigger('change:fragment');
+            }
+
 
             if (triggerRoute) {
                 this.triggerRoute(fragment, function() {
