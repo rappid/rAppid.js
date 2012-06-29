@@ -96,11 +96,12 @@ var esprima = require('esprima'),
         },
 
         process: function () {
+            var fqClassName,
+                classDocumentation;
 
-
-            for (var fqClassName in this.documentations) {
+            for (fqClassName in this.documentations) {
                 if (this.documentations.hasOwnProperty(fqClassName)) {
-                    var classDocumentation = this.documentations[fqClassName];
+                    classDocumentation = this.documentations[fqClassName];
 
                     if (classDocumentation.inherit && !classDocumentation.inheritancePath) {
 
@@ -118,6 +119,34 @@ var esprima = require('esprima'),
                     }
                 }
             }
+
+            // convert methods object into array
+            for (fqClassName in this.documentations) {
+                if (this.documentations.hasOwnProperty(fqClassName)) {
+
+                    classDocumentation = this.documentations[fqClassName];
+
+                    var methodArray = [],
+                        methodNames = _.keys(classDocumentation.methods);
+
+                    methodNames.sort();
+
+                    for (var i = 0; i < methodNames.length; i++) {
+                        var methodName = methodNames[i];
+                        var method = classDocumentation.methods[methodName];
+                        method.name = methodName;
+                        method.visibility = (methodName.substr(0, 1) === '_' || method.hasOwnProperty('private')) && !method.hasOwnProperty('public') ? 'protected' : 'public';
+
+
+
+                        methodArray.push(method);
+                    }
+
+                    classDocumentation.methods = methodArray;
+
+                }
+            }
+
 
 
             return this.documentations;
