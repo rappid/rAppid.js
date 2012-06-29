@@ -339,8 +339,9 @@
 
         var stage = new Stage(this.$requirejsContext, this, document);
 
-            this.$requirejsContext(["js/core/Application", "js/core/HeadManager"], function (Application, HeadManager) {
+            this.$requirejsContext(["js/core/Application", "js/core/HeadManager", "js/core/History"], function (Application, HeadManager, History) {
                 stage.$headManager = new HeadManager(document.head);
+                stage.$history = new History();
                 var application = new applicationFactory(null, false, stage, null, null);
 
             if (application instanceof Application) {
