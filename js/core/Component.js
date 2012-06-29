@@ -127,6 +127,10 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                     }
 
                 },
+                /***
+                 * adds a children
+                 * @param {js.core.Element} child
+                 */
                 addChild: function (child) {
                     if (!(child instanceof Element)) {
                         throw "only children of type js.core.Component can be added"
