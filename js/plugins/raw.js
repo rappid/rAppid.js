@@ -66,6 +66,7 @@ define([], function () {
                 var content = fs.readFileSync(path, 'utf8');
                 callback(null, content);
             } catch (e) {
+                console.error.call(console, e);
                 callback(e);
             }
         };
@@ -98,9 +99,7 @@ define([], function () {
                         text = text.replace(/\n/g, "\\n");
 
                         buildMap[name] = text;
-                        parentRequire([name], function(value) {
-                            load(value);
-                        });
+                        load(raw);
                     } else {
                         load(raw);
                     }

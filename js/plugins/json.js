@@ -72,7 +72,6 @@ define(['JSON'], function (JSON) {
         };
     }
 
-
     return {
 
         write: function (pluginName, name, write) {
@@ -87,20 +86,33 @@ define(['JSON'], function (JSON) {
 
         load: function (name, parentRequire, load, config) {
 
+            var resourceName = name;
 
-            name = name.replace(rSuffix,"$1");
+            name = name.replace(rSuffix, "$1");
             name = name + ".json";
 
-            var url = parentRequire.toUrl(name );
+            var url = parentRequire.toUrl(name);
 
-            fetchJSON(url, function (err, raw) {
+            fetchJSON(url, function (err, json) {
                 if (!err) {
-                    load(JSON.parse(raw));
+
+                    if (config.isBuild) {
+                        var text = json.replace(/\r\n/g, "\n"); // DOS to Unix
+                        text = text.replace(/\r/g, "\n"); // Mac to Unix
+
+                        text = text.replace(/\n/g, "\\n");
+
+                        buildMap[resourceName] = text;
+                    }
+
+                    load(JSON.parse(json));
+
                 } else {
-                    load.error(new Error("Json for " + url + " not found"));
+                    load.error(new Error("JSON for " + url + " not found"));
                 }
             });
         }
+
     }
 });
 
