@@ -5,7 +5,7 @@
  * Version: 0.2.1 (2012/04/17)
  * Released under the MIT license
  */
-define(['text'], function (text) {
+define(['js/plugins/text'], function (text) {
     var CACHE_BUST_QUERY_PARAM = 'bust',
         CACHE_BUST_FLAG = '!bust',
         jsonParse = (typeof JSON !== 'undefined' && typeof JSON.parse === 'function') ? JSON.parse : function (val) {
