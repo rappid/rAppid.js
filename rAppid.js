@@ -147,6 +147,29 @@
          */
         bootStrap: function (mainClass, target, parameter, config, callback) {
 
+            parameter = parameter || {};
+
+            if (typeof window !== 'undefined' && window.location && !parameter.initialHash) {
+                parameter = window.location.search.replace(/^\?/, '').split('&');
+                for (var i = 0; i < parameter.length; i++) {
+                    var result = /^([^=]+)=(.*)$/.exec(parameter[i]);
+                    if (result && result[1] === 'fragment') {
+
+                        var redirectUrl = location.protocol + '//' + location.host + location.pathname;
+                        parameter.splice(i, 1);
+
+                        if (parameter.length) {
+                            redirectUrl += '?' + parameter.join('&');
+                        }
+
+                        redirectUrl += '#' + result[2];
+                        window.location = redirectUrl;
+
+                        return;
+                    }
+                }
+            }
+
             if (!target && document && document.body) {
                 // render default into document.body
                 target = document.body;
@@ -177,6 +200,7 @@
                         if (err) {
                             callback(err);
                         } else {
+
                             // start the application
                             application.start(parameter, function (err) {
                                 if (err) {
