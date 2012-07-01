@@ -6,7 +6,7 @@ define(
                     return this.$el;
                 }
 
-                this.$textNode = this.$systemManager.$document.createTextNode("");
+                this.$textNode = this.$stage.$document.createTextNode("");
                 this.$el = this.$textNode;
 
                 return this.$el;

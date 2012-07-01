@@ -1,4 +1,4 @@
-define(['js/svg/SvgElement'], function(SvgElement) {
+define(['js/svg/SvgElement'], function (SvgElement) {
 
     return SvgElement.inherit("js.svg.Svg", {
 
@@ -7,7 +7,7 @@ define(['js/svg/SvgElement'], function(SvgElement) {
             viewBox: "0 0 100 100"
         },
 
-        setViewBox: function(x, y, width, height) {
+        setViewBox: function (x, y, width, height) {
             this.set("viewBox", [x, y, width, height].join(" "));
         }
 

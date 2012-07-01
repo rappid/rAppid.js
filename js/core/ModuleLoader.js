@@ -2,13 +2,17 @@ define(["require", "js/core/UIComponent", "js/ui/ContentPlaceHolder", "js/core/M
     function (require, UIComponent, ContentPlaceHolder, Module, _, ModuleConfiguration, flow) {
         var ModuleLoader = UIComponent.inherit("js.core.ModuleLoader", {
 
-            $classAttributes: ['router'],
+            $classAttributes: ['router', 'currentModuleName'],
+            defaults: {
+                currentModuleName:  null
+            },
+
             ctor: function (attributes) {
                 this.callBase();
                 this.$modules = {};
                 this.$moduleCache = {};
-                this.$currentModuleName = null;
             },
+
             _initializationComplete: function () {
                 this.callBase();
 
@@ -21,6 +25,11 @@ define(["require", "js/core/UIComponent", "js/ui/ContentPlaceHolder", "js/core/M
                 }
             },
 
+            /***
+             * adds a module to the list of known modules
+             *
+             * @param {js.conf.Module} module
+             */
             addModule: function (module) {
                 _.defaults(module, {
                     name: null,
@@ -63,7 +72,7 @@ define(["require", "js/core/UIComponent", "js/ui/ContentPlaceHolder", "js/core/M
 
             _startModule: function (moduleName, moduleInstance, callback, routeContext, cachedInstance) {
 
-                this.$currentModuleName = moduleName;
+                this.set('currentModuleName',moduleName);
 
                 var contentPlaceHolders = this.getContentPlaceHolders();
 
@@ -108,8 +117,15 @@ define(["require", "js/core/UIComponent", "js/ui/ContentPlaceHolder", "js/core/M
 
             },
 
+            /***
+             * loads an module instance into the module loader and starts the module
+             *
+             * @param {js.conf.Module} module - the module to load
+             * @param {Function} [callback] - a callback function which gets invoked after the module is loaded or an error occurred
+             * @param {js.core.Router.RouteContext} [routeContext]
+             */
             loadModule: function (module, callback, routeContext) {
-                if (module.name === this.$currentModuleName) {
+                if (module.name === this.$.currentModuleName) {
                     // module already shown
                     if (callback) {
                         callback();
@@ -122,8 +138,8 @@ define(["require", "js/core/UIComponent", "js/ui/ContentPlaceHolder", "js/core/M
                         var self = this;
                         // load module
 
-                        require([this.$systemManager.$applicationContext.getFqClassName(module.moduleClass)], function (moduleBaseClass) {
-                            var moduleInstance = new moduleBaseClass(null, false, self.$systemManager, null, null);
+                        require([this.$stage.$applicationContext.getFqClassName(module.moduleClass)], function (moduleBaseClass) {
+                            var moduleInstance = new moduleBaseClass(null, false, self.$stage, null, null);
 
                             if (moduleInstance instanceof Module) {
                                 moduleInstance._initialize("auto");
@@ -149,16 +165,22 @@ define(["require", "js/core/UIComponent", "js/ui/ContentPlaceHolder", "js/core/M
 
             },
 
-            removeChild: function (child) {
-                this.callBase();
+            // TODO: remove this method and make the modules bindable
 
-                var index = this.$modules.indexOf(child);
-                if (index != -1) {
-                    // TODO: remove route from router
-
+            /***
+             * @deprecated will be removed soon
+             * @return {Array}
+             */
+            moduleNames: function(){
+                var modules = [], conf;
+                for(var i = 0; i < this.$configurations.length; i++){
+                    conf = this.$configurations[i];
+                    if(conf instanceof ModuleConfiguration){
+                        modules.push(conf.$.name);
+                    }
                 }
+                return modules;
             },
-
             render: function () {
                 // render the ContentPlaceHolder
                 return this.callBase();

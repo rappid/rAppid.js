@@ -6,12 +6,12 @@ define(["js/core/Bindable", "flow"], function (Bindable, flow) {
         emptyCallback = function () {
         };
 
-    return Bindable.inherit("js.core.History", {
+    var History = Bindable.inherit("js.core.History", {
 
         ctor: function () {
             this.callBase();
             this.$routers = [];
-            this.processUrl = true;
+            this.$processUrl = true;
 
             this.$history = [];
         },
@@ -20,7 +20,22 @@ define(["js/core/Bindable", "flow"], function (Bindable, flow) {
             interval: 50
         },
 
-        getFragment: function () {
+        // TODO: make this bindable so that i can call this.fragment.triggerChange()
+
+        /***
+         * @Bindable
+         * @return {String}
+         */
+        fragment: function() {
+            return this.$fragment;
+        }.on('change:fragment'),
+
+        /***
+         * determinate the current fragment
+         * @return {String} the current fragment without the starting #/
+         * @private
+         */
+        _getFragment: function () {
             var fragment;
 
             if (this.runsInBrowser()) {
@@ -58,9 +73,9 @@ define(["js/core/Bindable", "flow"], function (Bindable, flow) {
                 this.$history.push(initialHash || "");
             }
 
-            this.fragment = this.getFragment();
-            this.navigate(this.fragment, true, true, callback);
-            this.processUrl = true;
+            this.$fragment = this._getFragment();
+            this.navigate(this.$fragment, true, true, callback);
+            this.$processUrl = true;
 
         },
 
@@ -86,16 +101,16 @@ define(["js/core/Bindable", "flow"], function (Bindable, flow) {
 
         checkUrl: function (e) {
 
-            if (this.processUrl) {
-                var currentFragment = this.getFragment();
-                if (currentFragment == this.fragment) {
+            if (this.$processUrl) {
+                var currentFragment = this._getFragment();
+                if (currentFragment == this.$fragment) {
                     return false;
                 }
 
                 this.navigate(currentFragment, true, true, emptyCallback);
             }
 
-            this.processUrl = true;
+            this.$processUrl = true;
 
         },
 
@@ -125,6 +140,8 @@ define(["js/core/Bindable", "flow"], function (Bindable, flow) {
 
         navigate: function (fragment, createHistoryEntry, triggerRoute, callback) {
 
+            var self = this;
+
             if (!callback && createHistoryEntry instanceof Function) {
                 callback = createHistoryEntry;
                 createHistoryEntry = null;
@@ -143,7 +160,15 @@ define(["js/core/Bindable", "flow"], function (Bindable, flow) {
                 triggerRoute = true;
             }
 
-            this.processUrl = false;
+            var eventData = {
+                fragment: fragment,
+                createHistoryEntry: createHistoryEntry,
+                triggerRoute: triggerRoute
+            };
+
+            this.trigger(History.EVENTS.NAVIGATION_START, eventData);
+
+            this.$processUrl = false;
 
             if (createHistoryEntry) {
                 if (this.runsInBrowser()) {
@@ -161,11 +186,29 @@ define(["js/core/Bindable", "flow"], function (Bindable, flow) {
 
             }
 
-            this.fragment = fragment;
+            if(this.$fragment !== fragment){
+                this.$fragment = fragment;
+                this.trigger('change:fragment');
+            }
+
 
             if (triggerRoute) {
-                this.triggerRoute(fragment, callback);
+                this.triggerRoute(fragment, function() {
+                    self.trigger(History.EVENTS.NAVIGATION_COMPLETE, eventData);
+                    if (callback) {
+                        callback.apply(arguments);
+                    }
+                });
+            } else {
+                this.trigger(History.EVENTS.NAVIGATION_COMPLETE, eventData);
             }
         }
     });
+
+    History.EVENTS = {
+        NAVIGATION_START: "navigationStart",
+        NAVIGATION_COMPLETE: "navigationComplete"
+    };
+
+    return History;
 });

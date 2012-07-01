@@ -5,7 +5,7 @@ define(
             _getChildrenFromDescriptor: function (descriptor) {
                 return [];
             },
-            render: function(){
+            render: function () {
                 var el = this.callBase();
                 el.appendChild(this.$descriptor.childNodes[0]);
 

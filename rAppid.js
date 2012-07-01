@@ -1,4 +1,4 @@
-(function(exports, requirejs, define, document, XMLHttpRequest){
+(function (exports, requirejs, define, document, XMLHttpRequest) {
 
     /** ECMA SCRIPT COMPLIANT**/
     if (!String.prototype.trim) {
@@ -7,7 +7,10 @@
         };
     }
 
-    var underscore;
+    var underscore,
+        Bus,
+        Stage;
+
 
     /***
      * marks a function to be executed asycn
@@ -83,14 +86,16 @@
                 });
 
                 if (typeof JSON !== "undefined") {
-                    define("JSON", function() {
+                    define("JSON", function () {
                         return JSON;
                     });
                 }
 
-                requirejsContext(["inherit", "underscore"], function (inherit, _) {
+                requirejsContext(["inherit", "underscore", "js/core/Bus", "js/core/Stage"], function (inherit, _, b, s) {
                     // we have to load inherit.js in order that inheritance is working
                     underscore = _;
+                    Bus = b;
+                    Stage = s;
 
                     if (inherit && _) {
 
@@ -108,7 +113,7 @@
                             requirejsContext([mainClass], function (applicationFactory) {
                                 applicationContext.$applicationFactory = applicationFactory;
                                 callback(null, applicationContext);
-                            }, function(err) {
+                            }, function (err) {
                                 callback(err);
                             });
                         } else {
@@ -132,14 +137,86 @@
 
         },
 
-        bootStrap: function (mainClass, config, callback) {
-            rAppid.createApplicationContext(mainClass, config, function (err, applicationContext) {
-                if (err || !document) {
-                    callback(err || "target document missing");
-                } else {
-                    applicationContext.createApplicationInstance(document, callback);
+        /***
+         *
+         * @param {js.core.Application} mainClass the application main class to load and start
+         * @param {Element} [target=document.body] the target where the application is rendered
+         * @param {Object} [parameter] an object defining the parameters passed to the Application.start method
+         * @param {String|Object} [config=config.json] filename of the config file to load or configuration object
+         * @param {Function} [callback] callback function in the form <code>function (err, systemManager, application)</code>
+         */
+        bootStrap: function (mainClass, target, parameter, config, callback) {
+
+            parameter = parameter || {};
+
+            if (typeof window !== 'undefined' && window.location && !parameter.initialHash) {
+                var param = window.location.search.replace(/^\?/, '').split('&');
+                for (var i = 0; i < param.length; i++) {
+                    var result = /^([^=]+)=(.*)$/.exec(param[i]);
+                    if (result && result[1] === 'fragment') {
+
+                        var redirectUrl = location.protocol + '//' + location.host + location.pathname;
+                        param.splice(i, 1);
+
+                        if (param.length) {
+                            redirectUrl += '?' + param.join('&');
+                        }
+
+                        redirectUrl += '#' + result[2];
+                        window.location = redirectUrl;
+
+                        return;
+                    }
                 }
-            })
+            }
+
+            if (!target && document && document.body) {
+                // render default into document.body
+                target = document.body;
+            }
+
+            config = config || "config.json";
+
+            callback = callback || function () {
+            };
+
+            if (!document) {
+                callback("Document missing");
+                return;
+            }
+
+            if (!target) {
+                callback("Target missing");
+                return;
+            }
+
+
+            // flow.js is not available here, so do it in a dirty way
+            rAppid.createApplicationContext(mainClass, config, function (err, applicationContext) {
+                if (err) {
+                    callback(err);
+                } else {
+                    applicationContext.createApplicationInstance(document, function (err, stage, application) {
+                        if (err) {
+                            callback(err);
+                        } else {
+
+                            // start the application
+                            application.start(parameter, function (err) {
+                                if (err) {
+                                    callback(err);
+                                } else {
+                                    // render stage to target
+                                    stage.render(target);
+
+                                    callback(null, stage, application);
+                                }
+                            })
+                        }
+                    })
+                }
+            });
+
         },
 
         rewriteMapEntry: Rewrite,
@@ -275,92 +352,82 @@
         data: null
     };
 
-
-    function inherit(o) {
-        function F() {} // Dummy constructor
-        F.prototype = o;
-        return new F();
-    }
-
-    var SystemManager = function (requirejsContext, applicationContext, document) {
-        this.$requirejsContext = requirejsContext;
-        this.$applicationContext = applicationContext;
-        this.$applicationFactory = null;
-        this.$document = document;
-    };
-
     var ApplicationContext = function (requirejsContext, config) {
-        SystemManager.call(this, requirejsContext);
-
+        this.$requirejsContext = requirejsContext;
         this.$config = config;
-        this.$applicationContext = this;
     };
-
-    ApplicationContext.prototype = inherit(SystemManager.prototype);
-    ApplicationContext.prototype.constructor = ApplicationContext;
 
     ApplicationContext.prototype.createApplicationInstance = function (document, callback) {
-            // create instance
-            var applicationFactory = this.$applicationFactory;
+        // create instance
+        var applicationFactory = this.$applicationFactory;
 
-            var systemManager = new SystemManager(this.$requirejsContext, this, document);
+        var stage = new Stage(this.$requirejsContext, this, document);
 
-            this.$requirejsContext(["js/core/Application"], function (Application) {
+            this.$requirejsContext(["js/core/Application", "js/core/HeadManager", "js/core/History", "js/core/Injection"], function (Application, HeadManager, History, Injection) {
+                stage.$headManager = new HeadManager(document.head || document.getElementsByTagName('head')[0]);
+                stage.$bus = new Bus();
+                stage.$history = new History();
+                var injection = stage.$injection = new Injection(null, null, stage);
 
-                var application = new applicationFactory(null, false, systemManager, null, null);
+                injection.addInstance(stage.$bus);
+                injection.addInstance(stage.$history);
+                injection.addInstance(stage.$headManager);
 
-                if (application instanceof Application) {
+                var application = new applicationFactory(null, false, stage, null, null);
 
-                    systemManager.$application = application;
+            if (application instanceof Application) {
 
-                    application._initialize("auto");
+                stage.$application = application;
+                stage._initialize("auto");
 
-                    // return rAppid instance
-                    if (callback) {
-                        callback(null, systemManager, application);
-                    }
+                application._initialize("auto");
 
-                } else {
-                    var errMessage = "mainClass isn't an instance of js.core.Application";
-                    if (callback) {
-                        callback(errMessage);
-                    } else {
-                        throw(errMessage);
-                    }
+                // return rAppid instance
+                if (callback) {
+                    callback(null, stage, application);
                 }
-            });
 
-        };
+            } else {
+                var errMessage = "mainClass isn't an instance of js.core.Application";
+                if (callback) {
+                    callback(errMessage);
+                } else {
+                    throw(errMessage);
+                }
+            }
+        });
+
+    };
 
     ApplicationContext.prototype.getFqClassName = function (namespace, className, useRewriteMap) {
-            if (useRewriteMap == undefined || useRewriteMap == null) {
-                useRewriteMap = true;
-            }
+        if (useRewriteMap == undefined || useRewriteMap == null) {
+            useRewriteMap = true;
+        }
 
-            if (namespace && className) {
-                namespace = (this.$config.namespaceMap[namespace] || namespace).replace(/\./g, '/');
-                var fqClassName = [namespace, className].join("/");
-            } else {
-                fqClassName = (namespace || className).replace(/\./g, '/');
-            }
+        if (namespace && className) {
+            namespace = (this.$config.namespaceMap[namespace] || namespace).replace(/\./g, '/');
+            var fqClassName = [namespace, className].join("/");
+        } else {
+            fqClassName = (namespace || className).replace(/\./g, '/');
+        }
 
-            if (underscore.indexOf(this.$config.xamlClasses, fqClassName) !== -1) {
-                fqClassName = 'xaml!' + fqClassName;
-            }
+        if (underscore.indexOf(this.$config.xamlClasses, fqClassName) !== -1) {
+            fqClassName = 'xaml!' + fqClassName;
+        }
 
-            if (useRewriteMap) {
-                for (var i = 0; i < this.$config.rewriteMap.length; i++) {
-                    var entry = this.$config.rewriteMap[i];
-                    if (entry instanceof rAppid.rewriteMapEntry) {
-                        if (entry.$from.test(fqClassName)) {
-                            return fqClassName.replace(entry.$from, entry.$to);
-                        }
+        if (useRewriteMap) {
+            for (var i = 0; i < this.$config.rewriteMap.length; i++) {
+                var entry = this.$config.rewriteMap[i];
+                if (entry instanceof rAppid.rewriteMapEntry) {
+                    if (entry.$from.test(fqClassName)) {
+                        return fqClassName.replace(entry.$from, entry.$to);
                     }
                 }
             }
+        }
 
-            return fqClassName;
-        };
+        return fqClassName;
+    };
 
     ApplicationContext.prototype.createInstance = function (fqClassName, args, className) {
         args = args || [];
@@ -408,13 +475,12 @@
 
     rAppid.defaultNamespaceMap = defaultNamespaceMap;
     rAppid.defaultRewriteMap = defaultRewriteMap;
-    rAppid.SystemManager = SystemManager;
     rAppid.ApplicationContext = ApplicationContext;
     rAppid.Rewrite = Rewrite;
 
     exports.rAppid = rAppid;
 
-}(  typeof exports !== "undefined" ? exports : window,
+}(typeof exports !== "undefined" ? exports : window,
     typeof requirejs !== "undefined" ? requirejs : require('requirejs'),
     typeof requirejs !== "undefined" ? define : require('requirejs').define,
     typeof window !== "undefined" ? window.document : null,

@@ -1,15 +1,10 @@
 define(['require', 'js/core/Bindable', 'js/core/List'],
     function(require, Bindable, List) {
-    var cid = 0,
-        Collection;
+    var Collection;
 
     var Entity = Bindable.inherit('js.core.Entity', {
 
         ctor: function(attributes) {
-
-            // generate unique id
-            this.$cid = ++cid;
-
 
             this._extendSchema();
 

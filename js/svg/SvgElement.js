@@ -1,6 +1,6 @@
-define(['js/html/DomElement'], function(DomElement) {
+define(['js/core/DomElement'], function(DomElement) {
 
-    var SvgElement = DomElement.inherit("js/svg/SvgElement", {
+    var SvgElement = DomElement.inherit("js.svg.SvgElement", {
 
         ctor: function() {
             // default namespace
@@ -55,6 +55,10 @@ define(['js/html/DomElement'], function(DomElement) {
         // render each href Element in xlink namespace
         _renderHref: function(href, oldHref) {
             this._setAttribute("href", href, SvgElement.XLINK_NAMESPACE);
+        },
+
+        _renderClass: function(value) {
+            this._setAttribute('class', value);
         }
     });
 

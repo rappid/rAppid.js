@@ -29,6 +29,13 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
 
         $isDependentObject: false,
 
+        /***
+         *
+         * persistent the model over the data-source in which it was created
+         *
+         * @param options
+         * @param callback
+         */
         save: function (options, callback) {
 
             // TODO: handle multiple access

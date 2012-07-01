@@ -16,7 +16,7 @@ define(["js/core/Component", "underscore", "js/conf/Route"],
                 if (this.$.history) {
                     this.history = this.$.history;
                 } else {
-                    this.history = this.$systemManager.$application.history;
+                    this.history = this.$stage.$history;
                 }
 
                 this.history.addRouter(this);

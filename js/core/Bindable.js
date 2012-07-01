@@ -4,14 +4,13 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding","underscor
         var indexExtractor = /^(.*)\[(\d+)\]$/,
             undefined, List;
 
-        /** @class */
+
         var Bindable = EventDispatcher.inherit("js.core.Bindable",
-            /** @lends Bindable.prototype */
             {
-                /**
-                 * @class A Bindable triggers every change of his attributes as 'change' event.
-                 * @constructs
-                 * @params {Object} attributes a key, value hash
+                /***
+                 * creates a new instance of bindable, which can be bound to components
+                 *
+                 * @param {Object} [attributes] the default attributes which will be set during instantiation
                  */
                 ctor: function (attributes) {
                     this.$eventBindables = [];
@@ -52,10 +51,22 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding","underscor
                 defaults: {
                 },
 
+                /***
+                 *
+                 * @return {Object} returns the default attributes and includes the defaults from base classes
+                 * @private
+                 */
                 _defaultAttributes: function () {
                     return this._generateDefaultsChain("defaults");
                 },
 
+                /***
+                 * generates a default chain containing the values from this instance and base classes
+                 *
+                 * @param {String} property - the name of the static property used to find defaults
+                 * @return {*}
+                 * @private
+                 */
                 _generateDefaultsChain: function (property) {
                     var ret = this[property],
                         base = this.base;
@@ -69,12 +80,13 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding","underscor
                 },
 
                 /**
-                 * Call this to set attributes
+                 * Sets new values for attributes and notify about changes
+                 *
                  * @param {String} key The attribute key
                  * @param {String} value The attribute value
                  * @param {Object} options A hash of options
-                 * @param {Boolean} options.silent If true no event is triggered on change
-                 * @param {Boolean} options.unset If true the attribute gets deleted
+                 * @param {Boolean} [options.silent=false] if true no event is triggered on change
+                 * @param {Boolean} [options.unset=false] if true the attribute gets deleted
                  */
                 set: function (key, value, options) {
                     var attributes = {};
@@ -99,7 +111,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding","underscor
 
                     options = options || {silent: false, unset: false};
 
-                    // for unsetting attributes
+                    // for un-setting attributes
                     if (options.unset) {
                         for (key in attributes) {
                             if (attributes.hasOwnProperty(key)) {
@@ -127,8 +139,6 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding","underscor
                                     changedAttributes[key] = now[key];
                                 }
                             }
-                            // if attribute has changed and there is no async changing process in the background, fire the event
-
                         }
                     }
 
@@ -148,10 +158,11 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding","underscor
 
 
                 /***
+                 * evaluates a path to retrieve a value
                  *
-                 * @param {Object} [scope]
+                 * @param {Object} [scope=this] the scope where the path is evaluated
                  * @param {String} key
-                 * @returns Attribute value
+                 * @returns the value for the path or undefined
                  */
                 get: function(scope, key) {
                     if(!key){
@@ -217,57 +228,69 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding","underscor
                     return scope;
                 },
 
-                /**
+                /***
+                 * determinate if a attribute is available
                  *
-                 * @param {String} key
-                 * @returns true if attribute is not undefined
+                 * @param {String} path - to get the value
+                 * @returns {Boolean} true if attribute is not undefined
                  */
-                has: function (key) {
-                    return !_.isUndefined(this.get(key));
+                has: function (path) {
+                    return !_.isUndefined(this.get(path));
                 },
-                /**
-                 * This method when attributes have changed after a set
-                 * @param {Object} hash of changed attributes
+
+                /***
+                 * called after attributes has set and some of the has been changed
+                 *
+                 * @param {Object} attributes - contains the changed attributes
+                 *
+                 * @abstract
+                 * @private
                  */
                 _commitChangedAttributes: function (attributes) {
                     // override
                 },
-                /**
-                 * Unsets on attribute key
-                 * @param {String} attribute key
-                 * @param {Object} options
+
+                /***
+                 * Unset attribute on $
+                 * @param {String|Object} key - the attribute or attributes to unset
+                 * @param {Object} [options]
+                 * @return {this}
                  */
                 unset: function (key, options) {
                     (options || (options = {})).unset = true;
                     return this.set(key, null, options);
                 },
+
                 /***
                  * Clears all attributes
+                 * @return {this}
                  */
                 clear: function () {
                     return this.set(this.$, {unset: true});
                 },
+
                 /***
+                 * Binds an event handler function to an EventDispatcher
                  *
-                 * @param {String} path a.b.c
-                 * @param {String} event
-                 * @param {Function} callback
-                 * @param {Object} scope
+                 * @param {String} path - a binding path e.g. a.b.c
+                 * @param {String} event - the type of the event which should be bound
+                 * @param {Function} callback - the event handler function
+                 * @param {Object} [thisArg] - the thisArg used for calling the event handler
                  */
-                bind: function (path, event, callback, scope) {
+                bind: function (path, event, callback, thisArg) {
                     if (event instanceof Function && _.isString(path)) {
                         this.callBase(path, event, callback);
                     } else {
                         if(_.isArray(path) && path.length > 0){
-                            scope = callback;
+                            thisArg = callback;
                             callback = event;
                             event = path[1];
-                            path = path[2];
+                            path = path[0];
                         }
                         var eb = new EventBindable({
                             path: path,
                             event: event,
-                            scope: scope,
+                            scope: thisArg,
                             callback: callback,
                             value: null
                         });
@@ -275,11 +298,14 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding","underscor
                         this.$eventBindables.push(eb);
                     }
                 },
+
                 /***
-                 * Unbinds an event.
-                 * @param {String} [path]
-                 * @param {String} event
-                 * @param {Function} callback
+                 * Unbinds an bound event handler from an EventDispatcher.
+                 *
+                 * @param {String} [path] - the path from which the event should be unbound
+                 * @param {String} event - the type of the event
+                 * @param {Function} callback - the event handler which is currently bound
+                 * TODO: why a scope is passed here?
                  * @param {Object} [scope]
                  */
                 unbind: function (path, event, callback, scope) {
@@ -297,8 +323,10 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding","underscor
                         }
                     }
                 },
+
                 /***
                  * Destroys all event bindings and triggers a destroy event
+                 * @return {this}
                  */
                 destroy: function() {
                     this.callBase();

@@ -4,22 +4,23 @@
  *
  * @class js.data.ListView
  */
-define(["js/core/Component", "js/core/List" ,"underscore"], function (Component, List ,_) {
+define(["js/core/Component", "js/core/List" , "underscore"], function (Component, List, _) {
 
     return Component.inherit("js.data.DataView", {
 
-        defaults: {
-            filterFnc: function (item, index, list) {
-                return true;
-            }
-        },
-        initialize: function(){
+
+        initialize: function () {
             this.$.list = new List();
-            this.bind('baseList','add', this._onItemAdded, this);
-            this.bind('baseList','remove', this._onItemRemoved, this);
-            this.bind('baseList','change', this._onItemChanged, this);
-            this.bind('baseList','reset', this._onReset, this);
-            this.bind('baseList','sort', this._onSort, this);
+            this.bind('baseList', 'add', this._onItemAdded, this);
+            this.bind('baseList', 'remove', this._onItemRemoved, this);
+            this.bind('baseList', 'change', this._onItemChanged, this);
+            this.bind('baseList', 'reset', this._onReset, this);
+            this.bind('baseList', 'sort', this._onSort, this);
+
+
+        },
+
+        _initializationComplete: function() {
 
             if (this.$.baseList && this.$.baseList instanceof List) {
                 this._innerReset(this.$.baseList.$items);
@@ -37,7 +38,7 @@ define(["js/core/Component", "js/core/List" ,"underscore"], function (Component,
         _innerReset: function (items) {
             // implement
         },
-        destroy: function(){
+        destroy: function () {
             this.unbind('baseList', 'add', this._onItemAdded, this);
             this.unbind('baseList', 'remove', this._onItemRemoved, this);
             this.unbind('baseList', 'change', this._onItemChanged, this);

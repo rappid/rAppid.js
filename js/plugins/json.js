@@ -45,7 +45,7 @@ define(['JSON'], function (JSON) {
                 xhr.open('GET', url, true);
                 xhr.onreadystatechange = function () {
                     if (xhr.readyState === 4) {
-                        if (xhr.responseText) {
+                        if ((xhr.status === 200 || xhr.status === 304) && xhr.responseText) {
                             callback(null, xhr.responseText);
                         } else {
                             callback("no responseXML found");
@@ -72,14 +72,16 @@ define(['JSON'], function (JSON) {
         };
     }
 
-
     return {
 
         write: function (pluginName, name, write) {
 
             if (name in buildMap) {
                 var text = buildMap[name];
-                write.asModule(pluginName + "!" + name, text);
+                write.asModule(pluginName + "!" + name,
+                    "define(function () { return " +
+                        text +
+                        ";});\n");
             }
         },
 
@@ -87,20 +89,28 @@ define(['JSON'], function (JSON) {
 
         load: function (name, parentRequire, load, config) {
 
+            var resourceName = name;
 
-            name = name.replace(rSuffix,"$1");
+            name = name.replace(rSuffix, "$1");
             name = name + ".json";
 
-            var url = parentRequire.toUrl(name );
+            var url = parentRequire.toUrl(name);
 
-            fetchJSON(url, function (err, raw) {
+            fetchJSON(url, function (err, json) {
                 if (!err) {
-                    load(JSON.parse(raw));
+
+                    if (config.isBuild) {
+                        buildMap[resourceName] = json;
+                    }
+
+                    load(JSON.parse(json));
+
                 } else {
-                    load.error(new Error("Json for " + url + " not found"));
+                    load.error(new Error("JSON for " + url + " not found"));
                 }
             });
         }
+
     }
 });
 

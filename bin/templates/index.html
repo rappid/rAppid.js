@@ -16,20 +16,7 @@
 </head>
 <body>
 <script type="text/javascript" data-usage="bootstrap">
-    rAppid.bootStrap("app/<%= appName %>.xml", "config.json",
-            function (err, systemManager, application) {
-                if (!err) {
-                    application.start(null, function (err) {
-                        if (!err) {
-                            application.render(document.body);
-                        } else {
-                            console.warn(err);
-                        }
-                    });
-                } else {
-                    console.warn(err);
-                }
-            });
+    rAppid.bootStrap("app/<%= appName %>.xml");
 </script>
 </body>
 </html>

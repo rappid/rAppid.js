@@ -1,12 +1,11 @@
-define(["js/core/Base"],
-    function (Base) {
+define(["js/core/Base"], function (Base) {
 
         /***
          * @param {arguments} eventTypes
          * */
         Function.prototype.on = function () {
 
-            var events = Array.prototype.slice.call(arguments, 0);
+            var events = Array.prototype.slice.call(arguments);
             this._events = this._events || [];
             for (var i = 0; i < events.length; i++) {
                 var event = events[i];
@@ -21,7 +20,7 @@ define(["js/core/Base"],
          * @param {arguments} changeEvents results in change:eventName
          * */
         Function.prototype.onChange = function () {
-            var events = Array.prototype.slice.call(arguments, 0);
+            var events = Array.prototype.slice.call(arguments);
             this._events = this._events || [];
             this._attributes = this._attributes || [];
             for (var i = 0; i < events.length; i++) {
@@ -31,6 +30,17 @@ define(["js/core/Base"],
                 this._events.push(event);
 
             }
+            return this;
+        };
+
+        Function.prototype.bus = function() {
+
+            var events = Array.prototype.slice.call(arguments);
+            this._busEvents = this._busEvents || [];
+            for (var i = 0; i < events.length; i++) {
+                this._busEvents.push(events[i]);
+            }
+
             return this;
         };
 
@@ -51,7 +61,7 @@ define(["js/core/Base"],
                 },
                 /**
                  * Binds a callback and a scope to a given eventType
-                 * @public
+                 *
                  * @param {String} eventType The name of the event
                  * @param {Function} callback The callback function - signature callback({@link EventDispatcher.Event},[caller])
                  * @param {Object} [scope]  This sets the scope for the callback function
@@ -71,7 +81,7 @@ define(["js/core/Base"],
                 },
                 /**
                  * Triggers an event
-                 * @public
+                 *
                  * @param {String} eventType
                  * @param {EventDispatcher.Event|Object} event If you use an Object the object is wrapped in an Event
                  * @param target
@@ -113,7 +123,7 @@ define(["js/core/Base"],
                 },
                 /***
                  * Unbinds callbacks for events
-                 * @public
+                 *
                  * @param {String} eventType
                  * @param {Function} callback
                  */
@@ -159,7 +169,7 @@ define(["js/core/Base"],
                 },
                 /**
                  * Prevent default triggering
-                 * @public
+                 *
                  */
                 preventDefault: function () {
                     this.isDefaultPrevented = true;
@@ -174,15 +184,16 @@ define(["js/core/Base"],
                         }
                     }
                 },
+
                 /**
                  * Call this to stop propagation
-                 * @public
+                 *
                  */
                 stopPropagation: function () {
                     this.isPropagationStopped = true;
                 },
                 /**
-                 * @public
+                 *
                  */
                 stopImmediatePropagation: function () {
                     this.isImmediatePropagationStopped = true;

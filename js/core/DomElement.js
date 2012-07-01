@@ -63,6 +63,11 @@ define(["require", "js/core/EventDispatcher","js/core/Component", "js/core/Conte
                     this.$tagName = attributes.tagName;
                     delete(attributes.tagName);
                 }
+
+                if (attributes.namespace) {
+                    this.$namespace = attributes.namespace;
+                    delete (attributes.namespace);
+                }
             },
 
             addChild: function (child) {
@@ -175,10 +180,10 @@ define(["require", "js/core/EventDispatcher","js/core/Component", "js/core/Conte
 
                 this.$renderedChildren = [];
 
-                if (this.$systemManager.$document.createElementNS && this.$namespace && /^http/.test(this.$namespace)) {
-                    this.$el = this.$systemManager.$document.createElementNS(this.$namespace, this.$tagName);
+                if (this.$stage.$document.createElementNS && this.$namespace && /^http/.test(this.$namespace)) {
+                    this.$el = this.$stage.$document.createElementNS(this.$namespace, this.$tagName);
                 } else {
-                    this.$el = this.$systemManager.$document.createElement(this.$tagName);
+                    this.$el = this.$stage.$document.createElement(this.$tagName);
                 }
 
                 this._initializeRenderer(this.$el);
@@ -232,6 +237,22 @@ define(["require", "js/core/EventDispatcher","js/core/Component", "js/core/Conte
                         this.$el.appendChild(el);
                     }
                 }
+            },
+
+            _renderComponentClass: function (cls, oldCls) {
+                if (oldCls) {
+                    this.removeClass(oldCls);
+                }
+                if (cls) {
+                    this.addClass(cls);
+                }
+            },
+
+            _renderClass: function (className) {
+                if (className) {
+                    this.addClass(className);
+                }
+
             },
 
             _removeRenderedChild: function (child) {

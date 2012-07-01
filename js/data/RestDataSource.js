@@ -108,6 +108,10 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
             uri = uri.concat(model.$context.getPathComponents());
             uri = uri.concat(modelPathComponents);
 
+            if (this.$.suffix) {
+                uri[uri.length - 1] = uri[uri.length - 1] + "." + this.$.suffix;
+            }
+
             // get queryParameter
             var params = _.defaults(model.$context.getQueryParameter(),
                 this.getQueryParameter(RestDataSource.METHOD.GET));
@@ -118,7 +122,7 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
             flow()
                 .seq("xhr", function(cb) {
                     // send request
-                    self.$systemManager.$applicationContext.ajax(url, {
+                    self.$stage.$applicationContext.ajax(url, {
                         type: RestDataSource.METHOD.GET,
                         queryParameter: params
                     }, cb);
@@ -299,7 +303,7 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
                     var url = uri.join("/");
 
                     // send request
-                    self.$systemManager.$applicationContext.ajax(url, {
+                    self.$stage.$applicationContext.ajax(url, {
                         type: method,
                         queryParameter: params,
                         data: payload
@@ -367,7 +371,7 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
             var self = this;
 
             // send request
-            this.$systemManager.$applicationContext.ajax(url, {
+            this.$stage.$applicationContext.ajax(url, {
                 type: RestDataSource.METHOD.GET,
                 queryParameter: params
             }, function (err, xhr) {

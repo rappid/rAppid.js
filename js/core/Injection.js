@@ -6,22 +6,18 @@ define(["js/core/Component", "underscore"], function (Component, _) {
     }
 
     return Component.inherit("js.core.Injection", {
-        ctor: function (attributes, descriptor, systemManager, parentScope, rootScope) {
+        ctor: function (attributes, descriptor, stage, parentScope, rootScope) {
 
-            if (!systemManager.$injection) {
-                this.callBase();
+            if (!stage.$injection) {
                 this.$singletonInstanceCache = [];
                 this.$factories = [];
+            } else {
+                this.$singletonInstanceCache = stage.$injection.$singletonInstanceCache;
+                this.$factories = stage.$injection.$factories;
 
-                systemManager.$injection = this;
+                this.callBase();
             }
 
-            return systemManager.$injection;
-
-        },
-
-        _initializeChildren: function (childComponents) {
-            this.callBase();
         },
 
         _childrenInitialized: function () {
@@ -30,8 +26,7 @@ define(["js/core/Component", "underscore"], function (Component, _) {
             for (var c = 0; c < this.$configurations.length; c++) {
                 var config = this.$configurations[c];
 
-
-                // TEST type of configuration
+                // TODO: TEST type of configuration
                 this.addFactory(config.$);
 
             }
@@ -101,7 +96,7 @@ define(["js/core/Component", "underscore"], function (Component, _) {
 
             if (!factory.factory) {
                 // get factory from class
-                var fac = this.$systemManager.$applicationDomain.getDefinition(factory.type);
+                var fac = this.$stage.$applicationDomain.getDefinition(factory.type);
                 if (!fac) {
                     throw "factory for type '" + factory.type + "' not found";
                 }

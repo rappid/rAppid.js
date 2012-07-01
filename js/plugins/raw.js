@@ -66,6 +66,7 @@ define([], function () {
                 var content = fs.readFileSync(path, 'utf8');
                 callback(null, content);
             } catch (e) {
+                console.error.call(console, e);
                 callback(e);
             }
         };
@@ -77,8 +78,12 @@ define([], function () {
         write: function (pluginName, name, write) {
 
             if (name in buildMap) {
-                var text = buildMap[name];
-                write.asModule(pluginName + "!" + name, text);
+                var text = buildMap[name].replace(/((\r\n|\n|\r)[\s\t]*)/gm, "")
+                    .replace(/'/g, "\\'");
+                write.asModule(pluginName + "!" + name,
+                    "define(function () { return '" +
+                        text +
+                        "';});\n");
             }
         },
 
@@ -90,9 +95,21 @@ define([], function () {
 
             fetchRaw(url, function (err, raw) {
                 if (!err) {
-                    load(raw);
+
+                    if (config.isBuild) {
+                        var text = raw.replace(/\r\n/g, "\n"); // DOS to Unix
+                        text = text.replace(/\r/g, "\n"); // Mac to Unix
+
+                        text = text.replace(/\n/g, "\\n");
+
+                        buildMap[name] = text;
+                        load(null);
+                    } else {
+                        load(raw);
+                    }
+
                 } else {
-                    load.error(new Error("Raw for " + url +  " not found"));
+                    load.error(new Error("Raw for " + url + " not found"));
                 }
             });
         }

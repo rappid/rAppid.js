@@ -1,7 +1,5 @@
 define(['require', "js/core/List", "js/data/Model", "flow", "underscore"], function (require, List, Model, flow, _) {
 
-    var cid = 0;
-
     var State = {
         CREATED: 0,
         LOADING: 1,
@@ -18,7 +16,6 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore"], funct
             options = options || {};
 
             this.callBase(items);
-            this.$cid = ++cid;
 
             _.defaults(options, {
                 rootCollection: null,

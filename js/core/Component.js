@@ -7,19 +7,19 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
 
 
         var Component = Element.inherit("js.core.Component",
-            /** @lends Component */
+
             {
                 /***
                  * What up??
                  * @param attributes The attributes of the component
                  * @param {String} attributes.style The style of the component
                  * @param {Node} descriptor
-                 * @param {SystemManager} systemManager
+                 * @param {js.core.Stage} stage
                  * @param {Element} parentScope
                  * @param {Element} rootScope
                  * @constructs
                  */
-                ctor: function (attributes, descriptor, systemManager, parentScope, rootScope) {
+                ctor: function (attributes, descriptor, stage, parentScope, rootScope) {
                     if (_.isUndefined(Template)) {
                         try {
                             Template = require('js/core/Template');
@@ -89,7 +89,20 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                     this.callBase();
 
                     this._inject();
+                    this._bindBus();
                 },
+
+                _bindBus: function() {
+                    for (var f in this) {
+                        var fn = this[f];
+                        if (fn instanceof Function && fn._busEvents) {
+                            for (var i = 0; i < fn._busEvents.length; i++) {
+                                this.$stage.$bus.bind(fn._busEvents[i], fn, this);
+                            }
+                        }
+                    }
+                },
+
                 _inject: function () {
 
                     var inject = this._injectChain();
@@ -100,7 +113,7 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                         // synchronous singleton instantiation of Injection,
                         // because if module requires injection, application also depends on
                         // Injection.js and class should be installed.
-                        var injection = this.$systemManager.$injection;
+                        var injection = this.$stage.$injection;
                         if (injection) {
                             for (var name in inject) {
                                 if (inject.hasOwnProperty(name)) {
@@ -114,6 +127,10 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                     }
 
                 },
+                /***
+                 * adds a children
+                 * @param {js.core.Element} child
+                 */
                 addChild: function (child) {
                     if (!(child instanceof Element)) {
                         throw "only children of type js.core.Component can be added"
@@ -221,6 +238,11 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
 
                     children = children.concat(this._getChildrenFromDescriptor(this.$descriptor));
 
+                    var extraChildren = this.createChildren();
+                    if (extraChildren) {
+                        children = children.concat(extraChildren);
+                    }
+
                     this._initializeChildren(children);
 
                     this._childrenInitialized();
@@ -228,6 +250,11 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                     this._initializeEventAttributes(this.$xamlDefaults, this);
                     this._initializeEventAttributes(this.$xamlAttributes, this.$rootScope);
                 },
+
+                createChildren: function() {
+
+                },
+
                 _cleanUpDescriptor: function (desc) {
                     if (desc && desc.childNodes) {
                         var node, text;
@@ -319,8 +346,8 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                 },
                 /***
                  * Create {@link Component} for DOM Node with given attributes
-                 * @param DOM Node
-                 * @param attributes for new Component
+                 * @param {DOM} node
+                 * @param [attributes] for new Component
                  */
                 _createComponentForNode: function (node, attributes, rootScope) {
                     if (!node) return null;
@@ -328,17 +355,16 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                     attributes = attributes || {};
                     rootScope = rootScope || this.$rootScope;
                     // only instantiation and construction but no initialization
-                    var appDomain = this.$systemManager.$applicationDomain;
 
                     if (node.nodeType == 1) { // Elements
 
-                        var fqClassName = this.$systemManager.$applicationContext.getFqClassName(node.namespaceURI, this._localNameFromDomNode(node), true);
-                        var className = this.$systemManager.$applicationContext.getFqClassName(node.namespaceURI, this._localNameFromDomNode(node), false);
+                        var fqClassName = this.$stage.$applicationContext.getFqClassName(node.namespaceURI, this._localNameFromDomNode(node), true);
+                        var className = this.$stage.$applicationContext.getFqClassName(node.namespaceURI, this._localNameFromDomNode(node), false);
 
-                        return this.$systemManager.$applicationContext.createInstance(fqClassName, [attributes, node, this.$systemManager, this, rootScope], className);
+                        return this.$stage.$applicationContext.createInstance(fqClassName, [attributes, node, this.$stage, this, rootScope], className);
 
-                    } else if (node.nodeType == 3 || node.nodeType == 4) { // Textnodes
-                        // remove whitespaces from text textnodes
+                    } else if (node.nodeType == 3 || node.nodeType == 4) { // Text nodes
+                        // remove whitespaces from text text nodes
                         var text = node.textContent ? node.textContent : node.text;
                         if (node.textContent) {
                             node.textContent = text;
@@ -352,11 +378,11 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
 
                 createComponent: function(factory, attributes) {
                     attributes = attributes || [];
-                    return this.$systemManager.$applicationContext.createInstance(factory, [attributes, null, this.$systemManager, this, this.$rootScope]);
+                    return this.$stage.$applicationContext.createInstance(factory, [attributes, false, this.$stage, this, this.$rootScope]);
                 },
 
                 _createTextElement: function(node, rootScope) {
-                    return this.$systemManager.$applicationContext.createInstance('js/core/TextElement', [null, node, this.$systemManager, this, rootScope]);
+                    return this.$stage.$applicationContext.createInstance('js/core/TextElement', [null, node, this.$stage, this, rootScope]);
                 },
 
                 /***
