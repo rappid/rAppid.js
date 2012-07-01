@@ -340,7 +340,7 @@
         var stage = new Stage(this.$requirejsContext, this, document);
 
             this.$requirejsContext(["js/core/Application", "js/core/HeadManager", "js/core/History", "js/core/Injection"], function (Application, HeadManager, History, Injection) {
-                stage.$headManager = new HeadManager(document.head);
+                stage.$headManager = new HeadManager(document.head || document.getElementsByTagName('head')[0]);
                 stage.$bus = new Bus();
                 stage.$history = new History();
                 var injection = stage.$injection = new Injection(null, null, stage);
