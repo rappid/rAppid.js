@@ -1,5 +1,10 @@
 define(["js/core/Window", "js/core/UIComponent"], function (Window, UIComponent) {
 
+        /***
+         * An application is a Window, which gets bootstrapped and started by rAppid.js and is attached to the WindowManager.
+         *
+         * @see js.core.WindowManager
+         */
         return Window.inherit("js.core.Application", {
             $classAttributes: [/.+/],
             ctor: function () {

@@ -1,5 +1,10 @@
 define(['js/html/HtmlElement', 'underscore'], function(HtmlElement, _){
 
+    /***
+     * The WindowManager manages Windows on the Stage.
+     *
+     * @see js.core.Stage
+     */
     return HtmlElement.inherit('js.core.WindowManager', {
 
         ctor: function() {
@@ -15,8 +20,13 @@ define(['js/html/HtmlElement', 'underscore'], function(HtmlElement, _){
             'class': 'window-manager'
         },
 
-
-        show: function(window, callback, modal) {
+        /***
+         * Adds a window to the WindowManager and shows it
+         * @param {js.core.Window} window - window instance to show
+         * @param {Function} [windowCloseCallback] - callback function invoked after the window the is closed
+         * @param {Boolean} [modal=false] - if true a modal window in front of all other windows will be shown
+         */
+        show: function(window, windowCloseCallback, modal) {
 
             var self = this,
                 list = modal ? this.$windows : this.$modalWindows,
@@ -45,8 +55,8 @@ define(['js/html/HtmlElement', 'underscore'], function(HtmlElement, _){
 
                 window.unbind('close', closeHandler);
 
-                if (callback) {
-                    callback(null, window, e.$);
+                if (windowCloseCallback) {
+                    windowCloseCallback(null, window, e.$);
                 }
             };
 
