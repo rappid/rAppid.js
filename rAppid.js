@@ -150,16 +150,16 @@
             parameter = parameter || {};
 
             if (typeof window !== 'undefined' && window.location && !parameter.initialHash) {
-                parameter = window.location.search.replace(/^\?/, '').split('&');
-                for (var i = 0; i < parameter.length; i++) {
-                    var result = /^([^=]+)=(.*)$/.exec(parameter[i]);
+                param = window.location.search.replace(/^\?/, '').split('&');
+                for (var i = 0; i < param.length; i++) {
+                    var result = /^([^=]+)=(.*)$/.exec(param[i]);
                     if (result && result[1] === 'fragment') {
 
                         var redirectUrl = location.protocol + '//' + location.host + location.pathname;
-                        parameter.splice(i, 1);
+                        param.splice(i, 1);
 
-                        if (parameter.length) {
-                            redirectUrl += '?' + parameter.join('&');
+                        if (param.length) {
+                            redirectUrl += '?' + param.join('&');
                         }
 
                         redirectUrl += '#' + result[2];
