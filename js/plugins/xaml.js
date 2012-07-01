@@ -173,7 +173,7 @@ define([], function () {
                     progId = progIds[i];
                     try {
                         xhr = new ActiveXObject(progId);
-                    } catch (e) {
+                    } catch(e) {
                     }
 
                     if (xhr) {
@@ -206,7 +206,7 @@ define([], function () {
                     }
                 };
                 xhr.send(null);
-            } catch (e) {
+            } catch(e) {
                 callback(e);
             }
         };
@@ -219,7 +219,7 @@ define([], function () {
             try {
                 var content = fs.readFileSync(path, 'utf8');
                 callback(null, require.nodeRequire('libxml').parseFromString(content));
-            } catch (e) {
+            } catch(e) {
                 callback(e);
             }
         };
@@ -242,131 +242,143 @@ define([], function () {
 
             var url = parentRequire.toUrl(name + ".xml");
 
-            fetchXaml(url, function (err, xml) {
-                if (!err && xml) {
+            if (config.optimizedXAML && config.optimizedXAML.indexOf(name) > -1) {
+                parentRequire([name], function () {
+                    parentRequire(["xaml!"+name], function(value){
+                        load(value);
+                    });
+                });
+            } else {
+                fetchXaml(url, function (err, xml) {
 
-                    // require all dependencies
-                    var imports = [],
-                        importStartIndex = 1;
+                    if (!err && xml) {
 
-                    var dependencies = findDependencies(xml.documentElement,
-                        config.namespaceMap, config.xamlClasses, config.rewriteMap, imports);
+                        // require all dependencies
+                        var imports = [],
+                            importStartIndex = 1;
 
-                    var scripts = findScripts(xml.documentElement,
-                        config.namespaceMap, config.xamlClasses, config.rewriteMap);
+                        var dependencies = findDependencies(xml.documentElement,
+                            config.namespaceMap, config.xamlClasses, config.rewriteMap, imports);
 
-                    if (scripts.length > 1) {
-                        throw "only one script block allowed in XAML";
-                    }
+                        var scripts = findScripts(xml.documentElement,
+                            config.namespaceMap, config.xamlClasses, config.rewriteMap);
 
-                    if (scripts.length > 0) {
-                        // at least one script
-                        dependencies.splice(1, 0, "js/core/Script");
-                        importStartIndex++;
-                    }
-
-                    if (imports.length > 0) {
-                        // add imports after start index
-                        dependencies = dependencies.slice(0, importStartIndex)
-                            .concat(imports)
-                            .concat(dependencies.slice(importStartIndex));
-                    }
-
-                    if (config.isBuild) {
-                        dependencies.splice(1, 0, "js/core/Element");
-                        importStartIndex++;
-
-                        var text = "define(%dependencies%, %function%)";
-                        var fn = "function(baseClass, ELEMENT %parameter%){return baseClass.inherit({ %classDefinition% _$descriptor: ELEMENT.xmlStringToDom(%descriptor%)})}";
-
-                        for (var i = 0; i < dependencies.length; i++) {
-                            dependencies[i] = "'" + dependencies[i] + "'";
+                        if (scripts.length > 1) {
+                            throw "only one script block allowed in XAML";
                         }
-
-                        text = text.replace('%dependencies%', '[' + dependencies.join(',') + ']');
-
-                        var xmlContent = xml.documentElement.toString()
-                            .replace(/((\r\n|\n|\r)[\s\t]*)/gm, "")
-                            .replace(/'/g, "\\'")
-                            .replace(/<js:Script[^>]*>[\s\S]*<\/js:Script[^>]*>/, "");
-
-                        var parameter = "",
-                            classDefinition = "";
 
                         if (scripts.length > 0) {
-                            var script = scripts[0].toString();
-
-                            var rScriptExtractor = /^[\s\S]*?function\s*\(([\s\S]*?)\)[\s\S]*?\{[\s\S]*?return[\s\S]*?\{([\s\S]*)\}[\s\S]*?\}[\s\S]*?\)[^)]*$/;
-                            var result = rScriptExtractor.exec(script);
-
-                            if (result) {
-                                // get parameter and trim
-                                if (hasContent(result[1])) {
-                                    // add comma for separate from baseClass
-                                    parameter = ",SCRIPT," + result[1];
-                                }
-
-                                if (hasContent(result[2])) {
-                                    classDefinition = result[2] + ','
-                                }
-
-                            } else {
-                                throw "Error parsing script block";
-                            }
-
+                            // at least one script
+                            dependencies.splice(1, 0, "js/core/Script");
+                            importStartIndex++;
                         }
 
-                        fn = fn.replace('%parameter%', parameter);
-                        fn = fn.replace('%classDefinition%', classDefinition);
-                        fn = fn.replace('%descriptor%', "'" + xmlContent + "'");
+                        if (imports.length > 0) {
+                            // add imports after start index
+                            dependencies = dependencies.slice(0, importStartIndex)
+                                .concat(imports)
+                                .concat(dependencies.slice(importStartIndex));
+                        }
 
-                        text = text.replace('%function%', fn);
-                        load.fromText(name, "(function () {"+text+"}).call(this);");
+                        if (config.isBuild) {
+                            dependencies.splice(1, 0, "js/core/Element");
+                            importStartIndex++;
 
-                        buildMap[name] = text;
+                            var text = "define(%dependencies%, %function%)";
+                            var fn = "function(baseClass, ELEMENT %parameter%){return baseClass.inherit({ %classDefinition% _$descriptor: ELEMENT.xmlStringToDom(%descriptor%)})}";
 
-                        parentRequire([name], function (value) {
-                            load(value);
-                        });
-                    } else {
-                        // first item should be the dependency of the document element
-                        parentRequire(dependencies, function (value) {
-
-                            // dependencies are loaded
-                            var baseClass = arguments[0],
-                                Script = arguments[1];
-
-                            var args = Array.prototype.slice.call(arguments);
-
-                            var scriptObjects = [];
-                            var importedClasses = args.slice(importStartIndex);
-
-                            if (scripts.length > 0) {
-                                for (var s = 0; s < scripts.length; s++) {
-                                    try {
-                                        var scriptInstance = new Script(null, scripts[s]);
-                                        scriptObjects.push(scriptInstance.evaluate(importedClasses));
-                                    } catch (e) {
-                                        load.error(new Error(name + ": Script cannot be loaded" + e));
-                                    }
-                                }
+                            var depsEscaped = [];
+                            for (var i = 0; i < dependencies.length; i++) {
+                                depsEscaped.push("'" + dependencies[i] + "'");
                             }
 
-                            var xamlFactory = baseClass.inherit(
-                                getDeclarationFromScripts(scriptObjects)
-                            );
+                            text = text.replace('%dependencies%', '[' + depsEscaped.join(',') + ']');
 
-                            xamlFactory.prototype._$descriptor = xml.documentElement;
+                            var xmlContent = xml.documentElement.toString()
+                                .replace(/((\r\n|\n|\r)[\s\t]*)/gm, "")
+                                .replace(/'/g, "\\'")
+                                .replace(/<js:Script[^>]*>[\s\S]*<\/js:Script[^>]*>/, "");
 
-                            load(xamlFactory);
-                        }, function(err) {
-                            load.error(err);
-                        });
+                            var parameter = "",
+                                classDefinition = "";
+
+                            if (scripts.length > 0) {
+                                var script = scripts[0].toString();
+
+                                var rScriptExtractor = /^[\s\S]*?function\s*\(([\s\S]*?)\)[\s\S]*?\{[\s\S]*?return[\s\S]*?\{([\s\S]*)\}[\s\S]*?\}[\s\S]*?\)[^)]*$/;
+                                var result = rScriptExtractor.exec(script);
+
+                                if (result) {
+                                    // get parameter and trim
+                                    if (hasContent(result[1])) {
+                                        // add comma for separate from baseClass
+                                        parameter = ",SCRIPT," + result[1];
+                                    }
+
+                                    if (hasContent(result[2])) {
+                                        classDefinition = result[2] + ','
+                                    }
+
+                                } else {
+                                    throw "Error parsing script block";
+                                }
+
+                            }
+
+                            fn = fn.replace('%parameter%', parameter);
+                            fn = fn.replace('%classDefinition%', classDefinition);
+                            fn = fn.replace('%descriptor%', "'" + xmlContent + "'");
+
+                            text = text.replace('%function%', fn);
+                            load.fromText(name, "(function () {" + text + "}).call(this);");
+
+                            buildMap[name] = text;
+
+                            parentRequire([name], function (value) {
+                                parentRequire(dependencies, function () {
+                                    load(value);
+                                });
+                            });
+                        } else {
+                            // first item should be the dependency of the document element
+                            parentRequire(dependencies, function (value) {
+
+                                // dependencies are loaded
+                                var baseClass = arguments[0],
+                                    Script = arguments[1];
+
+                                var args = Array.prototype.slice.call(arguments);
+
+                                var scriptObjects = [];
+                                var importedClasses = args.slice(importStartIndex);
+
+                                if (scripts.length > 0) {
+                                    for (var s = 0; s < scripts.length; s++) {
+                                        try {
+                                            var scriptInstance = new Script(null, scripts[s]);
+                                            scriptObjects.push(scriptInstance.evaluate(importedClasses));
+                                        } catch(e) {
+                                            load.error(new Error(name + ": Script cannot be loaded" + e));
+                                        }
+                                    }
+                                }
+
+                                var xamlFactory = baseClass.inherit(
+                                    getDeclarationFromScripts(scriptObjects)
+                                );
+
+                                xamlFactory.prototype._$descriptor = xml.documentElement;
+
+                                load(xamlFactory);
+                            }, function (err) {
+                                load.error(err);
+                            });
+                        }
+                    } else {
+                        load.error(new Error("XML " + url + " not found." + err));
                     }
-                } else {
-                    load.error(new Error("XML " + url + " not found." + err));
-                }
-            });
+                });
+            }
         }
     }
 });
