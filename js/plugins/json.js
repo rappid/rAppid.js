@@ -78,7 +78,10 @@ define(['JSON'], function (JSON) {
 
             if (name in buildMap) {
                 var text = buildMap[name];
-                write.asModule(pluginName + "!" + name, text);
+                write.asModule(pluginName + "!" + name,
+                    "define(function () { return " +
+                        text +
+                        ";});\n");
             }
         },
 
@@ -97,12 +100,7 @@ define(['JSON'], function (JSON) {
                 if (!err) {
 
                     if (config.isBuild) {
-                        var text = json.replace(/\r\n/g, "\n"); // DOS to Unix
-                        text = text.replace(/\r/g, "\n"); // Mac to Unix
-
-                        text = text.replace(/\n/g, "\\n");
-
-                        buildMap[resourceName] = text;
+                        buildMap[resourceName] = json;
                     }
 
                     load(JSON.parse(json));

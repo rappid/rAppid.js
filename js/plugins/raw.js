@@ -78,8 +78,12 @@ define([], function () {
         write: function (pluginName, name, write) {
 
             if (name in buildMap) {
-                var text = buildMap[name];
-                write.asModule(pluginName + "!" + name, text);
+                var text = buildMap[name].replace(/((\r\n|\n|\r)[\s\t]*)/gm, "")
+                    .replace(/'/g, "\\'");
+                write.asModule(pluginName + "!" + name,
+                    "define(function () { return '" +
+                        text +
+                        "';});\n");
             }
         },
 
@@ -99,7 +103,7 @@ define([], function () {
                         text = text.replace(/\n/g, "\\n");
 
                         buildMap[name] = text;
-                        load(raw);
+                        load(null);
                     } else {
                         load(raw);
                     }
