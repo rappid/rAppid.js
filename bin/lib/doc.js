@@ -263,8 +263,11 @@ var esprima = require('esprima'),
 
         ctor: function () {
             this.classAnnotationProcessors = [
+                new Documentation.Processors.Class(),
                 new Documentation.Processors.General('inherit'),
-                new Documentation.Processors.General('see')
+                new Documentation.Processors.General('see', true),
+                new Documentation.Processors.General('ignore'),
+                new Documentation.Processors.Description()
             ];
 
             this.prototypeAnnotationProcessors = [
@@ -273,8 +276,9 @@ var esprima = require('esprima'),
                 new Documentation.Processors.General('private'),
                 new Documentation.Processors.General('public'),
                 new Documentation.Processors.General('deprecated'),
+                new Documentation.Processors.General('abstract'),
                 new Documentation.Processors.General('ignore'),
-                new Documentation.Processors.General('see'),
+                new Documentation.Processors.General('see', true),
                 new Documentation.Processors.Description()
             ];
         },
@@ -310,8 +314,21 @@ var esprima = require('esprima'),
 
                         var classDocumentation = this.getClassDocumentation(expression.arguments[1].body, varToRequireMap);
                         if (classDocumentation) {
+
+                            // get annotations for class from body begin until class definition begin
+                            var annotations = this.getAnnotationInRange(body.range[0], classDocumentation.start, this.classAnnotationProcessors);
+
+                            for (var a = 0; a < annotations.length; a++) {
+                                var annotation = annotations[a];
+                                annotation.processor.mapAnnotationToItem(annotation, classDocumentation, annotations);
+                            }
+
+                            delete classDocumentation.start;
+
                             classDocumentation.fqClassName = classDocumentation.fqClassName || fqClassName;
-                            ret.push(new ClassDocumentation(classDocumentation));
+                            if (!classDocumentation.hasOwnProperty(('ignore'))) {
+                                ret.push(new ClassDocumentation(classDocumentation));
+                            }
                         }
 
                     }
@@ -335,7 +352,9 @@ var esprima = require('esprima'),
                     if (argument.type === CONST.CallExpression) {
                         // class definition should use inherit.js
 
-                        return this.getDocumentationFromInheritCall(argument, varToRequireMap);
+                        classDocumentation = this.getDocumentationFromInheritCall(argument, varToRequireMap);
+                        classDocumentation.start = argument.range[0];
+                        return classDocumentation;
 
                     } else if (argument.type === CONST.Identifier) {
 
@@ -355,6 +374,9 @@ var esprima = require('esprima'),
                                         // found the variable declaration
 
                                         classDocumentation = this.getDocumentationFromInheritCall(declaration.init, varToRequireMap);
+                                        if (classDocumentation) {
+                                            classDocumentation.start = declaration.range[0];
+                                        }
 
                                     }
 
@@ -457,7 +479,7 @@ var esprima = require('esprima'),
                         item.parameter.push(param)
                     }
 
-                    var annotations = this.getAnnotationInRange(lastProperty ? lastProperty.range[1] : object.range[0], property.range[0]);
+                    var annotations = this.getAnnotationInRange(lastProperty ? lastProperty.range[1] : object.range[0], property.range[0], this.prototypeAnnotationProcessors);
 
                     for (var a = 0; a < annotations.length; a++) {
                         var annotation = annotations[a];
@@ -481,7 +503,7 @@ var esprima = require('esprima'),
 
         },
 
-        getAnnotationInRange: function (from, to) {
+        getAnnotationInRange: function (from, to, processors) {
             var comments = this.getCommentsInRange(from, to),
                 ret = [];
 
@@ -504,9 +526,9 @@ var esprima = require('esprima'),
                             lastAnnotationProcessor.appendToResult(lastResult, line.replace(stripLineStart, ''));
                             lineProcessed = true;
                         } else {
-                            for (var k = 0; k < this.prototypeAnnotationProcessors.length; k++) {
+                            for (var k = 0; k < processors.length; k++) {
 
-                                var annotationProcessor = this.prototypeAnnotationProcessors[k];
+                                var annotationProcessor = processors[k];
                                 var result = annotationProcessor.parse(line);
 
                                 if (result) {
@@ -572,8 +594,9 @@ Documentation.Processors = {};
 
 Documentation.Processors.General = Documentation.AnnotationProcessor.inherit({
 
-    ctor: function (type) {
+    ctor: function (type, many) {
         this.type = type;
+        this.many = many;
     },
 
     parse: function (line) {
@@ -596,10 +619,44 @@ Documentation.Processors.General = Documentation.AnnotationProcessor.inherit({
     },
 
     mapAnnotationToItem: function (annotation, item, annotations) {
-        item[this.type] = annotation.value;
+        if (this.many) {
+            item[this.type] = item[this.type] || [];
+            item[this.type].push(annotation.value);
+        } else {
+            item[this.type] = annotation.value;
+        }
     }
 }, {
-    Parser: /^\s*\*\s*@(\S+)\s*(\S*)\s*$/
+    Parser: /^\s*\*\s*@(\S+)\s*([\s\S]*)\s*$/
+});
+
+
+Documentation.Processors.Class = Documentation.AnnotationProcessor.inherit({
+    parse: function (line) {
+
+        var result = Documentation.Processors.Class.Parser.exec(line);
+
+        if (result) {
+
+            result.shift();
+
+            return {
+                type: 'fqClassName',
+                processor: this,
+                value: result[0]
+            }
+        }
+    },
+
+    appendToResult: function (result, description) {
+        return false;
+    },
+
+    mapAnnotationToItem: function (annotation, item, annotations) {
+        item.fqClassName = annotation.value;
+    }
+}, {
+    Parser: /^\s*\*\s*@class\s*(\S+)\s*$/
 });
 
 Documentation.Processors.Parameter = Documentation.AnnotationProcessor.inherit({
