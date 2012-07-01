@@ -150,7 +150,7 @@
             parameter = parameter || {};
 
             if (typeof window !== 'undefined' && window.location && !parameter.initialHash) {
-                param = window.location.search.replace(/^\?/, '').split('&');
+                var param = window.location.search.replace(/^\?/, '').split('&');
                 for (var i = 0; i < param.length; i++) {
                     var result = /^([^=]+)=(.*)$/.exec(param[i]);
                     if (result && result[1] === 'fragment') {
