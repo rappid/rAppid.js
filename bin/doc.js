@@ -44,6 +44,8 @@ var help = function(args, callback) {
                 var shortPath = path.relative(path.join(startFile, '..'), p),
                     code = fs.readFileSync(p, 'UTF-8');
 
+                console.warn(shortPath);
+
                 var defaultFqClassName = shortPath.replace(/\//g, '.').replace(/\.js$/, '');
                 documentation.generateDocumentationsForFile('js', code, defaultFqClassName, true);
 
