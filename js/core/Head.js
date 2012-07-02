@@ -1,11 +1,13 @@
 define(["js/core/Component"], function(Component) {
 
     return Component.inherit('js.core.Head', {
-
-
         ctor: function() {
             this.callBase();
-            this.$head = this.$systemManager.$headManager;
+            this.$headManager = this.$stage.$headManager;
+            this.bind('change',this.render, this);
+        },
+        render: function(){
+            this.$headManager.set(this.$);
         }
     });
 

@@ -1,5 +1,4 @@
 (function (exports, requirejs, define, document, XMLHttpRequest) {
-
     /** ECMA SCRIPT COMPLIANT**/
     if (!String.prototype.trim) {
         String.prototype.trim = function () {
@@ -268,7 +267,7 @@
                         xhr.setRequestHeader(header, s.headers[header]);
                     }
                 }
-            } catch (e) {
+            } catch(e) {
             } // FF3
 
             xhr.send(s.data);
@@ -323,7 +322,7 @@
 
         try {
             this.statusText = xhr.statusText;
-        } catch (e) {
+        } catch(e) {
             this.statusText = "";
         }
     };
@@ -363,17 +362,17 @@
 
         var stage = new Stage(this.$requirejsContext, this, document);
 
-            this.$requirejsContext(["js/core/Application", "js/core/HeadManager", "js/core/History", "js/core/Injection"], function (Application, HeadManager, History, Injection) {
-                stage.$headManager = new HeadManager(document.head || document.getElementsByTagName('head')[0]);
-                stage.$bus = new Bus();
-                stage.$history = new History();
-                var injection = stage.$injection = new Injection(null, null, stage);
+        this.$requirejsContext(["js/core/Application", "js/core/HeadManager", "js/core/History", "js/core/Injection"], function (Application, HeadManager, History, Injection) {
+            stage.$headManager = new HeadManager(document);
+            stage.$bus = new Bus();
+            stage.$history = new History();
+            var injection = stage.$injection = new Injection(null, null, stage);
 
-                injection.addInstance(stage.$bus);
-                injection.addInstance(stage.$history);
-                injection.addInstance(stage.$headManager);
+            injection.addInstance(stage.$bus);
+            injection.addInstance(stage.$history);
+            injection.addInstance(stage.$headManager);
 
-                var application = new applicationFactory(null, false, stage, null, null);
+            var application = new applicationFactory(null, false, stage, null, null);
 
             if (application instanceof Application) {
 
@@ -457,7 +456,7 @@
         try {
             ret = construct(classDefinition, args);
             ret.className = className;
-        } catch (e) {
+        } catch(e) {
             console.log("Cannot create instance of '" + fqClassName + "'");
         }
 
