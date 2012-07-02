@@ -1,5 +1,7 @@
-var should = require('chai').should();
-var testRunner = require('..').TestRunner.setup();
+var chai = require('chai'),
+    should = chai.should(),
+    expect = chai.expect,
+    testRunner = require('..').TestRunner.setup();
 
 var C = {};
 
@@ -19,7 +21,7 @@ describe('js.core.Binding', function () {
         testRunner.requireClasses({
             Binding: 'js/core/Binding',
             Bindable: 'js/core/Bindable',
-            Parser: 'js/core/BindingParser'
+            Parser: 'js/lib/parser'
         }, C, done);
 
 
@@ -62,7 +64,7 @@ describe('js.core.Binding', function () {
             var b1 = new C.Binding({scope: model, path: C.Parser.parse('a', PATH_RULE), target: target, targetKey: "val"});
             model.set("a", "A");
 
-            target.get('val').should.equal('A');
+            expect(target.get('val')).to.be.equal('A');
 
         });
 
@@ -156,12 +158,14 @@ describe('js.core.Binding', function () {
         });
 
         var fncBinding = "bar('" + parStr + "'," + parNum + ")";
+
         it(fncBinding + " should call bar with parameters and return true", function () {
             new C.Binding({scope: extendedModel, path: C.Parser.parse(fncBinding, PATH_RULE), target: target, targetKey: 'val'});
             target.get('val').should.equal(true);
         });
 
         var fncBinding2 = "bar({m1.a},{m1.b})";
+
         it(fncBinding2 + ' should be triggered if m1.a or m1.b is changing', function () {
             var extendedTarget = new ExtendedClass();
             // extendedTarget.set('m1', new ExtendedClass({}));
