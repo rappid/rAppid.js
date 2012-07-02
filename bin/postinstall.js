@@ -15,7 +15,7 @@ var postinstall = function (args, callback) {
         "underscore.js":path.join(nodeModules, "underscore", "underscore.js")
     };
 
-    if (!fs.existsSync(libDir)) {
+    if (!path.existsSync(libDir)) {
         fs.mkdirSync(libDir);
     }
 

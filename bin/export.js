@@ -16,7 +16,7 @@ var exportApp = function (args, callback) {
         exportDir = cleanPath(exportDir);
         srcDir = cleanPath(srcDir);
 
-        if (fs.existsSync(srcDir)) {
+        if (path.existsSync(srcDir)) {
             copyDirectory(srcDir,exportDir);
         }else{
             callback("Couldn't find source dir of project");
@@ -32,7 +32,7 @@ var exportApp = function (args, callback) {
 
 var copyDirectory = function(srcDir, targetDir){
     var subDirs = [];
-    if (!fs.existsSync(targetDir)) {
+    if (!path.existsSync(targetDir)) {
         fs.mkdirSync(targetDir);
     }
     var source, dest;

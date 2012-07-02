@@ -28,15 +28,15 @@ var Helper = {
 };
 
 fs.mkdirIfNotExist = function (dirPath) {
-    if (!fs.existsSync(dirPath)) {
+    if (!path.existsSync(dirPath)) {
         fs.mkdirSync(dirPath);
     }
 };
 
 fs.mkdirParent = function (dirPath) {
-    if (!fs.existsSync(dirPath)) {
+    if (!path.existsSync(dirPath)) {
         var parentDir = path.normalize(path.join(dirPath, ".."));
-        if (!fs.existsSync(parentDir)) {
+        if (!path.existsSync(parentDir)) {
             fs.mkdirParent(parentDir);
         }
 
@@ -93,7 +93,7 @@ function createApplication(appName, dir, callback) {
 
     fs.mkdirParent(dir);
 
-    if (!fs.existsSync(dir)) {
+    if (!path.existsSync(dir)) {
         callback("Directory " + dir + " could not be created");
     }
 

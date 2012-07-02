@@ -36,7 +36,7 @@ function install(args, callback) {
     dir = path.resolve(dir.replace(/^~\//, process.env.HOME + '/'));
 
 
-    if (!fs.existsSync(path.join(dir,"node_modules", packageName))) {
+    if (!path.existsSync(path.join(dir,"node_modules", packageName))) {
         child = child_process.exec(["npm", "install", what, "-d"].join(" "), {cwd: dir}, function (err, stdout, stderr) {
             sys.print('stdout: ' + stdout);
             sys.print('stderr: ' + stderr);
@@ -71,7 +71,7 @@ function linkPackage(dir, packageName, version ,callback){
     readJson(path.join(packageDir, "package.json"), function (err, data) {
         if (!err){
             var libDir = path.join(publicDir, data.lib);
-            if (!fs.existsSync(libDir)) {
+            if (!path.existsSync(libDir)) {
                 fs.symlinkSync(path.join(packageDir, data.lib), libDir, 'dir');
             }
             var packageFile = path.join(dir, "package.json");

@@ -19,7 +19,7 @@ var config = function(args, callback) {
         } else {
             var config = {};
 
-            if (fs.existsSync(configFile)) {
+            if (path.existsSync(configFile)) {
                 config = JSON.parse(fs.readFileSync(configFile));
             }
 
