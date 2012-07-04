@@ -362,6 +362,13 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                     return this.$stage.$applicationContext.createInstance(factory, [attributes, false, this.$stage, this, this.$rootScope]);
                 },
 
+                createBinding: function(path, callback, callbackScope) {
+                    callbackScope = callbackScope || this;
+                    this.$bindingCreator.evaluate(path, this, function() {
+                        callback.apply(callbackScope, arguments);
+                    });
+                },
+
                 _createTextElement: function(node, rootScope) {
                     return this.$stage.$applicationContext.createInstance('js/core/TextElement', [null, node, this.$stage, this, rootScope]);
                 },
