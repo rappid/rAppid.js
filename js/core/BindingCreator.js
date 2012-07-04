@@ -23,6 +23,14 @@ define(['js/core/EventDispatcher','js/lib/parser','js/core/Binding', 'underscore
 
     return EventDispatcher.inherit('js.core.BindingCreator',{
 
+        /***
+         *
+         * @param bindingDef
+         * @param targetScope
+         * @param {String|Function} attrKey key where to bind, or callback function
+         * @param context
+         * @return {*}
+         */
         create: function(bindingDef, targetScope, attrKey, context){
             var path = bindingDef.path;
             var pathElement = path[0];
