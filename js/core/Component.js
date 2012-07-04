@@ -2,10 +2,6 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
 
     function (require, Element, TextElement, Bindable, EventDispatcher, _) {
 
-        var Template,
-            Configuration;
-
-
         var Component = Element.inherit("js.core.Component",
 
             {
@@ -20,21 +16,6 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                  * @constructs
                  */
                 ctor: function (attributes, descriptor, stage, parentScope, rootScope) {
-                    if (_.isUndefined(Template)) {
-                        try {
-                            Template = require('js/core/Template');
-                        } catch(e) {
-                            Template = null;
-                        }
-                    }
-
-                    if (_.isUndefined(Configuration)) {
-                        try {
-                            Configuration = require('js/conf/Configuration');
-                        } catch(e) {
-                            Configuration = null;
-                        }
-                    }
                     this.$eventDefinitions = [];
                     this.$internalDescriptors = [];
                     this.$xamlDefaults = {};
@@ -151,9 +132,9 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                     this.$elements.push(child);
 
                     // handle special elements
-                    if (Template && child instanceof Template) {
+                    if (child instanceof Component.Template) {
                         this._addTemplate(child);
-                    } else if (Configuration && child instanceof Configuration) {
+                    } else if (child instanceof Component.Configuration) {
                         this._addConfiguration(child);
                     }
                 },
@@ -428,6 +409,33 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                     return st[st.length - 1];
                 }
             });
+
+        Component.Template = Component.inherit("js.core.Template", {
+
+            _initializeDescriptors: function () {
+                this._cleanUpDescriptor(this.$descriptor);
+                this._childrenInitialized();
+            },
+
+            createComponents: function (attributes, parentScope, rootScope) {
+                rootScope = rootScope || this.$rootScope;
+                parentScope = parentScope || this.$parentScope;
+                // foreach child Descriptor
+                var components = this._getChildrenFromDescriptor(this.$descriptor, null, rootScope);
+
+                for (var c = 0; c < components.length; c++) {
+                    components[c].$parentScope = parentScope;
+                    components[c].set(attributes);
+                    components[c]._initialize("auto", true);
+
+                }
+
+                return components
+            }
+        });
+
+        Component.Configuration = Component.inherit("js.core.Configuration", {
+        });
 
         return Component;
     }
