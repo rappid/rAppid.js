@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<ui:DataGridClass xmlns="http://www.w3.org/1999/xhtml" xmlns:js="js.core" xmlns:ui="js.ui" class="data-grid">
+    <ui:ItemsView items="{$columns}" itemKey="column" class="data-grid-head" tagName="div">
+        <js:Template name="item">
+            <div>{$column.title}</div>
+        </js:Template>
+    </ui:ItemsView>
+    <div class="data-grid-body">
+        <table>
+            <thead style="display: none;">
+                <ui:ItemsView items="{$columns}" tagName="tr" itemKey="column">
+                    <js:Template name="item">
+                        <td>{$column.title}</td>
+                    </js:Template>
+                </ui:ItemsView>
+            </thead>
+            <tbody>
+                <tr>
+
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <js:Template name="layout">
+    </js:Template>
+</ui:DataGridClass>

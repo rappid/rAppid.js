@@ -1,5 +1,0 @@
-<?xml version="1.0"?>
-<ui:GridClass xmlns="http://www.w3.org/1999/xhtml" xmlns:js="js.core" xmlns:ui="js.ui">
-    <js:Template name="layout">
-    </js:Template>
-</ui:GridClass>
