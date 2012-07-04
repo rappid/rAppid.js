@@ -121,6 +121,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding","underscor
                     }
 
                     var changedAttributes = {},
+                        changedAttributesCount = 0,
                         now = this.$,
                         val, prev;
 
@@ -137,20 +138,44 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding","underscor
                                     this.$previousAttributes[key] = prev;
                                     now[key] = attributes[key];
                                     changedAttributes[key] = now[key];
+
+                                    changedAttributesCount++;
                                 }
                             }
                         }
                     }
 
-                    this._commitChangedAttributes(changedAttributes);
-
-                    if (options.silent === false && _.size(changedAttributes) > 0) {
+                    if (changedAttributesCount) {
                         for (key in changedAttributes) {
                             if (changedAttributes.hasOwnProperty(key)) {
-                                this.trigger('change:' + key, changedAttributes[key], this);
+                                var commitMethodName = '_commit' + key.charAt(0).toUpperCase() + key.substr(1);
+
+                                if (this[commitMethodName] instanceof Function) {
+                                    // call method
+
+                                    if (this[commitMethodName](now[key], this.$previousAttributes[key]) === false) {
+                                        // false returned rollback
+                                        changedAttributesCount--;
+                                        now[key] = this.$previousAttributes[key];
+                                    }
+                                }
                             }
                         }
-                        this.trigger('change', changedAttributes, this);
+
+                        if (changedAttributesCount) {
+
+                            this._commitChangedAttributes(changedAttributes);
+
+                            if (options.silent === false) {
+                                for (key in changedAttributes) {
+                                    if (changedAttributes.hasOwnProperty(key)) {
+                                        this.trigger('change:' + key, changedAttributes[key], this);
+                                    }
+                                }
+                                this.trigger('change', changedAttributes, this);
+                            }
+                        }
+
                     }
 
                     return this;
@@ -185,7 +210,6 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding","underscor
                     }else{
                         path = Parser.parse(key, "path");
                     }
-
 
                     var pathElement;
                     // go through the path
