@@ -124,15 +124,12 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
                     this.$.target.bind(this.$.targetEvent, this._revCallback, this);
                 }
 
-                this._createSubBinding();
+                if(!this._createSubBinding()){
+                    this.trigger();
+                }
                 scope.bind('destroy', function () {
                     self.destroy();
                 });
-
-
-                if (this.$.path.length === 1) {
-                    this.trigger();
-                }
             },
             _checkAttributes: function () {
                 // check infrastructur
@@ -169,8 +166,6 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
                 if (this.$.transformBack) {
                     this.transformBack = this.$.transformBack;
                 }
-
-
             },
             _createSubBinding: function () {
                 if (this.$.path.length > 1) {
@@ -186,12 +181,11 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
                         if(nScope instanceof Bindable){
                             // init new binding, which triggers this binding
                             this.$subBinding = new Binding({scope: nScope, path: this.$.path.slice(1), target: this.$.target, targetKey: this.$.targetKey, rootScope: this.$.rootScope, callback: this.$.callback, context: this.$.context, twoWay: this.$.twoWay, transform: this.$.transform, transformBack: this.$.transformBack, bindingCreator: this.$.bindingCreator});
-                        } else {
-                            // TODO: find next bindable var
                         }
-
-
+                        return true;
                     }
+                }else{
+                    return false;
                 }
             },
             _revCallback: function (e) {
@@ -220,8 +214,6 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
 
                 // try to create subBinding
                 this._createSubBinding();
-
-                this.trigger();
             },
             destroy: function () {
                 var e;
