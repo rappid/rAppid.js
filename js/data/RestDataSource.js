@@ -350,6 +350,10 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
             uri = uri.concat(page.$collection.$context.getPathComponents());
             uri = uri.concat(modelPathComponents);
 
+            if (this.$.suffix) {
+                uri[uri.length - 1] = uri[uri.length - 1] + "." + this.$.suffix;
+            }
+
             var params = {};
 
             _.defaults(params, (options || {}).params);
