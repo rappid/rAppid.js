@@ -180,11 +180,7 @@ define(["require", "js/core/EventDispatcher","js/core/Component", "js/core/Conte
 
                 this.$renderedChildren = [];
 
-                if (this.$stage.$document.createElementNS && this.$namespace && /^http/.test(this.$namespace)) {
-                    this.$el = this.$stage.$document.createElementNS(this.$namespace, this.$tagName);
-                } else {
-                    this.$el = this.$stage.$document.createElement(this.$tagName);
-                }
+                this.$el = this._createDomElement(this.$tagName, this.$namespace);
 
                 this._initializeRenderer(this.$el);
                 this._renderChildren(this.$children);
@@ -194,6 +190,15 @@ define(["require", "js/core/EventDispatcher","js/core/Component", "js/core/Conte
 
                 return this.$el;
             },
+            
+            _createDomElement: function(tagName, namespace) {
+                if (this.$stage.$document.createElementNS && namespace && /^http/.test(namespace)) {
+                    return this.$stage.$document.createElementNS(namespace, tagName);
+                } else {
+                    return this.$stage.$document.createElement(tagName);
+                }
+            },
+            
             _bindDomEvents: function (el) {
                 var eventDef, es;
 
