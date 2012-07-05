@@ -124,9 +124,6 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
                     this.$.target.bind(this.$.targetEvent, this._revCallback, this);
                 }
 
-                if(!this._createSubBinding()){
-                    this.trigger();
-                }
                 scope.bind('destroy', function () {
                     self.destroy();
                 });
@@ -182,10 +179,9 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
                             // init new binding, which triggers this binding
                             this.$subBinding = new Binding({scope: nScope, path: this.$.path.slice(1), target: this.$.target, targetKey: this.$.targetKey, rootScope: this.$.rootScope, callback: this.$.callback, context: this.$.context, twoWay: this.$.twoWay, transform: this.$.transform, transformBack: this.$.transformBack, bindingCreator: this.$.bindingCreator});
                         }
-                        return true;
                     }
                 }else{
-                    return false;
+                    this.trigger();
                 }
             },
             _revCallback: function (e) {

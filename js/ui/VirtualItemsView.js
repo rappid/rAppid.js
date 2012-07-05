@@ -33,6 +33,8 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
             $dataAdapter: null
         },
 
+        $classAttributes: ['horizontalGap', 'verticalGap', 'prefetchItemCount', 'rows', 'cols', 'itemWidth', 'itemHeight', 'scrollLeft', 'scrollTop'],
+
         ctor: function () {
 
             this.$activeRenderer = {};
@@ -103,9 +105,10 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
             }
 
             // check if some renderers can be released
-            var offset = this.$.offset;
-            var startIndex = this.getIndexFromPoint(offset.x, offset.y) - this.prefetchItemCount,
-                endIndex = this.getIndexFromPoint(offset.x + this.$.width, offset.y + this.$.height) + this.prefetchItemCount,
+            var scrollLeft = this.$.scrollLeft;
+            var scrollTop = this.$.scrollTop;
+            var startIndex = this.getIndexFromPoint(scrollLeft, scrollTop) - this.prefetchItemCount,
+                endIndex = this.getIndexFromPoint(scrollLeft + this.$.width, scrollTop + this.$.height) + this.prefetchItemCount,
                 renderer, i;
 
             startIndex = Math.max(0, startIndex);
@@ -340,8 +343,6 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
         }
     });
 
-
-    VirtualItemsView.Point = Point;
 
     return VirtualItemsView;
 });

@@ -6,7 +6,7 @@ define(['js/ui/VirtualItemsView', 'xaml!js/ui/DataGridColumn', 'js/core/List', '
             $columns: List
         },
 
-        $classAttributes: ['rowHeight'],
+        $classAttributes: ['rowHeight', 'scrollContainer'],
 
         _getScrollContainer: function() {
             return this.get('scrollContainer');
