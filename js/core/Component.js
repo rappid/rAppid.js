@@ -73,7 +73,7 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                     this._bindBus();
                 },
 
-                _bindBus: function() {
+                _bindBus: function () {
                     for (var f in this) {
                         var fn = this[f];
                         if (fn instanceof Function && fn._busEvents) {
@@ -232,7 +232,7 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                     this._initializeEventAttributes(this.$xamlAttributes, this.$rootScope);
                 },
 
-                createChildren: function() {
+                createChildren: function () {
 
                 },
 
@@ -357,19 +357,19 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                     return null;
                 },
 
-                createComponent: function(factory, attributes) {
+                createComponent: function (factory, attributes) {
                     attributes = attributes || [];
                     return this.$stage.$applicationContext.createInstance(factory, [attributes, false, this.$stage, this, this.$rootScope]);
                 },
 
-                createBinding: function(path, callback, callbackScope) {
+                createBinding: function (path, callback, callbackScope) {
                     callbackScope = callbackScope || this;
-                    this.$bindingCreator.evaluate(path, this, function() {
+                    this.$bindingCreator.evaluate(path, this, function () {
                         callback.apply(callbackScope, arguments);
                     });
                 },
 
-                _createTextElement: function(node, rootScope) {
+                _createTextElement: function (node, rootScope) {
                     return this.$stage.$applicationContext.createInstance('js/core/TextElement', [null, node, this.$stage, this, rootScope]);
                 },
 
@@ -433,11 +433,13 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                 for (var c = 0; c < components.length; c++) {
                     components[c].$parentScope = parentScope;
                     components[c].set(attributes);
-                    components[c]._initialize("auto", true);
-
                 }
 
-                return components
+                return components;
+            },
+            createInstance: function (attributes, parentScope, rootScope) {
+                var components = this.createComponents(attributes, parentScope, rootScope);
+                return components[0];
             }
         });
 

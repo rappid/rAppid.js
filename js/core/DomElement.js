@@ -253,7 +253,10 @@ define(["require", "js/core/EventDispatcher","js/core/Component", "js/core/Conte
                 }
             },
 
-            _renderClass: function (className) {
+            _renderClass: function (className, oldClass) {
+                if(oldClass){
+                   this.removeClass(oldClass);
+                }
                 if (className) {
                     this.addClass(className);
                 }

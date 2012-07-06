@@ -26,7 +26,7 @@ define(["js/html/HtmlElement"], function (HtmlElement) {
                         self.set('checked', self.$el.checked);
                     });
                 } else if(this.$.type == "number" ){
-                    this.bindDomEvent(this.$.updateOnEvent, function (e) {
+                    this.bindDomEvent('change', function (e) {
                         var val = parseInt(self.$el.value);
                         if(isNaN(val)){
                             val = self.$.value;

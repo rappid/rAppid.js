@@ -127,6 +127,8 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
                 scope.bind('destroy', function () {
                     self.destroy();
                 });
+
+                this._createSubBinding();
             },
             _checkAttributes: function () {
                 // check infrastructur
