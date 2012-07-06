@@ -1,6 +1,12 @@
-define(['js/core/Component'], function (VirtualItemsView) {
+define(['js/core/Component'], function (Component) {
 
-    return VirtualItemsView.inherit('js.ui.DataGridColumnClass', {
+    return Component.inherit('js.ui.DataGridColumnClass', {
+        defaults : {
+            name : 'column'
+        },
+        createCellRenderer: function(attributes){
+            return this.$templates['cell'].createInstance(attributes);
+        }
 
     });
 });

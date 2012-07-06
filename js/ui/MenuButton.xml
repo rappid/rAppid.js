@@ -19,10 +19,10 @@
                 $instances: [],
 
                 addChild: function (child) {
+                    this.callBase();
                     if (child instanceof Button) {
                         this._collectButton(child);
                     }
-                    this.callBase();
                 },
                 _collectButton: function (child) {
                     this.$button = child;

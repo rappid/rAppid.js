@@ -4,7 +4,7 @@
     <js:Template name="renderer">
         <ui:ItemsView items="{$columns}" tagName="tr" itemKey="column" class="index-{index}">
             <js:Template name="item">
-                <ui:ContentPlaceHolder tagName="td"/>
+                <td></td>
             </js:Template>
         </ui:ItemsView>
     </js:Template>
@@ -14,8 +14,8 @@
             <div>{$column.title}</div>
         </js:Template>
     </ui:ItemsView>
-    <div class="data-grid-body">
-        <div cid="scrollContainer">
+    <div cid="$gridBody" class="data-grid-body">
+        <div cid="$scrollContainer" style="position: relative;">
             <table>
                 <thead style="display: none;">
                     <ui:ItemsView items="{$columns}" tagName="tr" itemKey="column">
@@ -24,10 +24,7 @@
                         </js:Template>
                     </ui:ItemsView>
                 </thead>
-                <tbody>
-                    <tr>
-
-                    </tr>
+                <tbody cid="$tbody">
                 </tbody>
             </table>
         </div>

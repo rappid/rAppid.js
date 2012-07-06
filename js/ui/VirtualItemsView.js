@@ -44,11 +44,28 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
             this.callBase();
 
             this.createBinding('{$dataAdapter.size()}', this._itemsCountChanged, this);
-            this.bind('change:$scroll', this._updateVisibleItems, this);
+            this.bind('change:scrollTop', this._updateVisibleItems, this);
+            this.bind('change:scrollLeft', this._updateVisibleItems, this);
         },
 
         _initializeRenderer: function($el) {
+            var style = $el.getAttribute('style') || "";
+            style = style.split(";");
+            style.push('overflow: auto');
+            $el.setAttribute('style',style.join(";"));
+
             this.$container = this._getScrollContainer($el);
+        },
+        _bindDomEvents: function(el){
+            this.callBase();
+            var self = this;
+
+            this.bindDomEvent('scroll', function(e){
+                self.set({
+                    scrollTop: self.$el.scrollTop,
+                    scrollLeft: self.$el.scrollLeft
+                });
+            });
         },
 
         _commitData: function (data) {
@@ -107,9 +124,10 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
             // check if some renderers can be released
             var scrollLeft = this.$.scrollLeft;
             var scrollTop = this.$.scrollTop;
-            var startIndex = this.getIndexFromPoint(scrollLeft, scrollTop) - this.prefetchItemCount,
-                endIndex = this.getIndexFromPoint(scrollLeft + this.$.width, scrollTop + this.$.height) + this.prefetchItemCount,
+            var startIndex = this.getIndexFromPoint(scrollLeft, scrollTop) - this.$.prefetchItemCount,
+                endIndex = this.getIndexFromPoint(scrollLeft + this.$.width, scrollTop + this.$.height) + this.$.prefetchItemCount,
                 renderer, i;
+
 
             startIndex = Math.max(0, startIndex);
             var ItemsCount = dataAdapter.size();
@@ -118,10 +136,11 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
                 // end well known
                 endIndex = Math.min(ItemsCount, endIndex)
             }
+            console.log("CURRENT:",startIndex, endIndex);
 
             if (!(startIndex === this.$lastStartIndex && endIndex === this.$lastEndIndex)) {
                 // some items are not visible any more or scrolled into view
-
+                console.log("LAST:",this.$lastStartIndex, this.$lastEndIndex);
                 // remember the last
                 this.$lastStartIndex = startIndex;
                 this.$lastEndIndex = endIndex;
@@ -154,22 +173,21 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
                     if (!renderer) {
                         // no renderer assigned to this item
                         renderer = this._reserveRenderer();
-
+                        this.$activeRenderer[i] = renderer;
                         renderer.set({
                             width: this.$.itemWidth,
                             height: this.$.itemHeight,
-                            data: dataAdapter.getItemAt(index),
-                            index: index
+                            data: dataAdapter.getItemAt(i).data,
+                            index: i
                         });
 
                         this._addRenderer(renderer);
                         addedRenderer.push(renderer);
-
                     }
                 }
 
                 for (i = 0; i < addedRenderer.length; i++) {
-                    this._positionRenderer(addedRenderer[i], addedRenderer);
+                    this._positionRenderer(addedRenderer[i], addedRenderer, i);
                 }
 
             }
@@ -181,7 +199,7 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
             this.$container.addChild(renderer);
         },
 
-        _positionRenderer: function(renderer, addedRenderer) {
+        _positionRenderer: function(renderer, addedRenderer, position) {
 
         },
 
@@ -195,22 +213,52 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
         },
 
         _createRenderer: function () {
-            return this.$templates['renderer'].createComponents()[0];
+            return this.$templates['renderer'].createComponents({},this)[0];
         },
 
         _itemsCountChanged: function() {
-            console.log('itemsCount changed', this.get('$dataAdapter.size()'))
-        },
 
+            var size = this.getSizeForItemsCount(this.$.$dataAdapter.size());
+            if(size){
+                this._getScrollContainer().set(size);
+            }
+        },
+        getSizeForItemsCount: function(count){
+            if(isNaN(count) || count === 0) {
+                return null;
+            }
+            var size = {}, itemRows = Math.floor(count / this.$.cols);
+
+            size.height = itemRows * (this.$.itemHeight + this.$.verticalGap);
+            size.width = this.$.cols * (this.$.itemWidth + this.$.horizontalGap);
+
+            return size;
+        },
         getIndexFromPoint: function(x, y) {
+                var col, row;
+
+                /* TODO: add gap position */
+                /*
+                 position.x -= (gapHPos / 2) * horizontalGap;
+                 position.y -= (gapVPos / 2) * verticalGap;
+                 */
+
+                x -= (this.$.horizontalGap);
+                y -= (this.$.verticalGap);
+
+
+                col = Math.floor(x / (this.$.itemWidth + this.$.horizontalGap));
+                row = Math.floor(y / (this.$.itemHeight + this.$.verticalGap));
+
+                return row * this.$.cols + col;
+
 
             /*
              private function getIndexFromAbsolutePosition(position:Point, gapHPos:int = RIGHT, gapVPos:int = BOTTOM):Number {
 
              if (new Rectangle(0, 0, this.width + 1, _scrollableContentHeight).containsPoint(position)) {
 
-             position.x -= (gapHPos / 2) * horizontalGap;
-             position.y -= (gapVPos / 2) * verticalGap;
+
 
              var col:int = Math.floor(position.x / (_itemWidth + _horizontalGap));
              var row:int = Math.floor(position.y / (_itemHeight + _verticalGap));
