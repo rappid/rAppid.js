@@ -2,7 +2,7 @@ define(["require", "js/core/EventDispatcher","js/core/Component", "js/core/Conte
     function (require, EventDispatcher, Component, Content, Binding, inherit, _) {
 
         var rspace = /\s+/;
-
+        var undefined;
         var ContentPlaceHolder;
 
         var DomElementFunctions = {
@@ -70,13 +70,15 @@ define(["require", "js/core/EventDispatcher","js/core/Component", "js/core/Conte
                 }
             },
 
-            addChild: function (child) {
+            addChild: function (child, options) {
                 this.callBase();
 
                 if (child instanceof DomElement || child.render) {
-                    this.$children.push(child);
+                    var pos = options && typeof(options.childIndex) !== "undefined" ? options.childIndex : this.$children.length;
+
+                    this.$children.splice(pos,0,child);
                     if (this.isRendered()) {
-                        this._renderChild(child);
+                        this._renderChild(child, pos);
                     }
                 } else if (child instanceof Content) {
                     this.$contentChildren.push(child);
@@ -234,12 +236,21 @@ define(["require", "js/core/EventDispatcher","js/core/Component", "js/core/Conte
                 }
             },
 
-            _renderChild: function (child) {
+            _renderChild: function (child, pos) {
                 if (_.isFunction(child.render)) {
                     var el = child.render();
                     this.$renderedChildren.push(child);
                     if (el) {
-                        this.$el.appendChild(el);
+                        if(pos == undefined){
+                            this.$el.appendChild(el);
+                        }else{
+                            var childNode = this.$el.childNodes[pos];
+                            if(childNode){
+                                this.$el.insertBefore(el,childNode)
+                            }else{
+                                this.$el.appendChild(el);
+                            }
+                        }
                     }
                 }
             },
