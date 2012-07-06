@@ -7,6 +7,7 @@
         <![CDATA[
         (function (View) {
             return {
+                $classAttributes: ['vertical', 'horizontal', 'mouseTracking', 'scrollPaneClass'],
                 defaults: {
                     componentClass: 'scroll-container',
                     vertical: true,
@@ -16,6 +17,19 @@
                 },
                 ctor: function () {
                     this.callBase();
+
+                    this.$mouseWheelMult = 1;
+
+                    var userAgent = this.get(window, "navigator.userAgent");
+                    if (userAgent) {
+                        this.$isChrome = userAgent.toLowerCase().indexOf('chrome') > -1;
+                        this.$isFirefox = userAgent.toLowerCase().indexOf('firefox') > -1;
+                        if (this.$isChrome) {
+                            this.$mouseWheelMult = 0.1;
+                        }
+
+
+                    }
 
                     this.$speed = {x: 0, y: 0};
                     this.$currentPos = {x: 0, y: 0};
@@ -39,7 +53,8 @@
                     };
                     this.$fixAxis = {x: false, y: false};
                     this.$transformProperty = null;
-
+                    this.$blockMouseWheelTimeout = null;
+                    this.$blockMouseWheel = false;
                 },
                 _getTransformProperty: function getTransformProperty(element) {
                     // Note that in some versions of IE9 it is critical that
@@ -182,20 +197,22 @@
                     var ndx = this._calculateDelta(dx * this.$.horizontal, "x");
                     var ndy = this._calculateDelta(dy * this.$.vertical, "y");
 
-                    if(Math.abs(dx) > Math.abs(dy)) {
+                    if (Math.abs(dx) > Math.abs(dy)) {
                         ndy = 0;
-                    }else{
+                    } else {
                         ndx = 0;
                     }
 
                     this.$newPos.x = this.$currentPos.x + ndx;
                     this.$newPos.y = this.$currentPos.y + ndy;
 
-
                     this._setCssTranslate(this.$newPos.x, this.$newPos.y);
 
                     this.$currentPos.x = this.$newPos.x;
                     this.$currentPos.y = this.$newPos.y;
+                },
+                _onWheel: function (e) {
+
                 },
                 _posToCss: function (x, y) {
                     return 'translate3d(' + x + "px," + y + "px,0px)";
@@ -206,33 +223,17 @@
                 _bindDomEvents: function (el) {
 
                     var self = this;
-                    if (this.$.mouseTracking) {
-                        this.addEventListener('mousemove', function (e) {
-                            if (self.$isMouseDown) {
-
-                                self._moveBy(e.clientX - self.$mousePos.x, e.clientY - self.$mousePos.y);
-                                self.$mousePos.x = e.clientX;
-                                self.$mousePos.y = e.clientY;
-                            }
-                        });
-                        this.addEventListener('mousedown', function (e) {
-                            self._startTracking(e.clientX, e.clientY);
-                        });
-                        this.addEventListener('mouseup', function (e) {
-                            self._stopTracking();
-                        });
-                    }
 
                     if (el.hasOwnProperty('ontouchstart')) {
                         // were on a mobile device
 
-                        el.addEventListener('touchstart', function (e) {
+                        this.bindDomEvent('touchstart', function (e) {
                             if (e.touches.length == 1) {
                                 self._startTracking(e.touches[0].clientX, e.touches[0].clientY);
                                 e.preventDefault();
                             }
                         });
-                        el.addEventListener('touchmove', function (e) {
+                        this.bindDomEvent('touchmove', function (e) {
                             if (e.touches.length == 1) {
                                 if (self.$isMouseDown) {
                                     if (self._moveBy(e.touches[0].clientX - self.$mousePos.x, e.touches[0].clientY - self.$mousePos.y)) {
@@ -243,9 +244,68 @@
                                 }
                             }
                         });
-                        el.addEventListener('touchend', function (e) {
+                        this.bindDomEvent('touchend', function (e) {
                             self._stopTracking();
                         });
+                    } else {
+                        if (this.$.mouseTracking) {
+                            this.bindDomEvent('mousemove', function (e) {
+                                if (self.$isMouseDown) {
+
+                                    self._moveBy(e.clientX - self.$mousePos.x, e.clientY - self.$mousePos.y);
+                                    self.$mousePos.x = e.clientX;
+                                    self.$mousePos.y = e.clientY;
+
+                                    e.preventDefault();
+                                }
+                            });
+                            this.bindDomEvent('mousedown', function (e) {
+                                self._startTracking(e.clientX, e.clientY);
+                            });
+                            this.bindDomEvent('mouseup', function (e) {
+                                self._stopTracking();
+                            });
+                        }
+
+                        var onWheel = function (e) {
+                            e = e || window.event; // for IE
+
+                            var deltaX = 0,
+                                    deltaY = 0;
+
+                            // check target and scroll
+                            if (e.wheelDeltaX) {
+                                deltaX = e.wheelDeltaX * 2;
+                            }
+
+                            if (e.wheelDeltaY) {
+                                deltaY = e.wheelDeltaY * 2;
+                            }
+
+                            var delta = e.detail ? e.detail * (-3) : e.wheelDelta;
+
+                            if (e.axis && e.axis == 1) {
+                                deltaX = delta * self.$mouseWheelMult;
+                            } else {
+                                deltaY = delta * self.$mouseWheelMult;
+                            }
+
+                            // TODO: fix scrolling out of border
+//                            if(self.$isOutOfBounce["y"]){
+//                                self.$blockMouseWheel = true;
+//                                self.$border = self.$currentPos;
+//                            }else if(deltaY < self.$border){
+//                                self.$blockMouseWheel = false;
+//                            }
+                            if (!self.$blockMouseWheel) {
+                                self._moveBy(deltaX, deltaY);
+                            }
+                            e.preventDefault();
+
+                        };
+
+                        this.bindDomEvent("DOMMouseScroll", onWheel, false);
+                        this.bindDomEvent("mousewheel", onWheel, false);
                     }
 
 

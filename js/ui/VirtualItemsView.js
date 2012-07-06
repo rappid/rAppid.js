@@ -16,11 +16,11 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
             scrollLeft: 0,
 
             // TODO: update width and height, after DOM Element resized
-            width: 300,
+            width: null,
             height: 300,
 
-            itemWidth: 100,
-            itemHeight: 100,
+            itemWidth: null,
+            itemHeight: null,
 
             rows: 3,
             cols: 3,
@@ -178,16 +178,16 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
                             width: this.$.itemWidth,
                             height: this.$.itemHeight,
                             data: dataAdapter.getItemAt(i).data,
-                            index: i
+                            index: i,
+                            viewIndex: i - startIndex
                         });
-
-                        this._addRenderer(renderer);
+                        this._addRenderer(renderer, renderer.$.viewIndex);
                         addedRenderer.push(renderer);
                     }
                 }
 
                 for (i = 0; i < addedRenderer.length; i++) {
-                    this._positionRenderer(addedRenderer[i], addedRenderer, i);
+                    this._positionRenderer(addedRenderer[i], addedRenderer);
                 }
 
             }
@@ -195,11 +195,11 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
 
         },
 
-        _addRenderer: function(renderer) {
-            this.$container.addChild(renderer);
+        _addRenderer: function(renderer, pos) {
+            this.$container.addChild(renderer, {childIndex: pos});
         },
 
-        _positionRenderer: function(renderer, addedRenderer, position) {
+        _positionRenderer: function(renderer, addedRenderer) {
 
         },
 
@@ -230,7 +230,8 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
             var size = {}, itemRows = Math.floor(count / this.$.cols);
 
             size.height = itemRows * (this.$.itemHeight + this.$.verticalGap);
-            size.width = this.$.cols * (this.$.itemWidth + this.$.horizontalGap);
+
+            // size.width = (this.$.cols * (this.$.itemWidth + this.$.horizontalGap)) || null;
 
             return size;
         },
@@ -246,8 +247,11 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
                 x -= (this.$.horizontalGap);
                 y -= (this.$.verticalGap);
 
-
-                col = Math.floor(x / (this.$.itemWidth + this.$.horizontalGap));
+                if(this.$.cols === 1){
+                    col = 0;
+                }else{
+                    col = Math.floor(x / (this.$.itemWidth + this.$.horizontalGap));
+                }
                 row = Math.floor(y / (this.$.itemHeight + this.$.verticalGap));
 
                 return row * this.$.cols + col;
