@@ -4,8 +4,8 @@ define(['js/core/Component'], function (Component) {
         defaults : {
             name : 'column'
         },
-        createCellRenderer: function(attributes){
-            return this.$templates['cell'].createInstance(attributes);
+        createCellRenderer: function(attributes, parentScope){
+            return this.$templates['cell'].createInstance(attributes, parentScope);
         }
 
     });

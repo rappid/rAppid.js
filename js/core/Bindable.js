@@ -1,8 +1,35 @@
 define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding","underscore"],
     function (EventDispatcher, Parser, Binding, _) {
 
-        var indexExtractor = /^(.*)\[(\d+)\]$/,
-            undefined, List;
+        // global invalidation timer
+
+        var globalInvalidationQueue = (function() {
+
+            var id,
+                callbacks = [],
+                work = function() {
+                    for (var i = 0; i < callbacks.length; i++) {
+                        try {
+                            callbacks[i]();
+                        } catch (e) {
+                            (console.warn || console.log).call(console, e);
+                        }
+                    }
+
+                    callbacks = [];
+                    id = null;
+                };
+
+            return {
+                addCallback: function(callback) {
+                    callbacks.push(callback);
+
+                    if (!id) {
+                        id = setTimeout(work, 1000 / 60);
+                    }
+                }
+            }
+        })();
 
 
         var Bindable = EventDispatcher.inherit("js.core.Bindable",
@@ -19,6 +46,8 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding","underscor
                     this.callBase(null);
 
                     this.$ = {};
+                    this.$invalidatedProperties = {};
+                    this.$invalidated = false;
 
                     _.extend(this._eventAttributes, this.base._eventAttributes || {});
 
@@ -181,6 +210,27 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding","underscor
                     return this;
                 },
 
+                setLater: function(key, value) {
+
+                    if (_.isString(key)) {
+                        key = {
+                            key: value
+                        }
+                    }
+
+                    _.extend(this.$invalidatedProperties, key);
+
+                    if (!this.$invalidated) {
+                        this.$invalidated = true;
+                        globalInvalidationQueue.addCallback(this._commitInvalidatedAttributes);
+                    }
+
+                },
+
+                _commitInvalidatedAttributes: function() {
+                    this.set(this.$invalidatedProperties);
+                    this.$invalidatedProperties = {};
+                },
 
                 /***
                  * evaluates a path to retrieve a value

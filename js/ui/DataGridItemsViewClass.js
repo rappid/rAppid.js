@@ -13,9 +13,6 @@ define(['js/ui/VirtualItemsView', 'xaml!js/ui/DataGridColumn', 'js/core/List', '
         },
         $classAttributes: ['rowHeight', 'columns'],
 
-        _getScrollContainer: function() {
-            return this.get('$scrollContainer');
-        },
         _addRenderer: function (renderer, position) {
             this.$.$table.addChild(renderer, {childIndex: position});
             var column, columnConfiguration, data;
@@ -23,7 +20,7 @@ define(['js/ui/VirtualItemsView', 'xaml!js/ui/DataGridColumn', 'js/core/List', '
                 column = renderer.$children[i];
                 columnConfiguration = this.$.columns.at(i);
 
-                data = {data: renderer.$.data.get(columnConfiguration.$.path)};
+                data = {data: renderer.$.dataItem.get(columnConfiguration.$.path)};
                 if(!column.$children.length){
                     var c = columnConfiguration.createCellRenderer(data);
                     column.addChild(c);

@@ -6,7 +6,10 @@ define(['js/ui/View', 'xaml!js/ui/DataGridColumn', 'js/core/List', 'underscore']
             $columns: List,
             rowHeight: 30,
             cols: 1,
-            prefetchItemCount: 0
+            width: null,
+            prefetchItemCount: 0,
+            itemWidth: null,
+            itemHeight: null
         },
 
         $classAttributes: ['rowHeight'],

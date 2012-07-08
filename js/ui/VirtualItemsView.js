@@ -1,4 +1,4 @@
-define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 'underscore'], function(View, Bindable, List, Collection, _) {
+define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 'underscore'], function (View, Bindable, List, Collection, _) {
 
     /***
      * defines an ItemsView which can show parts of data
@@ -16,11 +16,11 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
             scrollLeft: 0,
 
             // TODO: update width and height, after DOM Element resized
-            width: null,
+            width: 300,
             height: 300,
 
-            itemWidth: null,
-            itemHeight: null,
+            itemWidth: 100,
+            itemHeight: 100,
 
             rows: 3,
             cols: 3,
@@ -30,10 +30,12 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
 
             prefetchItemCount: 0,
 
+            fetchPageDelay: 5000,
+
             $dataAdapter: null
         },
 
-        $classAttributes: ['horizontalGap', 'verticalGap', 'prefetchItemCount', 'rows', 'cols', 'itemWidth', 'itemHeight', 'scrollLeft', 'scrollTop'],
+        $classAttributes: ['horizontalGap', 'verticalGap', 'prefetchItemCount', 'rows', 'cols', 'itemWidth', 'itemHeight', 'scrollLeft', 'scrollTop', 'fetchPageDelay'],
 
         ctor: function () {
 
@@ -48,19 +50,18 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
             this.bind('change:scrollLeft', this._updateVisibleItems, this);
         },
 
-        _initializeRenderer: function($el) {
+        _initializeRenderer: function ($el) {
             var style = $el.getAttribute('style') || "";
             style = style.split(";");
             style.push('overflow: auto');
-            $el.setAttribute('style',style.join(";"));
-
-            this.$container = this._getScrollContainer($el);
+            $el.setAttribute('style', style.join(";"));
         },
-        _bindDomEvents: function(el){
+
+        _bindDomEvents: function (el) {
             this.callBase();
             var self = this;
 
-            this.bindDomEvent('scroll', function(e){
+            this.bindDomEvent('scroll', function (e) {
                 self.set({
                     scrollTop: self.$el.scrollTop,
                     scrollLeft: self.$el.scrollLeft
@@ -68,7 +69,18 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
             });
         },
 
+        _initializationComplete: function() {
+            this.callBase();
+
+            this.$container = this._getScrollContainer();
+            this._commitData(this.$.data);
+        },
+
         _commitData: function (data) {
+
+            if (!this.$initialized) {
+                return;
+            }
 
             // TODO
             /*
@@ -107,14 +119,14 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
 
              */
 
-            this.set('$dataAdapter', VirtualItemsView.createDataAdapter(data));
+            this.set('$dataAdapter', VirtualItemsView.createDataAdapter(data, this));
 
             // TODO: cleanup renderer
             this._updateVisibleItems();
         },
 
 
-        _updateVisibleItems: function() {
+        _updateVisibleItems: function () {
 
             var dataAdapter = this.$.$dataAdapter;
             if (!dataAdapter) {
@@ -130,17 +142,17 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
 
 
             startIndex = Math.max(0, startIndex);
-            var ItemsCount = dataAdapter.size();
+            var ItemsCount = parseFloat(dataAdapter.size());
 
             if (!isNaN(ItemsCount)) {
                 // end well known
                 endIndex = Math.min(ItemsCount, endIndex)
             }
-            console.log("CURRENT:",startIndex, endIndex);
+            console.log("CURRENT:", startIndex, endIndex);
 
             if (!(startIndex === this.$lastStartIndex && endIndex === this.$lastEndIndex)) {
                 // some items are not visible any more or scrolled into view
-                console.log("LAST:",this.$lastStartIndex, this.$lastEndIndex);
+                console.log("LAST:", this.$lastStartIndex, this.$lastEndIndex);
                 // remember the last
                 this.$lastStartIndex = startIndex;
                 this.$lastEndIndex = endIndex;
@@ -177,7 +189,7 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
                         renderer.set({
                             width: this.$.itemWidth,
                             height: this.$.itemHeight,
-                            data: dataAdapter.getItemAt(i).data,
+                            dataItem: dataAdapter.getItemAt(i),
                             index: i,
                             viewIndex: i - startIndex
                         });
@@ -195,15 +207,16 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
 
         },
 
-        _addRenderer: function(renderer, pos) {
+        _addRenderer: function (renderer, pos) {
+
             this.$container.addChild(renderer, {childIndex: pos});
         },
 
-        _positionRenderer: function(renderer, addedRenderer) {
+        _positionRenderer: function (renderer, addedRenderer) {
 
         },
 
-        _reserveRenderer: function() {
+        _reserveRenderer: function () {
 
             if (this.$availableRenderer.length) {
                 return this.$availableRenderer.pop();
@@ -213,18 +226,18 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
         },
 
         _createRenderer: function () {
-            return this.$templates['renderer'].createComponents({},this)[0];
+            return this.$templates['renderer'].createComponents({}, this)[0];
         },
 
-        _itemsCountChanged: function() {
+        _itemsCountChanged: function () {
 
             var size = this.getSizeForItemsCount(this.$.$dataAdapter.size());
-            if(size){
+            if (size) {
                 this._getScrollContainer().set(size);
             }
         },
-        getSizeForItemsCount: function(count){
-            if(isNaN(count) || count === 0) {
+        getSizeForItemsCount: function (count) {
+            if (isNaN(count) || count === 0) {
                 return null;
             }
             var size = {}, itemRows = Math.floor(count / this.$.cols);
@@ -235,26 +248,22 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
 
             return size;
         },
-        getIndexFromPoint: function(x, y) {
-                var col, row;
+        getIndexFromPoint: function (x, y, gapHPos, gapVPos) {
+            var col, row;
 
-                /* TODO: add gap position */
-                /*
-                 position.x -= (gapHPos / 2) * horizontalGap;
-                 position.y -= (gapVPos / 2) * verticalGap;
-                 */
+            /* TODO: add gap position */
+            /*
+             position.x -= (gapHPos / 2) * horizontalGap;
+             position.y -= (gapVPos / 2) * verticalGap;
+             */
 
-                x -= (this.$.horizontalGap);
-                y -= (this.$.verticalGap);
+            x -= (this.$.horizontalGap);
+            y -= (this.$.verticalGap);
 
-                if(this.$.cols === 1){
-                    col = 0;
-                }else{
-                    col = Math.floor(x / (this.$.itemWidth + this.$.horizontalGap));
-                }
-                row = Math.floor(y / (this.$.itemHeight + this.$.verticalGap));
+            col = this.$.cols === 1 ? 0 : Math.floor(x / (this.$.itemWidth + this.$.horizontalGap));
+            row = this.$.rows === 1 ? 0 : Math.floor(y / (this.$.itemHeight + this.$.verticalGap));
 
-                return row * this.$.cols + col;
+            return row * this.$.cols + col;
 
 
             /*
@@ -276,7 +285,7 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
              */
         },
 
-        getPointFromIndex: function(index) {
+        getPointFromIndex: function (index) {
 
             var row = Math.floor(index / this.$.cols),
                 col = index % this.$.cols;
@@ -295,17 +304,25 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
          * @returns {js.core.DomElement}
          * @private
          */
-        _getScrollContainer: function(el) {
-            throw "implement _getScrollContainer";
+        _getScrollContainer: function () {
+
+            var scrollContainer = this.get('$scrollContainer');
+
+            if (!scrollContainer) {
+                throw "implement _getScrollContainer or set cid='$scrollContainer'";
+            }
+
+            return scrollContainer;
+
         }
 
     }, {
-        createDataAdapter: function (data) {
+        createDataAdapter: function (data, virtualItemsView) {
 
             if (data instanceof Collection) {
-                return new VirtualItemsView.VirtualCollectionDataAdapter(data);
+                return new (VirtualItemsView.VirtualCollectionDataAdapter)(data, virtualItemsView);
             } else if (data instanceof List || data instanceof Array) {
-                return new VirtualItemsView.VirtualDataAdapter(data);
+                return new (VirtualItemsView.VirtualDataAdapter)(data, virtualItemsView);
             }
 
             return null;
@@ -318,28 +335,24 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
     VirtualItemsView.VirtualDataAdapter = Bindable.inherit('js.ui.VirtualItemsView.VirtualDataAdapter', {
 
         defaults: {
-            $data: null
+            $data: null,
+            $virtualItemsView: null
         },
 
-        _initializeRenderer: function ($el) {
-            // create scroll panel
-            this.$scroll = this._createDomElement('div');
-
-        },
-
-        ctor: function(data) {
+        ctor: function (data, virtualItemsView) {
 
             if (data && !(data instanceof Array || data instanceof List)) {
                 throw "data needs to be either an Array or a List"
             }
 
             this.callBase({
-                $data: data
+                $data: data,
+                $virtualItemsView: virtualItemsView
             });
 
         },
 
-        getItemAt: function(index) {
+        getItemAt: function (index) {
             var data = this.$.$data,
                 dataItem = null;
 
@@ -350,36 +363,122 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
             }
 
             if (dataItem) {
-                dataItem = {
+                dataItem = new (VirtualItemsView.DataItem)({
                     index: index,
                     data: dataItem
-                }
+                });
             }
 
             return dataItem;
         },
 
         /***
-         * @returns {Number} the size of the list, or NaN if size currently unknown
+         * @returns {Number} the size of the list
          */
-        size: function() {
+        size: function () {
             return this.$.$data ? this.$.$data.length : 0;
         }.onChange('$data')
     });
 
-    VirtualItemsView.VirtualCollectionDataAdapter = Bindable.inherit('js.ui.VirtualItemsView.VirtualCollectionDataAdapter', {
+    VirtualItemsView.VirtualCollectionDataAdapter = VirtualItemsView.VirtualDataAdapter.inherit('js.ui.VirtualItemsView.VirtualCollectionDataAdapter', {
 
         ctor: function (data) {
+
+            if (data && !(data instanceof Collection)) {
+                throw  "data needs to be a Collection";
+            }
+
+            // stores the waiting queue or true, if page already fetched
+            this.$pages = {};
+            this.$pageSize = data.$options.pageSize;
+
             this.callBase();
         },
 
         getItemAt: function (index) {
+            console.log("getItemAt", index);
+
+            // get the page from index
+            var self = this,
+                pageIndex = Math.floor(index / this.$pageSize),
+                firstTimeToFetchPage = false;
+
+            if (!this.$pages.hasOwnProperty(pageIndex)) {
+                this.$pages[pageIndex] = {};
+                firstTimeToFetchPage = true;
+            }
+
+            var pageEntry = this.$pages[pageIndex],
+                dataItem = new (VirtualItemsView.DataItem)({
+                    index: index,
+                    data: null
+                });
+
+            if (pageEntry === true) {
+                // page already fetched -> return with data
+                dataItem.data = this.$.$data.at(index);
+            } else {
+
+                // add callback after fetch completes, which sets the data
+                pageEntry[index] = function () {
+                    dataItem.set('data', self.$.$data.at(index));
+                };
+
+                if (firstTimeToFetchPage) {
+
+                    // first time -> start fetch delay
+                    setTimeout(function () {
+
+                        // delay passed -> check if at least on item of the page is needed
+                        var pageStartIndex = pageIndex * self.$pageSize,
+                            pageEndIndex = (pageIndex + 1) * self.$pageSize - 1;
+
+                        var virtualItemsView = self.$.$virtualItemsView;
+
+                        if (virtualItemsView.$lastStartIndex < pageEndIndex &&
+                            virtualItemsView.$lastEndIndex > pageStartIndex) {
+
+                            // we need to fetch the page
+                            self.$.$data.fetchPage(pageIndex, null, function (err) {
+                                if (err) {
+                                    // delete page so it will be fetched again on scrolling
+                                    delete self.$pages[pageIndex];
+                                } else {
+                                    // execute all callbacks
+                                    var pageEntry = self.$pages[pageIndex];
+                                    for (var key in pageEntry) {
+                                        if (pageEntry.hasOwnProperty(key)) {
+                                            (pageEntry[key])();
+                                            delete pageEntry[key];
+                                        }
+                                    }
+
+                                    // mark as already fetched
+                                    self.$pages[pageIndex] = true;
+                                }
+                            });
+                        } else {
+                            // we don't need to fetch this page any more
+                            delete self.$pages[pageIndex];
+                        }
+
+                    }, self.$.$virtualItemsView.$.fetchPageDelay);
+
+
+                }
+            }
+
+            return dataItem;
 
         },
 
-        size: function () {
 
-        }
+        /***
+         * @returns {Number} the size of the list, or NaN if size currently unknown
+         */
+        size: function () {
+            return this.$.$data ? this.$.$data.$itemsCount : NaN;
+        }.onChange('$data')
     });
 
     /***
