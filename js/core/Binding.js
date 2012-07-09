@@ -182,8 +182,6 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
                             this.$subBinding = new Binding({scope: nScope, path: this.$.path.slice(1), target: this.$.target, targetKey: this.$.targetKey, rootScope: this.$.rootScope, callback: this.$.callback, context: this.$.context, twoWay: this.$.twoWay, transform: this.$.transform, transformBack: this.$.transformBack, bindingCreator: this.$.bindingCreator});
                         }
                     }
-                }else{
-                    this.trigger();
                 }
             },
             _revCallback: function (e) {
@@ -212,6 +210,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
 
                 // try to create subBinding
                 this._createSubBinding();
+                this.trigger();
             },
             destroy: function () {
                 var e;
