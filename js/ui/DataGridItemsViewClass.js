@@ -1,4 +1,4 @@
-define(['js/ui/VirtualItemsView', 'xaml!js/ui/DataGridColumn', 'js/core/List', 'underscore'], function (VirtualItemsView, DataGridColumn, List, _) {
+define(['js/ui/VirtualItemsView', 'xaml!js/ui/DataGridColumn', 'js/core/List', 'underscore', 'js/core/Binding'], function (VirtualItemsView, DataGridColumn, List, _, Binding) {
 
     return VirtualItemsView.inherit('js.ui.DataGridClass', {
 
@@ -15,17 +15,16 @@ define(['js/ui/VirtualItemsView', 'xaml!js/ui/DataGridColumn', 'js/core/List', '
 
         _addRenderer: function (renderer, position) {
             this.$.$table.addChild(renderer, {childIndex: position});
-            var column, columnConfiguration, data;
+            var column, columnConfiguration, binding;
             for (var i = 0; i < renderer.$children.length; i++) {
                 column = renderer.$children[i];
                 columnConfiguration = this.$.columns.at(i);
 
-                data = {data: renderer.$.dataItem.get(columnConfiguration.$.path)};
                 if(!column.$children.length){
-                    var c = columnConfiguration.createCellRenderer(data);
+                    var c = columnConfiguration.createCellRenderer({data: null});
+                    binding = new Binding({scope: renderer, path: "dataItem.data."+columnConfiguration.$.path, target: c, attrKey: 'data'});
+                    c.set({data: binding.getValue()});
                     column.addChild(c);
-                }else{
-                    column.$children[0].set(data)
                 }
 
             }
