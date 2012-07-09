@@ -208,7 +208,6 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
         },
 
         _addRenderer: function (renderer, pos) {
-
             this.$container.addChild(renderer, {childIndex: pos});
         },
 
@@ -217,7 +216,6 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
         },
 
         _reserveRenderer: function () {
-
             if (this.$availableRenderer.length) {
                 return this.$availableRenderer.pop();
             }
@@ -226,7 +224,7 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
         },
 
         _createRenderer: function () {
-            return this.$templates['renderer'].createComponents({}, this)[0];
+            return this.$templates['renderer'].createComponents({})[0];
         },
 
         _itemsCountChanged: function () {

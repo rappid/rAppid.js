@@ -3,6 +3,6 @@
     <js:Template name="renderer">
         {data}
     </js:Template>
-    <ul cid="$scrollContainer" class="tile-list scoll-container" style="position: relative;">
+    <ul cid="$scrollContainer" class="tile-list scroll-container" style="position: relative;">
     </ul>
 </ui:VirtualItemsView>
