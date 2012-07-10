@@ -414,12 +414,18 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding","underscor
             });
 
         var EventBindable = Bindable.inherit({
-            _commitChangedAttributes: function (attributes) {
+            _commitChangedAttributes: function(attributes){
                 this.callBase();
-                this._unbindEvent(this.$previousAttributes['value']);
-                if (!_.isUndefined(attributes.value)) {
-                    this._bindEvent(attributes.value);
+                if(attributes.binding){
+                    this.set('value', attributes.binding.getValue());
+                }else if(attributes.value){
+                    var value = attributes.value;
+                    this._unbindEvent(this.$previousAttributes['value']);
+                    if (!_.isUndefined(value)) {
+                        this._bindEvent(value);
+                    }
                 }
+
             },
             _unbindEvent: function (value) {
                 if (value && value instanceof EventDispatcher) {
