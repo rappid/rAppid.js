@@ -9,7 +9,7 @@ define(["js/data/DataView", "js/core/List", "js/data/Collection", "flow", "under
         },
 
         defaults: {
-            page: null,
+            page: 0,
             pageCount: null,
             baseList: null,
             pageSize: 20
@@ -18,7 +18,6 @@ define(["js/data/DataView", "js/core/List", "js/data/Collection", "flow", "under
         initialize: function() {
             this.set('list', new List());
             this.bind('baseList', 'add', this.hasNextPage.trigger);
-            this.bind('change:pageSize', this._onPageSizeChange, this);
             this.callBase();
 
         },
@@ -55,31 +54,43 @@ define(["js/data/DataView", "js/core/List", "js/data/Collection", "flow", "under
 
             }
 
-            if (attributes.hasOwnProperty("page") && attributes.page) {
+            if (attributes.hasOwnProperty("page") && attributes.page && !this.$loadingPage) {
                 this.showPage(attributes.page, null, attributes.page !== this.$previousAttributes.page);
             }
 
 
         },
-        _onPageSizeChange: function(){
-            this.showPage(this.$.page, null, true);
-        },
-
         /***
          * navigates to page
          * @param {Number} pageIndex
          * @param {Function} [callback] callback if navigation completes
          */
         showPage: function (pageIndex, callback, noPageCheck) {
+
+            if(this.$loadingPage) {
+                if(callback){
+                    callback();
+                }
+                return;
+            }
+            var self = this;
+
+            function cb(err){
+                if(callback){
+                    callback(err);
+                }
+                self.$loadingPage = false;
+            }
+
             if(this.hasPage(pageIndex)){
+                this.$loadingPage = true;
+
                 var i;
                 pageIndex = pageIndex || 0;
 
                 if (!this.$.baseList || (!noPageCheck && pageIndex === this.$.page)) {
                     // nothing to do
-                    if (callback) {
-                        callback();
-                    }
+                    cb();
                     return;
                 }
 
@@ -109,7 +120,7 @@ define(["js/data/DataView", "js/core/List", "js/data/Collection", "flow", "under
                         pageIndices[i] = i;
                     }
 
-                    var self = this;
+
 
                     flow()
                         .seq("execId", function () {
@@ -136,23 +147,16 @@ define(["js/data/DataView", "js/core/List", "js/data/Collection", "flow", "under
                                     self.$.list.reset(items);
                                 }
                             }
+                            self.set('page', pageIndex);
 
-                            if (callback) {
-                                callback(err);
-                            }
+                            cb(err);
                         });
 
                 } else {
-                    if (callback) {
-                        callback()
-                    }
+                    cb();
                 }
-
-                this.set('page', pageIndex);
             } else {
-                if (callback) {
-                    callback()
-                }
+                cb();
             }
 
         },
@@ -162,7 +166,7 @@ define(["js/data/DataView", "js/core/List", "js/data/Collection", "flow", "under
         }.onChange('page'),
         hasPage: function(pageIndex){
             if(this.$.baseList){
-                return this.$.baseList.$itemsCount === null || this.$.baseList.$itemsCount > (pageIndex) * this.$.pageSize;
+                return this.$.baseList.$.$itemsCount === null || this.$.baseList.$.$itemsCount > (pageIndex) * this.$.pageSize;
             }
             return true;
         },

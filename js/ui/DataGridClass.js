@@ -5,14 +5,11 @@ define(['js/ui/View', 'xaml!js/ui/DataGridColumn', 'js/core/List', 'underscore']
         defaults: {
             $columns: List,
             rowHeight: 30,
-            cols: 1,
             width: null,
-            prefetchItemCount: 0,
-            itemWidth: null,
-            itemHeight: null
+            prefetchItemCount: 0
         },
 
-        $classAttributes: ['rowHeight'],
+        $classAttributes: ['rowHeight','itemWidth'],
 
         addChild: function (child) {
 
@@ -25,5 +22,6 @@ define(['js/ui/View', 'xaml!js/ui/DataGridColumn', 'js/core/List', 'underscore']
         removeChild: function(child) {
             this.$.$columns.remove(child);
         }
+
     });
 });

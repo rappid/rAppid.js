@@ -6,7 +6,8 @@ define(['js/ui/VirtualItemsView', 'xaml!js/ui/DataGridColumn', 'js/core/List', '
             columns: List,
             cols: 1,
             itemWidth: null,
-            prefetchItemCount: 0
+            data: null,
+            prefetchItemCount: 3
         },
         ctor: function(){
             this.callBase();
@@ -14,7 +15,7 @@ define(['js/ui/VirtualItemsView', 'xaml!js/ui/DataGridColumn', 'js/core/List', '
         $classAttributes: ['rowHeight', 'columns'],
 
         _addRenderer: function (renderer, position) {
-            this.$.$table.addChild(renderer, {childIndex: position});
+            this.$.$tbody.addChild(renderer, {childIndex: position});
             var column, columnConfiguration, binding;
             for (var i = 0; i < renderer.$children.length; i++) {
                 column = renderer.$children[i];
@@ -22,18 +23,36 @@ define(['js/ui/VirtualItemsView', 'xaml!js/ui/DataGridColumn', 'js/core/List', '
 
                 if(!column.$children.length){
                     var c = columnConfiguration.createCellRenderer({data: null});
-                    binding = new Binding({scope: renderer, path: "dataItem.data."+columnConfiguration.$.path, target: c, attrKey: 'data'});
+                    binding = new Binding({scope: renderer, path: "$dataItem.data."+(columnConfiguration.$.path || ""), target: c, targetKey: 'data'});
                     c.set({data: binding.getValue()});
                     column.addChild(c);
                 }
 
             }
         },
+
         removeChild: function(child) {
             this.$.$columns.remove(child);
         },
+
         _positionRenderer: function (renderer, addedRenderer, position) {
-            this.$.$table.set('style', ['width: 100%; position: absolute;', 'top:' + ((renderer.$.index - renderer.$.viewIndex) * this.$.itemHeight)+ "px"].join(";"));
+            this.$.$table.set('style', ['width: 100%; position: absolute;', 'top:' + ((renderer.$.$index - renderer.$.$viewIndex) * this.$.itemHeight)+ "px"].join(";"));
+        },
+
+        _commitData: function (data) {
+            if (!this.$el) {
+                return;
+            }
+
+            this.callBase();
+        },
+
+        render: function() {
+            var el = this.callBase();
+
+            this._commitData(this.$.data);
+
+            return el;
         }
 
     });
