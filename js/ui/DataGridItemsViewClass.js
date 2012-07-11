@@ -1,5 +1,9 @@
 define(['js/ui/VirtualItemsView', 'xaml!js/ui/DataGridColumn', 'js/core/List', 'underscore', 'js/core/Binding'], function (VirtualItemsView, DataGridColumn, List, _, Binding) {
 
+    var INDEX_ODD = "odd",
+        INDEX_EVEN = "even";
+
+
     return VirtualItemsView.inherit('js.ui.DataGridClass', {
 
         defaults: {
@@ -34,16 +38,16 @@ define(['js/ui/VirtualItemsView', 'xaml!js/ui/DataGridColumn', 'js/core/List', '
         removeChild: function(child) {
             this.$.$columns.remove(child);
         },
-
-        _positionRenderer: function (renderer, addedRenderer, position) {
-            this.$.$table.set('style', ['width: 100%; position: absolute;', 'top:' + ((renderer.$.$index - renderer.$.$viewIndex) * this.$.itemHeight)+ "px"].join(";"));
+        _updatedVisibleItems: function(startIndex, endIndex){
+            this.$.$table.set('style', ['width: 100%; position: absolute;', 'top:' + (startIndex * this.$.itemHeight) + "px"].join(";"));
         },
-
+        _positionRenderer: function (renderer, addedRenderer, position) {
+            // nothing needs to be done
+        },
         _commitData: function (data) {
             if (!this.$el) {
                 return;
             }
-
             this.callBase();
         },
 
@@ -53,7 +57,9 @@ define(['js/ui/VirtualItemsView', 'xaml!js/ui/DataGridColumn', 'js/core/List', '
             this._commitData(this.$.data);
 
             return el;
+        },
+        indexStatus: function(index){
+            return index % 2 ? INDEX_EVEN : INDEX_ODD;
         }
-
     });
 });

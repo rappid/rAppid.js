@@ -1,14 +1,14 @@
 <?xml version="1.0"?>
 <ui:DataGridItemsViewClass xmlns="http://www.w3.org/1999/xhtml" xmlns:js="js.core" xmlns:ui="js.ui" componentClass="data-grid-body">
     <js:Template name="renderer">
-        <ui:ItemsView items="{columns}" tagName="tr" itemKey="column" class="index-{$index}">
+        <ui:ItemsView items="{columns}" tagName="tr" itemKey="column" class="{indexStatus({$index})}">
             <js:Template name="item">
                 <td width="{$column.width}"/>
             </js:Template>
         </ui:ItemsView>
     </js:Template>
     <div cid="$scrollContainer" style="position: relative;">
-        <table cid="$table" componentClass="table table-striped">
+        <table cid="$table" componentClass="table">
             <thead style="display: none;">
                 <ui:ItemsView items="{columns}" tagName="tr" itemKey="column">
                     <js:Template name="item">

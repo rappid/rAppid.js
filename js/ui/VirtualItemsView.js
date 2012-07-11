@@ -179,7 +179,7 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
 
                 var addedRenderer = [];
 
-                for (i = startIndex; i < endIndex; i++) {
+                for (i = startIndex; i <= endIndex; i++) {
                     renderer = this.$activeRenderer[i];
 
                     if (!renderer) {
@@ -202,11 +202,21 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
                     this._positionRenderer(addedRenderer[i], addedRenderer);
                 }
 
+                this._updatedVisibleItems(startIndex, endIndex);
+
             }
 
 
         },
-
+        /***
+         * @abstract
+         * @param startIndex
+         * @param endIndex
+         * @private
+         */
+        _updatedVisibleItems: function(startIndex, endIndex){
+            // HOOK for positions containers
+        },
         _addRenderer: function (renderer, pos) {
             this.$container.addChild(renderer, {childIndex: pos});
         },
