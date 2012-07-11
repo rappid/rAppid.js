@@ -1,7 +1,7 @@
 # rAppid.js - the way you want to do it.
 ## Introduction
 
-rAppid.js is a declarative javascript web application framework for rapid web application development. It uses XML to define the structure of applications, modules, components and views and JavaScript for the business logic of the application. The XML (XAML) gets translated to javascript components during runtime which will render itself as HTML5 DOM elements. This enables a rapid development of applications.
+rAppid.js is a declarative javascript web application framework for rapid web application development. It allows you to use XML to define the structure of the application UI and to configure components like datasources or routes. The XML (XAML) gets translated to javascript components during runtime which will render itself as HTML5 DOM elements. This enables a rapid development of application.
 
 Visit http://www.rappidjs.com for quick start and documentation.
 
@@ -27,7 +27,7 @@ For more information and documentation of <rAppid.js /> lookup our project home 
 * optimize build
 
 ## Installation
-The installation of rAppid.js is simple done via [npm](http://npmjs.org/).
+The installation of rAppid.js is simply done via [npm](http://npmjs.org/).
 
 ```
 npm install rAppid.js -d -g
