@@ -1,8 +1,8 @@
-<ui:VirtualItemsView xmlns="http://www.w3.org/1999/xhtml"
-                     xmlns:ui="js.ui" xmlns:js="js.core">
+<ui:TileListClass xmlns="http://www.w3.org/1999/xhtml"
+                     xmlns:ui="js.ui" xmlns:js="js.core" componentClass="tile-list">
     <js:Template name="renderer">
-        {data}
+        <li>{$dataItem.data}</li>
     </js:Template>
-    <ul cid="$scrollContainer" class="tile-list scroll-container" style="position: relative;">
+    <ul cid="$scrollContainer" class="scroll-container" position="relative">
     </ul>
-</ui:VirtualItemsView>
+</ui:TileListClass>

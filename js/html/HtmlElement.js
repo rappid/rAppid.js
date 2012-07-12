@@ -1,4 +1,4 @@
-define(['js/core/DomElement'], function(DomElement) {
+define(['js/core/DomElement', 'underscore'], function(DomElement, _) {
 
     var HTML_Namespace = "http://www.w3.org/1999/xhtml";
 
@@ -7,8 +7,19 @@ define(['js/core/DomElement'], function(DomElement) {
         defaults: {
             selected: undefined,
             selectable: undefined,
-            namespace: HTML_Namespace
+            namespace: HTML_Namespace,
+
+            position: null,
+
+            heightUpdatePolicy: 'out',
+            widthUpdatePolicy: 'out'
         },
+
+        $classAttributes: ['heightUpdatePolicy', 'widthUpdatePolicy'],
+
+        $renderAsStyle: ['position'],
+
+        $renderAsStyleWithPx: ['left', 'top'],
 
         _renderVisible: function (visible) {
             if (visible === true) {
@@ -32,6 +43,24 @@ define(['js/core/DomElement'], function(DomElement) {
             }
         },
 
+        _setAttribute: function(key, value) {
+
+            var renderAsStyle;
+            if (_.indexOf(this.$renderAsStyleWithPx, key) !== -1) {
+                if (!_.isString(value)) {
+                    value += "px";
+                }
+
+                renderAsStyle = true;
+            }
+
+            if (renderAsStyle || _.indexOf(this.$renderAsStyle, key) !== -1) {
+                this.$el.style[key] = value;
+            } else {
+                this.callBase();
+            }
+        },
+
         _renderSelectable: function (selectable) {
             if (selectable === true) {
                 if (!this._onSelect) {
@@ -47,21 +76,39 @@ define(['js/core/DomElement'], function(DomElement) {
                 }
             }
         },
+
+        /***
+         * renders the width of the element if the update-policy allows out-going
+         * @param width - the width in pixel if not a string
+         * @private
+         */
         _renderWidth: function (width) {
-            if (width) {
-                if (typeof(width) !== "string") {
-                    width += "px";
-                }
-                this.$el.style.width = width;
-            }
+            this._renderPolicyValue('width', width);
         },
+
+        /***
+         * renders the height of the element if the update-policy allows out-going
+         * @param height - the width in pixel if not a string
+         * @private
+         */
         _renderHeight: function (height) {
-            if (height) {
-                if (typeof(height) !== "string") {
-                    height += "px";
+            this._renderPolicyValue('height', height);
+        },
+
+        _renderPosition: function(position) {
+            this.$el.style.position = position;
+        },
+
+        _renderPolicyValue: function(name, value) {
+            var policy = this.$[name + 'UpdatePolicy'];
+
+            if (policy === 'out' || policy === 'both') {
+                if (typeof(value) !== "string") {
+                    value += "px";
                 }
-                this.$el.style.height = height;
+                this.$el.style[name] = value;
             }
+
         }
 
     });

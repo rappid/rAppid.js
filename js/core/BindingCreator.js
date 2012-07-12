@@ -57,7 +57,14 @@ define(['js/core/EventDispatcher','js/lib/parser','js/core/Binding', 'underscore
                     var twoWay = (bindingDef.type == Binding.TYPE_TWOWAY);
 
 
-                    var options = {scope: scope, path: path, target: targetScope, twoWay: twoWay, context: context, bindingCreator: this};
+                    var options = {
+                        scope: scope,
+                        path: path,
+                        target: targetScope,
+                        twoWay: twoWay,
+                        context: context,
+                        bindingCreator: this
+                    };
 
                     if (twoWay) {
                         if (bindingDef.transform) {

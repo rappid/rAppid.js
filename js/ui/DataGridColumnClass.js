@@ -7,6 +7,5 @@ define(['js/core/Component'], function (Component) {
         createCellRenderer: function(attributes, parentScope){
             return this.$templates['cell'].createInstance(attributes, parentScope);
         }
-
     });
 });

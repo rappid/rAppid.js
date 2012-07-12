@@ -222,7 +222,11 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
         },
 
         _positionRenderer: function (renderer, addedRenderer) {
-
+            var point = this.getPointFromIndex(renderer.$.$index);
+            renderer.set({
+                left: point.x,
+                top: point.y
+            });
         },
 
         _reserveRenderer: function () {
@@ -434,43 +438,45 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
 
                 if (firstTimeToFetchPage) {
 
-                    // first time -> start fetch delay
-                    setTimeout(function () {
+                    (function(pageIndex) {
+                        // first time -> start fetch delay
+                        setTimeout(function () {
 
-                        // delay passed -> check if at least on item of the page is needed
-                        var pageStartIndex = pageIndex * self.$pageSize,
-                            pageEndIndex = (pageIndex + 1) * self.$pageSize - 1;
+                            // delay passed -> check if at least on item of the page is needed
+                            var pageStartIndex = pageIndex * self.$pageSize,
+                                pageEndIndex = (pageIndex + 1) * self.$pageSize - 1;
 
-                        var virtualItemsView = self.$.$virtualItemsView;
+                            var virtualItemsView = self.$.$virtualItemsView;
 
-                        if (virtualItemsView.$lastStartIndex < pageEndIndex &&
-                            virtualItemsView.$lastEndIndex > pageStartIndex) {
+                            if (virtualItemsView.$lastStartIndex < pageEndIndex &&
+                                virtualItemsView.$lastEndIndex > pageStartIndex) {
 
-                            // we need to fetch the page
-                            self.$.$data.fetchPage(pageIndex, null, function (err) {
-                                if (err) {
-                                    // delete page so it will be fetched again on scrolling
-                                    delete self.$pages[pageIndex];
-                                } else {
-                                    // execute all callbacks
-                                    var pageEntry = self.$pages[pageIndex];
-                                    for (var key in pageEntry) {
-                                        if (pageEntry.hasOwnProperty(key)) {
-                                            (pageEntry[key])();
-                                            delete pageEntry[key];
+                                // we need to fetch the page
+                                self.$.$data.fetchPage(pageIndex, null, function (err) {
+                                    if (err) {
+                                        // delete page so it will be fetched again on scrolling
+                                        delete self.$pages[pageIndex];
+                                    } else {
+                                        // execute all callbacks
+                                        var pageEntry = self.$pages[pageIndex];
+                                        for (var key in pageEntry) {
+                                            if (pageEntry.hasOwnProperty(key)) {
+                                                (pageEntry[key])();
+                                                delete pageEntry[key];
+                                            }
                                         }
+
+                                        // mark as already fetched
+                                        self.$pages[pageIndex] = true;
                                     }
+                                });
+                            } else {
+                                // we don't need to fetch this page any more
+                                delete self.$pages[pageIndex];
+                            }
 
-                                    // mark as already fetched
-                                    self.$pages[pageIndex] = true;
-                                }
-                            });
-                        } else {
-                            // we don't need to fetch this page any more
-                            delete self.$pages[pageIndex];
-                        }
-
-                    }, self.$.$virtualItemsView.$.fetchPageDelay);
+                        }, self.$.$virtualItemsView.$.fetchPageDelay);
+                    })(pageIndex)
 
 
                 }

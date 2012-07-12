@@ -362,6 +362,15 @@ define(["require", "js/core/EventDispatcher","js/core/Component", "js/core/Conte
                     this._setAttribute(key, attr);
                 }
             },
+
+            /***
+             * sets the attribute as part of the rendering cycle on the element
+             *
+             * @param {String} key - name of the attribute
+             * @param {String} value - value of the attribute
+             * @param {String} [namespaceUri] - namespaceUri for the attribute
+             * @private
+             */
             _setAttribute: function (key, value, namespaceUri) {
 
                 if (!_.isUndefined(value)) {
