@@ -40,7 +40,7 @@ define(['js/html/HtmlElement', 'underscore'], function(HtmlElement, _){
 
                 child.addChild(this.createComponent(HtmlElement, {
                     tagName: 'div',
-                    class: 'back-drop'
+                    'class': 'back-drop'
                 }));
 
                 child.addChild(window);
