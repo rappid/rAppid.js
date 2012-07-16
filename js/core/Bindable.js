@@ -120,6 +120,10 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding","underscor
                 set: function (key, value, options) {
                     var attributes = {};
 
+                    if(_.isNumber(key)){
+                        key = String(key);
+                    }
+
                     if (_.isString(key)) {
                         // check for path
                         var path = key.split(".");
@@ -160,7 +164,11 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding","underscor
                             val = attributes[key];
                             // unset attribute or change it ...
                             if (options.unset === true) {
+                                prev = now[key];
                                 delete now[key];
+                                changedAttributes[key] = undefined;
+                                changedAttributesCount++;
+                                this.$previousAttributes[key] = prev;
                             } else {
                                 if (!_.isEqual(now[key], attributes[key])) {
                                     prev = now[key];
@@ -261,10 +269,9 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding","underscor
                         path = Parser.parse(key, "path");
                     }
 
-                    var pathElement;
-                    // go through the path
-                    while (scope && path.length > 0) {
-                        pathElement = path.shift();
+                    var pathElement, val;
+                    for (var j = 0; scope && j < path.length; j++) {
+                        pathElement = path[j];
                         if (pathElement.type == "fnc") {
                             var fnc = scope[pathElement.name];
                             var parameters = pathElement.parameter;
@@ -278,9 +285,13 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding","underscor
                             scope = fnc.apply(scope, parameters);
                         } else if (pathElement.type == "var") {
                             if (scope instanceof Bindable) {
-                                if(path.length === 0){
-                                    scope = scope.$[pathElement.name];
-                                }else{
+                                if (path.length - 1 === j ) {
+                                    val = scope.$[pathElement.name];
+                                    if(_.isUndefined(val)){
+                                        val = scope[pathElement.name];
+                                    }
+                                    scope = val;
+                                } else {
                                     scope = scope.get(pathElement.name);
                                 }
 
@@ -289,12 +300,12 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding","underscor
                             }
                         }
 
-                        if(scope && pathElement.index !== ''){
+                        if (scope && pathElement.index !== '') {
                             // if it's an array
-                            if(_.isArray(scope)){
+                            if (_.isArray(scope)) {
                                 scope = scope[pathElement.index];
-                            // if it's a list
-                            }else if(scope.at){
+                                // if it's a list
+                            } else if (scope.at) {
                                 scope = scope.at(pathElement.index);
                             }
                         }
