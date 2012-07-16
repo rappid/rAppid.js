@@ -17,9 +17,11 @@ define(["require", "js/core/EventDispatcher","js/core/Component", "js/core/Conte
             ],
 
             ctor: function (attributes, descriptor, systemManager, parentScope, rootScope) {
+                this.$addedToDom = false;
                 this.$renderMap = {};
                 this.$children = [];
                 this.$contentChildren = [];
+                this.$renderedChildren = [];
                 this.$domEventHandler = {};
                 // go inherit tree up and search for descriptors
                 var current = this;
@@ -41,8 +43,19 @@ define(["require", "js/core/EventDispatcher","js/core/Component", "js/core/Conte
                         this.$namespace = descriptor.namespaceURI;
                     }
                 }
-            },
 
+                this.bind('add:dom', this._onDomAdded, this);
+            },
+            /**
+             * This method is called when the stage is added to the DOM
+             * @private
+             */
+            _onDomAdded: function(){
+                this.$addedToDom = true;
+                for(var i=0; i < this.$renderedChildren.length; i++){
+                    this.$renderedChildren[i].trigger('add:dom', this.$el);
+                }
+            },
             _inject: function () {
                 this.callBase();
 
@@ -202,12 +215,11 @@ define(["require", "js/core/EventDispatcher","js/core/Component", "js/core/Conte
             },
             
             _bindDomEvents: function (el) {
-                var eventDef, es;
+                var eventDef, fnc;
 
                 for (var i = 0; i < this.$eventDefinitions.length; i++) {
                     eventDef = this.$eventDefinitions[i];
-                    es = eventDef.name.substr(2);
-                    this.bind(es, eventDef.scope[eventDef.fncName], eventDef.scope);
+                    this.bind(eventDef.type, eventDef.eventHandler, eventDef.scope);
                 }
             },
 
@@ -250,6 +262,9 @@ define(["require", "js/core/EventDispatcher","js/core/Component", "js/core/Conte
                             }else{
                                 this.$el.appendChild(el);
                             }
+                        }
+                        if(this.$addedToDom){
+                            child.trigger('add:dom',this.$el);
                         }
                     }
                 }
@@ -373,8 +388,7 @@ define(["require", "js/core/EventDispatcher","js/core/Component", "js/core/Conte
              */
             _setAttribute: function (key, value, namespaceUri) {
 
-                if (!_.isUndefined(value)) {
-
+                if (!_.isUndefined(value) && value !== null) {
                     namespaceUri = namespaceUri || this.$attributesNamespace[key];
 
                     if (this.$el.setAttributeNS && namespaceUri) {
@@ -382,6 +396,11 @@ define(["require", "js/core/EventDispatcher","js/core/Component", "js/core/Conte
                     } else {
                         this.$el.setAttribute(key, value);
                     }
+                }else{
+                    // first set empty -> needed for Chrome
+                    this.$el.setAttribute(key,"");
+                    // then remove -> needed for firefox
+                    this.$el.removeAttribute(key);
                 }
             },
 
@@ -445,18 +464,28 @@ define(["require", "js/core/EventDispatcher","js/core/Component", "js/core/Conte
             },
             bind: function (type, eventHandler, scope) {
                 var self = this;
-                this.callBase();
-                if (this.isRendered() && !this.$domEventHandler[type] && !this._isComponentEvent(type))  {
-                    var cb = this.$domEventHandler[type] = function (originalEvent) {
-                        var e = new DomElement.Event(originalEvent);
-                        try {
-                            self.trigger(type, e, self);
-                        } catch(e) {}
-                        if (e.isPropagationStopped) {
-                            return false;
-                        }
-                    };
-                    this.bindDomEvent(type,cb);
+                if (type.indexOf("on:") === 0 && !this.$domEventHandler[type] && !this._isComponentEvent(type))  {
+                    if(this.isRendered()){
+                        var cb = this.$domEventHandler[type] = function (originalEvent) {
+                            var e = new DomElement.Event(originalEvent);
+                            try {
+                                self.trigger(type, e, self);
+                            } catch(e) {}
+                            if (e.isPropagationStopped) {
+                                return false;
+                            }
+                        };
+                        this.bindDomEvent(type.substr(3),cb);
+                        this.callBase();
+                    }else{
+                        this.$eventDefinitions.push({
+                            scope: scope || this,
+                            type: type,
+                            eventHandler: eventHandler
+                        });
+                    }
+                } else {
+                    this.callBase();
                 }
             },
 

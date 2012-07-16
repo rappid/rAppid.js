@@ -228,8 +228,8 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
 
                     this._childrenInitialized();
 
-                    this._initializeEventAttributes(this.$xamlDefaults, this);
-                    this._initializeEventAttributes(this.$xamlAttributes, this.$rootScope);
+                    this._initializeXamlEventAttributes(this.$xamlDefaults, this);
+                    this._initializeXamlEventAttributes(this.$xamlAttributes, this.$rootScope);
                 },
 
                 createChildren: function () {
@@ -254,12 +254,14 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                         console.warn("Descriptor not defined or not correct");
                     }
                 },
-                /**
-                 * an array of attributes names, which will expect handler functions
-                 */
                 _isEventAttribute: function (attributeName) {
+                    return attributeName.indexOf("on:") == 0;
+                },
+                _isXamlEventAttribute: function(attributeName){
                     return attributeName.indexOf("on") == 0;
-                    // return this._eventAttributes.hasOwnProperty(attributeName);
+                },
+                _getEventName: function(eventDefinition){
+                    return eventDefinition.substr(3);
                 },
                 /**
                  * Returns true if event is defined in Component event list
@@ -277,25 +279,16 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                     // TODO: implement eventAttribites as hash
                     return this._eventAttributes[eventName];
                 },
-                _initializeEventAttributes: function (attributes, rootScope) {
-                    var event = '';
+                _initializeXamlEventAttributes: function (attributes, rootScope) {
+                    var event = '', callback;
                     for (var key in attributes) {
                         if (attributes.hasOwnProperty(key)) {
                             var value = attributes[key];
-
-                            if (this._isEventAttribute(key)) {
+                            if (this._isXamlEventAttribute(key)) {
                                 if (rootScope[value]) {
-
-                                    this.$eventDefinitions.push({
-                                        name: key,
-                                        scope: rootScope,
-                                        fncName: value
-                                    });
                                     event = key.substr(2);
-                                    if (this._isComponentEvent(event)) {
-                                        this.bind(event, rootScope[value], rootScope);
-                                    }
-
+                                    callback = rootScope[value];
+                                    this.bind("on:"+event, rootScope[value], rootScope);
                                 } else {
                                     throw "Couldn't find callback " + value + " for " + key + " event";
                                 }
