@@ -104,7 +104,7 @@ define(['require', 'js/core/Bindable', 'js/core/List'],
                                 throw "Cannot determinate ModelFactory. Multiple factories defined for '" + type + "'.";
                             }
 
-                            if (!(factory.prototype instanceof Entity)) {
+                            if (!(factory === Entity || factory.prototype instanceof Entity)) {
                                 throw "Factory for type '" + type + "' isn't an instance of Entity";
                             }
 
@@ -150,8 +150,7 @@ define(['require', 'js/core/Bindable', 'js/core/List'],
                                 // TODO: what here
 //                                throw 'Schema for type "' + type + '" requires to be an array';
                             }
-                        }
-                        else {
+                        } else if ( value && value.id){
                             factory = schemaType || Entity;
 
                             if (!(factory.prototype instanceof Entity)) {
@@ -162,7 +161,7 @@ define(['require', 'js/core/Bindable', 'js/core/List'],
                             alias = (factory === this.$context.$datasource.$entityFactory ||
                                 factory === this.$context.$datasource.$modelFactory) ? type : null;
 
-                            data[type] = entity = this.getContextForChildren(factory).createEntity(factory, this.$.id, alias);
+                            data[type] = entity = this.getContextForChildren(factory).createEntity(factory, value.id, alias);
                             entity.set(entity.parse(value, action, options));
                         }
                     }
