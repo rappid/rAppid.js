@@ -48,15 +48,25 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
             this.createBinding('{$dataAdapter.size()}', this._itemsCountChanged, this);
             this.bind('change:scrollTop', this._updateVisibleItems, this);
             this.bind('change:scrollLeft', this._updateVisibleItems, this);
-        },
+            this.bind('change:height', this._updateVisibleItems, this);
+            this.bind('change:width', this._updateVisibleItems, this);
 
+        },
         _initializeRenderer: function ($el) {
             var style = $el.getAttribute('style') || "";
             style = style.split(";");
             style.push('overflow: auto');
             $el.setAttribute('style', style.join(";"));
         },
+        _onDomAdded: function(){
+            this.callBase();
+            if(this.isRendered()){
+                // set scroll position
+                this.$el.scrollTop = this.$.scrollTop;
+                this.$el.scrollLeft = this.$.scrollLeft;
+            }
 
+        },
         _bindDomEvents: function (el) {
             this.callBase();
             var self = this;
@@ -148,11 +158,10 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
                 // end well known
                 endIndex = Math.min(ItemsCount, endIndex)
             }
-            console.log("CURRENT:", startIndex, endIndex);
 
             if (!(startIndex === this.$lastStartIndex && endIndex === this.$lastEndIndex)) {
                 // some items are not visible any more or scrolled into view
-                console.log("LAST:", this.$lastStartIndex, this.$lastEndIndex);
+
                 // remember the last
                 this.$lastStartIndex = startIndex;
                 this.$lastEndIndex = endIndex;
@@ -164,8 +173,8 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
                         renderer = this.$activeRenderer[index];
                         if (renderer) {
                             renderer.set({
-                                index: null,
-                                data: null
+                                $index: null,
+                                $dataItem: null
                             });
 
                             renderer.remove();
@@ -233,17 +242,21 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
             if (this.$availableRenderer.length) {
                 return this.$availableRenderer.pop();
             }
+            var renderer = this._createRenderer();
+            renderer.bind('on:dblclick',this._onRendererDblClick, this);
+            renderer.bind('on:click',this._onRendererClick, this);
 
-            return this._createRenderer();
+            return renderer;
         },
-
+        _onRendererClick: function(e, renderer){
+        },
+        _onRendererDblClick: function (e, renderer) {
+        },
         _createRenderer: function (attributes) {
             return this.$templates['renderer'].createComponents(attributes, this)[0];
         },
 
         _itemsCountChanged: function () {
-
-            console.log("changed size");
             var size = this.getSizeForItemsCount(this.$.$dataAdapter.size());
             if (size) {
                 this._getScrollContainer().set(size);
@@ -277,25 +290,6 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
             row = this.$.rows === 1 ? 0 : Math.floor(y / (this.$.itemHeight + this.$.verticalGap));
 
             return row * this.$.cols + col;
-
-
-            /*
-             private function getIndexFromAbsolutePosition(position:Point, gapHPos:int = RIGHT, gapVPos:int = BOTTOM):Number {
-
-             if (new Rectangle(0, 0, this.width + 1, _scrollableContentHeight).containsPoint(position)) {
-
-
-
-             var col:int = Math.floor(position.x / (_itemWidth + _horizontalGap));
-             var row:int = Math.floor(position.y / (_itemHeight + _verticalGap));
-
-             return row * _cols + col;
-             }
-
-             return Number.NaN;
-             }
-
-             */
         },
 
         getPointFromIndex: function (index) {
@@ -402,38 +396,45 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
 
             // stores the waiting queue or true, if page already fetched
             this.$pages = {};
+            this.$cache = {};
             this.$pageSize = data.$options.pageSize;
 
             this.callBase();
         },
 
         getItemAt: function (index) {
-            console.log("getItemAt", index);
-
             // get the page from index
             var self = this,
                 pageIndex = Math.floor(index / this.$pageSize),
-                firstTimeToFetchPage = false;
+                firstTimeToFetchPage = false,
+                dataItem = this.$cache[index];
 
             if (!this.$pages.hasOwnProperty(pageIndex)) {
                 this.$pages[pageIndex] = {};
                 firstTimeToFetchPage = true;
             }
 
-            var pageEntry = this.$pages[pageIndex],
+            if(!dataItem){
                 dataItem = new (VirtualItemsView.DataItem)({
                     index: index,
-                    data: null
+                    data: null,
+                    $status: STATUS_LOADING
                 });
+                this.$cache[index] = dataItem;
+            }
+
+            var pageEntry = this.$pages[pageIndex];
 
             if (pageEntry === true) {
+                dataItem.set('status', STATUS_LOADED);
                 // page already fetched -> return with data
                 dataItem.set('data',this.$.$data.at(index));
             } else {
-
+                dataItem.set('status',STATUS_LOADING);
                 // add callback after fetch completes, which sets the data
                 pageEntry[index] = function () {
                     dataItem.set('data', self.$.$data.at(index));
+                    dataItem.set('status', STATUS_LOADED);
                 };
 
                 if (firstTimeToFetchPage) {
@@ -495,6 +496,8 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
         }.on(['$data','change:$itemsCount'])
     });
 
+    var STATUS_EMPTY = "empty", STATUS_LOADING = "loading", STATUS_LOADED = "loaded";
+
     /***
      *
      * @class
@@ -503,6 +506,9 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
         defaults: {
             // holds the index of the datasource, and is set by VirtualItemsView
             $index: null,
+            // loading status
+            status: STATUS_EMPTY,
+            selected: false,
             // the data, which is set by the VirtualDataAdapter
             data: null
         }
