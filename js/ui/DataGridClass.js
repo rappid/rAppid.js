@@ -6,13 +6,13 @@ define(['js/ui/View', 'xaml!js/ui/DataGridColumn', 'js/core/List', 'underscore']
             $columns: List,
             rowHeight: 30,
             width: null,
-            prefetchItemCount: 0
+            prefetchItemCount: 0,
+            selectedItems: List
         },
 
-        $classAttributes: ['rowHeight','itemWidth'],
+        $classAttributes: ['rowHeight','itemWidth', 'prefetchItemCount', 'selectedItems'],
 
         addChild: function (child) {
-
             this.callBase();
 
             if (child instanceof DataGridColumn) {
@@ -21,6 +21,9 @@ define(['js/ui/View', 'xaml!js/ui/DataGridColumn', 'js/core/List', 'underscore']
         },
         removeChild: function(child) {
             this.$.$columns.remove(child);
+        },
+        _propagateDblClick: function(e, row){
+            console.log("dblclicked", row);
         }
 
     });

@@ -1,14 +1,16 @@
 <?xml version="1.0"?>
 <ui:DataGridClass xmlns="http://www.w3.org/1999/xhtml" xmlns:js="js.core" xmlns:ui="js.ui" class="data-grid">
-    <table class="table" style="margin-bottom: 0;">
-        <ui:ItemsView items="{$columns}" itemKey="column" class="data-grid-head" tagName="tr">
+    <table class="data-grid-head" style="margin-bottom: 0;">
+        <ui:ItemsView items="{$columns}" itemKey="column" tagName="tr">
             <js:Template name="item">
                 <th style="width: {$column.width};">
                     {$column.title}
+                    <i class="icon icon-chevron-down pull-right"/>
                 </th>
             </js:Template>
         </ui:ItemsView>
     </table>
     <ui:DataGridItemsView columns="{$columns}" data="{data}" itemHeight="{rowHeight}" width="{width}"
-                          prefetchItemCount="{prefetchItemCount}"/>
+                          prefetchItemCount="{prefetchItemCount}" heightUpdatePolicy="in"
+                          class="data-grid-body" selectedItems="{{selectedItems}}"/>
 </ui:DataGridClass>
