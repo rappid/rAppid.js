@@ -1,4 +1,4 @@
-(function (exports, requirejs, define, document, XMLHttpRequest) {
+(function (exports, requirejs, define, window, XMLHttpRequest) {
     /** ECMA SCRIPT COMPLIANT**/
     if (!String.prototype.trim) {
         String.prototype.trim = function () {
@@ -8,7 +8,8 @@
 
     var underscore,
         Bus,
-        Stage;
+        Stage,
+        document = window.document; // TODO: create workaround for node
 
 
     /***
@@ -360,7 +361,8 @@
         // create instance
         var applicationFactory = this.$applicationFactory;
 
-        var stage = new Stage(this.$requirejsContext, this, document);
+        // TODO: add node support for window
+        var stage = new Stage(this.$requirejsContext, this, document, window);
 
         this.$requirejsContext(["js/core/Application", "js/core/HeadManager", "js/core/History", "js/core/Injection"], function (Application, HeadManager, History, Injection) {
             stage.$headManager = new HeadManager(document);
@@ -482,5 +484,5 @@
 }(typeof exports !== "undefined" ? exports : window,
     typeof requirejs !== "undefined" ? requirejs : require('requirejs'),
     typeof requirejs !== "undefined" ? define : require('requirejs').define,
-    typeof window !== "undefined" ? window.document : null,
+    typeof window !== "undefined" ? window : null,
     typeof window !== "undefined" ? window.XMLHttpRequest : require('xmlhttprequest').XMLHttpRequest));
