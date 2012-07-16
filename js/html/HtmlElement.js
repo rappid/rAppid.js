@@ -1,6 +1,50 @@
-define(['js/core/DomElement', 'underscore'], function(DomElement, _) {
+define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
 
-    var HTML_Namespace = "http://www.w3.org/1999/xhtml";
+    var HTML_Namespace = "http://www.w3.org/1999/xhtml",
+        POLICY_OUT = 'out',
+        POLICY_IN = 'in',
+        POLICY_BOTH = 'both',
+        attributeMap = {
+            height: 'offsetHeight',
+            width: 'offsetWidth'
+        };
+
+    /**
+     * Sets the size of an element, if the policy requires it
+     * @param element
+     * @param policy
+     * @param attribute
+     */
+    var checkSizePolicy = function(element, policy, attribute){
+        if (policy === POLICY_IN || policy === POLICY_BOTH) {
+            element.set(attribute, element.$el[attributeMap[attribute]]);
+        }
+    };
+
+    /**
+     * Binds the window resize event and sets the size on resize if the policy requires it
+     * @param element
+     * @param policy
+     * @param attribute
+     */
+    var bindSizePolicy = function (element, policy, attribute) {
+        var elAttribute;
+        if (policy === POLICY_IN || policy === POLICY_BOTH) {
+            if (!element["__update"+attribute]) {
+                var self = element;
+                element["__update" + attribute] = function () {
+                    self.set(attribute, self.$el[attributeMap[attribute]]);
+                };
+                element.dom(element.$stage.$window).bindDomEvent('resize', element["__update" + attribute]);
+            }
+        } else {
+            if (element["__update" + attribute]) {
+                element.dom(element.$stage.$window).unbindDomEvent('resize', element["__update" + attribute]);
+                delete element["__update" + attribute];
+            }
+        }
+
+    };
 
     var HtmlElement = DomElement.inherit("js.html.HtmlElement", {
 
@@ -11,8 +55,8 @@ define(['js/core/DomElement', 'underscore'], function(DomElement, _) {
 
             position: null,
 
-            heightUpdatePolicy: 'out',
-            widthUpdatePolicy: 'out'
+            heightUpdatePolicy: POLICY_OUT,
+            widthUpdatePolicy: POLICY_OUT
         },
 
         $classAttributes: ['heightUpdatePolicy', 'widthUpdatePolicy'],
@@ -20,7 +64,32 @@ define(['js/core/DomElement', 'underscore'], function(DomElement, _) {
         $renderAsStyle: ['position'],
 
         $renderAsStyleWithPx: ['left', 'top'],
+        /**
+         *
+         * @private
+         */
+        _onDomAdded: function(){
+            this.callBase();
 
+            checkSizePolicy(this,this.$.widthUpdatePolicy,'width');
+            checkSizePolicy(this,this.$.heightUpdatePolicy,'height');
+        },
+        /**
+         *
+         * @param policy
+         * @private
+         */
+        _renderHeightUpdatePolicy: function (policy) {
+            bindSizePolicy(this, policy, "height");
+        },
+        /**
+         *
+         * @param policy
+         * @private
+         */
+        _renderWidthUpdatePolicy: function (policy) {
+            bindSizePolicy(this, policy, "width");
+        },
         _renderVisible: function (visible) {
             if (visible === true) {
                 this.removeClass('hide');
@@ -28,13 +97,21 @@ define(['js/core/DomElement', 'underscore'], function(DomElement, _) {
                 this.addClass('hide');
             }
         },
-
+        /**
+         *
+         * @param hidden
+         * @private
+         */
         _renderHidden: function (hidden) {
             if (typeof(hidden) !== "undefined") {
                 this.set({visible: !hidden});
             }
         },
-
+        /**
+         *
+         * @param selected
+         * @private
+         */
         _renderSelected: function (selected) {
             if (selected === true) {
                 this.addClass('active');
@@ -42,8 +119,13 @@ define(['js/core/DomElement', 'underscore'], function(DomElement, _) {
                 this.removeClass('active');
             }
         },
-
-        _setAttribute: function(key, value) {
+        /**
+         *
+         * @param key
+         * @param value
+         * @private
+         */
+        _setAttribute: function (key, value) {
 
             var renderAsStyle;
             if (_.indexOf(this.$renderAsStyleWithPx, key) !== -1) {
@@ -60,7 +142,11 @@ define(['js/core/DomElement', 'underscore'], function(DomElement, _) {
                 this.callBase();
             }
         },
-
+        /**
+         *
+         * @param selectable
+         * @private
+         */
         _renderSelectable: function (selectable) {
             if (selectable === true) {
                 if (!this._onSelect) {
@@ -94,15 +180,26 @@ define(['js/core/DomElement', 'underscore'], function(DomElement, _) {
         _renderHeight: function (height) {
             this._renderPolicyValue('height', height);
         },
-
-        _renderPosition: function(position) {
-            this.$el.style.position = position;
+        /***
+         *
+         * @param position
+         * @private
+         */
+        _renderPosition: function (position) {
+            if(position){
+                this.$el.style.position = position;
+            }
         },
-
-        _renderPolicyValue: function(name, value) {
+        /***
+         *
+         * @param name
+         * @param value
+         * @private
+         */
+        _renderPolicyValue: function (name, value) {
             var policy = this.$[name + 'UpdatePolicy'];
 
-            if (policy === 'out' || policy === 'both') {
+            if (policy === POLICY_OUT || policy === POLICY_BOTH) {
                 if (typeof(value) !== "string") {
                     value += "px";
                 }
