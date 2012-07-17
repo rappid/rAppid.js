@@ -104,7 +104,7 @@ define(['require', 'js/core/Bindable', 'js/core/List'],
                                 throw "Cannot determinate ModelFactory. Multiple factories defined for '" + type + "'.";
                             }
 
-                            if (!(factory === Entity || factory.prototype instanceof Entity)) {
+                            if (!factory.classof(Entity)) {
                                 throw "Factory for type '" + type + "' isn't an instance of Entity";
                             }
 
