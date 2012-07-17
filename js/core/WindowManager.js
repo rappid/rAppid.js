@@ -40,10 +40,12 @@ define(['js/html/HtmlElement', 'underscore'], function(HtmlElement, _){
 
                 child.addChild(this.createComponent(HtmlElement, {
                     tagName: 'div',
-                    'class': 'back-drop'
+                    'class': 'modal-backdrop back-drop'
                 }));
 
                 child.addChild(window);
+
+                window.set('componentClass', 'modal window');
             }
 
             this.addChild(child);

@@ -26,7 +26,6 @@ define(['js/html/HtmlElement'], function(HtmlElement) {
             this.trigger('close', state);
         }
 
-
     });
 
 });
