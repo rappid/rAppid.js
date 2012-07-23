@@ -484,5 +484,5 @@
 }(typeof exports !== "undefined" ? exports : window,
     typeof requirejs !== "undefined" ? requirejs : require('requirejs'),
     typeof requirejs !== "undefined" ? define : require('requirejs').define,
-    typeof window !== "undefined" ? window : null,
+    typeof window !== "undefined" ? window : exports,
     typeof window !== "undefined" ? window.XMLHttpRequest : require('xmlhttprequest').XMLHttpRequest));
