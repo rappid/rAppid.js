@@ -29,13 +29,15 @@ describe('js.core.List', function () {
         });
     });
 
-    describe('add', function () {
-
-        it('should add one item to list', function () {
+    describe('#size', function(){
+        it('should return size of list', function(){
             list.size().should.equal(0);
             list.add(item);
             list.size().should.equal(1);
         });
+    });
+
+    describe('#add', function () {
 
         it('should add a array of items', function() {
             list.size().should.equal(0);
@@ -67,7 +69,7 @@ describe('js.core.List', function () {
 
     });
 
-    describe('remove', function () {
+    describe('#remove', function () {
         it('should remove one item', function(){
             list.add(item);
             list.size().should.equal(1);
@@ -106,7 +108,7 @@ describe('js.core.List', function () {
         });
     });
 
-    describe('removeAt', function () {
+    describe('#removeAt', function () {
         it('should remove one item at a specific index', function () {
             var index = 1;
             list.add(items);
@@ -118,7 +120,7 @@ describe('js.core.List', function () {
         });
     });
 
-    describe('sort', function () {
+    describe('#sort', function () {
         it('should sort the list', function () {
             list.add(items);
             list.sort(function(item,item2){
@@ -156,13 +158,63 @@ describe('js.core.List', function () {
         });
     });
 
-    describe('change of item attributes', function () {
+    describe('#change of item attributes', function () {
         it('should trigger change event', function () {
             list.bind('change', function(e){
                 expect(e.$.item).to.equal(bindable);
             });
             list.add(bindable);
             bindable.set('firstname','Peter');
+        });
+    });
+
+    describe('#sync', function(){
+        var b1, b2, b3, copy;
+        beforeEach(function () {
+            b1 = new C.Bindable({
+                firstname: 'Max',
+                lastname: 'Mustermann'
+            });
+            b2 = new C.Bindable({
+                street: 'Street 1',
+                city: 'City 1'
+            });
+            b3 = new C.Bindable({
+                foo: 'xyz',
+                bar: 'uvw'
+            });
+            list = new C.List([b1,b2,b3]);
+            copy = list.clone();
+        });
+
+        it('should have same items after remove', function(){
+            copy.removeAt(0);
+
+            copy.sync();
+
+            expect(list.length).to.be.equal(copy.length);
+        });
+
+        it('should have all new items of copy', function(){
+            copy.add(new C.Bindable({
+                a: "a",
+                b: "b"
+            }));
+
+            copy.sync();
+
+            expect(list.length).to.be.equal(copy.length);
+            expect(list.at(list.length-1)).to.be.equal(copy.at(list.length-1));
+        });
+
+        it('should not replace modified items', function() {
+            copy.at(0).set({firstName: 'Peter', lastName: 'Pan'});
+
+            copy.sync();
+
+            expect(list.at(0)).not.to.be.equal(copy.at(0));
+            expect(list.at(0).$.firstName).to.be.equal(copy.at(0).$.firstName);
+            expect(list.at(0).$.lastName).to.be.equal(copy.at(0).$.lastName);
         });
     });
 
