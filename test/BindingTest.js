@@ -7,14 +7,7 @@ var C = {};
 
 describe('js.core.Binding', function () {
 
-    var target;
-    var model;
-    var PATH_RULE = "path";
-    var returnValue = "HALLO";
-    var parStr = "abc";
-    var parNum = 123;
-    var extendedModel;
-    var ExtendedClass;
+    var target, model, returnValue = "HALLO",parStr = "abc",parNum = 123,extendedModel,ExtendedClass;
 
     before(function (done) {
 
@@ -61,7 +54,7 @@ describe('js.core.Binding', function () {
 
         it('simple value set should set value on binded target', function () {
 
-            var b1 = new C.Binding({scope: model, path: C.Parser.parse('a', PATH_RULE), target: target, targetKey: "val"});
+            var b1 = new C.Binding({scope: model, path: 'a', target: target, targetKey: "val"});
             model.set("a", "A");
 
             expect(target.get('val')).to.be.equal('A');
@@ -69,7 +62,7 @@ describe('js.core.Binding', function () {
         });
 
         it('path binding a.b should return null if b is not set', function () {
-            var b1 = new C.Binding({scope: model, path: C.Parser.parse('a.b', PATH_RULE), target: target, targetKey: "val"});
+            var b1 = new C.Binding({scope: model, path: 'a.b', target: target, targetKey: "val"});
 
             model.set("a", "A");
             should.equal(target.get('val'), null);
@@ -90,7 +83,7 @@ describe('js.core.Binding', function () {
         });
 
         it('path binding a.b.c should return null if b or c is not set', function () {
-            var b1 = new C.Binding({scope: model, path: C.Parser.parse('a.b.c', PATH_RULE), target: target, targetKey: "val"});
+            var b1 = new C.Binding({scope: model, path: 'a.b.c', target: target, targetKey: "val"});
 
             model.set("a", "A");
             should.equal(target.get('val'), null);
@@ -112,7 +105,7 @@ describe('js.core.Binding', function () {
 
     describe('#two way binding', function () {
         it('should set value on scope', function () {
-            new C.Binding({scope: model, path: C.Parser.parse('a', PATH_RULE), target: target, targetKey: "val", twoWay: true});
+            new C.Binding({scope: model, path: 'a', target: target, targetKey: "val", twoWay: true});
 
             model.set("a", "A");
             model.get('a').should.equal("A");
@@ -122,7 +115,7 @@ describe('js.core.Binding', function () {
         });
 
         it('should set value if b in a.b is set', function () {
-            var binding = new C.Binding({scope: model, path: C.Parser.parse('a.b', PATH_RULE), target: target, targetKey: "val", twoWay: true});
+            var binding = new C.Binding({scope: model, path: 'a.b', target: target, targetKey: "val", twoWay: true});
 
             target.set({val: 'TargetValue'});
             should.equal(binding.getValue(), null);
@@ -139,12 +132,12 @@ describe('js.core.Binding', function () {
     describe('#function binding', function () {
 
         it('foo() should call fnc and set returned value to target', function () {
-            new C.Binding({scope: extendedModel, path: C.Parser.parse("foo()", PATH_RULE), target: target, targetKey: 'val'});
+            new C.Binding({scope: extendedModel, path: "foo()", target: target, targetKey: 'val'}).trigger();
             target.get('val').should.equal(returnValue);
         });
 
         it('a.foo() should be triggered if "a" is set and has fnc', function () {
-            new C.Binding({scope: model, path: C.Parser.parse('a.foo()', PATH_RULE), target: target, targetKey: 'val'});
+            new C.Binding({scope: model, path: 'a.foo()', target: target, targetKey: 'val'}).trigger();
             should.not.exist(target.get('val'));
 
             var m1 = new C.Bindable({b: "what"});
@@ -160,7 +153,7 @@ describe('js.core.Binding', function () {
         var fncBinding = "bar('" + parStr + "'," + parNum + ")";
 
         it(fncBinding + " should call bar with parameters and return true", function () {
-            new C.Binding({scope: extendedModel, path: C.Parser.parse(fncBinding, PATH_RULE), target: target, targetKey: 'val'});
+            new C.Binding({scope: extendedModel, path: fncBinding, target: target, targetKey: 'val'}).trigger();
             target.get('val').should.equal(true);
         });
 
@@ -170,7 +163,7 @@ describe('js.core.Binding', function () {
             var extendedTarget = new ExtendedClass();
             // extendedTarget.set('m1', new ExtendedClass({}));
             extendedModel.set('m1', extendedTarget);
-            new C.Binding({scope: extendedModel, path: C.Parser.parse(fncBinding2, PATH_RULE), target: extendedTarget, targetKey: 'val'});
+            new C.Binding({scope: extendedModel, path: fncBinding2, target: extendedTarget, targetKey: 'val'}).trigger();
             extendedTarget.get('val').should.equal(false);
 
             extendedTarget.set({'a': parStr, 'b': parNum});
