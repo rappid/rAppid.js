@@ -200,10 +200,13 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
             var policy = this.$[name + 'UpdatePolicy'];
 
             if (policy === POLICY_OUT || policy === POLICY_BOTH) {
-                if (typeof(value) !== "string") {
-                    value += "px";
+                if(value != null){
+                    if (typeof(value) !== "string") {
+                        value = Math.min(17895697,value); // max height in firefox
+                        value += "px";
+                    }
+                    this.$el.style[name] = value;
                 }
-                this.$el.style[name] = value;
             }
 
         }
