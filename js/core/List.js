@@ -1,5 +1,10 @@
 define(["js/core/Bindable", "underscore"], function (Bindable, _) {
-    return Bindable.inherit("js.core.List", {
+    var List = Bindable.inherit("js.core.List", {
+        /**
+         * List constructor
+         * @param [Object] items to add
+         * @param Object attributes to set
+         */
         ctor: function (items, attributes) {
             this.$items = [];
 
@@ -16,30 +21,52 @@ define(["js/core/Bindable", "underscore"], function (Bindable, _) {
             this.bind('remove', function () {
                 self.length = self.size();
             });
+            this.bind('reset', function(){
+                self.length = self.size();
+            });
 
             this.length = this.size();
         },
+        /**
+         *
+         * @return Boolean true if list has items
+         */
         hasItems: function () {
             return this.$items.length > 0;
         }.on("add", "remove"),
+        /**
+         * Pushes one item to the list
+         * @param item
+         */
         push: function (item) {
-            // TODO: add options
-            this.$items.push(item);
-            this.trigger('add', {item: item, index: this.$items.length - 1});
+            this.add(item);
         },
+        /**
+         * Removes last item  of the list
+         * @return {*}
+         */
         pop: function () {
-            // TODO: add options
             return this.removeAt(this.$items.length);
         },
+        /**
+         * Removes first item of list
+         * @return {*}
+         */
         shift: function () {
-            // TODO: add options
-            return this.removeAt(0);
+            return this.removeAt(0,{});
         },
+        /**
+         * Adds item to first position of list
+         * @param item
+         */
         unshift: function (item) {
-            // TODO: add options
-            this.$items.unshift(item);
-            this.trigger('add', {item: item, index: 0});
+            this.add(item,0);
         },
+        /**
+         * This method adds one ore items to the array.
+         * @param items
+         * @param options
+         */
         add: function (items, options) {
 
 
@@ -68,9 +95,20 @@ define(["js/core/Bindable", "underscore"], function (Bindable, _) {
                 }
             }
         },
+        /**
+         *
+         * @param e
+         * @param item
+         * @private
+         */
         _onItemChange: function (e, item) {
             this.trigger('change', {item: item, index: this.$items.indexOf(item)});
         },
+        /**
+         * Removes an Array or just one item from the list. Triggers remove events.
+         * @param Object | [Object] items
+         * @param options
+         */
         remove: function (items, options) {
 
             if (!_.isArray(items)) {
@@ -80,42 +118,102 @@ define(["js/core/Bindable", "underscore"], function (Bindable, _) {
                 this.removeAt(this.$items.indexOf(items[i]), options);
             }
         },
+        /**
+         * Removes one item a specific index and triggers remove event
+         * @param index
+         * @param options
+         * @return {*}
+         */
         removeAt: function (index, options) {
             options = options || {};
 
             if (index > -1 && index < this.$items.length) {
-                var items = this.$items.splice(index, 1);
+                var items = this.$items.splice(index, 1), item = items[0];
                 if (options.silent !== true) {
-                    this.trigger('remove', {item: items[0], index: index});
+                    this.trigger('remove', {item: item, index: index});
+                }
+                if (item instanceof Bindable) {
+                    item.unbind('change', this._onItemChange, this);
                 }
                 return items[0];
             }
             return null;
         },
+        /**
+         * Resets the list with the given items and triggers reset event
+         * @param items
+         */
         reset: function (items) {
             this.$items = items;
             this.trigger('reset', {items: items});
         },
+        /**
+         * Sorts the list by the given function and triggers sort event
+         * @param fnc
+         */
         sort: function (fnc) {
             this.trigger('sort', {items: this.$items.sort(fnc), sortFnc: fnc});
         },
+        /**
+         * Clears all items and triggers reset event
+         */
         clear: function () {
             this.reset([]);
         },
+        /**
+         * Returns the size of the list
+         */
         size: function () {
             return this.$items.length;
         }.on('add', 'remove'),
+        /**
+         * Returns item at a specific index
+         * @param index
+         * @return {*}
+         */
         at: function (index) {
             if (index < this.$items.length && index >= 0) {
                 return this.$items[index];
             }
             return null;
         },
+        /**
+         * Iterates over all items with given callback
+         * @param Function callback with signature function(item, index)
+         * @param Object The call scope of the callback
+         */
         each: function (fnc, scope) {
             scope = scope || this;
             for (var i = 0; i < this.$items.length; i++) {
                 fnc.call(scope, this.$items[i], i);
             }
+        },
+        /**
+         * Returns a fresh copy of the List
+         * @return List a fresh copy of the list
+         */
+        clone: function(){
+            var attributes = this._cloneAttribute(this.$);
+            var items = this._cloneAttribute(this.$items);
+            var ret = new List(items,attributes);
+            ret._$source = this;
+            return ret;
+        },
+        sync: function(){
+            if(this._$source){
+                var item, items = [];
+                for(var i = 0; i < this.$items.length; i++){
+                    item = this.$items[i];
+                    if(item instanceof Bindable && item.sync()){
+                        item = item._$source;
+                    }
+                    items.push(item);
+                }
+                this._$source.reset(items);
+            }
+            return this.callBase();
         }
-    })
+    });
+
+    return List;
 });

@@ -1,8 +1,8 @@
 define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding","underscore"],
+
+
     function (EventDispatcher, Parser, Binding, _) {
-
         // global invalidation timer
-
         var globalInvalidationQueue = (function() {
 
             var id,
@@ -30,7 +30,6 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding","underscor
                 }
             }
         })();
-
 
         var Bindable = EventDispatcher.inherit("js.core.Bindable",
             {
@@ -79,7 +78,80 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding","underscor
                  */
                 defaults: {
                 },
+                /**
+                 * Writes attributes back to the source
+                 */
+                sync: function(){
+                    if(this._$source) {
+                        var val, attributes = {}, unsetAttributes = {};
+                        for (var key in this.$) {
+                            if (this.$.hasOwnProperty(key)) {
+                                val = this.$[key];
+                                if(val instanceof Bindable && val.sync()){
+                                    attributes[key] = val._$source;
+                                }else{
+                                    attributes[key] = val;
+                                }
+                            }
+                        }
+                        // remove all attributes, which are not in clone
+                        for (var sourceKey in this._$source.$){
+                            if(this._$source.$.hasOwnProperty(sourceKey)){
+                                if(!attributes.hasOwnProperty(sourceKey)){
+                                    unsetAttributes[sourceKey] = "";
+                                }
+                            }
+                        }
+                        this._$source.set(unsetAttributes,{unset:true});
+                        this._$source.set(attributes);
+                        return true;
+                    }else{
+                        return false;
+                    }
 
+                },
+                /***
+                 * This method returns a copy of the Object
+                 * @return js.core.Bindable a fresh copy of the Bindable
+                 */
+                clone: function () {
+                    var ret = {};
+                    for (var key in this.$) {
+                        if (this.$.hasOwnProperty(key)) {
+                            ret[key] = this._cloneAttribute(this.$[key], key);
+                        }
+                    }
+                    var b = new Bindable(ret);
+                    b._$source = this;
+                    return b;
+                },
+                /**
+                 * Returns a copy of the attribute. This method is a hook for further cloning options
+                 * @param attribute
+                 * @param key
+                 * @private
+                 */
+                _cloneAttribute: function(attribute, key){
+                    if(attribute instanceof Bindable){
+                        return attribute.clone();
+                    }else if(_.isArray(attribute)){
+                        var retArray = [];
+                        for(var i = 0; i < attribute.length; i++){
+                            retArray.push(this._cloneAttribute(attribute[i]));
+                        }
+                        return retArray;
+                    } else if(_.isObject(attribute)){
+                        var retObject = {};
+                        for (var attrKey in attribute){
+                            if(attribute.hasOwnProperty(attrKey)){
+                                retObject[attrKey] = this._cloneAttribute(attribute[attrKey], attrKey);
+                            }
+                        }
+                        return retObject;
+                    } else{
+                        return attribute;
+                    }
+                },
                 /***
                  *
                  * @return {Object} returns the default attributes and includes the defaults from base classes
@@ -125,17 +197,6 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding","underscor
                     }
 
                     if (_.isString(key)) {
-                        // check for path
-                        var path = key.split(".");
-                        if (path.length > 1) {
-                            var scope = this.get(path.shift());
-                            if (scope && scope.set) {
-                                scope.set(path.join("."), value, options);
-                                return this;
-                            }
-
-                        }
-
                         attributes[key] = value;
                     } else {
                         options = value;
@@ -200,9 +261,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding","underscor
                         }
 
                         if (changedAttributesCount) {
-
                             this._commitChangedAttributes(changedAttributes);
-
                             if (options.silent === false) {
                                 for (key in changedAttributes) {
                                     if (changedAttributes.hasOwnProperty(key)) {
@@ -221,9 +280,8 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding","underscor
                 setLater: function(key, value) {
 
                     if (_.isString(key)) {
-                        key = {
-                            key: value
-                        }
+                        key = {};
+                        key[key] = value;
                     }
 
                     _.extend(this.$invalidatedProperties, key);
