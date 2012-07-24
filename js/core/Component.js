@@ -531,7 +531,7 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                 var el, children = [];
                 for (var i = 0; i < this.$elements.length; i++) {
                     el = this.$elements[i];
-                    if (el instanceof require("js/core/DomElement")) {
+                    if (el instanceof require("js/core/DomElement") || el instanceof TextElement) {
                         children.push(el);
                     }
                 }
