@@ -1,0 +1,71 @@
+<div xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="js.ui" xmlns:js="js.core"
+     componentClass="control-group" tagName="div">
+    <js:Imports>
+        js.html.Input;
+        js.html.Select;
+        js.html.TextArea;
+    </js:Imports>
+    <js:Script type="text/javascript">
+        <![CDATA[
+        (function (Input, Select, TextArea) {
+
+            var fieldId = 0;
+
+            return {
+
+                defaults: {
+                    label: ""
+                },
+
+                ctor: function () {
+                    this.callBase();
+
+                    if (!this.$.id) {
+                        this.set('id', 'field_' + (++fieldId));
+                    }
+                },
+
+                $defaultContentName: "controls",
+
+                _renderContentChildren: function () {
+                    this.callBase();
+
+                    // find first Input, Select or TextArea and set id if null
+                    var children = this.getPlaceHolder('controls').$.content.getChildren();
+                    var firstChild;
+
+                    for (var j = 0; j < children.length; j++) {
+                        firstChild = this.getFirstChild(children[j]);
+                        if (firstChild) {
+                            if (!firstChild.$.id) {
+                                firstChild.set('id', 'field_' + fieldId)
+                            }
+                            return;
+                        }
+                    }
+
+                },
+
+                getFirstChild: function (child) {
+                    if (child instanceof Input || child instanceof Select || child instanceof TextArea) {
+                        return child;
+                    }
+
+                    console.log(child);
+
+                    if (child && child.$children) {
+                        for (var i = 0; i < child.$children.length; i++) {
+                            var c = this.getFirstChild(child.$children[i]);
+                            if (c) {
+                                return c;
+                            }
+                        }
+                    }
+                }
+            }
+        })
+        ]]>
+    </js:Script>
+    <label class="control-label" for="{id}">{label}</label>
+    <ui:ContentPlaceHolder class="controls" name="controls" tagName="div" />
+</div>

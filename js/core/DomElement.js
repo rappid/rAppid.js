@@ -572,7 +572,7 @@ define(["require", "js/core/EventDispatcher","js/core/Component", "js/core/Conte
         var DomElement = Component.inherit("js.html.DomElement",
             _.extend(DomElementFunctions, DomManipulationFunctions));
 
-        DomElement.Event = EventDispatcher.Event.inherit({
+        DomElement.Event = EventDispatcher.Event.inherit('js.core.DomElement.Event', {
             ctor: function (domEvent) {
                 this.domEvent = domEvent;
                 this.callBase(domEvent);
