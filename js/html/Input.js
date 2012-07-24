@@ -1,10 +1,23 @@
 define(["js/html/HtmlElement"], function (HtmlElement) {
+        var radioElementCache = {};
+
         return HtmlElement.inherit("js.html.Input", {
             $classAttributes: ['updateOnEvent','checked'],
             defaults: {
                 type: 'text',
                 checked: false,
                 updateOnEvent: 'keyup'
+            },
+            _commitChangedAttributes: function(attributes){
+                if(this.$.type === 'radio'){
+                    if(attributes.name){
+                        radioElementCache[attributes.name + this.$cid] = this;
+                    }
+                    if(this.$previousAttributes.name){
+                        delete radioElementCache[this.$previousAttributes.name + this.$cid];
+                    }
+                }
+                this.callBase();
             },
             _renderValue: function (value) {
                 if(value !== this.$el.value){
@@ -24,6 +37,16 @@ define(["js/html/HtmlElement"], function (HtmlElement) {
                 } else if (this.$.type === "checkbox" || this.$.type === "radio") {
                     this.bindDomEvent('click', function (e) {
                         self.set('checked', self.$el.checked);
+                        if(self.$.type === "radio"){
+                            for(var id in radioElementCache){
+                                if(radioElementCache.hasOwnProperty(id)){
+                                    if(radioElementCache[id] !== self){
+                                        radioElementCache[id].set('checked', false);
+                                    }
+                                }
+                            }
+                        }
+
                     });
                 } else if(this.$.type == "number" ){
                     this.bindDomEvent('change', function (e) {
