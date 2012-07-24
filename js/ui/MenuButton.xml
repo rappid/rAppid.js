@@ -16,6 +16,7 @@
                     'menuClassName': "dropdown-menu",
                     'menuVisible': false
                 },
+                $defaultContentName: 'menu',
                 $instances: [],
 
                 addChild: function (child) {
@@ -90,7 +91,7 @@
     <js:Template name="layout">
         <ui:Button class="dropdown-toggle">
             <js:Template name="layout">
-                <ui:PlaceHolder name="icon"/><span>{label}</span>
+                <ui:PlaceHolder name="icon"/><span>{label} </span>
                 <span class="caret"/>
             </js:Template>
         </ui:Button>
