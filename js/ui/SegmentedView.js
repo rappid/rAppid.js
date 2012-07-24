@@ -24,15 +24,15 @@ define(
             },
             _renderVisibleView: function (child, oldView) {
                 if (oldView) {
-                    oldView.set({visible: false});
+                    oldView.set({hidden: true});
                 }
 
                 if (child) {
                     if (!child.isRendered()) {
-                        child.set({visible: false});
+                        child.set({hidden: true});
                         this._renderChild(child);
                     }
-                    child.set({visible: true});
+                    child.set({hidden: false});
                 }
 
             },
@@ -40,7 +40,7 @@ define(
                 if (index > -1 && index < this.$children.length) {
                     this.set({visibleView: this.$children[index]});
                 } else if (this.$.visibleView) {
-                    this.$.visibleView.set({visible: false});
+                    this.$.visibleView.set({hidden: true});
                 }
             }
 
