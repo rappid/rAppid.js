@@ -29,7 +29,7 @@ define(
 
                 if (child) {
                     if (!child.isRendered()) {
-                        child.set({hidden: true});
+                        child.set({visible: true});
                         this._renderChild(child);
                     }
                     child.set({visible: false});
