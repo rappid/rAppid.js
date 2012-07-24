@@ -90,10 +90,10 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
         _renderWidthUpdatePolicy: function (policy) {
             bindSizePolicy(this, policy, "width");
         },
-        _renderHidden: function (hidden) {
-            if (hidden === false) {
+        _renderVisible: function (visible) {
+            if (visible === true) {
                 this.removeClass('hide');
-            } else if (hidden === true) {
+            } else if (visible === false) {
                 this.addClass('hide');
             }
         },
