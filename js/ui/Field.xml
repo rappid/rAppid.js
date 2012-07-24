@@ -7,11 +7,16 @@
     </js:Imports>
     <js:Script type="text/javascript">
         <![CDATA[
-        (function (Input, Select, Textarea) {
+        (function (Input, Select, TextArea) {
 
             var fieldId = 0;
 
             return {
+
+                defaults: {
+                    label: ""
+                },
+
                 ctor: function () {
                     this.callBase();
 
@@ -20,10 +25,12 @@
                     }
                 },
 
+                $defaultContentName: "controls",
+
                 _renderContentChildren: function () {
                     this.callBase();
 
-                    // find first Input, Select or Textarea and set id if null
+                    // find first Input, Select or TextArea and set id if null
                     var children = this.getPlaceHolder('controls').$.content.getChildren();
                     var firstChild;
 
@@ -40,7 +47,7 @@
                 },
 
                 getFirstChild: function (child) {
-                    if (child instanceof Input || child instanceof Select || child instanceof Textarea) {
+                    if (child instanceof Input || child instanceof Select || child instanceof TextArea) {
                         return child;
                     }
 
