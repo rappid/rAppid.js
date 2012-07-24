@@ -181,6 +181,14 @@ define(["js/core/Bindable", "underscore", "js/core/BindingCreator"], function (B
                     }
                 }
                 return textContent;
+            },
+            /**
+             * Binding helper to negate a Boolean value
+             * @param value
+             * @return {Boolean}
+             */
+            not: function(value){
+                return !value;
             }
         });
 
