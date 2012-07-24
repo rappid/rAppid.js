@@ -12,6 +12,8 @@ define(
                 'itemKey', 'indexKey'
             ],
 
+            $defaultTemplateName: 'item',
+
             hasItems: function () {
                 if (this.$.items) {
                     return this.$.items.length;
