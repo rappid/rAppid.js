@@ -3,7 +3,6 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
     function (require, Element, TextElement, Bindable, EventDispatcher, _) {
 
         var Component = Element.inherit("js.core.Component",
-
             {
                 /***
                  * What up??
@@ -47,6 +46,14 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
 
                     this.callBase();
                 },
+
+                /**
+                 * if set all children from the descriptor will be placed into a
+                 * js.core.Content block with the name of $defaultContentName
+                 */
+                $defaultContentName: null,
+
+                $defaultTemplateName: null,
 
                 /**
                  * @name Component#ontest
@@ -209,7 +216,8 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                  *  Initializes all internal and external descriptors
                  */
                 _initializeDescriptors: function () {
-                    var children = [];
+                    var children = [],
+                        i, child;
 
                     var desc;
                     for (var d = 0; d < this.$internalDescriptors.length; d++) {
@@ -217,7 +225,40 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                         children = children.concat(this._getChildrenFromDescriptor(desc, this));
                     }
 
-                    children = children.concat(this._getChildrenFromDescriptor(this.$descriptor));
+                    var externalDescriptorChildren = this._getChildrenFromDescriptor(this.$descriptor);
+
+
+                    if (this.$defaultContentName) {
+                        // check if content block is already defined
+                        var contentBlock;
+
+                        for (i = 0; i < externalDescriptorChildren.length; i++) {
+                            child = externalDescriptorChildren[i];
+
+                            if (child instanceof Content && child.$.ref === this.$defaultContentName) {
+                                // content block already defined
+                                contentBlock = child;
+                                break;
+                            }
+                        }
+
+                        if (!contentBlock) {
+                            // create a content block and move all children in a js.core.Content Block
+                            contentBlock = this.createComponent(Content, {
+                                ref: this.$defaultContentName
+                            });
+
+                            // add all children to content block
+                            for (i = 0; i < externalDescriptorChildren.length; i++) {
+                                contentBlock.addChild(externalDescriptorChildren[i]);
+                            }
+
+                            externalDescriptorChildren = [contentBlock];
+                        }
+
+                    }
+
+                    children = children.concat(externalDescriptorChildren);
 
                     var extraChildren = this.createChildren();
                     if (extraChildren) {
@@ -437,6 +478,19 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
         });
 
         Component.Configuration = Component.inherit("js.core.Configuration", {
+        });
+
+        var Content = Component.Content = Component.inherit("js.core.Content", {
+            getChildren: function () {
+                var el, children = [];
+                for (var i = 0; i < this.$elements.length; i++) {
+                    el = this.$elements[i];
+                    if (el instanceof require("js/core/DomElement")) {
+                        children.push(el);
+                    }
+                }
+                return children;
+            }
         });
 
         return Component;
