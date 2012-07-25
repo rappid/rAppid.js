@@ -375,16 +375,16 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                  * Initialize all Binding and Event attributes
                  */
                 _initializeBindings: function () {
-                    var attributes = this.$;
+                    var attributes = this.$, changedAttributes = {};
                     var value;
                     // Resolve bindings and events
                     for (var key in attributes) {
                         if (attributes.hasOwnProperty(key)) {
                             value = attributes[key];
-                            attributes[key] = this.$bindingCreator.evaluate(value, this, key);
+                            changedAttributes[key] = this.$bindingCreator.evaluate(value, this, key);
                         }
                     }
-                    this.set(attributes);
+                    this.set(changedAttributes);
 
                     for (var c = 0; c < this.$elements.length; c++) {
                         this.$elements[c]._initializeBindings();
