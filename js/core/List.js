@@ -1,4 +1,6 @@
 define(["js/core/Bindable", "underscore"], function (Bindable, _) {
+
+
     var List = Bindable.inherit("js.core.List", {
         /**
          * List constructor
@@ -15,15 +17,14 @@ define(["js/core/Bindable", "underscore"], function (Bindable, _) {
             }
 
             var self = this;
-            this.bind('add', function () {
+
+            function updateLength(){
                 self.length = self.size();
-            });
-            this.bind('remove', function () {
-                self.length = self.size();
-            });
-            this.bind('reset', function(){
-                self.length = self.size();
-            });
+            }
+
+            this.bind('add', updateLength);
+            this.bind('remove', updateLength);
+            this.bind('reset', updateLength);
 
             this.length = this.size();
         },
