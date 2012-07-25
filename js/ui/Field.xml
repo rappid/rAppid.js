@@ -14,14 +14,16 @@
             return {
 
                 defaults: {
-                    label: ""
+                    label: "",
+                    inputId: null
                 },
+                $classAttributes: ['inputId'],
 
                 ctor: function () {
                     this.callBase();
 
-                    if (!this.$.id) {
-                        this.set('id', 'field_' + (++fieldId));
+                    if (!this.$.inputId) {
+                        this.set('inputId', 'field_' + (++fieldId));
                     }
                 },
 
@@ -38,7 +40,7 @@
                         firstChild = this.getFirstChild(children[j]);
                         if (firstChild) {
                             if (!firstChild.$.id) {
-                                firstChild.set('id', 'field_' + fieldId)
+                                firstChild.set('id', this.$.inputId)
                             }
                             return;
                         }
@@ -66,6 +68,6 @@
         })
         ]]>
     </js:Script>
-    <label class="control-label" for="{id}">{label}</label>
+    <label class="control-label" for="{inputId}">{label}</label>
     <ui:ContentPlaceHolder class="controls" name="controls" tagName="div" />
 </div>
