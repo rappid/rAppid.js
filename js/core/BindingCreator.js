@@ -98,36 +98,68 @@ define(['js/core/EventDispatcher','js/lib/parser','js/core/Binding', 'underscore
 
         },
 
-        evaluate: function (text, scope, attrKey) {
+        /***
+         *
+         * @param text
+         * @param scope
+         * @param attrKey
+         * @param [bindingDefinitions]
+         * @return {*}
+         */
+        evaluate: function (text, scope, attrKey, bindingDefinitions) {
             if (!_.isString(text)) {
                 return text;
             }
-            var bindingDefs = Parser.parse(text, "text"), binding, bindings = [];
-            for (var i = 0; i < bindingDefs.length; i++) {
-                var bindingDef = bindingDefs[i];
+
+            bindingDefinitions = bindingDefinitions || this.parse(text);
+
+            var binding,
+                bindings = [];
+
+            for (var i = 0; i < bindingDefinitions.length; i++) {
+                var bindingDef = bindingDefinitions[i];
                 if (bindingDef.length) {
-                    bindingDefs[i] = bindingDef;
+                    bindingDefinitions[i] = bindingDef;
                 } else {
-                    binding = this.create(bindingDef, scope, attrKey, bindingDefs);
+                    binding = this.create(bindingDef, scope, attrKey, bindingDefinitions);
                     if (binding instanceof Binding) {
                         bindings.push(binding);
                     }
-                    bindingDefs[i] = binding;
+                    bindingDefinitions[i] = binding;
                 }
 
             }
 
             if (bindings.length > 0) {
                 return bindings[0].getContextValue();
-            } else if (bindingDefs.length > 0) {
-                if (bindingDefs.length === 1) {
-                    return bindingDefs[0];
+            } else if (bindingDefinitions.length > 0) {
+                if (bindingDefinitions.length === 1) {
+                    return bindingDefinitions[0];
                 }
-                return Binding.contextToString(bindingDefs);
+                return Binding.contextToString(bindingDefinitions);
             } else {
                 return text;
             }
 
+        },
+
+        parse: function(text) {
+            if (_.isString(text)) {
+                return Parser.parse(text, "text");
+            }
+        },
+
+        containsBindingDefinition: function(bindingDefinitions) {
+
+            if (bindingDefinitions) {
+                for (var i = 0; i < bindingDefinitions.length; i++) {
+                    if (bindingDefinitions[i] instanceof Object) {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
         }
     });
 

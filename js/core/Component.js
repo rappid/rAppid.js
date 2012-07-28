@@ -375,15 +375,55 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                  * Initialize all Binding and Event attributes
                  */
                 _initializeBindings: function () {
-                    var attributes = this.$, changedAttributes = {};
-                    var value;
-                    // Resolve bindings and events
-                    for (var key in attributes) {
-                        if (attributes.hasOwnProperty(key)) {
-                            value = attributes[key];
-                            changedAttributes[key] = this.$bindingCreator.evaluate(value, this, key);
+                    var $ = this.$,
+                        bindingCreator = this.$bindingCreator,
+                        changedAttributes = {},
+                        bindingAttributes = {},
+                        bindingDefinitions,
+                        bindingAttribute,
+                        value,
+                        key;
+
+                    // we need to find out all attributes which contains binding definitions and set
+                    // the corresponding $[key] to null -> than evaluate the bindings
+                    // this is because some function bindings belong on other binding values which are
+                    // at the time of evaluation maybe unresolved and for example {foo.bar} instead of a value
+
+
+                    for (key in $) {
+                        if ($.hasOwnProperty(key)) {
+                            value = $[key];
+                            bindingDefinitions = bindingCreator.parse(value);
+
+                            if (bindingCreator.containsBindingDefinition(bindingDefinitions)) {
+                                // we found an attribute containing a binding definition
+                                bindingAttributes[key] = {
+                                    bindingDefinitions: bindingDefinitions,
+                                    value: value
+                                };
+
+                                $[key] = null;
+                            }
                         }
                     }
+
+                    // Resolve bindings and events
+                    for (key in $) {
+                        if ($.hasOwnProperty(key)) {
+                            bindingAttribute = bindingAttributes[key];
+
+                            if (bindingAttribute) {
+                                value = bindingAttribute.value;
+                                bindingDefinitions = bindingAttribute.bindingDefinitions
+                            } else {
+                                value = $[key];
+                                bindingDefinitions = null;
+                            }
+
+                            changedAttributes[key] = bindingCreator.evaluate(value, this, key, bindingDefinitions);
+                        }
+                    }
+
                     this.set(changedAttributes);
 
                     for (var c = 0; c < this.$elements.length; c++) {
