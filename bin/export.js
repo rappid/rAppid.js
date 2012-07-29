@@ -4,6 +4,8 @@ var fs = require("fs"),
     jsdom = require('jsdom').jsdom,
     flow = require('flow.js').flow;
 
+    fs.existsSync || (fs.existsSync = path.existsSync);
+
 var cleanPath = function(dirPath){
     return path.resolve(dirPath.replace(/^~\//, process.env.HOME + '/'));
 };

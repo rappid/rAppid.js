@@ -11,6 +11,8 @@ var fs = require("fs"),
     rl = require("readline"),
     install = require(path.join(__dirname, "install.js"));
 
+    fs.existsSync || (fs.existsSync = path.existsSync);
+
 var Helper = {
     template:function (source, destination, options) {
         var data = fs.readFileSync(source, "utf8");

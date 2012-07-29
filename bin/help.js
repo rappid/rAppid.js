@@ -1,4 +1,7 @@
-var path = require('path');
+var path = require('path'),
+    fs = require('fs');
+
+    fs.existsSync || (fs.existsSync = path.existsSync);
 
 var help = function(args, callback) {
     if (args.length >= 1) {

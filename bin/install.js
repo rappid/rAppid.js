@@ -6,13 +6,14 @@ install.usage = "rappidjs install <pkg>"
     + "\nrappidjs install <pkg> <version> <dir>"
     + "\nInstalls rAppidjs dependencies from ./package.json.";
 
-var sys = require('util')
-var child_process = require('child_process');
-var fs = require("fs"),
+var sys = require('util'),
+    child_process = require('child_process'),
+    fs = require("fs"),
     path = require("path"),
     flow = require("flow.js").flow,
     child;
 
+    fs.existsSync || (fs.existsSync = path.existsSync);
 
 var dir;
 

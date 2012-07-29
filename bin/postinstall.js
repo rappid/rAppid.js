@@ -2,6 +2,8 @@ var fs = require("fs"),
     path = require("path"),
     child;
 
+fs.existsSync || (fs.existsSync = path.existsSync);
+
 var postinstall = function (args, callback) {
 
     var rappidDir = path.join(__dirname, "..");
