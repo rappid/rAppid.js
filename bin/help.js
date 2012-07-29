@@ -4,7 +4,7 @@ var help = function(args, callback) {
     if (args.length >= 1) {
         var cmd = args[0],
             cmdPath = path.join(__dirname, cmd + ".js");
-        if (path.existsSync(cmdPath)) {
+        if (fs.existsSync(cmdPath)) {
             console.log(require(cmdPath).usage);
         } else {
             callback("Command '" + cmd + "' not found.");
