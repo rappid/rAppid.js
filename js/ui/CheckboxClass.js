@@ -1,6 +1,6 @@
-define(['js/ui/View'], function (View, DataGridColumn, List, _) {
+define(['js/ui/View'], function (View) {
 
-    return View.inherit('js.ui.DataGridClass', {
+    return View.inherit('js.ui.CheckboxClass', {
         defaults: {
             componentClass: 'checkbox',
             selected: false,
