@@ -1,56 +1,57 @@
 {
-    "name": "rAppid.js",
-    "preferGlobal": "false",
-    "version": "0.3.1",
-    "author": "rAppid <support@rappidjs.com> (http://rappidjs.com)",
-    "contributors": [
-        "Tony Findeisen <tony@rappidjs.com>",
-        "Marcus Krejpowicz <marcus@rappidjs.com>"
-    ],
-    "description": "rAppid.js is a declarative JavaScript web application for rapid web application development. It uses XML to define the structure of applications, modules, components and views and JavaScript for the business logic of the application. The XML (xaml) gets translated to javascript components during runtime which will render itself as HTML5 DOM elements. This enables a rapid development of applications.",
-    "scripts": {
-        "test": "mocha -R spec",
-        "postinstall" : "node bin/rappidjs postinstall"
-    },
-    "bin": {
-        "rappidjs": "./bin/rappidjs"
-    },
-    "lib": "js",
-    "main": "index.js",
-    "repository": {
-        "type": "git",
-        "url": "git://github.com/it-ony/rAppid.js.git"
-    },
-    "keywords": [
-        "rAppid",
-        "MVC",
-        "framework",
-        "application",
-        "web",
-        "xaml"
-    ],
-    "dependencies": {
-        "underscore": ">=1.3.1",
-        "requirejs": ">=2.0.2",
-        "flow.js": ">=0.2.2",
-        "inherit.js": ">=0.1.5",
-        "ejs": "latest",
-        "optimist": ">=0.3.4"
-    },
-    "optionalDependencies": {
-        "esprima": "latest"
-    },
-    "devDependencies": {
-        "chai": "*",
-        "mocha": "*" ,
-        "pegjs": "*"
-    },
-    "license": "MIT",
-    "engine": {
-        "node": ">=0.4"
-    },
-    "engines": {
-        "node": "*"
-    },
-    "homepage": "http://rappidjs.com"
+  "name": "rAppid.js",
+  "preferGlobal": "false",
+  "version": "0.3.2",
+  "author": "rAppid <support@rappidjs.com> (http://rappidjs.com)",
+  "contributors": [
+    "Tony Findeisen <tony@rappidjs.com>",
+    "Marcus Krejpowicz <marcus@rappidjs.com>"
+  ],
+  "description": "rAppid.js is a declarative JavaScript web application for rapid web application development. It uses XML to define the structure of applications, modules, components and views and JavaScript for the business logic of the application. The XML (xaml) gets translated to javascript components during runtime which will render itself as HTML5 DOM elements. This enables a rapid development of applications.",
+  "scripts": {
+    "test": "mocha -R spec",
+    "postinstall": "node bin/rappidjs postinstall"
+  },
+  "bin": {
+    "rappidjs": "./bin/rappidjs"
+  },
+  "lib": "js",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/it-ony/rAppid.js.git"
+  },
+  "keywords": [
+    "rAppid",
+    "MVC",
+    "framework",
+    "application",
+    "web",
+    "xaml"
+  ],
+  "dependencies": {
+    "underscore": ">=1.3.1",
+    "requirejs": ">=2.0.2",
+    "flow.js": ">=0.2.2",
+    "inherit.js": ">=0.1.5",
+    "ejs": "latest",
+    "optimist": ">=0.3.4",
+    "esprima": "latest"
+  },
+  "optionalDependencies": {
+    "esprima": "latest"
+  },
+  "devDependencies": {
+    "chai": "*",
+    "mocha": "*",
+    "pegjs": "*"
+  },
+  "license": "MIT",
+  "engine": {
+    "node": ">=0.4"
+  },
+  "engines": {
+    "node": "*"
+  },
+  "homepage": "http://rappidjs.com"
 }
