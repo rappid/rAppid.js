@@ -196,7 +196,7 @@
                 if (err) {
                     callback(err);
                 } else {
-                    applicationContext.createApplicationInstance(document, function (err, stage, application) {
+                    applicationContext.createApplicationInstance(window, function (err, stage, application) {
                         if (err) {
                             callback(err);
                         } else {
@@ -357,9 +357,19 @@
         this.$config = config;
     };
 
-    ApplicationContext.prototype.createApplicationInstance = function (document, callback) {
+    ApplicationContext.prototype.createApplicationInstance = function (window, callback) {
+
+        var document;
+
         // create instance
         var applicationFactory = this.$applicationFactory;
+
+        if (window.document) {
+            document = window.document;
+        } else {
+            document = window;
+            window = null;
+        }
 
         // TODO: add node support for window
         var stage = new Stage(this.$requirejsContext, this, document, window);
