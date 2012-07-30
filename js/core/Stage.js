@@ -11,12 +11,13 @@ define(["js/html/HtmlElement", "js/core/UIComponent", "js/core/Bus", "js/core/Wi
             'class': 'stage'
         },
 
-        ctor: function(requireJsContext, applicationContext, document){
+        ctor: function(requireJsContext, applicationContext, document, window){
 
             this.$requirejsContext = requireJsContext;
             this.$applicationContext = applicationContext;
             this.$applicationFactory = null;
             this.$document = document;
+            this.$window = window;
             this.$bus = new Bus();
 
             this.$containers = {};
@@ -37,6 +38,7 @@ define(["js/html/HtmlElement", "js/core/UIComponent", "js/core/Bus", "js/core/Wi
             var dom = this.callBase(null);
             if (target) {
                 target.appendChild(dom);
+                this.trigger('add:dom', target);
             }
             return dom;
         },

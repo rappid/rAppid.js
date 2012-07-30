@@ -6,6 +6,8 @@ var path = require('path'),
     removeXMLSuffix = /^(.*).xml$/,
     backslashes = /\\/g;
 
+    fs.existsSync || (fs.existsSync = path.existsSync);
+
 var config = function(args, callback) {
 
     if (args.length  <= 1) {
@@ -19,7 +21,7 @@ var config = function(args, callback) {
         } else {
             var config = {};
 
-            if (path.existsSync(configFile)) {
+            if (fs.existsSync(configFile)) {
                 config = JSON.parse(fs.readFileSync(configFile));
             }
 

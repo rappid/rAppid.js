@@ -2,12 +2,7 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
 
     function (require, Element, TextElement, Bindable, EventDispatcher, _) {
 
-        var Template,
-            Configuration;
-
-
         var Component = Element.inherit("js.core.Component",
-
             {
                 /***
                  * What up??
@@ -20,21 +15,6 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                  * @constructs
                  */
                 ctor: function (attributes, descriptor, stage, parentScope, rootScope) {
-                    if (_.isUndefined(Template)) {
-                        try {
-                            Template = require('js/core/Template');
-                        } catch(e) {
-                            Template = null;
-                        }
-                    }
-
-                    if (_.isUndefined(Configuration)) {
-                        try {
-                            Configuration = require('js/conf/Configuration');
-                        } catch(e) {
-                            Configuration = null;
-                        }
-                    }
                     this.$eventDefinitions = [];
                     this.$internalDescriptors = [];
                     this.$xamlDefaults = {};
@@ -68,6 +48,14 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                 },
 
                 /**
+                 * if set all children from the descriptor will be placed into a
+                 * js.core.Content block with the name of $defaultContentName
+                 */
+                $defaultContentName: null,
+
+                $defaultTemplateName: null,
+
+                /**
                  * @name Component#ontest
                  * @event
                  * @param {Event} e Custom Event
@@ -92,7 +80,7 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                     this._bindBus();
                 },
 
-                _bindBus: function() {
+                _bindBus: function () {
                     for (var f in this) {
                         var fn = this[f];
                         if (fn instanceof Function && fn._busEvents) {
@@ -131,7 +119,7 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                  * adds a children
                  * @param {js.core.Element} child
                  */
-                addChild: function (child) {
+                addChild: function (child, options) {
                     if (!(child instanceof Element)) {
                         throw "only children of type js.core.Component can be added"
                     }
@@ -151,9 +139,9 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                     this.$elements.push(child);
 
                     // handle special elements
-                    if (Template && child instanceof Template) {
+                    if (child instanceof Component.Template) {
                         this._addTemplate(child);
-                    } else if (Configuration && child instanceof Configuration) {
+                    } else if (child instanceof Component.Configuration) {
                         this._addConfiguration(child);
                     }
                 },
@@ -228,7 +216,12 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                  *  Initializes all internal and external descriptors
                  */
                 _initializeDescriptors: function () {
-                    var children = [];
+                    var children = [],
+                        i, child;
+
+                    if (this.$defaultContentName && this.$defaultTemplateName) {
+                        throw "both $defaultContentName and $defaultTemplateName are defined";
+                    }
 
                     var desc;
                     for (var d = 0; d < this.$internalDescriptors.length; d++) {
@@ -236,7 +229,70 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                         children = children.concat(this._getChildrenFromDescriptor(desc, this));
                     }
 
-                    children = children.concat(this._getChildrenFromDescriptor(this.$descriptor));
+                    var externalDescriptorChildren;
+
+                    if (this.$defaultTemplateName) {
+                        var templateBlock;
+
+                        // go through all children from the external descriptor
+                        // and check if a template block with the name $defaultTemplateName
+
+                        for (i = 0; i < this.$descriptor.childNodes.length; i++) {
+                            var node = this.$descriptor.childNodes[i];
+
+                            if (node.nodeType === 1 &&
+                                node.getAttribute("name") === this.$defaultTemplateName &&
+                                this.$stage.$applicationContext.getFqClassName(node.namespaceURI, this._localNameFromDomNode(node), true) === "js/core/Template") {
+
+                                templateBlock = node;
+                                break;
+                            }
+                        }
+
+                        if (!templateBlock) {
+                            templateBlock = this.createComponent(Template, {
+                                name: this.$defaultTemplateName
+                            }, this.$descriptor);
+
+                            externalDescriptorChildren = [templateBlock];
+                        }
+
+                    }
+
+                    externalDescriptorChildren = externalDescriptorChildren || this._getChildrenFromDescriptor(this.$descriptor);
+
+
+                    if (this.$defaultContentName) {
+                        // check if content block is already defined
+                        var contentBlock;
+
+                        for (i = 0; i < externalDescriptorChildren.length; i++) {
+                            child = externalDescriptorChildren[i];
+
+                            if (child instanceof Content && child.$.ref === this.$defaultContentName) {
+                                // content block already defined
+                                contentBlock = child;
+                                break;
+                            }
+                        }
+
+                        if (!contentBlock) {
+                            // create a content block and move all children in a js.core.Content Block
+                            contentBlock = this.createComponent(Content, {
+                                ref: this.$defaultContentName
+                            });
+
+                            // add all children to content block
+                            for (i = 0; i < externalDescriptorChildren.length; i++) {
+                                contentBlock.addChild(externalDescriptorChildren[i]);
+                            }
+
+                            externalDescriptorChildren = [contentBlock];
+                        }
+
+                    }
+
+                    children = children.concat(externalDescriptorChildren);
 
                     var extraChildren = this.createChildren();
                     if (extraChildren) {
@@ -247,11 +303,11 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
 
                     this._childrenInitialized();
 
-                    this._initializeEventAttributes(this.$xamlDefaults, this);
-                    this._initializeEventAttributes(this.$xamlAttributes, this.$rootScope);
+                    this._initializeXamlEventAttributes(this.$xamlDefaults, this);
+                    this._initializeXamlEventAttributes(this.$xamlAttributes, this.$rootScope);
                 },
 
-                createChildren: function() {
+                createChildren: function () {
 
                 },
 
@@ -273,12 +329,14 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                         console.warn("Descriptor not defined or not correct");
                     }
                 },
-                /**
-                 * an array of attributes names, which will expect handler functions
-                 */
                 _isEventAttribute: function (attributeName) {
+                    return attributeName.indexOf("on:") == 0;
+                },
+                _isXamlEventAttribute: function(attributeName){
                     return attributeName.indexOf("on") == 0;
-                    // return this._eventAttributes.hasOwnProperty(attributeName);
+                },
+                _getEventName: function(eventDefinition){
+                    return eventDefinition.substr(3);
                 },
                 /**
                  * Returns true if event is defined in Component event list
@@ -296,25 +354,16 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                     // TODO: implement eventAttribites as hash
                     return this._eventAttributes[eventName];
                 },
-                _initializeEventAttributes: function (attributes, rootScope) {
-                    var event = '';
+                _initializeXamlEventAttributes: function (attributes, rootScope) {
+                    var event = '', callback;
                     for (var key in attributes) {
                         if (attributes.hasOwnProperty(key)) {
                             var value = attributes[key];
-
-                            if (this._isEventAttribute(key)) {
+                            if (this._isXamlEventAttribute(key)) {
                                 if (rootScope[value]) {
-
-                                    this.$eventDefinitions.push({
-                                        name: key,
-                                        scope: rootScope,
-                                        fncName: value
-                                    });
                                     event = key.substr(2);
-                                    if (this._isComponentEvent(event)) {
-                                        this.bind(event, rootScope[value], rootScope);
-                                    }
-
+                                    callback = rootScope[value];
+                                    this.bind("on:"+event, rootScope[value], rootScope);
                                 } else {
                                     throw "Couldn't find callback " + value + " for " + key + " event";
                                 }
@@ -326,17 +375,56 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                  * Initialize all Binding and Event attributes
                  */
                 _initializeBindings: function () {
-                    var attributes = this.$;
+                    var $ = this.$,
+                        bindingCreator = this.$bindingCreator,
+                        changedAttributes = {},
+                        bindingAttributes = {},
+                        bindingDefinitions,
+                        bindingAttribute,
+                        value,
+                        key;
 
-                    var value;
-                    // Resolve bindings and events
-                    for (var key in attributes) {
+                    // we need to find out all attributes which contains binding definitions and set
+                    // the corresponding $[key] to null -> than evaluate the bindings
+                    // this is because some function bindings belong on other binding values which are
+                    // at the time of evaluation maybe unresolved and for example {foo.bar} instead of a value
 
-                        if (attributes.hasOwnProperty(key)) {
-                            value = attributes[key];
-                            this.$[key] = this.$bindingCreator.evaluate(value, this, key);
+
+                    for (key in $) {
+                        if ($.hasOwnProperty(key)) {
+                            value = $[key];
+                            bindingDefinitions = bindingCreator.parse(value);
+
+                            if (bindingCreator.containsBindingDefinition(bindingDefinitions)) {
+                                // we found an attribute containing a binding definition
+                                bindingAttributes[key] = {
+                                    bindingDefinitions: bindingDefinitions,
+                                    value: value
+                                };
+
+                                $[key] = null;
+                            }
                         }
                     }
+
+                    // Resolve bindings and events
+                    for (key in $) {
+                        if ($.hasOwnProperty(key)) {
+                            bindingAttribute = bindingAttributes[key];
+
+                            if (bindingAttribute) {
+                                value = bindingAttribute.value;
+                                bindingDefinitions = bindingAttribute.bindingDefinitions
+                            } else {
+                                value = $[key];
+                                bindingDefinitions = null;
+                            }
+
+                            changedAttributes[key] = bindingCreator.evaluate(value, this, key, bindingDefinitions);
+                        }
+                    }
+
+                    this.set(changedAttributes);
 
                     for (var c = 0; c < this.$elements.length; c++) {
                         this.$elements[c]._initializeBindings();
@@ -376,12 +464,28 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                     return null;
                 },
 
-                createComponent: function(factory, attributes) {
+                /***
+                 *
+                 * @param {Function} factory
+                 * @param {Object} [attributes]
+                 * @param [descriptor=false]
+                 * @return {*}
+                 */
+                createComponent: function (factory, attributes, descriptor) {
+                    descriptor = descriptor || false;
                     attributes = attributes || [];
-                    return this.$stage.$applicationContext.createInstance(factory, [attributes, false, this.$stage, this, this.$rootScope]);
+
+                    return this.$stage.$applicationContext.createInstance(factory, [attributes, descriptor, this.$stage, this, this.$rootScope]);
                 },
 
-                _createTextElement: function(node, rootScope) {
+                createBinding: function (path, callback, callbackScope) {
+                    callbackScope = callbackScope || this;
+                    this.$bindingCreator.evaluate(path, this, function () {
+                        callback.apply(callbackScope, arguments);
+                    });
+                },
+
+                _createTextElement: function (node, rootScope) {
                     return this.$stage.$applicationContext.createInstance('js/core/TextElement', [null, node, this.$stage, this, rootScope]);
                 },
 
@@ -422,12 +526,57 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                  * @param domNode
                  */
                 _localNameFromDomNode: function (domNode) {
-                    if (domNode.localName) return domNode.localName;
+                    if (domNode.localName) {
+                        return domNode.localName;
+                    }
 
                     var st = domNode.tagName.split(":");
                     return st[st.length - 1];
                 }
             });
+
+        var Template = Component.Template = Component.inherit("js.core.Template", {
+
+            _initializeDescriptors: function () {
+                this._cleanUpDescriptor(this.$descriptor);
+                this._childrenInitialized();
+            },
+
+            createComponents: function (attributes, parentScope, rootScope) {
+                rootScope = rootScope || this.$rootScope;
+                parentScope = parentScope || this.$parentScope;
+                // foreach child Descriptor
+                var components = this._getChildrenFromDescriptor(this.$descriptor, null, rootScope);
+
+                for (var c = 0; c < components.length; c++) {
+                    components[c].$parentScope = parentScope;
+                    components[c].set(attributes);
+                }
+
+                return components;
+            },
+
+            createInstance: function (attributes, parentScope, rootScope) {
+                var components = this.createComponents(attributes, parentScope, rootScope);
+                return components[0];
+            }
+        });
+
+        Component.Configuration = Component.inherit("js.core.Configuration", {
+        });
+
+        var Content = Component.Content = Component.inherit("js.core.Content", {
+            getChildren: function () {
+                var el, children = [];
+                for (var i = 0; i < this.$elements.length; i++) {
+                    el = this.$elements[i];
+                    if (el instanceof require("js/core/DomElement") || el instanceof TextElement) {
+                        children.push(el);
+                    }
+                }
+                return children;
+            }
+        });
 
         return Component;
     }

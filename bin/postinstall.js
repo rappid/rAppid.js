@@ -2,6 +2,8 @@ var fs = require("fs"),
     path = require("path"),
     child;
 
+fs.existsSync || (fs.existsSync = path.existsSync);
+
 var postinstall = function (args, callback) {
 
     var rappidDir = path.join(__dirname, "..");
@@ -15,7 +17,7 @@ var postinstall = function (args, callback) {
         "underscore.js":path.join(nodeModules, "underscore", "underscore.js")
     };
 
-    if (!path.existsSync(libDir)) {
+    if (!fs.existsSync(libDir)) {
         fs.mkdirSync(libDir);
     }
 

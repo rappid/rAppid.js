@@ -1,5 +1,4 @@
-(function (exports, requirejs, define, document, XMLHttpRequest) {
-
+(function (exports, requirejs, define, window, XMLHttpRequest) {
     /** ECMA SCRIPT COMPLIANT**/
     if (!String.prototype.trim) {
         String.prototype.trim = function () {
@@ -9,7 +8,8 @@
 
     var underscore,
         Bus,
-        Stage;
+        Stage,
+        document = window.document; // TODO: create workaround for node
 
 
     /***
@@ -196,7 +196,7 @@
                 if (err) {
                     callback(err);
                 } else {
-                    applicationContext.createApplicationInstance(document, function (err, stage, application) {
+                    applicationContext.createApplicationInstance(window, function (err, stage, application) {
                         if (err) {
                             callback(err);
                         } else {
@@ -268,7 +268,7 @@
                         xhr.setRequestHeader(header, s.headers[header]);
                     }
                 }
-            } catch (e) {
+            } catch(e) {
             } // FF3
 
             xhr.send(s.data);
@@ -323,7 +323,7 @@
 
         try {
             this.statusText = xhr.statusText;
-        } catch (e) {
+        } catch(e) {
             this.statusText = "";
         }
     };
@@ -357,23 +357,34 @@
         this.$config = config;
     };
 
-    ApplicationContext.prototype.createApplicationInstance = function (document, callback) {
+    ApplicationContext.prototype.createApplicationInstance = function (window, callback) {
+
+        var document;
+
         // create instance
         var applicationFactory = this.$applicationFactory;
 
-        var stage = new Stage(this.$requirejsContext, this, document);
+        if (window.document) {
+            document = window.document;
+        } else {
+            document = window;
+            window = null;
+        }
 
-            this.$requirejsContext(["js/core/Application", "js/core/HeadManager", "js/core/History", "js/core/Injection"], function (Application, HeadManager, History, Injection) {
-                stage.$headManager = new HeadManager(document.head || document.getElementsByTagName('head')[0]);
-                stage.$bus = new Bus();
-                stage.$history = new History();
-                var injection = stage.$injection = new Injection(null, null, stage);
+        // TODO: add node support for window
+        var stage = new Stage(this.$requirejsContext, this, document, window);
 
-                injection.addInstance(stage.$bus);
-                injection.addInstance(stage.$history);
-                injection.addInstance(stage.$headManager);
+        this.$requirejsContext(["js/core/Application", "js/core/HeadManager", "js/core/History", "js/core/Injection"], function (Application, HeadManager, History, Injection) {
+            stage.$headManager = new HeadManager(document);
+            stage.$bus = new Bus();
+            stage.$history = new History();
+            var injection = stage.$injection = new Injection(null, null, stage);
 
-                var application = new applicationFactory(null, false, stage, null, null);
+            injection.addInstance(stage.$bus);
+            injection.addInstance(stage.$history);
+            injection.addInstance(stage.$headManager);
+
+            var application = new applicationFactory(null, false, stage, null, null);
 
             if (application instanceof Application) {
 
@@ -457,7 +468,7 @@
         try {
             ret = construct(classDefinition, args);
             ret.className = className;
-        } catch (e) {
+        } catch(e) {
             console.log("Cannot create instance of '" + fqClassName + "'");
         }
 
@@ -483,5 +494,5 @@
 }(typeof exports !== "undefined" ? exports : window,
     typeof requirejs !== "undefined" ? requirejs : require('requirejs'),
     typeof requirejs !== "undefined" ? define : require('requirejs').define,
-    typeof window !== "undefined" ? window.document : null,
+    typeof window !== "undefined" ? window : exports,
     typeof window !== "undefined" ? window.XMLHttpRequest : require('xmlhttprequest').XMLHttpRequest));

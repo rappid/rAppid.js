@@ -1,9 +1,35 @@
 define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding","underscore"],
+
+
     function (EventDispatcher, Parser, Binding, _) {
+        // global invalidation timer
+        var globalInvalidationQueue = (function() {
 
-        var indexExtractor = /^(.*)\[(\d+)\]$/,
-            undefined, List;
+            var id,
+                callbacks = [],
+                work = function() {
+                    for (var i = 0; i < callbacks.length; i++) {
+                        try {
+                            callbacks[i]();
+                        } catch (e) {
+                            (console.warn || console.log).call(console, e);
+                        }
+                    }
 
+                    callbacks = [];
+                    id = null;
+                };
+
+            return {
+                addCallback: function(callback) {
+                    callbacks.push(callback);
+
+                    if (!id) {
+                        id = setTimeout(work, 1000 / 60);
+                    }
+                }
+            }
+        })();
 
         var Bindable = EventDispatcher.inherit("js.core.Bindable",
             {
@@ -19,6 +45,8 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding","underscor
                     this.callBase(null);
 
                     this.$ = {};
+                    this.$invalidatedProperties = {};
+                    this.$invalidated = false;
 
                     _.extend(this._eventAttributes, this.base._eventAttributes || {});
 
@@ -50,7 +78,80 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding","underscor
                  */
                 defaults: {
                 },
+                /**
+                 * Writes attributes back to the source
+                 */
+                sync: function(){
+                    if(this._$source) {
+                        var val, attributes = {}, unsetAttributes = {};
+                        for (var key in this.$) {
+                            if (this.$.hasOwnProperty(key)) {
+                                val = this.$[key];
+                                if(val instanceof Bindable && val.sync()){
+                                    attributes[key] = val._$source;
+                                }else{
+                                    attributes[key] = val;
+                                }
+                            }
+                        }
+                        // remove all attributes, which are not in clone
+                        for (var sourceKey in this._$source.$){
+                            if(this._$source.$.hasOwnProperty(sourceKey)){
+                                if(!attributes.hasOwnProperty(sourceKey)){
+                                    unsetAttributes[sourceKey] = "";
+                                }
+                            }
+                        }
+                        this._$source.set(unsetAttributes,{unset:true});
+                        this._$source.set(attributes);
+                        return true;
+                    }else{
+                        return false;
+                    }
 
+                },
+                /***
+                 * This method returns a copy of the Object
+                 * @return js.core.Bindable a fresh copy of the Bindable
+                 */
+                clone: function () {
+                    var ret = {};
+                    for (var key in this.$) {
+                        if (this.$.hasOwnProperty(key)) {
+                            ret[key] = this._cloneAttribute(this.$[key], key);
+                        }
+                    }
+                    var b = new Bindable(ret);
+                    b._$source = this;
+                    return b;
+                },
+                /**
+                 * Returns a copy of the attribute. This method is a hook for further cloning options
+                 * @param attribute
+                 * @param key
+                 * @private
+                 */
+                _cloneAttribute: function(attribute, key){
+                    if(attribute instanceof Bindable){
+                        return attribute.clone();
+                    }else if(_.isArray(attribute)){
+                        var retArray = [];
+                        for(var i = 0; i < attribute.length; i++){
+                            retArray.push(this._cloneAttribute(attribute[i]));
+                        }
+                        return retArray;
+                    } else if(_.isObject(attribute)){
+                        var retObject = {};
+                        for (var attrKey in attribute){
+                            if(attribute.hasOwnProperty(attrKey)){
+                                retObject[attrKey] = this._cloneAttribute(attribute[attrKey], attrKey);
+                            }
+                        }
+                        return retObject;
+                    } else{
+                        return attribute;
+                    }
+                },
                 /***
                  *
                  * @return {Object} returns the default attributes and includes the defaults from base classes
@@ -91,18 +192,11 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding","underscor
                 set: function (key, value, options) {
                     var attributes = {};
 
+                    if(_.isNumber(key)){
+                        key = String(key);
+                    }
+
                     if (_.isString(key)) {
-                        // check for path
-                        var path = key.split(".");
-                        if (path.length > 1) {
-                            var scope = this.get(path.shift());
-                            if (scope && scope.set) {
-                                scope.set(path.join("."), value, options);
-                                return this;
-                            }
-
-                        }
-
                         attributes[key] = value;
                     } else {
                         options = value;
@@ -121,6 +215,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding","underscor
                     }
 
                     var changedAttributes = {},
+                        changedAttributesCount = 0,
                         now = this.$,
                         val, prev;
 
@@ -130,32 +225,78 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding","underscor
                             val = attributes[key];
                             // unset attribute or change it ...
                             if (options.unset === true) {
+                                prev = now[key];
                                 delete now[key];
+                                changedAttributes[key] = undefined;
+                                changedAttributesCount++;
+                                this.$previousAttributes[key] = prev;
                             } else {
                                 if (!_.isEqual(now[key], attributes[key])) {
                                     prev = now[key];
                                     this.$previousAttributes[key] = prev;
                                     now[key] = attributes[key];
                                     changedAttributes[key] = now[key];
+
+                                    changedAttributesCount++;
                                 }
                             }
                         }
                     }
 
-                    this._commitChangedAttributes(changedAttributes);
-
-                    if (options.silent === false && _.size(changedAttributes) > 0) {
+                    if (changedAttributesCount) {
                         for (key in changedAttributes) {
                             if (changedAttributes.hasOwnProperty(key)) {
-                                this.trigger('change:' + key, changedAttributes[key], this);
+                                var commitMethodName = '_commit' + key.charAt(0).toUpperCase() + key.substr(1);
+
+                                if (this[commitMethodName] instanceof Function) {
+                                    // call method
+
+                                    if (this[commitMethodName](now[key], this.$previousAttributes[key]) === false) {
+                                        // false returned rollback
+                                        changedAttributesCount--;
+                                        now[key] = this.$previousAttributes[key];
+                                    }
+                                }
                             }
                         }
-                        this.trigger('change', changedAttributes, this);
+
+                        if (changedAttributesCount) {
+                            this._commitChangedAttributes(changedAttributes);
+                            if (options.silent === false) {
+                                for (key in changedAttributes) {
+                                    if (changedAttributes.hasOwnProperty(key)) {
+                                        this.trigger('change:' + key, changedAttributes[key], this);
+                                    }
+                                }
+                                this.trigger('change', changedAttributes, this);
+                            }
+                        }
+
                     }
 
                     return this;
                 },
 
+                setLater: function(key, value) {
+
+                    if (_.isString(key)) {
+                        key = {};
+                        key[key] = value;
+                    }
+
+                    _.extend(this.$invalidatedProperties, key);
+
+                    if (!this.$invalidated) {
+                        this.$invalidated = true;
+                        globalInvalidationQueue.addCallback(this._commitInvalidatedAttributes);
+                    }
+
+                },
+
+                _commitInvalidatedAttributes: function() {
+                    this.set(this.$invalidatedProperties);
+                    this.$invalidatedProperties = {};
+                },
 
                 /***
                  * evaluates a path to retrieve a value
@@ -186,11 +327,9 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding","underscor
                         path = Parser.parse(key, "path");
                     }
 
-
-                    var pathElement;
-                    // go through the path
-                    while (scope && path.length > 0) {
-                        pathElement = path.shift();
+                    var pathElement, val;
+                    for (var j = 0; scope && j < path.length; j++) {
+                        pathElement = path[j];
                         if (pathElement.type == "fnc") {
                             var fnc = scope[pathElement.name];
                             var parameters = pathElement.parameter;
@@ -204,9 +343,13 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding","underscor
                             scope = fnc.apply(scope, parameters);
                         } else if (pathElement.type == "var") {
                             if (scope instanceof Bindable) {
-                                if(path.length === 0){
-                                    scope = scope.$[pathElement.name];
-                                }else{
+                                if (path.length - 1 === j ) {
+                                    val = scope.$[pathElement.name];
+                                    if(_.isUndefined(val)){
+                                        val = scope[pathElement.name];
+                                    }
+                                    scope = val;
+                                } else {
                                     scope = scope.get(pathElement.name);
                                 }
 
@@ -215,12 +358,12 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding","underscor
                             }
                         }
 
-                        if(scope && pathElement.index !== ''){
+                        if (scope && pathElement.index !== '') {
                             // if it's an array
-                            if(_.isArray(scope)){
+                            if (_.isArray(scope)) {
                                 scope = scope[pathElement.index];
-                            // if it's a list
-                            }else if(scope.at){
+                                // if it's a list
+                            } else if (scope.at) {
                                 scope = scope.at(pathElement.index);
                             }
                         }
@@ -340,12 +483,18 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding","underscor
             });
 
         var EventBindable = Bindable.inherit({
-            _commitChangedAttributes: function (attributes) {
+            _commitChangedAttributes: function(attributes){
                 this.callBase();
-                this._unbindEvent(this.$previousAttributes['value']);
-                if (!_.isUndefined(attributes.value)) {
-                    this._bindEvent(attributes.value);
+                if(attributes.binding){
+                    this.set('value', attributes.binding.getValue());
+                }else if(attributes.value){
+                    var value = attributes.value;
+                    this._unbindEvent(this.$previousAttributes['value']);
+                    if (!_.isUndefined(value)) {
+                        this._bindEvent(value);
+                    }
                 }
+
             },
             _unbindEvent: function (value) {
                 if (value && value instanceof EventDispatcher) {

@@ -1,4 +1,4 @@
-define(["js/core/UIComponent", "js/core/Router"], function (UIComponent, Router) {
+define(["js/core/UIComponent", "js/core/Router", "js/core/Head"], function (UIComponent, Router, Head) {
     return UIComponent.inherit("js.core.Module", {
 
         ctor: function() {
@@ -12,6 +12,9 @@ define(["js/core/UIComponent", "js/core/Router"], function (UIComponent, Router)
          * @param [routeContext]
          */
         start: function (callback, routeContext) {
+            if(this.$head){
+                this.$head.render();
+            }
             if (callback) {
                 callback();
             }
@@ -27,6 +30,10 @@ define(["js/core/UIComponent", "js/core/Router"], function (UIComponent, Router)
 
             if (component instanceof Router) {
                 this.$routers.push(component);
+            }
+
+            if(component instanceof Head){
+               this.$head = component;
             }
         }
     });

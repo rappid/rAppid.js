@@ -22,10 +22,10 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore"], funct
                 pageSize: null,
                 queryParameters: {},
                 factory: this.$modelFactory || require('js/data/Model'),
-                type: null
+                type: null,
+                $itemsCount: null
             });
 
-            this.$itemsCount = null;
             this.$queryCollectionsCache = {};
             this.$pageCache = [];
             this.$options = options;
@@ -133,8 +133,8 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore"], funct
         },
 
         pageCount: function () {
-            if (this.$itemsCount) {
-                return Math.ceil(this.$itemsCount / this.$options.pageSize);
+            if (this.$.$itemsCount) {
+                return Math.ceil(this.$.$itemsCount / this.$options.pageSize);
             } else {
                 // we actually don't know how many pages there will be
                 return NaN;

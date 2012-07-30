@@ -11,6 +11,8 @@ var fs = require("fs"),
     rl = require("readline"),
     install = require(path.join(__dirname, "install.js"));
 
+    fs.existsSync || (fs.existsSync = path.existsSync);
+
 var Helper = {
     template:function (source, destination, options) {
         var data = fs.readFileSync(source, "utf8");
@@ -28,15 +30,15 @@ var Helper = {
 };
 
 fs.mkdirIfNotExist = function (dirPath) {
-    if (!path.existsSync(dirPath)) {
+    if (!fs.existsSync(dirPath)) {
         fs.mkdirSync(dirPath);
     }
 };
 
 fs.mkdirParent = function (dirPath) {
-    if (!path.existsSync(dirPath)) {
+    if (!fs.existsSync(dirPath)) {
         var parentDir = path.normalize(path.join(dirPath, ".."));
-        if (!path.existsSync(parentDir)) {
+        if (!fs.existsSync(parentDir)) {
             fs.mkdirParent(parentDir);
         }
 
@@ -93,7 +95,7 @@ function createApplication(appName, dir, callback) {
 
     fs.mkdirParent(dir);
 
-    if (!path.existsSync(dir)) {
+    if (!fs.existsSync(dir)) {
         callback("Directory " + dir + " could not be created");
     }
 

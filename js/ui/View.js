@@ -51,7 +51,6 @@ define(["js/html/HtmlElement", "js/core/Content", "underscore"], function (HtmlE
                         // TODO: maybe render all components returned
                         // or create special method createComponent
                         renderedComponent = template.createComponents(attributes)[0];
-                        // renderedComponent._initialize();
                         var placeholder = this.getPlaceHolder(placeholderName);
                         if (placeholder) {
                             placeholder.set({content: renderedComponent});

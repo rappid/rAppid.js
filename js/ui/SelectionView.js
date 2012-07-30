@@ -4,6 +4,7 @@ define(
             $classAttributes: [
                 "needsSelection", "multiSelect", "selectedView","selectedViews","selectedItems","selectedIndex","items", "forceSelectable"
             ],
+            $defaultTemplateName: null,
             defaults: {
                 needsSelection: false,
                 multiSelect: false,

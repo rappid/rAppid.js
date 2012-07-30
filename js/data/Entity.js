@@ -1,5 +1,5 @@
-define(['require', 'js/core/Bindable', 'js/core/List'],
-    function(require, Bindable, List) {
+define(['require', 'js/core/Bindable', 'js/core/List', 'js/data/TypeResolver'],
+    function(require, Bindable, List, TypeResolver) {
     var Collection;
 
     var Entity = Bindable.inherit('js.core.Entity', {
@@ -88,7 +88,8 @@ define(['require', 'js/core/Bindable', 'js/core/List'],
 
                         var value = data[type],
                             schemaType = schema[type],
-                            factory,
+                            factory = null,
+                            typeResolver,
                             entity,
                             i,
                             list,
@@ -96,7 +97,7 @@ define(['require', 'js/core/Bindable', 'js/core/List'],
 
                         if (schemaType instanceof Array) {
                             if (schemaType.length === 1) {
-                                factory = schemaType[0];
+                                typeResolver = schemaType[0];
                             } else if (schemaType.length === 0) {
                                 this.log('ModelFactory for ListItem for "' + type + '" not defined', 'warn');
                                 factory = Entity;
@@ -104,19 +105,30 @@ define(['require', 'js/core/Bindable', 'js/core/List'],
                                 throw "Cannot determinate ModelFactory. Multiple factories defined for '" + type + "'.";
                             }
 
-                            if (!(factory.prototype instanceof Entity)) {
-                                throw "Factory for type '" + type + "' isn't an instance of Entity";
+                            if (typeResolver instanceof Function) {
+                                factory = typeResolver;
+                                typeResolver = null;
                             }
 
                             if (value instanceof Array || value === null) {
                                 list = data[type] = new List();
 
-                                // set alias to type if generic entity
-                                alias = (factory === this.$context.$datasource.$entityFactory ||
-                                    factory === this.$context.$datasource.$modelFactory) ? type : null;
 
                                 if (value) {
                                     for (i = 0; i < value.length; i++) {
+
+                                        if (typeResolver) {
+                                            factory = typeResolver.resolve(value[i], type);
+                                        }
+
+                                        if (!(factory && factory.classof(Entity))) {
+                                            throw "Factory for type '" + type + "' isn't an instance of Entity";
+                                        }
+
+                                        // set alias to type if generic entity
+                                        alias = (factory === this.$context.$datasource.$entityFactory ||
+                                            factory === this.$context.$datasource.$modelFactory) ? type : null;
+
                                         entity = this.getContextForChildren(factory).createEntity(factory, value[i].id, alias);
                                         entity.set(entity.parse(value[i], action, options));
                                         list.add(entity);
@@ -150,11 +162,15 @@ define(['require', 'js/core/Bindable', 'js/core/List'],
                                 // TODO: what here
 //                                throw 'Schema for type "' + type + '" requires to be an array';
                             }
-                        }
-                        else {
-                            factory = schemaType || Entity;
 
-                            if (!(factory.prototype instanceof Entity)) {
+                        } else if (value && value.id) {
+                            if (schemaType instanceof TypeResolver) {
+                                factory = schemaType.resolve(value, type);
+                            } else {
+                                factory = schemaType || Entity;
+                            }
+
+                            if (!(factory && factory.classof(Entity))) {
                                 throw "Factory for type '" + type + "' isn't an instance of Entity";
                             }
 
@@ -162,7 +178,7 @@ define(['require', 'js/core/Bindable', 'js/core/List'],
                             alias = (factory === this.$context.$datasource.$entityFactory ||
                                 factory === this.$context.$datasource.$modelFactory) ? type : null;
 
-                            data[type] = entity = this.getContextForChildren(factory).createEntity(factory, this.$.id, alias);
+                            data[type] = entity = this.getContextForChildren(factory).createEntity(factory, value.id, alias);
                             entity.set(entity.parse(value, action, options));
                         }
                     }

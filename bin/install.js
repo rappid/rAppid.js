@@ -6,13 +6,14 @@ install.usage = "rappidjs install <pkg>"
     + "\nrappidjs install <pkg> <version> <dir>"
     + "\nInstalls rAppidjs dependencies from ./package.json.";
 
-var sys = require('util')
-var child_process = require('child_process');
-var fs = require("fs"),
+var sys = require('util'),
+    child_process = require('child_process'),
+    fs = require("fs"),
     path = require("path"),
     flow = require("flow.js").flow,
     child;
 
+    fs.existsSync || (fs.existsSync = path.existsSync);
 
 var dir;
 
@@ -36,7 +37,7 @@ function install(args, callback) {
     dir = path.resolve(dir.replace(/^~\//, process.env.HOME + '/'));
 
 
-    if (!path.existsSync(path.join(dir,"node_modules", packageName))) {
+    if (!fs.existsSync(path.join(dir,"node_modules", packageName))) {
         child = child_process.exec(["npm", "install", what, "-d"].join(" "), {cwd: dir}, function (err, stdout, stderr) {
             sys.print('stdout: ' + stdout);
             sys.print('stderr: ' + stderr);
@@ -71,7 +72,7 @@ function linkPackage(dir, packageName, version ,callback){
     readJson(path.join(packageDir, "package.json"), function (err, data) {
         if (!err){
             var libDir = path.join(publicDir, data.lib);
-            if (!path.existsSync(libDir)) {
+            if (!fs.existsSync(libDir)) {
                 fs.symlinkSync(path.join(packageDir, data.lib), libDir, 'dir');
             }
             var packageFile = path.join(dir, "package.json");

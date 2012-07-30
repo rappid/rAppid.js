@@ -124,15 +124,11 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
                     this.$.target.bind(this.$.targetEvent, this._revCallback, this);
                 }
 
-                this._createSubBinding();
                 scope.bind('destroy', function () {
                     self.destroy();
                 });
 
-
-                if (this.$.path.length === 1) {
-                    this.trigger();
-                }
+                this._createSubBinding();
             },
             _checkAttributes: function () {
                 // check infrastructur
@@ -169,8 +165,6 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
                 if (this.$.transformBack) {
                     this.transformBack = this.$.transformBack;
                 }
-
-
             },
             _createSubBinding: function () {
                 if (this.$.path.length > 1) {
@@ -186,11 +180,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
                         if(nScope instanceof Bindable){
                             // init new binding, which triggers this binding
                             this.$subBinding = new Binding({scope: nScope, path: this.$.path.slice(1), target: this.$.target, targetKey: this.$.targetKey, rootScope: this.$.rootScope, callback: this.$.callback, context: this.$.context, twoWay: this.$.twoWay, transform: this.$.transform, transformBack: this.$.transformBack, bindingCreator: this.$.bindingCreator});
-                        } else {
-                            // TODO: find next bindable var
                         }
-
-
                     }
                 }
             },
@@ -203,6 +193,12 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
                     this.$.scope.set(pathToString(this.$.path), this.transformBack(e.$));
                 }
             },
+            /**
+             * This method is called, when the a change event of an function binding is triggered
+             *
+             * @param event
+             * @private
+             */
             _changeCallback: function (event) {
                 for (var i = 0; i < this.$.fnc._attributes.length; i++) {
                     if (!_.isUndefined(event.$[this.$.fnc._attributes[i]])) {
@@ -211,6 +207,11 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
                     }
                 }
             },
+            /**
+             * This method is called, when the value of the current binding changes.
+             * It recreates the the subBinding and triggers the binding
+             * @private
+             */
             _callback: function () {
                 // remove subBindings!
                 if (this.$subBinding) {
@@ -220,9 +221,11 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
 
                 // try to create subBinding
                 this._createSubBinding();
-
                 this.trigger();
             },
+            /**
+             * Unbinds all events and destroys subBinding...
+             */
             destroy: function () {
                 var e;
                 for (var j = 0; j < this.$events.length; j++) {
@@ -247,6 +250,11 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
                     }
                 }
             },
+            /**
+             * Returns an array with values of all function parameters
+             * @return {Array}
+             * @private
+             */
             _getFncParameters: function () {
                 var parameters = [];
                 for (var i = 0; i < this.$parameters.length; i++) {
@@ -258,19 +266,28 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
                 }
                 return parameters;
             },
+            /**
+             * Returns the transformed value of the binding or null, if the binding path is not present
+             * @return {*}
+             */
             getValue: function () {
                 if (this.$subBinding) {
                     return this.$subBinding.getValue();
                 } else {
                     if (this.$.fnc) {
-                        return this.$.fnc.apply(this.$.scope, this._getFncParameters());
+                        return this.transform(this.$.fnc.apply(this.$.scope, this._getFncParameters()));
                     } else if (this.$.path.length == 1) {
-                        return this.$.scope.get(this.$.key.name);
+                        return this.transform(this.$.scope.get(this.$.key.name));
                     } else {
                         return null;
                     }
                 }
+
             },
+            /**
+             * Returns the value in the context of the surrounding bindings
+             * @return {*}
+             */
             getContextValue: function () {
                 if (this.$.context && this.$.context.length > 1) {
                     return Binding.contextToString(this.$.context);
@@ -278,14 +295,16 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
                     return this.getValue();
                 }
             },
-            // trigger
+            /**
+             * This method triggers the binding and syncs the target with the scope
+             */
             trigger: function () {
                 // get value
                 var val = this.getContextValue();
                 if (this.$.targetKey) {
-                    this.$.target.set(this.$.targetKey, this.transform(val));
+                    this.$.target.set(this.$.targetKey, val);
                 } else if (this.$.callback) {
-                    this.$.callback.call(this.$.target, this.transform(val));
+                    this.$.callback.call(this.$.target, val);
                 }
 
             },

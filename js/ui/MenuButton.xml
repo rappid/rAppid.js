@@ -16,13 +16,14 @@
                     'menuClassName': "dropdown-menu",
                     'menuVisible': false
                 },
+                $defaultContentName: 'menu',
                 $instances: [],
 
                 addChild: function (child) {
+                    this.callBase();
                     if (child instanceof Button) {
                         this._collectButton(child);
                     }
-                    this.callBase();
                 },
                 _collectButton: function (child) {
                     this.$button = child;
@@ -73,7 +74,7 @@
                         self.trigger('onclick', e, self);
                     });
 
-                    this.dom(document).bindDomEvent('click', function (e) {
+                    this.dom(this.$stage.$document).bindDomEvent('click', function (e) {
                         self.set({menuVisible: false});
                     });
                 },
@@ -90,7 +91,7 @@
     <js:Template name="layout">
         <ui:Button class="dropdown-toggle">
             <js:Template name="layout">
-                <ui:PlaceHolder name="icon"/><span>{label}</span>
+                <ui:PlaceHolder name="icon"/><span>{label} </span>
                 <span class="caret"/>
             </js:Template>
         </ui:Button>

@@ -73,10 +73,8 @@ define(["js/core/Bindable", "flow"], function (Bindable, flow) {
                 this.$history.push(initialHash || "");
             }
 
-            this.$fragment = this._getFragment();
-            this.navigate(this.$fragment, true, true, callback);
+            this.navigate(this._getFragment(), true, true, callback);
             this.$processUrl = true;
-
         },
 
         stop: function () {
@@ -188,7 +186,7 @@ define(["js/core/Bindable", "flow"], function (Bindable, flow) {
 
             if(this.$fragment !== fragment){
                 this.$fragment = fragment;
-                this.trigger('change:fragment');
+                this.trigger('change:fragment', this.$fragment);
             }
 
 

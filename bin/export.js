@@ -4,6 +4,8 @@ var fs = require("fs"),
     jsdom = require('jsdom').jsdom,
     flow = require('flow.js').flow;
 
+    fs.existsSync || (fs.existsSync = path.existsSync);
+
 var cleanPath = function(dirPath){
     return path.resolve(dirPath.replace(/^~\//, process.env.HOME + '/'));
 };
@@ -16,7 +18,7 @@ var exportApp = function (args, callback) {
         exportDir = cleanPath(exportDir);
         srcDir = cleanPath(srcDir);
 
-        if (path.existsSync(srcDir)) {
+        if (fs.existsSync(srcDir)) {
             copyDirectory(srcDir,exportDir);
         }else{
             callback("Couldn't find source dir of project");
@@ -32,7 +34,7 @@ var exportApp = function (args, callback) {
 
 var copyDirectory = function(srcDir, targetDir){
     var subDirs = [];
-    if (!path.existsSync(targetDir)) {
+    if (!fs.existsSync(targetDir)) {
         fs.mkdirSync(targetDir);
     }
     var source, dest;

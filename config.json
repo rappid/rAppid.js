@@ -24,6 +24,9 @@
         },
         "js/lib/parser": {
             "exports": "parser"
+        },
+        "js/lib/moment" : {
+            "exports" : "moment"
         }
     }
 }

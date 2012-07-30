@@ -285,7 +285,7 @@ define([], function () {
                             importStartIndex++;
 
                             var text = "define(%dependencies%, %function%)";
-                            var fn = "function(baseClass, ELEMENT %parameter%){return baseClass.inherit({ %classDefinition% _$descriptor: ELEMENT.xmlStringToDom(%descriptor%)})}";
+                            var fn = "function(baseClass, ELEMENT %parameter%){%GLOBALS% return baseClass.inherit({ %classDefinition% _$descriptor: ELEMENT.xmlStringToDom(%descriptor%)})}";
 
                             var depsEscaped = [];
                             for (var i = 0; i < dependencies.length; i++) {
@@ -295,17 +295,19 @@ define([], function () {
                             text = text.replace('%dependencies%', '[' + depsEscaped.join(',') + ']');
 
                             var xmlContent = xml.documentElement.toString()
-                                .replace(/((\r\n|\n|\r)[\s\t]*)/gm, "")
+                                .replace(/((\r\n|\n|\r)[\s\t]*)/gm, " ")
+                                .replace(/\s{2,}/g, " ")
                                 .replace(/'/g, "\\'")
                                 .replace(/<js:Script[^>]*>[\s\S]*<\/js:Script[^>]*>/, "");
 
                             var parameter = "",
-                                classDefinition = "";
+                                classDefinition = "",
+                                globals = "";
 
                             if (scripts.length > 0) {
                                 var script = scripts[0].toString();
 
-                                var rScriptExtractor = /^[\s\S]*?function\s*\(([\s\S]*?)\)[\s\S]*?\{[\s\S]*?return[\s\S]*?\{([\s\S]*)\}[\s\S]*?\}[\s\S]*?\)[^)]*$/;
+                                var rScriptExtractor = /^[\s\S]*?function\s*\(([\s\S]*?)\)[\s\S]*?\{([\s\S]*?)return[\s\S]*?\{([\s\S]*)\}[\s\S]*?\}[\s\S]*?\)[^)]*$/;
                                 var result = rScriptExtractor.exec(script);
 
                                 if (result) {
@@ -316,7 +318,11 @@ define([], function () {
                                     }
 
                                     if (hasContent(result[2])) {
-                                        classDefinition = result[2] + ','
+                                        globals = result[2];
+                                    }
+
+                                    if (hasContent(result[3])) {
+                                        classDefinition = result[3] + ','
                                     }
 
                                 } else {
@@ -327,6 +333,7 @@ define([], function () {
 
                             fn = fn.replace('%parameter%', parameter);
                             fn = fn.replace('%classDefinition%', classDefinition);
+                            fn = fn.replace('%GLOBALS%', globals);
                             fn = fn.replace('%descriptor%', "'" + xmlContent + "'");
 
                             text = text.replace('%function%', fn);

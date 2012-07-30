@@ -2,7 +2,7 @@ define(["require", "js/core/EventDispatcher","js/core/Component", "js/core/Conte
     function (require, EventDispatcher, Component, Content, Binding, inherit, _) {
 
         var rspace = /\s+/;
-
+        var undefined;
         var ContentPlaceHolder;
 
         var DomElementFunctions = {
@@ -17,9 +17,11 @@ define(["require", "js/core/EventDispatcher","js/core/Component", "js/core/Conte
             ],
 
             ctor: function (attributes, descriptor, systemManager, parentScope, rootScope) {
+                this.$addedToDom = false;
                 this.$renderMap = {};
                 this.$children = [];
                 this.$contentChildren = [];
+                this.$renderedChildren = [];
                 this.$domEventHandler = {};
                 // go inherit tree up and search for descriptors
                 var current = this;
@@ -41,8 +43,19 @@ define(["require", "js/core/EventDispatcher","js/core/Component", "js/core/Conte
                         this.$namespace = descriptor.namespaceURI;
                     }
                 }
-            },
 
+                this.bind('add:dom', this._onDomAdded, this);
+            },
+            /**
+             * This method is called when the stage is added to the DOM
+             * @private
+             */
+            _onDomAdded: function(){
+                this.$addedToDom = true;
+                for(var i=0; i < this.$renderedChildren.length; i++){
+                    this.$renderedChildren[i].trigger('add:dom', this.$el);
+                }
+            },
             _inject: function () {
                 this.callBase();
 
@@ -70,13 +83,15 @@ define(["require", "js/core/EventDispatcher","js/core/Component", "js/core/Conte
                 }
             },
 
-            addChild: function (child) {
+            addChild: function (child, options) {
                 this.callBase();
 
                 if (child instanceof DomElement || child.render) {
-                    this.$children.push(child);
+                    var pos = options && typeof(options.childIndex) !== "undefined" ? options.childIndex : this.$children.length;
+
+                    this.$children.splice(pos,0,child);
                     if (this.isRendered()) {
-                        this._renderChild(child);
+                        this._renderChild(child, pos);
                     }
                 } else if (child instanceof Content) {
                     this.$contentChildren.push(child);
@@ -180,11 +195,7 @@ define(["require", "js/core/EventDispatcher","js/core/Component", "js/core/Conte
 
                 this.$renderedChildren = [];
 
-                if (this.$stage.$document.createElementNS && this.$namespace && /^http/.test(this.$namespace)) {
-                    this.$el = this.$stage.$document.createElementNS(this.$namespace, this.$tagName);
-                } else {
-                    this.$el = this.$stage.$document.createElement(this.$tagName);
-                }
+                this.$el = this._createDomElement(this.$tagName, this.$namespace);
 
                 this._initializeRenderer(this.$el);
                 this._renderChildren(this.$children);
@@ -194,13 +205,21 @@ define(["require", "js/core/EventDispatcher","js/core/Component", "js/core/Conte
 
                 return this.$el;
             },
+            
+            _createDomElement: function(tagName, namespace) {
+                if (this.$stage.$document.createElementNS && namespace && /^http/.test(namespace)) {
+                    return this.$stage.$document.createElementNS(namespace, tagName);
+                } else {
+                    return this.$stage.$document.createElement(tagName);
+                }
+            },
+            
             _bindDomEvents: function (el) {
-                var eventDef, es;
+                var eventDef, fnc;
 
                 for (var i = 0; i < this.$eventDefinitions.length; i++) {
                     eventDef = this.$eventDefinitions[i];
-                    es = eventDef.name.substr(2);
-                    this.bind(es, eventDef.scope[eventDef.fncName], eventDef.scope);
+                    this.bind(eventDef.type, eventDef.eventHandler, eventDef.scope);
                 }
             },
 
@@ -229,12 +248,24 @@ define(["require", "js/core/EventDispatcher","js/core/Component", "js/core/Conte
                 }
             },
 
-            _renderChild: function (child) {
+            _renderChild: function (child, pos) {
                 if (_.isFunction(child.render)) {
                     var el = child.render();
                     this.$renderedChildren.push(child);
                     if (el) {
-                        this.$el.appendChild(el);
+                        if(pos == undefined){
+                            this.$el.appendChild(el);
+                        }else{
+                            var childNode = this.$el.childNodes[pos];
+                            if(childNode){
+                                this.$el.insertBefore(el,childNode)
+                            }else{
+                                this.$el.appendChild(el);
+                            }
+                        }
+                        if(this.$addedToDom){
+                            child.trigger('add:dom',this.$el);
+                        }
                     }
                 }
             },
@@ -248,7 +279,10 @@ define(["require", "js/core/EventDispatcher","js/core/Component", "js/core/Conte
                 }
             },
 
-            _renderClass: function (className) {
+            _renderClass: function (className, oldClass) {
+                if(oldClass){
+                   this.removeClass(oldClass);
+                }
                 if (className) {
                     this.addClass(className);
                 }
@@ -343,10 +377,18 @@ define(["require", "js/core/EventDispatcher","js/core/Component", "js/core/Conte
                     this._setAttribute(key, attr);
                 }
             },
+
+            /***
+             * sets the attribute as part of the rendering cycle on the element
+             *
+             * @param {String} key - name of the attribute
+             * @param {String} value - value of the attribute
+             * @param {String} [namespaceUri] - namespaceUri for the attribute
+             * @private
+             */
             _setAttribute: function (key, value, namespaceUri) {
 
-                if (!_.isUndefined(value)) {
-
+                if (!_.isUndefined(value) && value !== null) {
                     namespaceUri = namespaceUri || this.$attributesNamespace[key];
 
                     if (this.$el.setAttributeNS && namespaceUri) {
@@ -354,6 +396,11 @@ define(["require", "js/core/EventDispatcher","js/core/Component", "js/core/Conte
                     } else {
                         this.$el.setAttribute(key, value);
                     }
+                }else{
+                    // first set empty -> needed for Chrome
+                    this.$el.setAttribute(key,"");
+                    // then remove -> needed for firefox
+                    this.$el.removeAttribute(key);
                 }
             },
 
@@ -417,18 +464,28 @@ define(["require", "js/core/EventDispatcher","js/core/Component", "js/core/Conte
             },
             bind: function (type, eventHandler, scope) {
                 var self = this;
-                this.callBase();
-                if (this.isRendered() && !this.$domEventHandler[type] && !this._isComponentEvent(type))  {
-                    var cb = this.$domEventHandler[type] = function (originalEvent) {
-                        var e = new DomElement.Event(originalEvent);
-                        try {
-                            self.trigger(type, e, self);
-                        } catch(e) {}
-                        if (e.isPropagationStopped) {
-                            return false;
-                        }
-                    };
-                    this.bindDomEvent(type,cb);
+                if (type.indexOf("on:") === 0 && !this.$domEventHandler[type] && !this._isComponentEvent(type))  {
+                    if(this.isRendered()){
+                        var cb = this.$domEventHandler[type] = function (originalEvent) {
+                            var e = new DomElement.Event(originalEvent);
+                            try {
+                                self.trigger(type, e, self);
+                            } catch(e) {}
+                            if (e.isPropagationStopped) {
+                                return false;
+                            }
+                        };
+                        this.bindDomEvent(type.substr(3),cb);
+                        this.callBase();
+                    }else{
+                        this.$eventDefinitions.push({
+                            scope: scope || this,
+                            type: type,
+                            eventHandler: eventHandler
+                        });
+                    }
+                } else {
+                    this.callBase();
                 }
             },
 
@@ -515,7 +572,7 @@ define(["require", "js/core/EventDispatcher","js/core/Component", "js/core/Conte
         var DomElement = Component.inherit("js.html.DomElement",
             _.extend(DomElementFunctions, DomManipulationFunctions));
 
-        DomElement.Event = EventDispatcher.Event.inherit({
+        DomElement.Event = EventDispatcher.Event.inherit('js.core.DomElement.Event', {
             ctor: function (domEvent) {
                 this.domEvent = domEvent;
                 this.callBase(domEvent);

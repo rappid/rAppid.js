@@ -84,7 +84,9 @@ define(["js/core/Bindable", "underscore", "js/core/BindingCreator"], function (B
             defaults: {
                 creationPolicy: "auto"
             },
+            _initializeEventAttributes: function(attribute){
 
+            },
             _initializeAttributes: function (attributes) {
             },
 
@@ -109,7 +111,9 @@ define(["js/core/Bindable", "underscore", "js/core/BindingCreator"], function (B
 
                 this._initializeDescriptors();
 
-                if (this == this.$rootScope || withBindings || this.$descriptor === false) {
+                this._initializeEventAttributes(this.$);
+
+                if (this == this.$rootScope || (this.$parentScope && this.$parentScope.$initialized) || this.$descriptor === false) {
                     this._initializeBindings();
                 }
 
@@ -177,6 +181,14 @@ define(["js/core/Bindable", "underscore", "js/core/BindingCreator"], function (B
                     }
                 }
                 return textContent;
+            },
+            /**
+             * Binding helper to negate a Boolean value
+             * @param value
+             * @return {Boolean}
+             */
+            not: function(value){
+                return !value;
             }
         });
 

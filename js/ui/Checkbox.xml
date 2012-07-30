@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<ui:CheckboxClass xmlns="http://www.w3.org/1999/xhtml" xmlns:js="js.core" xmlns:ui="js.ui" tagName="label">
+    <js:Script type="text/javascript">
+        <![CDATA[
+        (function () {
+            return {
+                $classAttributes: ['value']
+            }
+        })
+        ]]>
+    </js:Script>
+
+    <js:Template name="layout">
+        <input type="checkbox" name="{name}" checked="{{selected}}" value="{{value}}"/> <ui:PlaceHolder name="label"/>
+    </js:Template>
+    <js:Template name="label">{label}</js:Template>
+</ui:CheckboxClass>
