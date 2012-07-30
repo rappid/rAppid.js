@@ -74,7 +74,7 @@
                         self.trigger('onclick', e, self);
                     });
 
-                    this.dom(document).bindDomEvent('click', function (e) {
+                    this.dom(this.$stage.$document).bindDomEvent('click', function (e) {
                         self.set({menuVisible: false});
                     });
                 },
