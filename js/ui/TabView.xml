@@ -8,6 +8,6 @@
                 </ui:View>
             </js:Template>
         </ui:SelectionView>
-        <ui:SegmentedView/>
+        <ui:SegmentedView componentClass="tab-content"/>
     </js:Template>
 </ui:TabViewClass>
