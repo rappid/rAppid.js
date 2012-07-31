@@ -295,7 +295,7 @@ define([], function () {
                             text = text.replace('%dependencies%', '[' + depsEscaped.join(',') + ']');
 
                             var xmlContent = xml.documentElement.toString()
-                                .replace(/(\r\n|\n|\r)/gm, " ")
+                                .replace(/(\r\n|\n|\r)/gm, "\\n")
                                 .replace(/'/g, "\\'")
                                 .replace(/<js:Script[^>]*>[\s\S]*<\/js:Script[^>]*>/, "");
 
