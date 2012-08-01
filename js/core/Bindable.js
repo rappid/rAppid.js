@@ -121,7 +121,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding","underscor
                             ret[key] = this._cloneAttribute(this.$[key], key);
                         }
                     }
-                    var b = new Bindable(ret);
+                    var b = new this.factory(ret);
                     b._$source = this;
                     return b;
                 },

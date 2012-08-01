@@ -196,7 +196,7 @@ define(["js/core/Bindable", "underscore"], function (Bindable, _) {
         clone: function(){
             var attributes = this._cloneAttribute(this.$);
             var items = this._cloneAttribute(this.$items);
-            var ret = new List(items,attributes);
+            var ret = new this.factory(items,attributes);
             ret._$source = this;
             return ret;
         },
