@@ -22,7 +22,7 @@ define(["js/html/HtmlElement", "js/core/Content", "underscore"], function (HtmlE
             _renderChild: function (child) {
                 this.callBase();
                 if (child instanceof Content) {
-                    var ref = child.get('ref');
+                    var ref = child.get('name');
                     if (ref) {
                         var placeHolder = this.getPlaceHolder(ref);
                         if (placeHolder) {
