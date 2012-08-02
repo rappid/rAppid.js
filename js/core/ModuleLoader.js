@@ -1,6 +1,6 @@
-define(["require", "js/core/UIComponent", "js/ui/ContentPlaceHolder", "js/core/Module", "underscore", "js/conf/Module", "flow"],
-    function (require, UIComponent, ContentPlaceHolder, Module, _, ModuleConfiguration, flow) {
-        var ModuleLoader = UIComponent.inherit("js.core.ModuleLoader", {
+define(["require", "js/html/HtmlElement", "js/ui/ContentPlaceHolder", "js/core/Module", "underscore", "js/conf/Module", "flow"],
+    function (require, HtmlElement, ContentPlaceHolder, Module, _, ModuleConfiguration, flow) {
+        var ModuleLoader = HtmlElement.inherit("js.core.ModuleLoader", {
 
             $classAttributes: ['router', 'currentModuleName'],
             defaults: {

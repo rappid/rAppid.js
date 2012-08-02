@@ -1,4 +1,4 @@
-define(["js/html/HtmlElement", "js/core/UIComponent", "js/core/Bus", "js/core/WindowManager"], function (HtmlElement, UIComponent, Bus, WindowManager) {
+define(["js/html/HtmlElement", "js/core/Bus", "js/core/WindowManager"], function (HtmlElement, Bus, WindowManager) {
     return HtmlElement.inherit("js.core.Stage", {
         $containerOrder: {
             'windows' : 0,
@@ -70,7 +70,7 @@ define(["js/html/HtmlElement", "js/core/UIComponent", "js/core/Bus", "js/core/Wi
         },
         createContainer: function(attributes){
             attributes = attributes || {};
-            return this.$stage.$applicationContext.createInstance(UIComponent, [attributes, null, this.$stage, this, this]);
+            return this.$stage.$applicationContext.createInstance(HtmlElement, [attributes, null, this.$stage, this, this]);
         }
 
     });

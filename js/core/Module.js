@@ -1,5 +1,5 @@
-define(["js/core/UIComponent", "js/core/Router", "js/core/Head"], function (UIComponent, Router, Head) {
-    return UIComponent.inherit("js.core.Module", {
+define(["js/html/HtmlElement", "js/core/Router", "js/core/Head"], function (HtmlElement, Router, Head) {
+    return HtmlElement.inherit("js.core.Module", {
 
         ctor: function() {
             this.callBase();

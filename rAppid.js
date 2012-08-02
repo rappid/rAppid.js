@@ -81,7 +81,7 @@
                 var requirejsContext = requirejs.config(config),
                     applicationContext = new ApplicationContext(requirejsContext, config);
 
-                define("rAppid", function () {
+                define("applicationContext", function () {
                     return applicationContext;
                 });
 

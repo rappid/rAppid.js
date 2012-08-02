@@ -1,6 +1,6 @@
 define(
-    ["js/core/UIComponent", "js/core/Content", "underscore"], function (UIComponent, Content, _) {
-        return UIComponent.inherit({
+    ["js/html/HtmlElement", "js/core/Content", "underscore"], function (HtmlElement, Content, _) {
+        return HtmlElement.inherit({
             render: function () {
                 if (this.isRendered()) {
                     return this.$el;

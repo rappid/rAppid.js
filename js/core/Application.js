@@ -1,4 +1,4 @@
-define(["js/core/Window", "js/core/UIComponent"], function (Window, UIComponent) {
+define(["js/core/Window", "js/html/HtmlElement"], function (Window, HtmlElement) {
 
         /***
          * An application is a Window, which gets bootstrapped and started by rAppid.js and is attached to the WindowManager.
@@ -17,7 +17,7 @@ define(["js/core/Window", "js/core/UIComponent"], function (Window, UIComponent)
 
             _initializeDescriptors: function () {
                 this.callBase();
-                UIComponent.prototype._inject.call(this);
+                HtmlElement.prototype._inject.call(this);
             },
 
             /**
