@@ -9,7 +9,6 @@ define(["require", "js/core/EventDispatcher","js/core/Component", "js/core/Conte
 
             $classAttributes: [
                 /^\$/,
-                /^data/,
                 /^xmlns/,
                 /^on/,
                 "cid",
