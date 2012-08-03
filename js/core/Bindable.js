@@ -169,6 +169,13 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding","underscor
                  * @private
                  */
                 _generateDefaultsChain: function (property) {
+
+                    this.factory.chainCache = this.factory.chainCache || {};
+
+                    if (this.factory.chainCache[property]) {
+                        return this.factory.chainCache[property];
+                    }
+
                     var ret = this[property],
                         base = this.base;
 
@@ -176,6 +183,9 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding","underscor
                         _.defaults(ret, base[property]);
                         base = base.base;
                     }
+
+                    // cache the chain
+                    this.factory.chainCache[property] = ret;
 
                     return ret;
                 },
