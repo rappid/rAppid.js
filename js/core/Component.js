@@ -217,6 +217,7 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                  */
                 _initializeDescriptors: function () {
                     var children = [],
+                        addedDescriptors = [],
                         i, child;
 
                     if (this.$defaultContentName && this.$defaultTemplateName) {
@@ -224,9 +225,23 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                     }
 
                     var desc;
+
+                    function addChildren(childrenFromDescriptor) {
+
+                        // don't add children with the same descriptor twice
+                        for (var j = 0; j < childrenFromDescriptor.length; j++) {
+                            child = childrenFromDescriptor[j];
+
+                            if (_.indexOf(addedDescriptors, child.$descriptor) === -1) {
+                                children.push(child);
+                                addedDescriptors.push(child.$descriptor);
+                            }
+                        }
+                    }
+
                     for (var d = 0; d < this.$internalDescriptors.length; d++) {
                         desc = this.$internalDescriptors[d];
-                        children = children.concat(this._getChildrenFromDescriptor(desc, this));
+                        addChildren(this._getChildrenFromDescriptor(desc, this));
                     }
 
                     var externalDescriptorChildren;
@@ -249,7 +264,7 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                             }
                         }
 
-                        if (!templateBlock) {
+                        if (!templateBlock && this.$descriptor) {
                             templateBlock = this.createComponent(Template, {
                                 name: this.$defaultTemplateName
                             }, this.$descriptor);
@@ -262,7 +277,7 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                     externalDescriptorChildren = externalDescriptorChildren || this._getChildrenFromDescriptor(this.$descriptor);
 
 
-                    if (this.$defaultContentName) {
+                    if (this.$defaultContentName && this.$descriptor) {
                         // check if content block is already defined
                         var contentBlock;
 
@@ -292,11 +307,11 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
 
                     }
 
-                    children = children.concat(externalDescriptorChildren);
+                    addChildren(externalDescriptorChildren);
 
                     var extraChildren = this.createChildren();
                     if (extraChildren) {
-                        children = children.concat(extraChildren);
+                        addChildren(extraChildren);
                     }
 
                     this._initializeChildren(children);
