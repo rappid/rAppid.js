@@ -1,0 +1,29 @@
+<js:Window xmlns="http://www.w3.org/1999/xhtml"
+           xmlns:js="js.core" xmlns:ui="js.ui">
+
+    <js:Script><![CDATA[
+        (function () {
+            return {
+                $classAttributes: ['title'],
+                $defaultContentName: "body",
+                defaults: {
+                    title: ''
+                },
+                closeDialog: function() {
+                    this.close()
+                }
+            }
+        })
+        ]]>
+    </js:Script>
+
+    <div class="modal-header">
+        <button type="button" class="close" onclick="closeDialog">×</button>
+        <h3>{title}</h3>
+    </div>
+
+    <ui:ContentPlaceHolder name="body" class="modal-body" />
+
+    <ui:ContentPlaceHolder name="footer" class="modal-footer" />
+
+</js:Window>
