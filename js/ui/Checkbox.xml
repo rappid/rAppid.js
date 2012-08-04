@@ -11,7 +11,7 @@
     </js:Script>
 
     <js:Template name="layout">
-        <input type="checkbox" name="{name}" checked="{{selected}}" value="{{value}}"/> <ui:PlaceHolder name="label"/>
+        <input type="checkbox" name="{name}" checked="{{checked}}" value="{{value}}"/> <ui:PlaceHolder name="label"/>
     </js:Template>
     <js:Template name="label">{label}</js:Template>
 </ui:CheckboxClass>
