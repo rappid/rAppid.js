@@ -258,7 +258,11 @@
 
             if (s.hasContent && s.contentType !== false) {
                 xhr.setRequestHeader("Content-Type", s.contentType);
-                xhr.setRequestHeader("Content-Length", s.data ? s.data.length.toString() : "0");
+                if(typeof window === "undefined"){
+                    // On NodeJs the XMLHttprequest does not set Content-Length
+                    // In the browser it's not allowed to set the Content-length
+                    xhr.setRequestHeader("Content-Length", s.data ? s.data.length.toString() : "0");
+                }
             }
 
 
@@ -469,7 +473,7 @@
             ret = construct(classDefinition, args);
             ret.className = className;
         } catch(e) {
-            console.log("Cannot create instance of '" + fqClassName + "'");
+            console.warn(["Cannot create instance of '" + fqClassName + "'", e, args]);
         }
 
         return ret;
