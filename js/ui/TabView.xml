@@ -4,7 +4,7 @@
         <ui:SelectionView tagName="ul" class="{tabClassName}" needsSelection="true" forceSelectable="true">
             <js:Template name="item">
                 <ui:View tagName="li">
-                    <ui:Link label="{$item.data-title}"/>
+                    <ui:Link label="{$item.title}"/>
                 </ui:View>
             </js:Template>
         </ui:SelectionView>
