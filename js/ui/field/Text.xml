@@ -1,0 +1,5 @@
+<ui:Field xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="js.ui" xmlns:js="js.core">
+    <js:Content name="controls">
+        <input type="text" value="{{value}}"/>
+    </js:Content>
+</ui:Field>

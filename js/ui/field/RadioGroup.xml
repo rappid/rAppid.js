@@ -1,0 +1,22 @@
+<ui:Field xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="js.ui" xmlns:js="js.core">
+    <js:Script><![CDATA[
+        (function () {
+            return {
+
+                $defaultContentName: null,
+
+                addChild: function (child) {
+                    if (this.$.$radioGroup) {
+                        this.$.$radioGroup.addChild(child);
+                    } else {
+                        this.callBase();
+                    }
+                }
+            }
+        })
+        ]]>
+    </js:Script>
+    <js:Content name="controls">
+        <ui:RadioGroup cid="$radioGroup" type="password" value="{{value}}" />
+    </js:Content>
+</ui:Field>
