@@ -36,15 +36,14 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                     }
 
                     this.$elements = [];
-
                     this.$templates = {};
                     this.$configurations = [];
                     this.$children = [];
 
                     attributes = attributes || {};
                     _.extend(attributes, this.$xamlAttributes, this.$xamlDefaults);
-
-                    this.callBase();
+                    // added parameters, otherwise it comes to problems in Chrome!
+                    this.callBase(attributes, descriptor, stage, parentScope, rootScope);
                 },
 
                 /**
@@ -284,7 +283,7 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                         for (i = 0; i < externalDescriptorChildren.length; i++) {
                             child = externalDescriptorChildren[i];
 
-                            if (child instanceof Content && child.$.ref === this.$defaultContentName) {
+                            if (child instanceof Content && child.$.name === this.$defaultContentName) {
                                 // content block already defined
                                 contentBlock = child;
                                 break;
@@ -294,7 +293,7 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                         if (!contentBlock) {
                             // create a content block and move all children in a js.core.Content Block
                             contentBlock = this.createComponent(Content, {
-                                ref: this.$defaultContentName
+                                name: this.$defaultContentName
                             });
 
                             // add all children to content block
@@ -453,7 +452,9 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                  * @param [attributes] for new Component
                  */
                 _createComponentForNode: function (node, attributes, rootScope) {
-                    if (!node) return null;
+                    if (!node){
+                        return null;
+                    }
 
                     attributes = attributes || {};
                     rootScope = rootScope || this.$rootScope;

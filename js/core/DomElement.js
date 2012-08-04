@@ -19,8 +19,8 @@ define(["require", "js/core/EventDispatcher","js/core/Component", "js/core/Conte
                 this.$addedToDom = false;
                 this.$renderMap = {};
                 this.$children = [];
-                this.$contentChildren = [];
                 this.$renderedChildren = [];
+                this.$contentChildren = [];
                 this.$domEventHandler = {};
                 // go inherit tree up and search for descriptors
                 var current = this;
@@ -30,7 +30,6 @@ define(["require", "js/core/EventDispatcher","js/core/Component", "js/core/Conte
                     }
                     current = current.base;
                 }
-
 
                 this.callBase();
 
@@ -46,7 +45,7 @@ define(["require", "js/core/EventDispatcher","js/core/Component", "js/core/Conte
                 this.bind('add:dom', this._onDomAdded, this);
             },
             /**
-             * This method is called when the stage is added to the DOM
+             * This method is called when the stage or the parent is added to the DOM
              * @private
              */
             _onDomAdded: function(){
@@ -161,15 +160,15 @@ define(["require", "js/core/EventDispatcher","js/core/Component", "js/core/Conte
                 var child,
                     content;
 
-                for (var i = 0; i < this.$elements.length; i++) {
-                    child = this.$elements[i];
+                for (var i = 0; i < this.$contentChildren.length; i++) {
+                    child = this.$contentChildren[i];
                     if (child instanceof Content && child.$.name === name) {
                         return child;
                     }
                 }
 
-                for (i = 0; i < this.$elements.length; i++) {
-                    child = this.$elements[i];
+                for (i = 0; i < this.$contentChildren.length; i++) {
+                    child = this.$contentChildren[i];
                     if (child.findContent) {
                         content = child.findContent(name);
                         if (content) {
@@ -239,7 +238,7 @@ define(["require", "js/core/EventDispatcher","js/core/Component", "js/core/Conte
                 var child;
                 for (var i = 0; i < children.length; i++) {
                     child = children[i];
-                    var ref = child.get('ref');
+                    var ref = child.get('name');
                     var placeHolder = this.getPlaceHolder(ref);
                     if (placeHolder) {
                         placeHolder.set({content: child});
