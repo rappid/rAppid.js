@@ -6,11 +6,55 @@
             return {
                 $classAttributes: ['title'],
                 $defaultContentName: "body",
+
                 defaults: {
                     title: ''
                 },
-                closeDialog: function() {
+
+                $keyHandlers: {
+                    27: "closeDialog",
+                    13: "confirmDialog"
+                },
+
+                showModal: function () {
+                    if (!this._keyDownHandler) {
+                        var self = this;
+                        this._keyDownHandler = function (e) {
+                            var keyHandlerName = self.$keyHandlers[e.keyCode];
+                            if (keyHandlerName && self[keyHandlerName]) {
+                                self[keyHandlerName].call(self, e);
+                                e.stopPropagation();
+                                return false;
+                            }
+                        }
+                    }
+                    this.$stage.$window && this.dom(this.$stage.$window).bindDomEvent('keydown', this._keyDownHandler);
+
+                    this.callBase();
+                },
+
+                close: function() {
+                    this.$stage.$window && this.dom(this.$stage.$window).unbindDomEvent('keydown', this._keyDownHandler);
+                    this.callBase();
+                },
+
+                /***
+                 * default function invoked when ESC is pressed
+                 * @param e
+                 */
+                closeDialog: function (e) {
                     this.close()
+                },
+
+                /***
+                 *
+                 * abstract function invoked when the enter key is pressed
+                 *
+                 * @abstract
+                 * @param e
+                 */
+                confirmDialog: function(e) {
+
                 }
             }
         })
