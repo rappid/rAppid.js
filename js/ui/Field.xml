@@ -18,7 +18,7 @@
                     inputId: null
                 },
 
-                $classAttributes: ['inputId', 'label'],
+                $classAttributes: ['inputId', 'label', 'value'],
 
                 ctor: function () {
                     this.callBase();
