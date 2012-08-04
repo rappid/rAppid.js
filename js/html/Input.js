@@ -1,4 +1,4 @@
-define(["js/html/HtmlElement"], function (HtmlElement) {
+define(["js/html/HtmlElement", "underscore"], function (HtmlElement, _) {
         var radioElementCache = {};
 
         return HtmlElement.inherit("js.html.Input", {
@@ -20,7 +20,7 @@ define(["js/html/HtmlElement"], function (HtmlElement) {
                 this.callBase();
             },
             _renderValue: function (value) {
-                if(value !== this.$el.value){
+                if(!_.isUndefined(value) && value !== this.$el.value){
                     this.$el.value = value;
                 }
             },
