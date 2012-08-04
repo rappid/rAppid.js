@@ -1,7 +1,7 @@
 define(["require", "js/core/Component", "underscore"], function (require, Component, _) {
     return Component.inherit("js.core.I18n", {
         defaults: {
-            path: 'app/locale',
+            path: 'ivo/locale',
             locale: null,
             suffix: '.json',
             translations: {}
@@ -26,9 +26,6 @@ define(["require", "js/core/Component", "underscore"], function (require, Compon
             }
 
             var self = this;
-//            if(callback){
-//                callback();
-//            }
             require(['json!' + this.$.path + '/' + this.$.locale], function (translations) {
                 self.set({
                     translations: translations
@@ -46,7 +43,7 @@ define(["require", "js/core/Component", "underscore"], function (require, Compon
          * @param - replacement for %0
          * @param - replacement for %1 ...
          */
-        translate: function () {
+        t: function () {
 
             var args = Array.prototype.slice.call(arguments);
             var key = args.shift(), isPlural;
