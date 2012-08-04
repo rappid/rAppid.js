@@ -1,5 +1,5 @@
 define(["js/html/HtmlElement", "underscore"], function (HtmlElement, _) {
-        var radioElementCache = {};
+        var radioNameCache = {};
 
         return HtmlElement.inherit("js.html.Input", {
             $classAttributes: ['updateOnEvent','checked'],
@@ -11,10 +11,11 @@ define(["js/html/HtmlElement", "underscore"], function (HtmlElement, _) {
             _commitChangedAttributes: function(attributes){
                 if(this.$.type === 'radio'){
                     if(attributes.name){
-                        radioElementCache[attributes.name + this.$cid] = this;
+                        radioNameCache[attributes.name] = radioNameCache[attributes.name] || {};
+                        radioNameCache[attributes.name][this.$cid] = this;
                     }
                     if(this.$previousAttributes.name){
-                        delete radioElementCache[this.$previousAttributes.name + this.$cid];
+                        delete radioNameCache[this.$previousAttributes.name][this.$cid];
                     }
                 }
                 this.callBase();
@@ -22,6 +23,19 @@ define(["js/html/HtmlElement", "underscore"], function (HtmlElement, _) {
             _renderValue: function (value) {
                 if(!_.isUndefined(value) && value !== this.$el.value){
                     this.$el.value = value;
+                }
+            },
+            _commitChecked: function(checked){
+                // sync shadow dom
+                if (checked && this.$.type === "radio") {
+                    var cache = radioNameCache[this.$.name];
+                    for (var id in cache) {
+                        if (cache.hasOwnProperty(id)) {
+                            if (cache[id] !== this) {
+                                cache[id].set('checked', false);
+                            }
+                        }
+                    }
                 }
             },
             _renderChecked: function (checked) {
@@ -37,15 +51,6 @@ define(["js/html/HtmlElement", "underscore"], function (HtmlElement, _) {
                 } else if (this.$.type === "checkbox" || this.$.type === "radio") {
                     this.bindDomEvent('click', function (e) {
                         self.set('checked', self.$el.checked);
-                        if(self.$.type === "radio"){
-                            for(var id in radioElementCache){
-                                if(radioElementCache.hasOwnProperty(id)){
-                                    if(radioElementCache[id] !== self){
-                                        radioElementCache[id].set('checked', false);
-                                    }
-                                }
-                            }
-                        }
 
                     });
                 } else if(this.$.type == "number" ){
