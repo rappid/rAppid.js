@@ -55,7 +55,7 @@ define(["require", "js/core/Component", "underscore"], function (require, Compon
                 key += "_plural";
             }
 
-            var value = this.$.translations[key] || "";
+            var value = this.$.translations[key] || this.get(this.$.translations, key) || "";
 
             for (var i = 0; i < args.length; i++) {
                 // replace, placeholder
