@@ -278,10 +278,12 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
 
                     if (this.$defaultContentName && this.$descriptor) {
                         // check if content block is already defined
-                        var contentBlock;
+                        var contentBlock,
+                            internAndExternChildren = children.concat(externalDescriptorChildren);
 
-                        for (i = 0; i < externalDescriptorChildren.length; i++) {
-                            child = externalDescriptorChildren[i];
+
+                        for (i = 0; i < internAndExternChildren.length; i++) {
+                            child = internAndExternChildren[i];
 
                             if (child instanceof Content && child.$.name === this.$defaultContentName) {
                                 // content block already defined
