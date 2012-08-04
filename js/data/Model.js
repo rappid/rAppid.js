@@ -138,7 +138,13 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
             } else {
                 return this.$.id ? STATE.CREATED : STATE.NEW;
             }
-        }.onChange('id')
+        }.onChange('id'),
+        clone: function(){
+            var ret = this.callBase();
+            ret.$context = this.$context;
+            ret.$alias = this.$alias;
+            return ret;
+        }
     });
 
     function fetchSubModels(attributes, subModelTypes, delegates) {
