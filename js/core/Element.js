@@ -22,8 +22,7 @@ define(["js/core/Bindable", "underscore", "js/core/BindingCreator"], function (B
         }
 
         var Element = Bindable.inherit("js.core.Element", {
-            ctor: function (attributes, descriptor, systemManager, parentScope, rootScope) {
-
+            ctor: function (attributes, descriptor, stage, parentScope, rootScope) {
                 attributes = attributes || {};
 
                 if (!descriptor) {
@@ -32,9 +31,8 @@ define(["js/core/Bindable", "underscore", "js/core/BindingCreator"], function (B
                         rootScope = this;
                     }
                 }
-
+                this.$stage = stage;
                 this.$descriptor = descriptor;
-                this.$stage = systemManager;
                 this.$parentScope = parentScope || null;
                 this.$rootScope = rootScope || null;
                 this.$attributesNamespace = this.$attributesNamespace || {};
