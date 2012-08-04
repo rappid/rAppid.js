@@ -529,15 +529,21 @@ define(["require", "js/core/Component", "js/core/Base", "js/data/Collection", "u
             },
             deserialize: function (responses) {
                 throw "abstract method";
+            },
+            getContentType: function(){
+                throw "abstract method";
             }
         });
 
         DataSource.JsonFormatProcessor = DataSource.FormatProcessor.inherit("js.data.DataSource.JsonFormatProcessor", {
             serialize: function (data) {
-                return JSON.stringify(data);
+                return decodeURI(JSON.stringify(data));
             },
             deserialize: function (text) {
                 return JSON.parse(text);
+            },
+            getContentType: function(){
+                return "application/json";
             }
         });
 

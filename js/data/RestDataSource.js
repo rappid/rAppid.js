@@ -85,18 +85,9 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
 
             return null;
         },
-
-        /**
-         *
-         * @param model
-         * @param options
-         * @param callback function(err, model, options)
-         */
-        loadModel: function (model, options, callback) {
+        _buildUriForModel: function(model){
             // map model to url
             var modelPathComponents = this.getPathComponentsForModel(model);
-
-            var self = this;
 
             if (!modelPathComponents) {
                 callback("path for model unknown", null, options);
@@ -112,12 +103,24 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
                 uri[uri.length - 1] = uri[uri.length - 1] + "." + this.$.suffix;
             }
 
+            return uri.join("/");
+        },
+        /**
+         *
+         * @param model
+         * @param options
+         * @param callback function(err, model, options)
+         */
+        loadModel: function (model, options, callback) {
+            var self = this;
+
+            // create url
+            var url = this._buildUriForModel(model);
+
             // get queryParameter
             var params = _.defaults(model.$context.getQueryParameter(),
                 this.getQueryParameter(RestDataSource.METHOD.GET));
 
-            // create url
-            var url = uri.join("/");
 
             flow()
                 .seq("xhr", function(cb) {
@@ -274,18 +277,8 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
                     processor.saveSubModels(model, options, cb)
                 })
                 .seq(function(cb) {
-                    // map model to url
-                    var modelPathComponents = self.getPathComponentsForModel(model);
-
-                    if (!modelPathComponents) {
-                        cb("path for model unknown");
-                        return;
-                    }
-
-                    // build uri
-                    var uri = [self.$.gateway];
-                    uri = uri.concat(model.$context.getPathComponents());
-                    uri = uri.concat(modelPathComponents);
+                    // create url
+                    var url = self._buildUriForModel(model);
 
                     // get queryParameter
                     var params = _.defaults(model.$context.getQueryParameter(),
@@ -299,14 +292,12 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
                     // format payload
                     var payload = formatProcessor.serialize(data);
 
-                    // create url
-                    var url = uri.join("/");
-
                     // send request
                     self.$stage.$applicationContext.ajax(url, {
                         type: method,
                         queryParameter: params,
-                        data: payload
+                        data: payload,
+                        contentType: formatProcessor.getContentType()
                     }, function (err, xhr) {
 
                         var request = {
