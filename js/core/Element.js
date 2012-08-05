@@ -134,11 +134,8 @@ define(["js/core/Bindable", "underscore", "js/core/BindingCreator"], function (B
                 }
             },
             getScopeForKey: function (key) {
-                // try to find value for first key
-                var value = this.$[key];
-
                 // if value was found
-                if (!_.isUndefined(value)) {
+                if (this.$.hasOwnProperty(key)) {
                     return this;
                 } else if (this.$parentScope) {
                     return this.$parentScope.getScopeForKey(key);
