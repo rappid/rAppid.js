@@ -1,4 +1,4 @@
-define(["require", "js/core/EventDispatcher","js/core/Component", "js/core/Content", "js/core/Binding", "inherit", "underscore"],
+define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Content", "js/core/Binding", "inherit", "underscore"],
     function (require, EventDispatcher, Component, Content, Binding, inherit, _) {
 
         var rspace = /\s+/;
@@ -48,9 +48,9 @@ define(["require", "js/core/EventDispatcher","js/core/Component", "js/core/Conte
              * This method is called when the stage or the parent is added to the DOM
              * @private
              */
-            _onDomAdded: function(){
+            _onDomAdded: function () {
                 this.$addedToDom = true;
-                for(var i=0; i < this.$renderedChildren.length; i++){
+                for (var i = 0; i < this.$renderedChildren.length; i++) {
                     this.$renderedChildren[i].trigger('add:dom', this.$el);
                 }
             },
@@ -87,7 +87,7 @@ define(["require", "js/core/EventDispatcher","js/core/Component", "js/core/Conte
                 if (child instanceof DomElement || child.render) {
                     var pos = options && typeof(options.childIndex) !== "undefined" ? options.childIndex : this.$children.length;
 
-                    this.$children.splice(pos,0,child);
+                    this.$children.splice(pos, 0, child);
                     if (this.isRendered()) {
                         this._renderChild(child, pos);
                     }
@@ -203,15 +203,15 @@ define(["require", "js/core/EventDispatcher","js/core/Component", "js/core/Conte
 
                 return this.$el;
             },
-            
-            _createDomElement: function(tagName, namespace) {
+
+            _createDomElement: function (tagName, namespace) {
                 if (this.$stage.$document.createElementNS && namespace && /^http/.test(namespace)) {
                     return this.$stage.$document.createElementNS(namespace, tagName);
                 } else {
                     return this.$stage.$document.createElement(tagName);
                 }
             },
-            
+
             _bindDomEvents: function (el) {
                 var eventDef, fnc;
 
@@ -251,18 +251,18 @@ define(["require", "js/core/EventDispatcher","js/core/Component", "js/core/Conte
                     var el = child.render();
                     this.$renderedChildren.push(child);
                     if (el) {
-                        if(pos == undefined){
+                        if (pos == undefined) {
                             this.$el.appendChild(el);
-                        }else{
+                        } else {
                             var childNode = this.$el.childNodes[pos];
-                            if(childNode){
-                                this.$el.insertBefore(el,childNode)
-                            }else{
+                            if (childNode) {
+                                this.$el.insertBefore(el, childNode)
+                            } else {
                                 this.$el.appendChild(el);
                             }
                         }
-                        if(this.$addedToDom){
-                            child.trigger('add:dom',this.$el);
+                        if (this.$addedToDom) {
+                            child.trigger('add:dom', this.$el);
                         }
                     }
                 }
@@ -278,8 +278,8 @@ define(["require", "js/core/EventDispatcher","js/core/Component", "js/core/Conte
             },
 
             _renderClass: function (className, oldClass) {
-                if(oldClass){
-                   this.removeClass(oldClass);
+                if (oldClass) {
+                    this.removeClass(oldClass);
                 }
                 if (className) {
                     this.addClass(className);
@@ -392,11 +392,16 @@ define(["require", "js/core/EventDispatcher","js/core/Component", "js/core/Conte
                     if (this.$el.setAttributeNS && namespaceUri) {
                         this.$el.setAttributeNS(namespaceUri, key, value)
                     } else {
-                        this.$el.setAttribute(key, value);
+                        try {
+                            this.$el.setAttribute(key, value);
+                        } catch (e) {
+                            // TODO: remove try catch block and find causing problem
+                            throw e;
+                        }
                     }
-                }else{
+                } else {
                     // first set empty -> needed for Chrome
-                    this.$el.setAttribute(key,"");
+                    this.$el.setAttribute(key, "");
                     // then remove -> needed for firefox
                     this.$el.removeAttribute(key);
                 }
@@ -428,10 +433,10 @@ define(["require", "js/core/EventDispatcher","js/core/Component", "js/core/Conte
                 return new DomManipulation(element || this);
             },
             setChildIndex: function (child, index) {
-                if(index < 0){
+                if (index < 0) {
                     index += this.$children.length;
                 }
-                if(index >= this.$children.length ){
+                if (index >= this.$children.length) {
                     index -= this.$children.length;
                 }
                 var oldIndex = this.$children.indexOf(child);
@@ -462,20 +467,18 @@ define(["require", "js/core/EventDispatcher","js/core/Component", "js/core/Conte
             },
             bind: function (type, eventHandler, scope) {
                 var self = this;
-                if (type.indexOf("on:") === 0 && !this.$domEventHandler[type] && !this._isComponentEvent(type))  {
-                    if(this.isRendered()){
+                if (type.indexOf("on:") === 0 && !this.$domEventHandler[type] && !this._isComponentEvent(type)) {
+                    if (this.isRendered()) {
                         var cb = this.$domEventHandler[type] = function (originalEvent) {
                             var e = new DomElement.Event(originalEvent);
-                            try {
-                                self.trigger(type, e, self);
-                            } catch(e) {}
+                            self.trigger(type, e, self);
                             if (e.isPropagationStopped) {
                                 return false;
                             }
                         };
-                        this.bindDomEvent(type.substr(3),cb);
+                        this.bindDomEvent(type.substr(3), cb);
                         this.callBase();
-                    }else{
+                    } else {
                         this.$eventDefinitions.push({
                             scope: scope || this,
                             type: type,
@@ -492,8 +495,8 @@ define(["require", "js/core/EventDispatcher","js/core/Component", "js/core/Conte
                 var handlers = this._eventHandlers[type];
                 if (handlers && handlers.length === 0) {
                     var cb = this.$domEventHandler[type];
-                    if(cb){
-                        this.unbindDomEvent(type,cb);
+                    if (cb) {
+                        this.unbindDomEvent(type, cb);
                     }
                 }
             }
