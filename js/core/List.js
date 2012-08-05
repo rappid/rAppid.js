@@ -185,9 +185,49 @@ define(["js/core/Bindable", "underscore"], function (Bindable, _) {
          */
         each: function (fnc, scope) {
             scope = scope || this;
-            for (var i = 0; i < this.$items.length; i++) {
-                fnc.call(scope, this.$items[i], i);
+
+            if (scope.break) {
+                throw "each would overwrite break";
             }
+
+            if (scope.return) {
+                throw "each would overwrite return";
+            }
+
+            var b = false,
+                r,
+                error;
+
+            scope.break = function() {
+                b = true;
+            };
+
+            scope.return = function(value) {
+                b = true;
+                r = value;
+            };
+
+            for (var i = 0; i < this.$items.length; i++) {
+                try {
+                    fnc.call(scope, this.$items[i], i, this.$items);
+                } catch (e) {
+                    error = e;
+                    b = true;
+                }
+
+                if (b) {
+                    break;
+                }
+            }
+
+            if (error) {
+                throw error;
+            }
+
+            delete scope.break;
+            delete scope.return;
+
+            return r;
         },
         /**
          * Returns a fresh copy of the List
