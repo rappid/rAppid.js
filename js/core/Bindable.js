@@ -272,7 +272,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding","underscor
 
                         if (changedAttributesCount) {
                             this._commitChangedAttributes(changedAttributes);
-                            if (options.silent === false) {
+                            if (!options.silent) {
                                 for (key in changedAttributes) {
                                     if (changedAttributes.hasOwnProperty(key)) {
                                         this.trigger('change:' + key, changedAttributes[key], this);
