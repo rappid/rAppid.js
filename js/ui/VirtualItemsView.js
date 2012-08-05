@@ -92,42 +92,7 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
                 return;
             }
 
-            // TODO
-            /*
-
-             if (_dataProviderChanged) {
-             _dataProviderChanged = false;
-
-             _scrollableContentHeightChanged = true;
-             _offsetChanged = true;
-             _layoutChanged = true;
-             this.offset = 0;
-
-             for (key in _activeRenderer) {
-             if (_activeRenderer.hasOwnProperty(key)) {
-             renderer = _activeRenderer[key] as IListItemRenderer;
-             rendererDO = renderer as DisplayObject;
-
-             if (renderer) {
-             // release renderer
-
-             dispatchEvent(new TileListEvent(TileListEvent.ITEM_SCROLLED_OUT_OF_VIEW, renderer.item));
-             renderer.item = null;
-
-             if (rendererDO && rendererDO.parent) {
-             rendererDO.parent.removeChild(rendererDO);
-             }
-
-             // move render into free renderer collection
-             _availableRenderer.push(rendererDO);
-             }
-             }
-             }
-
-             _activeRenderer = {};
-             }
-
-             */
+            // TODO data provider change
 
             this.set('$dataAdapter', VirtualItemsView.createDataAdapter(data, this));
 
@@ -341,25 +306,21 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
      */
     VirtualItemsView.VirtualDataAdapter = Bindable.inherit('js.ui.VirtualItemsView.VirtualDataAdapter', {
 
-        defaults: {
-            $data: null,
-            $virtualItemsView: null
-        },
-
         ctor: function (data, virtualItemsView) {
 
             if (data && !(data instanceof Array || data instanceof List)) {
                 throw "data needs to be either an Array or a List"
             }
 
-            this.callBase({
-                $data: data,
-                $virtualItemsView: virtualItemsView
-            });
+            this.$data = data;
+            this.$virtualItemsView = virtualItemsView;
+
+            this.callBase(null);
+
         },
 
         getItemAt: function (index) {
-            var data = this.$.$data,
+            var data = this.$data,
                 dataItem = null;
 
             if (data instanceof Array) {
@@ -382,7 +343,7 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
          * @returns {Number} the size of the list
          */
         size: function () {
-            return this.$.$data ? this.$.$data.length : 0;
+            return this.$data ? this.$data.length : 0;
         }.onChange('$data')
     });
 
@@ -400,6 +361,8 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
             this.$pageSize = data.$options.pageSize;
 
             this.callBase();
+
+            this.$collectionSizeUnknown = isNaN(this.size);
         },
 
         getItemAt: function (index) {
@@ -428,12 +391,12 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
             if (pageEntry === true) {
                 dataItem.set('status', STATUS_LOADED);
                 // page already fetched -> return with data
-                dataItem.set('data',this.$.$data.at(index));
+                dataItem.set('data',this.$data.at(index));
             } else {
                 dataItem.set('status',STATUS_LOADING);
                 // add callback after fetch completes, which sets the data
                 pageEntry[index] = function () {
-                    dataItem.set('data', self.$.$data.at(index));
+                    dataItem.set('data', self.$data.at(index));
                     dataItem.set('status', STATUS_LOADED);
                 };
 
@@ -447,13 +410,13 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
                             var pageStartIndex = pageIndex * self.$pageSize,
                                 pageEndIndex = (pageIndex + 1) * self.$pageSize - 1;
 
-                            var virtualItemsView = self.$.$virtualItemsView;
+                            var virtualItemsView = self.$virtualItemsView;
 
-                            if (virtualItemsView.$lastStartIndex < pageEndIndex &&
-                                virtualItemsView.$lastEndIndex > pageStartIndex) {
+                            if (virtualItemsView.$lastStartIndex <= pageEndIndex &&
+                                virtualItemsView.$lastEndIndex >= pageStartIndex) {
 
                                 // we need to fetch the page
-                                self.$.$data.fetchPage(pageIndex, null, function (err) {
+                                self.$data.fetchPage(pageIndex, null, function (err) {
                                     if (err) {
                                         // delete page so it will be fetched again on scrolling
                                         delete self.$pages[pageIndex];
@@ -469,6 +432,13 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
 
                                         // mark as already fetched
                                         self.$pages[pageIndex] = true;
+
+                                        if (self.$collectionSizeUnknown) {
+                                            // after the successfully fetch the size of the collection should be
+                                            // known -> update the VirtualItemsView
+                                            self.$collectionSizeUnknown = false;
+                                            self.$virtualItemsView._updateVisibleItems();
+                                        }
                                     }
                                 });
                             } else {
@@ -476,7 +446,7 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
                                 delete self.$pages[pageIndex];
                             }
 
-                        }, self.$.$virtualItemsView.$.fetchPageDelay);
+                        }, self.$virtualItemsView.$.fetchPageDelay);
                     })(pageIndex)
 
 
@@ -492,7 +462,7 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
          * @returns {Number} the size of the list, or NaN if size currently unknown
          */
         size: function () {
-            return this.$.$data ? this.$.$data.$.$itemsCount : NaN;
+            return this.$data ? this.$data.$.$itemsCount : NaN;
         }.on(['$data','change:$itemsCount'])
     });
 
