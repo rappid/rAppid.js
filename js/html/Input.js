@@ -10,13 +10,17 @@ define(["js/html/HtmlElement", "underscore"], function (HtmlElement, _) {
             },
             _commitChangedAttributes: function(attributes){
                 if(this.$.type === 'radio'){
+
                     if(attributes.name){
+
+                        if (this.$previousAttributes.name) {
+                            delete radioNameCache[this.$previousAttributes.name][this.$cid];
+                        }
+
                         radioNameCache[attributes.name] = radioNameCache[attributes.name] || {};
                         radioNameCache[attributes.name][this.$cid] = this;
                     }
-                    if(this.$previousAttributes.name){
-                        delete radioNameCache[this.$previousAttributes.name][this.$cid];
-                    }
+
                 }
                 this.callBase();
             },
