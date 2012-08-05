@@ -67,8 +67,8 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding","underscor
                     }
 
                     this.$ = attributes;
-                    // TODO: clone and keep prototype for attribute the same -> write own clone method
-                    this.$previousAttributes = _.clone(attributes);
+
+                    this.$previousAttributes = {}
 
                 },
                 /**
@@ -213,7 +213,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding","underscor
                         attributes = key;
                     }
 
-                    options = options || {silent: false, unset: false};
+                    options = options || {silent: false, unset: false, force: false};
 
                     // for un-setting attributes
                     if (options.unset) {
@@ -241,7 +241,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding","underscor
                                 changedAttributesCount++;
                                 this.$previousAttributes[key] = prev;
                             } else {
-                                if (!_.isEqual(now[key], attributes[key])) {
+                                if (options.force || !_.isEqual(now[key], attributes[key])) {
                                     prev = now[key];
                                     this.$previousAttributes[key] = prev;
                                     now[key] = attributes[key];
