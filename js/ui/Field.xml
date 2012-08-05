@@ -54,8 +54,6 @@
                         return child;
                     }
 
-                    console.log(child);
-
                     if (child && child.$children) {
                         for (var i = 0; i < child.$children.length; i++) {
                             var c = this.getFirstChild(child.$children[i]);
