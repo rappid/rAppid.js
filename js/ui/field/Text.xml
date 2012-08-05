@@ -1,5 +1,14 @@
 <ui:Field xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="js.ui" xmlns:js="js.core">
+    <js:Script><![CDATA[
+        (function () {
+            return {
+                $defaultContentName: "additionalControls"
+            }
+        })
+        ]]>
+    </js:Script>
     <js:Content name="controls">
         <input type="text" value="{{value}}"/>
+        <ui:ContentPlaceHolder name="additionalControls" />
     </js:Content>
 </ui:Field>
