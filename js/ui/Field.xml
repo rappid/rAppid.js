@@ -18,8 +18,8 @@
                     inputId: null
                 },
 
-                $classAttributes: ['inputId', 'label', 'value'],
-
+                $classAttributes: ['inputId', 'label'],
+                $errorAttribute: 'value',
                 ctor: function () {
                     this.callBase();
 
@@ -27,7 +27,14 @@
                         this.set('inputId', 'field_' + (++fieldId));
                     }
                 },
-
+                _render_error: function(error,oldError){
+                    console.log("error",error);
+                    if(error){
+                        this.addClass('error');
+                    }else{
+                        this.removeClass('error');
+                    }
+                },
                 $defaultContentName: "controls",
 
                 _renderContentChildren: function () {

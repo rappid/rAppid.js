@@ -124,6 +124,8 @@ define(['js/core/EventDispatcher','js/lib/parser','js/core/Binding', 'underscore
                     binding = this.create(bindingDef, scope, attrKey, bindingDefinitions);
                     if (binding instanceof Binding) {
                         bindings.push(binding);
+                        scope.$bindings[attrKey] = scope.$bindings[attrKey] || [];
+                        scope.$bindings[attrKey].push(binding);
                     }
                     bindingDefinitions[i] = binding;
                 }
@@ -149,6 +151,9 @@ define(['js/core/EventDispatcher','js/lib/parser','js/core/Binding', 'underscore
             }
         },
 
+        parsePath: function(text){
+            return Parser.parse(text, "path");
+        },
         containsBindingDefinition: function(bindingDefinitions) {
 
             if (bindingDefinitions) {

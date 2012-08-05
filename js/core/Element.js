@@ -35,6 +35,7 @@ define(["js/core/Bindable", "underscore", "js/core/BindingCreator"], function (B
                         rootScope = this;
                     }
                 }
+                this.$bindings = {};
                 this.$stage = stage;
                 this.$descriptor = descriptor;
                 this.$parentScope = parentScope || null;

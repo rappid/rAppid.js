@@ -1,6 +1,6 @@
-define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable", "js/core/EventDispatcher", "underscore"],
+define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable", "js/core/EventDispatcher", "underscore", "js/core/Binding"],
 
-    function (require, Element, TextElement, Bindable, EventDispatcher, _) {
+    function (require, Element, TextElement, Bindable, EventDispatcher, _, Binding) {
 
         var Component = Element.inherit("js.core.Component",
             {
@@ -45,7 +45,7 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                     // added parameters, otherwise it comes to problems in Chrome!
                     this.callBase(attributes, descriptor, stage, parentScope, rootScope);
                 },
-
+                $errorAttribute: null,
                 /**
                  * if set all children from the descriptor will be placed into a
                  * js.core.Content block with the name of $defaultContentName
@@ -437,6 +437,19 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                             }
 
                             changedAttributes[key] = bindingCreator.evaluate(value, this, key, bindingDefinitions);
+                        }
+                    }
+
+                    if(this.$errorAttribute && this.$bindings[this.$errorAttribute]){
+                        var b = this.$bindings[this.$errorAttribute][0];
+                        if(b.$.twoWay && b.$.path.length > 1){
+                            var path = b.$.path.slice(), attrKey = path.pop().name;
+                            path = path.concat(bindingCreator.parsePath("errors()."+attrKey));
+
+                            bindingCreator.create({
+                                type: 'oneWay',
+                                path: path
+                            }, this, "_error");
                         }
                     }
 
