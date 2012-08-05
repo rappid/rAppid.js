@@ -159,7 +159,10 @@ define(["js/core/Bindable", "underscore", "js/core/BindingCreator"], function (B
             _initializationComplete: function () {
 
                 // call commitChangedAttributes for all attributes
-                this._commitChangedAttributes(this.$);
+                this.set(this.$, {
+                    force: true,
+                    silent: true
+                });
 
                 this.$initialized = true;
             },
