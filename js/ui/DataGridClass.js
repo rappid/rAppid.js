@@ -10,7 +10,7 @@ define(['js/ui/View', 'xaml!js/ui/DataGridColumn', 'js/core/List', 'underscore']
             selectedItems: List
         },
 
-        $classAttributes: ['rowHeight','itemWidth', 'prefetchItemCount', 'selectedItems'],
+        $classAttributes: ['rowHeight','itemWidth', 'prefetchItemCount', 'selectedItems', "data"],
 
         addChild: function (child) {
             this.callBase();

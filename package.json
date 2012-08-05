@@ -22,8 +22,9 @@
     "url": "git://github.com/it-ony/rAppid.js.git"
   },
   "keywords": [
-    "rAppid",
-    "MVC",
+    "rAppid", "rAppid.js", "rAppid:js",
+    "RIA", "Rich Internet Application",
+    "MVC", "Model View Controller",
     "framework",
     "application",
     "web",

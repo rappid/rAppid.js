@@ -25,7 +25,7 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                             this._cleanUpDescriptor(current._$descriptor);
                             this.$internalDescriptors.unshift(current._$descriptor);
 
-                            _.extend(this.$xamlDefaults, this._getAttributesFromDescriptor(current._$descriptor));
+                            _.defaults(this.$xamlDefaults, this._getAttributesFromDescriptor(current._$descriptor));
                         }
                         current = current.base;
                     }

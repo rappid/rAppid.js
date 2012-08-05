@@ -17,6 +17,6 @@
         ]]>
     </js:Script>
     <js:Content name="controls">
-        <ui:RadioGroup cid="$radioGroup" type="password" value="{{value}}" />
+        <ui:RadioGroup cid="$radioGroup" value="{{value}}" />
     </js:Content>
 </ui:Field>

@@ -21,7 +21,7 @@ define(['js/ui/VirtualItemsView', 'xaml!js/ui/DataGridColumn', 'js/core/List', '
             this.$selectedViews = {};
             this.callBase();
         },
-        $classAttributes: ['rowHeight', 'columns', 'selectedItems'],
+        $classAttributes: ['rowHeight', 'columns', 'selectedItems', 'data'],
 
         _addRenderer: function (renderer, position) {
             this.$.$tbody.addChild(renderer, {childIndex: position});

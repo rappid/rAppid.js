@@ -5,8 +5,11 @@ define(["js/ui/View"], function (View) {
 
         _renderContent: function (content) {
             this._clearRenderedChildren();
+            this.$children = [];
+
             if (content) {
-                this._renderChildren(content.getChildren());
+                this.$children = content.getChildren();
+                this._renderChildren(this.$children);
             }
         }
     }));

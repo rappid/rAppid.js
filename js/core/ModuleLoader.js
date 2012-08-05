@@ -4,7 +4,8 @@ define(["require", "js/html/HtmlElement", "js/ui/ContentPlaceHolder", "js/core/M
 
             $classAttributes: ['router', 'currentModuleName'],
             defaults: {
-                currentModuleName:  null
+                currentModuleName:  null,
+                tagName: 'div'
             },
 
             ctor: function (attributes) {
