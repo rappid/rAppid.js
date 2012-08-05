@@ -1,14 +1,18 @@
-<ui:Field xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="js.ui" xmlns:js="js.core">
+<ui:Field xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="js.ui" xmlns:js="js.core"
+        type="text">
     <js:Script><![CDATA[
         (function () {
             return {
+
+                $classAttributes: ['type'],
+
                 $defaultContentName: "additionalControls"
             }
         })
         ]]>
     </js:Script>
     <js:Content name="controls">
-        <input type="text" value="{{value}}"/>
+        <input type="{type}" value="{{value}}"/>
         <ui:ContentPlaceHolder name="additionalControls" />
     </js:Content>
 </ui:Field>
