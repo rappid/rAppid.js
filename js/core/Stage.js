@@ -11,6 +11,8 @@ define(["js/html/HtmlElement", "js/core/Bus", "js/core/WindowManager"], function
             'class': 'stage'
         },
 
+
+
         ctor: function(requireJsContext, applicationContext, document, window){
 
             this.$requirejsContext = requireJsContext;
@@ -38,6 +40,8 @@ define(["js/html/HtmlElement", "js/core/Bus", "js/core/WindowManager"], function
             var dom = this.callBase(null);
             if (target) {
                 target.appendChild(dom);
+                this.$bus.trigger('Stage.Rendered', target);
+
                 this.trigger('add:dom', target);
             }
             return dom;
