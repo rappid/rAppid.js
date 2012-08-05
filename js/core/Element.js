@@ -17,6 +17,10 @@ define(["js/core/Bindable", "underscore", "js/core/BindingCreator"], function (B
                 } else if (str === "false") {
                     return false;
                 }
+
+                if (str === "null") {
+                    return null;
+                }
             }
             return str;
         }
