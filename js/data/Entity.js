@@ -5,7 +5,7 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'js/data/TypeResolver'],
     var Entity = Bindable.inherit('js.core.Entity', {
 
         ctor: function(attributes) {
-
+            this.$errors = new Bindable();
             this._extendSchema();
 
             this.callBase(attributes);
@@ -200,6 +200,19 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'js/data/TypeResolver'],
          */
         compose: function (action, options) {
             return this.prepare(action, options);
+        },
+        clearErrors: function(){
+            this.$errors.clear();
+        },
+        setErrors: function(errors){
+            for(var key in errors) {
+                if(errors.hasOwnProperty(key)){
+                    this.$errors.set(key,errors[key]);
+                }
+            }
+        },
+        errors: function(){
+            return this.$errors;
         }
 
 //        preCompose: function (data, action, options) {
