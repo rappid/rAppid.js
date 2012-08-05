@@ -5,7 +5,6 @@
             <js:Template name="item">
                 <th style="width: {$column.width};">
                     {$column.title}
-                    <i class="icon icon-chevron-down pull-right"/>
                 </th>
             </js:Template>
         </ui:ItemsView>
