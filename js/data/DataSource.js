@@ -177,6 +177,12 @@ define(["require", "js/core/Component", "js/core/Base", "js/data/Collection", "u
                         ret.push(self._getCompositionValue(v, action, options));
                     });
                     return ret;
+                }else if (value instanceof Array){
+                    var arr = [];
+                    for(var i = 0; i < value.length; i++){
+                        arr.push(this._getCompositionValue(value[i],action, options));
+                    }
+                    return arr;
                 } else if (value instanceof Object) {
                     return this._composeObject(value);
                 }
