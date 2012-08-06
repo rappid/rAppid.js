@@ -392,12 +392,7 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                     if (this.$el.setAttributeNS && namespaceUri) {
                         this.$el.setAttributeNS(namespaceUri, key, value)
                     } else {
-                        try {
-                            this.$el.setAttribute(key, value);
-                        } catch (e) {
-                            // TODO: remove try catch block and find causing problem
-                            throw e;
-                        }
+                        this.$el.setAttribute(key, value);
                     }
                 } else {
                     // first set empty -> needed for Chrome

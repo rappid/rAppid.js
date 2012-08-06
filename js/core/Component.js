@@ -391,6 +391,9 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                  * Initialize all Binding and Event attributes
                  */
                 _initializeBindings: function () {
+                    if(this.$initialized){
+                        return;
+                    }
                     var $ = this.$,
                         bindingCreator = this.$bindingCreator,
                         changedAttributes = {},
