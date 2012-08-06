@@ -4,6 +4,9 @@ define(["js/html/HtmlElement", "js/core/Content", "underscore"], function (HtmlE
                 tagName: "div"
             },
             render: function () {
+                if(this.isRendered()){
+                    return this.$el;
+                }
                 // look if the component has a layout defined
                 var layout = this.$templates['layout'];
                 // if layout template available...
