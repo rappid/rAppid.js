@@ -212,7 +212,11 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore"], funct
             }
 
             return this.$queryCollectionsCache[queryKey];
-        }
+        },
+
+        size: function() {
+            return this.$.$itemsCount;
+        }.onChange('$itemsCount')
 
     });
 
