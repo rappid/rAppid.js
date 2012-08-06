@@ -22,7 +22,12 @@ define(['js/ui/VirtualItemsView', 'xaml!js/ui/DataGridColumn', 'js/core/List', '
             this.callBase();
         },
         $classAttributes: ['rowHeight', 'columns', 'selectedItems', 'data'],
-
+        _createRenderer: function (attributes) {
+            if(attributes){
+                delete attributes['width'];
+            }
+            return this.callBase(attributes);
+        },
         _addRenderer: function (renderer, position) {
             this.$.$tbody.addChild(renderer, {childIndex: position});
             var column, columnConfiguration, binding;
@@ -32,12 +37,17 @@ define(['js/ui/VirtualItemsView', 'xaml!js/ui/DataGridColumn', 'js/core/List', '
 
                 if(!column.$children.length){
                     var c = columnConfiguration.createCellRenderer({data: null}), path = ["$dataItem","data"];
+                    var cellContainer = columnConfiguration.createCellContainer();
                     if(columnConfiguration.$.path && columnConfiguration.$.path !== ""){
                         path.push(columnConfiguration.$.path);
                     }
 
                     binding = new Binding({scope: renderer, path: path.join("."), target: c, targetKey: 'data', transform: columnConfiguration.getFormatFnc()});
                     c.set({data: binding.getValue()});
+                    if(cellContainer){
+                        cellContainer.addChild(c);
+                        c = cellContainer;
+                    }
                     column.addChild(c);
                 }
 

@@ -3,4 +3,7 @@
     <js:Template name="cell">
         {data}
     </js:Template>
+    <js:Template name="cellContainer">
+        <div class="cell-container" height="{rowHeight}"/>
+    </js:Template>
 </ui:DataGridColumnClass>
