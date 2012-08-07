@@ -180,7 +180,15 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding","underscor
                         base = this.base;
 
                     while (base) {
-                        _.defaults(ret, base[property]);
+                        var baseValue = base[property];
+                        for (var key in baseValue) {
+                            if (baseValue.hasOwnProperty(key)) {
+                                if (_.isUndefined(ret[key])) {
+                                    ret[key] = baseValue[key];
+                                }
+                            }
+                        }
+
                         base = base.base;
                     }
 
