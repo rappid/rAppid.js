@@ -54,6 +54,7 @@
                  * @param e
                  */
                 confirmDialog: function(e) {
+                    this.close(true);
                 }
             }
         })
