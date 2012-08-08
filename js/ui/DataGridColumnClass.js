@@ -10,11 +10,11 @@ define(['js/core/Component'], function (Component) {
         getFormatFnc: function () {
             return null;
         },
-        createCellRenderer: function (attributes) {
-            return this.$templates['cell'].createInstance(attributes);
+        createCellRenderer: function (attributes, parentScope) {
+            return this.$templates['cell'].createInstance(attributes, parentScope);
         },
-        createCellContainer: function () {
-            return this.$templates['cellContainer'].createInstance(null);
+        createCellContainer: function (parentScope) {
+            return this.$templates['cellContainer'].createInstance(null, parentScope);
         },
         isDefined: function (value) {
             return value !== null && value !== undefined;
