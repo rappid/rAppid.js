@@ -1,7 +1,7 @@
 {
   "name": "rAppid.js",
   "preferGlobal": "false",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "author": "rAppid <support@rappidjs.com> (http://rappidjs.com)",
   "contributors": [
     "Tony Findeisen <tony@rappidjs.com>",
@@ -22,9 +22,13 @@
     "url": "git://github.com/it-ony/rAppid.js.git"
   },
   "keywords": [
-    "rAppid", "rAppid.js", "rAppid:js",
-    "RIA", "Rich Internet Application",
-    "MVC", "Model View Controller",
+    "rAppid",
+    "rAppid.js",
+    "rAppid:js",
+    "RIA",
+    "Rich Internet Application",
+    "MVC",
+    "Model View Controller",
     "framework",
     "application",
     "web",
