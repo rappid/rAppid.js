@@ -1,7 +1,10 @@
 <ui:TileListClass xmlns="http://www.w3.org/1999/xhtml"
-                     xmlns:ui="js.ui" xmlns:js="js.core" componentClass="tile-list">
+                     xmlns:ui="js.ui" xmlns:js="js.core" componentClass="tile-list" onkeydown="_onKeyDown" tabindex="1">
     <js:Template name="renderer">
-        <li>{$dataItem.data}</li>
+        {$dataItem.data}
+    </js:Template>
+    <js:Template name="rendererContainer">
+        <li selected="{$dataItem.selected}"/>
     </js:Template>
     <ul cid="$scrollContainer" class="scroll-container" position="relative">
     </ul>
