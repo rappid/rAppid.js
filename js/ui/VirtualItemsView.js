@@ -32,12 +32,15 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
 
             fetchPageDelay: 500,
 
-            $dataAdapter: null
+            $dataAdapter: null,
+            selectedItems: List
         },
-
-        $classAttributes: ['horizontalGap', 'verticalGap', 'prefetchItemCount', 'rows', 'cols', 'itemWidth', 'itemHeight', 'scrollLeft', 'scrollTop', 'fetchPageDelay'],
-
+        $classAttributes: ['selectedItems','data','horizontalGap', 'verticalGap', 'prefetchItemCount', 'rows', 'cols', 'itemWidth', 'itemHeight', 'scrollLeft', 'scrollTop', 'fetchPageDelay'],
+        events: ["on:itemClick", "on:itemDblClick"],
         ctor: function () {
+            this.$currentSelectionIndex = null;
+            this.$selectionMap = {};
+            this.$selectedViews = {};
 
             this.$activeRenderer = {};
             this.$availableRenderer = [];
@@ -99,8 +102,6 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
             // TODO: cleanup renderer
             this._updateVisibleItems();
         },
-
-
         _updateVisibleItems: function () {
 
             var dataAdapter = this.$.$dataAdapter;
@@ -213,9 +214,14 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
 
             return renderer;
         },
-        _onRendererClick: function(e, renderer){
+        _onRendererClick: function (e, renderer) {
+            this.trigger('on:itemClick', e, renderer);
+            if(!e.isDefaultPrevented){
+                this._selectItem(renderer.$.$index, e.domEvent.shiftKey, e.domEvent.metaKey);
+            }
         },
         _onRendererDblClick: function (e, renderer) {
+            this.trigger('on:itemDblClick', e, renderer);
         },
         _createRenderer: function (attributes) {
             return this.$templates['renderer'].createComponents(attributes, this)[0];
@@ -286,8 +292,88 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
 
             return scrollContainer;
 
-        }
+        },
+        _onKeyDown: function (e) {
+            if (e.domEvent.keyCode === 38 || e.domEvent.keyCode === 40 || e.domEvent.keyCode === 37 || e.domEvent.keyCode === 39) {
+                var index = this.$currentSelectionIndex ? this.$currentSelectionIndex : 0;
+                switch (e.domEvent.keyCode) {
+                    case 38: index -= this.$.cols; break;
+                    case 40: index += this.$.cols; break;
+                    case 37: index--; break;
+                    case 39: index++; break;
+                    default: void 0;
+                }
+                if (index < 0) {
+                    index = 0;
+                }
+                this._selectItem(index, e.domEvent.shiftKey, false);
+                e.preventDefault();
+                e.stopPropagation();
+            }
+        },
+        _selectItem: function (index, shiftDown, metaKey) {
+            if (!metaKey) {
+                for (var key in this.$selectionMap) {
+                    if (this.$selectionMap.hasOwnProperty(key)) {
+                        this.$selectionMap[key].set({selected: false});
+                        this.$.selectedItems.remove(this.$selectionMap[key].$.data);
+                        delete this.$selectionMap[key];
+                    }
+                }
+            }
 
+            if (!shiftDown || metaKey) {
+                this.$lastSelectionIndex = index;
+            }
+            var startIndex, endIndex;
+            if (this.$lastSelectionIndex !== undefined && index < this.$lastSelectionIndex) {
+                startIndex = index;
+                endIndex = this.$lastSelectionIndex;
+            } else {
+                startIndex = this.$lastSelectionIndex;
+                endIndex = index;
+            }
+            this.$currentSelectionIndex = index;
+            var item, id;
+            for (var i = startIndex; i <= endIndex; i++) {
+                item = this.$.$dataAdapter.getItemAt(i);
+                id = item.get('data.$cid');
+                if (id) {
+                    if (metaKey && item.$.selected) {
+                        delete this.$selectionMap[id];
+                        this.$.selectedItems.remove(item.$.data);
+                        item.set('selected', false);
+                    } else {
+                        this.$selectionMap[id] = item;
+                        this.$.selectedItems.add(item.$.data);
+                        item.set('selected', true);
+
+                    }
+                } else {
+                    console.warn("no id defined for data item");
+                }
+            }
+            var pos = this.getPointFromIndex(index), y = pos.y, topDiff = y - this.$el.scrollTop, bottomDiff = topDiff + this.$.itemHeight + this.$.verticalGap - this.$.height;
+            topDiff -= this.$.verticalGap;
+            if(bottomDiff > 0){
+                this.$el.scrollTop += bottomDiff;
+            }
+            if(topDiff < 0){
+                this.$el.scrollTop += topDiff;
+            }
+
+            if (!shiftDown) {
+                this.$lastSelectionIndex = index;
+            }
+        },
+        isItemSelected: function (data) {
+            if (!data) {
+                return false;
+            }
+            var cid = data.$cid;
+            console.log(cid);
+            return cid && this.$.selectedItems[cid] !== undefined;
+        }
     }, {
         createDataAdapter: function (data, virtualItemsView) {
 
@@ -389,15 +475,15 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
             var pageEntry = this.$pages[pageIndex];
 
             if (pageEntry === true) {
-                dataItem.set('status', STATUS_LOADED);
+                dataItem.set('$status', STATUS_LOADED);
                 // page already fetched -> return with data
                 dataItem.set('data',this.$data.at(index));
             } else {
-                dataItem.set('status',STATUS_LOADING);
+                dataItem.set('$status',STATUS_LOADING);
                 // add callback after fetch completes, which sets the data
                 pageEntry[index] = function () {
                     dataItem.set('data', self.$data.at(index));
-                    dataItem.set('status', STATUS_LOADED);
+                    dataItem.set('$status', STATUS_LOADED);
                 };
 
                 if (firstTimeToFetchPage) {
