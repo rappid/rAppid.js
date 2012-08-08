@@ -124,7 +124,7 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                     }
 
                     // initialize auto
-                    if (this.$creationPolicy == "auto") {
+                    if (this.$creationPolicy === "auto") {
                         child._initialize(this.$creationPolicy);
                     }
 
