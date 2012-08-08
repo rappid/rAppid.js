@@ -93,7 +93,7 @@ define(['js/core/EventDispatcher','js/lib/parser','js/core/Binding', 'underscore
                     return scope.get(bindingDef.path);
                 }
             }else{
-                throw "Couldn't find scope for " + pathElement.name;
+                throw new Error("Couldn't find scope for " + pathElement.name);
             }
 
         },
