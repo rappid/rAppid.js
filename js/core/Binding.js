@@ -118,10 +118,11 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
                     scope.bind(this.$.event, this._callback, this);
                 }
 
-                if (this.$.twoWay === true && this.$.path.length === 1) {
+                if (this.$.twoWay === true) {
                     this.$.targetEvent = 'change:' + this.$.targetKey;
-
-                    this.$.target.bind(this.$.targetEvent, this._revCallback, this);
+                    if(this.$.path.length === 1){
+                        this.$.target.bind(this.$.targetEvent, this._revCallback, this);
+                    }
                 }
 
                 scope.bind('destroy', function () {
@@ -230,11 +231,11 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
                 var e;
                 for (var j = 0; j < this.$events.length; j++) {
                     e = this.$events[j];
-                    this.$.scope.unbind(e.eventType, e.callback);
+                    this.$.scope.unbind(e.eventType, e.callback, this);
                 }
 
                 if (this.$.twoWay === true) {
-                    this.$.target.unbind(this.$.targetEvent, this._revCallback);
+                    this.$.target.unbind(this.$.targetEvent, this._revCallback, this);
                 }
                 if (this.$subBinding) {
                     this.$subBinding.destroy();
