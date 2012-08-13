@@ -192,6 +192,9 @@ define(["js/core/Bindable", "underscore", "js/core/BindingCreator"], function (B
              */
             not: function(value){
                 return !value;
+            },
+            isDefined: function(value){
+                return !_.isUndefined(value);
             }
         });
 
