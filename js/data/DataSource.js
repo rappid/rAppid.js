@@ -138,14 +138,30 @@ define(["require", "js/core/Component", "js/core/Base", "js/data/Collection", "u
 
             /***
              * prepares the data for being serialized
-             * @param {JSON} data
+             * @param {js.data.Entity} entity
              * @param {js.data.DataSource.ACTION} action
              * @return {JSON}
              */
-            compose: function (data, action, options) {
-                return this._composeObject(data, action, options);
+            compose: function(entity, action, options){
+                var ret = {}, obj = entity.$;
+                for (var key in obj) {
+                    if (obj.hasOwnProperty(key)) {
+                        var value = this._getCompositionValue(obj[key], action, options);
+                        if (value !== undefined) {
+                            ret[this._getReferenceKey(key, entity.$schema)] = value;
+                        }
+                    }
+                }
+                return ret;
             },
-
+            _getReferenceKey: function(key, schema){
+                // TODO: put this in a special rails adapter
+                if (schema[key] && schema[key].classof && schema[key].classof(Model)) {
+                    return key + "_id";
+                }else{
+                    return key;
+                }
+            },
             _composeObject: function (obj, action, options) {
 
                 var ret = {};
@@ -177,6 +193,12 @@ define(["require", "js/core/Component", "js/core/Base", "js/data/Collection", "u
                         ret.push(self._getCompositionValue(v, action, options));
                     });
                     return ret;
+                }else if(value instanceof Date){
+                    if(value){
+                        return moment(value).format("YYYY-MM-DDTHH:mm:ssZ");
+                    }else{
+                        return null;
+                    }
                 }else if (value instanceof Array){
                     var arr = [];
                     for(var i = 0; i < value.length; i++){
@@ -185,16 +207,15 @@ define(["require", "js/core/Component", "js/core/Base", "js/data/Collection", "u
                     return arr;
                 } else if (value instanceof Object) {
                     return this._composeObject(value);
-                }
-                else {
+                } else {
                     return value;
                 }
             },
 
             _composeSubModel: function (model, action, options) {
-                return model.compose(action, options);
+                // just return id
+                return model.$.id;
             },
-
             _composeCollection: function (collection, action, options) {
                 return undefined;
             },
@@ -207,16 +228,27 @@ define(["require", "js/core/Component", "js/core/Base", "js/data/Collection", "u
              * saves sub models
              */
             saveSubModels: function (model, options, callback) {
-                // TODO: handle circular dependencies
+                var schema = model.$schema, subModels = [], type;
+                for(var reference in schema){
+                    if(schema.hasOwnProperty(reference)){
+                        type = schema[reference];
+                        if(type.classof){
+                            // todo: add collection
+                            if(type.classof(Model)){
+                                if(model.$[reference] && _.include(model.$nestedModels,reference)){
+                                    subModels.push(model.$[reference]);
+                                }
+                            }
+                        }
 
-//                flow()
-//                    .parEach(this.getSubModelsForModel(model), function(model, cb) {
-//                        model.save(options, cb);
-//                    })
-//                    .exec(callback);
+                    }
+                }
 
-                // TODO: uncomment
-                callback();
+                flow()
+                    .parEach(subModels, function(model, cb) {
+                        model.save(options, cb);
+                    })
+                    .exec(callback);
             },
 
             getSubModelsForModel: function (model) {
