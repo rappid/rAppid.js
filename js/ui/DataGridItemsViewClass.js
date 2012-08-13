@@ -66,6 +66,11 @@ define(['js/ui/VirtualItemsView', 'xaml!js/ui/DataGridColumn', 'js/core/List', '
         },
         indexStatus: function(index){
             return index % 2 ? INDEX_EVEN : INDEX_ODD;
+        },
+        focus: function(){
+            if(this.isRendered()){
+                this.$.$table.$el.focus();
+            }
         }
     });
 });
