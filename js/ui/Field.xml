@@ -15,10 +15,11 @@
 
                 defaults: {
                     label: "",
-                    inputId: null
+                    inputId: null,
+                    enabled: true
                 },
 
-                $classAttributes: ['inputId', 'label'],
+                $classAttributes: ['enabled','inputId', 'label', 'value'],
                 $errorAttribute: 'value',
                 ctor: function () {
                     this.callBase();
