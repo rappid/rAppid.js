@@ -87,6 +87,7 @@ define(["js/data/DataView", "js/core/List", "js/data/Collection", "flow", "under
 
                 var i;
                 pageIndex = pageIndex || 0;
+                noPageCheck = _.isUndefined(noPageCheck) ? true : noPageCheck;
 
                 if (!this.$.baseList || (!noPageCheck && pageIndex === this.$.page)) {
                     // nothing to do
@@ -166,7 +167,7 @@ define(["js/data/DataView", "js/core/List", "js/data/Collection", "flow", "under
         }.onChange('page'),
         hasPage: function(pageIndex){
             if(this.$.baseList){
-                return this.$.baseList.$.$itemsCount === null || this.$.baseList.$.$itemsCount > (pageIndex) * this.$.pageSize;
+                return _.isUndefined(this.$.baseList.$.$itemsCount) || this.$.baseList.$.$itemsCount > (pageIndex) * this.$.pageSize;
             }
             return true;
         },
