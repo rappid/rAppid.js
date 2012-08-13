@@ -1,4 +1,4 @@
-define(["js/html/HtmlElement", "underscore"], function (HtmlElement, _) {
+define(["js/html/HtmlElement", "underscore", "js/lib/moment"], function (HtmlElement, _, moment) {
         var radioNameCache = {};
 
         return HtmlElement.inherit("js.html.Input", {
@@ -24,8 +24,25 @@ define(["js/html/HtmlElement", "underscore"], function (HtmlElement, _) {
                 }
                 this.callBase();
             },
+            _renderEnabled: function(enabled){
+                if(enabled){
+                    this.$el.removeAttribute("disabled");
+                }else{
+                    this.$el.setAttribute("disabled","disabled");
+                }
+            },
             _renderValue: function (value) {
-                if(!_.isUndefined(value) && value !== this.$el.value){
+                if(!value){
+                    value = "";
+                }
+                if(value !== this.$el.value){
+                    if(this.$.type === "date"){
+                        if(value instanceof Date){
+                            value = moment(value).format("YYYY-MM-DD");
+                            console.log(value);
+                        }
+                    }
+
                     this.$el.value = value;
                 }
             },
@@ -45,25 +62,36 @@ define(["js/html/HtmlElement", "underscore"], function (HtmlElement, _) {
             _renderChecked: function (checked) {
                 this.$el.checked = checked;
             },
+            _transformValue: function(value){
+                if(this.$.type === "number"){
+                    value = parseInt(value);
+                    if (isNaN(val)) {
+                        value = this.$.value;
+                    }
+                } else if(this.$.type === "date"){
+                    try{
+                        value = value !== "" ? new Date(value) : null;
+                    }catch(e){
+                        console.warn("Invalid Date");
+                        value = this.$.value;
+                    }
+                }
+
+                return value;
+            },
             _bindDomEvents: function () {
 
                 var self = this;
-                if (this.$.type === "text" || this.$.type === "password") {
+                if (this.$.type === "text" || this.$.type === "password" || this.$.type === "date") {
+                    if(this.$.type === "date"){
+                        this.$.updateOnEvent = "change";
+                    }
                     this.bindDomEvent(this.$.updateOnEvent, function (e) {
-                        self.set('value', self.$el.value);
+                        self.set('value', self._transformValue(self.$el.value));
                     });
                 } else if (this.$.type === "checkbox" || this.$.type === "radio") {
                     this.bindDomEvent('click', function (e) {
                         self.set('checked', self.$el.checked);
-
-                    });
-                } else if(this.$.type == "number" ){
-                    this.bindDomEvent('change', function (e) {
-                        var val = parseInt(self.$el.value);
-                        if(isNaN(val)){
-                            val = self.$.value;
-                        }
-                        self.set('value', val);
                     });
                 }
 
