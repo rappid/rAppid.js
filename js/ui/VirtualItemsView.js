@@ -1,4 +1,7 @@
 define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 'underscore'], function (View, Bindable, List, Collection, _) {
+    var SELECTION_MODE_NONE = 'none',
+        SELECTION_MODE_MULTI = 'multi',
+        SELECTION_MODE_SINGLE = 'single';
 
     /***
      * defines an ItemsView which can show parts of data
@@ -9,7 +12,6 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
 
             // the data, which should be bound
             data: null,
-
             // TODO: update positions, after DOM Element scrollLeft and scrollTop changed
             // scroll positions
             scrollTop: 0,
@@ -33,9 +35,10 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
             fetchPageDelay: 500,
 
             $dataAdapter: null,
+            selectionMode: 'multi',
             selectedItems: List
         },
-        $classAttributes: ['selectedItems','data','horizontalGap', 'verticalGap', 'prefetchItemCount', 'rows', 'cols', 'itemWidth', 'itemHeight', 'scrollLeft', 'scrollTop', 'fetchPageDelay'],
+        $classAttributes: ['selectionMode','selectedItems','data','horizontalGap', 'verticalGap', 'prefetchItemCount', 'rows', 'cols', 'itemWidth', 'itemHeight', 'scrollLeft', 'scrollTop', 'fetchPageDelay'],
         events: ["on:itemClick", "on:itemDblClick"],
         ctor: function () {
             this.$currentSelectionIndex = null;
@@ -312,6 +315,13 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
             }
         },
         _selectItem: function (index, shiftDown, metaKey) {
+            if(this.$.selectionMode === SELECTION_MODE_NONE){
+                return;
+            }
+            if(this.$.selectionMode === SELECTION_MODE_SINGLE){
+                shiftDown = false;
+                metaKey = false;
+            }
             if (!metaKey) {
                 for (var key in this.$selectionMap) {
                     if (this.$selectionMap.hasOwnProperty(key)) {
