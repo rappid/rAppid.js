@@ -31,8 +31,8 @@ define(['js/core/Bindable'], function(Bindable) {
             for(var key in attributes){
                 if(attributes.hasOwnProperty(key)){
                     val = attributes[key];
-                    if(key === 'title'){
-                        this.$title.innerText = val;
+                    if(key == 'title'){
+                        this.$title.text = val;
                     }else{
                         metaEl = this.$document.createElement('meta');
                         metaEl.setAttribute('name',key);
