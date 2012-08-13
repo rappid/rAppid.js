@@ -556,6 +556,11 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                 } else if (this.$el.detachEvent) {
                     this.$el.detachEvent("on" + type, cb);
                 }
+            },
+            focus: function(){
+                if(this.isRendered()){
+                    this.$el.focus();
+                }
             }
         };
 
