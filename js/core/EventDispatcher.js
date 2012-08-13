@@ -93,17 +93,15 @@ define(["js/core/Base"], function (Base) {
                             event = new EventDispatcher.Event(event);
                         }
 
-                        if (!target) {
-                            target = arguments.callee.caller;
+                        if(!event.target){
+                            event.target = target || arguments.callee.caller;
                         }
-                        event.target = target;
                         event.type = eventType;
 
                         var list = this._eventHandlers[eventType];
                         for (var i = 0; i < list.length; i++) {
                             if (list[i]) {
                                 var result = list[i].trigger(event, target);
-
                                 if (result !== undefinedValue) {
                                     ret = result;
                                     if (result === false) {
