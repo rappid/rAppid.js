@@ -114,10 +114,19 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding","underscor
                  * This method returns a copy of the Object
                  * @return js.core.Bindable a fresh copy of the Bindable
                  */
-                clone: function () {
+                clone: function (options) {
                     var ret = {};
+                    options = options || {};
                     for (var key in this.$) {
                         if (this.$.hasOwnProperty(key)) {
+                            if(options.exclude){
+                                if(options.exclude instanceof Array){
+                                    if(_.include(options.exclude,key)){
+                                        ret[key] = this.$[key];
+                                        continue;
+                                    }
+                                }
+                            }
                             ret[key] = this._cloneAttribute(this.$[key], key);
                         }
                     }
@@ -140,6 +149,8 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding","underscor
                             retArray.push(this._cloneAttribute(attribute[i]));
                         }
                         return retArray;
+                    } else if(attribute instanceof Date){
+                        return new Date(attribute.getTime());
                     } else if(_.isObject(attribute)){
                         var retObject = {};
                         for (var attrKey in attribute){
