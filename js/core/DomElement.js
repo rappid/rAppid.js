@@ -14,11 +14,14 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                 "cid",
                 /^_/ // private attributes
             ],
-
+            defaults: {
+                visible: true
+            },
             ctor: function (attributes, descriptor, systemManager, parentScope, rootScope) {
                 this.$addedToDom = false;
                 this.$renderMap = {};
                 this.$children = [];
+                this.$invisibleChildMap = {};
                 this.$renderedChildren = [];
                 this.$contentChildren = [];
                 this.$domEventHandler = {};
@@ -248,9 +251,10 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
 
             _renderChild: function (child, pos) {
                 if (_.isFunction(child.render)) {
+                    child.$renderParent = this;
                     var el = child.render();
                     this.$renderedChildren.push(child);
-                    if (el) {
+                    if (el && child.$.visible) {
                         if (pos == undefined) {
                             this.$el.appendChild(el);
                         } else {
@@ -267,7 +271,16 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                     }
                 }
             },
-
+            _renderVisible: function (visible) {
+                if(this.$renderParent){
+                    if (visible) {
+                        this.$renderParent.setChildVisible(this);
+                    } else {
+                        console.log(this);
+                        this.$renderParent.setChildInvisible(this);
+                    }
+                }
+            },
             _renderComponentClass: function (cls, oldCls) {
                 if (oldCls) {
                     this.removeClass(oldCls);
@@ -458,6 +471,29 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
             sendToBack: function () {
                 if (this.$parent) {
                     this.$parent.setChildIndex(this, 0);
+                }
+            },
+            setChildInvisible: function(child){
+                if(this.isRendered() && this.$renderedChildren.indexOf(child) > -1){
+                    if(child.$el.parentNode){
+                        this.$el.removeChild(child.$el);
+                    }
+                    this.$invisibleChildMap[child.$cid] = child;
+                }
+            },
+            setChildVisible: function(child){
+                if(this.isRendered() && this.$invisibleChildMap[child.$cid]){
+                    var i = this.$renderedChildren.indexOf(child) + 1;
+                    while (i < this.$renderedChildren.length && !this.$renderedChildren[i].$el.parentNode) {
+                        i++;
+                    }
+
+                    if(this.$children.length === 1 || i === this.$renderedChildren.length){
+                        this.$el.appendChild(child.$el);
+                    }else{
+                        this.$el.insertBefore(child.$el,this.$renderedChildren[i].$el);
+                    }
+                    delete this.$invisibleChildMap[child.$cid];
                 }
             },
             bind: function (type, eventHandler, scope) {

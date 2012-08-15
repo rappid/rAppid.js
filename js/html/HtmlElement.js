@@ -90,22 +90,15 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
         _renderWidthUpdatePolicy: function (policy) {
             bindSizePolicy(this, policy, "width");
         },
-        _renderVisible: function (visible) {
-            if (visible) {
-                this.removeClass('hide');
-            } else {
-                this.addClass('hide');
-            }
-        },
         /**
          *
          * @param selected
          * @private
          */
         _renderSelected: function (selected) {
-            if (selected === true) {
+            if (selected) {
                 this.addClass('active');
-            } else if (selected === false) {
+            } else {
                 this.removeClass('active');
             }
         },

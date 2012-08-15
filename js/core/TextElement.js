@@ -2,6 +2,9 @@ define(
     ["js/core/Element", "underscore"], function (Element, _) {
 
         return Element.inherit("js.core.TextElement", {
+            defaults: {
+                visible: true
+            },
             _initializeBindings: function () {
                 this.$.textContent = this.$bindingCreator.evaluate(this.$.textContent || "", this, "textContent");
                 this.callBase();
