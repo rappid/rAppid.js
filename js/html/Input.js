@@ -32,10 +32,10 @@ define(["js/html/HtmlElement", "underscore", "js/lib/moment"], function (HtmlEle
                 }
             },
             _renderValue: function (value) {
-                if(!value){
+                if(value === null || value === undefined){
                     value = "";
                 }
-                if(value !== this.$el.value){
+                if(String(value) !== this.$el.value){
                     if(this.$.type === "date"){
                         if(value instanceof Date){
                             value = moment(value).format("YYYY-MM-DD");
@@ -65,7 +65,7 @@ define(["js/html/HtmlElement", "underscore", "js/lib/moment"], function (HtmlEle
             _transformValue: function(value){
                 if(this.$.type === "number"){
                     value = parseInt(value);
-                    if (isNaN(val)) {
+                    if (isNaN(value)) {
                         value = this.$.value;
                     }
                 } else if(this.$.type === "date"){
@@ -82,7 +82,7 @@ define(["js/html/HtmlElement", "underscore", "js/lib/moment"], function (HtmlEle
             _bindDomEvents: function () {
 
                 var self = this;
-                if (this.$.type === "text" || this.$.type === "password" || this.$.type === "date") {
+                if (_.include(["text","password","date","number"], this.$.type)) {
                     if(this.$.type === "date"){
                         this.$.updateOnEvent = "change";
                     }
