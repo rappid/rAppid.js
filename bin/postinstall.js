@@ -10,11 +10,7 @@ var postinstall = function (args, callback) {
     var nodeModules = path.join(rappidDir, "node_modules");
     var libDir = path.join(rappidDir, "js", "lib");
     var libraries = {
-        "rAppid.js":path.join(rappidDir, "rAppid.js"),
-        "require.js":path.join(nodeModules, "requirejs", "require.js"),
-        "flow.js":path.join(nodeModules, "flow.js", "lib", "flow.js"),
-        "inherit.js":path.join(nodeModules, "inherit.js", "inherit.js"),
-        "underscore.js":path.join(nodeModules, "underscore", "underscore.js")
+        "rAppid.js":path.join(rappidDir, "rAppid.js")
     };
 
     if (!fs.existsSync(libDir)) {
