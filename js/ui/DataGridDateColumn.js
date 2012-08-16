@@ -1,4 +1,4 @@
-define(['xaml!js/ui/DataGridColumn','js/lib/moment'], function (Column, moment) {
+define(['xaml!js/ui/DataGridColumn','moment'], function (Column, moment) {
 
     return Column.inherit('js.ui.DataGridDateColumn', {
         defaults : {
