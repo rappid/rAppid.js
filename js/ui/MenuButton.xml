@@ -64,14 +64,14 @@
                         self.set({menuVisible: false});
                     });
 
-                    this.$toggleButton.bindDomEvent('click', function (e) {
+                    this.$toggleButton.bind('on:click', function (e) {
                         e.stopPropagation();
                         e.preventDefault();
                         self.set({menuVisible: !self.$.menuVisible});
                     });
 
-                    this.$button.bindDomEvent('click', function (e) {
-                        self.trigger('onclick', e, self);
+                    this.$button.bind('on:click', function (e) {
+                        self.trigger('on:click', e, self);
                     });
 
                     this.dom(this.$stage.$document).bindDomEvent('click', function (e) {
