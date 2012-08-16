@@ -1,5 +1,5 @@
 define(["require", "js/core/Component", "js/core/Base", "js/data/Collection", "underscore", "js/data/Model", "js/data/Entity", "js/core/List", "flow", "JSON", "js/lib/moment"],
-    function (require, Component, Base, Collection, _, Model, Entity, List, flow, JSON) {
+    function (require, Component, Base, Collection, _, Model, Entity, List, flow, JSON, moment) {
 
         var undefined,
             Context = Base.inherit("js.data.DataSource.Context", {
