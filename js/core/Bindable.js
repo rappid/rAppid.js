@@ -31,6 +31,15 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding","underscor
             }
         })();
 
+
+        var isEqual = function(a,b){
+            if(a instanceof EventDispatcher && b instanceof EventDispatcher){
+                return a === b;
+            }else{
+                return _.isEqual(a,b);
+            }
+        };
+
         var Bindable = EventDispatcher.inherit("js.core.Bindable",
             {
                 /***
@@ -260,7 +269,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding","underscor
                                 changedAttributesCount++;
                                 this.$previousAttributes[key] = prev;
                             } else {
-                                if (options.force || !_.isEqual(now[key], attributes[key])) {
+                                if (options.force || !isEqual(now[key],attributes[key])) {
                                     prev = now[key];
                                     this.$previousAttributes[key] = prev;
                                     now[key] = attributes[key];
