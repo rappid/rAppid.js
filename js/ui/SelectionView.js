@@ -1,5 +1,5 @@
 define(
-    ["js/ui/ItemsView", "js/html/HtmlElement", "underscore"], function (ItemsView, HtmlElement, _) {
+    ["js/ui/ItemsView", "js/html/HtmlElement", "underscore", "js/core/List"], function (ItemsView, HtmlElement, _, List) {
         return ItemsView.inherit("js.ui.SelectionView",{
             $classAttributes: [
                 "needsSelection", "multiSelect", "selectedView","selectedViews","selectedItems","selectedIndex","items", "forceSelectable"
@@ -8,11 +8,38 @@ define(
             defaults: {
                 needsSelection: false,
                 multiSelect: false,
-                selectedViews: [],
-                selectedItems: [],
+                selectedViews: List,
+                selectedItems: List,
                 selectedItem: null,
                 items: [],
                 forceSelectable: true
+            },
+            ctor: function(){
+                this.callBase();
+                this.bind(['selectedItems','add'], this._onSelectedItemAdd, this);
+                this.bind(['selectedItems','remove'], this._onSelectedItemRemove, this);
+                this.bind(['selectedItems','reset'], this._onSelectedItemReset, this);
+            },
+            _onSelectedItemAdd: function(e){
+                var item;
+                for (var i = 0; i < this.$renderedItems.length; i++) {
+                    item = this.$renderedItems[i].item;
+                    if(e.$ === item && !this.$renderedItems[i].component.$.selected){
+                        this.$renderedItems[i].component.set({selected: true});
+                    }
+                }
+            },
+            _onSelectedItemRemove: function(e){
+                var item;
+                for (var i = 0; i < this.$renderedItems.length; i++) {
+                    item = this.$renderedItems[i].item;
+                    if (e.$ === item && this.$renderedItems[i].component.$.selected) {
+                        this.$renderedItems[i].component.set({selected: false});
+                    }
+                }
+            },
+            _onSelectedItemReset: function () {
+                this._renderSelectedItems(this.$.selectedItems);
             },
             hasSelectedItems: function () {
                 return this.$.selectedItems.length > 0;
@@ -55,14 +82,12 @@ define(
                     comp.set({selected: true});
                 }
             },
-            _renderSelectedItems: function (items) {
+            _renderSelectedItems: function (list) {
                 var item;
                 for (var i = 0; i < this.$renderedItems.length; i++) {
                     item = this.$renderedItems[i].item;
-                    this.$renderedItems[i].component.set({selected: _.contains(items, item)});
+                    this.$renderedItems[i].component.set({selected: (list.indexOf(item) > -1)});
                 }
-
-
             },
             _renderSelectedIndex: function (i) {
                 if (i != null && i > -1 && i < this.$renderedChildren.length) {
@@ -106,7 +131,8 @@ define(
                 }
 
                 if (!correctSelection) {
-                    this.set({selectedViews: selectedChildren, selectedItems: selectedItems, selectedIndex: selectedIndex, selectedItem: selectedItem});
+                    this.set({selectedViews: selectedChildren, selectedIndex: selectedIndex, selectedItem: selectedItem});
+                    this.$.selectedItems.reset(selectedItems);
                 }
             }
         });
