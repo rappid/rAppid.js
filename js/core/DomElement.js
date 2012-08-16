@@ -268,6 +268,8 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                         if (this.$addedToDom) {
                             child.trigger('add:dom', this.$el);
                         }
+                    }else{
+                        this.$invisibleChildMap[child.$cid] = child;
                     }
                 }
             },
@@ -482,12 +484,11 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
             },
             setChildVisible: function(child){
                 if(this.isRendered() && this.$invisibleChildMap[child.$cid]){
-                    var i = this.$renderedChildren.indexOf(child) + 1;
-                    while (i < this.$renderedChildren.length && !this.$renderedChildren[i].$el.parentNode) {
+                    var i = this.$renderedChildren.indexOf(child);
+                    while (i + 1 < this.$renderedChildren.length && !this.$invisibleChildMap[this.$renderedChildren[i+1].$cid]) {
                         i++;
                     }
-
-                    if(this.$children.length === 1 || i === this.$renderedChildren.length){
+                    if(this.$el.childNodes.length === 0 || i >= this.$renderedChildren.length){
                         this.$el.appendChild(child.$el);
                     }else{
                         this.$el.insertBefore(child.$el,this.$renderedChildren[i].$el);
