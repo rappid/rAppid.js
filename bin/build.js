@@ -6,6 +6,18 @@ var path = require('path'),
     fs = require('fs');
 fs.existsSync || (fs.existsSync = path.existsSync);
 
+var createOnBuildWriteFnc = function(shim){
+    return function(moduleName,path, contents){
+        if(shim[moduleName]){
+            contents = "define('"+moduleName+"', function () { " + contents + "; return "+ shim[moduleName].exports+"; });"
+        } else if (moduleName == "rAppid") {
+            // rollback content changes
+            contents = contents.replace(/EMPTYDEFINE/g, 'define');
+        }
+        return contents;
+    }
+};
+
 var optimizeConfig = {
     baseUrl: './public',
     modules: [],
@@ -45,23 +57,6 @@ var optimizeConfig = {
         }
         return contents;
     },
-    onBuildWrite: function (moduleName, path, contents) {
-        if (moduleName == "inherit") {
-            contents = "define('inherit', function () { " + contents + "; return inherit; });"
-        } else if (moduleName == "underscore") {
-            contents = "define('underscore', function () { " + contents + "; return _; });"
-        } else if (moduleName == "flow") {
-            contents = "define('flow', function () { " + contents + "; return flow; });"
-        } else if (moduleName == "js/lib/parser") {
-            contents = "define('js/lib/parser', function () { " + contents + "; return this.parser; });"
-        } else if (moduleName == "app/lib/highlight/highlight") {
-            contents = "define('app/lib/highlight/highlight', function() { " + contents + "; return hljs; });"
-        } else if (moduleName == "rAppid") {
-            // rollback content changes
-            contents = contents.replace(/EMPTYDEFINE/g, 'define');
-        }
-        return contents;
-    },
     skipModuleInsertion: true,
     namespaceMap: rAppid.defaultNamespaceMap,
     rewriteMap: rAppid.defaultRewriteMap
@@ -93,6 +88,7 @@ var build = function (args, callback) {
     var config = JSON.parse(fs.readFileSync(configPath));
     var buildConfig = JSON.parse(fs.readFileSync(buildConfigPath));
 
+    optimizeConfig.onBuildWrite = createOnBuildWriteFnc(config.shim);
 
     if (buildConfig.uglify === false) {
         optimizeConfig.optimize = 'none';
