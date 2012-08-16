@@ -103,7 +103,7 @@ define(["js/core/Bindable", "underscore"], function (Bindable, _) {
          * @private
          */
         _onItemChange: function (e, item) {
-            this.trigger('change', {item: item, index: this.$items.indexOf(item)});
+            this.trigger('change', {item: item, index: this.indexOf(item)});
         },
         /**
          * Removes an Array or just one item from the list. Triggers remove events.
@@ -116,8 +116,16 @@ define(["js/core/Bindable", "underscore"], function (Bindable, _) {
                 items = [items];
             }
             for (var i = 0; i < items.length; i++) {
-                this.removeAt(this.$items.indexOf(items[i]), options);
+                this.removeAt(this.indexOf(items[i]), options);
             }
+        },
+        /**
+         * Returns the index of the item
+         * @param item
+         * @return {*}
+         */
+        indexOf: function(item){
+            return this.$items.indexOf(item);
         },
         /**
          * Removes one item a specific index and triggers remove event
