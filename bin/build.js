@@ -22,7 +22,8 @@ var optimizeConfig = {
     uglify: {
         toplevel: true,
         ascii_only: true,
-        beautify: false
+        beautify: false,
+        "line-len": 1000
     },
     "paths": {
         "rAppid": "js/lib/rAppid",
