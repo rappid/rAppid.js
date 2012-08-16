@@ -16,7 +16,7 @@ define(['js/ui/ItemsView', 'js/html/HtmlElement', 'js/ui/SelectionView','js/ui/S
                 if (!this.$selectionView && child instanceof SelectionView) {
                     this.$selectionView = child;
                     this.$selectionView.set({items: this.$.tabItems});
-                    this.$selectionView.bind('change:selectedViews', this._onTabChange, this);
+                    this.$selectionView.bind('change:selectedItem', this._onTabChange, this);
                 } else if (!this.$segmentedView && child instanceof SegmentedView) {
                     this.$segmentedView = child;
                 }
@@ -32,9 +32,8 @@ define(['js/ui/ItemsView', 'js/html/HtmlElement', 'js/ui/SelectionView','js/ui/S
             }
         },
         _onTabChange: function (e) {
-            if (e.$.length > 0) {
-                this.$segmentedView.set({visibleView: e.$[0].$.$item});
-            }
+            this.$segmentedView.set({visibleView: e.$});
+
         },
         _renderSelectedIndex: function (index) {
             this.$selectionView.set({selectedIndex: index});
