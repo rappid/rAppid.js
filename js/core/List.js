@@ -186,11 +186,11 @@ define(["js/core/Bindable", "underscore"], function (Bindable, _) {
         each: function (fnc, scope) {
             scope = scope || this;
 
-            if (scope.break) {
+            if (scope['break']) {
                 throw "each would overwrite break";
             }
 
-            if (scope.return) {
+            if (scope['return']) {
                 throw "each would overwrite return";
             }
 
@@ -198,11 +198,11 @@ define(["js/core/Bindable", "underscore"], function (Bindable, _) {
                 r,
                 error;
 
-            scope.break = function() {
+            scope['break'] = function () {
                 b = true;
             };
 
-            scope.return = function(value) {
+            scope['return'] = function (value) {
                 b = true;
                 r = value;
             };
@@ -210,7 +210,7 @@ define(["js/core/Bindable", "underscore"], function (Bindable, _) {
             for (var i = 0; i < this.$items.length; i++) {
                 try {
                     fnc.call(scope, this.$items[i], i, this.$items);
-                } catch (e) {
+                } catch(e) {
                     error = e;
                     b = true;
                 }
@@ -224,8 +224,9 @@ define(["js/core/Bindable", "underscore"], function (Bindable, _) {
                 throw error;
             }
 
-            delete scope.break;
-            delete scope.return;
+
+            delete scope['break'];
+            delete scope['return'];
 
             return r;
         },
