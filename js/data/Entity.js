@@ -1,4 +1,4 @@
-define(['require', 'js/core/Bindable', 'js/core/List', 'js/data/TypeResolver', 'js/lib/moment'],
+define(['require', 'js/core/Bindable', 'js/core/List', 'js/data/TypeResolver', 'moment'],
     function (require, Bindable, List, TypeResolver, moment) {
         var Collection;
 

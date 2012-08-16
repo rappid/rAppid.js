@@ -1,4 +1,4 @@
-define(["js/html/HtmlElement", "underscore", "js/lib/moment"], function (HtmlElement, _, moment) {
+define(["js/html/HtmlElement", "underscore", "moment"], function (HtmlElement, _, moment) {
         var radioNameCache = {};
 
         return HtmlElement.inherit("js.html.Input", {

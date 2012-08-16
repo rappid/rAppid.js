@@ -33,7 +33,8 @@ var optimizeConfig = {
         "flow": "js/lib/flow",
         "inherit": "js/lib/inherit",
         "underscore": "js/lib/underscore",
-        "JSON": "js/lib/JSON"
+        "JSON": "js/lib/JSON",
+        "moment": "js/lib/moment"
     },
     onBuildRead: function (moduleName, path, contents) {
 

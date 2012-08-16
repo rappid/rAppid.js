@@ -1,4 +1,4 @@
-define(["require", "js/core/Component", "js/core/Base", "js/data/Collection", "underscore", "js/data/Model", "js/data/Entity", "js/core/List", "flow", "JSON", "js/lib/moment"],
+define(["require", "js/core/Component", "js/core/Base", "js/data/Collection", "underscore", "js/data/Model", "js/data/Entity", "js/core/List", "flow", "JSON", "moment"],
     function (require, Component, Base, Collection, _, Model, Entity, List, flow, JSON, moment) {
 
         var undefined,
