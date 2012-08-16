@@ -26,7 +26,7 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
 
             rows: 3,
             cols: 3,
-
+            scrollToIndex: 0,
             horizontalGap: 0,
             verticalGap: 0,
 
@@ -38,13 +38,12 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
             selectionMode: 'multi',
             selectedItems: List
         },
-        $classAttributes: ['selectionMode','selectedItems','data','horizontalGap', 'verticalGap', 'prefetchItemCount', 'rows', 'cols', 'itemWidth', 'itemHeight', 'scrollLeft', 'scrollTop', 'fetchPageDelay'],
+        $classAttributes: ['scrollToIndex','selectionMode','selectedItems','data','horizontalGap', 'verticalGap', 'prefetchItemCount', 'rows', 'cols', 'itemWidth', 'itemHeight', 'scrollLeft', 'scrollTop', 'fetchPageDelay'],
         events: ["on:itemClick", "on:itemDblClick"],
         ctor: function () {
             this.$currentSelectionIndex = null;
             this.$selectionMap = {};
             this.$selectedViews = {};
-
             this.$activeRenderer = {};
             this.$availableRenderer = [];
             this.$container = null;
@@ -67,11 +66,12 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
         _onDomAdded: function(){
             this.callBase();
             if(this.isRendered()){
-                // set scroll position
-                this.$el.scrollTop = this.$.scrollTop;
-                this.$el.scrollLeft = this.$.scrollLeft;
+                this._syncScrollPosition();
             }
-
+        },
+        _syncScrollPosition: function(){
+            this.$el.scrollTop = this.$.scrollTop;
+            this.$el.scrollLeft = this.$.scrollLeft;
         },
         _bindDomEvents: function (el) {
             this.callBase();
@@ -87,38 +87,49 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
 
         _initializationComplete: function() {
             this.callBase();
-
             this.$container = this._getScrollContainer();
             this._commitData(this.$.data);
         },
-
         _commitData: function (data) {
-
             if (!this.$initialized) {
                 return;
             }
-
-            // TODO data provider change
-
             this.set('$dataAdapter', VirtualItemsView.createDataAdapter(data, this));
-
-            // TODO: cleanup renderer
             this._updateVisibleItems();
         },
-        _updateVisibleItems: function () {
+        _commitChangedAttributes: function(attributes){
+            if(!_.isUndefined(attributes.scrollToIndex)){
+                // TODO: add scroll left handling
+                var scrollTop = this.getPointFromIndex(attributes.scrollToIndex).y;
+                if(this.isRendered()){
+                    this.$el.scrollTop = scrollTop;
+                }else{
+                    this.set('scrollTop', scrollTop);
+                }
+            }
+            this.callBase();
 
+            // TODO data provider change
+            // TODO: cleanup renderer
+        },
+        _updateVisibleItems: function () {
             var dataAdapter = this.$.$dataAdapter;
             if (!dataAdapter) {
                 return;
             }
-
             // check if some renderers can be released
-            var scrollLeft = this.$.scrollLeft;
-            var scrollTop = this.$.scrollTop;
-            var startIndex = this.getIndexFromPoint(scrollLeft, scrollTop) - this.$.prefetchItemCount,
+            var scrollLeft = this.$.scrollLeft,
+                scrollTop = this.$.scrollTop,
+                realStartIndex = this.getIndexFromPoint(scrollLeft, scrollTop),
+                startIndex = realStartIndex - this.$.prefetchItemCount,
                 endIndex = this.getIndexFromPoint(scrollLeft + this.$.width, scrollTop + this.$.height) + this.$.prefetchItemCount,
-                renderer, i;
+                renderer, i, pageIndex;
 
+            realStartIndex = Math.max(0, realStartIndex);
+            if (this.$.scrollToIndex !== realStartIndex) {
+                this.$.scrollToIndex = realStartIndex;
+                this.trigger('change:scrollToIndex', this.$.scrollToIndex);
+            }
 
             startIndex = Math.max(0, startIndex);
             var ItemsCount = parseFloat(dataAdapter.size());
@@ -129,8 +140,9 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
             }
 
             if (!(startIndex === this.$lastStartIndex && endIndex === this.$lastEndIndex)) {
-                // some items are not visible any more or scrolled into view
 
+
+                // some items are not visible any more or scrolled into view
                 // remember the last
                 this.$lastStartIndex = startIndex;
                 this.$lastEndIndex = endIndex;
@@ -180,7 +192,7 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
                     this._positionRenderer(addedRenderer[i], addedRenderer);
                 }
 
-                this._updatedVisibleItems(startIndex, endIndex);
+                this._onVisibleItemsUpdated(startIndex, endIndex);
 
             }
 
@@ -192,7 +204,7 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
          * @param endIndex
          * @private
          */
-        _updatedVisibleItems: function(startIndex, endIndex){
+        _onVisibleItemsUpdated: function(startIndex, endIndex){
             // HOOK for positions containers
         },
         _addRenderer: function (renderer, pos) {
@@ -214,7 +226,6 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
             var renderer = this._createRenderer();
             renderer.bind('on:dblclick',this._onRendererDblClick, this);
             renderer.bind('on:click',this._onRendererClick, this);
-
             return renderer;
         },
         _onRendererClick: function (e, renderer) {
@@ -229,11 +240,20 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
         _createRenderer: function (attributes) {
             return this.$templates['renderer'].createComponents(attributes, this)[0];
         },
-
+        _renderItemWidth: function(itemWidth){
+            for(var index in this.$activeRenderer){
+                if(this.$activeRenderer.hasOwnProperty(index)){
+                    this.$activeRenderer[index].set('width', itemWidth);
+                    this._positionRenderer(this.$activeRenderer[index],[]);
+                }
+            }
+            // this._updateVisibleItems();
+        },
         _itemsCountChanged: function () {
             var size = this.getSizeForItemsCount(this.$.$dataAdapter.size());
             if (size) {
                 this._getScrollContainer().set(size);
+                this._syncScrollPosition();
             }
         },
         getSizeForItemsCount: function (count) {
@@ -257,12 +277,11 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
              position.y -= (gapVPos / 2) * verticalGap;
              */
 
-            x -= (this.$.horizontalGap);
-            y -= (this.$.verticalGap);
+            x += (this.$.horizontalGap) *0.5;
+            y += (this.$.verticalGap) * 0.5;
 
             col = this.$.cols === 1 ? 0 : Math.floor(x / (this.$.itemWidth + this.$.horizontalGap));
             row = this.$.rows === 1 ? 0 : Math.floor(y / (this.$.itemHeight + this.$.verticalGap));
-
             return row * this.$.cols + col;
         },
 
@@ -371,7 +390,6 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
             if(topDiff < 0){
                 this.$el.scrollTop += topDiff;
             }
-
             if (!shiftDown) {
                 this.$lastSelectionIndex = index;
             }
