@@ -289,7 +289,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding","underscor
                                 if (this[commitMethodName] instanceof Function) {
                                     // call method
 
-                                    if (this[commitMethodName](now[key], this.$previousAttributes[key]) === false) {
+                                    if (this[commitMethodName](now[key], this.$previousAttributes[key], options) === false) {
                                         // false returned rollback
                                         changedAttributesCount--;
                                         now[key] = this.$previousAttributes[key];
@@ -299,7 +299,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding","underscor
                         }
 
                         if (changedAttributesCount) {
-                            this._commitChangedAttributes(changedAttributes);
+                            this._commitChangedAttributes(changedAttributes,options);
                             if (!options.silent) {
                                 for (key in changedAttributes) {
                                     if (changedAttributes.hasOwnProperty(key)) {
@@ -427,7 +427,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding","underscor
                  * @abstract
                  * @private
                  */
-                _commitChangedAttributes: function (attributes) {
+                _commitChangedAttributes: function (attributes, options) {
                     // override
                 },
 

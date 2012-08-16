@@ -97,8 +97,8 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
             this.set('$dataAdapter', VirtualItemsView.createDataAdapter(data, this));
             this._updateVisibleItems();
         },
-        _commitChangedAttributes: function(attributes){
-            if(!_.isUndefined(attributes.scrollToIndex)){
+        _commitChangedAttributes: function(attributes, opt){
+            if(!_.isUndefined(attributes.scrollToIndex) && opt.initiator !== this){
                 // TODO: add scroll left handling
                 var scrollTop = this.getPointFromIndex(attributes.scrollToIndex).y;
                 if(this.isRendered()){
@@ -126,10 +126,7 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
                 renderer, i, pageIndex;
 
             realStartIndex = Math.max(0, realStartIndex);
-            if (this.$.scrollToIndex !== realStartIndex) {
-                this.$.scrollToIndex = realStartIndex;
-                this.trigger('change:scrollToIndex', this.$.scrollToIndex);
-            }
+            this.set('scrollToIndex', realStartIndex, {initiator: this});
 
             startIndex = Math.max(0, startIndex);
             var ItemsCount = parseFloat(dataAdapter.size());
