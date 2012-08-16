@@ -18,7 +18,7 @@
                 },
                 _renderHref: function (href) {
                     if (this.$tagName == "a") {
-                        this.$el.setAttribute("href", href || "#");
+                        this.$el.setAttribute("href", href || "javascript: void 0;");
                         if (!href) {
                             this.$el.setAttribute('onclick', "return false;");
                         }else{
