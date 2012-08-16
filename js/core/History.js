@@ -3,6 +3,7 @@ define(["js/core/Bindable", "flow"], function (Bindable, flow) {
 
     var routeStripper = /^#?!?\/?/,
         undef,
+        scrollPositions = {},
         emptyCallback = function () {
         };
 
@@ -104,7 +105,6 @@ define(["js/core/Bindable", "flow"], function (Bindable, flow) {
                 if (currentFragment == this.$fragment) {
                     return false;
                 }
-
                 this.navigate(currentFragment, true, true, emptyCallback);
             }
 
@@ -137,7 +137,7 @@ define(["js/core/Bindable", "flow"], function (Bindable, flow) {
         },
 
         navigate: function (fragment, createHistoryEntry, triggerRoute, callback) {
-
+            console.log(window.scrollY, scrollPositions[fragment]);
             var self = this;
 
             if (!callback && createHistoryEntry instanceof Function) {
@@ -183,8 +183,14 @@ define(["js/core/Bindable", "flow"], function (Bindable, flow) {
                 this.$history[this.$history.length - 1] = fragment;
 
             }
-
+            var scrollToTop = false;
             if(this.$fragment !== fragment){
+                if(this.runsInBrowser()){
+                    if(this.$fragment && window.scrollY !== scrollPositions[fragment]){
+                        scrollToTop = true;
+                        scrollPositions[this.$fragment] = window.scrollY;
+                    }
+                }
                 this.$fragment = fragment;
                 this.trigger('change:fragment', this.$fragment);
             }
@@ -196,10 +202,21 @@ define(["js/core/Bindable", "flow"], function (Bindable, flow) {
                     if (callback) {
                         callback.apply(arguments);
                     }
+                    if(scrollPositions[fragment] === undefined){
+                        scrollPositions[fragment] = 0;
+                    }
+                    if(scrollToTop){
+                        window.scrollTo(0,0);
+                    }
+
                 });
             } else {
                 this.trigger(History.EVENTS.NAVIGATION_COMPLETE, eventData);
             }
+
+
+
+
         }
     });
 
