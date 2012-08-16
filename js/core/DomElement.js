@@ -276,7 +276,6 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                     if (visible) {
                         this.$renderParent.setChildVisible(this);
                     } else {
-                        console.log(this);
                         this.$renderParent.setChildInvisible(this);
                     }
                 }
