@@ -29,7 +29,6 @@
                     }
                 },
                 _render_error: function(error,oldError){
-                    console.log("error",error);
                     if(error){
                         this.addClass('error');
                     }else{

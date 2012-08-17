@@ -396,7 +396,6 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
                 return false;
             }
             var cid = data.$cid;
-            console.log(cid);
             return cid && this.$.selectedItems[cid] !== undefined;
         }
     }, {

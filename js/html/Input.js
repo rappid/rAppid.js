@@ -39,7 +39,6 @@ define(["js/html/HtmlElement", "underscore", "moment"], function (HtmlElement, _
                     if(this.$.type === "date"){
                         if(value instanceof Date){
                             value = moment(value).format("YYYY-MM-DD");
-                            console.log(value);
                         }
                     }
 

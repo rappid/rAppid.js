@@ -38,10 +38,6 @@ define(['js/ui/View', 'xaml!js/ui/DataGridColumn', 'js/core/List', 'underscore',
         },
         removeChild: function(child) {
             this.$.$columns.remove(child);
-        },
-        _propagateDblClick: function(e, row){
-            console.log("dblclicked", row);
         }
-
     });
 });
