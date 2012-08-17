@@ -455,8 +455,9 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                     if (this.isRendered() && child.isRendered()) {
                         if (this.$renderedChildren.length > 1) {
                             this.$el.removeChild(child.$el);
-                            if (index < this.$el.childNodes.length) {
-                                this.$el.insertBefore(child.$el, this.$el.childNodes[index]);
+                            var next = this._getNextVisibleChild(child);
+                            if (next) {
+                                this.$el.insertBefore(child.$el, next.$el);
                             } else {
                                 this.$el.appendChild(child.$el);
                             }
@@ -484,17 +485,27 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
             },
             setChildVisible: function(child){
                 if(this.isRendered() && this.$invisibleChildMap[child.$cid]){
-                    var i = this.$renderedChildren.indexOf(child);
-                    while (i + 1 < this.$renderedChildren.length && !this.$invisibleChildMap[this.$renderedChildren[i+1].$cid]) {
-                        i++;
-                    }
-                    if(this.$el.childNodes.length === 0 || i >= this.$renderedChildren.length){
-                        this.$el.appendChild(child.$el);
+                    var next = this._getNextVisibleChild(child);
+                    if(next){
+                        this.$el.insertBefore(child.$el,next.$el);
                     }else{
-                        this.$el.insertBefore(child.$el,this.$renderedChildren[i].$el);
+                        this.$el.appendChild(child.$el);
                     }
                     delete this.$invisibleChildMap[child.$cid];
                 }
+            },
+            _getNextVisibleChild: function(child){
+                if(this.$el.childNodes.length === 0){
+                    return null;
+                }
+                var i = this.$renderedChildren.indexOf(child);
+                while (i + 1 < this.$renderedChildren.length && !this.$invisibleChildMap[this.$renderedChildren[i + 1].$cid]) {
+                    i++;
+                }
+                if (i < this.$renderedChildren.length && child !== this.$renderedChildren[i]) {
+                    return this.$renderedChildren[i];
+                }
+                return null;
             },
             bind: function (type, eventHandler, scope) {
                 var self = this;
