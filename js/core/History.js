@@ -137,7 +137,6 @@ define(["js/core/Bindable", "flow"], function (Bindable, flow) {
         },
 
         navigate: function (fragment, createHistoryEntry, triggerRoute, callback) {
-            console.log(window.scrollY, scrollPositions[fragment]);
             var self = this;
 
             if (!callback && createHistoryEntry instanceof Function) {
