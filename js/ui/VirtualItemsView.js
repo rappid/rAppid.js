@@ -38,7 +38,7 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
             selectionMode: 'multi',
             selectedItems: List
         },
-        $classAttributes: ['scrollToIndex','selectionMode','selectedItems','data','horizontalGap', 'verticalGap', 'prefetchItemCount', 'rows', 'cols', 'itemWidth', 'itemHeight', 'scrollLeft', 'scrollTop', 'fetchPageDelay'],
+        $classAttributes: ['scrollToIndex','selectedItems','data','horizontalGap', 'verticalGap', 'prefetchItemCount', 'rows', 'cols', 'itemWidth', 'itemHeight', 'scrollLeft', 'scrollTop', 'fetchPageDelay'],
         events: ["on:itemClick", "on:itemDblClick"],
         ctor: function () {
             this.$currentSelectionIndex = null;
@@ -51,11 +51,6 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
             this.callBase();
 
             this.createBinding('{$dataAdapter.size()}', this._itemsCountChanged, this);
-            this.bind('change:scrollTop', this._updateVisibleItems, this);
-            this.bind('change:scrollLeft', this._updateVisibleItems, this);
-            this.bind('change:height', this._updateVisibleItems, this);
-            this.bind('change:width', this._updateVisibleItems, this);
-
         },
         _initializeRenderer: function ($el) {
             var style = $el.getAttribute('style') || "";
@@ -99,17 +94,20 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
         },
         _commitChangedAttributes: function(attributes, opt){
             if(!_.isUndefined(attributes.scrollToIndex) && opt.initiator !== this){
-                // TODO: add scroll left handling
-                var scrollTop = this.getPointFromIndex(attributes.scrollToIndex).y;
-                if(this.isRendered()){
-                    this.$el.scrollTop = scrollTop;
-                }else{
-                    this.set('scrollTop', scrollTop);
-                }
+                this._scrollToIndex(attributes.scrollToIndex);
             }
-            this.callBase();
 
-            // TODO data provider change
+            if(attributes.hasOwnProperty('itemWidth') || attributes.hasOwnProperty('itemHeight') || attributes.hasOwnProperty('verticalGap') || attributes.hasOwnProperty('horizontalGap') || attributes.hasOwnProperty('cols')) {
+                this._positionActiveRenderers();
+                this._scrollToIndex(this.$.scrollToIndex);
+            }
+
+            if(attributes.hasOwnProperty('scrollTop') || attributes.hasOwnProperty('scrollLeft') || attributes.hasOwnProperty('height') || attributes.hasOwnProperty('width')){
+                this._updateVisibleItems();
+            }
+
+            this.callBase();
+            // TODO: data provider change
             // TODO: cleanup renderer
         },
         _updateVisibleItems: function () {
@@ -122,11 +120,14 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
                 scrollTop = this.$.scrollTop,
                 realStartIndex = this.getIndexFromPoint(scrollLeft, scrollTop),
                 startIndex = realStartIndex - this.$.prefetchItemCount,
-                endIndex = this.getIndexFromPoint(scrollLeft + this.$.width, scrollTop + this.$.height) + this.$.prefetchItemCount,
+                realEndIndex = this.getIndexFromPoint(scrollLeft + this.$.width, scrollTop + this.$.height),
+                endIndex = realEndIndex + this.$.prefetchItemCount,
                 renderer, i, pageIndex;
 
             realStartIndex = Math.max(0, realStartIndex);
-            this.set('scrollToIndex', realStartIndex, {initiator: this});
+            if((realStartIndex > this.$.scrollToIndex || realStartIndex + this.$.cols < this.$.scrollToIndex)){
+                this.set('scrollToIndex', realStartIndex, {initiator: this});
+            }
 
             startIndex = Math.max(0, startIndex);
             var ItemsCount = parseFloat(dataAdapter.size());
@@ -216,6 +217,15 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
             });
         },
 
+        _scrollToIndex: function(index){
+            this.$scrollToIndexPos = this.getPointFromIndex(index);
+            var scrollTop = this.$scrollToIndexPos.y;
+            if (this.isRendered()) {
+                this.$el.scrollTop = scrollTop;
+            }
+            this.set('scrollTop', scrollTop);
+        },
+
         _reserveRenderer: function () {
             if (this.$availableRenderer.length) {
                 return this.$availableRenderer.pop();
@@ -237,14 +247,13 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
         _createRenderer: function (attributes) {
             return this.$templates['renderer'].createComponents(attributes, this)[0];
         },
-        _renderItemWidth: function(itemWidth){
-            for(var index in this.$activeRenderer){
-                if(this.$activeRenderer.hasOwnProperty(index)){
-                    this.$activeRenderer[index].set('width', itemWidth);
-                    this._positionRenderer(this.$activeRenderer[index],[]);
+        _positionActiveRenderers: function(){
+            for (var index in this.$activeRenderer) {
+                if (this.$activeRenderer.hasOwnProperty(index)) {
+                    this.$activeRenderer[index].set({width: this.$.itemWidth, height: this.$.itemHeight});
+                    this._positionRenderer(this.$activeRenderer[index], []);
                 }
             }
-            // this._updateVisibleItems();
         },
         _itemsCountChanged: function () {
             var size = this.getSizeForItemsCount(this.$.$dataAdapter.size());
@@ -311,6 +320,11 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
 
             return scrollContainer;
 
+        },
+        _renderSelectionMode: function (mode) {
+            if (mode !== SELECTION_MODE_NONE) {
+                this.$el.setAttribute('tabindex', '1');
+            }
         },
         _onKeyDown: function (e) {
             if (e.domEvent.keyCode === 38 || e.domEvent.keyCode === 40 || e.domEvent.keyCode === 37 || e.domEvent.keyCode === 39) {
@@ -448,7 +462,6 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
 
             return dataItem;
         },
-
         /***
          * @returns {Number} the size of the list
          */
