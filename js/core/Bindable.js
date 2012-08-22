@@ -525,11 +525,13 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding","underscor
                 this.callBase();
                 if(attributes.binding){
                     this.set('value', attributes.binding.getValue());
-                }else if(attributes.value){
+                }else if(attributes.hasOwnProperty('value')){
                     var value = attributes.value;
                     this._unbindEvent(this.$previousAttributes['value']);
-                    if (!_.isUndefined(value)) {
-                        this._bindEvent(value);
+                    this._bindEvent(value);
+
+                    if(this.$.binding){
+                        this.$.binding.trigger();
                     }
                 }
 
