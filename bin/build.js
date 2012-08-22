@@ -118,7 +118,8 @@ var build = function (args, callback) {
                 'js/core/Stage',
                 'js/core/WindowManager',
                 'js/core/HeadManager',
-                'js/core/Injection'];
+                'js/core/Injection',
+                'js/core/History'];
         }
 
         var realModuleName = (isXamlClass ? "xaml!" : "") + module;
