@@ -1,5 +1,5 @@
 <ui:TileListClass xmlns="http://www.w3.org/1999/xhtml"
-                     xmlns:ui="js.ui" xmlns:js="js.core" componentClass="tile-list" onkeydown="_onKeyDown" tabindex="1">
+                     xmlns:ui="js.ui" xmlns:js="js.core" componentClass="tile-list" onkeydown="_onKeyDown">
     <js:Template name="renderer">
         {$dataItem.data}
     </js:Template>
