@@ -82,7 +82,7 @@ define(["js/html/HtmlElement", "underscore", "moment"], function (HtmlElement, _
 
                 var self = this;
                 if (_.include(["text","password","date","number"], this.$.type)) {
-                    if(this.$.type === "date"){
+                    if(this.$.type === "date" || this.$.type === "number"){
                         this.$.updateOnEvent = "change";
                     }
                     this.bindDomEvent(this.$.updateOnEvent, function (e) {
