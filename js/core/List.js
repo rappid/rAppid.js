@@ -86,11 +86,7 @@ define(["js/core/Bindable", "underscore"], function (Bindable, _) {
                     item.bind('change', this._onItemChange, this);
                 }
                 itemIndex = index + i;
-                if(itemIndex > this.$items.length){
-                    this.$items[itemIndex] = item;
-                }else{
-                    this.$items.splice(itemIndex, 0, item);
-                }
+                this.$items[itemIndex] = item;
                 if (options.silent !== true) {
                     this.trigger('add', {item: item, index: itemIndex})
                 }
