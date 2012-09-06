@@ -320,7 +320,9 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                     var rc;
                     for (var i = this.$renderedChildren.length - 1; i >= 0; i--) {
                         rc = this.$renderedChildren[i];
-                        this.$el.removeChild(rc.$el);
+                        if(rc.$.visible){
+                            this.$el.removeChild(rc.$el);
+                        }
                     }
                 }
                 this.$renderedChildren = [];
