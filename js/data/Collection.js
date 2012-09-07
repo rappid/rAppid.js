@@ -54,17 +54,23 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore"], funct
             return ret.join("&");
         },
 
-        createQueryCollection: function (queryParameter) {
+        createQueryCollection: function (queryParameters) {
 
             var options = {
-                queryParameter: queryParameter,
+                queryParameters: queryParameters,
                 rootCollection: this.getRootCollection()
             };
 
             // different queryParameter, same options
             _.defaults(options, this.$options);
 
-            return new Collection(null, options);
+            var cacheKey = this.createQueryCacheKey(queryParameters);
+            if(!this.$queryCollectionsCache[cacheKey]){
+                var collection = new Collection(null, options);
+                collection.$context = this.$context;
+                this.$queryCollectionsCache[cacheKey] = collection;
+            }
+            return this.$queryCollectionsCache[cacheKey];
         },
 
         // fetches the complete list
@@ -181,12 +187,12 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore"], funct
 
             var page = this.$pageCache[pageIndex];
             if (!page) {
-                page = this.$pageCache[pageIndex] = new Page(null, this.getRootCollection(), pageIndex);
+                page = this.$pageCache[pageIndex] = new Page(null, this, pageIndex);
             }
 
             var self = this;
+            options = _.extend(this.$options, options);
             page.fetch(options, function (err, page) {
-
                 // insert data into items if not already inserted
                 if (!err && !page.itemsInsertedIntoCollection) {
                     page.itemsInsertedIntoCollection = true;
@@ -216,8 +222,11 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore"], funct
 
         size: function() {
             return this.$.$itemsCount;
-        }.onChange('$itemsCount')
+        }.onChange('$itemsCount'),
 
+        getQueryParameters: function(method){
+            return this.$options.queryParameters;
+        }
     });
 
     var Page = Collection.Page = List.inherit({
@@ -249,9 +258,12 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore"], funct
 
 
         parse: function (data, type) {
-            return this.$collection.parse.call(this.$collection, data, type);
+            return this.getRootCollection().parse(data, type);
         },
 
+        getRootCollection: function(){
+            return this.$collection.getRootCollection();
+        },
         /***
          *
          * @param options

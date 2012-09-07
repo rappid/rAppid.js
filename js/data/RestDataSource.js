@@ -328,8 +328,9 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
 
         loadCollectionPage: function (page, options, callback) {
 
-            var modelPathComponents = page.$collection.$options.path ?
-                page.$collection.$options.path : this.getRestPathForAlias(page.$collection.$alias);
+            var rootCollection = page.getRootCollection();
+            var modelPathComponents = rootCollection.$options.path ?
+                rootCollection.$options.path : this.getRestPathForAlias(rootCollection.$alias);
 
             if (!modelPathComponents) {
                 callback("path for model unknown", null, options);
@@ -338,7 +339,7 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
 
             // build uri
             var uri = [this.$.gateway];
-            uri = uri.concat(page.$collection.$context.getPathComponents());
+            uri = uri.concat(rootCollection.$context.getPathComponents());
             uri = uri.concat(modelPathComponents);
 
             if (this.$.suffix) {
@@ -358,7 +359,7 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
             }
 
             // get queryParameter
-            params = _.defaults(params, page.$collection.$context.getQueryParameter(), this.getQueryParameter(RestDataSource.METHOD.GET));
+            params = _.defaults(params, page.$collection.getQueryParameters(RestDataSource.METHOD.GET), rootCollection.$context.getQueryParameter(), this.getQueryParameter(RestDataSource.METHOD.GET));
 
             // create url
             var url = uri.join("/");
