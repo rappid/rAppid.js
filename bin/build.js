@@ -113,6 +113,7 @@ var build = function (args, callback) {
                 'flow',
                 'underscore',
                 'js/plugins/json',
+                'json!config.json',
                 'js/lib/parser',
                 'js/core/Bus',
                 'js/core/Stage',
@@ -142,14 +143,14 @@ var build = function (args, callback) {
     optimizeConfig.dir = buildConfig.targetDir || optimizeConfig.dir;
 
     var buildDirPath = path.join(basePath,optimizeConfig.dir);
-    var newConfigPath = path.join(buildDirPath, "config.json");
+    var newConfigPath = path.join(configPath, "config.json");
+
+    fs.writeFileSync(configPath, JSON.stringify(config));
 
     global.libxml = require("libxml");
 
     // start optimizing
     requirejs.optimize(optimizeConfig, function (results) {
-        // create build-config
-        fs.writeFileSync(newConfigPath, JSON.stringify(config));
 
         var indexFilePath = path.join(buildDirPath, buildConfig.indexFile || "index.html");
         var indexFile = fs.readFileSync(indexFilePath, "utf8");
