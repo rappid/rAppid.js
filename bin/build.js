@@ -98,6 +98,9 @@ var build = function (args, callback) {
 
     // find modules
     var isXamlClass, moduleConfig, mainModule;
+
+    config.optimizedXAML = [];
+
     buildConfig.modules.forEach(function (module, index) {
         isXamlClass = xamlClasses.indexOf(module) > -1;
         moduleConfig = {
@@ -133,7 +136,6 @@ var build = function (args, callback) {
         moduleConfig.include.push(realModuleName);
 
         if(isXamlClass){
-            config.optimizedXAML = config.optimizedXAML || [];
             config.optimizedXAML.push(module);
         }
 
@@ -151,6 +153,10 @@ var build = function (args, callback) {
 
     // start optimizing
     requirejs.optimize(optimizeConfig, function (results) {
+        // write back normal config
+        delete config['optimizedXAML'];
+        fs.writeFileSync(configPath, JSON.stringify(config));
+
 
         var indexFilePath = path.join(buildDirPath, buildConfig.indexFile || "index.html");
         var indexFile = fs.readFileSync(indexFilePath, "utf8");
