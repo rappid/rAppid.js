@@ -90,6 +90,23 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
                 return;
             }
             this.set('$dataAdapter', VirtualItemsView.createDataAdapter(data, this));
+            // reset indecies
+            this.$lastEndIndex = null;
+            this.$lastStartIndex = null;
+
+            // clear active renderer and scroll to top
+            var renderer;
+            for (var index in this.$activeRenderer) {
+                if (this.$activeRenderer.hasOwnProperty(index)) {
+                    // render not in use
+                    renderer = this.$activeRenderer[index];
+                    if (renderer) {
+                        renderer.remove();
+                        this.$availableRenderer.push(renderer);
+                    }
+                    delete this.$activeRenderer[index];
+                }
+            }
             this._updateVisibleItems();
         },
         _commitChangedAttributes: function(attributes, opt){
