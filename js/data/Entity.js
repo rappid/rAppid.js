@@ -17,8 +17,6 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'js/data/TypeResolver', '
 
             $dependentObjectContext: null,
 
-            $cacheInRootContext: false,
-
             $isDependentObject: true,
 
             _extendSchema: function () {
@@ -35,11 +33,7 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'js/data/TypeResolver', '
                 }
             },
 
-            getContextForChildren: function (childFactory) {
-
-                if (childFactory.prototype.$cacheInRootContext) {
-                    return this.$context.$datasource.getContext();
-                }
+            getContextForChild: function (childFactory) {
 
                 // TODO: this is the circle dependency. check different than use model
                 if (this._isChildFactoryDependentObject(childFactory)) {
@@ -53,7 +47,7 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'js/data/TypeResolver', '
                 }
 
 
-                return this.$context;
+                return this.$context.$datasource.getContextForChild(childFactory, this);
             },
 
             _isChildFactoryDependentObject: function (childFactory) {
@@ -75,8 +69,8 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'js/data/TypeResolver', '
                     }
                 }
 
-            var processor = this.$context.$datasource.getProcessorForModel(this);
-            data = processor.parse(data, action, options);
+                var processor = this.$context.$datasource.getProcessorForModel(this);
+                data = processor.parse(data, action, options);
 
                 var schema = this.$schema;
 
@@ -138,7 +132,7 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'js/data/TypeResolver', '
                                             alias = (factory === this.$context.$datasource.$entityFactory ||
                                                 factory === this.$context.$datasource.$modelFactory) ? type : null;
 
-                                            entity = this.getContextForChildren(factory).createEntity(factory, value[i].id, alias);
+                                            entity = this.getContextForChild(factory).createEntity(factory, value[i].id, alias);
                                             entity.set(entity.parse(value[i], action, options));
                                             list.add(entity);
                                         }
@@ -151,11 +145,8 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'js/data/TypeResolver', '
 
                             } else if (Collection && schemaType.classof(Collection)) {
 
-                                // set alias to type if generic collection
-                                alias = (schemaType === this.$context.$datasource.$collectionFactory) ? type : schemaType.prototype.$alias;
-
-                                var contextForChildren = this.getContextForChildren(schemaType);
-                                list = data[type] = contextForChildren.createCollection(schemaType, null, alias);
+                                var contextForChildren = this.getContextForChild(schemaType);
+                                list = data[type] = contextForChildren.createCollection(schemaType, null);
                                 list.set(value);
 
                                 if (value instanceof Array || value === null) {
@@ -171,9 +162,9 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'js/data/TypeResolver', '
                                     // TODO: what here
 //                                throw 'Schema for type "' + type + '" requires to be an array';
                                 }
-                            } else if (schemaType === Date && value){
+                            } else if (schemaType === Date && value) {
                                 data[type] = new Date(value);
-                            } else if (value && value.id) {
+                            } else if (schemaType.classof(Entity) && value) {
                                 if (schemaType instanceof TypeResolver) {
                                     factory = schemaType.resolve(value, type);
                                 } else {
@@ -184,11 +175,7 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'js/data/TypeResolver', '
                                     throw "Factory for type '" + type + "' isn't an instance of Entity";
                                 }
 
-                                // set alias to type if generic entity
-                                alias = (factory === this.$context.$datasource.$entityFactory ||
-                                    factory === this.$context.$datasource.$modelFactory) ? type : null;
-
-                                data[type] = entity = this.getContextForChildren(factory).createEntity(factory, value.id, alias);
+                                data[type] = entity = this.getContextForChild(factory).createEntity(factory, value.id);
                                 entity.set(entity.parse(value, action, options));
                             }
                         }
@@ -209,14 +196,14 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'js/data/TypeResolver', '
              * @return {Object} all data that should be serialized
              */
             compose: function (action, options) {
-                var data = this.prepare(action, options);
-
                 var processor = this.$context.$datasource.getProcessorForModel(this, options);
                 return processor.compose(this, action, options);
             },
+
             clearErrors: function () {
                 this.$errors.clear();
             },
+
             setErrors: function (errors) {
                 for (var key in errors) {
                     if (errors.hasOwnProperty(key)) {
@@ -224,29 +211,16 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'js/data/TypeResolver', '
                     }
                 }
             },
+
             errors: function () {
                 return this.$errors;
             },
+
             clone: function () {
                 var ret = this.callBase();
                 ret.$context = this.$context;
-                if(this.$alias){
-                    ret.$alias = this.$alias;
-                }
                 return ret;
             }
-
-
-//        preCompose: function (data, action, options) {
-//            var processor = this.$context.$datasource.getProcessorForModel(this);
-//            return processor.preCompose(data, action, options);
-//        },
-//
-//        postCompose: function (data, action, options) {
-//            var processor = this.$context.$datasource.getProcessorForModel(this);
-//            return processor.postCompose(data, action, options);
-//        }
-
         });
 
 
