@@ -14,6 +14,15 @@ define(
 
             $defaultTemplateName: 'item',
 
+            ctor: function(){
+                this.callBase();
+
+                this.bind(['items','sort'], this._onSort, this);
+                this.bind(['items','reset'], this._onReset, this);
+                this.bind(['items','add'], this._onItemAdd, this);
+                this.bind(['items','remove'], this._onItemRemove, this);
+            },
+
             hasItems: function () {
                 if (this.$.items) {
                     return this.$.items.length;
@@ -28,20 +37,10 @@ define(
                 return this.callBase();
             },
 
-            _renderItems: function (items, oldItems) {
-                if (oldItems && oldItems instanceof List) {
-                    oldItems.unbind('sort', this._onSort, this);
-                    oldItems.unbind('reset', this._onReset, this);
-                    oldItems.unbind('add', this._onItemAdd, this);
-                    oldItems.unbind('remove', this._onItemRemove, this);
-
-                }
-
-                if (items instanceof List) {
-                    items.bind('sort', this._onSort, this);
-                    items.bind('reset', this._onReset, this);
-                    items.bind('add', this._onItemAdd, this);
-                    items.bind('remove', this._onItemRemove, this);
+            _renderItems: function (items) {
+                if(!items){
+                    this._innerRenderItems([]);
+                }else if (items instanceof List) {
                     this._innerRenderItems(items.$items);
                 } else if (_.isArray(items)) {
                     this._innerRenderItems(items);
@@ -64,11 +63,15 @@ define(
             },
 
             _onItemAdd: function (e) {
-                this._innerRenderItem(e.$.item, e.$.index);
+                if(this.isRendered()){
+                    this._innerRenderItem(e.$.item, e.$.index);
+                }
             },
 
             _onItemRemove: function (e) {
-                this._removeRenderedItem(e.$.item);
+                if(this.isRendered()){
+                    this._removeRenderedItem(e.$.item);
+                }
             },
 
             _innerRenderItems: function (items) {
