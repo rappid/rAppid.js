@@ -597,6 +597,20 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
         });
 
         Component.Configuration = Component.inherit("js.core.Configuration", {
+            getConfigurationByKeyValue: function (key, value) {
+                if (this.$[key] === value) {
+                    return this;
+                }
+                var configuration, ret;
+                for (var i = 0; i < this.$configurations.length; i++) {
+                    configuration = this.$configurations[i];
+                    ret = configuration.getConfigurationByKeyValue(key, value);
+                    if (ret) {
+                        return ret;
+                    }
+                }
+                return null;
+            }
         });
 
         var Content = Component.Content = Component.inherit("js.core.Content", {
