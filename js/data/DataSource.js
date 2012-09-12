@@ -1,5 +1,5 @@
-define(["require", "js/core/Component", "js/core/Base", "js/data/Collection", "underscore", "js/data/Model", "js/data/Entity", "js/core/List", "flow", "JSON", "moment"],
-    function (require, Component, Base, Collection, _, Model, Entity, List, flow, JSON, moment) {
+define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base", "js/data/Collection", "underscore", "js/data/Model", "js/data/Entity", "js/core/List", "flow", "JSON", "moment", "js/conf/DataSource", "js/conf/Resource"],
+    function (require, Component, Configuration, Base, Collection, _, Model, Entity, List, flow, JSON, moment, DataSourceConfiguration, ResourceConfiguration) {
 
         var undefined,
             Context = Base.inherit("js.data.DataSource.Context", {
@@ -11,6 +11,7 @@ define(["require", "js/core/Component", "js/core/Base", "js/data/Collection", "u
                 ctor: function (dataSource, properties, parentContext) {
                     this.callBase();
 
+                    this.$contextCache = {};
                     this.$datasource = dataSource;
                     this.$properties = properties;
                     this.$parent = parentContext;
@@ -34,22 +35,21 @@ define(["require", "js/core/Component", "js/core/Base", "js/data/Collection", "u
                     return [];
                 },
 
-                createEntity: function (factory, id, alias) {
+                createEntity: function (factory, id) {
 
                     if (_.isFunction(factory)) {
 
                         var entityClassName = factory.prototype.constructor.name;
-                        alias = alias || (factory.classof(Model) ? this.$datasource.getAliasForModelClassName(entityClassName) : entityClassName);
 
-                        if (factory.classof(Model) && !alias) {
-                            throw "Alias for '" + entityClassName + "' not found";
+                        if (!entityClassName) {
+                            throw new Error("No model class name defined");
                         }
 
                         var cachedItem;
 
                         // only get from cache if we got an id
                         if (id) {
-                            cachedItem = this.getInstanceByCacheId(Context.generateCacheIdForEntity(alias, id));
+                            cachedItem = this.getInstanceByCacheId(Context.generateCacheIdForEntity(entityClassName, id));
                         }
 
                         if (!cachedItem) {
@@ -59,7 +59,6 @@ define(["require", "js/core/Component", "js/core/Base", "js/data/Collection", "u
                             });
                             // set context
                             cachedItem.$context = this;
-                            cachedItem.$alias = alias;
 
                             // and add it to the cache
                             this.addEntityToCache(cachedItem);
@@ -72,31 +71,31 @@ define(["require", "js/core/Component", "js/core/Base", "js/data/Collection", "u
                     }
                 },
 
-                createCollection: function (factory, options, alias) {
+                createCollection: function (factory, options) {
                     options = options || {};
 
                     if (_.isFunction(factory)) {
+                        if (factory === this.$datasource.$collectionFactory) {
+                            throw new Error("Untyped collections not allowed");
+                        }
 
                         var collectionClassName = factory.prototype.constructor.name;
-                        alias = alias || this.$datasource.getAliasForCollectionClassName(collectionClassName);
 
-                        if (!alias) {
-                            throw "Alias for '" + collectionClassName + "' not found";
+                        if (!collectionClassName) {
+                            throw new Error("No collection class name defined");
                         }
 
                         _.defaults(options, {
-                            factory: factory,
-                            type: alias
+                            factory: factory
                         });
 
-                        var cachedCollection = this.getInstanceByCacheId(Context.generateCacheIdForCollection(alias));
+                        var cachedCollection = this.getInstanceByCacheId(Context.generateCacheIdForCollection(collectionClassName));
 
                         if (!cachedCollection) {
                             // create new Collection
                             cachedCollection = new factory(null, options);
                             // set context
                             cachedCollection.$context = this;
-                            cachedCollection.$alias = alias;
 
                             // and add it to the cache
                             this.addCollectionToCache(cachedCollection);
@@ -107,24 +106,58 @@ define(["require", "js/core/Component", "js/core/Base", "js/data/Collection", "u
                     } else {
                         throw "Factory has to be a function";
                     }
+                },
+
+                getContext: function (properties) {
+                    var cacheId = this.createContextCacheId(properties);
+
+                    if (!cacheId) {
+                        // empty cacheId indicates the current context
+                        return this;
+                    }
+
+                    if (!this.$contextCache.hasOwnProperty(cacheId)) {
+                        this.$contextCache[cacheId] = this.$datasource.createContext(properties, this);
+                    }
+
+                    return this.$contextCache[cacheId];
+                },
+
+                createContextCacheId: function (properties) {
+
+                    var ret = [];
+                    _.each(_.extend({}, properties), function (value, key) {
+                        ret.push(key + "=" + value);
+                    });
+
+                    ret.sort();
+
+                    if (ret.length === 0) {
+                        return null;
+                    }
+
+                    return ret.join("&");
                 }
+
+            }, {
+
+                generateCacheIdForCollection: function (type) {
+                    return type;
+                },
+
+                generateCacheIdForEntity: function (type, id) {
+                    return type + "_" + id;
+                },
+
+                generateCacheIdFromEntity: function (entity) {
+                    return Context.generateCacheIdForEntity(entity.constructor.name, entity.$.id);
+                },
+
+                generateCacheIdFromCollection: function (collection) {
+                    return Context.generateCacheIdForCollection(collection.$modelFactory.prototype.constructor.name);
+                }
+
             });
-
-        Context.generateCacheIdForCollection = function (type) {
-            return type;
-        };
-
-        Context.generateCacheIdForEntity = function (type, id) {
-            return type + "_" + id;
-        };
-
-        Context.generateCacheIdFromEntity = function (entity) {
-            return Context.generateCacheIdForEntity(entity.$alias, entity.$.id);
-        };
-
-        Context.generateCacheIdFromCollection = function (collection) {
-            return Context.generateCacheIdForCollection(collection.$alias);
-        };
 
         var Processor = Base.inherit("js.data.DataSource.Processor", {
 
@@ -142,8 +175,9 @@ define(["require", "js/core/Component", "js/core/Base", "js/data/Collection", "u
              * @param {js.data.DataSource.ACTION} action
              * @return {JSON}
              */
-            compose: function(entity, action, options){
-                var ret = {}, obj = entity.$;
+            compose: function (entity, action, options) {
+                var ret = {}, obj = entity.prepare(action, options);
+
                 for (var key in obj) {
                     if (obj.hasOwnProperty(key)) {
                         var value = this._getCompositionValue(obj[key], action, options);
@@ -154,14 +188,16 @@ define(["require", "js/core/Component", "js/core/Base", "js/data/Collection", "u
                 }
                 return ret;
             },
-            _getReferenceKey: function(key, schema){
+
+            _getReferenceKey: function (key, schema) {
                 // TODO: put this in a special rails adapter
                 if (schema[key] && schema[key].classof && schema[key].classof(Model)) {
                     return key + "_id";
-                }else{
+                } else {
                     return key;
                 }
             },
+
             _composeObject: function (obj, action, options) {
 
                 var ret = {};
@@ -193,16 +229,17 @@ define(["require", "js/core/Component", "js/core/Base", "js/data/Collection", "u
                         ret.push(self._getCompositionValue(v, action, options));
                     });
                     return ret;
-                }else if(value instanceof Date){
-                    if(value){
+                } else if (value instanceof Date) {
+                    // TODO: remove dependency of moment
+                    if (value) {
                         return moment(value).format("YYYY-MM-DDTHH:mm:ssZ");
-                    }else{
+                    } else {
                         return null;
                     }
-                }else if (value instanceof Array){
+                } else if (value instanceof Array) {
                     var arr = [];
-                    for(var i = 0; i < value.length; i++){
-                        arr.push(this._getCompositionValue(value[i],action, options));
+                    for (var i = 0; i < value.length; i++) {
+                        arr.push(this._getCompositionValue(value[i], action, options));
                     }
                     return arr;
                 } else if (value instanceof Object) {
@@ -229,13 +266,14 @@ define(["require", "js/core/Component", "js/core/Base", "js/data/Collection", "u
              */
             saveSubModels: function (model, options, callback) {
                 var schema = model.$schema, subModels = [], type;
-                for(var reference in schema){
-                    if(schema.hasOwnProperty(reference)){
+                for (var reference in schema) {
+                    if (schema.hasOwnProperty(reference)) {
                         type = schema[reference];
-                        if(type.classof){
+                        if (type.classof) {
                             // todo: add collection
-                            if(type.classof(Model)){
-                                if(model.$[reference] && _.include(model.$nestedModels,reference)){
+                            if (type.classof(Model)) {
+                                // TODO: clearify $nestedModels
+                                if (model.$[reference] && _.include(model.$nestedModels, reference)) {
                                     subModels.push(model.$[reference]);
                                 }
                             }
@@ -245,7 +283,7 @@ define(["require", "js/core/Component", "js/core/Base", "js/data/Collection", "u
                 }
 
                 flow()
-                    .parEach(subModels, function(model, cb) {
+                    .parEach(subModels, function (model, cb) {
                         model.save(options, cb);
                     })
                     .exec(callback);
@@ -300,11 +338,10 @@ define(["require", "js/core/Component", "js/core/Base", "js/data/Collection", "u
         var DataSource = Component.inherit('js.data.DataSource', {
 
             ctor: function () {
-
+                this.$dataSourceConfiguration = null;
                 this.$configuredTypes = [];
-                this.$contextCache = {};
+                this.$rootContext = this.createContext();
                 this.$formatProcessors = [];
-
                 this.callBase();
 
                 this.initializeFormatProcessors();
@@ -313,9 +350,7 @@ define(["require", "js/core/Component", "js/core/Base", "js/data/Collection", "u
             },
 
             $processors: {},
-            $modelFactory: Model,
             $entityFactory: Entity,
-            $collectionFactory: Collection,
             $defaultProcessorFactory: Processor,
             $defaultProcessor: null,
 
@@ -339,110 +374,109 @@ define(["require", "js/core/Component", "js/core/Base", "js/data/Collection", "u
 
                 for (var c = 0; c < this.$configurations.length; c++) {
                     var config = this.$configurations[c];
-                    this.addTypeConfiguration(config);
-
+                    if (config instanceof DataSourceConfiguration) {
+                        this.$dataSourceConfiguration = config;
+                        break;
+                    }
+                }
+                if (!this.$dataSourceConfiguration) {
+                    throw "No DataSourceConfiguration specified";
                 }
             },
 
-            getAliasForModelClassName: function (modelClassName) {
+            getConfigurationForModelClassName: function (modelClassName) {
+                return this.$dataSourceConfiguration.getConfigurationForModelClassName(modelClassName);
+            },
 
-                for (var i = 0; i < this.$configuredTypes.length; i++) {
-                    var config = this.$configuredTypes[i];
-                    if (config.$.modelClassName === modelClassName) {
-                        return config.$.alias;
+            getConfigurationForCollectionClassName: function (collectionClassName) {
+                return this.$dataSourceConfiguration.getConfigurationForCollectionClassName(collectionClassName);
+            },
+
+
+            /***
+             *
+             * @param {Function} childFactory
+             * @param {js.data.Entity|js.data.Collection} requestor
+             * @return {*}
+             */
+            getContextForChild: function (childFactory, requestor) {
+                if (childFactory) {
+                    var configuration,
+                        className = childFactory.prototype.constructor.name,
+                        key;
+                    if (childFactory.classof(Model)) {
+                        configuration = this.getConfigurationForModelClassName(className);
+                    } else if (childFactory.classof(Collection)) {
+                        configuration = this.getConfigurationForCollectionClassName(className);
+                    }
+
+                    if(requestor instanceof Collection){
+                        key = "collectionClassName";
+                    }else if(requestor instanceof Model){
+                        key = "modelClassName";
+                    }
+
+                    if (configuration) {
+
+                        if (requestor) {
+                            do {
+                                configuration = configuration.$parent;
+
+                                if (!(configuration instanceof ResourceConfiguration)) {
+                                    break;
+                                }
+
+                                if (configuration.$[key] === requestor.constructor.name) {
+                                    // childFactory is configured as descendant of the requestor
+                                    // so the childFactory will be created in the context of the requestor
+                                    return this.getContext(requestor, requestor.$context);
+                                }
+
+                            } while (configuration.$parent);
+                        }
+
+
+                        // childFactory isn't descendant of the requestor, so return the root context
+                        return requestor.$context;
                     }
                 }
 
                 return null;
-            },
-
-            getAliasForCollectionClassName: function (collectionClassName) {
-                for (var i = 0; i < this.$configuredTypes.length; i++) {
-                    var config = this.$configuredTypes[i];
-                    if (config.$.collectionClassName === collectionClassName) {
-                        return config.$.alias;
-                    }
-                }
-
-                return null;
-            },
-
-
-            addTypeConfiguration: function (configuration) {
-
-                if (!configuration.$.modelClassName && !configuration.$.alias) {
-                    throw "neither modelClassName nor alias defined";
-                }
-
-                if (configuration.$.modelClassName && !configuration.$.alias) {
-                    configuration.$.alias = configuration.$.modelClassName.split(".").pop();
-                }
-
-                if (!configuration.$.modelClassName) {
-                    configuration.$.modelClassName = "js.data.Model";
-                }
-
-                this.$configuredTypes.push(configuration);
-            },
-
-            getFqClassName: function (alias) {
-
-                for (var i = 0; i < this.$configuredTypes.length; i++) {
-                    var typeConfig = this.$configuredTypes[i];
-
-                    if (typeConfig.$.alias == alias) {
-                        return typeConfig.$.modelClassName;
-                    }
-                }
             },
 
             getContext: function (properties, parentContext) {
 
-                var cacheId = this.createContextCacheId(properties, parentContext ? parentContext.$properties : null);
-
-                if (!this.$contextCache.hasOwnProperty(cacheId)) {
-                    this.$contextCache[cacheId] = this.createContext(properties, parentContext);
+                if (!(properties && _.size(properties))) {
+                    // no properties or empty object passed
+                    return this.root();
                 }
 
-                return this.$contextCache[cacheId];
+                parentContext = parentContext || this.root();
+                return parentContext.getContext(properties);
+
             },
 
             /**
              * returns the root context
              */
             root: function () {
-                return this.getContext();
+                return this.$rootContext;
             },
 
             createContext: function (properties, parentContext) {
                 return new Context(this, properties, parentContext)
             },
 
-            createContextCacheId: function (properties, parentProperties) {
-                var ret = [];
-                _.each(_.extend({}, parentProperties, properties), function (value, key) {
-                    ret.push(key + "=" + value);
-                });
-
-                ret.sort();
-
-                if (ret.length == 0) {
-                    return "root";
-                }
-
-                return ret.join("&");
-            },
-
-            createEntity: function (factory, id, type, context) {
+            createEntity: function (factory, id, context) {
                 context = context || this.getContext();
 
-                return context.createEntity(factory, id, type);
+                return context.createEntity(factory, id);
             },
 
-            createCollection: function (factory, options, type, context) {
+            createCollection: function (factory, options, context) {
                 context = context || this.getContext();
 
-                return context.createCollection(factory, options, type);
+                return context.createCollection(factory, options);
             },
 
             /**
@@ -487,54 +521,11 @@ define(["require", "js/core/Component", "js/core/Base", "js/data/Collection", "u
                 }
             },
 
-            /***
-             * returns the configuration entry for the model class
-             * @param modelClassName
-             * @return {Configuration} configuration matching the model class name
-             */
-            getConfigurationForModelClass: function (modelClassName) {
-
-                // TODO: cache
-                for (var i = 0; i < this.$configuredTypes.length; i++) {
-                    var config = this.$configuredTypes[i];
-                    if (config.$.modelClassName === modelClassName) {
-                        return config;
-                    }
-                }
-
-                return null;
-            },
-
-            /***
-             *
-             * returns a configuration entry by matching the alias
-             *
-             * @param alias
-             * @return {*}
-             */
-            getConfigurationByAlias: function (alias) {
-
-                // TODO: cache it
-                for (var i = 0; i < this.$configuredTypes.length; i++) {
-                    var config = this.$configuredTypes[i];
-                    if (config.$.alias === alias) {
-                        return config;
-                    }
-                }
-
-                return null;
-            },
-
             getProcessorForModel: function (model, options) {
 
                 if (model) {
-                    var config;
-                    if (model.constructor === this.$modelFactory) {
-                        // default model -> working with alias
-                        config = this.getConfigurationByAlias(model.$alias);
-                    } else {
-                        config = this.getConfigurationForModelClass(model.$modelClassName);
-                    }
+                    var config = this.getConfigurationForModelClassName(model.$modelClassName);
+
 
                     if (config && config.$.processor) {
                         var processorName = config.$.processor;
@@ -568,7 +559,7 @@ define(["require", "js/core/Component", "js/core/Base", "js/data/Collection", "u
             deserialize: function (responses) {
                 throw "abstract method";
             },
-            getContentType: function(){
+            getContentType: function () {
                 throw "abstract method";
             }
         });
@@ -580,7 +571,7 @@ define(["require", "js/core/Component", "js/core/Base", "js/data/Collection", "u
             deserialize: function (text) {
                 return JSON.parse(text);
             },
-            getContentType: function(){
+            getContentType: function () {
                 return "application/json";
             }
         });
