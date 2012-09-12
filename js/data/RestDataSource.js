@@ -4,18 +4,13 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
 
     var RestDataSource = DataSource.inherit("js.data.RestDataSource", {
 
-        initializeFormatProcessors: function () {
-
-            var jsonProcessor = new DataSource.JsonFormatProcessor();
-            jsonProcessor.regex = /json/;
-
-            this.$formatProcessors.push(jsonProcessor);
-
-        },
-
         defaults: {
             endPoint: null,
             gateway: null
+        },
+
+        ctor: function(){
+            this.callBase();
         },
 
         initialize: function () {
@@ -27,6 +22,15 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
             if (!this.$.gateway) {
                 this.$.gateway = this.$.endPoint;
             }
+
+        },
+
+        initializeFormatProcessors: function () {
+
+            var jsonProcessor = new DataSource.JsonFormatProcessor();
+            jsonProcessor.regex = /json/;
+
+            this.$formatProcessors.push(jsonProcessor);
 
         },
 
@@ -50,41 +54,29 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
             return {};
         },
 
-        getRestPathForAlias: function (alias) {
-
-            var typeConfig,
-                i;
-
-            // search via alias
-            for (i = 0; i < this.$configuredTypes.length; i++) {
-                typeConfig = this.$configuredTypes[i];
-                if (typeConfig.$.alias == alias) {
-                    return typeConfig.$.path;
-                }
-            }
-
-            return null;
-        },
-
         getPathComponentsForModel: function (model) {
 
             if (model) {
-                var path = this.getRestPathForAlias(model.$alias);
+                var config = this.$dataSourceConfiguration.getConfigurationForModelClassName(model.constructor.name);
+                if (config) {
 
-                if (path) {
+                    var path = config.$.path;
 
-                    var ret = [path];
+                    if (path) {
+                        var ret = [path];
 
-                    if (model._status() === Model.STATE.CREATED) {
-                        ret.push(model.$.id);
+                        if (!model.isNew()) {
+                            ret.push(model.$.id);
+                        }
+
+                        return ret;
                     }
-
-                    return ret;
                 }
             }
 
             return null;
         },
+
         _buildUriForModel: function(model){
             // map model to url
             var modelPathComponents = this.getPathComponentsForModel(model);
@@ -213,6 +205,7 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
 
                     if (id || id === 0) {
                         model.set('id', id);
+                        model.$context.addEntityToCache(model);
                         // TODO: ask processor if i should call save again to put content
                         cb(null);
                     } else {
@@ -273,9 +266,9 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
 
             // call save of the processor to save submodels
             flow()
-                .seq(function(cb) {
-                    processor.saveSubModels(model, options, cb)
-                })
+//                .seq(function(cb) {
+//                    processor.saveSubModels(model, options, cb)
+//                })
                 .seq(function(cb) {
                     // create url
                     var url = self._buildUriForModel(model);
@@ -320,7 +313,7 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
                     });
                 })
                 .exec(function(err){
-                    callback(err, model, options);
+                    callback && callback(err, model, options);
                 })
 
 
@@ -329,8 +322,14 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
         loadCollectionPage: function (page, options, callback) {
 
             var rootCollection = page.getRootCollection();
-            var modelPathComponents = rootCollection.$options.path ?
-                rootCollection.$options.path : this.getRestPathForAlias(rootCollection.$alias);
+            var config =  this.$dataSourceConfiguration.getConfigurationForModelClassName(rootCollection.$modelFactory.prototype.constructor.name);
+
+            if(!config){
+                throw new Error("Couldnt find path config for " + rootCollection.$modelFactory.prototype.constructor.name);
+            }
+            var modelPathComponents = [config.$.path];
+
+
 
             if (!modelPathComponents) {
                 callback("path for model unknown", null, options);
@@ -428,6 +427,29 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
     });
 
     RestDataSource.RestContext = DataSource.Context.inherit("js.data.RestDataSource.Context", {
+        ctor: function(dataSource, properties, parentContext){
+            this.$contextModel = properties;
+            this.callBase(dataSource, properties, parentContext);
+        },
+
+        createContextCacheId: function (contextModel) {
+            return contextModel.constructor.name + "_" + contextModel.$.id;
+        },
+
+        getPathComponents: function(){
+
+            if (!this.$parent) {
+                // rootContext
+                return [];
+            }
+
+            if (!this.$contextModel) {
+                throw new Error("ContextModel missing for non-root-Context");
+            }
+
+            var configuration = this.$datasource.getConfigurationForModelClassName(this.$contextModel.constructor.name);
+            return [configuration.$.path, this.$contextModel.$.id];
+        },
 
         createCollection: function (factory, options, type) {
             options = options || {};
