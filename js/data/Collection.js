@@ -147,26 +147,20 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore"], funct
             }
         },
 
-        getContextForChildren: function(childFactory) {
-            if (childFactory.prototype.$cacheInRootContext) {
-                return this.$context.$datasource.getContext();
-            }
-
+        getContextForChild: function(childFactory) {
             return this.$context;
         },
 
-        parse: function(data, type) {
+        parse: function(data) {
             if (!(data instanceof Array)) {
                 throw "data has to be an array";
             }
 
             var factory = this.$modelFactory;
-            var alias = (factory === this.$context.$datasource.$entityFactory ||
-                factory === this.$context.$datasource.$modelFactory) ? type : this.$alias;
 
             for (var i = 0; i < data.length; i++) {
                 var value = data[i];
-                var entity = this.getContextForChildren(factory).createEntity(factory, value.id, alias, type);
+                var entity = this.getContextForChild(factory).createEntity(factory, value.id);
                 entity.set(entity.parse(value));
 
                 data[i] = entity;
@@ -175,8 +169,8 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore"], funct
             return data;
         },
 
-        createItem: function(id, type) {
-            return this.getContextForChildren(this.$modelFactory).createEntity(this.$modelFactory, id, type);
+        createItem: function(id) {
+            return this.getContextForChild(this.$modelFactory).createEntity(this.$modelFactory, id);
         },
 
         fetchPage: function (pageIndex, options, callback) {
@@ -336,12 +330,7 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore"], funct
             return Collection.inherit(Collection.prototype.constructor.name + '[' + modelFactory.prototype.constructor.name + ']', {
                 $modelFactory: modelFactory
             });
-        } else if (_.isString(modelFactory)) {
-            return Collection.inherit(Collection.prototype.constructor.name + '[' + modelFactory + ']', {
-                $alias: modelFactory,
-                $modelFactory: Model || require('js/data/Model')
-            });
-        } else {
+        }  else {
             throw "Cannot create Collection of '" + modelFactory + "'.";
         }
 
