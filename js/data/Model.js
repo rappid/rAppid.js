@@ -131,14 +131,17 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
             } else {
                 return this.$.id ? STATE.CREATED : STATE.NEW;
             }
+        }.onChange('id'),
+        isNew: function(){
+            return this._status() === STATE.NEW;
         }.onChange('id')
     });
 
     function fetchSubModels(attributes, subModelTypes, delegates) {
-        _.each(attributes, function (value) {
+        _.each(attributes, function (value, key) {
             if (value instanceof Model) {
                 // check if the model is required
-                var subModelTypeEntry = subModelTypes[value.$alias];
+                var subModelTypeEntry = subModelTypes[key];
 
                 if (subModelTypeEntry) {
                     // model required -> create delegate
@@ -173,12 +176,12 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
             if (options.fetchSubModels && options.fetchSubModels.length > 0) {
 
                 // for example fetch an article with ["currency", "product/design", "product/productType"]
-                var subModelTypes = Model.createSubModelLoadingChain(model, options.fetchSubModels);
+                var subModels = Model.createSubModelLoadingChain(model, options.fetchSubModels);
 
-                fetchSubModels(model.$, subModelTypes, delegates);
+                fetchSubModels(model.$, subModels, delegates);
 
                 // check that all subResources where found
-                var missingSubModels = _.filter(subModelTypes, function (subModel) {
+                var missingSubModels = _.filter(subModels, function (subModel) {
                     return !subModel.found;
                 });
 
