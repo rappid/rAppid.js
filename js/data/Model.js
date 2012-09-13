@@ -154,7 +154,8 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
                     });
                 }
             } else if (value instanceof Object) {
-                fetchSubModels(value, subModelTypes, delegates);
+                // TODO: causes in some cases an unfinity loop
+                // fetchSubModels(value, subModelTypes, delegates);
             }
         });
     }

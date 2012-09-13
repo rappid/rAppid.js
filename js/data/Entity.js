@@ -50,6 +50,12 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'js/data/TypeResolver', '
                 return this.$context.$datasource.getContextForChild(childFactory, this);
             },
 
+            createEntity: function(childFactory,id){
+                var context = this.getContextForChild(childFactory);
+
+                return context.createEntity(childFactory,id);
+            },
+
             _isChildFactoryDependentObject: function (childFactory) {
                 return childFactory && childFactory.prototype.$isDependentObject;
             },
@@ -191,12 +197,13 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'js/data/TypeResolver', '
 
             /***
              * composes the data for serialisation
+             * @param dataSource
              * @param action
              * @param options
              * @return {Object} all data that should be serialized
              */
-            compose: function (action, options) {
-                var processor = this.$context.$datasource.getProcessorForModel(this, options);
+            compose: function (dataSource, action, options) {
+                var processor = dataSource.getProcessorForModel(this, options);
                 return processor.compose(this, action, options);
             },
 

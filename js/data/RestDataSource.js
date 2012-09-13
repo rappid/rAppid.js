@@ -280,7 +280,7 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
                     // TODO: create hook, which can modify url and queryParameter
 
                     // compose data in model and in processor
-                    var data = model.compose(action, options);
+                    var data = model.compose(self,action, options);
 
                     // format payload
                     var payload = formatProcessor.serialize(data);

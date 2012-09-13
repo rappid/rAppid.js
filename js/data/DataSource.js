@@ -221,7 +221,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                 } else if (value instanceof Collection) {
                     return this._composeCollection(value, action, options);
                 } else if (value instanceof Entity) {
-                    return value.compose(action, options);
+                    return value.compose(this.$datasource,action, options);
                 } else if (value instanceof List) {
                     var ret = [];
                     var self = this;
