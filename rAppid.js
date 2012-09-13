@@ -7,7 +7,6 @@
     }
 
     var underscore,
-        Bus,
         Stage,
         document = window.document; // TODO: create workaround for node
 
@@ -91,10 +90,9 @@
                     });
                 }
 
-                requirejsContext(["inherit", "underscore", "js/core/Bus", "js/core/Stage"], function (inherit, _, b, s) {
+                requirejsContext(["inherit", "underscore", "js/core/Stage"], function (inherit, _, s) {
                     // we have to load inherit.js in order that inheritance is working
                     underscore = _;
-                    Bus = b;
                     Stage = s;
 
                     if (inherit && _) {
@@ -380,7 +378,6 @@
 
         this.$requirejsContext(["js/core/Application", "js/core/HeadManager", "js/core/History", "js/core/Injection"], function (Application, HeadManager, History, Injection) {
             stage.$headManager = new HeadManager(document);
-            stage.$bus = new Bus();
             stage.$history = new History();
             var injection = stage.$injection = new Injection(null, null, stage);
 
@@ -413,6 +410,8 @@
         });
 
     };
+
+
 
     ApplicationContext.prototype.getFqClassName = function (namespace, className, useRewriteMap) {
         if (useRewriteMap == undefined || useRewriteMap == null) {
