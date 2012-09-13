@@ -12,6 +12,11 @@ define(["js/core/Base"], function (Base) {
                 this._events.push(event);
             }
 
+            if(!this.trigger){
+                this.trigger = function () {
+                };
+            }
+
             return this;
         };
 
@@ -30,6 +35,12 @@ define(["js/core/Base"], function (Base) {
                 this._events.push(event);
 
             }
+
+            if (!this.trigger) {
+                this.trigger = function () {
+                };
+            }
+
             return this;
         };
 
