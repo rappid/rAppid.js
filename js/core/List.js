@@ -99,7 +99,7 @@ define(["js/core/Bindable", "underscore"], function (Bindable, _) {
          * @private
          */
         _onItemChange: function (e, item) {
-            this.trigger('change', {item: item, index: this.indexOf(item)});
+            this.trigger('change', {item: item, index: this.indexOf(item), changedAttributes: e.$});
         },
         /**
          * Removes an Array or just one item from the list. Triggers remove events.
