@@ -517,6 +517,9 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding","underscor
 
                     this.trigger('destroy',this);
                     return this;
+                },
+                isEqual: function (a, b) {
+                    return isEqual(a,b);
                 }
             });
 
