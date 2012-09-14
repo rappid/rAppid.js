@@ -63,7 +63,7 @@ define(['js/core/Component', 'srv/core/Context', 'srv/core/Handlers', 'srv/core/
 
                 context.handler = requestHandler;
 
-                requestHandler.handleRequest(context)
+                requestHandler.handleRequest(context);
 
             } catch (e) {
 
