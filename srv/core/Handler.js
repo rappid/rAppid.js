@@ -7,8 +7,7 @@ define(['js/core/Component'], function(Component) {
 
         isResponsibleForRequest: function(context) {
             if (this.$.route !== null) {
-                var regex = new RegExp(this.$.route);
-                // TODO test route and return
+                return (new RegExp(this.$.route, "i")).test(context.request.urlInfo.pathname);
             }
 
             return false;
@@ -22,7 +21,11 @@ define(['js/core/Component'], function(Component) {
             return this;
         },
 
-        processRequest: function(context, callback) {
+        /***
+         * handles the request
+         * @param {srv.core.ServerContext} context
+         */
+        handleRequest: function(context) {
             throw new Error("Abstract method processRequest");
         }
     })
