@@ -598,18 +598,42 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
         });
 
         Component.Configuration = Component.inherit("js.core.Configuration", {
-            getConfigurationByKeyValue: function (key, value) {
-                if (this.$[key] === value) {
-                    return this;
+
+            /***
+             *
+             * @param {String} key
+             * @param {String} value
+             * @param {Boolean} [recursive=true]
+             * @return {*}
+             */
+            getConfigurationByKeyValue: function (key, value, recursive) {
+
+                if (arguments.length < 3) {
+                    recursive = true;
                 }
-                var configuration, ret;
-                for (var i = 0; i < this.$configurations.length; i++) {
+
+                var configuration,
+                    i, ret;
+
+                for (i = 0; i < this.$configurations.length; i++) {
                     configuration = this.$configurations[i];
-                    ret = configuration.getConfigurationByKeyValue(key, value);
-                    if (ret) {
-                        return ret;
+
+                    if (configuration.$[key] === value) {
+                        return configuration;
                     }
                 }
+
+                if (recursive) {
+                    for (i = 0; i < this.$configurations.length; i++) {
+                        configuration = this.$configurations[i];
+                        ret = configuration.getConfigurationByKeyValue(key, value);
+
+                        if (ret) {
+                            return ret;
+                        }
+                    }
+                }
+
                 return null;
             }
         });
