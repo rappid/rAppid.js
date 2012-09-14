@@ -11,9 +11,9 @@ define(['js/core/Component', 'srv/core/Handler', 'srv/handler/ExceptionHandler']
                         if (handler.isResponsibleForRequest(context)) {
                             ret = handler.getHandlerInstance();
 
-                            if (!ret) {
-                                return this.getHandlerForException(new Error("No handler instance returned for '" + context.request.url + " '." ))
-                            }
+                            return ret || this.getHandlerForException(
+                                    new Error("No handler instance returned for '" + context.request.url + " '."));
+
                         }
                     } catch (e) {
                         return this.getHandlerForException(e);
