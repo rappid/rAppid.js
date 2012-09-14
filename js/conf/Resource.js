@@ -23,6 +23,10 @@ define(["js/conf/Configuration"], function (Configuration) {
 
         getConfigurationForCollectionClassName: function (collectionClassName) {
             return this.getConfigurationByKeyValue("collectionClassName", collectionClassName);
+        },
+
+        getConfigurationForPath: function(path) {
+            return this.getConfigurationByKeyValue("path", path, false);
         }
     });
 
