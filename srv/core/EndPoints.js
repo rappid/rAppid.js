@@ -14,7 +14,7 @@ define(['js/core/Component', 'srv/core/EndPoint', 'flow'], function (Component, 
             }
         },
 
-        start: function(callback) {
+        start: function(server, callback) {
             if (!this.$endPoints.length) {
                 callback(new Error("No endPoint specified"));
                 return;
@@ -23,7 +23,7 @@ define(['js/core/Component', 'srv/core/EndPoint', 'flow'], function (Component, 
             for (var i = 0; i < this.$endPoints.length; i++) {
                 var endPoint = this.$endPoints[i];
                 try {
-                    endPoint.start(this);
+                    endPoint.start(server);
                 } catch (e) {
                     // start fault for end point -> shut down the server
                     this.shutdown(function () {
