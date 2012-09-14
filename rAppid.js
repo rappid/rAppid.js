@@ -411,8 +411,6 @@
 
     };
 
-
-
     ApplicationContext.prototype.getFqClassName = function (namespace, className, useRewriteMap) {
         if (useRewriteMap == undefined || useRewriteMap == null) {
             useRewriteMap = true;
