@@ -1,5 +1,5 @@
-define(['js/core/Component', 'srv/core/Context', 'srv/core/Handlers', 'srv/core/EndPoints'],
-    function(Component, Context, Handlers, EndPoints) {
+define(['js/core/Component', 'srv/core/Context', 'srv/core/Handlers', 'srv/core/EndPoints', 'srv/handler/ExceptionHandler'],
+    function(Component, Context, Handlers, EndPoints, ExceptionHandler) {
 
     return Component.inherit('srv.core.Server', {
 
@@ -52,18 +52,29 @@ define(['js/core/Component', 'srv/core/Context', 'srv/core/Handlers', 'srv/core/
          * @param response
          */
         handleRequest: function(endPoint, request, response) {
+            var context,
+                requestHandler;
+
             try {
                 // create the new context object
-                var context = new Context(endPoint, request, response);
+                context = new Context(endPoint, request, response);
                 // and set the chosen handler
-                var requestHandler = this.$handlers.getRequestHandler(context);
+                requestHandler = this.$handlers.getRequestHandler(context);
 
                 context.handler = requestHandler;
 
                 requestHandler.handleRequest(context)
 
             } catch (e) {
-                // TODO: handle error and send response
+
+                try {
+                    requestHandler = new ExceptionHandler(e);
+                    requestHandler.handleRequest(context);
+                } catch (e) {
+                    // TODO: log something here
+                    console.error(e);
+                }
+
             }
         }
 
