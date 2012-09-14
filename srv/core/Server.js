@@ -33,7 +33,7 @@ define(['js/core/Component', 'srv/core/Context', 'srv/core/Handlers', 'srv/core/
             }
 
             // start all end points
-            this.$endPoints.start(callback);
+            this.$endPoints.start(this, callback);
 
         },
 
@@ -54,11 +54,13 @@ define(['js/core/Component', 'srv/core/Context', 'srv/core/Handlers', 'srv/core/
         handleRequest: function(endPoint, request, response) {
             try {
                 // create the new context object
-                var context = new Context(request, response);
-                context.endPoint = endPoint;
+                var context = new Context(endPoint, request, response);
                 // and set the chosen handler
-                context.handler = self.$handlers.getRequestHandler(context);
+                var requestHandler = this.$handlers.getRequestHandler(context);
 
+                context.handler = requestHandler;
+
+                requestHandler.handleRequest(context)
 
             } catch (e) {
                 // TODO: handle error and send response
