@@ -53,7 +53,13 @@ var server = function (args, callback) {
                     if (server instanceof Server) {
                         serverContext.$server = server;
                         server._initialize('auto');
-                        server.start(parameter);
+                        server.start(parameter, function(err) {
+                            if (err) {
+                                console.error(err);
+                            } else {
+                                console.log("server started");
+                            }
+                        });
 
                     } else {
                         //noinspection ExceptionCaughtLocallyJS
@@ -64,7 +70,7 @@ var server = function (args, callback) {
                 }
 
             }, function (err) {
-                console.err(err);
+                console.error(err);
                 process.exit(1);
             })
         }

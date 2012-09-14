@@ -483,6 +483,7 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                         var fqClassName = this.$stage.$applicationContext.getFqClassName(node.namespaceURI, this._localNameFromDomNode(node), true);
                         var className = this.$stage.$applicationContext.getFqClassName(node.namespaceURI, this._localNameFromDomNode(node), false);
 
+
                         return this.$stage.$applicationContext.createInstance(fqClassName, [attributes, node, this.$stage, this, rootScope], className);
 
                     } else if (node.nodeType == 3 || node.nodeType == 4) { // Text nodes
