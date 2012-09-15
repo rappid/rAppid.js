@@ -1,4 +1,5 @@
 define(['require', 'js/core/Base', 'srv/handler/rest/Resource'], function (require, Base, Resource) {
+
     return Base.inherit('srv.handler.rest.ResourceRouter', {
 
         ctor: function(handler) {
@@ -38,31 +39,47 @@ define(['require', 'js/core/Base', 'srv/handler/rest/Resource'], function (requi
          * @private
          */
         _getResourceForPath: function(pathElements) {
-            var configuration = this.$handler.$dataSourceConfiguration;
+            var configuration = this.$handler.$dataSourceConfiguration,
+                resource = null,
+                resourceClassName;
 
-            for (var i = 0; i < pathElements.length; i++) {
+
+            for (var i = 0; i < pathElements.length; i += 2) {
                 var path = pathElements[i];
                 configuration = configuration.getConfigurationForPath(path);
 
                 if (!configuration) {
                     throw new Error("Configuration for '" + pathElements.slice(0, i + 1).join('/') + "' not found.");
                 }
+
+                resourceClassName = configuration.$.resourceClassName;
+                if (!resourceClassName) {
+                    throw new Error("No resource for '" + pathElements.join('/') + "' found")
+                }
+
+                resource = this._createResourceInstance(resourceClassName, configuration, resource);
+
+                var id = pathElements[i+1];
+                if (id) {
+                    resource.$id = id;
+                }
+
             }
 
-            var resourceClassName = configuration.$.resourceClassName;
-            if (!resourceClassName) {
-                throw new Error("No resource for '" + pathElements.join('/') + "' found")
-            }
-
-
-            return this._getResourceFactory(resourceClassName);
+            return resource;
 
         },
 
-        _getResourceFactory: function(fqClassName) {
 
-            fqClassName = this.$handler.$stage.$applicationContext.getFqClassName(null, fqClassName);
-            return require(fqClassName);
+        _createResourceInstance: function(fqClassName, configuration, parentResource) {
+            var applicationContext = this.$handler.$stage.$applicationContext;
+            fqClassName = applicationContext.getFqClassName(null, fqClassName);
+
+            require([fqClassName], function(resource) {
+                resource = resource;
+            });
+
+            return applicationContext.createInstance(require(fqClassName), [configuration, parentResource]);
         }
     })
 });
