@@ -12,6 +12,14 @@ define(['js/core/Component'], function(Component) {
             }
         },
 
+        /***
+         * starts the handler
+         * @param callback
+         */
+        start: function(callback) {
+            callback();
+        },
+
         isResponsibleForRequest: function(context) {
 
             // Check path

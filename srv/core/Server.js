@@ -1,5 +1,5 @@
-define(['js/core/Component', 'srv/core/Context', 'srv/core/Handlers', 'srv/core/EndPoints', 'srv/handler/ExceptionHandler'],
-    function(Component, Context, Handlers, EndPoints, ExceptionHandler) {
+define(['js/core/Component', 'srv/core/Context', 'srv/core/Handlers', 'srv/core/EndPoints', 'srv/handler/ExceptionHandler', 'flow'],
+    function(Component, Context, Handlers, EndPoints, ExceptionHandler, flow) {
 
     return Component.inherit('srv.core.Server', {
 
@@ -32,8 +32,25 @@ define(['js/core/Component', 'srv/core/Context', 'srv/core/Handlers', 'srv/core/
                 return;
             }
 
-            // start all end points
-            this.$endPoints.start(this, callback);
+            var self = this;
+
+            flow()
+                .seq(function(cb) {
+                    // start all end points
+                    self.$endPoints.start(this, cb);
+                })
+                .seq(function(cb) {
+                    // handlers starts also asynchronous to load e.g. classes
+                    self.$handlers.start(this, cb);
+                })
+                .exec(function(err) {
+                    if (err) {
+                        self.shutdown(callback);
+                    } else {
+                        callback();
+                    }
+                })
+
 
         },
 
