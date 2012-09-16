@@ -1,4 +1,4 @@
-define(['js/data/DataSource'], function(DataSource) {
+define(['js/data/DataSource', 'mongoskin'], function(DataSource, MongoSkin) {
     return DataSource.inherit('srv.data.MongoDataSource', {
 
         defaults: {
