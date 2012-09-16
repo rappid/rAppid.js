@@ -25,6 +25,12 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
 
         },
 
+        _validateConfiguration: function() {
+            if (!this.$dataSourceConfiguration) {
+                throw "No DataSourceConfiguration specified";
+            }
+        },
+
         initializeFormatProcessors: function () {
 
             var jsonProcessor = new DataSource.JsonFormatProcessor();

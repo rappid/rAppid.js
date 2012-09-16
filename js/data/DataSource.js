@@ -379,9 +379,12 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                         break;
                     }
                 }
-                if (!this.$dataSourceConfiguration) {
-                    throw "No DataSourceConfiguration specified";
-                }
+
+                this._validateConfiguration();
+            },
+
+            _validateConfiguration: function() {
+                // hook
             },
 
             getConfigurationForModelClassName: function (modelClassName) {
