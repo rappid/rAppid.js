@@ -471,6 +471,7 @@
             ret.className = className;
         } catch(e) {
             console.warn(["Cannot create instance of '" + fqClassName + "'", e, args]);
+            throw e;
         }
 
         return ret;
