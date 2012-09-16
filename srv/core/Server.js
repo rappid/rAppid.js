@@ -80,19 +80,35 @@ define(['js/core/Component', 'srv/core/Context', 'srv/core/Handlers', 'srv/core/
 
                 context.handler = requestHandler;
 
-                requestHandler.handleRequest(context);
+                requestHandler.handleRequest(context, function(err) {
+                    if (err) {
+                        handleErrorWithErrorHandler(err);
+                    }
+                });
 
             } catch (e) {
+                handleErrorWithErrorHandler(e);
+            }
 
+            function handleErrorWithErrorHandler(e) {
                 try {
                     requestHandler = new ExceptionHandler(e);
-                    requestHandler.handleRequest(context);
+                    requestHandler.handleRequest(context, function(err) {
+                        if (err) {
+                            handleErrorIntern(err);
+                        }
+                    });
                 } catch (e) {
+                    handleErrorIntern(e);
+                }
+
+
+                function handleErrorIntern(e) {
                     // TODO: log something here
                     console.error(e);
                 }
-
             }
+
         }
 
     });

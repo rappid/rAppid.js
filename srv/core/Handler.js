@@ -48,8 +48,9 @@ define(['js/core/Component'], function(Component) {
         /***
          * handles the request
          * @param {srv.core.ServerContext} context
+         * @param {Function} callback - callback can be used to report an asynchronous error
          */
-        handleRequest: function(context) {
+        handleRequest: function(context, callback) {
             throw new Error("Abstract method processRequest");
         }
     })
