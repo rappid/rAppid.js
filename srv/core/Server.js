@@ -37,11 +37,11 @@ define(['js/core/Component', 'srv/core/Context', 'srv/core/Handlers', 'srv/core/
             flow()
                 .seq(function(cb) {
                     // start all end points
-                    self.$endPoints.start(this, cb);
+                    self.$endPoints.start(self, cb);
                 })
                 .seq(function(cb) {
                     // handlers starts also asynchronous to load e.g. classes
-                    self.$handlers.start(this, cb);
+                    self.$handlers.start(self, cb);
                 })
                 .exec(function(err) {
                     if (err) {
