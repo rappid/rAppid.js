@@ -1,24 +1,11 @@
-define(['require', 'srv/core/Handler', 'js/conf/DataSource', 'srv/handler/rest/ResourceRouter'],
-    function(require, Handler, DataSourceConfiguration, ResourceRouter) {
+define(['require', 'srv/core/Handler', 'js/conf/DataSource', 'srv/handler/rest/ResourceRouter', 'flow'],
+    function(require, Handler, DataSourceConfiguration, ResourceRouter, flow) {
 
     return Handler.inherit('srv.core.RestHandler', {
 
         ctor: function() {
             this.$dataSourceConfiguration = null;
             this.callBase();
-        },
-
-        start: function(callback) {
-            var resourceClasses = [];
-
-            // TODO: determinate resource
-
-            require(resourceClasses, function() {
-                callback();
-            }, function(err) {
-                callback(err);
-            });
-
         },
 
         addChild: function(child) {
@@ -33,14 +20,23 @@ define(['require', 'srv/core/Handler', 'js/conf/DataSource', 'srv/handler/rest/R
             return new ResourceRouter(this);
         },
 
-        handleRequest: function(context) {
+        handleRequest: function(context, callback) {
+
+            var self = this;
 
             if (!this.$dataSourceConfiguration) {
                 throw new Error("DataSourceConfiguration missing.");
             }
 
-            var resource = this._getResourceRouter().getResource(context);
-            resource.handleRequest(context);
+
+            flow()
+                .seq("resource", function(cb) {
+                    self._getResourceRouter().getResource(context, cb);
+                })
+                .seq(function(cb) {
+                    this.vars["resource"].handleRequest(context, cb);
+                })
+                .exec(callback);
 
         }
     });
