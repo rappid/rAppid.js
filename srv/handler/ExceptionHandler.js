@@ -1,4 +1,4 @@
-define(['srv/core/Handler'], function(Handler) {
+define(['srv/core/Handler', 'srv/core/HttpError'], function(Handler, HttpError) {
 
     return Handler.inherit('srv.core.ExceptionHandler', {
 
@@ -20,16 +20,27 @@ define(['srv/core/Handler'], function(Handler) {
 
             var response = context.response,
                 exception = this.exception || new Error(),
-                body, stack;
+                body, stack,
+                statusCode = 500,
+                statusText = null;
 
-            body = "<h1>Internal Server Error</h1>" + exception.message;
-            stack = exception.stack;
+            if (exception instanceof HttpError) {
+                body = exception.toString();
+                statusCode = exception.statusCode;
+                statusText = exception.statusText;
+            } else {
+                body = "<h1>Internal Server Error</h1>" + exception.message;
 
-            if (stack) {
-                body += "<pre>" + stack + "</pre>";
+                stack = exception.stack;
+                statusText = "Internal Server Error";
+
+                if (stack) {
+                    body += "<pre>" + stack + "</pre>";
+                }
             }
 
-            response.writeHead(500, 'Internal Server Error', {
+
+            response.writeHead(statusCode, statusText, {
                 'Content-Length': body.length,
                 'Content-Type': 'text/html'
             });
