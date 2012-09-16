@@ -14,6 +14,8 @@ define(['js/core/Component', 'srv/core/Handler', 'srv/handler/ExceptionHandler',
                 } else {
                     throw new Error("Child for Handlers must be an Handler");
                 }
+
+                this.callBase();
             },
 
             start: function (server, callback) {
