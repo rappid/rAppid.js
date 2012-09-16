@@ -16,10 +16,12 @@ define(['srv/core/EndPoint', 'http'], function(EndPoint, Http) {
             });
 
             this.$endPoint.listen(this.$.port, this.$.hostname, this.$.backlog);
+            this.log("HttpEndPoint started at :" + this.$.port);
         },
 
         _stop: function(callback) {
             this.$endPoint && this.$endPoint.close(callback);
+            this.log("HttpEndPoint at :" + this.$.port + " stopped");
         }
     });
 });
