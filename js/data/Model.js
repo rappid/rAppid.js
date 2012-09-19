@@ -113,15 +113,13 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
                         if(!err){
                             self.set('id', false);
                         }
-                        callback(err);
+                        callback && callback(err);
                     });
                 } else {
                     throw "status '" + status + "' doesn't allow delete";
                 }
             } catch(e) {
-                if (callback) {
-                    callback(e);
-                }
+                callback && callback(e);
             }
         },
 
