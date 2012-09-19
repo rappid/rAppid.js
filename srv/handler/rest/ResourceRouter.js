@@ -1,4 +1,4 @@
-define(['require', 'js/core/Base', 'srv/handler/rest/Resource', 'flow'], function (require, Base, Resource, flow) {
+define(['require', 'js/core/Base', 'srv/handler/rest/ResourceHandler', 'flow'], function (require, Base, ResourceHandler, flow) {
 
     return Base.inherit('srv.handler.rest.ResourceRouter', {
 
@@ -43,13 +43,12 @@ define(['require', 'js/core/Base', 'srv/handler/rest/Resource', 'flow'], functio
          */
         _getResourceForPath: function(pathElements, callback) {
             var self = this,
-                configuration = this.$handler.$dataSourceConfiguration,
+                configuration = this.$handler.$resourceConfiguration,
                 parentResource = null,
                 resourceClassName,
                 resourceStack = [];
 
             // build a stack of configurations
-
             for (var i = 0; i < pathElements.length; i += 2) {
                 var path = pathElements[i];
                 configuration = configuration.getConfigurationForPath(path);
@@ -95,9 +94,10 @@ define(['require', 'js/core/Base', 'srv/handler/rest/Resource', 'flow'], functio
             var applicationContext = this.$handler.$stage.$applicationContext,
                 fqClassName = applicationContext.getFqClassName(null, resourceEntry.resourceClassName);
 
+            var self = this;
             require([fqClassName], function(resourceFactory) {
-                var resource = applicationContext.createInstance(resourceFactory, [resourceEntry.configuration, parentResource]);
-                if (resource instanceof Resource) {
+                var resource = applicationContext.createInstance(resourceFactory, [self.$handler, resourceEntry.configuration, parentResource]);
+                if (resource instanceof ResourceHandler) {
                     callback(null, resource);
                 } else {
                     callback("Returned resource not an instance of Resource");
