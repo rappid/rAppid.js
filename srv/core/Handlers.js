@@ -18,6 +18,16 @@ define(['js/core/Component', 'srv/core/Handler', 'srv/handler/ExceptionHandler',
                 this.callBase();
             },
 
+            stop: function(callback){
+                flow()
+                    .parEach(this.$handlers, function (handler, cb) {
+                        // ignore errors during stop
+                        handler.stop(function(){
+                            cb();
+                        });
+                    })
+                    .exec(callback);
+            },
             start: function (server, callback) {
 
                 flow()
