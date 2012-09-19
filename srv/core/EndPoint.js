@@ -6,18 +6,23 @@ define(['js/core/Component'], function (Component) {
          * starts the endpoint
          * @param {srv.core.Server} server
          */
-        start: function (server) {
+        start: function (server, callback) {
+            var self = this;
+
             this.$server = server;
-            this._start();
-            this.$started = true;
+            this._start(function(err) {
+                self.$started = true;
+                callback(err);
+            });
         },
 
         /***
          * end point specific implementation to get started
+         *
+         * @param callback
          * @private
-         * @abstract
          */
-        _start: function () {
+        _start: function (callback) {
             throw "abstract";
         },
 

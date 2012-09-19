@@ -20,7 +20,7 @@ define(['js/core/Component', 'srv/core/Handler', 'srv/handler/ExceptionHandler',
 
             stop: function(callback){
                 flow()
-                    .parEach(this.$handlers, function (handler, cb) {
+                    .seqEach(this.$handlers, function (handler, cb) {
                         // ignore errors during stop
                         handler.stop(function(){
                             cb();
@@ -31,7 +31,7 @@ define(['js/core/Component', 'srv/core/Handler', 'srv/handler/ExceptionHandler',
             start: function (server, callback) {
 
                 flow()
-                    .parEach(this.$handlers, function(handler, cb) {
+                    .seqEach(this.$handlers, function(handler, cb) {
                         handler.start(server, cb);
                     })
                     .exec(callback);

@@ -20,29 +20,16 @@ define(['js/core/Component', 'srv/core/EndPoint', 'flow'], function (Component, 
                 return;
             }
 
-            for (var i = 0; i < this.$endPoints.length; i++) {
-                var endPoint = this.$endPoints[i];
-                try {
-                    endPoint.start(server);
-                } catch (e) {
-                    // start fault for end point -> shut down the server
-                    this.shutdown(function () {
-                        var error = new Error("Couldn't start all end points. shut down started end points");
-                        error.nestedError = e;
-
-                        callback(error)
-                    });
-                    return;
-                }
-            }
-
-            // all end points started successfully
-            callback();
+            flow()
+                .seqEach(this.$endPoints, function(endPoint, cb) {
+                    endPoint.start(server, cb);
+                })
+                .exec(callback);
         },
 
         shutdown: function(callback) {
             flow()
-                .parEach(this.$endPoints, function (endPoint, cb) {
+                .seqEach(this.$endPoints, function (endPoint, cb) {
                     endPoint.stop(function(){
                         // ignore errors during shutdown
                         cb();

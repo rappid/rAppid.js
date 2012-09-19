@@ -8,20 +8,30 @@ define(['srv/core/EndPoint', 'http'], function(EndPoint, Http) {
             backlog: null
         },
 
-        _start: function() {
+        _start: function(callback) {
 
             var self = this;
             this.$endPoint = Http.createServer(function(req, res) {
                 self.handleRequest(req, res);
             });
 
+            this.$endPoint.on('listening', function() {
+                self.log("HttpEndPoint started at :" + self.$.port);
+                callback();
+            });
+
+            this.$endPoint.on('error', callback);
+
             this.$endPoint.listen(this.$.port, this.$.hostname, this.$.backlog);
-            this.log("HttpEndPoint started at :" + this.$.port);
+
         },
 
         _stop: function(callback) {
             this.log("HttpEndPoint at :" + this.$.port + " stopped");
-            this.$endPoint && this.$endPoint.close(callback);
+            this.$endPoint.on('close', function() {
+                callback();
+            });
+            this.$endPoint && this.$endPoint.close();
         }
     });
 });
