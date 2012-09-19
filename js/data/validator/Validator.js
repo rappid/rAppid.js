@@ -10,47 +10,47 @@ define(['js/core/Component', 'js/core/Base'], function (Component, Base, undefin
         validate: function (data, callback) {
 
             var self = this,
-                callbackInvoked = false,
-                internalCallback = function (err) {
-                    if (callbackInvoked) {
-                        self.log('Validator returned twice. Ignore second return', Base.LOGLEVEL.WARN);
-                        return;
-                    }
-
-                    callbackInvoked = true;
-                    callback(err);
-                };
+                callbackInvoked = false;
 
             try {
-                var synchronousResult = this._validate(data, internalCallback);
+                var result = this._validate(data);
 
-                if (synchronousResult === true) {
+                if (result === true) {
                     // no error
                     internalCallback(null);
-                } else if (synchronousResult !== null && synchronousResult !== undefined) {
-                    // validation failed
-                    if (!synchronousResult) {
-                        // we got an error, which could be detected with if(err) so we use true instead
-                        synchronousResult = true;
-                    }
-                    internalCallback(synchronousResult);
                 } else {
-                    // validation will be invoke callback by itself
-                }
+                    // validation failed
+                    if (!result) {
+                        // we got an error, which could be detected with if(err) so we use true instead
+                        result = true;
+                    }
 
+                    internalCallback(result);
+                }
             } catch (e) {
                 internalCallback(e);
+            }
+
+            function internalCallback(err) {
+                if (callbackInvoked) {
+                    self.log('Validator returned twice. Ignore second return', Base.LOGLEVEL.WARN);
+                    return;
+                }
+
+                callbackInvoked = true;
+                callback(err);
             }
         },
 
         /***
-         *
+         * performs a synchronous validation
          * @param data
-         * @param callback
+         * @abstract
          * @private
          */
         _validate: function (data) {
-            throw "abstract method _validate from Validator";
+            return "abstract method _validate from Validator";
         }
     })
-});
+})
+;
