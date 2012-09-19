@@ -1,19 +1,19 @@
-define(['js/core/Component', 'js/core/Base'], function (Component, Base, undefined) {
+define(['js/core/Component', 'js/core/Base'], function (Component, Base) {
 
     return Component.inherit('js.data.validator.Validator', {
 
         /***
-         * validates data
-         * @param data
+         * validates entities
+         * @param entity
          * @param callback
          */
-        validate: function (data, callback) {
+        validate: function (entity, callback) {
 
             var self = this,
                 callbackInvoked = false;
 
             try {
-                var result = this._validate(data);
+                var result = this._validate(entity);
 
                 if (result === true) {
                     // no error
