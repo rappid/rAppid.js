@@ -1,22 +1,46 @@
 var path = require('path'),
     fs = require('fs'),
     requirejs = require('requirejs'),
-    _ = require('underscore');
+    _ = require('underscore'),
+    tty = require('tty');
 
 fs.existsSync || (fs.existsSync = path.existsSync);
 
-var server = function (args, callback) {
+var serverExport = function (args, callback) {
 
     var argv = require('optimist')(args)
-        .usage(server.usage)
+        .usage(serverExport.usage)
 //        .demand(1)
         .argv;
 
-    var serverDirectory = process.cwd(),
+    var serverInstance,
+        serverDirectory = process.cwd(),
         documentRoot = serverDirectory,
         serverFactoryClassName = 'xaml!web/Server',
         configPath = 'config.json';
 
+    process.stdin.resume();
+
+//    process.stdin.setRawMode(true);
+//    process.stdin.on('keypress', function (char, key) {
+//        if (key && key.ctrl && key.name == 'c') {
+//            shutdownServer();
+//        }
+//    });
+
+    process.on('SIGINT', function() {
+        shutdownServer();
+    });
+
+    function shutdownServer() {
+        if (serverInstance) {
+            console.log('Shutting down server... [%d]', process.pid);
+            serverInstance.shutdown(function (err) {
+                err && console.error(err);
+                process.exit(err ? 2 : 0);
+            });
+        }
+    }
 
     var config = {},
         parameter = {
@@ -58,6 +82,7 @@ var server = function (args, callback) {
                                 console.error(err);
                             } else {
                                 console.log("server started");
+                                serverInstance = server;
                             }
                         });
 
@@ -79,7 +104,7 @@ var server = function (args, callback) {
 
 };
 
-server.usage = "rappidjs server <Directory>";
+serverExport.usage = "rappidjs server <Directory>";
 
-module.exports = server;
+module.exports = serverExport;
 
