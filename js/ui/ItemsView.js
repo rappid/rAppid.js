@@ -1,15 +1,16 @@
 define(
-    ["js/ui/View", "js/core/Template", "js/core/List", "underscore"], function (View, Template, List, _) {
+    ["js/ui/View", "js/core/Template", "js/core/List", "js/core/Bindable", "underscore"], function (View, Template, List, Bindable, _) {
         return View.inherit({
             defaults: {
                 tagName: "div",
                 items: null,
                 itemKey: 'item',
-                indexKey: 'index'
+                indexKey: 'index',
+                keyPath: null
             },
 
             $classAttributes: [
-                'itemKey', 'indexKey'
+                'keyPath', 'itemKey', 'indexKey'
             ],
 
             $defaultTemplateName: 'item',
@@ -33,6 +34,7 @@ define(
             render: function () {
                 if (!this.isRendered()) {
                     this.$renderedItems = [];
+                    this.$renderedItemsMap = {};
                 }
                 return this.callBase();
             },
@@ -82,6 +84,13 @@ define(
                         this.removeChild(c.component);
                         c.component.destroy();
                     }
+                    for(var key in this.$renderedItemsMap){
+                        if(this.$renderedItemsMap.hasOwnProperty(key)){
+                            c = this.$renderedItemsMap[key];
+                            this.removeChild(c);
+                            c.destroy();
+                        }
+                    }
                 }
                 this.$renderedItems = [];
                 for (var i = 0; i < items.length; i++) {
@@ -96,14 +105,31 @@ define(
                 attr[this._getIndexKey()] = i;
                 var comp = this.$templates['item'].createComponents(attr)[0];
 
-                // add to rendered item map
-                this.$renderedItems.push({
-                    item: item,
-                    component: comp
-                });
+                var key = this._getKeyForItem(item);
+                if(key){
+                    this.$renderedItemsMap[key] = comp;
+                }else{
+                    // add to rendered item map
+                    this.$renderedItems.push({
+                        item: item,
+                        component: comp
+                    });
+                }
+
                 return comp;
             },
-
+            _getKeyForItem: function(item){
+                if (item instanceof Bindable) {
+                    var key;
+                    if (this.$.keyPath) {
+                        return item.get(this.$.keyPath);
+                    } else {
+                        return item.$cid;
+                    }
+                }
+                // TODO: handle hash objects
+                return null;
+            },
             _innerRenderItem: function (item, i) {
                 this.addChild(this._createComponentForItem(item, i));
             },
@@ -118,18 +144,31 @@ define(
 
             _removeRenderedItem: function (item) {
                 var ri;
-                for (var i = 0; i < this.$renderedItems.length; i++) {
-                    ri = this.$renderedItems[i];
-                    if (ri.item === item) {
-                        this.removeChild(ri.component);
-                        this.$renderedItems.splice(i, 1);
-                        ri.component.destroy();
-                        return;
+                var key = this._getKeyForItem(item);
+                var comp;
+                if(key){
+                    comp = this.$renderedItemsMap[key];
+                    this.removeChild(comp);
+                    delete this.$renderedItems[key];
+                    comp.destroy();
+                }else{
+                    for (var i = 0; i < this.$renderedItems.length; i++) {
+                        ri = this.$renderedItems[i];
+                        if (ri.item === item) {
+                            this.removeChild(ri.component);
+                            this.$renderedItems.splice(i, 1);
+                            ri.component.destroy();
+                            return;
+                        }
                     }
                 }
             },
 
             getComponentForItem: function (item) {
+                var key = this._getKeyForItem(item);
+                if(key){
+                    return this.$renderedItemsMap[key];
+                }
                 var ri;
                 for (var i = 0; i < this.$renderedItems.length; i++) {
                     ri = this.$renderedItems[i];
