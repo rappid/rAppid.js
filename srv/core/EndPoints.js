@@ -43,7 +43,10 @@ define(['js/core/Component', 'srv/core/EndPoint', 'flow'], function (Component, 
         shutdown: function(callback) {
             flow()
                 .parEach(this.$endPoints, function (endPoint, cb) {
-                    endPoint.stop(cb);
+                    endPoint.stop(function(){
+                        // ignore errors during shutdown
+                        cb();
+                    });
                 })
                 .exec(callback);
         }
