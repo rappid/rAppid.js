@@ -363,6 +363,9 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
                 params.offset = page.$offset;
             }
 
+            params.fullData = options.fullData || false;
+
+
             // get queryParameter
             params = _.defaults(params, page.$collection.getQueryParameters(RestDataSource.METHOD.GET), rootCollection.$context.getQueryParameter(), this.getQueryParameter(RestDataSource.METHOD.GET));
 
@@ -418,7 +421,33 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
                 }
             });
         },
+        removeModel: function (model, options, callback) {
+            callback = callback || function(){
 
+            };
+
+            // create url
+            var url = this._buildUriForModel(model);
+
+            var method = RestDataSource.METHOD.DELETE;
+
+            // get queryParameter
+            var params = _.defaults(model.$context.getQueryParameter(),
+                this.getQueryParameter(method));
+
+            this.$stage.$applicationContext.ajax(url, {
+                type: method,
+                queryParameter: params
+            }, function (err, xhr) {
+                if (!err && (xhr.status == 200 || xhr.status == 304)) {
+                    callback(null,model);
+                } else {
+                    // TODO: better error handling
+                    err = err || "wrong status code";
+                    callback(err, model);
+                }
+            });
+        },
         getFormatProcessorForContentType: function(contentType) {
             for (var i = 0; i < this.$formatProcessors.length; i++) {
                 var processorEntry = this.$formatProcessors[i];
