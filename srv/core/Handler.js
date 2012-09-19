@@ -14,9 +14,14 @@ define(['js/core/Component'], function(Component) {
 
         /***
          * starts the handler
+         * @param server
          * @param callback
          */
-        start: function(callback) {
+        start: function(server, callback) {
+            callback();
+        },
+
+        stop: function(callback){
             callback();
         },
 
