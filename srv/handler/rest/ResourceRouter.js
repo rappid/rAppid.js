@@ -58,14 +58,8 @@ define(['require', 'js/core/Base', 'srv/handler/rest/ResourceHandler', 'flow'], 
                     return;
                 }
 
-                resourceClassName = configuration.$.resourceClassName;
-                if (!resourceClassName) {
-                    callback(new Error("No resource for '" + pathElements.join('/') + "' found"));
-                    return;
-                }
-
                 resourceStack.push({
-                    resourceClassName: resourceClassName,
+                    resourceClassName: configuration.$.resourceClassName,
                     configuration: configuration,
                     id: pathElements[i + 1]
                 });
@@ -91,20 +85,24 @@ define(['require', 'js/core/Base', 'srv/handler/rest/ResourceHandler', 'flow'], 
 
 
         _createResourceInstance: function(resourceEntry, parentResource, callback) {
-            var applicationContext = this.$handler.$stage.$applicationContext,
-                fqClassName = applicationContext.getFqClassName(null, resourceEntry.resourceClassName);
+            var applicationContext = this.$handler.$stage.$applicationContext;
 
             var self = this;
-            require([fqClassName], function(resourceFactory) {
-                var resource = applicationContext.createInstance(resourceFactory, [self.$handler, resourceEntry.configuration, parentResource]);
+            if(resourceEntry.resourceClassName){
+                var fqClassName = applicationContext.getFqClassName(null, resourceEntry.resourceClassName);
+                require([fqClassName], instanceCallback(), callback);
+            }else{
+                instanceCallback(ResourceHandler);
+            }
+
+            function instanceCallback(resourceFactory) {
+                var resource = applicationContext.createInstance(resourceFactory, [self.$handler, resourceEntry.configuration, resourceEntry.id, parentResource]);
                 if (resource instanceof ResourceHandler) {
                     callback(null, resource);
                 } else {
                     callback("Returned resource not an instance of Resource");
                 }
-            }, callback);
-
-
+            }
         }
     })
 });

@@ -1,9 +1,10 @@
 define(['js/core/Base', 'srv/core/HttpError', 'flow'], function(Base, HttpError, flow) {
     return Base.inherit('srv.handler.rest.ResourceHandler', {
 
-        ctor: function(restHandler, configuration, parentResource) {
+        ctor: function(restHandler, configuration, resourceId, parentResource) {
             this.$context = null;
             this.$restHandler = restHandler;
+            this.$resourceId = resourceId;
 
             this.$resourceConfiguration = configuration;
             this.$parentResource = parentResource;
@@ -23,7 +24,7 @@ define(['js/core/Base', 'srv/core/HttpError', 'flow'], function(Base, HttpError,
         },
 
         _isCollectionResource: function() {
-            return !!this.$resourceConfiguration.id;
+            return !this.$resourceId;
         },
 
         getDataSource: function(context) {
@@ -40,7 +41,7 @@ define(['js/core/Base', 'srv/core/HttpError', 'flow'], function(Base, HttpError,
             this.$context = context;
 
             var method = this._getRequestMethod(context),
-                map = this._isCollectionResource ? this.$collectionMethodMap : this.$modelMethodMap;
+                map = this._isCollectionResource() ? this.$collectionMethodMap : this.$modelMethodMap;
 
             var fn = this[map[method]];
 
