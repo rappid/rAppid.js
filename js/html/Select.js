@@ -14,10 +14,11 @@ define(["js/ui/SelectionView", "underscore"], function (SelectionView, _) {
                 this.bindDomEvent('change', function (e) {
                     self._checkOptions();
                 });
+                this.callBase();
             },
             _checkOptions: function () {
-                for (var i = 0; i < this.$children.length; i++) {
-                    this.$children[i].set({selected: this.$children[i].$el.selected});
+                for (var i = 0; i < this.$renderedChildren.length; i++) {
+                    this.$renderedChildren[i].set({selected: this.$renderedChildren[i].$el.selected});
                 }
             }
         });
