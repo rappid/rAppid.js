@@ -1,8 +1,9 @@
-define(['js/core/Base', 'srv/core/HttpError'], function(Base, HttpError) {
-    return Base.inherit('srv.handler.rest.Resource', {
+define(['js/core/Base', 'srv/core/HttpError', 'flow'], function(Base, HttpError, flow) {
+    return Base.inherit('srv.handler.rest.ResourceHandler', {
 
-        ctor: function(configuration, parentResource) {
+        ctor: function(restHandler, configuration, parentResource) {
             this.$context = null;
+            this.$restHandler = restHandler;
 
             this.$resourceConfiguration = configuration;
             this.$parentResource = parentResource;
@@ -16,13 +17,23 @@ define(['js/core/Base', 'srv/core/HttpError'], function(Base, HttpError) {
         },
 
         $modelMethodMap: {
-            GET: "_retrieve",
+            GET: "_show",
             PUT: "_update",
             DELETE: "_delete"
         },
 
         _isCollectionResource: function() {
             return !!this.$resourceConfiguration.id;
+        },
+
+        getDataSource: function(context) {
+            context = context || this.$context;
+
+            if (this.$parentResource) {
+                return this.$parentResource.getDataSource(context);
+            } else {
+                return this.$restHandler.getDataSource(context);
+            }
         },
 
         handleRequest: function(context, callback) {
@@ -34,11 +45,13 @@ define(['js/core/Base', 'srv/core/HttpError'], function(Base, HttpError) {
             var fn = this[map[method]];
 
             if (fn instanceof Function) {
+
+                context.$dataSource = this.getDataSource();
+
                 fn(context, callback);
             } else {
                 throw new HttpError("Method not supported", 404);
             }
-
         },
 
         /***
@@ -72,7 +85,7 @@ define(['js/core/Base', 'srv/core/HttpError'], function(Base, HttpError) {
             throw new HttpError("Not implemented", 500);
         },
 
-        _retrieve: function(context, callback) {
+        _show: function(context, callback) {
             throw new HttpError("Not implemented", 500);
         },
 
