@@ -52,7 +52,7 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
             selected: undefined,
             selectable: undefined,
             namespace: HTML_Namespace,
-
+            enabled: true,
             position: null,
 
             heightUpdatePolicy: POLICY_OUT,
@@ -142,6 +142,21 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
             } else {
                 if (this._onSelect) {
                     this.unbindDomEvent('click', this._onSelect);
+                }
+            }
+        },
+        _renderEnabled: function (enabled) {
+            if (this.$el.hasOwnProperty("disabled")) {
+                if (!enabled) {
+                    this.$el.setAttribute('disabled', true);
+                } else {
+                    this.$el.removeAttribute('disabled');
+                }
+            } else {
+                if (enabled) {
+                    this.removeClass('disabled');
+                } else {
+                    this.addClass('disabled');
                 }
             }
         },
