@@ -53,9 +53,9 @@ define(
                     if (this.$.forceSelectable === true) {
                         child.set({selectable: true});
                     }
-                    child.bind('change:selected', function (e, c) {
-                        self._onChildSelected(c);
-                    }, child);
+                    child.bind('change:selected', function (e) {
+                        self._onChildSelected(e.target);
+                    });
                 }
                 this.callBase();
                 if (this.$.needsSelection === true && this.$.selectedItem === null && this.hasSelection() === false) {
@@ -65,12 +65,12 @@ define(
                     var item = child.get(this._getItemKey());
                     if (item) {
                         for (var i = 0; i < this.$.selectedItems.length; i++) {
-                            if (item === this.$.selectedItems[i]) {
+                            if (this._areItemsEqual(item,this.$.selectedItems[i])) {
                                 child.set({selected: true});
                                 break;
                             }
                         }
-                        if(item === this.$.selectedItem){
+                        if(this._areItemsEqual(item,this.$.selectedItem)){
                             child.set({selected: true});
                         }
                     }
@@ -133,6 +133,16 @@ define(
                 if (!correctSelection) {
                     this.set({selectedViews: selectedChildren, selectedIndex: selectedIndex, selectedItem: selectedItem});
                     this.$.selectedItems.reset(selectedItems);
+                }
+            },
+            _areItemsEqual: function(itemA,itemB){
+                if(this.$.keyPath){
+                    if(!itemA || !itemB){
+                        return false;
+                    }
+                    return itemA.get(this.$.keyPath) === itemB.get(this.$.keyPath);
+                }else{
+                    return itemA === itemB;
                 }
             }
         });
