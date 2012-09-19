@@ -45,7 +45,9 @@ define(['js/core/Component', 'srv/core/Context', 'srv/core/Handlers', 'srv/core/
                 })
                 .exec(function(err) {
                     if (err) {
-                        self.shutdown(callback);
+                        self.shutdown(function(e){
+                            callback(err);
+                        });
                     } else {
                         callback();
                     }
@@ -59,7 +61,21 @@ define(['js/core/Component', 'srv/core/Context', 'srv/core/Handlers', 'srv/core/
          * @param callback
          */
         shutdown: function(callback) {
-            this.$endPoints.shutdown(callback);
+            var self = this;
+            flow()
+                .seq(function(cb){
+                    self.$handlers.stop(function(){
+                        // ignore errors during stop
+                       cb();
+                    });
+                })
+                .seq(function(cb){
+                    self.$endPoints.shutdown(function(){
+                        // ignore errors during shutdown
+                        cb();
+                    });
+                })
+                .exec(callback);
         },
 
         /***
