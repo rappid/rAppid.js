@@ -20,8 +20,8 @@ define(['srv/core/EndPoint', 'http'], function(EndPoint, Http) {
         },
 
         _stop: function(callback) {
-            this.$endPoint && this.$endPoint.close(callback);
             this.log("HttpEndPoint at :" + this.$.port + " stopped");
+            this.$endPoint && this.$endPoint.close(callback);
         }
     });
 });
