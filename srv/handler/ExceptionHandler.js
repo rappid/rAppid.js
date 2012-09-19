@@ -3,6 +3,7 @@ define(['srv/core/Handler', 'srv/core/HttpError'], function(Handler, HttpError) 
     return Handler.inherit('srv.core.ExceptionHandler', {
 
         ctor: function(exception) {
+
             if (!(exception instanceof Error)) {
                 exception = new Error(exception);
             }
@@ -17,6 +18,7 @@ define(['srv/core/Handler', 'srv/core/HttpError'], function(Handler, HttpError) 
         handleRequest: function(context) {
 
             // TODO: display error details only for special user or in special mode
+            // check authorisation
 
             var response = context.response,
                 exception = this.exception || new Error(),

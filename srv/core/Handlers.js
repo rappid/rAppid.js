@@ -1,5 +1,5 @@
-define(['js/core/Component', 'srv/core/Handler', 'srv/handler/ExceptionHandler', 'flow'],
-    function (Component, Handler, ExceptionHandler, flow) {
+define(['js/core/Component', 'srv/core/Handler', 'srv/handler/ExceptionHandler', 'flow', 'srv/core/HttpError'],
+    function (Component, Handler, ExceptionHandler, flow, HttpError) {
 
         return Component.inherit('srv.core.Handlers', {
 
@@ -58,7 +58,7 @@ define(['js/core/Component', 'srv/core/Handler', 'srv/handler/ExceptionHandler',
                     }
                 }
 
-                return this.getHandlerForException(new Error("No handler responsible for '" + context.request.url + " '."))
+                return this.getHandlerForException(new HttpError("No handler responsible for '" + context.request.url + " '.", 404));
             },
 
             getHandlerForException: function (e) {
@@ -66,9 +66,7 @@ define(['js/core/Component', 'srv/core/Handler', 'srv/handler/ExceptionHandler',
                     e = new Error(e);
                 }
 
-                return this.createComponent(ExceptionHandler, {
-                    exception: e
-                });
+                return new ExceptionHandler(e);
             }
         })
     });
