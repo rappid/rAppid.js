@@ -89,7 +89,7 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
             this.bindDomEvent('scroll', scroll);
 
             if (this._isWebkitAndTouch()) {
-                this.$el.ontouchend = scroll;
+                this.bindDomEvent('touchend', scroll);
             }
 
             function scroll(e) {
