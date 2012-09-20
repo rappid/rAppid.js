@@ -102,8 +102,13 @@ define(['js/core/Base', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'js/dat
             var modelFactory = this._getModelFactory();
             var collection = context.dataSource.createCollection(Collection.of(modelFactory));
 
+            var parameters = context.request.urlInfo.parameter;
+            var options = {};
+            if(parameters["limit"]){
+                options["limit"] = parseInt(parameters["limit"]);
+            }
             // TODO: read out offset, limit and query from query string
-            collection.fetch({}, function(err, collection){
+            collection.fetch(options, function(err, collection){
                 if(!err){
                     var response = context.response;
                     var body = "", results = [];
@@ -119,8 +124,10 @@ define(['js/core/Base', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'js/dat
                     });
 
                     var res = {
-                        results: results,
-                        totalCount: collection.$itemsCount
+                        count: collection.$itemsCount,
+                        limit: options["limit"],
+                        offset: 0,
+                        results: results
                     };
 
                     body = JSON.stringify(res);
@@ -174,7 +181,15 @@ define(['js/core/Base', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'js/dat
             // TODO: add options
             model.fetch({}, function(err, model){
                 if(!err){
+                    var body = JSON.stringify(model.$), response = context.response;
 
+                    response.writeHead(200, "", {
+                        'Content-Length': body.length,
+                        'Content-Type': 'application/json'
+                    });
+
+                    response.write(body);
+                    response.end();
                     callback(null);
                 }else{
                     callback(new HttpError(err, 500));
