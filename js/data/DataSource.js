@@ -180,7 +180,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
 
                 for (var key in obj) {
                     if (obj.hasOwnProperty(key)) {
-                        var value = this._getCompositionValue(obj[key], action, options);
+                        var value = this._getCompositionValue(obj[key], key, action, options);
                         if (value !== undefined) {
                             ret[this._getReferenceKey(key, entity.$schema)] = value;
                         }
@@ -190,12 +190,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
             },
 
             _getReferenceKey: function (key, schema) {
-                // TODO: put this in a special rails adapter
-                if (schema[key] && schema[key].classof && schema[key].classof(Model)) {
-                    return key + "_id";
-                } else {
-                    return key;
-                }
+                return key;
             },
 
             _composeObject: function (obj, action, options) {
@@ -204,7 +199,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
 
                 for (var key in obj) {
                     if (obj.hasOwnProperty(key)) {
-                        var value = this._getCompositionValue(obj[key], action, options);
+                        var value = this._getCompositionValue(obj[key], key, action, options);
 
                         if (value !== undefined) {
                             ret[key] = value;
@@ -215,7 +210,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                 return ret;
             },
 
-            _getCompositionValue: function (value, action, options) {
+            _getCompositionValue: function (value, key, action, options) {
                 if (value instanceof Model) {
                     return this._composeSubModel(value, action, options);
                 } else if (value instanceof Collection) {
@@ -225,8 +220,8 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                 } else if (value instanceof List) {
                     var ret = [];
                     var self = this;
-                    value.each(function (v) {
-                        ret.push(self._getCompositionValue(v, action, options));
+                    value.each(function (v, index) {
+                        ret.push(self._getCompositionValue(v, index, action, options));
                     });
                     return ret;
                 } else if (value instanceof Date) {
@@ -239,7 +234,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                 } else if (value instanceof Array) {
                     var arr = [];
                     for (var i = 0; i < value.length; i++) {
-                        arr.push(this._getCompositionValue(value[i], action, options));
+                        arr.push(this._getCompositionValue(value[i], i, action, options));
                     }
                     return arr;
                 } else if (value instanceof Object) {

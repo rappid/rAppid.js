@@ -57,11 +57,13 @@ define(['js/core/Base', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'js/dat
 
                 var self = this;
                 context.request.on('end', function () {
-                    // TODO: handle different payload formats -> query string
-                    try{
-                        context.request.params = JSON.parse(body);
-                    }catch(e){
-                        console.warn("Couldn't parse " + body);
+                    if(body !== ""){
+                        // TODO: handle different payload formats -> query string
+                        try{
+                            context.request.params = JSON.parse(body);
+                        }catch(e){
+                            console.warn("Couldn't parse " + body);
+                        }
                     }
                     fn.call(self, context, callback);
                 });
@@ -98,14 +100,50 @@ define(['js/core/Base', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'js/dat
          */
         _index: function(context, callback) {
             var modelFactory = this._getModelFactory();
-            var collection = context.dataSource.createCollection(Collection.of(modelFactory), {pageSize: 100});
+            var collection = context.dataSource.createCollection(Collection.of(modelFactory));
 
-            // TODO: read out page from query string
-            collection.fetchPage(1,{}, function(err, collection){
+            // TODO: read out offset, limit and query from query string
+            collection.fetch({}, function(err, collection){
+                if(!err){
+                    var response = context.response;
+                    var body = "", results = [];
+
+                    // switch context of collection to restdatasource
+
+                    // call compose
+
+                    // TODO: serialize and compose item
+                    collection.each(function(item){
+                        // TODO: compose and serialize item
+                        results.push(item.$);
+                    });
+
+                    var res = {
+                        results: results,
+                        totalCount: collection.$itemsCount
+                    };
+
+                    body = JSON.stringify(res);
+
+                    response.writeHead(200, "", {
+                        'Content-Length': body.length,
+                        'Content-Type': 'application/json'
+                    });
+
+                    response.write(body);
+                    response.end();
+                }
+
+
                 callback(err);
             });
         },
-
+        /***
+         *
+         * @param context
+         * @param callback
+         * @private
+         */
         _create: function(context, callback) {
             var modelFactory = this._getModelFactory();
             var model = context.dataSource.createEntity(modelFactory);
@@ -117,12 +155,18 @@ define(['js/core/Base', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'js/dat
             model.save({}, function (err, model) {
                 if (!err) {
                     // TODO: write response
+                    callback(null);
                 } else {
                     callback(new HttpError(err, 500));
                 }
             });
         },
-
+        /***
+         *
+         * @param context
+         * @param callback
+         * @private
+         */
         _show: function(context, callback) {
             var modelFactory = this._getModelFactory();
             var model = context.dataSource.createEntity(modelFactory,this.$resourceId);
@@ -130,17 +174,28 @@ define(['js/core/Base', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'js/dat
             // TODO: add options
             model.fetch({}, function(err, model){
                 if(!err){
-                    // TODO: write response
+
+                    callback(null);
                 }else{
                     callback(new HttpError(err, 500));
                 }
             });
         },
-
+        /***
+         *
+         * @param context
+         * @param callback
+         * @private
+         */
         _update: function(context, callback) {
             throw new HttpError("Not implemented", 500);
         },
-
+        /***
+         *
+         * @param context
+         * @param callback
+         * @private
+         */
         _delete: function(context, callback) {
             throw new HttpError("Not implemented", 500);
         }
