@@ -1,5 +1,5 @@
-define(['require', 'js/core/Bindable', 'js/core/List', 'js/data/TypeResolver', 'js/data/validator/SchemaValidator', 'moment', 'flow'],
-    function (require, Bindable, List, TypeResolver, SchemaValidator, moment, flow) {
+define(['require', 'js/core/Bindable', 'js/core/List', 'js/data/TypeResolver', 'moment'],
+    function (require, Bindable, List, TypeResolver, moment) {
         var Collection;
 
         var Entity = Bindable.inherit('js.core.Entity', {
@@ -12,10 +12,6 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'js/data/TypeResolver', '
             },
 
             $schema: {},
-
-            $validators: [
-                new SchemaValidator()
-            ],
 
             $context: null,
 
@@ -87,15 +83,6 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'js/data/TypeResolver', '
                 // convert top level properties to Models respective to there schema
                 for (var type in schema) {
                     if (schema.hasOwnProperty(type)) {
-                        if (!data[type]) {
-                            // TODO: put this in an extra method
-                            if (data[type + "_id"]) {
-                                data[type] = {id: data[type + "_id"]};
-                                delete(data[type + "_id"]);
-                            }
-                        }
-
-
                         if (data.hasOwnProperty(type)) {
                             // found key in data payload
 
@@ -209,19 +196,6 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'js/data/TypeResolver', '
             compose: function (dataSource, action, options) {
                 var processor = dataSource.getProcessorForModel(this, options);
                 return processor.compose(this, action, options);
-            },
-
-            /***
-             * validates the entity
-             * @param callback
-             */
-            validate: function(callback) {
-                var self = this;
-                flow()
-                    .seqEach(this.$validators, function(validator, cb) {
-                        validator.validate(self, cb);
-                    })
-                    .exec(callback);
             },
 
             clearErrors: function () {
