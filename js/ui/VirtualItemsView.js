@@ -38,8 +38,11 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
             selectionMode: 'multi',
             selectedItems: List
         },
+
         $classAttributes: ['scrollToIndex','selectedItems','data','horizontalGap', 'verticalGap', 'prefetchItemCount', 'rows', 'cols', 'itemWidth', 'itemHeight', 'scrollLeft', 'scrollTop', 'fetchPageDelay'],
+
         events: ["on:itemClick", "on:itemDblClick"],
+
         ctor: function () {
             this.$currentSelectionIndex = null;
             this.$selectionMap = {};
@@ -52,39 +55,59 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
 
             this.createBinding('{$dataAdapter.size()}', this._itemsCountChanged, this);
         },
+
+        _isWebkitAndTouch: function() {
+            var window = this.$stage.$window;
+            return this.runsInBrowser() && window && window.hasOwnProperty("ontouchend") && /AppleWebKit/i.test(window.navigator.userAgent);
+        },
+
         _initializeRenderer: function ($el) {
             var style = $el.getAttribute('style') || "";
             style = style.split(";");
             style.push('overflow: auto');
+            style.push('-webkit-overflow-scrolling: touch;');
+
             $el.setAttribute('style', style.join(";"));
         },
+
         _onDomAdded: function(){
             this.callBase();
             if(this.isRendered()){
                 this._syncScrollPosition();
             }
         },
+
         _syncScrollPosition: function(){
             this.$el.scrollTop = this.$.scrollTop;
             this.$el.scrollLeft = this.$.scrollLeft;
         },
+
         _bindDomEvents: function (el) {
             this.callBase();
             var self = this;
 
-            this.bindDomEvent('scroll', function (e) {
+            this.bindDomEvent('scroll', scroll);
+
+            if (this._isWebkitAndTouch()) {
+                this.bindDomEvent('touchend', scroll);
+            }
+
+            function scroll(e) {
                 self.set({
                     scrollTop: self.$el.scrollTop,
                     scrollLeft: self.$el.scrollLeft
                 });
-            });
+            }
+
         },
+
 
         _initializationComplete: function() {
             this.callBase();
             this.$container = this._getScrollContainer();
             this._commitData(this.$.data);
         },
+
         _commitData: function (data) {
             if (!this.$initialized) {
                 return;
@@ -109,6 +132,7 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
             }
             this._updateVisibleItems();
         },
+
         _commitChangedAttributes: function(attributes, opt){
             if(!_.isUndefined(attributes.scrollToIndex) && opt.initiator !== this){
                 this._scrollToIndex(attributes.scrollToIndex);
@@ -127,6 +151,7 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
             // TODO: data provider change
             // TODO: cleanup renderer
         },
+
         _updateVisibleItems: function () {
             var dataAdapter = this.$.$dataAdapter;
             if (!dataAdapter) {
@@ -213,6 +238,7 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
 
 
         },
+
         /***
          * @abstract
          * @param startIndex
@@ -222,6 +248,7 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
         _onVisibleItemsUpdated: function(startIndex, endIndex){
             // HOOK for positions containers
         },
+
         _addRenderer: function (renderer, pos) {
             this.$container.addChild(renderer, {childIndex: pos});
         },
@@ -252,18 +279,22 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
             renderer.bind('on:click',this._onRendererClick, this);
             return renderer;
         },
+
         _onRendererClick: function (e, renderer) {
             this.trigger('on:itemClick', e, renderer);
             if(!e.isDefaultPrevented){
                 this._selectItem(renderer.$.$index, e.domEvent.shiftKey, e.domEvent.metaKey);
             }
         },
+
         _onRendererDblClick: function (e, renderer) {
             this.trigger('on:itemDblClick', e, renderer);
         },
+
         _createRenderer: function (attributes) {
             return this.$templates['renderer'].createComponents(attributes, this)[0];
         },
+
         _positionActiveRenderers: function(){
             for (var index in this.$activeRenderer) {
                 if (this.$activeRenderer.hasOwnProperty(index)) {
@@ -272,6 +303,7 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
                 }
             }
         },
+
         _itemsCountChanged: function () {
             var size = this.getSizeForItemsCount(this.$.$dataAdapter.size());
             if (size) {
@@ -279,6 +311,7 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
                 this._syncScrollPosition();
             }
         },
+
         getSizeForItemsCount: function (count) {
             if (isNaN(count) || count === 0) {
                 return null;
@@ -291,6 +324,7 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
 
             return size;
         },
+
         getIndexFromPoint: function (x, y, gapHPos, gapVPos) {
             var col, row;
 
@@ -338,11 +372,13 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
             return scrollContainer;
 
         },
+
         _renderSelectionMode: function (mode) {
             if (mode !== SELECTION_MODE_NONE) {
                 this.$el.setAttribute('tabindex', '1');
             }
         },
+
         _onKeyDown: function (e) {
             if (e.domEvent.keyCode === 38 || e.domEvent.keyCode === 40 || e.domEvent.keyCode === 37 || e.domEvent.keyCode === 39) {
                 var index = this.$currentSelectionIndex ? this.$currentSelectionIndex : 0;
@@ -361,6 +397,7 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
                 e.stopPropagation();
             }
         },
+
         _selectItem: function (index, shiftDown, metaKey) {
             if(this.$.selectionMode === SELECTION_MODE_NONE){
                 return;
@@ -422,6 +459,7 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
                 this.$lastSelectionIndex = index;
             }
         },
+
         isItemSelected: function (data) {
             if (!data) {
                 return false;
