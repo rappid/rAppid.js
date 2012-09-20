@@ -1,4 +1,4 @@
-define(['js/data/DataSource', 'mongoskin', 'js/data/Model', 'flow'], function (DataSource, mongo, Model, flow) {
+define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow'], function (DataSource, mongodb, Model, flow) {
 
 
     var MongoDataProcessor = DataSource.Processor.inherit('src.data.MongoDataProcessor', {
@@ -7,7 +7,7 @@ define(['js/data/DataSource', 'mongoskin', 'js/data/Model', 'flow'], function (D
             if (key === "id") {
                 return "_id";
             }
-            this.callBase();
+            return this.callBase();
         },
         _getCompositionValue: function (value, key, action, options) {
             // add correct id object
@@ -33,7 +33,7 @@ define(['js/data/DataSource', 'mongoskin', 'js/data/Model', 'flow'], function (D
             password: null,
 
             host: 'localhost',
-            port: '27017',
+            port: 27017,
             poolSize: 2,
             database: null,
             autoReconnect: true
@@ -41,28 +41,19 @@ define(['js/data/DataSource', 'mongoskin', 'js/data/Model', 'flow'], function (D
 
         $defaultProcessorFactory: MongoDataProcessor,
 
-        db: function () {
+        connect: function (callback) {
 
-            var connectionUrl = this.$.host + ":" + this.$.port + "/" + this.$.database;
-            var params = [];
-            if (this.$.autoReconnect) {
-                params.push("auto_reconnect");
-            }
-            if (this.$.poolSize) {
-                params.push("poolSize=" + this.$.poolSize);
-            }
+            var server = new mongodb.Server(this.$.host, this.$.port, {});
 
-            if (params.length) {
-                connectionUrl += "?" + params.join("&");
-            }
-            return mongo.db(connectionUrl);
-
+            var db = new mongodb.Db(this.$.database, server, {});
+            db.open(callback);
+            return db;
         },
         _getConfigurationForModel: function (model) {
             return this.$dataSourceConfiguration.getConfigurationForModelClassName(model.constructor.name);
         },
         getIdObject: function (id) {
-            return this.$db.ObjectID.createFromHexString(id);
+            return new mongodb.ObjectID(id);
         },
         loadModel: function (model, options, callback) {
             var configuration = this._getConfigurationForModel(model);
@@ -79,18 +70,29 @@ define(['js/data/DataSource', 'mongoskin', 'js/data/Model', 'flow'], function (D
             }
 
             // TODO: add loading/linking of sub models
-            this.$db.collection(configuration.$.collection).findOne({_id: idObject}, function (err, result) {
-                if (!err) {
-                    if (result) {
-                        model.set(model.parse(result[0]));
-                        callback(null, model);
-                    } else {
-                        callback("Coulnd't find entry " + configuration.$.collection + "/" + model.$.id);
+            var self = this, connection;
+            flow()
+                .seq("collection", function (cb) {
+                    connection = self.connect(function (err, client) {
+                        cb(err, new mongodb.Collection(client, configuration.$.collection));
+                    });
+                })
+                .seq(function (cb) {
+                    this.vars['collection'].findOne({_id: idObject}, function (err, objects) {
+                        if (!err) {
+                            model.set(model.parse(objects));
+                        }
+                        cb(err);
+                    });
+                })
+                .exec(function (err) {
+                    if (connection) {
+                        connection.close();
                     }
-                } else {
-                    callback(err);
-                }
-            });
+                    callback(err, model);
+
+                });
+
         },
 
         saveModel: function (model, options, callback) {
@@ -108,24 +110,56 @@ define(['js/data/DataSource', 'mongoskin', 'js/data/Model', 'flow'], function (D
                 method = MongoDataSource.METHOD.INSERT;
             }
 
-            var data = model.compose(this, action, options);
-
-            var collection = this.$db.collection(configuration.$.collection);
-            collection[method].call(collection, data, {}, function (err, result) {
-                if (!err) {
-                    if (result) {
-                        // TODO: parse the payload and fill model
-                        if (method == "insert") {
-                            model.set(model.parse(result[0]));
-                        }
-                        callback(null, model);
+            var data = model.compose(this, action, options), self = this, connection;
+            flow()
+                .seq("collection", function (cb) {
+                    connection = self.connect(function (err, client) {
+                        cb(err, new mongodb.Collection(client, configuration.$.collection));
+                    });
+                })
+                .seq(function (cb) {
+                    if (method === MongoDataSource.METHOD.INSERT) {
+                        this.vars['collection'].insert(data, {safe: true}, function (err, objects) {
+                            if (!err) {
+                                model.set(model.parse(objects[0]));
+                            }
+                            cb(err);
+                        });
+                    } else if (method === MongoDataSource.METHOD.SAVE) {
+                        this.vars['collection'].update({_id: this.getIdObject(model.$.id)}, data, {safe: true}, function (err, objects) {
+                            if (!err) {
+                                model.set(model.parse(objects[0]));
+                            }
+                            cb(err);
+                        });
                     } else {
-                        callback("Coulnd't save entry " + configuration.$.collection + "/" + model.$.id);
+                        cb("Wrong method");
                     }
-                } else {
-                    callback(err);
-                }
-            });
+                })
+                .exec(function (err) {
+                    if (connection) {
+                        connection.close();
+                    }
+                    callback(err, model);
+
+                });
+
+//            var collection = this.$db.collection(configuration.$.collection);
+//            collection[method].call(collection, data, {}, function (err, result) {
+//                if (!err) {
+//                    if (result) {
+//                        // TODO: parse the payload and fill model
+//                        if (method == "insert") {
+//                            model.set(model.parse(result[0]));
+//                        }
+//                        callback(null, model);
+//                    } else {
+//                        callback("Coulnd't save entry " + configuration.$.collection + "/" + model.$.id);
+//                    }
+//                } else {
+//                    callback(err);
+//                }
+//            });
         },
         loadCollectionPage: function (collection, options, callback) {
             var rootCollection = collection.getRootCollection();
@@ -142,32 +176,36 @@ define(['js/data/DataSource', 'mongoskin', 'js/data/Model', 'flow'], function (D
 
             // TODO: add query, fields and options
 
-            var self = this;
-            var db = self.db();
+            var self = this, connection;
             flow()
-                .seq(function () {
-                    db.collection(mongoCollection).find(function (err, cursor) {
+                .seq("collection", function (cb) {
+                    connection = self.connect(function (err, client) {
+                        cb(err, new mongodb.Collection(client, mongoCollection));
+                    });
+                })
+                .seq("cursor", function (cb) {
+                    var cursor = this.vars["collection"].find();
+                    if(options.limit){
+                        cursor = cursor.limit(options.limit);
+                    }
+
+                    cursor.toArray(function (err, results) {
                         if (!err) {
-                            collection.$itemsCount = cursor.count();
-                            cursor.toArray(function (err, results) {
-                                if (!err) {
-                                    collection.add(rootCollection.parse(results));
-                                }
-                                cb(null);
-                            });
-                        } else {
-                            cb(err);
+                            collection.add(rootCollection.parse(results));
                         }
+                        cb(err, cursor);
                     });
-
-                    var tmp= db.collection(mongoCollection);
-                    tmp.count(function(err, count) {
-                        console.log(count);
+                })
+                .seq(function (cb) {
+                    this.vars["cursor"].count(function (err, count) {
+                        collection.$itemsCount = count;
+                        cb(err);
                     });
-
                 })
                 .exec(function (err) {
-                    db.close();
+                    if (connection) {
+                        connection.close();
+                    }
                     callback(err, collection, options);
                 });
         }
