@@ -39,7 +39,7 @@ define(["js/core/Bindable", "flow"], function (Bindable, flow) {
             var fragment;
 
             if (this.runsInBrowser()) {
-                fragment = decodeURIComponent(window.location.hash);
+                fragment = decodeURI(window.location.hash);
             } else {
                 fragment = this.$history[this.$history.length - 1] || "";
             }
@@ -167,7 +167,7 @@ define(["js/core/Bindable", "flow"], function (Bindable, flow) {
             this.trigger(History.EVENTS.NAVIGATION_START, eventData);
 
             this.$processUrl = false;
-            var isSameFragment = window.location.hash === "#/" + encodeURI(fragment);
+            var isSameFragment = decodeURI(window.location.hash) === "#/" + fragment;
 
             if (isSameFragment) {
                 this.$processUrl = true;
