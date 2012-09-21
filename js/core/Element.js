@@ -166,7 +166,8 @@ define(["js/core/Bindable", "underscore", "js/core/BindingCreator"], function (B
                 // call commitChangedAttributes for all attributes
                 this.set(this.$, {
                     force: true,
-                    silent: true
+                    silent: true,
+                    initial: true
                 });
 
                 this.$initialized = true;
