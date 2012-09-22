@@ -1,18 +1,19 @@
-define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base", "js/data/Collection", "underscore", "js/data/Model", "js/data/Entity", "js/core/List", "flow", "JSON", "moment", "js/conf/DataSource", "js/conf/Resource"],
-    function (require, Component, Configuration, Base, Collection, _, Model, Entity, List, flow, JSON, moment, DataSourceConfiguration, ResourceConfiguration) {
+define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base", "js/data/Collection", "underscore", "js/data/Model", "js/data/Entity", "js/core/List", "flow", "JSON", "moment", "js/conf/DataSource", "js/conf/Resource", 'js/data/TypeResolver'],
+    function (require, Component, Configuration, Base, Collection, _, Model, Entity, List, flow, JSON, moment, DataSourceConfiguration, ResourceConfiguration, TypeResolver) {
 
         var undefined,
             Context = Base.inherit("js.data.DataSource.Context", {
 
                 defaults: {
-                    collectionPageSize: null
+                    collectionPageSize: null,
+                    dateFormat: "YYYY-MM-DDTHH:mm:ssZ"
                 },
 
                 ctor: function (dataSource, properties, parentContext) {
                     this.callBase();
 
                     this.$contextCache = {};
-                    this.$datasource = dataSource;
+                    this.$dataSource = dataSource;
                     this.$properties = properties;
                     this.$parent = parentContext;
                     this.$cache = {};
@@ -75,7 +76,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                     options = options || {};
 
                     if (_.isFunction(factory)) {
-                        if (factory === this.$datasource.$collectionFactory) {
+                        if (factory === this.$dataSource.$collectionFactory) {
                             throw new Error("Untyped collections not allowed");
                         }
 
@@ -117,7 +118,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                     }
 
                     if (!this.$contextCache.hasOwnProperty(cacheId)) {
-                        this.$contextCache[cacheId] = this.$datasource.createContext(properties, this);
+                        this.$contextCache[cacheId] = this.$dataSource.createContext(properties, this);
                     }
 
                     return this.$contextCache[cacheId];
@@ -166,7 +167,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                     throw "dataSource is required for Processor";
                 }
 
-                this.$datasource = dataSource;
+                this.$dataSource = dataSource;
             },
 
             /***
@@ -216,7 +217,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                 } else if (value instanceof Collection) {
                     return this._composeCollection(value, action, options);
                 } else if (value instanceof Entity) {
-                    return value.compose(this.$datasource,action, options);
+                    return value.compose(this.$dataSource,action, options);
                 } else if (value instanceof List) {
                     var ret = [];
                     var self = this;
@@ -227,7 +228,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                 } else if (value instanceof Date) {
                     // TODO: remove dependency of moment
                     if (value) {
-                        return moment(value).format("YYYY-MM-DDTHH:mm:ssZ");
+                        return moment(value).format(this.$dataSource.$.dateFormat);
                     } else {
                         return null;
                     }
@@ -251,11 +252,124 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
             _composeCollection: function (collection, action, options) {
                 return undefined;
             },
+            /**
+             * Parses data for a given model
+             * @param model
+             * @param data
+             * @param action
+             * @param options
+             * @return {*}
+             */
+            parse: function (model, data, action, options) {
+                var schema = model.$schema;
 
-            parse: function (data, action, options) {
+                // convert top level properties to Models respective to there schema
+                for (var key in schema) {
+                    if (schema.hasOwnProperty(key)) {
+                        if (data.hasOwnProperty(key)) {
+                            // found key in data payload
+                            var schemaType = schema[key],
+                                value = this._getValueForKey(data,key,schemaType),
+                                factory = null,
+                                typeResolver,
+                                entity,
+                                i,
+                                list;
+
+                            if (schemaType instanceof Array) {
+                                if (schemaType.length === 1) {
+                                    typeResolver = schemaType[0];
+                                } else if (schemaType.length === 0) {
+                                    this.log('ModelFactory for ListItem for "' + key + '" not defined', 'warn');
+                                    factory = Entity;
+                                } else {
+                                    throw "Cannot determinate ModelFactory. Multiple factories defined for '" + key + "'.";
+                                }
+
+                                if (typeResolver instanceof Function) {
+                                    factory = typeResolver;
+                                    typeResolver = null;
+                                }
+
+                                if (value instanceof Array || value === null) {
+                                    list = data[key] = new List();
+
+
+                                    if (value) {
+                                        for (i = 0; i < value.length; i++) {
+
+                                            if (typeResolver) {
+                                                factory = typeResolver.resolve(value[i], key);
+                                            }
+
+                                            if (!(factory && factory.classof(Entity))) {
+                                                throw "Factory for type '" + key + "' isn't an instance of Entity";
+                                            }
+
+                                            entity = model.getContextForChild(factory).createEntity(factory, value[i].id);
+                                            entity.set(entity.parse(this.$dataSource, value[i], action, options));
+                                            list.add(entity);
+                                        }
+                                    }
+
+                                } else {
+                                    throw 'Schema for type "' + key + '" requires to be an array';
+                                }
+
+
+                            } else if (Collection && schemaType.classof(Collection)) {
+
+                                var contextForChildren = model.getContextForChild(schemaType);
+                                list = data[key] = contextForChildren.createCollection(schemaType, null);
+                                list.set(value);
+
+                                if (value instanceof Array || value === null) {
+                                    for (i = 0; i < value.length; i++) {
+                                        // create new entity based on collection type
+                                        entity = contextForChildren.createEntity(list.$modelFactory);
+                                        entity.set(entity.parse(this.$dataSource, value[i], action, options));
+                                        // and add it to the collection
+                                        list.add(entity);
+                                    }
+                                } else {
+                                    // TODO: what here
+//                                throw 'Schema for type "' + type + '" requires to be an array';
+                                }
+                            } else if (schemaType === Date && value) {
+                                data[key] = moment(value, this.$dataSource.$.dateFormat);
+                            } else if (schemaType.classof(Entity) && value) {
+                                if (schemaType instanceof TypeResolver) {
+                                    factory = schemaType.resolve(value, key);
+                                } else {
+                                    factory = schemaType || Entity;
+                                }
+
+                                if (!(factory && factory.classof(Entity))) {
+                                    throw "Factory for type '" + key + "' isn't an instance of Entity";
+                                }
+
+                                data[key] = entity = model.getContextForChild(factory).createEntity(factory, value.id);
+                                entity.set(entity.parse(this.$dataSource, value, action, options));
+                            }
+                        }
+                    }
+
+                }
                 return data;
             },
-
+            /**
+             * This method can be used to map payload values to the correct schema key
+             * For example to map "company_id" to "company" : {id: "2"} ...
+             *
+             * @param data The payload data
+             * @param key The schema key
+             * @param schemaType The schema typ
+             * @return {*} Returns the correct value for a reference and schemaType
+             * @private
+             */
+            _getValueForKey: function(data, key, schemaType){
+                return data[key];
+            },
             /***
              * saves sub models
              */

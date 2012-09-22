@@ -43,7 +43,7 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
                 var status = this._status();
 
                 if (status === STATE.NEW || status === STATE.CREATED) {
-                    this.$context.$datasource.saveModel(this, options, callback);
+                    this.$context.$dataSource.saveModel(this, options, callback);
                 } else {
                     throw "status '" + status + "' doesn't allow save";
                 }
@@ -90,7 +90,7 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
                 // set state and start loading
                 self._fetch.state = FETCHSTATE.LOADING;
 
-                this.$context.$datasource.loadModel(this, options, function (err, model) {
+                this.$context.$dataSource.loadModel(this, options, function (err, model) {
                     self._fetch.state = err ? FETCHSTATE.ERROR : FETCHSTATE.LOADED;
 
                     // execute callbacks
@@ -109,7 +109,7 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
                 var status = this._status();
                 var self = this;
                 if (status === STATE.CREATED) {
-                    this.$context.$datasource.removeModel(this, options, function(err){
+                    this.$context.$dataSource.removeModel(this, options, function(err){
                         if(!err){
                             self.set('id', false);
                         }

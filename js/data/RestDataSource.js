@@ -145,7 +145,7 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
                         var data = formatProcessor.deserialize(xhr.responses.text);
 
                         // parse data inside model
-                        data = model.parse(data, DataSource.ACTION.LOAD, options);
+                        data = model.parse(self, data, DataSource.ACTION.LOAD, options);
 
                         // set data
                         model.set(data);
@@ -404,7 +404,7 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
                         // extract data from list result
                         var data = self.extractListData(page, payload, options);
 
-                        data = page.parse(data);
+                        data = page.parse(self, data);
                         page.add(data);
 
                         callback(null, page, options)
@@ -482,14 +482,14 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
                 throw new Error("ContextModel missing for non-root-Context");
             }
 
-            var configuration = this.$datasource.getConfigurationForModelClassName(this.$contextModel.constructor.name);
+            var configuration = this.$dataSource.getConfigurationForModelClassName(this.$contextModel.constructor.name);
             return [configuration.$.path, this.$contextModel.$.id];
         },
 
         createCollection: function (factory, options, type) {
             options = options || {};
             _.defaults(options, {
-                pageSize: this.$datasource.$.collectionPageSize || 100
+                pageSize: this.$dataSource.$.collectionPageSize || 100
             });
 
             return this.callBase(factory, options, type);

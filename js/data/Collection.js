@@ -151,7 +151,7 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore"], funct
             return this.$context;
         },
 
-        parse: function(data) {
+        parse: function(dataSource, data) {
             if (!(data instanceof Array)) {
                 throw "data has to be an array";
             }
@@ -161,7 +161,7 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore"], funct
             for (var i = 0; i < data.length; i++) {
                 var value = data[i];
                 var entity = this.getContextForChild(factory).createEntity(factory, value.id);
-                entity.set(entity.parse(value));
+                entity.set(entity.parse(dataSource, value));
 
                 data[i] = entity;
             }
@@ -310,7 +310,7 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore"], funct
                 // set state and start loading
                 self._fetch.state = State.LOADING;
 
-                this.$collection.$context.$datasource.loadCollectionPage(this, options, function (err, page) {
+                this.$collection.$context.$dataSource.loadCollectionPage(this, options, function (err, page) {
                     self._fetch.state = err ? State.ERROR : State.LOADED;
 
                     // execute callbacks
