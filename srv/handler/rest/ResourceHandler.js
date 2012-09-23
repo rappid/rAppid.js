@@ -36,9 +36,11 @@ define(['js/core/Base', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'js/dat
                 return this.$restHandler.getDataSource(context);
             }
         },
+
         handleRequest: function(context, callback) {
             this.$context = context;
 
+            // This is evil here
             context.request.setEncoding('utf8');
 
             var method = this._getRequestMethod(context),
@@ -50,6 +52,7 @@ define(['js/core/Base', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'js/dat
             if (fn instanceof Function) {
                 context.dataSource = this.getDataSource();
 
+                // TODO: why this?
                 var body = "";
                 context.request.on('data', function (data) {
                     body += data;
