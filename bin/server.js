@@ -32,6 +32,10 @@ var serverExport = function (args, callback) {
         shutdownServer();
     });
 
+    process.on('uncaughtException', function (err) {
+        console.error(err.stack || err);
+    });
+
     function shutdownServer() {
         if (serverInstance) {
             console.log('Shutting down server... [%d]', process.pid);
