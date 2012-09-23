@@ -15,8 +15,6 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
 
     var Model = Entity.inherit("js.data.Model", {
         ctor: function (attributes) {
-            // set model class name
-            this.$modelClassName = this.constructor.name;
 
             // stores the current fetch state
             this._fetch = {

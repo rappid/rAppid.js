@@ -177,11 +177,13 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
              * @return {JSON}
              */
             compose: function (entity, action, options) {
-                var ret = {}, obj = entity.prepare(action, options);
+                var ret = {},
+                    data = entity.compose(action, options);
 
-                for (var key in obj) {
-                    if (obj.hasOwnProperty(key)) {
-                        var value = this._getCompositionValue(obj[key], key, action, options);
+                for (var key in data) {
+                    if (data.hasOwnProperty(key)) {
+                        var value = this._getCompositionValue(data[key], key, action, options);
+
                         if (value !== undefined) {
                             ret[this._getReferenceKey(key, entity.$schema)] = value;
                         }
@@ -217,7 +219,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                 } else if (value instanceof Collection) {
                     return this._composeCollection(value, action, options);
                 } else if (value instanceof Entity) {
-                    return value.compose(this.$dataSource,action, options);
+                    return this._composeObject(value.compose(action, options), action, options);
                 } else if (value instanceof List) {
                     var ret = [];
                     var self = this;
@@ -246,9 +248,11 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
             },
 
             _composeSubModel: function (model, action, options) {
+                // TODO: implement compose SubModel
                 // just return id
                 return model.$.id;
             },
+
             _composeCollection: function (collection, action, options) {
                 return undefined;
             },
@@ -269,7 +273,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                         if (data.hasOwnProperty(key)) {
                             // found key in data payload
                             var schemaType = schema[key],
-                                value = this._getValueForKey(data,key,schemaType),
+                                value = this._getValueForKey(data, key, schemaType),
                                 factory = null,
                                 typeResolver,
                                 entity,
@@ -307,7 +311,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                                             }
 
                                             entity = model.getContextForChild(factory).createEntity(factory, value[i].id);
-                                            entity.set(entity.parse(this.$dataSource, value[i], action, options));
+                                            entity.set(this._parseModel(entity, value[i], action, options));
                                             list.add(entity);
                                         }
                                     }
@@ -327,7 +331,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                                     for (i = 0; i < value.length; i++) {
                                         // create new entity based on collection type
                                         entity = contextForChildren.createEntity(list.$modelFactory);
-                                        entity.set(entity.parse(this.$dataSource, value[i], action, options));
+                                        entity.set(this._parseModel(entity, value[i], action, options));
                                         // and add it to the collection
                                         list.add(entity);
                                     }
@@ -349,14 +353,37 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                                 }
 
                                 data[key] = entity = model.getContextForChild(factory).createEntity(factory, value.id);
-                                entity.set(entity.parse(this.$dataSource, value, action, options));
+                                entity.set(this._parseModel(entity, value, action, options));
                             }
                         }
                     }
-
                 }
+
+                return model.parse(data);
+            },
+
+            _parseModel: function(model, data, action, options) {
+                var processor = this.$dataSource.getProcessorForModel(model);
+                return processor.parse(model, data, action, options);
+            },
+
+            parseCollection: function(collection, data, action, options) {
+                if (!(data instanceof Array)) {
+                    throw "data has to be an array";
+                }
+
+                var factory = collection.$modelFactory;
+
+                for (var i = 0; i < data.length; i++) {
+                    var value = data[i];
+                    var entity = collection.getContextForChild(factory).createEntity(factory, value.id);
+                    entity.set(this._parseModel(entity, value, action, options));
+                    data[i] = entity;
+                }
+
                 return data;
             },
+
             /**
              * This method can be used to map payload values to the correct schema key
              * For example to map "company_id" to "company" : {id: "2"} ...
@@ -367,7 +394,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
              * @return {*} Returns the correct value for a reference and schemaType
              * @private
              */
-            _getValueForKey: function(data, key, schemaType){
+            _getValueForKey: function (data, key, schemaType) {
                 return data[key];
             },
             /***
@@ -492,7 +519,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                 this._validateConfiguration();
             },
 
-            _validateConfiguration: function() {
+            _validateConfiguration: function () {
                 // hook
             },
 
@@ -522,9 +549,9 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                         configuration = this.getConfigurationForCollectionClassName(className);
                     }
 
-                    if(requestor instanceof Collection){
+                    if (requestor instanceof Collection) {
                         key = "collectionClassName";
-                    }else if(requestor instanceof Model){
+                    } else if (requestor instanceof Model) {
                         key = "modelClassName";
                     }
 
@@ -634,22 +661,34 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
             },
 
             getProcessorForModel: function (model, options) {
-
+                var ret;
                 if (model) {
-                    var config = this.getConfigurationForModelClassName(model.$modelClassName);
-
-
-                    if (config && config.$.processor) {
-                        var processorName = config.$.processor;
-                        if (this.$processors[processorName]) {
-                            return this.$processors[processorName];
-                        } else {
-                            throw "Processor for '" + processorName + "' not an instance of js.data.DataSource.Processor."
-                        }
-                    }
+                    ret = this.getProcessorForModelClassName(model.constructor.name, options);
                 }
 
-                return this.$defaultProcessor;
+                return ret || this.$defaultProcessor;
+            },
+
+            getProcessorForModelClassName: function (modelClassName, options) {
+                var config = this.getConfigurationForModelClassName(modelClassName);
+
+                if (config && config.$.processor) {
+                    var processorName = config.$.processor;
+                    if (this.$processors[processorName]) {
+                        return this.$processors[processorName];
+                    } else {
+                        throw "Processor for '" + processorName + "' not an instance of js.data.DataSource.Processor."
+                    }
+                }
+            },
+
+            getProcessorForCollection: function (collection, options) {
+                var ret;
+                if (collection && collection.$modelFactory) {
+                    ret = this.getProcessorForModelClassName(collection.$modelFactory.prototype.constructor.name, options);
+                }
+
+                return ret || this.$defaultProcessor;
             },
 
             getFormatProcessor: function (action) {

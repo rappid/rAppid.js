@@ -151,21 +151,7 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore"], funct
             return this.$context;
         },
 
-        parse: function(dataSource, data) {
-            if (!(data instanceof Array)) {
-                throw "data has to be an array";
-            }
-
-            var factory = this.$modelFactory;
-
-            for (var i = 0; i < data.length; i++) {
-                var value = data[i];
-                var entity = this.getContextForChild(factory).createEntity(factory, value.id);
-                entity.set(entity.parse(dataSource, value));
-
-                data[i] = entity;
-            }
-
+        parse: function(data) {
             return data;
         },
 

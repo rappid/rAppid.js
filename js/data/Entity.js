@@ -63,32 +63,22 @@ define(['require', 'js/core/Bindable', 'js/core/List'],
             /**
              * Parses data with a given DataSource
              * Can be overidden to add pre or post parsing of data
-             * @param dataSource
              * @param data
              * @param [action]
              * @param [options]
              */
-            parse: function (dataSource, data, action, options) {
-                var processor = dataSource.getProcessorForModel(this);
-                data = processor.parse(this, data, action, options);
-
+            parse: function (data, action, options) {
                 return data;
-            },
-
-            prepare: function (action, options) {
-                return this.$;
             },
 
             /***
              * composes the data for serialisation
-             * @param dataSource
              * @param action
              * @param options
              * @return {Object} all data that should be serialized
              */
-            compose: function (dataSource, action, options) {
-                var processor = dataSource.getProcessorForModel(this, options);
-                return processor.compose(this, action, options);
+            compose: function (action, options) {
+                return this.$;
             },
 
             clearErrors: function () {

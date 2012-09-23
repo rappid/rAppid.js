@@ -144,8 +144,13 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
                         // deserialize data with format processor
                         var data = formatProcessor.deserialize(xhr.responses.text);
 
+                        var processor = self.getProcessorForModel(model, options);
+
+                        // parse data inside processor
+                        data = processor.parse(model, data, DataSource.ACTION.LOAD, options);
+
                         // parse data inside model
-                        data = model.parse(self, data, DataSource.ACTION.LOAD, options);
+                        data = model.parse(data);
 
                         // set data
                         model.set(data);
@@ -270,11 +275,11 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
             var formatProcessor = this.getFormatProcessor(action);
             var self = this;
 
-            // call save of the processor to save submodels
+            // call save of the processor to save sub models
             flow()
-//                .seq(function(cb) {
-//                    processor.saveSubModels(model, options, cb)
-//                })
+                .seq(function(cb) {
+                    processor.saveSubModels(model, options, cb)
+                })
                 .seq(function(cb) {
                     // create url
                     var url = self._buildUriForModel(model);
@@ -285,8 +290,7 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
 
                     // TODO: create hook, which can modify url and queryParameter
 
-                    // compose data in model and in processor
-                    var data = model.compose(self,action, options);
+                    var data = processor.compose(model, action, options);
 
                     // format payload
                     var payload = formatProcessor.serialize(data);
@@ -380,18 +384,18 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
                 queryParameter: params
             }, function (err, xhr) {
                 if (!err && (xhr.status == 200 || xhr.status == 304)) {
-                    // find processor that matches the content-type
+                    // find formatProcessor that matches the content-type
                     var contentType = xhr.getResponseHeader("Content-Type");
-                    var processor = self.getFormatProcessorForContentType(contentType);
+                    var formatProcessor = self.getFormatProcessorForContentType(contentType);
 
-                    if (!processor) {
-                        callback("No processor for content type '" + contentType + "' found", null, options);
+                    if (!formatProcessor) {
+                        callback("No formatProcessor for content type '" + contentType + "' found", null, options);
                         return;
                     }
 
                     try {
-                        // deserialize data with processor
-                        var payload = processor.deserialize(xhr.responses.text);
+                        // deserialize data with formatProcessor
+                        var payload = formatProcessor.deserialize(xhr.responses.text);
 
                         // extract meta data
                         var metaData = self.extractListMetaData(page, payload, options);
@@ -404,7 +408,10 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
                         // extract data from list result
                         var data = self.extractListData(page, payload, options);
 
-                        data = page.parse(self, data);
+                        var processor = self.getProcessorForCollection(page);
+
+                        data = processor.parseCollection(page.getRootCollection(), data, DataSource.ACTION.LOAD, options);
+
                         page.add(data);
 
                         callback(null, page, options)
