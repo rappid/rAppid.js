@@ -108,6 +108,8 @@ define(["js/core/Bindable", "underscore", "js/core/BindingCreator"], function (B
                     return;
                 }
 
+                this.$initializing = true;
+
                 this._preinitialize();
 
                 this.initialize();
@@ -171,6 +173,7 @@ define(["js/core/Bindable", "underscore", "js/core/BindingCreator"], function (B
                 });
 
                 this.$initialized = true;
+                this.$initializing = false;
             },
             _getTextContentFromDescriptor: function (desc) {
                 var textContent = desc.textContent || desc.text || desc.data;

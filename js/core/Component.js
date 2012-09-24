@@ -123,25 +123,30 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                         throw "only children of type js.core.Component can be added"
                     }
 
-                    // initialize auto
-                    if (this.$creationPolicy === "auto") {
-                        child._initialize(this.$creationPolicy);
-                    }
+                    if(this.$initializing){
+                        // initialize auto
+                        if (this.$creationPolicy === "auto") {
+                            child._initialize(this.$creationPolicy);
+                        }
 
-                    if (child.$rootScope && child.$.cid) {
-                        // register component by cid in the root scope
-                        child.$rootScope.set(child.$.cid, child);
-                    }
+                        if (child.$rootScope && child.$.cid) {
+                            // register component by cid in the root scope
+                            child.$rootScope.set(child.$.cid, child);
+                        }
 
-                    child.$parent = this;
-                    // save under elements
-                    this.$elements.push(child);
+                        child.$parent = this;
+                        // save under elements
+                        this.$elements.push(child);
 
-                    // handle special elements
-                    if (child instanceof Component.Template) {
-                        this._addTemplate(child);
-                    } else if (child instanceof Component.Configuration) {
-                        this._addConfiguration(child);
+                        // handle special elements
+                        if (child instanceof Component.Template) {
+                            this._addTemplate(child);
+                        } else if (child instanceof Component.Configuration) {
+                            this._addConfiguration(child);
+                        }
+                    }else{
+                        this.$unitializedChildren = this.$unitializedChildren || [];
+                        this.$unitializedChildren.push(child);
                     }
                 },
 
@@ -324,7 +329,13 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                 },
 
                 createChildren: function () {
-
+                    if(this.$unitializedChildren){
+                        var ret = [];
+                        while(this.$unitializedChildren.length){
+                            ret.push(this.$unitializedChildren.pop());
+                        }
+                        return ret;
+                    }
                 },
 
                 _cleanUpDescriptor: function (desc) {
