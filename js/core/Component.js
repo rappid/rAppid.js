@@ -123,7 +123,7 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                         throw "only children of type js.core.Component can be added"
                     }
 
-                    if(this.$initializing){
+                    if(this.$initializing || this.$initialized){
                         // initialize auto
                         if (this.$creationPolicy === "auto") {
                             child._initialize(this.$creationPolicy);
