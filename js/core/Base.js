@@ -32,6 +32,8 @@ define(["inherit"], function(inherit){
                 message = message.toString();
             }
 
+            message = "[ "+(new Date())+" ]: " + message;
+
             if (Base.logger.length) {
                 for (var i = 0; i < Base.logger.length; i++) {
                     Base.logger[i].log(message, level);
