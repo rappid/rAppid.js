@@ -1,17 +1,21 @@
-define(['require', 'srv/core/Handler', 'flow', 'fs', 'path', 'srv/core/HttpError'],
-    function (require, Handler, flow, Fs, Path, HttpError) {
+define(['require', 'srv/core/Handler', 'flow', 'fs', 'path', 'srv/core/HttpError', 'json!srv/conf/mime.types.json', 'underscore'],
+    function (require, Handler, flow, Fs, Path, HttpError, MimeTypes, _) {
 
         Fs.exists = Fs.exists || Path.exists;
-
         return Handler.inherit('srv.core.StaticFileHandler', {
+
+            ctor: function() {
+                this.$mimeTypes = MimeTypes || {};
+                this.callBase();
+            },
 
             defaults: {
                 documentRoot: null,
-                indexFile: 'index.html'
+                indexFile: 'index.html',
+                defaultContentType: 'text/plain'
             },
 
             start: function (server, callback) {
-
 
                 if (!this.$.documentRoot) {
                     this.$.documentRoot = this.$stage.$applicationContext.$config.documentRoot;
@@ -55,7 +59,9 @@ define(['require', 'srv/core/Handler', 'flow', 'fs', 'path', 'srv/core/HttpError
                         });
                     })
                     .seq(function () {
-                        var stream = Fs.createReadStream(this.vars['path']);
+                        var path = this.vars['path'],
+                            stream = Fs.createReadStream(path),
+                            extension = Path.extname(path).substring(1);
 
                         stream.on('end', function() {
                             context.response.end();
@@ -63,6 +69,10 @@ define(['require', 'srv/core/Handler', 'flow', 'fs', 'path', 'srv/core/HttpError
 
                         stream.on('close', function () {
                             context.response.end();
+                        });
+
+                        context.response.writeHead(200, {
+                            'Content-Type': self.$mimeTypes[extension] || self.$.defaultContentType
                         });
 
                         stream.pipe(context.response);
