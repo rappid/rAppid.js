@@ -119,6 +119,9 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
             var params = _.defaults(model.$context.getQueryParameter(),
                 this.getQueryParameter(RestDataSource.METHOD.GET));
 
+            if(options.noCache){
+                params.timestamp = (new Date().getTime());
+            }
 
             flow()
                 .seq("xhr", function(cb) {
@@ -367,6 +370,10 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
                 params.offset = page.$offset;
             }
 
+
+            if(options.noCache){
+                params.timestamp = (new Date()).getTime();
+            }
             params.fullData = options.fullData || false;
 
 
