@@ -110,6 +110,7 @@ define(['js/core/Base', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'js/dat
             if(parameters["limit"]){
                 options["limit"] = parseInt(parameters["limit"]);
             }
+            var self = this;
             // TODO: read out offset, limit and query from query string
             collection.fetch(options, function(err, collection){
                 if(!err){
@@ -119,18 +120,13 @@ define(['js/core/Base', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'js/dat
                     // switch context of collection to restdatasource
 
                     // call compose
-
-                    // TODO: serialize and compose item
-                    collection.each(function(item){
-                        // TODO: compose and serialize item
-                        results.push(item.$);
-                    });
+                    var processor = self.$restHandler.$restDataSource.getProcessorForCollection(collection);
 
                     var res = {
                         count: collection.$itemsCount,
                         limit: options["limit"],
                         offset: 0,
-                        results: results
+                        results: processor.composeCollection(collection, null, options)
                     };
 
                     body = JSON.stringify(res);
@@ -159,12 +155,27 @@ define(['js/core/Base', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'js/dat
             var model = context.dataSource.createEntity(modelFactory);
 
             var payload = context.request.params;
-            model.set(payload);
+
+            var processor = this.$restHandler.$restDataSource.getProcessorForModel(model);
+
+            model.set(processor.parse(model, payload));
 
             // TODO: add options
             model.save({}, function (err, model) {
                 if (!err) {
-                    // TODO: write response
+                    // TODO: generate the location header
+                    var body = "";
+
+                    var response = context.response;
+                    response.writeHead(201, "", {
+                        'Content-Length': body.length,
+                        'Content-Type': 'application/json',
+                        'Location' : 'http://todo/'+model.$.id
+                    });
+
+                    response.write(body);
+                    response.end();
+
                     callback(null);
                 } else {
                     callback(new HttpError(err, 500));
