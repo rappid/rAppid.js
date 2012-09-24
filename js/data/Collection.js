@@ -139,7 +139,7 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore"], funct
         },
 
         pageCount: function () {
-            if (this.$.$itemsCount) {
+            if (this.$.hasOwnProperty("$itemsCount")) {
                 return Math.ceil(this.$.$itemsCount / this.$options.pageSize);
             } else {
                 // we actually don't know how many pages there will be
