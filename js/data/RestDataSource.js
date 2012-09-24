@@ -331,7 +331,19 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
 
 
         },
+        extractListMetaData: function (list, payload, options) {
+            return payload;
+        },
 
+        extractListData: function (list, payload, options) {
+            for (var key in payload) {
+                if (payload.hasOwnProperty(key)) {
+                    if (_.isArray(payload[key])) {
+                        return payload[key];
+                    }
+                }
+            }
+        },
         loadCollectionPage: function (page, options, callback) {
 
             var rootCollection = page.getRootCollection();
