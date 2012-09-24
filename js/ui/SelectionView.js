@@ -16,9 +16,9 @@ define(
             },
             ctor: function(){
                 this.callBase();
-                this.bind(['selectedItems','add'], this._onSelectedItemAdd, this);
-                this.bind(['selectedItems','remove'], this._onSelectedItemRemove, this);
-                this.bind(['selectedItems','reset'], this._onSelectedItemReset, this);
+                this.bind('selectedItems','add', this._onSelectedItemAdd, this);
+                this.bind('selectedItems','remove', this._onSelectedItemRemove, this);
+                this.bind('selectedItems','reset', this._onSelectedItemReset, this);
             },
             _onSelectedItemAdd: function(e){
                 var item;

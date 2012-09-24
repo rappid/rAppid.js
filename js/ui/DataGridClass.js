@@ -14,8 +14,8 @@ define(['js/ui/View', 'xaml!js/ui/DataGridColumn', 'js/core/List', 'underscore',
         $classAttributes: ['$itemsView','rowHeight'],
         ctor: function(){
             this.callBase();
-            this.bind(['$itemsView','on:itemClick'], this._onRowClick, this);
-            this.bind(['$itemsView','on:itemDblClick'], this._onRowDblClick, this);
+            this.bind('$itemsView','on:itemClick', this._onRowClick, this);
+            this.bind('$itemsView','on:itemDblClick', this._onRowDblClick, this);
         },
         _onRowClick: function(e){
             this.trigger('on:rowClick', e);
