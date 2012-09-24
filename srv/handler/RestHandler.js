@@ -1,5 +1,5 @@
-define(['require', 'srv/core/Handler', 'js/conf/DataSource', 'js/conf/Resource', 'srv/handler/rest/ResourceRouter', 'flow', 'js/data/DataSource'],
-    function(require, Handler, DataSourceConfiguration, ResourceConfiguration, ResourceRouter, flow, DataSource) {
+define(['require', 'srv/core/Handler', 'js/conf/DataSource', 'js/conf/Resource', 'srv/handler/rest/ResourceRouter', 'flow', 'js/data/DataSource', 'js/data/RestDataSource'],
+    function(require, Handler, DataSourceConfiguration, ResourceConfiguration, ResourceRouter, flow, DataSource, RestDataSource) {
 
     return Handler.inherit('srv.core.RestHandler', {
 
@@ -60,8 +60,12 @@ define(['require', 'srv/core/Handler', 'js/conf/DataSource', 'js/conf/Resource',
 
             findClasses(this.$resourceConfiguration);
 
+            this.$restDataSource = new RestDataSource({endPoint: "localhost"}, false);
+            this.$restDataSource.addChild(this.$resourceConfiguration);
+            this.$restDataSource._initialize("auto");
 
             require(classes, function() {
+
                 callback();
             }, function(err) {
                 callback(err);
