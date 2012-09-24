@@ -16,13 +16,13 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow'], function (Dat
             }
             return this.callBase();
         },
-        parse: function (data, action, options) {
+        parse: function (model, data, action, options) {
             if (data['_id']) {
                 data['id'] = data._id.toHexString();
                 delete data['_id'];
             }
 
-            return this.callBase(data, action, options);
+            return this.callBase(model, data, action, options);
         }
     });
 
@@ -109,8 +109,9 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow'], function (Dat
                 action = DataSource.ACTION.CREATE;
                 method = MongoDataSource.METHOD.INSERT;
             }
+            var processor = this.getProcessorForModel(model);
 
-            var data = model.compose(this, action, options), self = this, connection;
+            var data = processor.compose(model, action, options), self = this, connection;
             flow()
                 .seq("collection", function (cb) {
                     connection = self.connect(function (err, client) {
@@ -121,14 +122,14 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow'], function (Dat
                     if (method === MongoDataSource.METHOD.INSERT) {
                         this.vars['collection'].insert(data, {safe: true}, function (err, objects) {
                             if (!err) {
-                                model.set(model.parse(objects[0]));
+                                model.set(processor.parse(model, objects[0]));
                             }
                             cb(err);
                         });
                     } else if (method === MongoDataSource.METHOD.SAVE) {
                         this.vars['collection'].update({_id: this.getIdObject(model.$.id)}, data, {safe: true}, function (err, objects) {
                             if (!err) {
-                                model.set(model.parse(objects[0]));
+                                model.set(processor.parse(model, objects[0]));
                             }
                             cb(err);
                         });
@@ -191,7 +192,11 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow'], function (Dat
 
                     cursor.toArray(function (err, results) {
                         if (!err) {
-                            collection.add(rootCollection.parse(results));
+                            var processor = self.getProcessorForCollection(rootCollection);
+
+                            results = processor.parseCollection(rootCollection, results, DataSource.ACTION.LOAD, options);
+
+                            collection.add(results);
                         }
                         cb(err, cursor);
                     });
