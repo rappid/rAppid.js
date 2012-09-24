@@ -191,6 +191,23 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                 }
                 return ret;
             },
+            /***
+             * Composes a collection to an array of composed models
+             * @param {js.data.Collection} collection
+             * @param {String} action
+             * @param {Object} options
+             * @return {Array}
+             */
+            composeCollection: function(collection, action, options){
+                var results = [];
+                var self = this;
+
+                collection.each(function (item) {
+                    results.push(self.compose(item, action, options));
+                });
+
+                return results;
+            },
 
             _getReferenceKey: function (key, schema) {
                 return key;
@@ -312,6 +329,11 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
 
                                             entity = model.getContextForChild(factory).createEntity(factory, value[i].id);
                                             entity.set(this._parseModel(entity, value[i], action, options));
+
+                                            if (entity instanceof Entity && !(entity instanceof Model)) {
+                                                entity.$parent = model;
+                                            }
+
                                             list.add(entity);
                                         }
                                     }
@@ -354,6 +376,11 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
 
                                 data[key] = entity = model.getContextForChild(factory).createEntity(factory, value.id);
                                 entity.set(this._parseModel(entity, value, action, options));
+
+                                if(entity instanceof Entity && !(entity instanceof Model)){
+                                    entity.$parent = model;
+                                }
+
                             }
                         }
                     }
