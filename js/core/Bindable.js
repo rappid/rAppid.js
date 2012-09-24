@@ -43,7 +43,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding","underscor
         var Bindable = EventDispatcher.inherit("js.core.Bindable",
             {
                 /***
-                 * creates a new instance of bindable, which can be bound to components
+                 * creates a new instance of Bindable, which can be bound to components
                  *
                  * @param {Object} [attributes] the default attributes which will be set during instantiation
                  */
@@ -226,6 +226,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding","underscor
                  * @param {Object} options A hash of options
                  * @param {Boolean} [options.silent=false] if true no event is triggered on change
                  * @param {Boolean} [options.unset=false] if true the attribute gets deleted
+                 * @return {js.core.Bindable} this
                  */
                 set: function (key, value, options) {
                     var attributes = {};
@@ -340,7 +341,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding","underscor
                  * evaluates a path to retrieve a value
                  *
                  * @param {Object} [scope=this] the scope where the path is evaluated
-                 * @param {String} key
+                 * @param {String} key or path
                  * @returns the value for the path or undefined
                  */
                 get: function(scope, key) {
@@ -423,7 +424,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding","underscor
                  * called after attributes has set and some of the has been changed
                  *
                  * @param {Object} attributes - contains the changed attributes
-                 *
+                 * @param {Object} options - the options passed in the set method
                  * @abstract
                  * @private
                  */
