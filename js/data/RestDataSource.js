@@ -370,7 +370,6 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
                 params.offset = page.$offset;
             }
 
-
             if(options.noCache){
                 params.timestamp = (new Date()).getTime();
             }
@@ -407,7 +406,7 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
                         // extract meta data
                         var metaData = self.extractListMetaData(page, payload, options);
 
-                        if (metaData && metaData.count) {
+                        if (metaData && metaData.hasOwnProperty('count')) {
                             // set itemsCount in collection for page calculation
                             page.$collection.set('$itemsCount', metaData.count);
                         }
