@@ -18,11 +18,6 @@ define(['js/ui/ItemsView', 'js/html/HtmlElement'], function(ItemsView, HtmlEleme
                 component.addChild(components[j]);
             }
 
-            // add to rendered item map
-            this.$renderedItems.push({
-                item: item,
-                component: component
-            });
             return component;
         }
 
