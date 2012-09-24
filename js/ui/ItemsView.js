@@ -40,7 +40,11 @@ define(
                 }
                 return this.callBase();
             },
-
+            /***
+             * Renders the given items
+             * @param items
+             * @private
+             */
             _renderItems: function (items) {
                 if(!items){
                     this._innerRenderItems([]);
@@ -50,20 +54,27 @@ define(
                     this._innerRenderItems(items);
                 }
             },
-            _onSort: function (e) {
+            /***
+             * This method is called when the sort event is fired,
+             * It reorders the items in the list
+             * @param [js.core.Event] event
+             * @private
+             */
+            _onSort: function (event) {
                 if (this.isRendered()) {
                     var item, c;
-                    for (var i = 0; i < e.$.items.length; i++) {
-                        item = e.$.items[i];
+                    for (var i = 0; i < event.$.items.length; i++) {
+                        item = event.$.items[i];
                         c = this.getComponentForItem(item);
                         this.$el.removeChild(c.$el);
                         this.$el.appendChild(c.$el);
                     }
                 }
             },
-
             _onReset: function (e) {
-                this._innerRenderItems(e.$.items);
+                if(this.isRendered()){
+                    this._innerRenderItems(e.$.items);
+                }
             },
 
             _onItemAdd: function (e) {
@@ -84,13 +95,15 @@ define(
              * @private
              */
             _innerRenderItems: function (items) {
+                var c;
                 if (this.$renderedItems) {
-                    var c;
                     for (var j = this.$renderedItems.length - 1; j >= 0; j--) {
                         c = this.$renderedItems[j];
                         this.removeChild(c.component);
                         c.component.destroy();
                     }
+                }
+                if(this.$renderedItemsMap){
                     for(var key in this.$renderedItemsMap){
                         if(this.$renderedItemsMap.hasOwnProperty(key)){
                             c = this.$renderedItemsMap[key];
@@ -100,6 +113,7 @@ define(
                     }
                 }
                 this.$renderedItems = [];
+                this.$renderedItemsMap = {};
                 for (var i = 0; i < items.length; i++) {
                     this._innerRenderItem(items[i], i);
                 }
@@ -116,7 +130,9 @@ define(
                 var attr = {};
                 attr[this._getItemKey()] = item;
                 attr[this._getIndexKey()] = index;
-                return this.$templates['item'].createComponents(attr)[0];
+                var component = this.$templates['item'].createComponents(attr)[0];
+                component.$classAttributes.push(this.$.itemKey, this.$.indexKey);
+                return component;
             },
             /***
              * Caches the component to a given item
@@ -204,8 +220,8 @@ define(
                 if(key){
                     comp = this.$renderedItemsMap[key];
                     this.removeChild(comp);
-                    delete this.$renderedItems[key];
                     comp.destroy();
+                    delete this.$renderedItemsMap[key];
                 }else{
                     for (var i = 0; i < this.$renderedItems.length; i++) {
                         ri = this.$renderedItems[i];
