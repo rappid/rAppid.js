@@ -90,7 +90,7 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                 if (child instanceof DomElement || child.render) {
                     var pos = options && typeof(options.childIndex) !== "undefined" ? options.childIndex : this.$children.length;
 
-                    this.$children.splice(pos, 0, child);
+                    this.$children[pos] = child;
                     if (this.isRendered()) {
                         this._renderChild(child, pos);
                     }
