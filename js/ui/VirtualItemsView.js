@@ -118,18 +118,8 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
             this.$lastStartIndex = null;
 
             // clear active renderer and scroll to top
-            var renderer;
-            for (var index in this.$activeRenderer) {
-                if (this.$activeRenderer.hasOwnProperty(index)) {
-                    // render not in use
-                    renderer = this.$activeRenderer[index];
-                    if (renderer) {
-                        renderer.remove();
-                        this.$availableRenderer.push(renderer);
-                    }
-                    delete this.$activeRenderer[index];
-                }
-            }
+            this._releaseActiveRenderer();
+
             this._updateVisibleItems();
         },
 
@@ -176,7 +166,11 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
 
             if (!isNaN(ItemsCount)) {
                 // end well known
-                endIndex = Math.min(ItemsCount, endIndex)
+                if(ItemsCount > 0){
+                    endIndex = Math.min(ItemsCount, endIndex)
+                }else{
+                    this._releaseActiveRenderer();
+                }
             }
 
             if (!(startIndex === this.$lastStartIndex && endIndex === this.$lastEndIndex)) {
@@ -187,25 +181,7 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
                 this.$lastStartIndex = startIndex;
                 this.$lastEndIndex = endIndex;
 
-                // release unused renderer
-                for (var index in this.$activeRenderer) {
-                    if (this.$activeRenderer.hasOwnProperty(index) && (index < startIndex || index > endIndex)) {
-                        // render not in use
-                        renderer = this.$activeRenderer[index];
-                        if (renderer) {
-                            renderer.set({
-                                $index: null,
-                                $dataItem: null
-                            });
-
-                            renderer.remove();
-
-                            this.$availableRenderer.push(renderer);
-                        }
-
-                        delete this.$activeRenderer[index];
-                    }
-                }
+                this._releaseActiveRenderer(startIndex, endIndex);
 
                 var addedRenderer = [];
 
@@ -239,6 +215,42 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
 
         },
 
+        /***
+         *
+         * Releases all renderer outside the given indecies
+         * If no indecies are given, all renderer are released
+         * @param [startIndex] the max startIndex
+         * @param [endIndex] the min endIndex
+         * @private
+         */
+        _releaseActiveRenderer: function(startIndex, endIndex){
+            if(_.isUndefined(startIndex)){
+                startIndex = Number.MAX_VALUE;
+            }
+            if(_.isUndefined(endIndex)){
+                endIndex = -1;
+            }
+            var renderer;
+            // release unused renderer
+            for (var index in this.$activeRenderer) {
+                if (this.$activeRenderer.hasOwnProperty(index) && (index < startIndex || index > endIndex)) {
+                    // render not in use
+                    renderer = this.$activeRenderer[index];
+                    if (renderer) {
+                        renderer.set({
+                            $index: null,
+                            $dataItem: null
+                        });
+
+                        renderer.remove();
+
+                        this.$availableRenderer.push(renderer);
+                    }
+
+                    delete this.$activeRenderer[index];
+                }
+            }
+        },
         /***
          * @abstract
          * @param startIndex
