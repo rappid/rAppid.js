@@ -122,21 +122,22 @@ define(['js/core/Base', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'js/dat
                     // call compose
                     var processor = self.$restHandler.$restDataSource.getProcessorForCollection(collection);
 
+                    results = processor.composeCollection(collection, null, options);
+
                     var res = {
                         count: collection.$itemsCount,
                         limit: options["limit"],
                         offset: 0,
-                        results: processor.composeCollection(collection, null, options)
+                        results: results
                     };
 
                     body = JSON.stringify(res);
 
                     response.writeHead(200, "", {
-                        'Content-Length': body.length,
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json; charset=utf-8'
                     });
 
-                    response.write(body);
+                    response.write(body, 'utf8');
                     response.end();
                 }
 
@@ -168,7 +169,6 @@ define(['js/core/Base', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'js/dat
 
                     var response = context.response;
                     response.writeHead(201, "", {
-                        'Content-Length': body.length,
                         'Content-Type': 'application/json',
                         'Location' : 'http://todo/'+model.$.id
                     });
@@ -217,7 +217,34 @@ define(['js/core/Base', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'js/dat
          * @private
          */
         _update: function(context, callback) {
-            throw new HttpError("Not implemented", 500);
+            var modelFactory = this._getModelFactory();
+            var model = context.dataSource.createEntity(modelFactory, this.$resourceId);
+
+            var payload = context.request.params;
+
+            var processor = this.$restHandler.$restDataSource.getProcessorForModel(model);
+
+            model.set(processor.parse(model, payload));
+
+            // TODO: add options
+            model.save({}, function (err, model) {
+                if (!err) {
+                    // TODO: generate the location header
+                    var body = "";
+
+                    var response = context.response;
+                    response.writeHead(200, "", {
+                        'Content-Type': 'application/json'
+                    });
+
+                    response.write(body);
+                    response.end();
+
+                    callback(null);
+                } else {
+                    callback(new HttpError(err, 500));
+                }
+            });
         },
         /***
          *
