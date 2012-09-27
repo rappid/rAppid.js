@@ -1,6 +1,15 @@
-define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "flow", "JSON"], function (DataSource, Base, Model, _, flow, JSON) {
+define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "flow", "JSON", "js/data/Collection"], function (DataSource, Base, Model, _, flow, JSON, Collection) {
 
     var rIdExtractor = /http.+\/([^/]+)$/;
+
+    var RestDataProcessor = DataSource.Processor.inherit('src.data.RestDataSource.RestDataProcessor', {
+        _composeSubModel: function (model, action, options) {
+            // TODO: add href
+            return {
+                id: model.$.id
+            }
+        }
+    });
 
     var RestDataSource = DataSource.inherit("js.data.RestDataSource", {
 
@@ -12,7 +21,7 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
         ctor: function(){
             this.callBase();
         },
-
+        $defaultProcessorFactory: RestDataProcessor,
         initialize: function () {
 
             if (!this.$.endPoint) {
@@ -219,7 +228,21 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
 
                     if (id || id === 0) {
                         model.set('id', id);
+
+                        var schema = model.$schema, schemaType;
+                        for(var schemaKey in schema){
+                            if(schema.hasOwnProperty(schemaKey)){
+                                schemaType = schema[schemaKey];
+                                if(schemaType.classof && schemaType.classof(Collection)){
+                                    var contextForChildren = model.getContextForChild(schemaType);
+                                    model.set(schemaKey, contextForChildren.createCollection(schemaType, null));
+                                }
+
+                            }
+                        }
+
                         model.$context.addEntityToCache(model);
+
                         // TODO: ask processor if i should call save again to put content
                         cb(null);
                     } else {
