@@ -18,23 +18,42 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                     this.$cache = {};
 
                 },
-
-                addEntityToCache: function (model) {
-                    this.$cache[Context.generateCacheIdFromEntity(model)] = model;
+                /***
+                 * Adds an entity to the cache
+                 * @param {js.data.Entity} entity
+                 */
+                addEntityToCache: function (entity) {
+                    this.$cache[Context.generateCacheIdFromEntity(entity)] = entity;
                 },
 
+                /**
+                 * Adds a collection to the cache
+                 * @param {js.data.Collection} collection
+                 */
                 addCollectionToCache: function (collection) {
                     this.$cache[Context.generateCacheIdFromCollection(collection)] = collection;
                 },
-
+                /**
+                 * returns null or the instance with the cacheId
+                 * @param {String} cacheId
+                 * @return {js.data.Entity}
+                 */
                 getInstanceByCacheId: function (cacheId) {
                     return this.$cache[cacheId];
                 },
-
+                /**
+                 * Returns the path components of the context
+                 * @return {Array}
+                 */
                 getPathComponents: function () {
                     return [];
                 },
-
+                /***
+                 * Creates a new entity in the context or returns an existing one
+                 * @param {Function} factory
+                 * @param {String|Number} [id]
+                 * @return {js.data.Entity}
+                 */
                 createEntity: function (factory, id) {
 
                     if (_.isFunction(factory)) {
@@ -70,7 +89,12 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                         throw "Factory has to be a function";
                     }
                 },
-
+                /***
+                 * Creates a collection in the context
+                 * @param {Function} factory
+                 * @param {Object} [options]
+                 * @return {js.data.Collection}
+                 */
                 createCollection: function (factory, options) {
                     options = options || {};
 
@@ -107,7 +131,11 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                         throw "Factory has to be a function";
                     }
                 },
-
+                /***
+                 * Returns the context for given properties
+                 * @param {Object} properties
+                 * @return {js.data.DataSource.Context}
+                 */
                 getContext: function (properties) {
                     var cacheId = this.createContextCacheId(properties);
 
@@ -122,7 +150,11 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
 
                     return this.$contextCache[cacheId];
                 },
-
+                /***
+                 * Creates a cache id on base of given properties
+                 * @param {Object} properties
+                 * @return {String}
+                 */
                 createContextCacheId: function (properties) {
 
                     var ret = [];

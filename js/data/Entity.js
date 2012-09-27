@@ -32,7 +32,11 @@ define(['require', 'js/core/Bindable', 'js/core/List'],
                     base = base.base;
                 }
             },
-
+            /***
+             * Returns the correct context for a child factory
+             * @param {Function} childFactory
+             * @return {js.data.DataSource.Context}
+             */
             getContextForChild: function (childFactory) {
 
                 // TODO: this is the circle dependency. check different than use model
@@ -49,7 +53,12 @@ define(['require', 'js/core/Bindable', 'js/core/List'],
 
                 return this.$context.$dataSource.getContextForChild(childFactory, this);
             },
-
+            /**
+             * Creates an entity in the context of the given entity
+             * @param {Function} childFactory
+             * @param {String|Number} [id]
+             * @return {js.data.Entity}
+             */
             createEntity: function(childFactory,id){
                 var context = this.getContextForChild(childFactory);
 
@@ -61,8 +70,8 @@ define(['require', 'js/core/Bindable', 'js/core/List'],
             },
 
             /**
-             * Parses data with a given DataSource
-             * Can be overidden to add pre or post parsing of data
+             * Parses data
+             * Can be overridden to post change parsed data
              * @param data
              * @param [action]
              * @param [options]
@@ -72,7 +81,7 @@ define(['require', 'js/core/Bindable', 'js/core/List'],
             },
 
             /***
-             * composes the data for serialisation
+             * Composes the data. Can pe used to pre compose the data for the processor
              * @param action
              * @param options
              * @return {Object} all data that should be serialized
@@ -81,10 +90,17 @@ define(['require', 'js/core/Bindable', 'js/core/List'],
                 return this.$;
             },
 
+            /***
+             * Clears all errors
+             */
             clearErrors: function () {
                 this.$errors.clear();
             },
 
+            /***
+             * Sets the errors for the entity
+             * @param {Object} errors
+             */
             setErrors: function (errors) {
                 for (var key in errors) {
                     if (errors.hasOwnProperty(key)) {
@@ -92,11 +108,13 @@ define(['require', 'js/core/Bindable', 'js/core/List'],
                     }
                 }
             },
-
+            /***
+             * Returns the errors of the entity
+             * @return {js.core.Bindable}
+             */
             errors: function () {
                 return this.$errors;
             },
-
             clone: function () {
                 var ret = this.callBase();
                 ret.$context = this.$context;
