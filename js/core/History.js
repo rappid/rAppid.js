@@ -2,7 +2,7 @@ define(["js/core/Bindable", "flow"], function (Bindable, flow) {
 
 
     var routeStripper = /^#?!?\/?/,
-        undef,
+        undefined,
         emptyCallback = function () {
         };
 
@@ -150,11 +150,11 @@ define(["js/core/Bindable", "flow"], function (Bindable, flow) {
                 triggerRoute = null;
             }
 
-            if (createHistoryEntry == undef || createHistoryEntry == null) {
+            if (createHistoryEntry == undefined || createHistoryEntry == null) {
                 createHistoryEntry = true;
             }
 
-            if (triggerRoute == undef || triggerRoute == null) {
+            if (triggerRoute == undefined || triggerRoute == null) {
                 triggerRoute = true;
             }
 
