@@ -5,8 +5,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
             Context = Base.inherit("js.data.DataSource.Context", {
 
                 defaults: {
-                    collectionPageSize: null,
-                    dateFormat: "YYYY-MM-DDTHH:mm:ssZ"
+                    collectionPageSize: null
                 },
 
                 ctor: function (dataSource, properties, parentContext) {
@@ -161,7 +160,10 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
             });
 
         var Processor = Base.inherit("js.data.DataSource.Processor", {
-
+            /***
+             * Processor constructor
+             * @param {js.data.DataSource} dataSource
+             */
             ctor: function (dataSource) {
                 if (!dataSource) {
                     throw "dataSource is required for Processor";
@@ -174,7 +176,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
              * prepares the data for being serialized
              * @param {js.data.Entity} entity
              * @param {js.data.DataSource.ACTION} action
-             * @return {JSON}
+             * @return {JSON} options
              */
             compose: function (entity, action, options) {
                 var ret = {},
@@ -185,7 +187,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                         var value = this._getCompositionValue(data[key], key, action, options);
 
                         if (value !== undefined) {
-                            ret[this._getReferenceKey(key, entity.$schema)] = value;
+                            ret[this._getReferenceKey(key, entity.$schema[key])] = value;
                         }
                     }
                 }
@@ -198,7 +200,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
              * @param {Object} options
              * @return {Array}
              */
-            composeCollection: function(collection, action, options){
+            composeCollection: function (collection, action, options) {
                 var results = [];
                 var self = this;
 
@@ -208,18 +210,31 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
 
                 return results;
             },
-
-            _getReferenceKey: function (key, schema) {
+            /***
+             * Returns the reference key for composing and parsing the schema
+             * @param {String} key
+             * @param {Function} schemaType
+             * @return {*}
+             * @private
+             */
+            _getReferenceKey: function (key, schemaType) {
                 return key;
             },
-
-            _composeObject: function (obj, action, options) {
+            /***
+             * Returns a composed object
+             * @param {Object} object
+             * @param {String} action
+             * @param {Object} options
+             * @return {Object}
+             * @private
+             */
+            _composeObject: function (object, action, options) {
 
                 var ret = {};
 
-                for (var key in obj) {
-                    if (obj.hasOwnProperty(key)) {
-                        var value = this._getCompositionValue(obj[key], key, action, options);
+                for (var key in object) {
+                    if (object.hasOwnProperty(key)) {
+                        var value = this._getCompositionValue(object[key], key, action, options);
 
                         if (value !== undefined) {
                             ret[key] = value;
@@ -229,7 +244,15 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
 
                 return ret;
             },
-
+            /***
+             * Returns the composed data for a value
+             * @param {Object} value
+             * @param {String} key
+             * @param {String} action
+             * @param {Object} options
+             * @return {Object} composed data
+             * @private
+             */
             _getCompositionValue: function (value, key, action, options) {
                 if (value instanceof Model) {
                     return this._composeSubModel(value, action, options);
@@ -263,23 +286,38 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                     return value;
                 }
             },
-
+            /**
+             * Composes a sub model
+             * @param {js.data.Model} model
+             * @param {String} action
+             * @param {Object} options
+             * @return {Object}
+             * @private
+             */
             _composeSubModel: function (model, action, options) {
                 // TODO: implement compose SubModel
                 // just return id
                 return model.$.id;
             },
-
+            /***
+             * Composes a collection. Returns undefined as collections are not composed into a model.
+             * Can be overridden to nest collections
+             * @param {js.data.Collection} collection
+             * @param {String} action
+             * @param {Object} options
+             * @return {*}
+             * @private
+             */
             _composeCollection: function (collection, action, options) {
                 return undefined;
             },
             /**
              * Parses data for a given model
-             * @param model
-             * @param data
-             * @param action
-             * @param options
-             * @return {*}
+             * @param {js.data.Model} model
+             * @param {Object} data
+             * @param {String} action
+             * @param {Object} options
+             * @return {Object}
              */
             parse: function (model, data, action, options) {
                 var schema = model.$schema;
@@ -287,16 +325,15 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                 // convert top level properties to Models respective to there schema
                 for (var key in schema) {
                     if (schema.hasOwnProperty(key)) {
-                        if (data.hasOwnProperty(key)) {
-                            // found key in data payload
-                            var schemaType = schema[key],
-                                value = this._getValueForKey(data, key, schemaType),
-                                factory = null,
-                                typeResolver,
-                                entity,
-                                i,
-                                list;
-
+                        // found key in data payload
+                        var schemaType = schema[key],
+                            value = this._getValueForKey(data, key, schemaType),
+                            factory = null,
+                            typeResolver,
+                            entity,
+                            i,
+                            list;
+                        if (!_.isUndefined(value)) {
                             if (schemaType instanceof Array) {
                                 if (schemaType.length === 1) {
                                     typeResolver = schemaType[0];
@@ -377,7 +414,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                                 data[key] = entity = model.getContextForChild(factory).createEntity(factory, value.id);
                                 entity.set(this._parseModel(entity, value, action, options));
 
-                                if(entity instanceof Entity && !(entity instanceof Model)){
+                                if (entity instanceof Entity && !(entity instanceof Model)) {
                                     entity.$parent = model;
                                 }
 
@@ -388,13 +425,28 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
 
                 return model.parse(data);
             },
-
-            _parseModel: function(model, data, action, options) {
+            /***
+             * Parses the data to a given model
+             * @param {js.data.Model} model The model which provides the schema
+             * @param {Object} data The data to parse
+             * @param {String} action
+             * @param {Object} options
+             * @return {*}
+             * @private
+             */
+            _parseModel: function (model, data, action, options) {
                 var processor = this.$dataSource.getProcessorForModel(model);
                 return processor.parse(model, data, action, options);
             },
-
-            parseCollection: function(collection, data, action, options) {
+            /***
+             * Parses the data to a given collection
+             * @param {js.data.Collection} collection
+             * @param {Object} data
+             * @param {String} action
+             * @param {Object} options
+             * @return {*}
+             */
+            parseCollection: function (collection, data, action, options) {
                 if (!(data instanceof Array)) {
                     throw "data has to be an array";
                 }
@@ -415,9 +467,9 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
              * This method can be used to map payload values to the correct schema key
              * For example to map "company_id" to "company" : {id: "2"} ...
              *
-             * @param data The payload data
-             * @param key The schema key
-             * @param schemaType The schema typ
+             * @param {Object} data The payload data
+             * @param {String} key The schema key
+             * @param {Function} schemaType The schema typ
              * @return {*} Returns the correct value for a reference and schemaType
              * @private
              */
@@ -451,7 +503,11 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                     })
                     .exec(callback);
             },
-
+            /***
+             * Returns all sub models, which should be saved afterwards the model is saved
+             * @param {js.data.Model} model
+             * @return {Array}
+             */
             getSubModelsForModel: function (model) {
 
                 var ret = [];
@@ -499,7 +555,9 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
         });
 
         var DataSource = Component.inherit('js.data.DataSource', {
-
+            defaults: {
+                dateFormat: "YYYY-MM-DDTHH:mm:ssZ"
+            },
             ctor: function () {
                 this.$dataSourceConfiguration = null;
                 this.$configuredTypes = [];
@@ -549,16 +607,22 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
             _validateConfiguration: function () {
                 // hook
             },
-
+            /***
+             * Returns the configuration for a model class name
+             * @param modelClassName
+             * @return {*}
+             */
             getConfigurationForModelClassName: function (modelClassName) {
                 return this.$dataSourceConfiguration.getConfigurationForModelClassName(modelClassName);
             },
-
+            /***
+             * Returns the configuration for a collectionclass name
+             * @param modelClassName
+             * @return {*}
+             */
             getConfigurationForCollectionClassName: function (collectionClassName) {
                 return this.$dataSourceConfiguration.getConfigurationForCollectionClassName(collectionClassName);
             },
-
-
             /***
              *
              * @param {Function} childFactory
@@ -609,7 +673,12 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
 
                 return null;
             },
-
+            /***
+             * Returns the context for a properties object
+             * @param {Object} properties
+             * @param {js.data.DataSource.Context} [parentContext]
+             * @return {js.data.DataSource.Context}
+             */
             getContext: function (properties, parentContext) {
 
                 if (!(properties && _.size(properties))) {
@@ -622,23 +691,41 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
 
             },
 
-            /**
-             * returns the root context
+            /***
+             * Returns the root context of the data source
+             * @return {js.data.DataSource.Context} context
              */
             root: function () {
                 return this.$rootContext;
             },
-
+            /***
+             * Creates a context with the given properties
+             * @param {Object} properties
+             * @param {js.data.DataSource.Context} [parentContext]
+             * @return {js.data.DataSource.Context}
+             */
             createContext: function (properties, parentContext) {
                 return new Context(this, properties, parentContext)
             },
-
+            /***
+             * Create an instance of {js.data.Entity}
+             * @param {Function} factory
+             * @param {String|Number} [id]
+             * @param {js.data.DataSource.Context} [context]
+             * @return {js.data.Entity}
+             */
             createEntity: function (factory, id, context) {
                 context = context || this.getContext();
 
                 return context.createEntity(factory, id);
             },
-
+            /***
+             * Creates a collection by a given factory in a caching context
+             * @param {Function} factory The factory
+             * @param {Object} [options]
+             * @param {js.data.DataSource.Context} [context]
+             * @return {js.data.Collection}
+             */
             createCollection: function (factory, options, context) {
                 context = context || this.getContext();
 
@@ -657,7 +744,13 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                     callback("Abstract method", data);
                 }
             },
-
+            /**
+             * Loads the data for a given model. (abstract)
+             * This method is called by model.fetch()
+             * @param {js.data.Model} model
+             * @param {Object} options
+             * @param {Function} callback
+             */
             loadModel: function (model, options, callback) {
                 if (callback) {
                     callback("Abstract method", model);
@@ -665,28 +758,45 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
             },
 
             /***
-             *
-             * @param list
-             * @param options
-             * @param callback
+             * Same as loadModel, but for a collection page
+             * @param {js.data.Collection} list
+             * @param {Object} options
+             * @param {Function} callback
              */
             loadCollectionPage: function (list, options, callback) {
                 if (callback) {
                     callback("Abstact method loadCollectionPage", list);
                 }
             },
-
+            /***
+             * Saves a model
+             * @param {js.data.Model} model
+             * @param {Object} options
+             * @param {Function} callback
+             */
             saveModel: function (model, options, callback) {
                 if (callback) {
                     callback("Abstract method saveModel", model);
                 }
             },
+            /***
+             * Removes a model
+             * @param {js.data.Model} model
+             * @param {Object} options
+             * @param {Function} callback
+             */
             removeModel: function (model, options, callback) {
                 if (callback) {
                     callback("Abstract method removeModel", model);
                 }
             },
-
+            /***
+             * Returns the correct processor for model
+             *
+             * @param {js.data.Model} model
+             * @param {Object} [options]
+             * @return {js.data.DataSource.Processor} processor
+             */
             getProcessorForModel: function (model, options) {
                 var ret;
                 if (model) {
@@ -695,7 +805,13 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
 
                 return ret || this.$defaultProcessor;
             },
-
+            /***
+             * Returns the correct processor for model class name
+             *
+             * @param {String} modelClassName
+             * @param {Object} [options]
+             * @return {js.data.DataSource.Processor} processor
+             */
             getProcessorForModelClassName: function (modelClassName, options) {
                 var config = this.getConfigurationForModelClassName(modelClassName);
 
@@ -708,7 +824,13 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                     }
                 }
             },
-
+            /***
+             * Returns the correct processor for a collection
+             *
+             * @param {js.data.Collection} collection
+             * @param {Object} [options]
+             * @return {js.data.DataSource.Processor} processor
+             */
             getProcessorForCollection: function (collection, options) {
                 var ret;
                 if (collection && collection.$modelFactory) {
@@ -717,15 +839,13 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
 
                 return ret || this.$defaultProcessor;
             },
-
+            /**
+             * Returns the format processor
+             * @param {String} [action]
+             * @return {*}
+             */
             getFormatProcessor: function (action) {
                 return this.$formatProcessors[0];
-            },
-
-            update: function (data, callback) {
-            },
-
-            find: function (data, callback) {
             }
         });
 
