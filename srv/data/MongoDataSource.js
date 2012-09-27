@@ -2,17 +2,40 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow'], function (Dat
 
 
     var MongoDataProcessor = DataSource.Processor.inherit('src.data.MongoDataProcessor', {
-        _getReferenceKey: function (key, schema) {
+        _composeSubModel: function (model, action, options) {
+            // TODO: add href
+            return this.$dataSource.getIdObject(model.$.id);
+        },
+        _getReferenceKey: function (key, schemaType) {
             // correct key of id object
             if (key === "id") {
                 return "_id";
             }
+            if(schemaType && schemaType.classof && schemaType.classof(Model)){
+                return key + "_id";
+            }
+
             return this.callBase();
+        },
+        _getValueForKey: function(data, key, schemaType){
+            if(schemaType && schemaType.classof && schemaType.classof(Model)){
+                var referenceKey = this._getReferenceKey(key, schemaType);
+                var id = data[referenceKey];
+                delete data[referenceKey];
+                if(id){
+                    return {
+                        id: id.toHexString()
+                    }
+                }
+                return null;
+            }
+            return this.callBase();
+
         },
         _getCompositionValue: function (value, key, action, options) {
             // add correct id object
             if (key === "id" && value) {
-                return this.$datasource.getIdObject(value);
+                return this.$dataSource.getIdObject(value);
             }
             return this.callBase();
         },
@@ -127,11 +150,8 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow'], function (Dat
                             cb(err);
                         });
                     } else if (method === MongoDataSource.METHOD.SAVE) {
-                        this.vars['collection'].update({_id: this.getIdObject(model.$.id)}, data, {safe: true}, function (err, objects) {
-                            if (!err) {
-                                model.set(processor.parse(model, objects[0]));
-                            }
-                            cb(err);
+                        this.vars['collection'].update({_id: data._id}, data, {safe: true}, function (err, objects) {
+                            cb(err, model);
                         });
                     } else {
                         cb("Wrong method");
