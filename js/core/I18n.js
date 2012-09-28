@@ -1,7 +1,7 @@
 define(["require", "js/core/Component", "underscore"], function (require, Component, _) {
     return Component.inherit("js.core.I18n", {
         defaults: {
-            path: 'ivo/locale',
+            path: 'app/locale',
             locale: null,
             suffix: '.json',
             translations: {}
@@ -9,7 +9,6 @@ define(["require", "js/core/Component", "underscore"], function (require, Compon
 
         initialize: function () {
             this.callBase();
-
             this.loadLocale(this.$.locale);
         },
 
