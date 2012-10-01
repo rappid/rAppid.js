@@ -1,6 +1,6 @@
-define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable", "js/core/EventDispatcher", "underscore", "js/core/Binding"],
+define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable", "js/core/EventDispatcher", "underscore"],
 
-    function (require, Element, TextElement, Bindable, EventDispatcher, _, Binding) {
+    function (require, Element, TextElement, Bindable, EventDispatcher, _) {
 
         var Component = Element.inherit("js.core.Component",
             {
