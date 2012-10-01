@@ -28,6 +28,10 @@ define(['srv/core/EndPoint', 'https'], function(EndPoint, Https) {
 
         _stop: function(callback) {
             this.$endPoint && this.$endPoint.close(callback);
+        },
+
+        uri: function () {
+            return "https://" + this.$.hostname + ":" + this.$.port;
         }
     });
 });
