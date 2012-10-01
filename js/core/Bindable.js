@@ -121,7 +121,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding","underscor
                 },
                 /***
                  * This method returns a copy of the Object
-                 * @return js.core.Bindable a fresh copy of the Bindable
+                 * @return {js.core.Bindable} a fresh copy of the Bindable
                  */
                 clone: function (options) {
                     var ret = {};

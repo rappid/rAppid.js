@@ -162,15 +162,16 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                         this.$elements.splice(index, 1);
                     }
 
+                    if (index != -1) {
+                        this.$configurations.splice(index, 1);
+                    }
+
                     if (this.$templates.hasOwnProperty(child.$.name)) {
                         // remove it from templates
                         delete this.$templates[child.$.name];
                     }
 
-                    index = this.$elements.indexOf(child);
-                    if (index != -1) {
-                        this.$configurations.splice(index, 1);
-                    }
+
 
                 },
 
@@ -184,7 +185,12 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                 _addConfiguration: function (config) {
                     this.$configurations.push(config);
                 },
-
+                /***
+                 * Goes up the tree and searches for a template component with the given name.
+                 * Returns null if no template was found.
+                 * @param {String} name
+                 * @return {js.core.Template}
+                 */
                 getTemplate: function (name) {
                     var tpl = this.$templates[name];
                     if (tpl) {
@@ -418,8 +424,6 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                     // the corresponding $[key] to null -> than evaluate the bindings
                     // this is because some function bindings belong on other binding values which are
                     // at the time of evaluation maybe unresolved and for example {foo.bar} instead of a value
-
-
                     for (key in $) {
                         if ($.hasOwnProperty(key)) {
                             value = $[key];

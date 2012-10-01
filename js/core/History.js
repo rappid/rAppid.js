@@ -46,7 +46,11 @@ define(["js/core/Bindable", "flow"], function (Bindable, flow) {
 
             return fragment.replace(routeStripper, '');
         },
-
+        /***
+         * This method is called to start the history
+         * @param {Function} callback - get's called after the navigation is completed
+         * @param {String} initialHash
+         */
         start: function (callback, initialHash) {
 
             var self = this;
@@ -135,7 +139,13 @@ define(["js/core/Bindable", "flow"], function (Bindable, flow) {
                     .exec(callback)
             }
         },
-
+        /***
+         * Navigates to a fragment
+         * @param {String} fragment
+         * @param {Boolean} [createHistoryEntry] - default true
+         * @param {Boolean} [triggerRoute] - default true
+         * @param {Function} callback - navigate callback
+         */
         navigate: function (fragment, createHistoryEntry, triggerRoute, callback) {
 
             var self = this;
@@ -188,10 +198,6 @@ define(["js/core/Bindable", "flow"], function (Bindable, flow) {
                 }
                 this.$history[this.$history.length - 1] = fragment;
             }
-
-
-
-
 
             if(this.$fragment !== fragment){
                 this.$fragment = fragment;
