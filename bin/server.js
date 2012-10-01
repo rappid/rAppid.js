@@ -1,8 +1,7 @@
 var path = require('path'),
     fs = require('fs'),
     requirejs = require('requirejs'),
-    _ = require('underscore'),
-    tty = require('tty');
+    _ = require('underscore');
 
 fs.existsSync || (fs.existsSync = path.existsSync);
 
@@ -10,12 +9,13 @@ var serverExport = function (args, callback) {
 
     var argv = require('optimist')(args)
         .usage(serverExport.usage)
+        // TODO
 //        .demand(1)
         .argv;
 
     var serverInstance,
         serverDirectory = process.cwd(),
-        documentRoot = serverDirectory,
+        documentRoot = path.resolve(path.join(serverDirectory, '..', 'public')),
         serverFactoryClassName = 'xaml!web/Server',
         configPath = 'config.json';
 
@@ -67,6 +67,7 @@ var serverExport = function (args, callback) {
             throw err;
         } else {
             var requirejsContext = applicationContext.$requirejsContext;
+            applicationContext.$nodeRequire = require;
 
             requirejsContext([serverFactoryClassName, 'srv/core/Server', 'srv/core/ServerContext', 'js/core/Injection'], function (ServerFactory, Server, ServerContext, Injection) {
 
