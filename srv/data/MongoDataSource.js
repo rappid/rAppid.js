@@ -1,7 +1,17 @@
 define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow'], function (DataSource, mongodb, Model, flow) {
 
+    var ID_KEY = "_id",
+        PARENT_KEY = "_parent_id";
 
     var MongoDataProcessor = DataSource.Processor.inherit('src.data.MongoDataProcessor', {
+        compose: function(model, action, options){
+            var data = this.callBase();
+
+            if(model.$parent){
+                data[PARENT_KEY] = model.$parent.$.id;
+            }
+            return data;
+        },
         _composeSubModel: function (model, action, options) {
             // TODO: add href
             return this.$dataSource.getIdObject(model.$.id);
@@ -9,7 +19,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow'], function (Dat
         _getReferenceKey: function (key, schemaType) {
             // correct key of id object
             if (key === "id") {
-                return "_id";
+                return ID_KEY;
             }
             if(schemaType && schemaType.classof && schemaType.classof(Model)){
                 return key + "_id";
@@ -29,6 +39,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow'], function (Dat
                 }
                 return null;
             }
+
             return this.callBase();
 
         },
@@ -37,6 +48,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow'], function (Dat
             if (key === "id" && value) {
                 return this.$dataSource.getIdObject(value);
             }
+
             return this.callBase();
         },
         parse: function (model, data, action, options) {
@@ -44,6 +56,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow'], function (Dat
                 data['id'] = data._id.toHexString();
                 delete data['_id'];
             }
+            delete data[PARENT_KEY];
 
             return this.callBase(model, data, action, options);
         }
@@ -92,6 +105,9 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow'], function (Dat
                 callback("Coulnd't find entry " + configuration.$.collection + "/" + model.$.id);
             }
 
+            var processor = this.getProcessorForModel(model);
+
+
             // TODO: add loading/linking of sub models
             var self = this, connection;
             flow()
@@ -101,9 +117,9 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow'], function (Dat
                     });
                 })
                 .seq(function (cb) {
-                    this.vars['collection'].findOne({_id: idObject}, function (err, objects) {
+                    this.vars['collection'].findOne({_id: idObject}, function (err, object) {
                         if (!err) {
-                            model.set(model.parse(objects));
+                            model.set(processor.parse(model, object));
                         }
                         cb(err);
                     });
@@ -164,24 +180,38 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow'], function (Dat
                     callback(err, model);
 
                 });
-
-//            var collection = this.$db.collection(configuration.$.collection);
-//            collection[method].call(collection, data, {}, function (err, result) {
-//                if (!err) {
-//                    if (result) {
-//                        // TODO: parse the payload and fill model
-//                        if (method == "insert") {
-//                            model.set(model.parse(result[0]));
-//                        }
-//                        callback(null, model);
-//                    } else {
-//                        callback("Coulnd't save entry " + configuration.$.collection + "/" + model.$.id);
-//                    }
-//                } else {
-//                    callback(err);
-//                }
-//            });
         },
+
+        removeModel: function(model, options, callback){
+            var configuration = this._getConfigurationForModel(model);
+
+            if (!configuration) {
+                callback("No configuration found for " + model.constructor.name);
+                return;
+            }
+
+            var self = this, connection;
+
+            flow()
+                .seq("collection", function (cb) {
+                    connection = self.connect(function (err, client) {
+                        cb(err, new mongodb.Collection(client, configuration.$.collection));
+                    });
+                })
+                .seq(function (cb) {
+                    this.vars['collection'].remove({_id: self.getIdObject(model.$.id)}, {safe: true}, function (err) {
+                        cb(err, model);
+                    });
+                })
+                .exec(function (err) {
+                    if (connection) {
+                        connection.close();
+                    }
+                    callback(err, model);
+
+                });
+        },
+
         loadCollectionPage: function (collection, options, callback) {
             var rootCollection = collection.getRootCollection();
             var config = this.$dataSourceConfiguration.getConfigurationForModelClassName(rootCollection.$modelFactory.prototype.constructor.name);
@@ -197,7 +227,12 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow'], function (Dat
 
             // TODO: add query, fields and options
 
-            var self = this, connection;
+            var self = this, connection, where = {};
+
+            if(rootCollection.$parent){
+                where['_parent_id'] = rootCollection.$parent.$.id;
+            }
+
             flow()
                 .seq("collection", function (cb) {
                     connection = self.connect(function (err, client) {
@@ -205,7 +240,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow'], function (Dat
                     });
                 })
                 .seq("cursor", function (cb) {
-                    var cursor = this.vars["collection"].find();
+                    var cursor = this.vars["collection"].find(where);
                     if(options.limit){
                         cursor = cursor.limit(options.limit);
                     }

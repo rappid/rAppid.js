@@ -75,7 +75,17 @@ define(['js/core/Base', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'js/dat
                 throw new HttpError("Method not supported", 404);
             }
         },
+        _findCollection: function(context){
+            if (this.$parentResource) {
+                // TODO: refactor this
+                var parentFactory = this.$parentResource._getModelFactory();
+                var parent = context.dataSource.createEntity(parentFactory, this.$parentResource.$resourceId);
 
+                return parent.getCollection(this.$resourceConfiguration.$.path);
+            } else {
+                return context.dataSource.createCollection(Collection.of(this._getModelFactory()));
+            }
+        },
         /***
          * determinate the request method from the request
          *
@@ -102,8 +112,7 @@ define(['js/core/Base', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'js/dat
          * @private
          */
         _index: function(context, callback) {
-            var modelFactory = this._getModelFactory();
-            var collection = context.dataSource.createCollection(Collection.of(modelFactory));
+            var collection = this._findCollection(context);
 
             var parameters = context.request.urlInfo.parameter;
             var options = {};
@@ -152,8 +161,8 @@ define(['js/core/Base', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'js/dat
          * @private
          */
         _create: function(context, callback) {
-            var modelFactory = this._getModelFactory();
-            var model = context.dataSource.createEntity(modelFactory);
+            var collection = this._findCollection(context);
+            var model = collection.createItem();
 
             var payload = context.request.params;
 
@@ -161,16 +170,22 @@ define(['js/core/Base', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'js/dat
 
             model.set(processor.parse(model, payload));
 
-            // TODO: add options
+            model.set('created',new Date());
+
+            // TODO: add hook to add session data like user id
+
             model.save({}, function (err, model) {
                 if (!err) {
+                    // TODO: do correct invalidation
+                    collection.invalidatePageCache();
+
                     // TODO: generate the location header
                     var body = "";
 
                     var response = context.response;
                     response.writeHead(201, "", {
                         'Content-Type': 'application/json',
-                        'Location' : 'http://todo/'+model.$.id
+                        'Location' : 'http://todo'+context.request.url + "/" + model.$.id
                     });
 
                     response.write(body);
@@ -191,11 +206,15 @@ define(['js/core/Base', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'js/dat
         _show: function(context, callback) {
             var modelFactory = this._getModelFactory();
             var model = context.dataSource.createEntity(modelFactory,this.$resourceId);
+            var self = this;
 
-            // TODO: add options
+            // TODO: add fields/include option handling
             model.fetch({}, function(err, model){
                 if(!err){
-                    var body = JSON.stringify(model.$), response = context.response;
+                    var processor = self.$restHandler.$restDataSource.getProcessorForModel(model);
+
+                    var body = JSON.stringify(processor.compose(model, null)),
+                        response = context.response;
 
                     response.writeHead(200, "", {
                         'Content-Length': body.length,
@@ -217,8 +236,8 @@ define(['js/core/Base', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'js/dat
          * @private
          */
         _update: function(context, callback) {
-            var modelFactory = this._getModelFactory();
-            var model = context.dataSource.createEntity(modelFactory, this.$resourceId);
+            var collection = this._findCollection(context);
+            var model = collection.createItem(this.$resourceId);
 
             var payload = context.request.params;
 
@@ -226,9 +245,13 @@ define(['js/core/Base', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'js/dat
 
             model.set(processor.parse(model, payload));
 
-            // TODO: add options
-            model.save({}, function (err, model) {
+            // TODO: add hook to add session data like user id
+
+            model.save({}, function (err) {
                 if (!err) {
+                    // TODO: do correct invalidation
+                    collection.invalidatePageCache();
+
                     // TODO: generate the location header
                     var body = "";
 
@@ -253,7 +276,29 @@ define(['js/core/Base', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'js/dat
          * @private
          */
         _delete: function(context, callback) {
-            throw new HttpError("Not implemented", 500);
+            var collection = this._findCollection(context);
+            var model = collection.createItem(this.$resourceId);
+
+            model.remove({}, function(err){
+                if (!err) {
+                    // TODO: do correct invalidation
+                    collection.invalidatePageCache();
+                    // TODO: generate the location header
+                    var body = "";
+
+                    var response = context.response;
+                    response.writeHead(200, "", {
+                        'Content-Type': 'application/json'
+                    });
+
+                    response.write(body);
+                    response.end();
+
+                    callback(null);
+                } else {
+                    callback(new HttpError(err, 500));
+                }
+            });
         }
 
     });
