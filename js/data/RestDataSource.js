@@ -229,7 +229,7 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
                     if (id || id === 0) {
                         model.set('id', id);
 
-                        var schema = model.$schema, schemaType;
+                        var schema = model.schema, schemaType;
                         for(var schemaKey in schema){
                             if(schema.hasOwnProperty(schemaKey)){
                                 schemaType = schema[schemaKey];

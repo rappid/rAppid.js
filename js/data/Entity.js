@@ -1,5 +1,5 @@
-define(['require', 'js/core/Bindable', 'js/core/List'],
-    function (require, Bindable, List) {
+define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validator/Validator'],
+    function (require, Bindable, List, flow, Validator) {
         var Collection;
 
         var Entity = Bindable.inherit('js.core.Entity', {
@@ -11,7 +11,9 @@ define(['require', 'js/core/Bindable', 'js/core/List'],
                 this.callBase(attributes);
             },
 
-            $schema: {},
+            schema: {},
+
+            validators: [           ],
 
             $context: null,
 
@@ -23,10 +25,10 @@ define(['require', 'js/core/Bindable', 'js/core/List'],
                 var base = this.base;
 
                 while (base instanceof Entity) {
-                    var baseSchema = base.$schema;
+                    var baseSchema = base.schema;
                     for (var type in baseSchema) {
-                        if (baseSchema.hasOwnProperty(type) && !this.$schema.hasOwnProperty(type)) {
-                            this.$schema[type] = baseSchema[type];
+                        if (baseSchema.hasOwnProperty(type) && !this.schema.hasOwnProperty(type)) {
+                            this.schema[type] = baseSchema[type];
                         }
                     }
                     base = base.base;
@@ -98,30 +100,106 @@ define(['require', 'js/core/Bindable', 'js/core/List'],
             },
 
             /***
-             * Sets the errors for the entity
-             * @param {Object} errors
-             */
-            setErrors: function (errors) {
-                for (var key in errors) {
-                    if (errors.hasOwnProperty(key)) {
-                        this.$errors.set(key, errors[key]);
-                    }
-                }
-            },
-            /***
              * Returns the errors of the entity
+             * @param {String} field
              * @return {js.core.Bindable}
              */
-            errors: function () {
-                return this.$errors;
+            errors: function (field) {
+                return this.$errors.$[field];
+            }.on('isValidChanged'),
+
+            /***
+             *
+             * @return {Boolean} true if valid
+             */
+            isValid: function(){
+                return _.size(this.$errors) === 0;
+            }.on('isValidChanged'),
+
+            /***
+             *
+             * @param {Object} options
+             * @param {Object} [options.setErrors=true] -
+             * @param {Object} [options.fields=null] - fields to validate
+             *
+             * @param {Function} [callback]
+             */
+            validate: function(options, callback) {
+
+                options = options || {};
+
+                _.defaults(options, {
+                    setErrors: true,
+                    fields: null
+                });
+
+                var self = this;
+
+                var validators = [], validator;
+                if(options.fields && options.fields.length > 0){
+                    for(var i = 0; i < this.validators.length; i++){
+                        validator = this.validators[i];
+                        if(options.fields.indexOf(validator.$.field) > -1){
+                            validators.push(validator);
+                        }
+                    }
+                }else{
+                    validators = this.validators;
+                }
+
+                var validationErrors = [];
+
+                flow()
+                    .parEach(validators, function (validator, cb) {
+                        validator.validate(self, function (err, result) {
+                            if (!err && result) {
+                                validationErrors.push(result);
+                            }
+                            cb(err);
+                        });
+                    })
+                    .exec(function (err) {
+                        if(options.setErrors === true){
+                            self._setErrors(validationErrors);
+                        }
+                        callback && callback(err || validationErrors.length === 0 ? null : validationErrors);
+                    });
+
             },
+
+            _setErrors: function(errors) {
+                this.$errors.clear();
+
+                var error;
+
+                try {
+                    for (var i = 0; i < errors.length; i++) {
+                        error = errors[i];
+                        if (error.$.field && !this.$errors.$.hasOwnProperty(error.$.field)) {
+                            this.$errors.set(error.$.field, error);
+                        } else if (!this.$errors.$.hasOwnProperty('_base')) {
+                            this.$errors.set('_base', error);
+                        }
+                    }
+                } catch(e) {
+                    this.log(e, 'warn');
+                }
+                this.trigger('isValidChanged');
+            },
+
+            error: function(key){
+                if (key) {
+                    return this.$errors.get(key);
+                }
+                return null;
+            },
+
             clone: function () {
                 var ret = this.callBase();
                 ret.$context = this.$context;
                 return ret;
             }
         });
-
 
         return Entity;
 

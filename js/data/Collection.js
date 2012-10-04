@@ -156,7 +156,12 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore"], funct
         },
 
         createItem: function(id) {
-            return this.getContextForChild(this.$modelFactory).createEntity(this.$modelFactory, id);
+            var item = this.getContextForChild(this.$modelFactory).createEntity(this.$modelFactory, id);
+
+            item.$parent = this.$parent;
+            item.$collection = this;
+
+            return item;
         },
 
         fetchPage: function (pageIndex, options, callback) {
@@ -187,6 +192,10 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore"], funct
                     callback(err, page, options);
                 }
             });
+        },
+
+        invalidatePageCache: function(){
+            this.$pageCache = {};
         },
 
         // returns a new collections

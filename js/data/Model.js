@@ -53,6 +53,25 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
 
         },
 
+        getCollection: function(key){
+            var schemaType = this.schema[key];
+            if (!schemaType) {
+                throw "Couldn't find '" + key + "' in schema";
+            }
+            var collection = this.get(key);
+            if(!collection){
+                var context = this.getContextForChild(schemaType);
+                if(context){
+                    collection = context.createCollection(schemaType, null);
+                    collection.$parent = this;
+                    this.set(key, collection);
+                }else{
+                    throw "Couldn't determine context for " + key;
+                }
+            }
+            return collection;
+
+        },
 
         prepare: function(attributes, action) {
             attributes = this.callBase();

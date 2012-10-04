@@ -219,7 +219,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                         var value = this._getCompositionValue(data[key], key, action, options);
 
                         if (value !== undefined) {
-                            ret[this._getReferenceKey(key, entity.$schema[key])] = value;
+                            ret[this._getReferenceKey(key, entity.schema[key])] = value;
                         }
                     }
                 }
@@ -352,7 +352,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
              * @return {Object}
              */
             parse: function (model, data, action, options) {
-                var schema = model.$schema;
+                var schema = model.schema;
 
                 // convert top level properties to Models respective to there schema
                 for (var key in schema) {
@@ -365,7 +365,6 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                             entity,
                             i,
                             list;
-                        if (!_.isUndefined(value)) {
                             if (schemaType instanceof Array) {
                                 if (schemaType.length === 1) {
                                     typeResolver = schemaType[0];
@@ -381,34 +380,28 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                                     typeResolver = null;
                                 }
 
-                                if (value instanceof Array || value === null) {
-                                    list = data[key] = new List();
+                                list = data[key] = new List();
 
+                                if (value && value instanceof Array) {
+                                    for (i = 0; i < value.length; i++) {
 
-                                    if (value) {
-                                        for (i = 0; i < value.length; i++) {
-
-                                            if (typeResolver) {
-                                                factory = typeResolver.resolve(value[i], key);
-                                            }
-
-                                            if (!(factory && factory.classof(Entity))) {
-                                                throw "Factory for type '" + key + "' isn't an instance of Entity";
-                                            }
-
-                                            entity = model.getContextForChild(factory).createEntity(factory, value[i].id);
-                                            entity.set(this._parseModel(entity, value[i], action, options));
-
-                                            if (entity instanceof Entity && !(entity instanceof Model)) {
-                                                entity.$parent = model;
-                                            }
-
-                                            list.add(entity);
+                                        if (typeResolver) {
+                                            factory = typeResolver.resolve(value[i], key);
                                         }
-                                    }
 
-                                } else {
-                                    throw 'Schema for type "' + key + '" requires to be an array';
+                                        if (!(factory && factory.classof(Entity))) {
+                                            throw "Factory for type '" + key + "' isn't an instance of Entity";
+                                        }
+
+                                        entity = model.getContextForChild(factory).createEntity(factory, value[i].id);
+                                        entity.set(this._parseModel(entity, value[i], action, options));
+
+                                        if (entity instanceof Entity && !(entity instanceof Model)) {
+                                            entity.$parent = model;
+                                        }
+
+                                        list.add(entity);
+                                    }
                                 }
 
 
@@ -416,12 +409,11 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
 
                                 var contextForChildren = model.getContextForChild(schemaType);
                                 list = data[key] = contextForChildren.createCollection(schemaType, null);
-                                list.set(value);
 
-                                if (value instanceof Array || value === null) {
+                                if (value && value instanceof Array) {
                                     for (i = 0; i < value.length; i++) {
                                         // create new entity based on collection type
-                                        entity = contextForChildren.createEntity(list.$modelFactory);
+                                        entity = list.createItem();
                                         entity.set(this._parseModel(entity, value[i], action, options));
                                         // and add it to the collection
                                         list.add(entity);
@@ -431,7 +423,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
 //                                throw 'Schema for type "' + type + '" requires to be an array';
                                 }
                             } else if (schemaType === Date && value) {
-                                data[key] = moment(value, this.$dataSource.$.dateFormat);
+                                data[key] = moment(value, this.$dataSource.$.dateFormat).toDate();
                             } else if (schemaType.classof(Entity) && value) {
                                 if (schemaType instanceof TypeResolver) {
                                     factory = schemaType.resolve(value, key);
@@ -451,7 +443,6 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                                 }
 
                             }
-                        }
                     }
                 }
 
@@ -512,7 +503,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
              * saves sub models
              */
             saveSubModels: function (model, options, callback) {
-                var schema = model.$schema, subModels = [], type;
+                var schema = model.schema, subModels = [], type;
                 for (var reference in schema) {
                     if (schema.hasOwnProperty(reference)) {
                         type = schema[reference];
