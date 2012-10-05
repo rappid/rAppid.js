@@ -61,15 +61,22 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding","underscor
 
                     attributes = attributes || {};
 
-                    var defaultAttributes = this._defaultAttributes();
+                    var defaultAttributes = this._defaultAttributes(), defaultAttribute;
+
                     for (var key in defaultAttributes) {
                         if (defaultAttributes.hasOwnProperty(key)) {
+                            defaultAttribute = defaultAttributes[key];
                             if (!attributes.hasOwnProperty(key)) {
-                                if (_.isFunction(defaultAttributes[key])) {
+                                if (_.isFunction(defaultAttribute)) {
                                     // Function as default -> construct new Object
-                                    attributes[key] = new (defaultAttributes[key])();
+                                    attributes[key] = new (defaultAttribute)();
                                 } else {
-                                    attributes[key] = _.clone(defaultAttributes[key]);
+                                    // RegExp should not be cloned!
+                                    if(defaultAttributes[key] instanceof RegExp){
+                                        attributes[key] = defaultAttribute;
+                                    }else{
+                                        attributes[key] = _.clone(defaultAttribute);
+                                    }
                                 }
                             }
                         }
