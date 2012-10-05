@@ -26,7 +26,6 @@ define(['js/data/validator/Validator', 'underscore'], function (Validator, _) {
                     return this._createFieldError();
                 }
             }
-            return true;
         }
 
     })

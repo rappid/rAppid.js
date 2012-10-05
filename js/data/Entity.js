@@ -113,7 +113,7 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
              * @return {Boolean} true if valid
              */
             isValid: function(){
-                return _.size(this.$errors) === 0;
+                return _.size(this.$errors.$) === 0;
             }.on('isValidChanged'),
 
             /***
