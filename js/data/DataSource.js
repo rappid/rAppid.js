@@ -380,9 +380,10 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                                     typeResolver = null;
                                 }
 
-                                list = data[key] = new List();
-
                                 if (value && value instanceof Array) {
+                                    // only create the list if items are there
+                                    list = data[key] = new List();
+
                                     for (i = 0; i < value.length; i++) {
 
                                         if (typeResolver) {
