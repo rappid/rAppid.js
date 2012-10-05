@@ -39,7 +39,7 @@ define(['js/core/Bindable'], function (Bindable) {
             } catch(e) {
                 if (e instanceof Validator.Error) {
                     internalCallback(null, e);
-                } else{
+                } else {
                     internalCallback(e);
                 }
             }
@@ -66,14 +66,11 @@ define(['js/core/Bindable'], function (Bindable) {
         },
 
         _getErrorMessage: function () {
-            if(!this.$.errorMessage){
-                if(this.$.field){
-                    return "Field '%' is invalid".replace('%', this.$.field);
-                }else{
-                    return "Entity is invalid";
-                }
+            if (this.$.field) {
+                return  (this.$.errorMessage || "Field '%' is invalid").replace('%', this.$.field);
+            } else {
+                return this.$.errorMessage || "Entity is invalid";
             }
-            return this.$.errorMessage;
         },
         _createFieldError: function () {
             return new Validator.Error({
