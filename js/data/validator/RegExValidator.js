@@ -5,7 +5,7 @@ define(['js/data/validator/Validator', 'underscore'], function (Validator, _) {
             errorCode: 'regExError'
         },
 
-        ctor: function(field, regEx){
+        ctor: function(){
             var b = this.callBase();
 
             if(!this.$.regEx){
@@ -16,7 +16,7 @@ define(['js/data/validator/Validator', 'underscore'], function (Validator, _) {
         },
 
         _generateCacheKey: function(field, regEx){
-            return field + "_" + regEx.toString();
+            return null;
         },
 
         _validate: function (entity) {
