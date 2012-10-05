@@ -76,10 +76,15 @@ define(
                     }
                 }
             },
-            _renderSelectedItem: function (item) {
+            _renderSelectedItem: function (item, oldItem) {
                 var comp = this.getComponentForItem(item);
                 if (comp) {
                     comp.set({selected: true});
+                }else{
+                    if(oldItem && !this.$.multiSelect){
+                        comp = this.getComponentForItem(oldItem);
+                        comp && comp.set({selected: false});
+                    }
                 }
             },
             _renderSelectedItems: function (list) {
