@@ -175,13 +175,7 @@ define(["js/core/Bindable", "flow"], function (Bindable, flow) {
             };
 
             this.trigger(History.EVENTS.NAVIGATION_START, eventData);
-
-            this.$processUrl = false;
-            var isSameFragment = decodeURI(window.location.hash) === "#/" + fragment;
-
-            if (isSameFragment) {
-                this.$processUrl = true;
-            }
+            this.$processUrl = (this._getFragment() === "#/" + fragment);
 
             if (createHistoryEntry) {
                 if (this.runsInBrowser()) {
