@@ -504,16 +504,25 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
              * saves sub models
              */
             saveSubModels: function (model, options, callback) {
-                var schema = model.schema, subModels = [], type;
+                var schema = model.schema, subModels = [], type, subCollection, subModel;
                 for (var reference in schema) {
                     if (schema.hasOwnProperty(reference)) {
                         type = schema[reference];
                         if (type.classof) {
-                            // todo: add collection
+                            // TODO: remove $nestedModels and use options to specify, which subModels should also be saved
+                            // This depends on the changes of the model.
+                            // If the submodels haven't changed, than there is no need to save sub models/collections.
                             if (type.classof(Model)) {
-                                // TODO: clearify $nestedModels
-                                if (model.$[reference] && _.include(model.$nestedModels, reference)) {
-                                    subModels.push(model.$[reference]);
+                                subModel = model.$[reference];
+                                if (subModel && _.include(model.$nestedModels, reference)) {
+                                    subModels.push(subModel);
+                                }
+                            } else if(type.classof(Collection)) {
+                                subCollection = model.$[reference];
+                                if(subCollection){
+                                    subCollection.each(function(model){
+                                        subModels.push(model);
+                                    });
                                 }
                             }
                         }
