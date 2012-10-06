@@ -48,7 +48,7 @@ define(['srv/core/EndPoint', 'http'], function(EndPoint, Http) {
         },
 
         uri: function() {
-            return "http://" + this.$.hostname + ":" + this.$.port;
+            return "http://" + (this.$.hostname || "localhost") + ":" + this.$.port;
         }
     });
 });
