@@ -14,7 +14,9 @@ define(['srv/core/Handler', 'path', 'flow', 'fs', 'jsdom', 'underscore'], functi
 
             indexFile: 'index.html',
 
-            config: 'config.json'
+            config: 'config.json',
+
+            defaultStartParameter: {}
         },
 
         start: function(server, callback) {
@@ -27,8 +29,8 @@ define(['srv/core/Handler', 'path', 'flow', 'fs', 'jsdom', 'underscore'], functi
             this.$.applicationDirectory = Path.resolve(this.$.applicationDirectory);
 
             if (!this.$.applicationUrl) {
-                for (var i = 0; i < server.$endPoints.length; i++) {
-                    var endPoint = server.$endPoints[i];
+                for (var i = 0; i < server.$endPoints.$endPoints.length; i++) {
+                    var endPoint = server.$endPoints.$endPoints[i];
 
                     if (endPoint.uri instanceof Function) {
                         this.$.applicationUrl = endPoint.uri();
@@ -79,8 +81,8 @@ define(['srv/core/Handler', 'path', 'flow', 'fs', 'jsdom', 'underscore'], functi
                 .exec(function(err, results) {
 
                     if (!err) {
-                        self.$.applicationContext = results.applicationContext;
-                        self.$.html = results.html;
+                        self.$applicationContext = results["applicationContext"];
+                        self.$html = results["html"];
 
                         self.log('Starting NodeRenderingHandler with applicationDirectory: ' + self.$.applicationDirectory);
                     }
@@ -92,10 +94,48 @@ define(['srv/core/Handler', 'path', 'flow', 'fs', 'jsdom', 'underscore'], functi
 
         isResponsibleForRequest: function (context) {
             // see https://developers.google.com/webmasters/ajax-crawling/docs/getting-started
-            return context.request.urlInfo.parameter.hasOwnProperty('_escaped_fragment_');
+            return context.request.urlInfo.parameter.hasOwnProperty('_escaped_fragment_') &&
+                context.request.urlInfo.pathname === this.$.path;
         },
 
         handleRequest: function(context, callback) {
+
+            var self = this,
+                stage;
+
+            flow()
+                .seq("window", function () {
+                    // generate document
+                    var document = JsDom.jsdom(self.$html);
+                    return document.createWindow();
+                })
+                .seq("app", function (cb) {
+                    self.$applicationContext.createApplicationInstance(cb.vars.window, function (err, s, application) {
+                        stage = s;
+                        cb(err, application);
+                    });
+                })
+                .seq(function (cb) {
+                    // start application
+                    var startParameter = _.extend({}, self.$.defaultStartParameter);
+                    startParameter.initialHash = context.request.urlInfo.parameter["_escaped_fragment_"] || "";
+                    cb.vars["app"].start(startParameter, cb);
+                })
+                .seq("html", function () {
+                    stage.render(this.vars.window.document.body);
+                    return '<!DOCTYPE html>\n' + this.vars.window.document.innerHTML;
+                })
+                .exec(function (err, results) {
+
+
+                    if (!err) {
+                        context.response.writeHead(200, {'Content-Type': 'text/html; charset=utf-8'});
+                        context.response.write(results.html);
+                        context.response.end();
+                    }
+
+                    callback(err);
+                });
 
         }
     });
