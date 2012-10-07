@@ -5,7 +5,7 @@ define(['require', 'srv/core/Handler', 'js/conf/DataSource', 'js/conf/Resource',
 
         ctor: function() {
             this.$resourceConfiguration = null;
-            this.$dataSource = null;
+            this.$dataSources = [];
 
             this.callBase();
         },
@@ -16,7 +16,7 @@ define(['require', 'srv/core/Handler', 'js/conf/DataSource', 'js/conf/Resource',
             }
 
             if (child instanceof DataSource) {
-                this.$dataSource = child;
+                this.$dataSources.push(child);
             }
 
             this.callBase();
@@ -32,7 +32,7 @@ define(['require', 'srv/core/Handler', 'js/conf/DataSource', 'js/conf/Resource',
                 return;
             }
 
-            if (!this.$dataSource) {
+            if (this.$dataSources.length === 0) {
                 callback(new Error("DataSource missing."));
                 return;
             }
@@ -47,11 +47,9 @@ define(['require', 'srv/core/Handler', 'js/conf/DataSource', 'js/conf/Resource',
                         if(config.$.modelClassName){
                             classes.push(config.$.modelClassName.replace(/\./g,'/'));
                         }
+                        // TODO: necessary ?
                         if(config.$.serverModelClassName){
                             classes.push(config.$.serverModelClassName.replace(/\./g, '/'));
-                        }
-                        if(config.$.resourceClassName){
-                            classes.push(config.$.resourceClassName.replace(/\./g, '/'));
                         }
                         findClasses(config);
                     }
@@ -60,12 +58,13 @@ define(['require', 'srv/core/Handler', 'js/conf/DataSource', 'js/conf/Resource',
 
             findClasses(this.$resourceConfiguration);
 
+            // FIXME
+            // TODO: remove $restDataSource and reuse getProcessorForModel and getProcessorForCollection an other way
             this.$restDataSource = new RestDataSource({endPoint: "localhost"}, false);
             this.$restDataSource.addChild(this.$resourceConfiguration);
             this.$restDataSource._initialize("auto");
 
             require(classes, function() {
-
                 callback();
             }, function(err) {
                 callback(err);
@@ -79,7 +78,7 @@ define(['require', 'srv/core/Handler', 'js/conf/DataSource', 'js/conf/Resource',
          * @return {*}
          */
         getDataSource: function(context) {
-            return this.$dataSource;
+            return this.$dataSources[0];
         },
 
         handleRequest: function(context, callback) {
