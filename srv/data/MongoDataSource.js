@@ -1,4 +1,4 @@
-define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow'], function (DataSource, mongodb, Model, flow) {
+define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow'], function (DataSource, mongoDb, Model, flow) {
 
     var ID_KEY = "_id",
         PARENT_KEY = "_parent_id";
@@ -79,9 +79,9 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow'], function (Dat
 
         connect: function (callback) {
 
-            var server = new mongodb.Server(this.$.host, this.$.port, {});
+            var server = new mongoDb.Server(this.$.host, this.$.port, {});
 
-            var db = new mongodb.Db(this.$.database, server, {});
+            var db = new mongoDb.Db(this.$.database, server, {});
             db.open(callback);
             return db;
         },
@@ -89,7 +89,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow'], function (Dat
             return this.$dataSourceConfiguration.getConfigurationForModelClassName(model.constructor.name);
         },
         getIdObject: function (id) {
-            return new mongodb.ObjectID(id);
+            return new mongoDb.ObjectID(id);
         },
         loadModel: function (model, options, callback) {
             var configuration = this._getConfigurationForModel(model);
@@ -113,7 +113,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow'], function (Dat
             flow()
                 .seq("collection", function (cb) {
                     connection = self.connect(function (err, client) {
-                        cb(err, new mongodb.Collection(client, configuration.$.collection));
+                        cb(err, new mongoDb.Collection(client, configuration.$.collection));
                     });
                 })
                 .seq(function (cb) {
@@ -154,7 +154,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow'], function (Dat
             flow()
                 .seq("collection", function (cb) {
                     connection = self.connect(function (err, client) {
-                        cb(err, new mongodb.Collection(client, configuration.$.collection));
+                        cb(err, new mongoDb.Collection(client, configuration.$.collection));
                     });
                 })
                 .seq(function (cb) {
@@ -195,7 +195,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow'], function (Dat
             flow()
                 .seq("collection", function (cb) {
                     connection = self.connect(function (err, client) {
-                        cb(err, new mongodb.Collection(client, configuration.$.collection));
+                        cb(err, new mongoDb.Collection(client, configuration.$.collection));
                     });
                 })
                 .seq(function (cb) {
@@ -236,7 +236,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow'], function (Dat
             flow()
                 .seq("collection", function (cb) {
                     connection = self.connect(function (err, client) {
-                        cb(err, new mongodb.Collection(client, mongoCollection));
+                        cb(err, new mongoDb.Collection(client, mongoCollection));
                     });
                 })
                 .seq("cursor", function (cb) {
