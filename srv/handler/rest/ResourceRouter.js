@@ -2,8 +2,8 @@ define(['require', 'js/core/Base', 'srv/handler/rest/ResourceHandler', 'flow'], 
 
     return Base.inherit('srv.handler.rest.ResourceRouter', {
 
-        ctor: function(handler) {
-            this.$handler = handler;
+        ctor: function(restHandler) {
+            this.$restHandler = restHandler;
         },
 
         /***
@@ -15,22 +15,26 @@ define(['require', 'js/core/Base', 'srv/handler/rest/ResourceHandler', 'flow'], 
         getResource: function(context, callback) {
 
             var path = context.request.urlInfo.pathname,
-                handlerRelativePath = this.$handler.$.path;
+                relativePath = this.$restHandler.$.path;
 
-            if (path.indexOf(handlerRelativePath) !== 0) {
-                callback(new Error("Handler path '" + handlerRelativePath + "' not at start of " + path));
+            if (path.indexOf(relativePath) !== 0) {
+                callback(new Error("Handler path '" + relativePath + "' not at start of " + path));
                 return;
             }
 
             // remove relative handler path from path
-            path = path.substring(handlerRelativePath.length);
+            path = path.substring(relativePath.length);
 
             var pathElements = path.split('/');
 
             // remove first empty path
             pathElements.shift();
 
-            this._getResourceForPath(pathElements, callback);
+            try {
+                callback(null, this._getResourceForPath(pathElements));
+            } catch (e) {
+                callback(e);
+            }
         },
 
         /***
@@ -41,68 +45,53 @@ define(['require', 'js/core/Base', 'srv/handler/rest/ResourceHandler', 'flow'], 
          *
          * @private
          */
-        _getResourceForPath: function(pathElements, callback) {
-            var self = this,
-                configuration = this.$handler.$resourceConfiguration,
-                parentResource = null,
-                resourceClassName,
-                resourceStack = [];
+        _getResourceForPath: function(pathElements) {
+            var configuration = this.$restHandler.$resourceConfiguration,
+                parentResourceHandler = null,
+                resourceStack = [],
+                i;
 
             // build a stack of configurations
-            for (var i = 0; i < pathElements.length; i += 2) {
+            for (i = 0; i < pathElements.length; i += 2) {
                 var path = pathElements[i];
                 configuration = configuration.getConfigurationForPath(path);
 
                 if (!configuration) {
-                    callback(new Error("Configuration for '" + pathElements.slice(0, i + 1).join('/') + "' not found."));
-                    return;
+                    throw new Error("Configuration for '" + pathElements.slice(0, i + 1).join('/') + "' not found.");
+                }
+
+                if (!configuration.$.resourceHandler) {
+                    // no resource handler assigned to resource, use a default resource handler
+                    configuration.$.resourceHandler = new ResourceHandler();
                 }
 
                 resourceStack.push({
-                    resourceClassName: configuration.$.resourceClassName,
+                    resourceHandler: configuration.$.resourceHandler,
                     configuration: configuration,
                     id: pathElements[i + 1]
                 });
 
             }
 
-            // go through resource stack and create resources
-            flow()
-                .parEach(resourceStack, function(resourceEntry, cb) {
-                    self._createResourceInstance(resourceEntry, parentResource, function(err, resource) {
-                        if (!err) {
-                            parentResource = resource;
-                        }
-                        cb(err, resource);
-                    });
-                })
-                .exec(function(err) {
-                    // return the latest resource
-                    callback(err, parentResource);
-                });
+            for (i = 0; i < resourceStack.length; i++) {
+                var resourceEntry = resourceStack[i],
+                    resourceHandler = resourceEntry.resourceHandler;
 
-        },
+                // clone or get same instance
+                resourceHandler = resourceHandler.getResourceHandlerInstance();
 
+                // initialize handler
+                resourceHandler.init(this.$restHandler, resourceEntry.configuration, resourceEntry.id, parentResourceHandler);
+                parentResourceHandler = resourceHandler;
 
-        _createResourceInstance: function(resourceEntry, parentResource, callback) {
-            var applicationContext = this.$handler.$stage.$applicationContext;
-
-            var self = this;
-            if(resourceEntry.resourceClassName){
-                var fqClassName = applicationContext.getFqClassName(null, resourceEntry.resourceClassName);
-                require([fqClassName], instanceCallback(), callback);
-            }else{
-                instanceCallback(ResourceHandler);
-            }
-
-            function instanceCallback(resourceFactory) {
-                var resource = applicationContext.createInstance(resourceFactory, [self.$handler, resourceEntry.configuration, resourceEntry.id, parentResource]);
-                if (resource instanceof ResourceHandler) {
-                    callback(null, resource);
-                } else {
-                    callback("Returned resource not an instance of Resource");
+                if (!(resourceHandler instanceof ResourceHandler)) {
+                    throw "Returned resource not an instance of Resource";
                 }
             }
+
+            // return top mose resourceHandler
+            return parentResourceHandler;
+
         }
     })
 });
