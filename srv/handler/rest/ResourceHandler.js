@@ -1,16 +1,6 @@
-define(['js/core/Base', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'js/data/Collection'], function(Base, HttpError, flow, require, JSON, Collection) {
-    return Base.inherit('srv.handler.rest.ResourceHandler', {
+define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'js/data/Collection'], function (Component, HttpError, flow, require, JSON, Collection) {
 
-        ctor: function(restHandler, configuration, resourceId, parentResource) {
-            this.$context = null;
-            this.$restHandler = restHandler;
-            this.$resourceId = resourceId;
-
-            this.$resourceConfiguration = configuration;
-            this.$parentResource = parentResource;
-
-            this.callBase();
-        },
+    return Component.inherit('srv.handler.rest.ResourceHandler', {
 
         $collectionMethodMap: {
             GET: "_index",
@@ -23,13 +13,23 @@ define(['js/core/Base', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'js/dat
             DELETE: "_delete"
         },
 
-        _isCollectionResource: function() {
+        init: function (restHandler, configuration, resourceId, parentResource) {
+            this.$restHandler = restHandler;
+            this.$resourceId = resourceId;
+
+            this.$resourceConfiguration = configuration;
+            this.$parentResource = parentResource;
+        },
+
+        _isCollectionResource: function () {
             return !this.$resourceId;
         },
 
-        getDataSource: function(context) {
-            context = context || this.$context;
+        getResourceHandlerInstance: function() {
+            return this;
+        },
 
+        getDataSource: function (context) {
             if (this.$parentResource) {
                 return this.$parentResource.getDataSource(context);
             } else {
@@ -37,8 +37,7 @@ define(['js/core/Base', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'js/dat
             }
         },
 
-        handleRequest: function(context, callback) {
-            this.$context = context;
+        handleRequest: function (context, callback) {
 
             // This is evil here
             context.request.setEncoding('utf8');
@@ -60,11 +59,11 @@ define(['js/core/Base', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'js/dat
 
                 var self = this;
                 context.request.on('end', function () {
-                    if(body !== ""){
+                    if (body !== "") {
                         // TODO: handle different payload formats -> query string
-                        try{
+                        try {
                             context.request.params = JSON.parse(body);
-                        }catch(e){
+                        } catch (e) {
                             console.warn("Couldn't parse " + body);
                         }
                     }
@@ -75,7 +74,8 @@ define(['js/core/Base', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'js/dat
                 throw new HttpError("Method not supported", 404);
             }
         },
-        _findCollection: function(context){
+
+        _findCollection: function (context) {
             if (this.$parentResource) {
                 // TODO: refactor this
                 var parentFactory = this.$parentResource._getModelFactory();
@@ -86,6 +86,7 @@ define(['js/core/Base', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'js/dat
                 return context.dataSource.createCollection(Collection.of(this._getModelFactory()));
             }
         },
+
         /***
          * determinate the request method from the request
          *
@@ -93,7 +94,7 @@ define(['js/core/Base', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'js/dat
          * @return {String} method
          * @private
          */
-        _getRequestMethod: function(context) {
+        _getRequestMethod: function (context) {
 
             var parameter = context.request.urlInfo.parameter;
             if (parameter.method) {
@@ -102,27 +103,29 @@ define(['js/core/Base', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'js/dat
 
             return context.request.method;
         },
-        _getModelFactory: function(){
-            return require(this.$resourceConfiguration.$.modelClassName.replace(/\./g,'/'));
+
+        _getModelFactory: function () {
+            return require(this.$resourceConfiguration.$.modelClassName.replace(/\./g, '/'));
         },
+
         /***
          *
          * @param context
          * @param callback
          * @private
          */
-        _index: function(context, callback) {
+        _index: function (context, callback) {
             var collection = this._findCollection(context);
 
             var parameters = context.request.urlInfo.parameter;
             var options = {};
-            if(parameters["limit"]){
+            if (parameters["limit"]) {
                 options["limit"] = parseInt(parameters["limit"]);
             }
             var self = this;
             // TODO: read out offset, limit and query from query string
-            collection.fetch(options, function(err, collection){
-                if(!err){
+            collection.fetch(options, function (err, collection) {
+                if (!err) {
                     var response = context.response;
                     var body = "", results = [];
 
@@ -154,13 +157,14 @@ define(['js/core/Base', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'js/dat
                 callback(err);
             });
         },
+
         /***
          *
          * @param context
          * @param callback
          * @private
          */
-        _create: function(context, callback) {
+        _create: function (context, callback) {
             var collection = this._findCollection(context);
             var model = collection.createItem();
 
@@ -170,7 +174,7 @@ define(['js/core/Base', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'js/dat
 
             model.set(processor.parse(model, payload));
 
-            model.set('created',new Date());
+            model.set('created', new Date());
 
             // TODO: add hook to add session data like user id
 
@@ -185,7 +189,7 @@ define(['js/core/Base', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'js/dat
                     var response = context.response;
                     response.writeHead(201, "", {
                         'Content-Type': 'application/json',
-                        'Location' : 'http://todo'+context.request.url + "/" + model.$.id
+                        'Location': 'http://todo' + context.request.url + "/" + model.$.id
                     });
 
                     response.write(body);
@@ -197,20 +201,21 @@ define(['js/core/Base', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'js/dat
                 }
             });
         },
+
         /***
          *
          * @param context
          * @param callback
          * @private
          */
-        _show: function(context, callback) {
+        _show: function (context, callback) {
             var modelFactory = this._getModelFactory();
-            var model = context.dataSource.createEntity(modelFactory,this.$resourceId);
+            var model = context.dataSource.createEntity(modelFactory, this.$resourceId);
             var self = this;
 
             // TODO: add fields/include option handling
-            model.fetch({}, function(err, model){
-                if(!err){
+            model.fetch({}, function (err, model) {
+                if (!err) {
                     var processor = self.$restHandler.$restDataSource.getProcessorForModel(model);
 
                     var body = JSON.stringify(processor.compose(model, null)),
@@ -224,18 +229,19 @@ define(['js/core/Base', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'js/dat
                     response.write(body);
                     response.end();
                     callback(null);
-                }else{
+                } else {
                     callback(new HttpError(err, 500));
                 }
             });
         },
+
         /***
          *
          * @param context
          * @param callback
          * @private
          */
-        _update: function(context, callback) {
+        _update: function (context, callback) {
             var collection = this._findCollection(context);
             var model = collection.createItem(this.$resourceId);
 
@@ -269,17 +275,18 @@ define(['js/core/Base', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'js/dat
                 }
             });
         },
+
         /***
          *
          * @param context
          * @param callback
          * @private
          */
-        _delete: function(context, callback) {
+        _delete: function (context, callback) {
             var collection = this._findCollection(context);
             var model = collection.createItem(this.$resourceId);
 
-            model.remove({}, function(err){
+            model.remove({}, function (err) {
                 if (!err) {
                     // TODO: do correct invalidation
                     collection.invalidatePageCache();
