@@ -119,6 +119,16 @@ describe('parser test', function () {
             parsed.index.should.equal(index);
         });
 
+        it('should not parse var ""', function(done){
+            var varName = "";
+
+            try{
+                parsed  = C.Parser.parse(varName, RULE);
+            }catch(e){
+                done();
+            }
+        })
+
     });
 
     describe('#parse fnc', function () {

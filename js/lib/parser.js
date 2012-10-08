@@ -105,69 +105,58 @@ var exports = (typeof(exports) === "undefined" ? this : exports); exports.parser
         }
         
         
+        var savedPos0 = pos;
         var savedPos1 = pos;
-        var savedPos2 = pos;
         if (input.substr(pos).match(/^[a-zA-Z$_]/) !== null) {
-          var result5 = input.charAt(pos);
+          var result3 = input.charAt(pos);
           pos++;
         } else {
-          var result5 = null;
+          var result3 = null;
           if (reportMatchFailures) {
             matchFailed("[a-zA-Z$_]");
           }
         }
-        if (result5 !== null) {
-          var result6 = [];
+        if (result3 !== null) {
+          var result4 = [];
           if (input.substr(pos).match(/^[a-zA-Z0-9$_\- ]/) !== null) {
-            var result7 = input.charAt(pos);
+            var result5 = input.charAt(pos);
             pos++;
           } else {
-            var result7 = null;
+            var result5 = null;
             if (reportMatchFailures) {
               matchFailed("[a-zA-Z0-9$_\\- ]");
             }
           }
-          while (result7 !== null) {
-            result6.push(result7);
+          while (result5 !== null) {
+            result4.push(result5);
             if (input.substr(pos).match(/^[a-zA-Z0-9$_\- ]/) !== null) {
-              var result7 = input.charAt(pos);
+              var result5 = input.charAt(pos);
               pos++;
             } else {
-              var result7 = null;
+              var result5 = null;
               if (reportMatchFailures) {
                 matchFailed("[a-zA-Z0-9$_\\- ]");
               }
             }
           }
-          if (result6 !== null) {
-            var result3 = [result5, result6];
+          if (result4 !== null) {
+            var result1 = [result3, result4];
           } else {
-            var result3 = null;
-            pos = savedPos2;
+            var result1 = null;
+            pos = savedPos1;
           }
         } else {
-          var result3 = null;
-          pos = savedPos2;
-        }
-        var result4 = result3 !== null
-          ? (function(start, end) {return start ? start + end.join("") : false; })(result3[0], result3[1])
-          : null;
-        if (result4 !== null) {
-          var result2 = result4;
-        } else {
-          var result2 = null;
+          var result1 = null;
           pos = savedPos1;
         }
+        var result2 = result1 !== null
+          ? (function(start, end) {return start + end.join(""); })(result1[0], result1[1])
+          : null;
         if (result2 !== null) {
           var result0 = result2;
         } else {
-          var savedPos0 = pos;
-          var result1 = [];
-          if (result1 !== null) {
-            var result0 = result1;
-          } else {
-            var result0 = null;;
-          };
+          var result0 = null;
+          pos = savedPos0;
         }
         
         
@@ -604,7 +593,7 @@ var exports = (typeof(exports) === "undefined" ? this : exports); exports.parser
                 if (result2 !== null) {
                   var result0 = result2;
                 } else {
-                  var result1 = parse_binding();
+                  var result1 = parse_path();
                   if (result1 !== null) {
                     var result0 = result1;
                   } else {

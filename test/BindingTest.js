@@ -101,6 +101,22 @@ describe('js.core.Binding', function () {
             should.equal(target.get("val"), null);
         });
 
+        it('path binding a.b.c should return c if b is just a json object', function() {
+            var b1 = new C.Binding({scope: model, path: 'a.b.c', target: target, targetKey: "val"});
+
+            var testValue = "TEST VALUE";
+
+            should.equal(target.get('val'),null);
+
+            model.set("a", {
+                b: {
+                    c: testValue
+                }
+            });
+
+            should.equal(target.get('val'),testValue);
+        })
+
     });
 
     describe('#two way binding', function () {
@@ -157,7 +173,7 @@ describe('js.core.Binding', function () {
             target.get('val').should.equal(true);
         });
 
-        var fncBinding2 = "bar({m1.a},{m1.b})";
+        var fncBinding2 = "bar(m1.a,m1.b)";
 
         it(fncBinding2 + ' should be triggered if m1.a or m1.b is changing', function () {
             var extendedTarget = new ExtendedClass();

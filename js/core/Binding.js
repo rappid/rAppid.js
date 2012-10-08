@@ -99,7 +99,14 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
                         this.$parameters = [];
                         for (var j = 0; j < parameters.length; j++) {
                             para = parameters[j];
-                            if(_.isObject(para)) {
+                            // if we have an array, it's a path
+                            if(para instanceof Array) {
+                                para = {
+                                    path: para,
+                                    type: TYPE_NORMAL
+                                };
+                            }
+                            if(_.isObject(para)){
                                 para = this.$.bindingCreator.create(para, this.$.target, cb);
                             }
                             this.$parameters.push(para);
@@ -181,6 +188,9 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
                         if(nScope instanceof Bindable){
                             // init new binding, which triggers this binding
                             this.$subBinding = new Binding({scope: nScope, path: this.$.path.slice(1), target: this.$.target, targetKey: this.$.targetKey, rootScope: this.$.rootScope, callback: this.$.callback, context: this.$.context, twoWay: this.$.twoWay, transform: this.$.transform, transformBack: this.$.transformBack, bindingCreator: this.$.bindingCreator});
+                        } else if(nScope instanceof Object){
+                            // we have a json object which is not bindable
+                            this.$jsonObject = nScope;
                         }
                     }
                 }
@@ -279,6 +289,8 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
                         return this.transform(this.$.fnc.apply(this.$.scope, this._getFncParameters()));
                     } else if (this.$.path.length == 1) {
                         return this.transform(this.$.scope.get(this.$.key.name));
+                    } else if(this.$jsonObject) {
+                        return this.transform(this.$.scope.get(this.$jsonObject, this.$.path.slice(1)));
                     } else {
                         return null;
                     }
@@ -337,6 +349,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
 
     var TYPE_FNC = Binding.TYPE_FNC = "fnc";
     var TYPE_VAR = Binding.TYPE_VAR = "var";
+    var TYPE_NORMAL = Binding.TYPE_NORMAL ="normal";
     var TYPE_STATIC = Binding.TYPE_STATIC ="static";
     var TYPE_TWOWAY = Binding.TYPE_TWOWAY ="twoWay";
 
