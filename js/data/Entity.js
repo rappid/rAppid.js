@@ -33,6 +33,31 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                     }
                     base = base.base;
                 }
+
+                var schemaDefaults = {
+                    required: true,
+                    _rewritten: true
+                }, schemaObject;
+
+
+                // rewrite schema
+                for(var key in this.schema){
+                    if(this.schema.hasOwnProperty(key)){
+                        schemaObject = this.schema[key];
+                        if (schemaObject instanceof Array || schemaObject instanceof Function) {
+                            schemaObject = {
+                                type: schemaObject
+                            };
+                            this.schema[key] = schemaObject;
+                        }
+                        if(schemaObject instanceof Object ){
+                            if(schemaObject._rewritten){
+                                continue;
+                            }
+                        }
+                        _.defaults(schemaObject,schemaDefaults);
+                    }
+                }
             },
             /***
              * Returns the correct context for a child factory

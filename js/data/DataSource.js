@@ -212,14 +212,16 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
              */
             compose: function (entity, action, options) {
                 var ret = {},
-                    data = entity.compose(action, options);
+                    data = entity.compose(action, options),
+                    schemaDefinition;
 
                 for (var key in data) {
                     if (data.hasOwnProperty(key)) {
                         var value = this._getCompositionValue(data[key], key, action, options);
 
                         if (value !== undefined) {
-                            ret[this._getReferenceKey(key, entity.schema[key])] = value;
+                            schemaDefinition = entity.schema[key];
+                            ret[this._getReferenceKey(key, schemaDefinition['type'])] = value;
                         }
                     }
                 }
@@ -252,6 +254,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
             _getReferenceKey: function (key, schemaType) {
                 return key;
             },
+
             /***
              * Returns a composed object
              * @param {Object} object
@@ -352,98 +355,104 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
              * @return {Object}
              */
             parse: function (model, data, action, options) {
-                var schema = model.schema;
+                var schema = model.schema,
+                    schemaDefinition,
+                    schemaType,
+                    value,
+                    factory;
 
                 // convert top level properties to Models respective to there schema
                 for (var key in schema) {
                     if (schema.hasOwnProperty(key)) {
-                        // found key in data payload
-                        var schemaType = schema[key],
-                            value = this._getValueForKey(data, key, schemaType),
-                            factory = null,
-                            typeResolver,
+
+                        schemaDefinition = schema[key];
+                        schemaType = schemaDefinition['type'];
+                        value = this._getValueForKey(data, key, schemaType);
+
+                        factory = null;
+                        var typeResolver,
                             entity,
                             i,
                             list;
-                            if (schemaType instanceof Array) {
-                                if (schemaType.length === 1) {
-                                    typeResolver = schemaType[0];
-                                } else if (schemaType.length === 0) {
-                                    this.log('ModelFactory for ListItem for "' + key + '" not defined', 'warn');
-                                    factory = Entity;
-                                } else {
-                                    throw "Cannot determinate ModelFactory. Multiple factories defined for '" + key + "'.";
-                                }
-
-                                if (typeResolver instanceof Function) {
-                                    factory = typeResolver;
-                                    typeResolver = null;
-                                }
-
-                                if (value && value instanceof Array) {
-                                    // only create the list if items are there
-                                    list = data[key] = new List();
-
-                                    for (i = 0; i < value.length; i++) {
-
-                                        if (typeResolver) {
-                                            factory = typeResolver.resolve(value[i], key);
-                                        }
-
-                                        if (!(factory && factory.classof(Entity))) {
-                                            throw "Factory for type '" + key + "' isn't an instance of Entity";
-                                        }
-
-                                        entity = model.getContextForChild(factory).createEntity(factory, value[i].id);
-                                        entity.set(this._parseModel(entity, value[i], action, options));
-
-                                        if (entity instanceof Entity && !(entity instanceof Model)) {
-                                            entity.$parent = model;
-                                        }
-
-                                        list.add(entity);
-                                    }
-                                }
-
-
-                            } else if (Collection && schemaType.classof(Collection)) {
-
-                                var contextForChildren = model.getContextForChild(schemaType);
-                                list = data[key] = contextForChildren.createCollection(schemaType, null);
-
-                                if (value && value instanceof Array) {
-                                    for (i = 0; i < value.length; i++) {
-                                        // create new entity based on collection type
-                                        entity = list.createItem();
-                                        entity.set(this._parseModel(entity, value[i], action, options));
-                                        // and add it to the collection
-                                        list.add(entity);
-                                    }
-                                } else {
-                                    // TODO: what here
-//                                throw 'Schema for type "' + type + '" requires to be an array';
-                                }
-                            } else if (schemaType === Date && value) {
-                                data[key] = moment(value, this.$dataSource.$.dateFormat).toDate();
-                            } else if (schemaType.classof(Entity) && value) {
-                                if (schemaType instanceof TypeResolver) {
-                                    factory = schemaType.resolve(value, key);
-                                } else {
-                                    factory = schemaType || Entity;
-                                }
-
-                                if (!(factory && factory.classof(Entity))) {
-                                    throw "Factory for type '" + key + "' isn't an instance of Entity";
-                                }
-
-                                data[key] = entity = model.getContextForChild(factory).createEntity(factory, value.id);
-                                entity.set(this._parseModel(entity, value, action, options));
-
-                                if (entity instanceof Entity && !(entity instanceof Model)) {
-                                    entity.$parent = model;
-                                }
-
+                        if (schemaType instanceof Array) {
+                            if (schemaType.length === 1) {
+                                typeResolver = schemaType[0];
+                            } else if (schemaType.length === 0) {
+                                this.log('ModelFactory for ListItem for "' + key + '" not defined', 'warn');
+                                factory = Entity;
+                            } else {
+                                throw "Cannot determinate ModelFactory. Multiple factories defined for '" + key + "'.";
                             }
+
+                            if (typeResolver instanceof Function) {
+                                factory = typeResolver;
+                                typeResolver = null;
+                            }
+
+                            if (value && value instanceof Array) {
+                                // only create the list if items are there
+                                list = data[key] = new List();
+
+                                for (i = 0; i < value.length; i++) {
+
+                                    if (typeResolver) {
+                                        factory = typeResolver.resolve(value[i], key);
+                                    }
+
+                                    if (!(factory && factory.classof(Entity))) {
+                                        throw "Factory for type '" + key + "' isn't an instance of Entity";
+                                    }
+
+                                    entity = model.getContextForChild(factory).createEntity(factory, value[i].id);
+                                    entity.set(this._parseModel(entity, value[i], action, options));
+
+                                    if (entity instanceof Entity && !(entity instanceof Model)) {
+                                        entity.$parent = model;
+                                    }
+
+                                    list.add(entity);
+                                }
+                            }
+
+
+                        } else if (Collection && schemaType.classof(Collection)) {
+
+                            var contextForChildren = model.getContextForChild(schemaType);
+                            list = data[key] = contextForChildren.createCollection(schemaType, null);
+
+                            if (value && value instanceof Array) {
+                                for (i = 0; i < value.length; i++) {
+                                    // create new entity based on collection type
+                                    entity = list.createItem();
+                                    entity.set(this._parseModel(entity, value[i], action, options));
+                                    // and add it to the collection
+                                    list.add(entity);
+                                }
+                            } else {
+                                // TODO: what here
+//                                throw 'Schema for type "' + type + '" requires to be an array';
+                            }
+                        } else if (schemaType === Date && value) {
+                            data[key] = moment(value, this.$dataSource.$.dateFormat).toDate();
+                        } else if (schemaType.classof(Entity) && value) {
+                            if (schemaType instanceof TypeResolver) {
+                                factory = schemaType.resolve(value, key);
+                            } else {
+                                factory = schemaType || Entity;
+                            }
+
+                            if (!(factory && factory.classof(Entity))) {
+                                throw "Factory for type '" + key + "' isn't an instance of Entity";
+                            }
+
+                            data[key] = entity = model.getContextForChild(factory).createEntity(factory, value.id);
+                            entity.set(this._parseModel(entity, value, action, options));
+
+                            if (entity instanceof Entity && !(entity instanceof Model)) {
+                                entity.$parent = model;
+                            }
+
+                        }
                     }
                 }
 
@@ -517,10 +526,10 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                                 if (subModel && _.include(model.$nestedModels, reference)) {
                                     subModels.push(subModel);
                                 }
-                            } else if(type.classof(Collection)) {
+                            } else if (type.classof(Collection)) {
                                 subCollection = model.$[reference];
-                                if(subCollection){
-                                    subCollection.each(function(model){
+                                if (subCollection) {
+                                    subCollection.each(function (model) {
                                         subModels.push(model);
                                     });
                                 }
