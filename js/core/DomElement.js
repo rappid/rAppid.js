@@ -500,9 +500,11 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                 if(this.$el.childNodes.length === 0){
                     return null;
                 }
-                var i = this.$renderedChildren.indexOf(child);
-                while (i + 1 < this.$renderedChildren.length && !this.$invisibleChildMap[this.$renderedChildren[i + 1].$cid]) {
-                    i++;
+                var index = this.$renderedChildren.indexOf(child);
+                for(i = index + 1; i < this.$renderedChildren.length; i++ ){
+                    if(!this.$invisibleChildMap[this.$renderedChildren[i].$cid]){
+                        break;
+                    }
                 }
                 if (i < this.$renderedChildren.length && child !== this.$renderedChildren[i]) {
                     return this.$renderedChildren[i];
