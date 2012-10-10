@@ -546,7 +546,7 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                 _getChildrenFromDescriptor: function (descriptor, rootScope) {
                     var childrenFromDescriptor = [], node, component;
 
-                    if (descriptor) {
+                    if (descriptor && descriptor.childNodes) {
                         for (var i = 0; i < descriptor.childNodes.length; i++) {
                             node = descriptor.childNodes[i];
                             component = this._createComponentForNode(node, null, rootScope);
