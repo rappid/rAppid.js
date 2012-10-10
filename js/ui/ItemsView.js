@@ -131,7 +131,9 @@ define(
                 attr[this._getItemKey()] = item;
                 attr[this._getIndexKey()] = index;
                 var component = this.$templates['item'].createComponents(attr)[0];
-                component.$classAttributes.push(this.$.itemKey, this.$.indexKey);
+                if(component.$classAttributes){
+                    component.$classAttributes.push(this.$.itemKey, this.$.indexKey);
+                }
                 return component;
             },
             /***
