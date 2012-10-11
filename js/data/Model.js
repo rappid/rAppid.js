@@ -54,15 +54,15 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
         },
 
         getCollection: function(key){
-            var schemaType = this.schema[key];
-            if (!schemaType) {
+            var schemaDefinition = this.schema[key];
+            if (!schemaDefinition) {
                 throw "Couldn't find '" + key + "' in schema";
             }
             var collection = this.get(key);
             if(!collection){
-                var context = this.getContextForChild(schemaType);
+                var context = this.getContextForChild(schemaDefinition.type);
                 if(context){
-                    collection = context.createCollection(schemaType, null);
+                    collection = context.createCollection(schemaDefinition.type, null);
                     collection.$parent = this;
                     this.set(key, collection);
                 }else{
@@ -70,6 +70,7 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
                 }
             }
             return collection;
+
 
         },
 
