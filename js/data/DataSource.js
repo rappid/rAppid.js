@@ -213,15 +213,16 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
             compose: function (entity, action, options) {
                 var ret = {},
                     data = entity.compose(action, options),
-                    schemaDefinition;
+                    schemaDefinition,
+                    schemaType;
 
                 for (var key in data) {
                     if (data.hasOwnProperty(key)) {
                         var value = this._getCompositionValue(data[key], key, action, options);
-
                         if (value !== undefined) {
                             schemaDefinition = entity.schema[key];
-                            ret[this._getReferenceKey(key, schemaDefinition['type'])] = value;
+                            schemaType = schemaDefinition ? schemaDefinition['type'] : null;
+                            ret[this._getReferenceKey(key, schemaType)] = value;
                         }
                     }
                 }
