@@ -1,6 +1,6 @@
 define(['srv/core/Handler', 'srv/core/HttpError'], function(Handler, HttpError) {
 
-    return Handler.inherit('srv.core.ExceptionHandler', {
+    return Handler.inherit('srv.handler.ExceptionHandler', {
 
         ctor: function(exception) {
 
