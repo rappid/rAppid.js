@@ -1,10 +1,11 @@
-define(['js/core/Component', 'srv/core/Context', 'srv/core/Handlers', 'srv/core/EndPoints', 'srv/handler/ExceptionHandler', 'flow', 'domain'],
-    function (Component, Context, Handlers, EndPoints, ExceptionHandler, flow, Domain) {
+define(['js/core/Component', 'srv/core/Context', 'srv/core/Handlers', 'srv/core/EndPoints', 'srv/core/Filters', 'srv/handler/ExceptionHandler', 'flow', 'domain'],
+    function (Component, Context, Handlers, EndPoints, Filters, ExceptionHandler, flow, Domain) {
 
         return Component.inherit('srv.core.Server', {
 
             ctor: function () {
                 this.$handlers = null;
+                this.$filters = null;
                 this.$endPoints = null;
 
                 this.callBase();
@@ -15,6 +16,8 @@ define(['js/core/Component', 'srv/core/Context', 'srv/core/Handlers', 'srv/core/
                     this.$handlers = child;
                 } else if (child instanceof EndPoints) {
                     this.$endPoints = child;
+                } else if (child instanceof Filters) {
+                    this.$filters = child;
                 }
 
                 this.callBase();
@@ -32,12 +35,20 @@ define(['js/core/Component', 'srv/core/Context', 'srv/core/Handlers', 'srv/core/
                     return;
                 }
 
+                if (!this.$filters) {
+                    this.$filters = this.createComponent(Filters);
+                }
+
                 var self = this;
 
                 flow()
                     .seq(function (cb) {
                         // start all end points
                         self.$endPoints.start(self, cb);
+                    })
+                    .seq(function (cb) {
+                        // handlers starts also asynchronous to load e.g. classes
+                        self.$filters.start(self, cb);
                     })
                     .seq(function (cb) {
                         // handlers starts also asynchronous to load e.g. classes
@@ -70,12 +81,18 @@ define(['js/core/Component', 'srv/core/Context', 'srv/core/Handlers', 'srv/core/
                         });
                     })
                     .seq(function (cb) {
+                        self.$filters.stop(function () {
+                            // ignore errors during stop
+                            cb();
+                        });
+                    })
+                    .seq(function (cb) {
                         self.$endPoints.shutdown(function () {
                             // ignore errors during shutdown
                             cb();
                         });
                     })
-                    .exec(function(err) {
+                    .exec(function (err) {
                         callback && callback(err);
 
                         process.stdin.end();
@@ -110,17 +127,21 @@ define(['js/core/Component', 'srv/core/Context', 'srv/core/Handlers', 'srv/core/
 
                     // create the new context object
                     context = new Context(endPoint, request, response);
+
                     // and set the chosen handler
                     requestHandler = self.$handlers.getRequestHandler(context);
-
                     context.handler = requestHandler;
 
-                    requestHandler.handleRequest(context, function(err) {
-                        if (err) {
-                            handleError(err);
-                        }
-                    });
-
+                    flow()
+                        .seq(function (cb) {
+                            self.$filters.beginRequest(context, cb);
+                        })
+                        .seq(function (cb) {
+                            requestHandler.handleRequest(context, cb);
+                        })
+                        .exec(function (err) {
+                            err && handleError(err);
+                        });
                 });
 
 
