@@ -43,6 +43,10 @@ define(['js/core/Component', 'srv/core/Filter', 'flow'],
                 this._execute("beginRequest", context, callback);
             },
 
+            beforeHeadersSend: function(context, callback) {
+                this._execute("beforeHeadersSend", context, callback);
+            },
+
             endRequest: function (context, callback) {
                 this._execute("endRequest", context, callback);
             },
