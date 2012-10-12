@@ -25,6 +25,11 @@ define(['js/core/Component'], function(Component) {
             callback();
         },
 
+        /***
+         *
+         * @param {srv.core.HttpContext} context
+         * @return {Boolean}
+         */
         isResponsibleForRequest: function(context) {
 
             // Check path
