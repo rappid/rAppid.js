@@ -126,7 +126,7 @@ define(['js/core/Component', 'srv/core/Context', 'srv/core/Handlers', 'srv/core/
                 domain.run(function () {
 
                     // create the new context object
-                    context = new Context(endPoint, request, response);
+                    context = new Context(self, endPoint, request, response);
 
                     // and set the chosen handler
                     requestHandler = self.$handlers.getRequestHandler(context);
