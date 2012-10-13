@@ -143,13 +143,17 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
 
             /***
              *
-             * @param {Object} options
+             * @param {Object} [options]
              * @param {Object} [options.setErrors=true] -
              * @param {Object} [options.fields=null] - fields to validate
              *
              * @param {Function} [callback]
              */
             validate: function(options, callback) {
+                if(options instanceof Function){
+                    callback = options;
+                    options = {};
+                }
 
                 options = options || {};
 
