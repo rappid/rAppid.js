@@ -650,14 +650,11 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
             _validateConfiguration: function () {
                 // hook
             },
-            /***
-             * Returns the configuration for a model class name
-             * @param modelClassName
-             * @return {*}
-             */
-            getConfigurationForModelClassName: function (modelClassName) {
-                return this.$dataSourceConfiguration.getConfigurationForModelClassName(modelClassName);
+
+            getConfigurationForModelClass: function(modelClass){
+                return this.$dataSourceConfiguration.getConfigurationForModelClass(modelClass);
             },
+
             /***
              * Returns the configuration for a collectionclass name
              * @param modelClassName
@@ -678,7 +675,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                         className = childFactory.prototype.constructor.name,
                         key;
                     if (childFactory.classof(Model)) {
-                        configuration = this.getConfigurationForModelClassName(className);
+                        configuration = this.getConfigurationForModelClass(childFactory);
                     } else if (childFactory.classof(Collection)) {
                         configuration = this.getConfigurationForCollectionClassName(className);
                     }
@@ -843,20 +840,20 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
             getProcessorForModel: function (model, options) {
                 var ret;
                 if (model) {
-                    ret = this.getProcessorForModelClassName(model.constructor.name, options);
+                    ret = this.getProcessorForModelClass(model.factory, options);
                 }
 
                 return ret || this.$defaultProcessor;
             },
             /***
-             * Returns the correct processor for model class name
+             * Returns the correct processor for model class
              *
              * @param {String} modelClassName
              * @param {Object} [options]
              * @return {js.data.DataSource.Processor} processor
              */
-            getProcessorForModelClassName: function (modelClassName, options) {
-                var config = this.getConfigurationForModelClassName(modelClassName);
+            getProcessorForModelClass: function(modelClass, options){
+                var config = this.getConfigurationForModelClass(modelClass);
 
                 if (config && config.$.processor) {
                     var processorName = config.$.processor;
@@ -877,7 +874,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
             getProcessorForCollection: function (collection, options) {
                 var ret;
                 if (collection && collection.$modelFactory) {
-                    ret = this.getProcessorForModelClassName(collection.$modelFactory.prototype.constructor.name, options);
+                    ret = this.getProcessorForModelClass(collection.$modelFactory, options);
                 }
 
                 return ret || this.$defaultProcessor;

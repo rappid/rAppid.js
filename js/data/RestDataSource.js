@@ -72,7 +72,7 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
         getPathComponentsForModel: function (model) {
 
             if (model) {
-                var config = this.$dataSourceConfiguration.getConfigurationForModelClassName(model.constructor.name);
+                var config = this.$dataSourceConfiguration.getConfigurationForModelClass(model.factory);
                 if (config) {
 
                     var path = config.$.path;
@@ -370,7 +370,7 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
         loadCollectionPage: function (page, options, callback) {
 
             var rootCollection = page.getRootCollection();
-            var config =  this.$dataSourceConfiguration.getConfigurationForModelClassName(rootCollection.$modelFactory.prototype.constructor.name);
+            var config =  this.$dataSourceConfiguration.getConfigurationForModelClass(rootCollection.$modelFactory);
 
             if(!config){
                 throw new Error("Couldnt find path config for " + rootCollection.$modelFactory.prototype.constructor.name);
@@ -530,7 +530,7 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
                 throw new Error("ContextModel missing for non-root-Context");
             }
 
-            var configuration = this.$dataSource.getConfigurationForModelClassName(this.$contextModel.constructor.name);
+            var configuration = this.$dataSource.getConfigurationForModelClass(this.$contextModel.factory);
             return [configuration.$.path, this.$contextModel.$.id];
         },
 

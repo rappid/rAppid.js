@@ -1,4 +1,4 @@
-define(["js/conf/Configuration"], function (Configuration) {
+define(["js/conf/Configuration", "js/data/Model"], function (Configuration, Model) {
 
     return Configuration.inherit('js.conf.Resource', {
         _initializationComplete: function () {
@@ -23,6 +23,21 @@ define(["js/conf/Configuration"], function (Configuration) {
 
         getConfigurationForCollectionClassName: function (collectionClassName) {
             return this.getConfigurationByKeyValue("collectionClassName", collectionClassName);
+        },
+
+        /**
+         * Returns configuration for a given modelClass / model factory
+         * @param {Function} modelClass
+         * @return {js.conf.Resource}
+         */
+        getConfigurationForModelClass: function(modelClass){
+            var configuration;
+            while (!configuration && modelClass && modelClass.classof && modelClass.classof(Model)) {
+                configuration = this.getConfigurationForModelClassName(modelClass.prototype.constructor.name);
+                modelClass = modelClass.prototype.base;
+            }
+
+            return configuration;
         },
 
         getConfigurationForPath: function(path) {

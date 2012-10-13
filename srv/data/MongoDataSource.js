@@ -1,7 +1,8 @@
 define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow'], function (DataSource, mongoDb, Model, flow) {
 
     var ID_KEY = "_id",
-        PARENT_KEY = "_parent_id";
+        PARENT_KEY = "_parent_id",
+        TYPE_KEY = "_type";
 
     var MongoDataProcessor = DataSource.Processor.inherit('src.data.MongoDataProcessor', {
         compose: function(model, action, options){
@@ -10,6 +11,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow'], function (Dat
             if(model.$parent){
                 data[PARENT_KEY] = model.$parent.$.id;
             }
+
             return data;
         },
         _composeSubModel: function (model, action, options) {
@@ -57,6 +59,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow'], function (Dat
                 delete data['_id'];
             }
             delete data[PARENT_KEY];
+            delete data[TYPE_KEY];
 
             return this.callBase(model, data, action, options);
         }
@@ -86,7 +89,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow'], function (Dat
             return db;
         },
         _getConfigurationForModel: function (model) {
-            return this.$dataSourceConfiguration.getConfigurationForModelClassName(model.constructor.name);
+            return this.$dataSourceConfiguration.getConfigurationForModelClass(model.factory);
         },
         getIdObject: function (id) {
             return new mongoDb.ObjectID(id);
@@ -107,6 +110,14 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow'], function (Dat
 
             var processor = this.getProcessorForModel(model);
 
+            var where = {
+                _id: idObject
+            };
+
+            // here we have a polymorph type
+            if (configuration.$.modelClassName !== model.constructor.name) {
+                where[TYPE_KEY] = model.constructor.name;
+            }
 
             // TODO: add loading/linking of sub models
             var self = this, connection;
@@ -117,7 +128,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow'], function (Dat
                     });
                 })
                 .seq(function (cb) {
-                    this.vars['collection'].findOne({_id: idObject}, function (err, object) {
+                    this.vars['collection'].findOne(where, function (err, object) {
                         if (!err) {
                             model.set(processor.parse(model, object));
                         }
@@ -151,6 +162,12 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow'], function (Dat
             var processor = this.getProcessorForModel(model);
 
             var data = processor.compose(model, action, options), self = this, connection;
+
+            // here we have a polymorph type
+            if (configuration.$.modelClassName !== model.constructor.name) {
+                data[TYPE_KEY] = model.constructor.name;
+            }
+
             flow()
                 .seq("collection", function (cb) {
                     connection = self.connect(function (err, client) {
@@ -213,14 +230,15 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow'], function (Dat
         },
 
         loadCollectionPage: function (collection, options, callback) {
-            var rootCollection = collection.getRootCollection();
-            var config = this.$dataSourceConfiguration.getConfigurationForModelClassName(rootCollection.$modelFactory.prototype.constructor.name);
+            var rootCollection = collection.getRootCollection(),
+                modelClassName = rootCollection.$modelFactory.prototype.constructor.name,
+                configuration = this.$dataSourceConfiguration.getConfigurationForModelClass(rootCollection.$modelFactory);
 
-            if (!config) {
+            if (!configuration) {
                 callback("Couldnt find path config for " + rootCollection.$modelFactory.prototype.constructor.name);
             }
 
-            var mongoCollection = config.$.collection;
+            var mongoCollection = configuration.$.collection;
             if (!mongoCollection) {
                 callback("No mongo collection defined for " + rootCollection.$modelFactory.prototype.constructor.name);
             }
@@ -229,8 +247,13 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow'], function (Dat
 
             var self = this, connection, where = {};
 
+            // here we have a polymorph type
+            if (configuration.$.modelClassName !== modelClassName) {
+                where[TYPE_KEY] = modelClassName;
+            }
+
             if(rootCollection.$parent){
-                where['_parent_id'] = rootCollection.$parent.$.id;
+                where[PARENT_KEY] = rootCollection.$parent.$.id;
             }
 
             flow()
