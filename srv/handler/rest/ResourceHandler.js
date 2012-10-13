@@ -177,29 +177,37 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
             model.set('created', new Date());
 
             // TODO: add hook to add session data like user id
-
-            model.save({}, function (err, model) {
-                if (!err) {
-                    // TODO: do correct invalidation
-                    collection.invalidatePageCache();
-
-                    // TODO: generate the location header
-                    var body = "";
-
-                    var response = context.response;
-                    response.writeHead(201, "", {
-                        'Content-Type': 'application/json',
-                        'Location': 'http://todo' + context.request.url + "/" + model.$.id
+            flow()
+                .seq(function (cb) {
+                    model.validate(function(err) {
+                        cb(err);
                     });
+                })
+                .seq(function (cb) {
+                    // TODO: add sub models
+                    model.save({}, function (err, model) {
+                        if (!err) {
+                            // TODO: do correct invalidation
+                            collection.invalidatePageCache();
 
-                    response.write(body);
-                    response.end();
+                            // TODO: generate the location header
+                            var body = "";
 
-                    callback(null);
-                } else {
-                    callback(new HttpError(err, 500));
-                }
-            });
+                            var response = context.response;
+                            response.writeHead(201, "", {
+                                'Content-Type': 'application/json',
+                                'Location': 'http://todo' + context.request.url + "/" + model.$.id
+                            });
+
+                            response.write(body);
+                            response.end();
+
+                            cb(null);
+                        } else {
+                            cb(new HttpError(err, 500));
+                        }
+                    });
+                }).exec(callback);
         },
 
         /***
@@ -252,28 +260,36 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
             model.set(processor.parse(model, payload));
 
             // TODO: add hook to add session data like user id
-
-            model.save({}, function (err) {
-                if (!err) {
-                    // TODO: do correct invalidation
-                    collection.invalidatePageCache();
-
-                    // TODO: generate the location header
-                    var body = "";
-
-                    var response = context.response;
-                    response.writeHead(200, "", {
-                        'Content-Type': 'application/json'
+            flow()
+                .seq(function (cb) {
+                    model.validate(function (err) {
+                        cb(err);
                     });
+                })
+                .seq(function(cb){
+                    model.save({}, function (err) {
+                        if (!err) {
+                            // TODO: do correct invalidation
+                            collection.invalidatePageCache();
 
-                    response.write(body);
-                    response.end();
+                            // TODO: generate the location header
+                            var body = "";
 
-                    callback(null);
-                } else {
-                    callback(new HttpError(err, 500));
-                }
-            });
+                            var response = context.response;
+                            response.writeHead(200, "", {
+                                'Content-Type': 'application/json'
+                            });
+
+                            response.write(body);
+                            response.end();
+
+                            cb(null);
+                        } else {
+                            cb(new HttpError(err, 500));
+                        }
+                    });
+                }).exec(callback);
+
         },
 
         /***
