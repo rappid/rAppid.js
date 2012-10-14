@@ -21,11 +21,12 @@ define(['js/core/EventDispatcher', 'url', 'querystring', 'underscore', 'flow', '
 
                 this._subClassResponse(response);
 
+
                 this._parseUrl();
 
                 this._extractCookies(request);
 
-                response.cookies = new Context.CookieManager(response);
+                response.cookies = new Context.CookieManager(this);
 
             },
 
@@ -182,8 +183,32 @@ define(['js/core/EventDispatcher', 'url', 'querystring', 'underscore', 'flow', '
         };
 
         Context.CookieManager = Base.inherit('srv.core.Context.CookieManager', {
-            ctor: function(response) {
 
+            ctor: function(context) {
+                this.cookies = {};
+                context.addProcessingHook("beforeHeadersSend", this._writeCookiesToHead);
+            },
+
+            set: function(name, value, options) {
+                this.cookies[name] = new Context.CookieManager.Cookie()
+            },
+
+            remove: function(name) {
+                this.set(name);
+            },
+
+            _writeCookiesToHead: function(context, callback) {
+
+                var headers = [];
+
+                for (var key in this.cookies) {
+                    if (this.cookies.hasOwnProperty(key)) {
+                        headers.push(this.cookies[key].toHeader())
+                    }
+                }
+
+                context.response.setHeader("Set-Cookie", headers);
+                callback();
             }
         });
 
@@ -194,6 +219,14 @@ define(['js/core/EventDispatcher', 'url', 'querystring', 'underscore', 'flow', '
             domain: undefined,
             httpOnly: true,
             secure: false,
+
+
+            ctor: function (name, value, options) {
+                this.name = name;
+                this.value = value;
+
+                // TODO: handle options
+            },
 
             toString: function () {
                 return this.name + "=" + this.value
