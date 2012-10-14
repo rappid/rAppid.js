@@ -186,13 +186,15 @@ define(['js/core/EventDispatcher', 'url', 'querystring', 'underscore', 'flow', '
 
             ctor: function(context) {
                 this.cookies = {};
-                context.addProcessingHook("beforeHeadersSend", this._writeCookiesToHead);
+                var self = this;
+                context.addProcessingHook("beforeHeadersSend", function(context, callback) {
+                    self._writeCookiesToHead(context, callback);
+                });
             },
 
             set: function(name, value, options) {
-                this.cookies[name] = new Context.CookieManager.Cookie()
+                this.cookies[name] = new Context.CookieManager.Cookie(name, value, options)
             },
-
             remove: function(name) {
                 this.set(name);
             },
@@ -225,6 +227,9 @@ define(['js/core/EventDispatcher', 'url', 'querystring', 'underscore', 'flow', '
                 this.name = name;
                 this.value = value;
 
+                options = options || {};
+
+                this.expires = options.expires;
                 // TODO: handle options
             },
 
