@@ -1,4 +1,9 @@
 define(['js/core/Bindable'], function (Bindable) {
+
+    var defaultConditionFnc = function(){
+        return true;
+    };
+
     var Validator = Bindable.inherit('js.data.validator.Validator', {
 
         $validatorCache: {},
@@ -6,7 +11,8 @@ define(['js/core/Bindable'], function (Bindable) {
         defaults: {
             field: null,
             errorCode: 'isInvalid',
-            errorMessage: null
+            errorMessage: null,
+            condition: null
         },
 
         ctor: function () {
@@ -32,10 +38,11 @@ define(['js/core/Bindable'], function (Bindable) {
         validate: function (entity, callback) {
 
             var self = this,
-                callbackInvoked = false;
+                callbackInvoked = false,
+                condition = this.$.condition || defaultConditionFnc;
 
             try {
-                internalCallback(null, this._validate(entity));
+                internalCallback(null, condition(entity) ? this._validate(entity) : null);
             } catch(e) {
                 if (e instanceof Validator.Error) {
                     internalCallback(null, e);
