@@ -169,6 +169,9 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                     }
 
                     return ret.join("&");
+                },
+                clear: function() {
+                    this.$contextCache = {};
                 }
 
             }, {
