@@ -1,4 +1,4 @@
-define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow'], function (DataSource, mongoDb, Model, flow) {
+define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore'], function (DataSource, mongoDb, Model, flow, _) {
 
     var ID_KEY = "_id",
         PARENT_KEY = "_parent_id",
@@ -35,8 +35,14 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow'], function (Dat
                 var id = data[referenceKey];
                 delete data[referenceKey];
                 if(id){
-                    return {
-                        id: id.toHexString()
+                    if(_.isObject(id) && id instanceof mongoDb.ObjectID){
+                        return {
+                            id: id.toHexString()
+                        }
+                    }else{
+                        return {
+                            id: id
+                        }
                     }
                 }
                 return null;
@@ -55,7 +61,13 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow'], function (Dat
         },
         parse: function (model, data, action, options) {
             if (data['_id']) {
-                data['id'] = data._id.toHexString();
+                var _id = data['_id'];
+
+                if(_.isObject(_id) && _id instanceof mongoDb.ObjectID){
+                    data['id'] = _id.toHexString();
+                }else{
+                    data['id'] = _id;
+                }
                 delete data['_id'];
             }
             delete data[PARENT_KEY];
@@ -167,6 +179,10 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow'], function (Dat
             var processor = this.getProcessorForModel(model);
 
             var data = processor.compose(model, action, options), self = this, connection;
+
+            if(options.id && action === DataSource.ACTION.CREATE){
+                data[ID_KEY] = options.id;
+            }
 
             // here we have a polymorphic type
             if (configuration.$.modelClassName !== model.constructor.name) {
