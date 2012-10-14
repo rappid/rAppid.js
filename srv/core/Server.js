@@ -136,6 +136,13 @@ define(['js/core/Component', 'srv/core/Context', 'srv/core/Handlers', 'srv/core/
                         .seq(function (cb) {
                             context._executeHook("beginRequest", cb);
                         })
+                        .seq(function(cb) {
+                            if (requestHandler.$.autoStartSession) {
+                                context.session.start(cb);
+                            } else {
+                                cb();
+                            }
+                        })
                         .seq(function (cb) {
                             requestHandler.handleRequest(context, cb);
                         })
