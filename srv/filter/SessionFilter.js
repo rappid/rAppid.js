@@ -76,8 +76,10 @@ define(['srv/core/Filter', 'require', 'flow', 'js/data/DataSource', 'srv/core/Se
             var session = context.session;
 
             session.set('expires', this._getExpiresDate());
-            session.save(null, function () {
-                // TODO: do we need to destroy the session here, why ?
+            session.save({
+                id: session.$.id
+            }, function () {
+                // TODO: do we need to destroy the session here, why. No extra code I see?
                 context.session.destroy();
                 callback();
             });
