@@ -168,7 +168,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow'], function (Dat
 
             var data = processor.compose(model, action, options), self = this, connection;
 
-            // here we have a polymorph type
+            // here we have a polymorphic type
             if (configuration.$.modelClassName !== model.constructor.name) {
                 data[TYPE_KEY] = model.constructor.name;
             }
