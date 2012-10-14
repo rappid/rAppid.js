@@ -2,6 +2,7 @@ define(['js/core/Component'], function(Component) {
     return Component.inherit('srv.core.Handler', {
 
         defaults: {
+            autoStartSession: false,
             path: "/",
             route: null
         },
