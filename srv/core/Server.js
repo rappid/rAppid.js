@@ -134,7 +134,7 @@ define(['js/core/Component', 'srv/core/Context', 'srv/core/Handlers', 'srv/core/
 
                     flow()
                         .seq(function (cb) {
-                            self.$filters.beginRequest(context, cb);
+                            context._executeHook("beginRequest", cb);
                         })
                         .seq(function (cb) {
                             requestHandler.handleRequest(context, cb);
@@ -143,7 +143,6 @@ define(['js/core/Component', 'srv/core/Context', 'srv/core/Handlers', 'srv/core/
                             err && handleError(err);
                         });
                 });
-
 
                 function handleError(err) {
 

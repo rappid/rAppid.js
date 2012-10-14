@@ -8,11 +8,12 @@ define(['srv/core/Filter'], function(Filter){
         },
 
         beginRequest: function (context, callback) {
-            var response = context.response,
-                sessionId;
+            var sessionName = this.$.sessionName,
+                sessionId = context.request.cookies[sessionName];
 
-            // TODO: read session id
+
             sessionId = sessionId || this.generateSessionId();
+            // TODO: read session data from data source
 
 //            context.response.setHeader(this.$.sessionName)
 
