@@ -13,11 +13,11 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
 
                     this.$contextCache = {};
                     this.$dataSource = dataSource;
-                    this.$properties = properties;
                     this.$parent = parentContext;
                     this.$cache = {};
 
                 },
+
                 /***
                  * Adds an entity to the cache
                  * @param {js.data.Entity} entity
@@ -33,6 +33,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                 addCollectionToCache: function (collection) {
                     this.$cache[Context.generateCacheIdFromCollection(collection)] = collection;
                 },
+
                 /**
                  * returns null or the instance with the cacheId
                  * @param {String} cacheId
@@ -41,6 +42,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                 getInstanceByCacheId: function (cacheId) {
                     return this.$cache[cacheId];
                 },
+
                 /**
                  * Returns the path components of the context
                  * @return {Array}
@@ -48,6 +50,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                 getPathComponents: function () {
                     return [];
                 },
+
                 /***
                  * Creates a new entity in the context or returns an existing one
                  * @param {Function} factory
@@ -76,11 +79,8 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                             cachedItem = new factory({
                                 id: id
                             });
-                            // set context
-                            cachedItem.$context = this;
 
-                            // and add it to the cache
-                            this.addEntityToCache(cachedItem);
+                            this.addEntity(cachedItem, true);
                         }
 
                         return cachedItem;
@@ -89,6 +89,17 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                         throw "Factory has to be a function";
                     }
                 },
+
+                addEntity: function(entity, addToCache) {
+
+                    // set context
+                    entity.$context = this;
+
+                    // and add it to the cache
+                    addToCache && this.addEntityToCache(entity);
+
+                },
+
                 /***
                  * Creates a collection in the context
                  * @param {Function} factory
@@ -601,9 +612,11 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
         });
 
         var DataSource = Component.inherit('js.data.DataSource', {
+
             defaults: {
                 dateFormat: "YYYY-MM-DDTHH:mm:ssZ"
             },
+
             ctor: function () {
                 this.$dataSourceConfiguration = null;
                 this.$configuredTypes = [];
@@ -660,7 +673,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
 
             /***
              * Returns the configuration for a collectionclass name
-             * @param modelClassName
+             * @param collectionClassName
              * @return {*}
              */
             getConfigurationForCollectionClassName: function (collectionClassName) {
@@ -716,6 +729,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
 
                 return null;
             },
+
             /***
              * Returns the context for a properties object
              * @param {Object} properties
@@ -741,6 +755,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
             root: function () {
                 return this.$rootContext;
             },
+
             /***
              * Creates a context with the given properties
              * @param {Object} properties
@@ -750,6 +765,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
             createContext: function (properties, parentContext) {
                 return new Context(this, properties, parentContext)
             },
+
             /***
              * Create an instance of {js.data.Entity}
              * @param {Function} factory
@@ -759,9 +775,9 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
              */
             createEntity: function (factory, id, context) {
                 context = context || this.getContext();
-
                 return context.createEntity(factory, id);
             },
+
             /***
              * Creates a collection by a given factory in a caching context
              * @param {Function} factory The factory
@@ -787,6 +803,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                     callback("Abstract method", data);
                 }
             },
+
             /**
              * Loads the data for a given model. (abstract)
              * This method is called by model.fetch()
@@ -811,6 +828,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                     callback("Abstact method loadCollectionPage", list);
                 }
             },
+
             /***
              * Saves a model
              * @param {js.data.Model} model
@@ -822,6 +840,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                     callback("Abstract method saveModel", model);
                 }
             },
+
             /***
              * Removes a model
              * @param {js.data.Model} model
@@ -833,6 +852,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                     callback("Abstract method removeModel", model);
                 }
             },
+
             /***
              * Returns the correct processor for model
              *
@@ -848,6 +868,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
 
                 return ret || this.$defaultProcessor;
             },
+
             /***
              * Returns the correct processor for model class
              *
@@ -867,6 +888,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                     }
                 }
             },
+
             /***
              * Returns the correct processor for a collection
              *
@@ -882,6 +904,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
 
                 return ret || this.$defaultProcessor;
             },
+
             /**
              * Returns the format processor
              * @param {String} [action]
@@ -891,7 +914,6 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                 return this.$formatProcessors[0];
             }
         });
-
 
         DataSource.FormatProcessor = Base.inherit("js.data.DataSource.FormatProcessor", {
             serialize: function (data) {
