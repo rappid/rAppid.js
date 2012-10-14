@@ -130,7 +130,12 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow'], function (Dat
                 .seq(function (cb) {
                     this.vars['collection'].findOne(where, function (err, object) {
                         if (!err) {
-                            model.set(processor.parse(model, object));
+                            if(object){
+                                model.set(processor.parse(model, object));
+                            }else{
+                                // TODO: find a better way
+                                cb("Entity not found");
+                            }
                         }
                         cb(err);
                     });
@@ -183,7 +188,12 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow'], function (Dat
                             cb(err);
                         });
                     } else if (method === MongoDataSource.METHOD.SAVE) {
-                        this.vars['collection'].update({_id: data._id}, data, {safe: true}, function (err, objects) {
+                        this.vars['collection'].update({_id: data._id}, data, {safe: true}, function (err, count) {
+                            if(!err && count === 0){
+                                // no update happend
+                                // TODO: find a better way
+                                err = "Entity not found";
+                            }
                             cb(err, model);
                         });
                     } else {
