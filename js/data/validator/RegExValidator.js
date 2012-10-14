@@ -20,8 +20,11 @@ define(['js/data/validator/Validator', 'underscore'], function (Validator, _) {
         },
 
         _validate: function (entity) {
-            var value = entity.$[this.$.field];
-            if(value && _.isString(value)){
+            var value = entity.$[this.$.field],
+                schemaDefinition = entity.schema[this.$.field],
+                required = schemaDefinition ? schemaDefinition.required : true;
+
+            if(value && _.isString(value) && (required || !required && !value.length)){
                 if(!this.$.regEx.test(value)){
                     return this._createFieldError();
                 }
