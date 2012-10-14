@@ -7,7 +7,7 @@ define(['js/core/EventDispatcher', 'url', 'querystring', 'underscore', 'flow', '
 
             ctor: function (server, endPoint, request, response) {
 
-                this.$processingHooks = [];
+                this.$processingHooks = {};
 
                 this.server = server;
                 this.session = new ServerSession();
@@ -195,6 +195,7 @@ define(['js/core/EventDispatcher', 'url', 'querystring', 'underscore', 'flow', '
             set: function(name, value, options) {
                 this.cookies[name] = new Context.CookieManager.Cookie(name, value, options)
             },
+
             remove: function(name) {
                 this.set(name);
             },
@@ -221,7 +222,6 @@ define(['js/core/EventDispatcher', 'url', 'querystring', 'underscore', 'flow', '
             domain: undefined,
             httpOnly: true,
             secure: false,
-
 
             ctor: function (name, value, options) {
                 this.name = name;
