@@ -5,12 +5,29 @@ define(['srv/core/Filter', 'require', 'flow', 'js/data/DataSource'], function(Fi
 
         // TODO: add default dataSource
         $dataSource: null,
+
         $activeSessions: 0,
+
+        $sessionFactory: null,
+
         defaults: {
             sessionClassName: 'srv.core.ServerSession',
+
             sessionName: "sessionId",
+
             sessionId: null,
-            timeout: 2 // in hours
+
+            timeout: 120 // in minutes
+        },
+
+        start: function (server, callback) {
+            var self = this;
+            require([this.$.sessionClassName.replace(/\./g, '/')], function(sessionFactory) {
+                self.$sessionFactory = sessionFactory;
+                callback();
+            }, function(err) {
+                callback(err);
+            })
         },
 
         _setSessionCookie: function(context, session){
@@ -19,7 +36,7 @@ define(['srv/core/Filter', 'require', 'flow', 'js/data/DataSource'], function(Fi
         },
 
         _getExpiresDate: function(){
-           return new Date(new Date().getTime() + this.$.timeout * 60 * 60 * 1000);
+           return new Date(new Date().getTime() + this.$.timeout * 1000);
         },
 
         _saveNewSession: function(context, session, callback){
@@ -33,17 +50,12 @@ define(['srv/core/Filter', 'require', 'flow', 'js/data/DataSource'], function(Fi
         },
 
         beginRequest: function (context, callback) {
-            console.log("begin request");
             var sessionName = this.$.sessionName,
                 sessionId = context.request.cookies[sessionName];
 
             var sessionFactory, self = this;
 
             flow()
-                .seq(function(cb){
-                    sessionFactory = require(self.$.sessionClassName.replace(/\./g,'/'));
-                    cb();
-                })
                 .seq(function(cb){
                     // TODO: find a better way to clear the cache
                     self.$dataSource.getContext().clear();
@@ -53,6 +65,8 @@ define(['srv/core/Filter', 'require', 'flow', 'js/data/DataSource'], function(Fi
 
                     // if session is new -> save
                     if (serverSession.isNew()) {
+                        // FIXME
+                        // TODO: why to save session here -> not necessary and
                        self._saveNewSession(context, serverSession, cb);
                     } else {
                         // else fetch session data
@@ -80,25 +94,20 @@ define(['srv/core/Filter', 'require', 'flow', 'js/data/DataSource'], function(Fi
             this.callBase();
         },
 
-        beforeHeadersSend: function (context, callback) {
-
-            // on end, save the session yeah!
-            if(context.session){
-                context.session.set('expires', this._getExpiresDate());
-                this._setSessionCookie(context, context.session);
-                context.session.save(null, function (err) {
-                    // and destroy the session object
-                    context.session.destroy();
-                });
-            }
-            callback();
-        },
-
         endRequest: function (context, callback) {
 
+            // on end, save the session yeah!
+            if (context.session) {
+                context.session.set('expires', this._getExpiresDate());
+                this._setSessionCookie(context, context.session);
+                context.session.save(null, function() {
+                    context.session.destroy();
+                    callback();
+                });
+            } else {
+                callback();
+            }
 
-            console.log("endRequest");
-            callback();
         }
     })
 });
