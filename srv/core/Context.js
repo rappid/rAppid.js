@@ -1,7 +1,8 @@
 define(['js/core/EventDispatcher', 'url', 'querystring', 'underscore', 'flow', 'srv/core/Identity', 'js/core/Base'],
     function (EventDispatcher, Url, QueryString, _, flow, Identity, Base) {
 
-        var Context = EventDispatcher.inherit('srv.core.Context', {
+        var undefined,
+            Context = EventDispatcher.inherit('srv.core.Context', {
 
             $hooks: ["beginRequest", "beforeHeadersSend", "endRequest"],
 
@@ -11,7 +12,7 @@ define(['js/core/EventDispatcher', 'url', 'querystring', 'underscore', 'flow', '
 
                 this.server = server;
                 this.session = new server.$serverSessionFactory();
-                this.user = new Identity(this, server);
+                this.identity = new Identity(this, server);
 
                 this.endPoint = endPoint;
                 this.request = request;
@@ -20,7 +21,6 @@ define(['js/core/EventDispatcher', 'url', 'querystring', 'underscore', 'flow', '
                 this._registerFilterHooks(server.$filters);
 
                 this._subClassResponse(response);
-
 
                 this._parseUrl();
 
@@ -164,7 +164,7 @@ define(['js/core/EventDispatcher', 'url', 'querystring', 'underscore', 'flow', '
                                 .seq(function (cb) {
                                     self.$context._executeHook("beforeHeadersSend", cb);
                                 })
-                                .exec(function (err) {
+                                .exec(function () {
                                     // TODO: how to handle errors here ?
                                     self.__writeHead.call(self, self.statusCode, self.$reasonPhrase);
                                     self.$headersSent = true;
@@ -217,42 +217,49 @@ define(['js/core/EventDispatcher', 'url', 'querystring', 'underscore', 'flow', '
 
         Context.CookieManager.Cookie = Base.inherit('srv.core.Context.CookieManager.Cookie', {
 
-            path: "/",
-            expires: undefined,
-            domain: undefined,
-            httpOnly: true,
-            secure: false,
-
             ctor: function (name, value, options) {
-                this.name = name;
-                this.value = value;
 
                 options = options || {};
+                _.defaults(options, {
+                    path: "/",
+                    expires: undefined,
+                    domain: undefined,
+                    httpOnly: true,
+                    secure: false,
 
-                this.expires = options.expires;
-                // TODO: handle options
+                    value: value,
+                    name: name
+                });
+
+                this.$ = options;
+
             },
 
             toString: function () {
-                return this.name + "=" + this.value
+                return this.$.name + "=" + this.$.value
             },
 
             toHeader: function () {
                 var header = this.toString();
 
-                if (this.path) {
-                    header += "; path=" + this.path
+                if (this.$.path) {
+                    header += "; path=" + this.$.path
                 }
 
-                if (this.expires) {
-                    header += "; expires=" + this.expires.toUTCString();
+                if (this.$.value === undefined) {
+                    // undefined value -> remove cookie
+                    this.$.expires = new Date(0);
                 }
 
-                if (this.domain) {
-                    header += "; domain=" + this.domain;
+                if (this.$.expires) {
+                    header += "; expires=" + this.$.expires.toUTCString();
                 }
 
-                if (this.secure) {
+                if (this.$.domain) {
+                    header += "; domain=" + this.$.domain;
+                }
+
+                if (this.$.secure) {
                     header += "; secure";
                 }
 
