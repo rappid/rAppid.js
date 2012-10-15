@@ -12,7 +12,7 @@ define(['js/core/Component', 'srv/core/AuthenticationProvider', 'flow'],
                 if (child instanceof AuthenticationProvider) {
                     this.$providers.push(child);
                 } else {
-                    throw new Error("Child for Filters must be an Filter");
+                    throw new Error("Child for Providers must be an AuthenticationProvider");
                 }
 
                 this.callBase();
@@ -20,9 +20,9 @@ define(['js/core/Component', 'srv/core/AuthenticationProvider', 'flow'],
 
             stop: function (callback) {
                 flow()
-                    .seqEach(this.$providers, function (filter, cb) {
+                    .seqEach(this.$providers, function (provider, cb) {
                         // ignore errors during stop
-                        filter.stop(function () {
+                        provider.stop(function () {
                             cb();
                         });
                     })
@@ -32,8 +32,8 @@ define(['js/core/Component', 'srv/core/AuthenticationProvider', 'flow'],
             start: function (server, callback) {
 
                 flow()
-                    .seqEach(this.$providers, function (filter, cb) {
-                        filter.start(server, cb);
+                    .seqEach(this.$providers, function (provider, cb) {
+                        provider.start(server, cb);
                     })
                     .exec(callback);
 
