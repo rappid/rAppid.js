@@ -12,10 +12,14 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore'],
                 data[PARENT_KEY] = model.$parent.$.id;
             }
 
+            var idSchema = model.schema['id'];
+            if(!(idSchema && idSchema.type === String)){
+                data[ID_KEY] = this.$dataSource.getIdObject(data[ID_KEY]);
+            }
+
             return data;
         },
         _composeSubModel: function (model, action, options) {
-            // TODO: add href
             return this.$dataSource.getIdObject(model.$.id);
         },
         _getReferenceKey: function (key, schemaType) {
@@ -50,14 +54,6 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore'],
 
             return this.callBase();
 
-        },
-        _getCompositionValue: function (value, key, action, options) {
-            // add correct id object
-            if (key === "id" && value) {
-                return this.$dataSource.getIdObject(value);
-            }
-
-            return this.callBase();
         },
         parse: function (model, data, action, options) {
             if (data['_id']) {
@@ -114,16 +110,13 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore'],
                 return;
             }
 
-            try {
-                var idObject = this.getIdObject(model.$.id);
-            } catch(e) {
-                callback("Coulnd't find entry " + configuration.$.collection + "/" + model.$.id);
-            }
-
             var processor = this.getProcessorForModel(model);
 
+            var data = processor.compose(model,options);
+
+
             var where = {
-                _id: idObject
+                _id: data._id
             };
 
             // here we have a polymorph type
@@ -145,8 +138,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore'],
                             if(object){
                                 model.set(processor.parse(model, object));
                             }else{
-                                // TODO: find a better way
-                                cb("Entity not found");
+                                err = DataSource.ERROR.NOT_FOUND;
                             }
                         }
                         cb(err);
@@ -180,6 +172,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore'],
 
             var data = processor.compose(model, action, options), self = this, connection;
 
+            // if you want to set a custom ID
             if(options.id && action === DataSource.ACTION.CREATE){
                 data[ID_KEY] = options.id;
             }
@@ -207,8 +200,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore'],
                         this.vars['collection'].update({_id: data._id}, data, {safe: true}, function (err, count) {
                             if(!err && count === 0){
                                 // no update happend
-                                // TODO: find a better way
-                                err = "Entity not found";
+                                err = DataSource.ERROR.NOT_FOUND;
                             }
                             cb(err, model);
                         });
@@ -233,7 +225,9 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore'],
                 return;
             }
 
-            var self = this, connection;
+            var processor = this.getProcessorForModel(model);
+
+            var data = processor.compose(model, options);
 
             flow()
                 .seq("collection", function (cb) {
@@ -242,7 +236,10 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore'],
                     });
                 })
                 .seq(function (cb) {
-                    this.vars['collection'].remove({_id: self.getIdObject(model.$.id)}, {safe: true}, function (err) {
+                    this.vars['collection'].remove({_id: data._id}, {safe: true}, function (err, count) {
+                        if(count === 0){
+                            err = DataSource.ERROR.NOT_FOUND;
+                        }
                         cb(err, model);
                     });
                 })
