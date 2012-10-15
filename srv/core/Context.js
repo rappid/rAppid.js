@@ -1,5 +1,5 @@
-define(['js/core/EventDispatcher', 'url', 'querystring', 'underscore', 'flow', 'srv/core/User', 'js/core/Base'],
-    function (EventDispatcher, Url, QueryString, _, flow, User, Base) {
+define(['js/core/EventDispatcher', 'url', 'querystring', 'underscore', 'flow', 'srv/core/Identity', 'js/core/Base'],
+    function (EventDispatcher, Url, QueryString, _, flow, Identity, Base) {
 
         var Context = EventDispatcher.inherit('srv.core.Context', {
 
@@ -11,7 +11,7 @@ define(['js/core/EventDispatcher', 'url', 'querystring', 'underscore', 'flow', '
 
                 this.server = server;
                 this.session = new server.$serverSessionFactory();
-                this.user = new User.AnonymousUser();
+                this.user = new Identity(this, server);
 
                 this.endPoint = endPoint;
                 this.request = request;

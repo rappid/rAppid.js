@@ -1,5 +1,5 @@
-define(['require', 'js/core/Component', 'srv/core/Context', 'srv/core/Handlers', 'srv/core/EndPoints', 'srv/core/Filters', 'srv/handler/ExceptionHandler', 'flow', 'domain', 'srv/core/ServerSession'],
-    function (require, Component, Context, Handlers, EndPoints, Filters, ExceptionHandler, flow, Domain, ServerSession) {
+define(['require', 'js/core/Component', 'srv/core/Context', 'srv/core/Handlers', 'srv/core/EndPoints', 'srv/core/Filters', 'srv/handler/ExceptionHandler', 'flow', 'domain', 'srv/core/ServerSession', 'srv/core/AuthenticationProviders', 'srv/core/AuthorisationProviders'],
+    function (require, Component, Context, Handlers, EndPoints, Filters, ExceptionHandler, flow, Domain, ServerSession, AuthenticationProviders, AuthorisationProviders) {
 
         return Component.inherit('srv.core.Server', {
 
@@ -11,6 +11,8 @@ define(['require', 'js/core/Component', 'srv/core/Context', 'srv/core/Handlers',
                 this.$handlers = null;
                 this.$filters = null;
                 this.$endPoints = null;
+                this.$authenticationProviders = null;
+                this.$authorisationProviders= null;
 
                 this.callBase();
             },
@@ -22,6 +24,10 @@ define(['require', 'js/core/Component', 'srv/core/Context', 'srv/core/Handlers',
                     this.$endPoints = child;
                 } else if (child instanceof Filters) {
                     this.$filters = child;
+                } else if (child instanceof AuthenticationProviders) {
+                    this.$authenticationProviders = child;
+                } else if (child instanceof AuthorisationProviders) {
+                    this.$authorisationProviders = child;
                 }
 
                 this.callBase();
@@ -41,6 +47,14 @@ define(['require', 'js/core/Component', 'srv/core/Context', 'srv/core/Handlers',
 
                 if (!this.$filters) {
                     this.$filters = this.createComponent(Filters);
+                }
+
+                if (!this.$authenticationProviders) {
+                    this.$authenticationProviders = this.createComponent(AuthenticationProviders);
+                }
+
+                if (!this.$authorisationProviders) {
+                    this.$authorisationProviders = this.createComponent(AuthorisationProviders);
                 }
 
                 var self = this;
