@@ -149,39 +149,51 @@ define(['require', 'js/core/Component', 'srv/core/Context', 'srv/core/Handlers',
                 domain.add(request);
                 domain.add(response);
 
+                request.setEncoding('utf8');
+                request.body = "";
+
+                request.on('data', function(chunk) {
+                    request.body += chunk;
+                });
+
+                request.on('end', function() {
+                    domain.run(function () {
+                        // create the new context object
+                        context = new Context(self, endPoint, request, response);
+
+                        // and set the chosen handler
+                        requestHandler = self.$handlers.getRequestHandler(context);
+                        context.handler = requestHandler;
+
+                        flow()
+                            .seq(function (cb) {
+                                context._executeHook("beginRequest", cb);
+                            })
+                            .seq(function (cb) {
+                                if (requestHandler.$.autoStartSession) {
+                                    context.session.start(cb);
+                                } else {
+                                    cb();
+                                }
+                            })
+                            .seq(function (cb) {
+                                requestHandler.handleRequest(context, cb);
+                            })
+                            .exec(function (err) {
+                                if (err) {
+                                    handleError(err);
+                                } else {
+                                    context.response.end();
+                                }
+                            });
+                    });
+                });
+
                 response.on('end', function () {
                     domain.dispose();
                 });
 
                 domain.on('error', handleError);
-
-                domain.run(function () {
-
-                    // create the new context object
-                    context = new Context(self, endPoint, request, response);
-
-                    // and set the chosen handler
-                    requestHandler = self.$handlers.getRequestHandler(context);
-                    context.handler = requestHandler;
-
-                    flow()
-                        .seq(function (cb) {
-                            context._executeHook("beginRequest", cb);
-                        })
-                        .seq(function(cb) {
-                            if (requestHandler.$.autoStartSession) {
-                                context.session.start(cb);
-                            } else {
-                                cb();
-                            }
-                        })
-                        .seq(function (cb) {
-                            requestHandler.handleRequest(context, cb);
-                        })
-                        .exec(function (err) {
-                            err && handleError(err);
-                        });
-                });
 
                 function handleError(err) {
 
