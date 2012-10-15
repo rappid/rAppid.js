@@ -14,13 +14,13 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore'],
 
             var idSchema = model.schema['id'];
             if(!(idSchema && idSchema.type === String)){
-                data[ID_KEY] = this.$dataSource.getIdObject(data[ID_KEY]);
+                data[ID_KEY] = this.$dataSource._createIdObject(data[ID_KEY]);
             }
 
             return data;
         },
         _composeSubModel: function (model, action, options) {
-            return this.$dataSource.getIdObject(model.$.id);
+            return this.$dataSource._createIdObject(model.$.id);
         },
         _getReferenceKey: function (key, schemaType) {
             // correct key of id object
@@ -99,7 +99,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore'],
         _getConfigurationForModel: function (model) {
             return this.$dataSourceConfiguration.getConfigurationForModelClass(model.factory);
         },
-        getIdObject: function (id) {
+        _createIdObject: function (id) {
             return new mongoDb.ObjectID(id);
         },
         loadModel: function (model, options, callback) {
