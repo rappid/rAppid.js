@@ -939,6 +939,10 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
             }
         });
 
+        DataSource.ERROR = {
+            NOT_FOUND: "not_found"
+        };
+
         DataSource.Context = Context;
 
         DataSource.Processor = Processor;
