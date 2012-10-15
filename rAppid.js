@@ -61,7 +61,7 @@
 
     requirejs.config({
         paths: {
-            json: "js/plugins/json"
+            json: "js/plugin/json"
         }
     });
 

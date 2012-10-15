@@ -1,9 +1,9 @@
 {
     "xamlClasses": ["js.ui.Link", "js.ui.MenuButton", "js.ui.SplitButton" , "js.ui.TabView"],
     "paths": {
-        "xaml": "js/plugins/xaml",
-        "json": "js/plugins/json",
-        "raw": "js/plugins/raw",
+        "xaml": "js/plugin/xaml",
+        "json": "js/plugin/json",
+        "raw": "js/plugin/raw",
         "flow": "js/lib/flow",
         "inherit": "js/lib/inherit",
         "underscore": "js/lib/underscore",
