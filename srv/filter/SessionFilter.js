@@ -60,7 +60,7 @@ define(['srv/core/Filter', 'require', 'flow', 'js/data/DataSource', 'srv/core/Se
         beforeHeadersSend: function (context, callback) {
             var session = context.session,
                 sessionName = this.$.sessionName,
-                sessionId = session.$.id;
+                sessionId = session.sessionId;
 
             if (session.$started && context.request.cookies[sessionName] !== sessionId) {
                 // store session id in cookie
@@ -73,14 +73,15 @@ define(['srv/core/Filter', 'require', 'flow', 'js/data/DataSource', 'srv/core/Se
         endRequest: function (context, callback) {
 
             // on end, save the session yeah!
-            var session = context.session;
+            var session = context.session, self = this;
 
             session.set('expires', this._getExpiresDate());
             session.save({
-                id: session.$.id
-            }, function () {
-                // TODO: do we need to destroy the session here, why. No extra code I see?
-                context.session.destroy();
+                id: session.sessionId
+            }, function (err) {
+                if(err){
+                    self.log("Couldn't save session.", "warn");
+                }
                 callback();
             });
 
