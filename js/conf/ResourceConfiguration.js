@@ -1,6 +1,6 @@
 define(["js/conf/Configuration", "js/data/Model"], function (Configuration, Model) {
 
-    return Configuration.inherit('js.conf.Resource', {
+    return Configuration.inherit('js.conf.ResourceConfiguration', {
         _initializationComplete: function () {
             this._validateConfiguration();
             this.callBase();
@@ -28,7 +28,7 @@ define(["js/conf/Configuration", "js/data/Model"], function (Configuration, Mode
         /**
          * Returns configuration for a given modelClass / model factory
          * @param {Function} modelClass
-         * @return {js.conf.Resource}
+         * @return {js.conf.ResourceConfiguration}
          */
         getConfigurationForModelClass: function(modelClass){
             var configuration;

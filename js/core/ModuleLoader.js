@@ -1,4 +1,4 @@
-define(["require", "js/html/HtmlElement", "js/ui/ContentPlaceHolder", "js/core/Module", "underscore", "js/conf/Module", "flow"],
+define(["require", "js/html/HtmlElement", "js/ui/ContentPlaceHolder", "js/core/Module", "underscore", "js/conf/ModuleConfiguration", "flow"],
     function (require, HtmlElement, ContentPlaceHolder, Module, _, ModuleConfiguration, flow) {
         var ModuleLoader = HtmlElement.inherit("js.core.ModuleLoader", {
 
@@ -29,7 +29,7 @@ define(["require", "js/html/HtmlElement", "js/ui/ContentPlaceHolder", "js/core/M
             /***
              * adds a module to the list of known modules
              *
-             * @param {js.conf.Module} module
+             * @param {js.conf.ModuleConfiguration} module
              */
             addModule: function (module) {
                 _.defaults(module, {
@@ -121,7 +121,7 @@ define(["require", "js/html/HtmlElement", "js/ui/ContentPlaceHolder", "js/core/M
             /***
              * loads an module instance into the module loader and starts the module
              *
-             * @param {js.conf.Module} module - the module to load
+             * @param {js.conf.ModuleConfiguration} module - the module to load
              * @param {Function} [callback] - a callback function which gets invoked after the module is loaded or an error occurred
              * @param {js.core.Router.RouteContext} [routeContext]
              */

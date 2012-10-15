@@ -1,6 +1,6 @@
-define(["js/core/Component", "underscore", "js/conf/Route"],
+define(["js/core/Component", "underscore", "js/conf/RouteConfiguration"],
 
-    function (Component, _, Route) {
+    function (Component, _, RouteConfiguration) {
 
         return Component.inherit("js.core.Router", {
             ctor: function () {
@@ -32,7 +32,7 @@ define(["js/core/Component", "underscore", "js/conf/Route"],
                 for (var c = 0; c < this.$configurations.length; c++) {
                     var config = this.$configurations[c];
 
-                    if (config instanceof Route) {
+                    if (config instanceof RouteConfiguration) {
                         this.addRoute(config.$);
                     }
                 }

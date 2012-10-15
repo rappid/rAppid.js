@@ -1,4 +1,4 @@
-define(['require', 'srv/core/Handler', 'js/conf/DataSource', 'js/conf/Resource', 'srv/handler/rest/ResourceRouter', 'flow', 'js/data/DataSource', 'js/data/RestDataSource'],
+define(['require', 'srv/core/Handler', 'js/conf/DataSourceConfiguration', 'js/conf/ResourceConfiguration', 'srv/handler/rest/ResourceRouter', 'flow', 'js/data/DataSource', 'js/data/RestDataSource'],
     function(require, Handler, DataSourceConfiguration, ResourceConfiguration, ResourceRouter, flow, DataSource, RestDataSource) {
 
     return Handler.inherit('srv.core.RestHandler', {
