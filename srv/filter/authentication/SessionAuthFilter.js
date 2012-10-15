@@ -1,6 +1,6 @@
 define(['srv/core/AuthenticationFilter'], function (AuthenticationFilter) {
 
-    return AuthenticationFilter.inherit('srv.filter.PlainAuthFilter', {
+    return AuthenticationFilter.inherit('srv.filter.SessionAuthFilter', {
         defaults: {
             key: 'userId'
         },
