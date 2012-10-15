@@ -29,7 +29,7 @@ define(['js/data/Model'], function (Model) {
                     internalCallBack();
                 });
             } else {
-                this.sessionId = this.$sessionFilter.generateSessionId();
+                this.sessionId = this.$sessionFilter && this.$sessionFilter.generateSessionId();
                 internalCallBack();
             }
 
