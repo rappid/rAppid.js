@@ -31,7 +31,7 @@ define(['srv/core/Filter', 'require', 'flow', 'js/data/DataSource', 'srv/core/Se
 
         beginRequest: function (context, callback) {
             var sessionName = this.$.sessionName,
-                sessionId = context.request.cookies[sessionName],
+                sessionId = context.request.cookie[sessionName],
                 session = context.session,
                 dataSourceContext;
 
@@ -62,9 +62,9 @@ define(['srv/core/Filter', 'require', 'flow', 'js/data/DataSource', 'srv/core/Se
                 sessionName = this.$.sessionName,
                 sessionId = session.sessionId;
 
-            if (session.$started && context.request.cookies[sessionName] !== sessionId) {
+            if (session.$started && context.request.cookie[sessionName] !== sessionId) {
                 // store session id in cookie
-                context.response.cookies.set(sessionName, sessionId);
+                context.response.cookie.set(sessionName, sessionId);
             }
 
             callback();
