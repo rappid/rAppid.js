@@ -1,7 +1,9 @@
-define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'js/data/Collection'], function (Component, HttpError, flow, require, JSON, Collection) {
+define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'js/data/Collection', 'js/data/DataSource'], function (Component, HttpError, flow, require, JSON, Collection, DataSource) {
 
     return Component.inherit('srv.handler.rest.ResourceHandler', {
-
+        defaults: {
+            autoStartSession: true
+        },
         $collectionMethodMap: {
             GET: "_index",
             POST: "_create"
@@ -63,7 +65,7 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
                         // TODO: handle different payload formats -> query string
                         try {
                             context.request.params = JSON.parse(body);
-                        } catch (e) {
+                        } catch(e) {
                             console.warn("Couldn't parse " + body);
                         }
                     }
@@ -238,7 +240,11 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
                     response.end();
                     callback(null);
                 } else {
-                    callback(new HttpError(err, 500));
+                    var statusCode = 500;
+                    if(err === DataSource.ERROR.NOT_FOUND){
+                        statusCode = 404;
+                    }
+                    callback(new HttpError(err, statusCode));
                 }
             });
         },
@@ -285,7 +291,11 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
 
                             cb(null);
                         } else {
-                            cb(new HttpError(err, 500));
+                            var statusCode = 500;
+                            if (err === DataSource.ERROR.NOT_FOUND) {
+                                statusCode = 404;
+                            }
+                            cb(new HttpError(err, statusCode));
                         }
                     });
                 }).exec(callback);
@@ -319,7 +329,11 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
 
                     callback(null);
                 } else {
-                    callback(new HttpError(err, 500));
+                    var statusCode = 500;
+                    if (err === DataSource.ERROR.NOT_FOUND) {
+                        statusCode = 404;
+                    }
+                    callback(new HttpError(err, statusCode));
                 }
             });
         }
