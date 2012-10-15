@@ -19,6 +19,11 @@ define(['js/core/Component'], function(Component) {
          * @param callback
          */
         start: function(server, callback) {
+            this.$server = server;
+            this._start(callback);
+        },
+
+        _start: function(callback) {
             callback();
         },
 
