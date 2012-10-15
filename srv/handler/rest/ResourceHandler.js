@@ -52,25 +52,17 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
 
             if (fn instanceof Function) {
                 context.dataSource = this.getDataSource();
+                var body = context.request.body;
 
-                // TODO: why this?
-                var body = "";
-                context.request.on('data', function (data) {
-                    body += data;
-                });
-
-                var self = this;
-                context.request.on('end', function () {
-                    if (body !== "") {
-                        // TODO: handle different payload formats -> query string
-                        try {
-                            context.request.params = JSON.parse(body);
-                        } catch(e) {
-                            console.warn("Couldn't parse " + body);
-                        }
+                if (body !== "") {
+                    // TODO: handle different payload formats -> query string
+                    try {
+                        context.request.params = JSON.parse(body);
+                    } catch (e) {
+                        console.warn("Couldn't parse " + body);
                     }
-                    fn.call(self, context, callback);
-                });
+                }
+                fn.call(self, context, callback);
 
             } else {
                 throw new HttpError("Method not supported", 404);
