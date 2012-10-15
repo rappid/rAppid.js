@@ -2,6 +2,7 @@ define([], function() {
 
     return Error.inherit('srv.core.HttpError', {
         ctor: function(message, statusCode, statusText) {
+            statusCode = statusCode || 500;
 
             Error.prototype.constructor.call(this, message, statusCode);
 
