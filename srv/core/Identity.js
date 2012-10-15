@@ -12,7 +12,16 @@ define(['js/core/Base', 'flow'], function (Base, flow) {
             this.$authenticationRequests.push(new Identity.AuthenticationRequest(data, filter));
         },
 
-        isAuthorized: function (authorizationRequest, callback) {
+        loadAuthentications: function(callback){
+
+            var self = this;
+            this._initAuthentications(function(err){
+                callback(err, self.authentications)
+            });
+
+        },
+
+        _initAuthentications: function(callback){
             if (!this.authentications) {
                 var self = this;
                 this.authentications = [];
@@ -26,7 +35,6 @@ define(['js/core/Base', 'flow'], function (Base, flow) {
                                 }
                                 cb(err);
                             });
-
                         } else {
                             self.$server.$authenticationProviders.authenticate(authRequest.data, function (err, authentications) {
                                 if (!err && authentications) {
@@ -38,11 +46,16 @@ define(['js/core/Base', 'flow'], function (Base, flow) {
                         }
 
                     })
-                    .exec(doAuthorization)
+                    .exec(callback)
             } else {
-                doAuthorization();
+                callback();
             }
+        },
 
+        isAuthorized: function (authorizationRequest, callback) {
+            var self = this;
+
+            this._initAuthentications(doAuthorization);
 
             function doAuthorization(err) {
                 if (!err) {
