@@ -1,7 +1,11 @@
-define(['js/core/Component', 'srv/core/Context', 'srv/core/Handlers', 'srv/core/EndPoints', 'srv/core/Filters', 'srv/handler/ExceptionHandler', 'flow', 'domain'],
-    function (Component, Context, Handlers, EndPoints, Filters, ExceptionHandler, flow, Domain) {
+define(['require', 'js/core/Component', 'srv/core/Context', 'srv/core/Handlers', 'srv/core/EndPoints', 'srv/core/Filters', 'srv/handler/ExceptionHandler', 'flow', 'domain', 'srv/core/ServerSession'],
+    function (require, Component, Context, Handlers, EndPoints, Filters, ExceptionHandler, flow, Domain, ServerSession) {
 
         return Component.inherit('srv.core.Server', {
+
+            defaults: {
+                serverSessionClassName: null
+            },
 
             ctor: function () {
                 this.$handlers = null;
@@ -42,6 +46,22 @@ define(['js/core/Component', 'srv/core/Context', 'srv/core/Handlers', 'srv/core/
                 var self = this;
 
                 flow()
+                    .seq(function(cb){
+                        if (self.serverSessionClassName) {
+                            require([self.serverSessionClassName], function(factory) {
+                                if (factory.classof(ServerSession)) {
+                                    self.$serverSessionFactory = factory;
+                                    cb();
+                                } else {
+                                    cb("Factory for session not a ServerSession");
+                                }
+
+                            }, cb)
+                        } else {
+                            self.$serverSessionFactory = ServerSession;
+                            cb();
+                        }
+                    })
                     .seq(function (cb) {
                         // start all end points
                         self.$endPoints.start(self, cb);
@@ -62,9 +82,7 @@ define(['js/core/Component', 'srv/core/Context', 'srv/core/Handlers', 'srv/core/
                         } else {
                             callback();
                         }
-                    })
-
-
+                    });
             },
 
             /***

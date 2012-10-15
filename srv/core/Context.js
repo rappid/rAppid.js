@@ -1,5 +1,5 @@
-define(['js/core/EventDispatcher', 'url', 'querystring', 'underscore', 'flow', 'srv/core/ServerSession', 'srv/core/User', 'js/core/Base'],
-    function (EventDispatcher, Url, QueryString, _, flow, ServerSession, User, Base) {
+define(['js/core/EventDispatcher', 'url', 'querystring', 'underscore', 'flow', 'srv/core/User', 'js/core/Base'],
+    function (EventDispatcher, Url, QueryString, _, flow, User, Base) {
 
         var Context = EventDispatcher.inherit('srv.core.Context', {
 
@@ -10,7 +10,7 @@ define(['js/core/EventDispatcher', 'url', 'querystring', 'underscore', 'flow', '
                 this.$processingHooks = {};
 
                 this.server = server;
-                this.session = new ServerSession();
+                this.session = new server.$serverSessionFactory();
                 this.user = new User.AnonymousUser();
 
                 this.endPoint = endPoint;
