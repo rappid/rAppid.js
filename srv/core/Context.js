@@ -4,106 +4,124 @@ define(['js/core/EventDispatcher', 'url', 'querystring', 'underscore', 'flow', '
         var undefined,
             Context = EventDispatcher.inherit('srv.core.Context', {
 
-            $hooks: ["beginRequest", "beforeHeadersSend", "endRequest"],
+                $hooks: ["beginRequest", "beforeHeadersSend", "endRequest"],
 
-            ctor: function (server, endPoint, request, response) {
+                ctor: function (server, endPoint, request, response) {
 
-                this.$processingHooks = {};
+                    this.$processingHooks = {};
 
-                this.server = server;
-                this.session = new server.$serverSessionFactory();
-                this.identity = new Identity(this, server);
+                    this.server = server;
+                    this.session = new server.$serverSessionFactory();
+                    this.identity = new Identity(this, server);
 
-                this.endPoint = endPoint;
-                this.request = request;
-                this.response = response;
+                    this.endPoint = endPoint;
+                    this.request = request;
+                    this.response = response;
 
-                this._registerFilterHooks(server.$filters);
+                    this._registerFilterHooks(server.$filters);
 
-                this._subClassResponse(response);
+                    this._subClassResponse(response);
 
-                this._parseUrl();
+                    this._parseUrl();
+                    this._parsePostData(request);
 
-                this._extractCookies(request);
+                    this._extractCookies(request);
 
-                response.cookies = new Context.CookieManager(this);
+                    response.cookies = new Context.CookieManager(this);
 
-            },
+                },
 
-            /***
-             *
-             * @param name
-             * @param {Function} hookFunction
-             */
-            addProcessingHook: function (name, hookFunction) {
-                var processingHookStorage = this.$processingHooks[name] || (this.$processingHooks[name] = []);
-                processingHookStorage.push(hookFunction);
-            },
+                /***
+                 *
+                 * @param name
+                 * @param {Function} hookFunction
+                 */
+                addProcessingHook: function (name, hookFunction) {
+                    var processingHookStorage = this.$processingHooks[name] || (this.$processingHooks[name] = []);
+                    processingHookStorage.push(hookFunction);
+                },
 
-            _executeHook: function (name, callback) {
-                var context = this;
+                _executeHook: function (name, callback) {
+                    var context = this;
 
-                flow()
-                    .seqEach(this.$processingHooks[name], function (hookFunction, cb) {
-                        hookFunction(context, cb);
-                    })
-                    .exec(callback);
-            },
+                    flow()
+                        .seqEach(this.$processingHooks[name], function (hookFunction, cb) {
+                            hookFunction(context, cb);
+                        })
+                        .exec(callback);
+                },
 
-            _registerFilterHooks: function(filters) {
-                // register filter hooks
-                for (var i = 0; i < this.$hooks.length; i++) {
-                    var hookName = this.$hooks[i];
-                    this.addProcessingHook(hookName, filters[hookName].bind(filters));
+                _registerFilterHooks: function (filters) {
+                    // register filter hooks
+                    for (var i = 0; i < this.$hooks.length; i++) {
+                        var hookName = this.$hooks[i];
+                        this.addProcessingHook(hookName, filters[hookName].bind(filters));
+                    }
+                },
+
+                _subClassResponse: function (response) {
+
+                    response.__end = response.end;
+                    response.__writeHead = response.writeHead;
+                    response.__write = response.write;
+
+                    response.$context = this;
+
+                    if (!response.__proto__.getHeaders) {
+                        response.__proto__.getHeaders = function () {
+                            return this._renderHeaders();
+                        };
+                    }
+
+                    response.writeHead = Context.Response._writeHead;
+
+                    response.write = Context.Response._write;
+
+                    response.end = Context.Response._end;
+                },
+
+                _parseUrl: function () {
+                    var request = this.request;
+
+                    var urlInfo = Url.parse(request.url);
+                    request.urlInfo = urlInfo;
+                    urlInfo.parameter = QueryString.parse(urlInfo.query);
+                    request.get = urlInfo;
+                },
+
+                _parsePostData: function (request) {
+
+                    if (request.method === "POST") {
+                        try {
+                            request.post = QueryString.parse(request.body);
+                        } catch (e) {
+                            this.log("Couldn't parse post parameters", "info");
+                        }
+                    }
+
+                    if (!request.post) {
+                        request.post = {};
+                    }
+
+                },
+
+                _extractCookies: function (request) {
+
+                    var cookies = request.headers["cookie"];
+                    request.cookie = {};
+
+                    if (!cookies) {
+                        return;
+                    }
+
+                    cookies.split(";").forEach(function (cookie) {
+                        var parts = cookie.split('=');
+                        request.cookie[parts[0].trim()] = (parts[1] || "").trim();
+                    });
+
                 }
-            },
 
-            _subClassResponse: function(response) {
-
-                response.__end = response.end;
-                response.__writeHead = response.writeHead;
-                response.__write = response.write;
-
-                response.$context = this;
-
-                if (!response.__proto__.getHeaders) {
-                    response.__proto__.getHeaders = function () {
-                        return this._renderHeaders();
-                    };
-                }
-
-                response.writeHead = Context.Response._writeHead;
-
-                response.write = Context.Response._write;
-
-                response.end = Context.Response._end;
-            },
-
-            _parseUrl: function() {
-                var request = this.request;
-
-                var urlInfo = Url.parse(request.url);
-                request.urlInfo = urlInfo;
-                urlInfo.parameter = QueryString.parse(urlInfo.query);
-            },
-
-            _extractCookies: function(request) {
-
-                var cookies = request.headers["cookie"];
-                request.cookies = {};
-
-                if (!cookies) {
-                    return;
-                }
-
-                cookies.split(";").forEach(function (cookie) {
-                    var parts = cookie.split('=');
-                    request.cookies[parts[0].trim()] = (parts[1] || "").trim();
-                });
-
-            }
-
-        });
+            });
 
         Context.Response = {
 
@@ -151,62 +169,62 @@ define(['js/core/EventDispatcher', 'url', 'querystring', 'underscore', 'flow', '
             _writeHeadHook: function (callback) {
                 // internal write head logic
 
-                    var self = this;
+                var self = this;
 
-                    if (!this.$headersSent) {
-                        if (this.$writeHeadCallbacks) {
-                            // head write in process -> queue callback
-                            this.$writeHeadCallbacks.push(callback);
-                        } else {
-                            this.$writeHeadCallbacks = [callback];
-
-                            flow()
-                                .seq(function (cb) {
-                                    self.$context._executeHook("beforeHeadersSend", cb);
-                                })
-                                .exec(function () {
-                                    // TODO: how to handle errors here ?
-                                    self.__writeHead.call(self, self.statusCode, self.$reasonPhrase);
-                                    self.$headersSent = true;
-
-                                    for (var i = 0; i < self.$writeHeadCallbacks.length; i++) {
-                                        var writeHeadCallback = self.$writeHeadCallbacks[i];
-                                        writeHeadCallback && writeHeadCallback();
-                                    }
-                                });
-                        }
+                if (!this.$headersSent) {
+                    if (this.$writeHeadCallbacks) {
+                        // head write in process -> queue callback
+                        this.$writeHeadCallbacks.push(callback);
                     } else {
-                        callback();
+                        this.$writeHeadCallbacks = [callback];
+
+                        flow()
+                            .seq(function (cb) {
+                                self.$context._executeHook("beforeHeadersSend", cb);
+                            })
+                            .exec(function () {
+                                // TODO: how to handle errors here ?
+                                self.__writeHead.call(self, self.statusCode, self.$reasonPhrase);
+                                self.$headersSent = true;
+
+                                for (var i = 0; i < self.$writeHeadCallbacks.length; i++) {
+                                    var writeHeadCallback = self.$writeHeadCallbacks[i];
+                                    writeHeadCallback && writeHeadCallback();
+                                }
+                            });
                     }
+                } else {
+                    callback();
+                }
             }
 
         };
 
         Context.CookieManager = Base.inherit('srv.core.Context.CookieManager', {
 
-            ctor: function(context) {
-                this.cookies = {};
+            ctor: function (context) {
+                this.cookie = {};
                 var self = this;
-                context.addProcessingHook("beforeHeadersSend", function(context, callback) {
+                context.addProcessingHook("beforeHeadersSend", function (context, callback) {
                     self._writeCookiesToHead(context, callback);
                 });
             },
 
-            set: function(name, value, options) {
-                this.cookies[name] = new Context.CookieManager.Cookie(name, value, options)
+            set: function (name, value, options) {
+                this.cookie[name] = new Context.CookieManager.Cookie(name, value, options)
             },
 
-            remove: function(name) {
+            remove: function (name) {
                 this.set(name);
             },
 
-            _writeCookiesToHead: function(context, callback) {
+            _writeCookiesToHead: function (context, callback) {
 
                 var headers = [];
 
-                for (var key in this.cookies) {
-                    if (this.cookies.hasOwnProperty(key)) {
-                        headers.push(this.cookies[key].toHeader())
+                for (var key in this.cookie) {
+                    if (this.cookie.hasOwnProperty(key)) {
+                        headers.push(this.cookie[key].toHeader())
                     }
                 }
 
