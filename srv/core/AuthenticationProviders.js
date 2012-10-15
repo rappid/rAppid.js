@@ -37,21 +37,7 @@ define(['js/core/Component', 'srv/core/AuthenticationProvider', 'flow'],
                     })
                     .exec(callback);
 
-            },
-
-            authenticate: function(authenticationData, callback) {
-                var authentications = [];
-                flow()
-                    .seqEach(this.$providers, function (provider, cb) {
-                        provider.authenticate(authenticationData, function(err, authentication){
-                            if(!err && authentication){
-                                authentications.push(authentication);
-                            }
-                        });
-                    })
-                    .exec(function(err){
-                        callback(err, authentications);
-                    });
             }
-        })
+
+        });
     });
