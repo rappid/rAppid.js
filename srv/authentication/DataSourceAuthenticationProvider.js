@@ -5,8 +5,6 @@ define(['srv/core/AuthenticationProvider', 'srv/core/Authentication', 'js/data/C
         defaults: {
             userModelClassName: null,
             idKey: 'userId',
-            passwordKey: 'password',
-            emailKey: 'email',
             dataSource: null
         },
 
