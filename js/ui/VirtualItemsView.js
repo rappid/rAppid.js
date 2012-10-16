@@ -72,12 +72,15 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
 
         _onDomAdded: function(){
             this.callBase();
-            if(this.isRendered()){
-                this._syncScrollPosition();
-            }
+            this._syncScrollPosition();
         },
 
         _syncScrollPosition: function(){
+
+            if (!this.isRendered()) {
+                return
+            }
+
             this.$el.scrollTop = this.$.scrollTop;
             this.$el.scrollLeft = this.$.scrollLeft;
         },
@@ -170,12 +173,12 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
 
             if (!isNaN(ItemsCount)) {
                 // end well known
-                if(ItemsCount > 0){
-                    endIndex = Math.min(ItemsCount - 1, endIndex)
-                }else{
+                if (ItemsCount <= 0) {
                     this._releaseActiveRenderer();
                 }
-                if(this.$isLoading){
+                endIndex = Math.min(ItemsCount - 1, endIndex);
+
+                if (this.$isLoading) {
                     this.removeClass('loading');
                     this.$isLoading = false;
                 }
@@ -515,6 +518,19 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
             this.$data = data;
             this.$virtualItemsView = virtualItemsView;
 
+            if (data instanceof List) {
+                var refreshView = function () {
+                    this.trigger('sizeChanged');
+                    virtualItemsView._updateVisibleItems();
+                };
+
+                data.bind('add', refreshView, this);
+                data.bind('remove', refreshView, this);
+                data.bind('reset', refreshView, this);
+                data.bind('sort', refreshView, this);
+            }
+
+
             this.callBase(null);
 
         },
@@ -543,7 +559,7 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
          */
         size: function () {
             return this.$data ? this.$data.length : 0;
-        }.onChange('$data')
+        }.onChange('$data').on("sizeChanged")
     });
 
     VirtualItemsView.VirtualCollectionDataAdapter = VirtualItemsView.VirtualDataAdapter.inherit('js.ui.VirtualItemsView.VirtualCollectionDataAdapter', {
