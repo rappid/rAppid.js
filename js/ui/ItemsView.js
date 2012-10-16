@@ -26,12 +26,12 @@ define(
             /***
              * Returns true if items are available
              */
-            hasItems: function () {
+            isEmpty: function () {
                 if (this.$.items) {
                     return this.$.items.length;
                 }
                 return 0;
-            }.on('items'),
+            }.onChange('items'),
 
             render: function () {
                 if (!this.isRendered()) {
