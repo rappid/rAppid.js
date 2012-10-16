@@ -30,10 +30,10 @@ define(["js/core/Bindable", "underscore"], function (Bindable, _) {
         },
         /**
          *
-         * @return Boolean true if list has items
+         * @return {Boolean} true if list has items
          */
-        hasItems: function () {
-            return this.$items.length > 0;
+        isEmpty: function () {
+            return this.$items.length === 0;
         }.on("add", "remove"),
         /**
          * Pushes one item to the list
