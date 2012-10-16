@@ -50,7 +50,7 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
             this.$activeRenderer = {};
             this.$availableRenderer = [];
             this.$container = null;
-
+            this.$isLoading = false;
             this.callBase();
 
             this.createBinding('{$dataAdapter.size()}', this._itemsCountChanged, this);
@@ -117,9 +117,13 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
             this.$lastEndIndex = null;
             this.$lastStartIndex = null;
 
+
             // clear active renderer and scroll to top
             this._releaseActiveRenderer();
-
+            if (this.isRendered()) {
+                this.$isLoading = true;
+                this.addClass('loading');
+            }
             this._updateVisibleItems();
         },
 
@@ -167,9 +171,13 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
             if (!isNaN(ItemsCount)) {
                 // end well known
                 if(ItemsCount > 0){
-                    endIndex = Math.min(ItemsCount, endIndex)
+                    endIndex = Math.min(ItemsCount - 1, endIndex)
                 }else{
                     this._releaseActiveRenderer();
+                }
+                if(this.$isLoading){
+                    this.removeClass('loading');
+                    this.$isLoading = false;
                 }
             }
 
@@ -325,10 +333,11 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
         },
 
         getSizeForItemsCount: function (count) {
-            if (isNaN(count) || count === 0) {
+            if (isNaN(count)) {
                 return null;
             }
-            var size = {}, itemRows = Math.floor(count / this.$.cols);
+            var size = {}, itemRows = Math.ceil(count / this.$.cols);
+
 
             size.height = itemRows * (this.$.itemHeight + this.$.verticalGap);
 
