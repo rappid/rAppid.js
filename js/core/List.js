@@ -171,6 +171,7 @@ define(["js/core/Bindable", "underscore"], function (Bindable, _) {
         size: function () {
             return this.$items.length;
         }.on('add', 'remove'),
+
         /**
          * Returns item at a specific index
          * @param index

@@ -559,7 +559,7 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
          */
         size: function () {
             return this.$data ? this.$data.length : 0;
-        }.onChange('$data').on("sizeChanged")
+        }.on("sizeChanged", "change:$data")
     });
 
     VirtualItemsView.VirtualCollectionDataAdapter = VirtualItemsView.VirtualDataAdapter.inherit('js.ui.VirtualItemsView.VirtualCollectionDataAdapter', {
