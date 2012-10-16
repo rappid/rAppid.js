@@ -213,6 +213,14 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore"], funct
             return this.$.$itemsCount;
         }.onChange('$itemsCount'),
 
+        isEmpty: function() {
+            var pageCount = this.pageCount();
+            if(!isNaN(pageCount)){
+                return pageCount === 0;
+            }
+            return false;
+        }.onChange('$itemsCount'),
+
         getQueryParameters: function(method){
             return this.$options.queryParameters;
         }
