@@ -237,11 +237,12 @@ define(['require', 'js/core/Component', 'srv/core/Context', 'srv/core/Handlers',
 
                     try {
                         response.writeHead(500);
-                        response.end('Internal Server Error');
                     } catch (error) {
                         console.error('Error sending 500', error, request.url);
-                        domain.dispose();
                     }
+
+                    response.end('Internal Server Error');
+                    domain.dispose();
                 }
 
             }
