@@ -141,7 +141,9 @@ define(['require', 'js/core/Component', 'srv/core/Context', 'srv/core/Handlers',
                 var self = this,
                     context,
                     requestHandler,
-                    handledWithErrorHandler = false;
+                    handledWithErrorHandler = false,
+                    buffers = [],
+                    bufferLength = 0;
 
                 // create a new application domain for the request
                 var domain = Domain.create();
@@ -149,14 +151,28 @@ define(['require', 'js/core/Component', 'srv/core/Context', 'srv/core/Handlers',
                 domain.add(request);
                 domain.add(response);
 
-                request.setEncoding('utf8');
-                request.body = "";
+                // request.setEncoding('utf8');
 
                 request.on('data', function(chunk) {
-                    request.body += chunk;
+                    buffers.push(chunk);
+                    bufferLength += chunk.length;
                 });
 
                 request.on('end', function() {
+
+                    request.body = new Buffer(bufferLength);
+
+                    var pos = 0;
+
+                    for (var i = 0; i < buffers.length; i++) {
+                        buffers[i].copy(request.body, pos);
+                        pos += buffers[i].length;
+                    }
+
+                    request.body.content = request.body.toString();
+
+                    buffers = null;
+
                     domain.run(function () {
                         // create the new context object
                         context = new Context(self, endPoint, request, response);

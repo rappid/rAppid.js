@@ -93,7 +93,7 @@ define(['js/core/EventDispatcher', 'url', 'querystring', 'underscore', 'flow', '
 
                     if (request.method === "POST") {
                         try {
-                            request.post = QueryString.parse(request.body);
+                            request.post = QueryString.parse(request.body.content);
                         } catch (e) {
                             this.log("Couldn't parse post parameters", "info");
                         }
