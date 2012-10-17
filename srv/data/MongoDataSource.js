@@ -185,7 +185,12 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore'],
             flow()
                 .seq("collection", function (cb) {
                     connection = self.connect(function (err, client) {
-                        cb(err, new mongoDb.Collection(client, configuration.$.collection));
+                        var collection;
+                        if (!err) {
+                            collection = new mongoDb.Collection(client, configuration.$.collection);
+                        }
+
+                        cb(err, collection);
                     });
                 })
                 .seq(function (cb) {
