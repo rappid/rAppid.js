@@ -149,7 +149,7 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
             // TODO: cleanup renderer
         },
 
-        _updateVisibleItems: function () {
+        _updateVisibleItems: function (forceRefresh) {
             var dataAdapter = this.$.$dataAdapter;
             if (!dataAdapter) {
                 return;
@@ -184,7 +184,7 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
                 }
             }
 
-            if (!(startIndex === this.$lastStartIndex && endIndex === this.$lastEndIndex)) {
+            if (forceRefresh || !(startIndex === this.$lastStartIndex && endIndex === this.$lastEndIndex)) {
 
 
                 // some items are not visible any more or scrolled into view
@@ -203,6 +203,7 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
                         // no renderer assigned to this item
                         renderer = this._reserveRenderer();
                         this.$activeRenderer[i] = renderer;
+
                         renderer.set({
                             width: this.$.itemWidth,
                             height: this.$.itemHeight,
@@ -210,8 +211,11 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
                             $index: i,
                             $viewIndex: i - startIndex
                         });
+
                         this._addRenderer(renderer, renderer.$.$viewIndex);
                         addedRenderer.push(renderer);
+                    } else if (forceRefresh) {
+                        renderer.set("$dataItem", dataAdapter.getItemAt(i));
                     }
                 }
 
@@ -519,9 +523,18 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
             this.$virtualItemsView = virtualItemsView;
 
             if (data instanceof List) {
-                var refreshView = function () {
+
+                var refreshView = function (e) {
+
+                    var force = true;
+
+                    if (e.type == "add" && e.$.index >= data.length - 1) {
+                        // added to the end
+                        force = false;
+                    }
+
                     this.trigger('sizeChanged');
-                    virtualItemsView._updateVisibleItems();
+                    virtualItemsView._updateVisibleItems(force);
                 };
 
                 data.bind('add', refreshView, this);
