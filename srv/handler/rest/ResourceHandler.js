@@ -41,18 +41,15 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
 
         handleRequest: function (context, callback) {
 
-            // This is evil here
-            context.request.setEncoding('utf8');
-
-            var method = this._getRequestMethod(context),
+            var self = this,
+                method = this._getRequestMethod(context),
                 map = this._isCollectionResource() ? this.$collectionMethodMap : this.$modelMethodMap;
 
             var fn = this[map[method]];
 
-
             if (fn instanceof Function) {
                 context.dataSource = this.getDataSource();
-                var body = context.request.body;
+                var body = context.request.body.content;
 
                 if (body !== "") {
                     // TODO: handle different payload formats -> query string
