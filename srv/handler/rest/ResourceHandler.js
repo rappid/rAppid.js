@@ -52,13 +52,14 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
                 var body = context.request.body.content;
 
                 if (body !== "") {
-                    // TODO: handle different payload formats -> query string
+                    // TODO: handle different payload formats -> format processor needed
                     try {
                         context.request.params = JSON.parse(body);
                     } catch (e) {
                         console.warn("Couldn't parse " + body);
                     }
                 }
+                // TODO: better apply json post value here to the function
                 fn.call(self, context, callback);
 
             } else {
