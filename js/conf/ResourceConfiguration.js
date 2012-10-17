@@ -1,6 +1,11 @@
 define(["js/conf/Configuration", "js/data/Model"], function (Configuration, Model) {
 
     return Configuration.inherit('js.conf.ResourceConfiguration', {
+
+        defaults: {
+            resourceHandler: null
+        },
+
         _initializationComplete: function () {
             this._validateConfiguration();
             this.callBase();
