@@ -76,20 +76,21 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
                         if (fnc._attributes && fnc._attributes.length > 0) {
                             this.$.scope.bind("change", this._changeCallback, this);
                             this.$events.push({eventType: "change", callback: this._changeCallback});
-                        } else {
-                            if (fnc._events) {
-                                events = fnc._events;
-                            } else {
-                                events = [];
-                            }
-
-                            var event, path;
-                            for (var i = 0; i < events.length; i++) {
-                                event = events[i];
-                                scope.bind(event, this._callback, this);
-                                this.$events.push({eventType: event, callback: this._callback});
-                            }
                         }
+
+                        if (fnc._events) {
+                            events = fnc._events;
+                        } else {
+                            events = [];
+                        }
+
+                        var event, path;
+                        for (var i = 0; i < events.length; i++) {
+                            event = events[i];
+                            scope.bind(event, this._callback, this);
+                            this.$events.push({eventType: event, callback: this._callback});
+                        }
+
 
                         var cb = function () {
                             self.trigger();
