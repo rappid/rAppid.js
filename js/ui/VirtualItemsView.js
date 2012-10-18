@@ -137,6 +137,7 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
 
             if(attributes.hasOwnProperty('itemWidth') || attributes.hasOwnProperty('itemHeight') || attributes.hasOwnProperty('verticalGap') || attributes.hasOwnProperty('horizontalGap') || attributes.hasOwnProperty('cols')) {
                 this._positionActiveRenderers();
+                this._updateSize();
                 this._scrollToIndex(this.$.scrollToIndex);
             }
 
@@ -330,13 +331,17 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
                 }
             }
         },
-
-        _itemsCountChanged: function () {
-            var size = this.getSizeForItemsCount(this.$.$dataAdapter.size());
-            if (size) {
-                this._getScrollContainer().set(size);
-                this._syncScrollPosition();
+        _updateSize: function(){
+            if (this.$.$dataAdapter) {
+                var size = this.getSizeForItemsCount(this.$.$dataAdapter.size());
+                if (size) {
+                    this._getScrollContainer().set(size);
+                    this._syncScrollPosition();
+                }
             }
+        },
+        _itemsCountChanged: function () {
+             this._updateSize();
         },
 
         getSizeForItemsCount: function (count) {
