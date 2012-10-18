@@ -39,7 +39,7 @@ define(["js/data/DataView", "js/core/List", "js/data/Collection", "flow", "under
 
                 var baseList = attributes.baseList;
 
-                if (baseList && (!(baseList instanceof List ) || !(baseList instanceof Collection))) {
+                if (baseList && !((baseList instanceof List ) || (baseList instanceof Collection))) {
                     throw "baseList must be a List or a Collection";
                 }
 
@@ -149,11 +149,11 @@ define(["js/data/DataView", "js/core/List", "js/data/Collection", "flow", "under
                                 }
                             }
                             self.set('page', pageIndex);
-
                             cb(err);
                         });
 
                 } else {
+                    self.set('page', pageIndex);
                     cb();
                 }
             } else {
@@ -167,9 +167,13 @@ define(["js/data/DataView", "js/core/List", "js/data/Collection", "flow", "under
         }.onChange('page'),
         hasPage: function(pageIndex){
             if(this.$.baseList){
-                return _.isUndefined(this.$.baseList.$.$itemsCount) || this.$.baseList.$.$itemsCount > (pageIndex) * this.$.pageSize;
+                if(this.$.baseList instanceof Collection){
+                    return _.isUndefined(this.$.baseList.$.$itemsCount) || this.$.baseList.$.$itemsCount > (pageIndex) * this.$.pageSize;
+                }else{
+                    return this.$.baseList.size() > (pageIndex) * this.$.pageSize;
+                }
             }
-            return !_.isUndefined(this.$.baseList);
+            return false;
         },
         hasNextPage: function(){
             return this.hasPage(this.$.page + 1);
