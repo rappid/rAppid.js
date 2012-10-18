@@ -1,5 +1,5 @@
-define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Content", "js/core/Binding", "inherit", "underscore"],
-    function (require, EventDispatcher, Component, Content, Binding, inherit, _) {
+define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Content", "js/core/Binding", "inherit", "underscore", 'js/core/Base'],
+    function (require, EventDispatcher, Component, Content, Binding, inherit, _, Base) {
 
         var rspace = /\s+/;
         var undefined;
@@ -515,13 +515,7 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                 var self = this;
                 if (type.indexOf("on:") === 0 && !this.$domEventHandler[type] && !this._isComponentEvent(type)) {
                     if (this.isRendered()) {
-                        var cb = this.$domEventHandler[type] = function (originalEvent) {
-                            var e = new DomElement.Event(originalEvent);
-                            self.trigger(type, e, self);
-                            if (e.isPropagationStopped) {
-                                return false;
-                            }
-                        };
+                        var cb = this.$domEventHandler[type] = new DomElement.EventHandler(this,type);
                         this.bindDomEvent(type.substr(3), cb);
                         this.callBase();
                     } else {
@@ -651,6 +645,20 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                     }
                 }
             }
+        });
+
+        DomElement.EventHandler = Base.inherit('js.core.DomEvent.EventHandler', {
+              ctor: function(component, type){
+                  this.component = component;
+                  this.type = type;
+              },
+              handleEvent: function(e){
+                  e = new DomElement.Event(e);
+                  this.component.trigger(this.type, e, this.component);
+                  if (e.isPropagationStopped) {
+                      return false;
+                  }
+              }
         });
 
         return DomElement;
