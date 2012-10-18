@@ -170,7 +170,7 @@ define(["js/core/Bindable", "underscore"], function (Bindable, _) {
          */
         size: function () {
             return this.$items.length;
-        }.on('add', 'remove'),
+        }.on('add', 'remove', 'reset'),
 
         /**
          * Returns item at a specific index
