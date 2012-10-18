@@ -169,7 +169,7 @@ define(["js/data/DataView", "js/core/List", "js/data/Collection", "flow", "under
             if(this.$.baseList){
                 return _.isUndefined(this.$.baseList.$.$itemsCount) || this.$.baseList.$.$itemsCount > (pageIndex) * this.$.pageSize;
             }
-            return true;
+            return !_.isUndefined(this.$.baseList);
         },
         hasNextPage: function(){
             return this.hasPage(this.$.page + 1);
