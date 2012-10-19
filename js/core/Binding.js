@@ -263,6 +263,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
                         par.destroy();
                     }
                 }
+                delete this.$jsonObject;
                 delete this.$parameters;
                 delete this.$;
             },
