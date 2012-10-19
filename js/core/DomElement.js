@@ -87,15 +87,18 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
             addChild: function (child, options) {
                 this.callBase();
 
-                if (child instanceof DomElement || child.render) {
-                    var pos = options && typeof(options.childIndex) !== "undefined" ? options.childIndex : this.$children.length;
+                if(child.$initialized || child.$initializing){
+                    if (child instanceof DomElement || child.render) {
+                        var pos = options && typeof(options.childIndex) !== "undefined" ? options.childIndex : this.$children.length;
 
-                    this.$children[pos] = child;
-                    if (this.isRendered()) {
-                        this._renderChild(child, pos);
+                        this.$children[pos] = child;
+                        if (this.isRendered()) {
+                            this._renderChild(child, pos);
+                        }
+                    } else if (child instanceof Content) {
+                        this.$contentChildren.push(child);
                     }
-                } else if (child instanceof Content) {
-                    this.$contentChildren.push(child);
+
                 }
             },
 
