@@ -11,8 +11,6 @@ define(["js/html/HtmlElement", "js/core/Bus", "js/core/WindowManager"], function
             'class': 'stage'
         },
 
-
-
         ctor: function(requireJsContext, applicationContext, document, window){
 
             this.$requirejsContext = requireJsContext;
@@ -27,6 +25,32 @@ define(["js/html/HtmlElement", "js/core/Bus", "js/core/WindowManager"], function
 
             this.callBase(null, false, this, null, this);
 
+            this._annotateDevice();
+        },
+
+        _annotateDevice: function() {
+
+            var classes = ["stage"];
+
+            if (this.runsInBrowser()) {
+                var window = this.$window;
+
+                classes.push("browser");
+                classes.push("ontouchend" in window ? "touch" : "no-touch");
+
+                var mobile = (/(iphone|ipad|ipod|android|blackberry|mini|windows\sce|palm)/i.test(window.navigator.userAgent));
+                if (mobile) {
+                    classes.push('mobile');
+                    classes.push(mobile[1]);
+                } else {
+                    classes.push('desktop');
+                }
+
+            } else {
+                classes.push("node");
+            }
+
+            this.set('class', classes.join(" "));
         },
 
         createChildren: function() {
@@ -47,12 +71,12 @@ define(["js/html/HtmlElement", "js/core/Bus", "js/core/WindowManager"], function
             return dom;
         },
         createWindow: function(elementId){
-            return this.createHtmlElemnet(elementId,"windows");
+            return this.createHtmlElement(elementId,"windows");
         },
         createTooltip: function(tooltipId){
-            return this.createHtmlElemnet(tooltipId, "tooltips");
+            return this.createHtmlElement(tooltipId, "tooltips");
         },
-        createHtmlElemnet: function(elementId, containerId){
+        createHtmlElement: function(elementId, containerId){
             var container = this.$containers[containerId];
             if(!container){
                 // TODO: remove this shit
