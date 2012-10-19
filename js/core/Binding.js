@@ -244,6 +244,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
                     e = this.$events[j];
                     this.$.scope.unbind(e.eventType, e.callback, this);
                 }
+                delete this.$events;
 
                 if (this.$.twoWay === true) {
                     this.$.target.unbind(this.$.targetEvent, this._revCallback, this);
@@ -261,6 +262,8 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
                         par.destroy();
                     }
                 }
+                delete this.$parameters;
+                delete this.$;
             },
             /**
              * Returns an array with values of all function parameters
