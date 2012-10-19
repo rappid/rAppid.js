@@ -58,17 +58,13 @@ define(['require', 'srv/core/Handler', 'flow', 'fs', 'path', 'srv/core/HttpError
                             cb();
                         });
                     })
-                    .seq(function () {
+                    .seq(function (cb) {
                         var path = this.vars['path'],
                             stream = Fs.createReadStream(path),
                             extension = Path.extname(path).substring(1);
 
-                        stream.on('end', function() {
-                            context.response.end();
-                        });
-
                         stream.on('close', function () {
-                            context.response.end();
+                            cb();
                         });
 
                         context.response.writeHead(200, {
