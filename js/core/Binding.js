@@ -185,15 +185,16 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
                     }
                     // if keys are left and has value && is bindable
                     // get value for first child
-                    if (nScope) {
-                        if(nScope instanceof Bindable){
-                            // init new binding, which triggers this binding
-                            this.$subBinding = new Binding({scope: nScope, path: this.$.path.slice(1), target: this.$.target, targetKey: this.$.targetKey, rootScope: this.$.rootScope, callback: this.$.callback, context: this.$.context, twoWay: this.$.twoWay, transform: this.$.transform, transformBack: this.$.transformBack, bindingCreator: this.$.bindingCreator});
-                        } else if(nScope instanceof Object){
-                            // we have a json object which is not bindable
-                            this.$jsonObject = nScope;
-                        }
+                    if(nScope instanceof Bindable){
+                        // init new binding, which triggers this binding
+                        this.$subBinding = new Binding({scope: nScope, path: this.$.path.slice(1), target: this.$.target, targetKey: this.$.targetKey, rootScope: this.$.rootScope, callback: this.$.callback, context: this.$.context, twoWay: this.$.twoWay, transform: this.$.transform, transformBack: this.$.transformBack, bindingCreator: this.$.bindingCreator});
+                    } else if(nScope instanceof Object){
+                        // we have a object which is not bindable
+                        this.$jsonObject = nScope;
+                    } else if(_.isString(nScope)){
+                        this.$jsonObject = nScope;
                     }
+
                 }
             },
             _revCallback: function (e) {
@@ -329,7 +330,12 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
                 return this.getValue();
             },
             create: function(bindingDef, target, callback){
-                var options = {scope: this.$.scope, target: target, callback: callback, path: bindingDef.path, twoWay : bindingDef.type === TYPE_TWOWAY, bindingCreator: this.$.bindingCreator};
+                var options = {
+                    scope: this.$.scope,
+                    target: target,
+                    callback: callback,
+                    path: bindingDef.path,
+                    twoWay : bindingDef.type === TYPE_TWOWAY, bindingCreator: this.$.bindingCreator};
 
                 var fncEl;
                 var fncScope;
