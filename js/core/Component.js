@@ -144,7 +144,7 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                         } else if (child instanceof Component.Configuration) {
                             this._addConfiguration(child);
                         }
-                    }else{
+                    }else {
                         this.$unitializedChildren = this.$unitializedChildren || [];
                         this.$unitializedChildren.push(child);
                     }
