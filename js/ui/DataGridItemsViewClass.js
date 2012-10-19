@@ -22,19 +22,21 @@ define(['js/ui/VirtualItemsView', 'xaml!js/ui/DataGridColumn', 'js/core/List', '
         },
         _addRenderer: function (renderer, position) {
             this.$.$tbody.addChild(renderer, {childIndex: position});
-            var column, columnConfiguration, binding;
+            var column, columnConfiguration, binding, c, cellContainer, val, path;
             for (var i = 0; i < renderer.$children.length; i++) {
                 column = renderer.$children[i];
                 columnConfiguration = this.$.columns.at(i);
                 if(!column.$children.length){
-                    var c = columnConfiguration.createCellRenderer({data: null}, renderer), path = ["$dataItem","data"];
-                    var cellContainer = columnConfiguration.createCellContainer(c);
+                    c = columnConfiguration.createCellRenderer({data: null}, renderer);
+                    path = ["$dataItem","data"];
+                    cellContainer = columnConfiguration.createCellContainer(c);
                     if(columnConfiguration.$.path && columnConfiguration.$.path !== ""){
                         path.push(columnConfiguration.$.path);
                     }
 
                     binding = new Binding({scope: renderer, path: path.join("."), target: c, targetKey: 'data', transform: columnConfiguration.getFormatFnc()});
-                    c.set({data: binding.getValue()});
+                    val = binding.getValue();
+                    c.set({data: val});
                     if(cellContainer){
                         cellContainer.addChild(c);
                         c = cellContainer;
