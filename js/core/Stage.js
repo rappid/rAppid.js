@@ -11,8 +11,6 @@ define(["js/html/HtmlElement", "js/core/Bus", "js/core/WindowManager"], function
             'class': 'stage'
         },
 
-
-
         ctor: function(requireJsContext, applicationContext, document, window){
 
             this.$requirejsContext = requireJsContext;
@@ -47,12 +45,12 @@ define(["js/html/HtmlElement", "js/core/Bus", "js/core/WindowManager"], function
             return dom;
         },
         createWindow: function(elementId){
-            return this.createHtmlElemnet(elementId,"windows");
+            return this.createHtmlElement(elementId,"windows");
         },
         createTooltip: function(tooltipId){
-            return this.createHtmlElemnet(tooltipId, "tooltips");
+            return this.createHtmlElement(tooltipId, "tooltips");
         },
-        createHtmlElemnet: function(elementId, containerId){
+        createHtmlElement: function(elementId, containerId){
             var container = this.$containers[containerId];
             if(!container){
                 // TODO: remove this shit
