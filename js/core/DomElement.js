@@ -378,21 +378,28 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                 if (method !== false) {
                     method.call(this, attr, prev);
                 } else {
-                    var cAttr;
-                    for (var i = 0; i < this.$classAttributes.length; i++) {
-                        cAttr = this.$classAttributes[i];
-                        if (cAttr instanceof RegExp) {
-                            if (cAttr.test(key)) {
-                                return;
-                            }
-                        } else {
-                            if (cAttr == key) {
-                                return;
-                            }
+                    if(this._isDOMNodeAttribute(this.$el, key)){
+                        this._setAttribute(key, attr);
+                    }
+                }
+            },
+
+            _isDOMNodeAttribute: function(node, key){
+                var cAttr;
+                for (var i = 0; i < this.$classAttributes.length; i++) {
+                    cAttr = this.$classAttributes[i];
+                    if (cAttr instanceof RegExp) {
+                        if (cAttr.test(key)) {
+                            return false;
+                        }
+                    } else {
+                        if (cAttr == key) {
+                            return false;
                         }
                     }
-                    this._setAttribute(key, attr);
                 }
+
+                return true;
             },
 
             /***
