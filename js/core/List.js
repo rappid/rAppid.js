@@ -34,7 +34,7 @@ define(["js/core/Bindable", "underscore"], function (Bindable, _) {
          */
         isEmpty: function () {
             return this.$items.length === 0;
-        }.on("add", "remove"),
+        }.on("add", "remove", "reset"),
         /**
          * Pushes one item to the list
          * @param item

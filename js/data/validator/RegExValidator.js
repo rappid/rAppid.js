@@ -24,7 +24,7 @@ define(['js/data/validator/Validator', 'underscore'], function (Validator, _) {
                 schemaDefinition = entity.schema[this.$.field],
                 required = schemaDefinition ? schemaDefinition.required : true;
 
-            if(value && _.isString(value) && (required || !required && !value.length)){
+            if(_.isString(value) && (required && value.length || !required)){
                 if(!this.$.regEx.test(value)){
                     return this._createFieldError();
                 }
