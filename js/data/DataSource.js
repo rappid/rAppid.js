@@ -912,6 +912,12 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
              */
             getFormatProcessor: function (action) {
                 return this.$formatProcessors[0];
+            },
+
+            clone: function () {
+                var ret = this.callBase();
+                ret.$dataSourceConfiguration = this.$dataSourceConfiguration;
+                return ret;
             }
         });
 
