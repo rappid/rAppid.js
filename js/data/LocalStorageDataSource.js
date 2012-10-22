@@ -1,13 +1,23 @@
-define(["js/data/DataSource", "js/data/Model", "flow"],
-    function (DataSource, Model, flow) {
+define(["js/data/DataSource", "js/data/Model", "flow", "js/data/LocalStorage"],
+    function (DataSource, Model, flow, LocalStorage) {
 
         var jsonFormatProcessor = new DataSource.JsonFormatProcessor();
 
-        return DataSource.inherit("js.data.LocalStorageDataSource", {
-            defaults : {
+        var LocalStorageProcessor = DataSource.Processor.inherit('src.data.RestDataSource.RestDataProcessor', {
+            _composeSubModel: function (model, action, options) {
+                // TODO: add href
+                return {
+                    id: model.$.id
+                }
+            }
+        });
+
+        var LocalStorageDataSource = DataSource.inherit("js.data.LocalStorageDataSource", {
+            defaults: {
                 name: 'default'
             },
-            ctor: function() {
+            $defaultProcessorFactory: LocalStorageProcessor,
+            ctor: function () {
                 this.callBase();
 
                 this.$storage = this._getStorage();
@@ -18,12 +28,15 @@ define(["js/data/DataSource", "js/data/Model", "flow"],
                 var value = this.$storage.getItem(this.$.name);
                 this.$data = (value && this.getFormatProcessor(null).deserialize(value)) || {};
             },
-            getFormatProcessor: function(action){
+            _getStorage: function () {
+                return this.createComponent(LocalStorage)
+            },
+            getFormatProcessor: function (action) {
                 return jsonFormatProcessor;
             },
             getPathComponentsForModel: function (model) {
                 if (model) {
-                    var conf = this.getConfigurationByAlias(model.$alias);
+                    var conf = this.getConfigurationForModelClass(model.factory);
                     if (conf) {
                         return [conf.$.path];
                     }
@@ -31,30 +44,7 @@ define(["js/data/DataSource", "js/data/Model", "flow"],
                 return null;
             },
 
-            getPathForAlias: function (alias) {
-
-                var typeConfig,
-                    i;
-
-                // search via alias
-                for (i = 0; i < this.$configuredTypes.length; i++) {
-                    typeConfig = this.$configuredTypes[i];
-                    if (typeConfig.$.alias == alias) {
-                        return typeConfig.$.path;
-                    }
-                }
-
-                return null;
-            },
-
-            _getStorage: function() {
-                if (typeof window !== "undefined" && window.localStorage) {
-                    return window.localStorage;
-                }
-
-                return null;
-            },
-            _getCollectionData : function(path, contextPath){
+            _getCollectionData: function (path, contextPath) {
                 if (!path) {
                     callback("path for model unknown", null, options);
                     return;
@@ -62,7 +52,7 @@ define(["js/data/DataSource", "js/data/Model", "flow"],
 
                 // build uri
                 var uri = [];
-                if(contextPath){
+                if (contextPath) {
                     uri = uri.concat(contextPath);
                 }
                 uri = uri.concat(path);
@@ -70,31 +60,41 @@ define(["js/data/DataSource", "js/data/Model", "flow"],
                 return this.$data[uri.join(":")] || {};
             },
             loadCollectionPage: function (page, options, callback) {
-                callback = callback || function(){};
+                callback = callback || function () {
+                };
 
-                var path = page.$collection.$options.path ?
-                    page.$collection.$options.path : this.getPathForAlias(page.$collection.$alias);
+                var rootCollection = page.getRootCollection();
+                var configuration = this.getConfigurationForModelClass(page.$collection.$modelFactory);
 
-                var contextPath = page.$collection.$context.getPathComponents();
+                if (!configuration) {
+                    throw new Error("Couldn't find path config for " + rootCollection.$modelFactory.prototype.constructor.name);
+                }
 
+                var path = [configuration.$.path];
 
+                if (!path) {
+                    callback("Path for model unknown", null, options);
+                    return;
+                }
 
-                var data = [], collection = this._getCollectionData(path, contextPath);
+                var data = [], collection = this._getCollectionData(path, rootCollection.$context.getPathComponents());
                 for (var key in collection) {
-                    if(collection.hasOwnProperty(key)){
-                        data.push(this.$data[key]);
+                    if (collection.hasOwnProperty(key)) {
+                        data.push(_.clone(this.$data[key]));
                     }
                 }
 
-                data = page.parse(data);
-                page.add(data);
+                var processor = this.getProcessorForCollection(page);
 
+                data = processor.parseCollection(page.getRootCollection(), data, DataSource.ACTION.LOAD, options);
+
+                page.add(data);
 
                 callback(null, page, options);
             },
             saveModel: function (model, options, callback) {
 
-                callback = callback || function(){
+                callback = callback || function () {
                 };
 
 
@@ -111,18 +111,15 @@ define(["js/data/DataSource", "js/data/Model", "flow"],
                 // call save of the processor to save submodels
                 flow()
                     .seq(function (cb) {
-                        processor.saveSubModels(model, options, cb)
-                    })
-                    .seq(function (cb) {
                         // compose data in model and in processor
-                        var payload = model.compose(action, options);
+                        var payload = processor.compose(model, action, options);
                         if (model._status() === Model.STATE.NEW) {
                             payload.id = DataSource.IdGenerator.genId();
                         }
                         self.$data[payload.id] = payload;
 
                         // add
-                        if(action === DataSource.ACTION.CREATE){
+                        if (action === DataSource.ACTION.CREATE) {
                             // get collection url for url
                             var modelPathComponents = self.getPathComponentsForModel(model);
 
@@ -142,7 +139,7 @@ define(["js/data/DataSource", "js/data/Model", "flow"],
                         }
 
                         self._saveStorage();
-                        model.set('id',payload.id);
+                        model.set('id', payload.id);
                         cb();
                     })
                     .exec(function (err) {
@@ -151,12 +148,16 @@ define(["js/data/DataSource", "js/data/Model", "flow"],
 
 
             },
-            loadModel: function(model, options, callback){
-                callback = callback || function(){};
+            loadModel: function (model, options, callback) {
+                callback = callback || function () {
+                };
 
                 var formatProcessor = this.getFormatProcessor(DataSource.ACTION.LOAD);
 
+                var processor = this.getProcessorForModel(model);
+
                 var payload;
+
                 if (model.$.id) {
                     payload = this.$data[model.$.id];
                 } else {
@@ -164,19 +165,19 @@ define(["js/data/DataSource", "js/data/Model", "flow"],
                     return;
                 }
 
-                if(!payload){
+                if (!payload) {
                     callback("Could not find model");
                     return;
                 }
 
-                payload = model.parse(payload);
+                payload = processor.parse(model, payload, DataSource.ACTION.LOAD, options);
 
                 // TODO: resolve references
                 model.set(payload);
 
                 callback(null, model, options);
             },
-            removeModel: function(model, options, callback){
+            removeModel: function (model, options, callback) {
                 callback = callback || function () {
                 };
 
@@ -185,7 +186,7 @@ define(["js/data/DataSource", "js/data/Model", "flow"],
                     delete this.$data[model.$.id];
 
                     var collection = this._getCollectionData(this.getPathComponentsForModel(model));
-                    if(collection){
+                    if (collection) {
                         delete collection[model.$.id];
                     }
                 } else {
@@ -197,9 +198,51 @@ define(["js/data/DataSource", "js/data/Model", "flow"],
                 callback(null, model, options);
             },
 
-            _saveStorage: function(){
-                this.$storage.setItem(this.$.name,this.getFormatProcessor(null).serialize(this.$data));
+            _saveStorage: function () {
+                this.$storage.setItem(this.$.name, this.getFormatProcessor(null).serialize(this.$data));
+            },
+            /***
+             * creates the context as RestContext
+             *
+             * @param properties
+             * @param parentContext
+             * @return {js.core.LocalStorageDataSource.RestContext}
+             */
+            createContext: function (properties, parentContext) {
+                return new LocalStorageDataSource.RestContext(this, properties, parentContext);
             }
 
         });
+
+        LocalStorageDataSource.RestContext = DataSource.Context.inherit("js.data.LocalStorageDataSource.Context", {
+            ctor: function (dataSource, properties, parentContext) {
+                this.$contextModel = properties;
+                this.callBase(dataSource, properties, parentContext);
+            },
+
+            createContextCacheId: function (contextModel) {
+                return contextModel.constructor.name + "_" + contextModel.$.id;
+            },
+
+            getPathComponents: function () {
+                if (!this.$parent) {
+                    // rootContext
+                    return [];
+                }
+
+                if (!this.$contextModel) {
+                    throw new Error("ContextModel missing for non-root-Context");
+                }
+
+                var configuration = this.$dataSource.getConfigurationForModelClass(this.$contextModel.factory);
+                return [configuration.$.path, this.$contextModel.$.id];
+            },
+
+            getQueryParameter: function () {
+                return {};
+            }
+        });
+
+
+        return LocalStorageDataSource;
     });
