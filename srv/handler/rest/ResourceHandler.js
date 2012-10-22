@@ -31,11 +31,11 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
             return this;
         },
 
-        getDataSource: function (context) {
+        getDataSource: function (context, childResource) {
             if (this.$parentResource) {
-                return this.$parentResource.getDataSource(context);
+                return this.$parentResource.getDataSource(context, this);
             } else {
-                return this.$restHandler.getDataSource(context);
+                return this.$restHandler.getDataSource(context, this);
             }
         },
 
@@ -48,7 +48,7 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
             var fn = this[map[method]];
 
             if (fn instanceof Function) {
-                context.dataSource = this.getDataSource();
+                context.dataSource = this.getDataSource(context);
                 var body = context.request.body.content;
 
                 if (body !== "") {
