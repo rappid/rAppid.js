@@ -41,10 +41,11 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                     this.$children = [];
 
                     attributes = attributes || {};
-                    _.extend(attributes, this.$xamlAttributes, this.$xamlDefaults);
+                    _.defaults(attributes, this.$xamlAttributes, this.$xamlDefaults);
                     // added parameters, otherwise it comes to problems in Chrome!
                     this.callBase(attributes, descriptor, stage, parentScope, rootScope);
                 },
+
                 $errorAttribute: null,
                 /**
                  * if set all children from the descriptor will be placed into a
@@ -69,9 +70,11 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                  * @value {Required Class}
                  */
                 inject: {},
+
                 _injectChain: function () {
                     return this._generateDefaultsChain("inject");
                 },
+
                 _preinitialize: function () {
                     this.callBase();
 
@@ -114,6 +117,7 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                     }
 
                 },
+
                 /***
                  * adds a children
                  * @param {js.core.Element} child
@@ -171,8 +175,6 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                         delete this.$templates[child.$.name];
                     }
 
-
-
                 },
 
                 _addTemplate: function (template) {
@@ -185,6 +187,7 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                 _addConfiguration: function (config) {
                     this.$configurations.push(config);
                 },
+
                 /***
                  * Goes up the tree and searches for a template component with the given name.
                  * Returns null if no template was found.
@@ -201,12 +204,14 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                         return null
                     }
                 },
+
                 _initializeChildren: function (childComponents) {
                     for (var i = 0; i < childComponents.length; i++) {
                         // add the children
                         this.addChild(childComponents[i]);
                     }
                 },
+
                 /***
                  *
                  * @param attributes
@@ -222,6 +227,7 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                     }
 
                 },
+
                 /***
                  *  Initializes all internal and external descriptors
                  */
@@ -362,15 +368,19 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                         console.warn("Descriptor not defined or not correct");
                     }
                 },
+
                 _isEventAttribute: function (attributeName) {
                     return attributeName.indexOf("on:") == 0;
                 },
+
                 _isXamlEventAttribute: function(attributeName){
                     return attributeName.indexOf("on") == 0;
                 },
+
                 _getEventName: function(eventDefinition){
                     return eventDefinition.substr(3);
                 },
+
                 /**
                  * Returns true if event is defined in Component event list
                  * @param event
@@ -383,10 +393,12 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                     }
                     return false;
                 },
+
                 _getEventTypeForAttribute: function (eventName) {
                     // TODO: implement eventAttribites as hash
                     return this._eventAttributes[eventName];
                 },
+
                 _initializeXamlEventAttributes: function (attributes, rootScope) {
                     var event = '', callback;
                     for (var key in attributes) {
@@ -404,6 +416,7 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                         }
                     }
                 },
+
                 /***
                  * Initialize all Binding and Event attributes
                  */
@@ -479,6 +492,7 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
 
                     this.callBase();
                 },
+
                 /***
                  * Create {@link Component} for DOM Node with given attributes
                  * @param {DOM} node
