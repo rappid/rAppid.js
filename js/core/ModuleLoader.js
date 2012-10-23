@@ -132,6 +132,9 @@ define(["require", "js/html/HtmlElement", "js/ui/ContentPlaceHolder", "js/core/M
                         callback();
                     }
                 } else {
+
+                    this._clearContentPlaceHolders();
+
                     if (this.$moduleCache.hasOwnProperty(module.name)) {
                         this._startModule(module.name, this.$moduleCache[module.name], callback, routeContext, true);
                     } else {
@@ -162,6 +165,18 @@ define(["require", "js/html/HtmlElement", "js/ui/ContentPlaceHolder", "js/core/M
                             }
                         });
                     }
+                }
+
+            },
+
+            _clearContentPlaceHolders: function() {
+
+                var contentPlaceHolders = this.getContentPlaceHolders();
+
+                // set content
+                for (var i = 0; i < contentPlaceHolders.length; i++) {
+                    var contentPlaceHolder = contentPlaceHolders[i];
+                    contentPlaceHolder.set("content", null);
                 }
 
             },
