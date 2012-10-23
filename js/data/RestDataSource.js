@@ -521,8 +521,11 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
 
         getPathComponents: function(){
 
-            if (!this.$parent) {
-                // rootContext
+            var path = [];
+
+            if (this.$parent) {
+                path = this.$parent.getPathComponents();
+            } else {
                 return [];
             }
 
@@ -531,7 +534,10 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
             }
 
             var configuration = this.$dataSource.getConfigurationForModelClass(this.$contextModel.factory);
-            return [configuration.$.path, this.$contextModel.$.id];
+            path.push(configuration.$.path, this.$contextModel.$.id);
+
+            return path;
+
         },
 
         createCollection: function (factory, options, type) {
