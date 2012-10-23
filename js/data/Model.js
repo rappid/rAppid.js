@@ -25,6 +25,10 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
             this.callBase(attributes);
         },
 
+        schema: {
+            created: Date
+        },
+
         $isDependentObject: false,
 
         /***
@@ -51,6 +55,19 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
                 }
             }
 
+        },
+
+        validateAndSave: function(options, callback) {
+            var self = this;
+
+            flow()
+                .seq(function(cb) {
+                    self.validate(options, cb);
+                })
+                .seq(function(cb) {
+                    self.save(options, cb)
+                })
+                .exec(callback);
         },
 
         getCollection: function(key){
