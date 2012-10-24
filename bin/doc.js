@@ -1,10 +1,12 @@
 var help = function(args, callback) {
 
+    args = args || [];
+
     var amdDoc = require('./lib/doc.js'),
         fs = require('fs'),
         path = require('path'),
         argv = require('optimist')(args)
-            .usage(help.usage)
+            .usage("rappidjs doc <dir>")
             .demand(1)
             .options('o', {
                 alias: 'output'
@@ -110,7 +112,9 @@ var help = function(args, callback) {
     }
 };
 
-help.usage = "rappidjs doc <dir>";
+help.usage = function() {
+    help();
+};
 
 module.exports = help;
 
