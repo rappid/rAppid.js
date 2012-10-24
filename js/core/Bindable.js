@@ -33,11 +33,10 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding","underscor
 
 
         var isEqual = function(a,b){
-            if(a instanceof EventDispatcher && b instanceof EventDispatcher){
+            if(a instanceof EventDispatcher || b instanceof EventDispatcher){
                 return a === b;
-            }else{
-                return _.isEqual(a,b);
             }
+            return _.isEqual(a,b);
         };
 
         var Bindable = EventDispatcher.inherit("js.core.Bindable",
@@ -526,8 +525,8 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding","underscor
                     this.trigger('destroy',this);
                     return this;
                 },
-                isEqual: function (a, b) {
-                    return isEqual(a,b);
+                isEqual: function (b) {
+                    return isEqual(this,b);
                 }
             });
 
