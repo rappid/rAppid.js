@@ -7,8 +7,9 @@ define(
             },
             render: function () {
                 var el = this.callBase();
-                el.appendChild(this.$descriptor.childNodes[0]);
-
+                while(this.$descriptor.childNodes.length){
+                    el.appendChild(this.$descriptor.childNodes[0]);
+                }
                 return el;
             },
             _renderChildren: function () {
@@ -17,7 +18,7 @@ define(
             _renderContentChildren: function () {
 
             },
-            _renderHTML: function (html, oldString) {
+            _renderHTML: function (html) {
                 this.$el.innerHTML = html;
             }
         });
