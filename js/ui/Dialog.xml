@@ -4,7 +4,6 @@
     <js:Script><![CDATA[
         (function () {
             return {
-                $classAttributes: ['title'],
                 $defaultContentName: "body",
 
                 defaults: {

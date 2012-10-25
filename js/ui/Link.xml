@@ -3,7 +3,6 @@
     <js:Script><![CDATA[
         (function () {
             return {
-                $classAttributes: ['label'],
                 defaults: {
                     tagName: 'a',
                     href: null,

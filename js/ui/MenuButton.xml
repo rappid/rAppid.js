@@ -9,7 +9,6 @@
         <![CDATA[
         (function (Content, Button, _) {
             return {
-                $classAttributes: ['menuVisible', 'menuClassName'],
                 defaults: {
                     'tagName': 'div',
                     'componentClass': 'btn-group',

@@ -1,4 +1,4 @@
-<div xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="js.ui" xmlns:js="js.core"
+<ui:View xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="js.ui" xmlns:js="js.core"
      componentClass="control-group" tagName="div">
     <js:Imports>
         js.html.Input;
@@ -19,7 +19,6 @@
                     enabled: true
                 },
 
-                $classAttributes: ['enabled','inputId', 'label', 'value'],
                 $errorAttribute: 'value',
                 ctor: function () {
                     this.callBase();
@@ -76,4 +75,4 @@
     </js:Script>
     <label class="control-label" for="{inputId}">{label}</label>
     <ui:ContentPlaceHolder class="controls" name="controls" tagName="div" />
-</div>
+</ui:View>

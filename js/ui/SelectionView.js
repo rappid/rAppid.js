@@ -1,9 +1,6 @@
 define(
     ["js/ui/ItemsView", "js/html/HtmlElement", "underscore", "js/core/List"], function (ItemsView, HtmlElement, _, List) {
         return ItemsView.inherit("js.ui.SelectionView",{
-            $classAttributes: [
-                "needsSelection", "multiSelect", "selectedView","selectedViews","selectedItems","selectedIndex","items", "forceSelectable"
-            ],
             $defaultTemplateName: null,
             defaults: {
                 needsSelection: false,

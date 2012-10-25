@@ -4,7 +4,6 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
      * defines an ItemsView which can show parts of data
      */
     return View.inherit('js.ui.VirtualScrollView', {
-        $classAttributes: ['vertical', 'horizontal', 'mouseTracking', 'scrollPaneClass', 'scrollLeft', 'scrollTop'],
         defaults: {
             scrollTop: 0,
             scrollLeft: 0,

@@ -1,6 +1,5 @@
 define(['js/ui/ItemsView', 'js/html/HtmlElement', 'js/ui/SelectionView','js/ui/SegmentedView','js/core/List'], function(ItemsView, HtmlElement, SelectionView, SegmentedView, List) {
     return ItemsView.inherit('js.ui.TabViewClass', {
-        $classAttributes: ['tabItems', 'tabClassName', 'selectedIndex', 'selectedViews'],
         defaults: {
             selectedIndex: 0,
             selectedView: null,

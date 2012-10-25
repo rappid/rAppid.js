@@ -16,8 +16,6 @@ define(['js/ui/View', 'xaml!js/ui/Radio'], function(View, Radio) {
             value: null
         },
 
-        $classAttributes: ["name", "value"],
-
         addChild: function(child) {
 
             if (!(child instanceof Radio)) {

@@ -7,7 +7,6 @@
         <![CDATA[
         (function (Button) {
             return {
-                $classAttributes: ['menuClassName'],
                 $defaultContentName: 'menu',
                 defaults: {
                     'menuClassName': "dropdown-menu right"

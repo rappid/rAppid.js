@@ -3,6 +3,7 @@ define(["js/html/HtmlElement", "js/core/Content", "underscore"], function (HtmlE
             defaults: {
                 tagName: "div"
             },
+            $domAttributes: ['class','id', 'style'],
             render: function () {
                 if(this.isRendered()){
                     return this.$el;
@@ -15,6 +16,16 @@ define(["js/html/HtmlElement", "js/core/Content", "underscore"], function (HtmlE
                     this._initializeLayoutChildren(children);
                 }
                 return this.callBase();
+            },
+            _isDOMNodeAttribute: function(attribute){
+                var allowed;
+                for(var i = 0; i < this.$domAttributes.length; i++){
+                    allowed = this.$domAttributes[i];
+                    if(allowed == attribute){
+                        return true;
+                    }
+                }
+                return false;
             },
             _initializeLayoutChildren: function (children) {
                 for (var i = 0; i < children.length; i++) {
@@ -51,9 +62,8 @@ define(["js/html/HtmlElement", "js/core/Content", "underscore"], function (HtmlE
                 if (!renderedComponent) {
                     var template = this.getTemplate(templateName);
                     if (template) {
-                        // TODO: maybe render all components returned
                         // or create special method createComponent
-                        renderedComponent = template.createComponents(attributes)[0];
+                        renderedComponent = template.createInstance(attributes);
                         var placeholder = this.getPlaceHolder(placeholderName);
                         if (placeholder) {
                             placeholder.set({content: renderedComponent});
@@ -71,6 +81,8 @@ define(["js/html/HtmlElement", "js/core/Content", "underscore"], function (HtmlE
             _renderId: function (id) {
                 if (id) {
                     this.$el.setAttribute("id", id);
+                }else{
+                    this.$el.removeAttribute("id");
                 }
 
             }

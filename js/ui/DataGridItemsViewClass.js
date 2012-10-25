@@ -13,7 +13,6 @@ define(['js/ui/VirtualItemsView', 'xaml!js/ui/DataGridColumn', 'js/core/List', '
             data: null,
             prefetchItemCount: 3
         },
-        $classAttributes: ['rowHeight', 'columns'],
         _createRenderer: function (attributes) {
             if(attributes){
                 delete attributes['width'];

@@ -7,7 +7,6 @@
                     value: "",
                     size: "large"
                 },
-                $classAttributes: ['size','type'],
                 $defaultContentName: "additionalControls"
             }
         })

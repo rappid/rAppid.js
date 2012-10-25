@@ -9,10 +9,6 @@ define(
                 keyPath: null
             },
 
-            $classAttributes: [
-                'keyPath', 'itemKey', 'indexKey'
-            ],
-
             $defaultTemplateName: 'item',
 
             ctor: function(){
@@ -130,11 +126,7 @@ define(
                 var attr = {};
                 attr[this._getItemKey()] = item;
                 attr[this._getIndexKey()] = index;
-                var component = this.$templates['item'].createComponents(attr)[0];
-                if(component.$classAttributes){
-                    component.$classAttributes.push(this.$.itemKey, this.$.indexKey);
-                }
-                return component;
+                return this.$templates['item'].createComponents(attr)[0];
             },
             /***
              * Caches the component to a given item

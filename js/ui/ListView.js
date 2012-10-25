@@ -14,8 +14,6 @@ define(['js/ui/ItemsView', 'js/html/HtmlElement'], function(ItemsView, HtmlEleme
                 tagName: 'li'
             });
 
-            component.$classAttributes.push(this.$.itemKey, this.$.indexKey);
-
             for (var j = 0; j < components.length; j++) {
                 component.addChild(components[j]);
             }

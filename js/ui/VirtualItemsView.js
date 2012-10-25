@@ -38,9 +38,6 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
             selectionMode: 'multi',
             selectedItems: List
         },
-
-        $classAttributes: ['scrollToIndex','selectedItems','data','horizontalGap', 'verticalGap', 'prefetchItemCount', 'rows', 'cols', 'itemWidth', 'itemHeight', 'scrollLeft', 'scrollTop', 'fetchPageDelay'],
-
         events: ["on:itemClick", "on:itemDblClick"],
 
         ctor: function () {

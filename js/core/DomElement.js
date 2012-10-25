@@ -378,13 +378,19 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                 if (method !== false) {
                     method.call(this, attr, prev);
                 } else {
-                    if(this._isDOMNodeAttribute(this.$el, key)){
+                    if(this._isDOMNodeAttribute(key)){
                         this._setAttribute(key, attr);
                     }
                 }
             },
-
-            _isDOMNodeAttribute: function(node, key){
+            /***
+             * Returns wether a attribute key is a dom attribute or not
+             * Therefor it looks in the $classAttributes array.
+             * @param {String} key
+             * @return {Boolean}
+             * @private
+             */
+            _isDOMNodeAttribute: function(key){
                 var cAttr;
                 for (var i = 0; i < this.$classAttributes.length; i++) {
                     cAttr = this.$classAttributes[i];
