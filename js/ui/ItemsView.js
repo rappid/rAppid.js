@@ -126,7 +126,11 @@ define(
                 var attr = {};
                 attr[this._getItemKey()] = item;
                 attr[this._getIndexKey()] = index;
-                return this.$templates['item'].createComponents(attr)[0];
+                var component = this.$templates['item'].createComponents(attr)[0];
+                if (component.$classAttributes) {
+                    component.$classAttributes.push(this.$.itemKey, this.$.indexKey);
+                }
+                return component;
             },
             /***
              * Caches the component to a given item
@@ -192,7 +196,7 @@ define(
              * @private
              */
             _getItemKey: function () {
-                return "$" + this.$.itemKey;
+                return this.$.itemKey;
             },
             /***
              * Returns the key to access the index in the template
@@ -200,7 +204,7 @@ define(
              * @private
              */
             _getIndexKey: function () {
-                return "$" + this.$.indexKey;
+                return this.$.indexKey;
             },
             /***
              * Removes an item from the list
