@@ -43,7 +43,13 @@ if (allCmds.indexOf(cmd) !== -1) {
 
         if (err) {
             console.log("Usage: ");
-            console.log(command.usage);
+
+            if (command.usage instanceof Function) {
+                command.usage();
+            } else {
+                console.log(command.usage);
+            }
+
         }
     });
 

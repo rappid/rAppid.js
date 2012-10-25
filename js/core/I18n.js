@@ -1,4 +1,4 @@
-define(["require", "js/core/Component", "underscore"], function (require, Component, _) {
+define(["require", "js/core/Component", "underscore", "moment", "flow"], function (require, Component, _, moment, flow) {
     return Component.inherit("js.core.I18n", {
         defaults: {
             path: 'app/locale',
@@ -20,20 +20,35 @@ define(["require", "js/core/Component", "underscore"], function (require, Compon
 
         loadLocale: function (locale, callback) {
 
+            var self = this;
+
             if (!locale) {
                 throw "locale not defined";
             }
 
-            var self = this;
-            require(['json!' + this.$.path + '/' + this.$.locale], function (translations) {
-                self.set({
-                    translations: translations
-                });
+            flow()
+                .par(function (cb) {
+                    require(['json!' + self.$.path + '/' + self.$.locale], function (translations) {
+                        self.set({
+                            translations: translations
+                        });
+                        cb();
+                    }, function(err) {
+                        self.log(err, 'error');
+                        cb();
+                    });
+                }, function (cb) {
+                    require([self.$.path + "/" + self.$.locale], function() {
+                        self.trigger("localeChanged");
+                        cb();
+                    }, function(err) {
+                        self.log(err, 'error');
+                        cb();
+                    })
+                })
+                .exec(callback)
 
-                if (callback) {
-                    callback();
-                }
-            });
+
         },
 
         /**
@@ -62,6 +77,19 @@ define(["require", "js/core/Component", "underscore"], function (require, Compon
             }
 
             return value;
-        }.onChange("translations")
+        }.onChange("translations"),
+
+        f: function (value, format) {
+
+            if (value instanceof Date) {
+                format = format || "LLL";
+                return moment(value).format(format);
+            } else if (value instanceof moment) {
+                format = format || "LLL";
+                return value.format(format);
+            }
+
+            return value;
+        }.on("localeChanged")
     })
 });

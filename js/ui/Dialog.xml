@@ -19,6 +19,11 @@
                     if (!this._keyDownHandler) {
                         var self = this;
                         this._keyDownHandler = function (e) {
+
+                            if (e.shiftKey || e.metaKey || e.ctrlKey || e.altKey) {
+                                return;
+                            }
+
                             var keyHandlerName = self.$keyHandlers[e.keyCode];
                             if (keyHandlerName && self[keyHandlerName]) {
                                 self[keyHandlerName].call(self, e);

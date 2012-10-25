@@ -8,7 +8,14 @@ var help = function(args, callback) {
         var cmd = args[0],
             cmdPath = path.join(__dirname, cmd + ".js");
         if (fs.existsSync(cmdPath)) {
-            console.log(require(cmdPath).usage);
+            var usage = require(cmdPath).usage;
+
+            if (usage instanceof Function) {
+                usage();
+            } else {
+                console.log(usage);
+            }
+
         } else {
             callback("Command '" + cmd + "' not found.");
         }
