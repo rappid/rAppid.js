@@ -1,7 +1,7 @@
 {
   "name": "rAppid.js",
   "preferGlobal": "false",
-  "version": "0.3.4",
+  "version": "0.4.0",
   "author": "rAppid <support@rappidjs.com> (http://rappidjs.com)",
   "contributors": [
     "Tony Findeisen <tony@rappidjs.com>",
@@ -16,6 +16,8 @@
     "rappidjs": "./bin/rappidjs"
   },
   "lib": "js",
+  "serverLib":"srv",
+
   "main": "index.js",
   "repository": {
     "type": "git",
@@ -44,7 +46,10 @@
     "esprima": "latest"
   },
   "optionalDependencies": {
-    "esprima": "latest"
+    "esprima": "latest",
+      "xmlhttprequest":"latest",
+      "libxml":"latest",
+      "jsdom":"latest"
   },
   "devDependencies": {
     "chai": "*",
