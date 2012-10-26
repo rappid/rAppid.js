@@ -1,0 +1,13 @@
+<Server xmlns="srv.core"
+        xmlns:handler="srv.handler"
+        xmlns:endpoint="srv.endpoint">
+
+    <EndPoints>
+        <endpoint:HttpEndPoint port="80"/>
+    </EndPoints>
+
+    <Handlers>
+        <handler:StaticFileHandler />
+    </Handlers>
+
+</Server>

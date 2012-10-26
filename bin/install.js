@@ -49,7 +49,7 @@ function install(args, callback) {
             }
         });
     }else{
-        callback();
+        linkPackage(dir, packageName, version, callback);
     }
 
 
@@ -67,14 +67,32 @@ function readJson(path, callback) {
 
 function linkPackage(dir, packageName, version ,callback){
     var publicDir = path.join(dir, "public");
+    var serverDir = path.join(dir, "server");
     var packageDir = path.join(dir, "node_modules", packageName);
 
     readJson(path.join(packageDir, "package.json"), function (err, data) {
         if (!err){
             var libDir = path.join(publicDir, data.lib);
+            var serverLibDir = path.join(serverDir, data.lib);
+            var relativePath;
+
             if (!fs.existsSync(libDir)) {
-                fs.symlinkSync(path.join(packageDir, data.lib), libDir, 'dir');
+                relativePath = path.join(path.relative(publicDir, packageDir),data.lib);
+                fs.symlinkSync(relativePath, libDir, 'dir');
             }
+            if(!fs.existsSync(serverLibDir)){
+                relativePath = path.join(path.relative(serverDir, packageDir), data.lib);
+                fs.symlinkSync(relativePath, serverLibDir, 'dir');
+            }
+
+            if (data.serverLib){
+                serverLibDir = path.join(serverDir ,data.serverLib);
+                if (!fs.existsSync(serverLibDir)) {
+                    relativePath = path.join(path.relative(serverDir, packageDir),data.serverLib);
+                    fs.symlinkSync(relativePath, serverLibDir, 'dir');
+                }
+            }
+
             var packageFile = path.join(dir, "package.json");
 
             readJson(packageFile, function(err,data){
