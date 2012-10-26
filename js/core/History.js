@@ -193,6 +193,8 @@ define(["js/core/Bindable", "flow"], function (Bindable, flow) {
                 this.$history[this.$history.length - 1] = fragment;
             }
 
+            this.$processUrl = true;
+
             if(this.$fragment !== fragment){
                 this.$fragment = fragment;
                 this.trigger('change:fragment', this.$fragment);
