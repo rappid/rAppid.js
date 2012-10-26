@@ -527,11 +527,14 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                 }
                 return null;
             },
+            _createDOMEventHandler: function(type){
+                return new DomElement.EventHandler(this, type);
+            },
             bind: function (type, eventHandler, scope) {
                 var self = this;
                 if (type.indexOf("on:") === 0 && !this.$domEventHandler[type] && !this._isComponentEvent(type)) {
                     if (this.isRendered()) {
-                        var cb = this.$domEventHandler[type] = new DomElement.EventHandler(this,type);
+                        var cb = this.$domEventHandler[type] = this._createDOMEventHandler(type);
                         this.bindDomEvent(type.substr(3), cb);
                         this.callBase();
                     } else {
