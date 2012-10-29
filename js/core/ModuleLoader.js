@@ -2,10 +2,12 @@ define(["require", "js/html/HtmlElement", "js/ui/ContentPlaceHolder", "js/core/M
     function (require, HtmlElement, ContentPlaceHolder, Module, _, ModuleConfiguration, flow) {
         var ModuleLoader = HtmlElement.inherit("js.core.ModuleLoader", {
 
-            $classAttributes: ['router', 'currentModuleName'],
+            $classAttributes: ['router', 'currentModuleName', 'state'],
             defaults: {
                 currentModuleName:  null,
-                tagName: 'div'
+                tagName: 'div',
+                componentClass: "module-loader",
+                state: null
             },
 
             ctor: function (attributes) {
@@ -73,7 +75,8 @@ define(["require", "js/html/HtmlElement", "js/ui/ContentPlaceHolder", "js/core/M
 
             _startModule: function (moduleName, moduleInstance, callback, routeContext, cachedInstance) {
 
-                this.set('currentModuleName',moduleName);
+                var self = this;
+                this.set('currentModuleName', moduleName);
 
                 var contentPlaceHolders = this.getContentPlaceHolders();
 
@@ -84,6 +87,9 @@ define(["require", "js/html/HtmlElement", "js/ui/ContentPlaceHolder", "js/core/M
                 }
 
                 var internalCallback = function(err) {
+
+                    self.set('state', err ? 'error' : null);
+
                     if (callback) {
                         callback(err);
                     }
@@ -134,6 +140,9 @@ define(["require", "js/html/HtmlElement", "js/ui/ContentPlaceHolder", "js/core/M
                 } else {
 
                     this._clearContentPlaceHolders();
+                    this.$lastModuleName = this.$.currentModuleName;
+                    this.set('currentModuleName', null);
+                    this.set('state', 'loading');
 
                     if (this.$moduleCache.hasOwnProperty(module.name)) {
                         this._startModule(module.name, this.$moduleCache[module.name], callback, routeContext, true);
@@ -160,6 +169,10 @@ define(["require", "js/html/HtmlElement", "js/ui/ContentPlaceHolder", "js/core/M
                             }
 
                         }, function(err) {
+
+                            self.set('state', 'error');
+                            console.log(err);
+
                             if (callback) {
                                 callback(err);
                             }
@@ -197,9 +210,10 @@ define(["require", "js/html/HtmlElement", "js/ui/ContentPlaceHolder", "js/core/M
                 }
                 return modules;
             },
-            render: function () {
-                // render the ContentPlaceHolder
-                return this.callBase();
+
+            _renderState: function(state, oldState) {
+                oldState && this.removeClass(oldState);
+                state && this.addClass(state);
             }
         });
 
