@@ -31,9 +31,6 @@ define(["js/core/Base"], function (Base) {
             for (var i = 0; i < events.length; i++) {
                 var event = events[i];
                 this._attributes.push(event);
-                event = "change:" + event;
-                this._events.push(event);
-
             }
 
             if (!this.trigger) {
