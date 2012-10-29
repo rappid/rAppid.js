@@ -11,7 +11,7 @@
             return {
                 defaults: {
                     'tagName': 'div',
-                    'componentClass': 'btn-group',
+                    'componentClass': 'btn-group menu-button',
                     'menuClassName': "dropdown-menu",
                     'menuVisible': false
                 },
