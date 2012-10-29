@@ -54,6 +54,8 @@
 
                 },
                 _bindDomEvents: function (el) {
+                    this.callBase();
+
                     if (!_.contains(this.$instances, this)) {
                         this.$instances.push(this);
                     }
@@ -76,6 +78,7 @@
                     this.dom(this.$stage.$document).bindDomEvent('click', function (e) {
                         self.set({menuVisible: false});
                     });
+
                 },
                 _preventDefault: function (e) {
                     e.$.stopPropagation();

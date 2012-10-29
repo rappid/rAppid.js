@@ -12,7 +12,7 @@ define(
                 return this.$el;
             },
             clear: function () {
-                this.set({content: this.$textNode});
+                this.set({content: null});
             },
             _renderContent: function (content) {
                 var children;
@@ -20,19 +20,31 @@ define(
                     children = content.$children;
                 } else if (_.isArray(content)) {
                     children = content;
-                } else {
+                } else if(content){
                     children = [content];
+                } else {
+                    children = [];
                 }
 
-                var child, el;
-                for (var i = 0; i < children.length; i++) {
-                    child = children[i];
-                    if (child.render) {
-                        el = child.render();
-                        var parentNode = this.$el.parentNode;
-                        parentNode.insertBefore(el, this.$el);
+                var parentNode = this.$el.parentNode;
+                if(parentNode){
+                    if(children.length > 0){
+                        var child, el;
+                        for (var i = 0; i < children.length; i++) {
+                            child = children[i];
+                            if (child.render) {
+                                el = child.render();
+                                parentNode.replaceChild(el, this.$el);
+                                this.$el = el;
+                                return;
+                            }
+                        }
+                    }else{
+                        parentNode.replaceChild(this.$textNode, this.$el);
+                        this.$el = this.$textNode;
                     }
                 }
+
             }
         });
     }

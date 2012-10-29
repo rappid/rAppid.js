@@ -58,15 +58,15 @@ define(["js/html/HtmlElement", "js/core/Content", "underscore"], function (HtmlE
 
             _renderTemplateToPlaceHolder: function (templateName, placeholderName, attributes) {
                 this.$renderedPlaceholders = this.$renderedPlaceholders || {};
-                var renderedComponent = this.$renderedPlaceholders[placeholderName];
+                var renderedComponent = this.$renderedPlaceholders[placeholderName], placeHolder;
                 if (!renderedComponent) {
                     var template = this.getTemplate(templateName);
                     if (template) {
                         // or create special method createComponent
                         renderedComponent = template.createInstance(attributes);
-                        var placeholder = this.getPlaceHolder(placeholderName);
-                        if (placeholder) {
-                            placeholder.set({content: renderedComponent});
+                        placeHolder = this.getPlaceHolder(placeholderName);
+                        if (placeHolder) {
+                            placeHolder.set({content: renderedComponent});
                             this.$renderedPlaceholders[placeholderName] = renderedComponent;
                         } else {
                             // throw "No placeholder '"+placeholderName+"' found";
@@ -74,6 +74,10 @@ define(["js/html/HtmlElement", "js/core/Content", "underscore"], function (HtmlE
 
                     }
                 } else {
+                    placeHolder = this.getPlaceHolder(placeholderName);
+                    if(placeHolder){
+                        placeHolder.set({content: renderedComponent});
+                    }
                     renderedComponent.set(attributes);
                 }
 
