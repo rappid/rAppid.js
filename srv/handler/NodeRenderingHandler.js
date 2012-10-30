@@ -42,7 +42,7 @@ define(['srv/core/Handler', 'path', 'flow', 'fs', 'jsdom', 'underscore'], functi
             flow()
                 .seq("config", function(cb) {
                     if (_.isString(self.$.config)) {
-                        Fs.readFile(Path.join(self.$.applicationDir, self.$.config), function(err, data) {
+                        Fs.readFile(Path.join(self.$.applicationDirectory, self.$.config), function(err, data) {
                             if (!err) {
                                 data = JSON.parse(data);
                                 data.nodeRequire = require;
