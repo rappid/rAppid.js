@@ -22,7 +22,7 @@ define(["js/core/Base"], function (Base) {
 
 
         /***
-         * @param {arguments} changeEvents results in change:eventName
+         * @param {arguments} changeEvents results in change
          * */
         Function.prototype.onChange = function () {
             var events = Array.prototype.slice.call(arguments);
