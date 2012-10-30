@@ -33,6 +33,10 @@ The installation of rAppid.js is simply done via [npm](http://npmjs.org/).
 npm install rAppid.js -d -g
 ```
 
+*Note*: If you want to use rAppid.js direct from github, you have to link the rAppid.js file in the js/lib directory.
+
+
+
 ## Command-line interface
 rAppid.js comes with a command-line interface to setup projects, install packages and updated modules.
 Open a terminal and type 
