@@ -497,10 +497,16 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding","underscor
                  * @param {Object} [scope]
                  */
                 unbind: function (path, event, callback, scope) {
-                    if (event instanceof Function) {
+                    if (event instanceof Function && _.isString(path)) {
                         this.callBase(path, event, callback);
                     } else {
                         var eb;
+                        if (_.isArray(path) && path.length > 0) {
+                            scope = callback;
+                            callback = event;
+                            event = path[1];
+                            path = path[0];
+                        }
                         for (var i = this.$eventBindables.length - 1; i >= 0; i--) {
                             eb = this.$eventBindables[i];
                             if (eb.$.scope === scope && eb.$.path === path && eb.$.event === event && eb.$.callback === callback) {
