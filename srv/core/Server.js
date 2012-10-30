@@ -46,15 +46,15 @@ define(['require', 'js/core/Component', 'srv/core/Context', 'srv/core/Handlers',
                 }
 
                 if (!this.$filters) {
-                    this.$filters = this.createComponent(Filters);
+                    this.addChild(this.createComponent(Filters));
                 }
 
                 if (!this.$authenticationProviders) {
-                    this.$authenticationProviders = this.createComponent(AuthenticationProviders);
+                    this.addChild(this.createComponent(AuthenticationProviders));
                 }
 
                 if (!this.$authorisationProviders) {
-                    this.$authorisationProviders = this.createComponent(AuthorisationProviders);
+                    this.addChild(this.createComponent(AuthorisationProviders));
                 }
 
                 var self = this;
