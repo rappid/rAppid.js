@@ -7,42 +7,63 @@ fs.existsSync || (fs.existsSync = path.existsSync);
 
 var serverExport = function (args, callback) {
 
-    var argv = require('optimist')(args)
-        .usage(serverExport.usage)
-        // TODO
-//        .demand(1)
-        .argv;
-
-    var serverInstance,
-        serverDirectory = process.cwd(),
-        documentRoot = path.resolve(path.join(serverDirectory, '..', 'public')),
-        serverFactoryClassName = 'xaml!web/Server',
-        configPath = 'config.json';
-
-    process.stdin.resume();
-
-//    process.stdin.setRawMode(true);
-//    process.stdin.on('keypress', function (char, key) {
-//        if (key && key.ctrl && key.name == 'c') {
-//            shutdownServer();
-//        }
-//    });
-
-    process.on('SIGINT', function() {
-        shutdownServer();
-    });
-
     process.on('uncaughtException', function (err) {
         console.error(err.stack || err);
     });
 
-    function shutdownServer() {
+    args = args || [];
+
+    var argv = require('optimist')(args)
+        .usage("rappidjs server <serverRoot>")
+        .demand(1)
+
+        .default('config', 'config.json')
+        .default('html', 'index.html')
+        .default('serverFactoryClassName', 'xaml!web/Server')
+
+        .describe('config', 'config.json file')
+        .describe('serverRoot', 'the root of the server')
+        .describe('documentRoot', 'the document root - public')
+        .describe('serverFactoryClassName', 'the fqClassName of the factory of the server class')
+
+        .argv;
+
+    var serverInstance,
+        serverFactoryClassName = argv.serverFactoryClassName,
+        serverRoot,
+        documentRoot,
+        configPath = argv.config;
+
+    serverRoot = argv._[0].replace(/^~\//, process.env.HOME + '/');
+    serverRoot = path.resolve(serverRoot);
+
+    var serverFactoryPath = serverFactoryClassName.replace(/^xaml!/, '') + '.xml';
+
+    if (!fs.existsSync(path.join(serverRoot, serverFactoryPath))) {
+        if (fs.existsSync(path.join(serverRoot, 'server', serverFactoryPath))) {
+            serverRoot = path.join(serverRoot, 'server');
+        }
+    }
+
+    if (path.resolve(configPath) !== configPath) {
+        configPath = path.join(serverRoot, configPath);
+    }
+
+    documentRoot = argv.documentRoot || path.join(serverRoot, '..', 'public');
+
+
+    console.log("serverRoot: " + serverRoot);
+    console.log("DocumentRoot: " + documentRoot);
+    console.log("Config: " + configPath);
+
+
+
+    function shutdownServer(callback) {
         if (serverInstance) {
             console.log('Shutting down server... [%d]', process.pid);
-            serverInstance.shutdown(function (err) {
-                err && console.error(err);
-                process.exit(err ? 2 : 0);
-            });
+            serverInstance.shutdown(callback);
+        } else {
+            callback();
         }
     }
 
@@ -51,15 +72,28 @@ var serverExport = function (args, callback) {
             port: 8000
         };
 
-    _.defaults(config, {
-        nodeRequire: require,
-        baseUrl: serverDirectory,
+    try {
+        _.defaults(config, {
+            nodeRequire: require,
+            baseUrl: serverRoot,
+            documentRoot: documentRoot
 
-        documentRoot: documentRoot
+        }, JSON.parse(fs.readFileSync(configPath, 'utf8')));
+    } catch (e) {
+        console.error(e);
+        process.exit(3);
+    }
 
-    }, JSON.parse(fs.readFileSync(configPath, 'utf8')));
 
-    var rAppid = require(path.join(serverDirectory, 'js/lib/rAppid.js')).rAppid;
+    process.stdin.resume();
+
+    process.on('SIGINT', function () {
+        shutdownServer(function(err) {
+            err && console.error(err);
+            process.exit(2);
+        });
+    });
+    var rAppid = require(path.join(serverRoot, 'js/lib/rAppid.js')).rAppid;
 
     rAppid.createApplicationContext(null, config, function(err, applicationContext) {
         if (err) {
@@ -109,7 +143,9 @@ var serverExport = function (args, callback) {
 
 };
 
-serverExport.usage = "rappidjs server <Directory>";
+serverExport.usage = function() {
+    serverExport();
+};
 
 module.exports = serverExport;
 
