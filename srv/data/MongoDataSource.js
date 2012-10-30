@@ -1,7 +1,8 @@
 define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore'], function (DataSource, mongoDb, Model, flow, _) {
 
     var ID_KEY = "_id",
-        PARENT_KEY = "_parent_id",
+        PARENT_ID_KEY = "_parent_id",
+        PARENT_TYPE_KEY = "_parent_type",
         TYPE_KEY = "_type";
 
     var MongoDataProcessor = DataSource.Processor.inherit('src.data.MongoDataProcessor', {
@@ -9,7 +10,8 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore'],
             var data = this.callBase();
 
             if(model.$parent){
-                data[PARENT_KEY] = model.$parent.$.id;
+                data[PARENT_ID_KEY] = model.$parent.$.id;
+                data[PARENT_TYPE_KEY] = model.$parent.factory.prototype.constructor.name;
             }
 
             var idSchema = model.schema['id'];
@@ -66,7 +68,8 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore'],
                 }
                 delete data['_id'];
             }
-            delete data[PARENT_KEY];
+            delete data[PARENT_ID_KEY];
+            delete data[PARENT_TYPE_KEY];
             delete data[TYPE_KEY];
 
             return this.callBase(model, data, action, options);
@@ -281,7 +284,8 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore'],
             }
 
             if(rootCollection.$parent){
-                where[PARENT_KEY] = rootCollection.$parent.$.id;
+                where[PARENT_ID_KEY] = rootCollection.$parent.$.id;
+                where[PARENT_TYPE_KEY] = rootCollection.$parent.factory.prototype.constructor.name;
             }
 
             flow()

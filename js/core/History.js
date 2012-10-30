@@ -125,7 +125,7 @@ define(["js/core/Bindable", "flow"], function (Bindable, flow) {
             }
 
             if (routeExecutionStack.length === 0) {
-                console.log("no route for '" + fragment + "' found.");
+                this.log("no route for '" + fragment + "' found.");
                 // no route found but
                 if (callback) {
                     // execute callback

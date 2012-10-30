@@ -474,7 +474,7 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
 
                     }
                 } else {
-                    console.warn("no id defined for data item");
+                    this.log("no id defined for data item", "warn");
                 }
             }
             var pos = this.getPointFromIndex(index), y = pos.y, topDiff = y - this.$el.scrollTop, bottomDiff = topDiff + this.$.itemHeight + this.$.verticalGap - this.$.height;

@@ -146,7 +146,7 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
             }
         },
         _renderEnabled: function (enabled) {
-            if (this.$el.hasOwnProperty("disabled")) {
+            if ("disabled" in this.$el) {
                 if (!enabled) {
                     this.$el.setAttribute('disabled', true);
                 } else {

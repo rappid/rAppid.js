@@ -221,7 +221,7 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
 
                 if (missingSubModels.length > 0) {
                     // TODO load again with fullData=true if not laoded with fullData=false
-                    console.log(["requested submodel missing", missingSubModels]);
+                    this.log(["requested submodel missing", missingSubModels], "warn");
 
                     callback("requested submodel missing", model);
                     return;

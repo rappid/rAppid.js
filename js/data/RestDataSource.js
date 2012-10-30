@@ -25,7 +25,7 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
         initialize: function () {
 
             if (!this.$.endPoint) {
-                console.warn("No end-point for RestDataSource defined");
+                this.log("No end-point for RestDataSource defined","warn");
             }
 
             if (!this.$.gateway) {

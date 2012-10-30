@@ -22,7 +22,7 @@ define(["js/core/Base"], function (Base) {
 
 
         /***
-         * @param {arguments} changeEvents results in change:eventName
+         * @param {arguments} changeEvents results in change
          * */
         Function.prototype.onChange = function () {
             var events = Array.prototype.slice.call(arguments);
@@ -82,7 +82,7 @@ define(["js/core/Base"], function (Base) {
                         // and push the callback function
                         list.push(new EventDispatcher.EventHandler(callback, scope));
                     } else {
-                        console.warn('no eventHandler for "' + eventType + '"');
+                        this.log('no eventHandler for "' + eventType + '"', "warn");
                     }
 
                     return this;

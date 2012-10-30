@@ -611,14 +611,25 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                     this.$el.addEventListener(type, cb, false);
 
                 } else if (this.$el.attachEvent) {
-                    this.$el.attachEvent("on" + type, cb);
+                    var callback = cb;
+                    if(cb instanceof DomElement.EventHandler){
+                        callback = cb._handleEvent = function(e){
+                            return cb.handleEvent(e);
+                        }
+                    }
+                    this.$el.attachEvent("on" + type, callback);
                 }
             },
             unbindDomEvent: function (type, cb) {
                 if (this.$el.removeEventListener) {
                     this.$el.removeEventListener(type, cb, false);
                 } else if (this.$el.detachEvent) {
-                    this.$el.detachEvent("on" + type, cb);
+                    var callback = cb;
+                    if (cb instanceof DomElement.EventHandler) {
+                        callback = cb._handleEvent;
+                    }
+
+                    this.$el.detachEvent("on" + type, callback);
                 }
             },
             focus: function(){
