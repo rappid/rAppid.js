@@ -71,7 +71,7 @@ define(["js/html/HtmlElement", "underscore", "moment"], function (HtmlElement, _
                     try{
                         value = value !== "" ? new Date(value) : null;
                     }catch(e){
-                        console.warn("Invalid Date");
+                        this.log("Invalid Date","warn");
                         value = this.$.value;
                     }
                 }

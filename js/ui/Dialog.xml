@@ -38,7 +38,9 @@
                 },
 
                 close: function() {
-                    this.$stage.$window && this.dom(this.$stage.$window).unbindDomEvent('keydown', this._keyDownHandler);
+                    if(this._keyDownHandler){
+                        this.$stage.$window && this.dom(this.$stage.$window).unbindDomEvent('keydown', this._keyDownHandler);
+                    }
                     this.callBase();
                 },
 

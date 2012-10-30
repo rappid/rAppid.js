@@ -171,7 +171,7 @@ define(["require", "js/html/HtmlElement", "js/ui/ContentPlaceHolder", "js/core/M
                         }, function(err) {
 
                             self.set('state', 'error');
-                            console.log(err);
+                            this.log(err, "warn");
 
                             if (callback) {
                                 callback(err);

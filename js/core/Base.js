@@ -37,7 +37,10 @@ define(["inherit"], function(inherit){
                     Base.logger[i].log(message, level);
                 }
             } else if (typeof console !== "undefined") {
-                (console[level] || console.log).call(console, "[ " + (new Date()) + " ]: ", message);
+                var method = (console[level] || console.log);
+                if(method){
+                    method.call(console,"[ " + (new Date()) + " ]: ", message);
+                }
             }
         }
     });

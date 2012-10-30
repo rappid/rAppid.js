@@ -82,7 +82,7 @@ define(["js/core/Base"], function (Base) {
                         // and push the callback function
                         list.push(new EventDispatcher.EventHandler(callback, scope));
                     } else {
-                        console.warn('no eventHandler for "' + eventType + '"');
+                        this.log('no eventHandler for "' + eventType + '"', "warn");
                     }
 
                     return this;

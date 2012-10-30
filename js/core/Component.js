@@ -365,7 +365,7 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                             }
                         }
                     } else {
-                        console.warn("Descriptor not defined or not correct");
+                        this.log("Descriptor not defined or not correct", "warn");
                     }
                 },
 
