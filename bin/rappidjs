@@ -57,7 +57,7 @@ if (allCmds.indexOf(cmd) !== -1) {
     var bin = process.argv[1].split("/").pop();
     // print usage
     console.log(bin + " <command>");
-    console.log("Version: 0.3.4");
+    console.log("Version: 0.4.0");
     console.log("Commands:");
     cmdList.sort().forEach(function(cmd) {
         console.log("   " + cmd);
