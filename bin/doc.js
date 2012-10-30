@@ -6,7 +6,7 @@ var help = function(args, callback) {
         fs = require('fs'),
         path = require('path'),
         argv = require('optimist')(args)
-            .usage("rappidjs doc <dir>")
+            .usage("rappidjs doc <dir> [<dir2>]")
             .demand(1)
             .options('o', {
                 alias: 'output'
@@ -28,33 +28,36 @@ var help = function(args, callback) {
 
         outputDir = argv.o ? argv.o.replace(/^~\//, process.env.HOME + '/') : null;
 
-    generateDocumentation(argv._[0]);
+    generateDocumentation(argv._);
 
-    function generateDocumentation(startFile) {
+    function generateDocumentation(startFiles) {
 
         var documentation = new amdDoc.Documentation(),
             paths,
             stat;
 
-        startFile = startFile.replace(/^~\//, process.env.HOME + '/');
+        for (var i = 0; i < startFiles.length; i++) {
+            var startFile = startFiles[i];
+            startFile = startFile.replace(/^~\//, process.env.HOME + '/');
 
-        stat = fs.statSync(startFile);
+            stat = fs.statSync(startFile);
 
-        if (stat.isDirectory()) {
-            paths = findFiles(startFile);
-            paths.forEach(function (p) {
-                var shortPath = path.relative(path.join(startFile, '..'), p),
-                    code = fs.readFileSync(p, 'UTF-8');
+            if (stat.isDirectory()) {
+                paths = findFiles(startFile);
+                paths.forEach(function (p) {
+                    var shortPath = path.relative(path.join(startFile, '..'), p),
+                        code = fs.readFileSync(p, 'UTF-8');
 
-                console.warn(shortPath);
+                    console.warn(shortPath);
 
-                var defaultFqClassName = shortPath.replace(/\//g, '.').replace(/\.js$/, '');
-                documentation.generateDocumentationsForFile('js', code, defaultFqClassName, true);
+                    var defaultFqClassName = shortPath.replace(/\//g, '.').replace(/\.js$/, '');
+                    documentation.generateDocumentationsForFile('js', code, defaultFqClassName, true);
 
 
-            });
-        } else if (stat.isFile()) {
-            documentation.generateDocumentationsForFile('js', fs.readFileSync(startFile, 'UTF-8'), startFile, true);
+                });
+            } else if (stat.isFile()) {
+                documentation.generateDocumentationsForFile('js', fs.readFileSync(startFile, 'UTF-8'), startFile, true);
+            }
         }
 
         var output = documentation.process();
