@@ -42,7 +42,7 @@ define(['js/core/Bindable'], function (Bindable) {
                 condition = this.$.condition || defaultConditionFnc;
 
             try {
-                internalCallback(null, condition(entity) ? this._validate(entity) : null);
+                internalCallback(null, this._validate(entity));
             } catch(e) {
                 if (e instanceof Validator.Error) {
                     internalCallback(null, e);
@@ -79,11 +79,11 @@ define(['js/core/Bindable'], function (Bindable) {
                 return this.$.errorMessage || "Entity is invalid";
             }
         },
-        _createFieldError: function () {
+        _createFieldError: function (field) {
             return new Validator.Error({
                 code: this.$.errorCode,
                 message: this._getErrorMessage(),
-                field: this.$.field
+                field: field || this.$.field
             })
         }
 
