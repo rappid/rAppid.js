@@ -68,9 +68,7 @@ var serverExport = function (args, callback) {
     }
 
     var config = {},
-        parameter = {
-            port: 8000
-        };
+        parameter = {};
 
     try {
         _.defaults(config, {
@@ -121,6 +119,13 @@ var serverExport = function (args, callback) {
                                 console.error(err);
                             } else {
                                 console.log("server started");
+                                for (var i = 0; i < server.$endPoints.$endPoints.length; i++) {
+                                    var endPoint = server.$endPoints.$endPoints[i];
+
+                                    if (endPoint.uri instanceof Function) {
+                                        console.log("open " + endPoint.uri() + " in your browser");
+                                    }
+                                }
                                 serverInstance = server;
                             }
                         });
