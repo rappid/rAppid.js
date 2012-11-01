@@ -4,7 +4,8 @@ define(["require", "js/core/Component", "underscore", "moment", "flow"], functio
             path: 'app/locale',
             locale: null,
             suffix: '.json',
-            translations: {}
+            translations: {},
+            loadMomentJs: true
         },
 
         initialize: function () {
@@ -38,13 +39,17 @@ define(["require", "js/core/Component", "underscore", "moment", "flow"], functio
                         cb();
                     });
                 }, function (cb) {
-                    require([self.$.path + "/" + self.$.locale], function() {
-                        self.trigger("localeChanged");
+                    if (self.$.loadMomentJs) {
+                        require([self.$.path + "/" + self.$.locale], function () {
+                            self.trigger("localeChanged");
+                            cb();
+                        }, function (err) {
+                            self.log(err, 'error');
+                            cb();
+                        })
+                    } else {
                         cb();
-                    }, function(err) {
-                        self.log(err, 'error');
-                        cb();
-                    })
+                    }
                 })
                 .exec(callback)
 
