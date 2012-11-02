@@ -194,7 +194,7 @@ function createApplication(appName, dir, callback) {
         // add server xml
         Helper.template(path.join(__dirname, "templates", "Server.xml"), path.join(webDir, "Server.xml"), {});
 
-        var rappidPath = path.join(fs.readlinkSync(process.argv[1]), "../..");
+        var rappidPath = path.join(fs.realpathSync(process.argv[1]), "../..");
 
         Helper.copyDirectory(path.join(rappidPath, "node_modules"), path.join(dir, "node_modules"), function () {
             install(["rAppid.js", "latest", dir], function (err) {
