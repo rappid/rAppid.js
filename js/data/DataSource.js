@@ -836,9 +836,35 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
              * @param {Function} callback
              */
             saveModel: function (model, options, callback) {
+                callback = callback || function(){};
+
+                var self = this;
+
+                flow()
+                    .seq(function(cb){
+                        self._beforeModelSave(model, options, cb);
+                    })
+                    .seq(function(cb){
+                        self._saveModel(model, options, cb);
+                    })
+                    .seq(function(cb){
+                        self._afterModelSave(model, options, cb);
+                    })
+                    .exec(callback);
+            },
+
+            _beforeModelSave: function(model, options, callback){
+                callback && callback();
+            },
+
+            _saveModel: function(model, options, callback){
                 if (callback) {
                     callback("Abstract method saveModel", model);
                 }
+            },
+
+            _afterModelSave: function(model, options, callback){
+                callback && callback();
             },
 
             /***

@@ -286,8 +286,7 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
             return null;
         },
 
-
-        saveModel: function (model, options, callback) {
+        _saveModel: function (model, options, callback) {
 
             var action = DataSource.ACTION.UPDATE,
                 method = RestDataSource.METHOD.PUT;

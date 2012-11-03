@@ -92,7 +92,10 @@ define(["js/data/DataSource", "js/data/Model", "flow", "js/data/LocalStorage"],
 
                 callback(null, page, options);
             },
-            saveModel: function (model, options, callback) {
+            _beforeModelSave: function(model, options, callback){
+
+            },
+            _saveModel: function (model, options, callback) {
 
                 callback = callback || function () {
                 };
@@ -105,7 +108,6 @@ define(["js/data/DataSource", "js/data/Model", "flow", "js/data/LocalStorage"],
                 }
 
                 var processor = this.getProcessorForModel(model, options);
-                var formatProcessor = this.getFormatProcessor(action);
                 var self = this;
 
                 // call save of the processor to save submodels
