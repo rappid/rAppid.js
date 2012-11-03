@@ -157,7 +157,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore'],
 
         },
 
-        saveModel: function (model, options, callback) {
+        _saveModel: function (model, options, callback) {
             var configuration = this._getConfigurationForModel(model);
 
             if (!configuration) {
