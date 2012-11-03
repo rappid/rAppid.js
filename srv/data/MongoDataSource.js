@@ -293,6 +293,11 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore'],
                 where[PARENT_TYPE_KEY] = rootCollection.$parent.factory.prototype.constructor.name;
             }
 
+            var sort;
+            if(options["sort"]){
+                sort = options["sort"];
+            }
+
             flow()
                 .seq("collection", function (cb) {
                     connection = self.connect(function (err, client) {
@@ -301,6 +306,9 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore'],
                 })
                 .seq("cursor", function (cb) {
                     var cursor = this.vars["collection"].find(where);
+                    if(sort){
+                        cursor = cursor.sort(sort);
+                    }
                     if (options.limit) {
                         cursor = cursor.limit(options.limit);
                     }

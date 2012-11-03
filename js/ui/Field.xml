@@ -27,7 +27,7 @@
                         this.set('inputId', 'field_' + (++fieldId));
                     }
                 },
-                _render_error: function(error,oldError){
+                _render$error: function(error,oldError){
                     if(error){
                         this.addClass('error');
                     }else{

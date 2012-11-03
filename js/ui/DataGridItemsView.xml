@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <ui:DataGridItemsViewClass xmlns="http://www.w3.org/1999/xhtml" xmlns:js="js.core" xmlns:ui="js.ui" componentClass="data-grid-body">
     <js:Template name="renderer">
-        <ui:DataGridRow items="{columns}" class="{indexStatus($index)} {$dataItem.status}" selected="{$dataItem.selected}">
+        <ui:DataGridRow items="{columns}" class="{indexStatus($index)} {$dataItem.status}" selected="{isItemSelected($dataItem.data)}">
             <js:Template name="item">
                 <td width="{column.width}"/>
             </js:Template>

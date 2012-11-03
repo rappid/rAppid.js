@@ -461,7 +461,7 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
             var item, id;
             for (var i = startIndex; i <= endIndex; i++) {
                 item = this.$.$dataAdapter.getItemAt(i);
-                id = item.get('data.$cid');
+                id = item.$.data ? item.$.data.$cid : undefined;
                 if (id) {
                     if (metaKey && item.$.selected) {
                         delete this.$selectionMap[id];
@@ -495,8 +495,13 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
                 return false;
             }
             var cid = data.$cid;
-            return cid && this.$.selectedItems[cid] !== undefined;
+            return cid && this.$selectionMap[cid] !== undefined;
+        }.on(["selectedItems","add"], ["selectedItems", "remove"]),
+        sort: function (sortParameter) {
+            this.$.$dataAdapter.sort(sortParameter);
         }
+
+
     }, {
         createDataAdapter: function (data, virtualItemsView) {
 
@@ -687,6 +692,10 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
 
         },
 
+        sort: function(sortParameter){
+            var sortCollection = this.$data.createSortCollection(sortParameter);
+            this.$virtualItemsView.set('data', sortCollection);
+        },
 
         /***
          * @returns {Number} the size of the list, or NaN if size currently unknown

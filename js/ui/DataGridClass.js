@@ -26,6 +26,18 @@ define(['js/ui/View', 'xaml!js/ui/DataGridColumn', 'js/core/List', 'underscore',
             this.$classAttributes = this.$classAttributes.concat(this.$.$itemsView.$classAttributes);
             this.callBase();
         },
+        _handleColumnClick: function(e){
+            if(this.$.data){
+                var column = e.target.$.column;
+                // add sortable attribute
+                if(column.$.path){
+                    this.$sortParamter = this.$sortParameter || {};
+                    column.$.sortDirection = column.$.sortDirection === -1 ? 1 : -1;
+                    this.$sortParamter[column.$.path] = column.$.sortDirection;
+                    this.$.$itemsView.sort(this.$sortParamter);
+                }
+            }
+        },
         addChild: function (child) {
             this.callBase();
             if (child instanceof DataGridColumn) {

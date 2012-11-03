@@ -4,6 +4,7 @@ define(['js/core/Component'], function (Component) {
 
     return Component.inherit('js.ui.DataGridColumnClass', {
         defaults: {
+            sortable: false,
             name: "column",
             title: ""
         },

@@ -836,18 +836,19 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
              * @param {Function} callback
              */
             saveModel: function (model, options, callback) {
+                callback = callback || function(){};
 
                 var self = this;
 
                 flow()
                     .seq(function(cb){
-                        self._beforeModelSave(model, options, cb);
+                        this._beforeModelSave(model, options, cb);
                     })
                     .seq(function(cb){
-                        self._saveModel(model, options, cb);
+                        this._saveModel(model, options, cb);
                     })
                     .seq(function(cb){
-                        self._afterModelSave(model, options, cb);
+                        this._afterModelSave(model, options, cb);
                     })
                     .exec(callback);
             },

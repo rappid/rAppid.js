@@ -21,6 +21,7 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore"], funct
                 rootCollection: null,
                 pageSize: null,
                 queryParameters: {},
+                sortParameters: {},
                 factory: this.$modelFactory || require('js/data/Model'),
                 type: null,
                 $itemsCount: null
@@ -53,7 +54,24 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore"], funct
 
             return ret.join("&");
         },
+        /***
+         *
+         * @param attributes
+         */
+        createSortCollection: function(sortParameters){
+            var options = {
+                sortParameters: sortParameters,
+                rootCollection: this.getRootCollection()
+            };
 
+            // different queryParameter, same options
+            _.defaults(options, this.$options);
+
+            var collection = new Collection(null, options);
+            collection.$context = this.$context;
+
+            return collection;
+        },
         createQueryCollection: function (queryParameters) {
 
             var options = {
@@ -223,6 +241,9 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore"], funct
 
         getQueryParameters: function(method){
             return this.$options.queryParameters;
+        },
+        getSortParameters: function (method) {
+            return this.$options.sortParameters;
         }
     });
 

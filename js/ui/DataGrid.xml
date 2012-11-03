@@ -3,7 +3,7 @@
     <table class="data-grid-head" style="margin-bottom: 0;">
         <ui:ItemsView items="{$columns}" itemKey="column" tagName="tr">
             <js:Template name="item">
-                <th style="width: {column.width};">
+                <th style="width: {column.width};" onclick="_handleColumnClick">
                     {column.title}
                 </th>
             </js:Template>
