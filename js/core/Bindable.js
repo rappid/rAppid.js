@@ -391,6 +391,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
                             if (scope instanceof Bindable) {
                                 if (path.length - 1 === j) {
                                     val = scope.$[pathElement.name];
+                                    // TODO: find another solution
                                     if (_.isUndefined(val)) {
                                         val = scope[pathElement.name];
                                     }
