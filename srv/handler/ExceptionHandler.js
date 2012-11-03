@@ -30,6 +30,9 @@ define(['srv/core/Handler', 'srv/core/HttpError'], function(Handler, HttpError) 
                 body = exception.toString();
                 statusCode = exception.statusCode;
                 statusText = exception.statusText;
+
+                exception._beforeSend(context);
+
             } else {
                 body = "<h1>Internal Server Error</h1>" + exception.message;
 
