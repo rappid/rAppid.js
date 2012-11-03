@@ -11,6 +11,10 @@ define([], function() {
             this.statusText = statusText;
         },
 
+        _beforeSend: function(context) {
+            // hook
+        },
+
         toString: function() {
             var body = this.message,
                 stack = this.stack;
