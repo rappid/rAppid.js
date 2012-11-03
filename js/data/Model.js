@@ -14,8 +14,8 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
     };
 
     var AUTO_GENERATE = {
-        CREATED_AT : "CREATED_AT",
-        UPDATED_AT: "UPDATED_AT"
+        CREATION_DATE : "CREATION_DATE",
+        UPDATED_DATE: "UPDATED_DATE"
     };
 
     var Model = Entity.inherit("js.data.Model", {
@@ -35,12 +35,12 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
             created: {
                 type: Date,
                 generated: true,
-                key: AUTO_GENERATE.CREATED_AT
+                key: AUTO_GENERATE.CREATION_DATE
             },
             updated: {
                 type: Date,
                 generated: true,
-                key: AUTO_GENERATE.UPDATED_AT
+                key: AUTO_GENERATE.UPDATED_DATE
             }
         },
 
