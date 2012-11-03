@@ -4,6 +4,7 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
         defaults: {
             autoStartSession: true
         },
+
         $collectionMethodMap: {
             GET: "_index",
             POST: "_create"
@@ -41,8 +42,7 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
 
         handleRequest: function (context, callback) {
 
-            var self = this,
-                method = this._getRequestMethod(context),
+            var method = this._getRequestMethod(context),
                 map = this._isCollectionResource() ? this.$collectionMethodMap : this.$modelMethodMap;
 
             var fn = this[map[method]];
@@ -60,7 +60,7 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
                     }
                 }
                 // TODO: better apply json post value here to the function
-                fn.call(self, context, callback);
+                fn.call(this, context, callback);
 
             } else {
                 throw new HttpError("Method not supported", 404);
