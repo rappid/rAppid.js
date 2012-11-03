@@ -133,11 +133,11 @@ define(['js/core/EventDispatcher', 'url', 'querystring', 'underscore', 'flow', '
             },
 
             _end: function () {
-                if (this.finished) {
+                if (this.$end) {
                     return false;
                 }
 
-                this.finished = true;
+                this.$end = true;
 
                 var self = this;
                 this.$context._executeHook("endRequest", function () {
