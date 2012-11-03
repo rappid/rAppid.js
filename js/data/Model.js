@@ -13,6 +13,11 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
         DELETED: -1
     };
 
+    var AUTO_GENERATE = {
+        CREATED_AT : "CREATED_AT",
+        UPDATED_AT: "UPDATED_AT"
+    };
+
     var Model = Entity.inherit("js.data.Model", {
         ctor: function (attributes) {
 
@@ -26,7 +31,16 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
         },
 
         schema: {
-            created: Date
+            created: {
+                type: Date,
+                generated: true,
+                key: AUTO_GENERATE.CREATED_AT
+            },
+            updated: {
+                type: Date,
+                generated: true,
+                key: AUTO_GENERATE.UPDATED_AT
+            }
         },
 
         $isDependentObject: false,
@@ -56,7 +70,11 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
             }
 
         },
-
+        /***
+         *
+         * @param options
+         * @param callback
+         */
         validateAndSave: function(options, callback) {
             var self = this;
 
@@ -65,9 +83,15 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
                     self.validate(options, cb);
                 })
                 .seq(function(cb) {
-                    self.save(options, cb)
+                    if(self.isValid()){
+                        self.save(options, cb)
+                    }else{
+                        cb("Model is not valid!");
+                    }
                 })
-                .exec(callback);
+                .exec(function(err){
+                    callback(err,self);
+                });
         },
 
         getCollection: function(key){
@@ -151,13 +175,20 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
                         callback && callback(err);
                     });
                 } else {
-                    throw "status '" + status + "' doesn't allow delete";
+                    throw new Error("status '" + status + "' doesn't allow delete");
                 }
             } catch(e) {
                 callback && callback(e);
             }
         },
-
+        validateSubEntity: function(entity, callback){
+            if(entity instanceof Model){
+                // does nothing :)
+                callback();
+            }else{
+                this.callBase();
+            }
+        },
         _status: function () {
             if (this.$.id === false) {
                 return STATE.DELETED;
@@ -270,6 +301,7 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
 
     Model.STATE = STATE;
     Model.FETCHSTATE = FETCHSTATE;
+    Model.AUTO_GENERATE = AUTO_GENERATE;
 
     return Model;
 });

@@ -42,13 +42,10 @@ define(['js/core/Bindable'], function (Bindable) {
                 condition = this.$.condition || defaultConditionFnc;
 
             try {
+                // TOOD: make validate sync
                 internalCallback(null, this._validate(entity));
             } catch(e) {
-                if (e instanceof Validator.Error) {
-                    internalCallback(null, e);
-                } else {
-                    internalCallback(e);
-                }
+                internalCallback(e);
             }
 
             function internalCallback(err, result) {
@@ -57,7 +54,10 @@ define(['js/core/Bindable'], function (Bindable) {
                     return;
                 }
 
+
+
                 callbackInvoked = true;
+                // returns an array of errors
                 callback(err, result);
             }
         },
@@ -69,7 +69,7 @@ define(['js/core/Bindable'], function (Bindable) {
          * @private
          */
         _validate: function (entity) {
-            return "abstract method _validate from Validator";
+            throw new Error("abstract method _validate from Validator");
         },
 
         _getErrorMessage: function () {
@@ -79,12 +79,16 @@ define(['js/core/Bindable'], function (Bindable) {
                 return this.$.errorMessage || "Entity is invalid";
             }
         },
-        _createFieldError: function (field) {
+        _createError: function(code, message, field){
             return new Validator.Error({
-                code: this.$.errorCode,
-                message: this._getErrorMessage(),
-                field: field || this.$.field
+                code: code,
+                message: message,
+                field: field
             })
+        },
+        _createFieldError: function (field) {
+            return this._createError(this.$.errorCode, this._getErrorMessage(), field || this.$.field)
+
         }
 
     });

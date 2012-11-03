@@ -131,7 +131,11 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
              * @param {String} field
              * @return {js.core.Bindable}
              */
-            errors: function (field) {
+            errors: function () {
+                return this.$errors;
+            }.on('isValidChanged'),
+
+            fieldError: function(field){
                 return this.$errors.$[field];
             }.on('isValidChanged'),
 
@@ -169,11 +173,11 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                 var validators = [], validator;
                 for (var i = 0; i < this.validators.length; i++) {
                     validator = this.validators[i];
-                    if(options.fields && options.fields.length > 0){
+                    if (options.fields && options.fields.length > 0) {
                         if (options.fields.indexOf(validator.$.field) > -1) {
                             validators.push(validator);
                         }
-                    }else{
+                    } else {
                         validators.push(validator);
                     }
                 }
@@ -186,7 +190,11 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                     .parEach(validators, function (validator, cb) {
                         validator.validate(self, function (err, result) {
                             if (!err && result) {
-                                validationErrors.push(result);
+                                if (result instanceof Validator.Error) {
+                                    validationErrors.push(result);
+                                } else if (result instanceof Array) {
+                                    validationErrors = validationErrors.concat(result);
+                                }
                             }
                             cb(err);
                         });
@@ -195,16 +203,29 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                         if (options.setErrors === true) {
                             self._setErrors(validationErrors);
                         }
-                        callback && callback(err || validationErrors.length === 0 ? null : validationErrors);
+                        callback && callback(err, validationErrors.length === 0 ? null : validationErrors);
                     });
 
+            },
+
+            validateAndSave: function (options, callback) {
+                var self = this;
+                callback = callback || function () {
+                };
+                flow()
+                    .seq(function (cb) {
+                        self.validate(options, cb);
+                    })
+                    .seq(function (cb) {
+                        self.save(options, cb);
+                    })
+                    .exec(callback);
             },
 
             _setErrors: function (errors) {
                 this.$errors.clear();
 
                 var error;
-
                 try {
                     for (var i = 0; i < errors.length; i++) {
                         error = errors[i];
@@ -227,6 +248,14 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                 return null;
             },
 
+            validateSubEntity: function (entity, callback) {
+                if (entity instanceof Entity) {
+                    entity.validate(null, callback);
+                } else {
+                    callback("parameter is not an entity");
+                }
+            },
+
             clone: function () {
                 var ret = this.callBase();
                 ret.$context = this.$context;
@@ -236,43 +265,60 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
 
 
         Entity.SchemaValidator = Validator.inherit('js.data.validator.SchemaValidator', {
-            _validate: function (data) {
-                var schema = data.schema, schemaObject, undefined, value;
+            validate: function (entity, callback) {
+                var errors = [], subEntities = [], attributes = entity.$;
+                var schema = entity.schema, schemaObject, undefined, value;
                 for (var key in schema) {
                     if (schema.hasOwnProperty(key)) {
-                        value = data.$[key];
+                        value = attributes[key];
                         schemaObject = schema[key];
-                        if (schemaObject.required === true) {
-                            if (value === undefined || value === null || value === "") {
-                                return new Validator.Error({
-                                    errorCode: "isUndefinedError",
-                                    errorMessage: key + " is required ",
-                                    field: key
-                                });
-                            }
-                        }
-                        if(!this._isValidType(value,schemaObject.type)){
-                            return new Validator.Error({
-                                errorCode: "wrongTypeError",
-                                errorMessage: key + " is not from type " + schemaObject.type,
-                                field: key
+                        if (!(this.runsInBrowser() && schemaObject.generated) && schemaObject.required === true
+                            && (value === undefined || value === null || value === "")) {
+                            errors.push(this._createError("isUndefinedError", key + " is required", key));
+                        } else if (value && !this._isValidType(value, schemaObject.type)) {
+                            errors.push(this._createError("wrongTypeError", key + " is from wrong type", key));
+                        } else if (value instanceof Entity) {
+                            subEntities.push({
+                                key: key,
+                                value: value
                             });
-                        }
-                        if (value instanceof Entity && schemaObject.type.classof(Entity)) {
-                            var error = this._validate(value);
-                            if (error) {
-                                new Validator.Error({
-                                    errorCode: "associationError",
-                                    errorMessage: key + " is not valid",
-                                    field: key,
-                                    subError: error
+                        } else if (value instanceof List){
+                            if(value.length && value.at(0) instanceof Entity){
+                                value.each(function(item){
+                                    subEntities.push({
+                                        key: key,
+                                        value: item
+                                    });
                                 });
                             }
                         }
                     }
                 }
+
+                for (key in attributes) {
+                    if (attributes.hasOwnProperty(key) && !schema.hasOwnProperty(key)) {
+                        if(key !== "id"){
+                            errors.push(this._createError("wrongDataError", key + " is not defined in schema", key));
+                        }
+                    }
+                }
+
+                var self = this;
+
+                flow()
+                    .seqEach(subEntities, function (subEntity, cb) {
+                        entity.validateSubEntity(subEntity.value, function (err, results) {
+                            if (results) {
+                                errors.push(self._createError("associationError", subEntity.key + " is not valid", subEntity.key));
+                            }
+                            cb(err);
+                        });
+                    })
+                    .exec(function (err) {
+                        callback(err, errors);
+                    });
             },
-            _isValidType: function(value, type){
+            _isValidType: function (value, type) {
 
                 if (type === String && !_.isString(value)) {
                     return false;
@@ -280,9 +326,11 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                     return false;
                 } else if (type === Boolean && !_.isBoolean(value)) {
                     return false;
-                } else if (type === Array && !(value instanceof List)) {
+                } else if (type === Array && !(value instanceof List || value instanceof Array)) {
                     return false;
-                } else if( type === Date && !(value instanceof Date)) {
+                } else if (type === Date && !(value instanceof Date)) {
+                    return false;
+                } else if (type.classof && type.classof(Entity) && !(value instanceof type)) {
                     return false;
                 }
                 return true;
