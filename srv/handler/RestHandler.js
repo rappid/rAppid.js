@@ -10,6 +10,10 @@ define(['require', 'srv/core/Handler', 'js/conf/DataSourceConfiguration', 'js/co
             this.callBase();
         },
 
+        defaults: {
+            path: "api"
+        },
+
         addChild: function(child) {
             if (child instanceof DataSourceConfiguration) {
                 this.$resourceConfiguration = child;

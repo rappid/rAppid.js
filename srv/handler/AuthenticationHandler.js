@@ -2,6 +2,10 @@ define(['srv/core/Handler', 'srv/core/AuthenticationFilter', 'srv/core/HttpError
 
     return Handler.inherit('srv.handler.SessionHandler', {
 
+        defaults: {
+            path: "api/authentication"
+        },
+
         isResponsibleForRequest: function (context) {
             var ret = this.callBase();
             return ret && context.request.urlInfo.pathname === this.$.path;
