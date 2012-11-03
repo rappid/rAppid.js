@@ -480,7 +480,7 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                             bindingCreator.create({
                                 type: 'oneWay',
                                 path: path
-                            }, this, "_error");
+                            }, this, "$error");
                         }
                     }
 
