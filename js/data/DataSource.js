@@ -842,13 +842,13 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
 
                 flow()
                     .seq(function(cb){
-                        this._beforeModelSave(model, options, cb);
+                        self._beforeModelSave(model, options, cb);
                     })
                     .seq(function(cb){
-                        this._saveModel(model, options, cb);
+                        self._saveModel(model, options, cb);
                     })
                     .seq(function(cb){
-                        this._afterModelSave(model, options, cb);
+                        self._afterModelSave(model, options, cb);
                     })
                     .exec(callback);
             },
