@@ -1,4 +1,4 @@
-define(['srv/core/Handler', 'srv/core/AuthenticationFilter', 'srv/core/HttpError'], function (Handler, AuthenticationFilter, HttpError) {
+define(['srv/core/Handler', 'srv/core/AuthenticationFilter', 'srv/core/HttpError', 'srv/error/MethodNotAllowedError'], function (Handler, AuthenticationFilter, HttpError, MethodNotAllowedError) {
 
     return Handler.inherit('srv.handler.SessionHandler', {
 
@@ -7,19 +7,64 @@ define(['srv/core/Handler', 'srv/core/AuthenticationFilter', 'srv/core/HttpError
         },
 
         isResponsibleForRequest: function (context) {
-            var ret = this.callBase();
-            return ret && context.request.urlInfo.pathname === this.$.path;
+            var ret = this.callBase(),
+                pathName = context.request.urlInfo.pathname;
+
+            return ret && pathName.indexOf(this.$.path);
         },
 
         handleRequest: function (context, callback) {
 
-            var authenticationFilter = this._getAuthenticationFilter(context);
+            var pathName = context.request.urlInfo.pathname,
+                method = this._getRequestMethod(context);
 
-            if (!authenticationFilter) {
-                throw new HttpError("No responsible authentication filter found.");
+            if (pathName === this.$.path) {
+                // /api/authentication request
+
+                if (method === "POST") {
+                    // login
+                    var authenticationFilter = this._getAuthenticationFilter(context);
+
+                    if (!authenticationFilter) {
+                        throw new HttpError("No responsible authentication filter found.", 500);
+                    }
+
+                    authenticationFilter.handleAuthenticationRequest(context, callback);
+                } else {
+                    throw new MethodNotAllowedError("Method not supported", ["POST"]);
+                }
+            } else if (pathName === this.$.path + "/current") {
+                // current authentication
+
+                if (method === "GET") {
+                    // TODO: retrieve authentications
+                } else if (method === "DELETE") {
+                    // TODO: logout
+                } else {
+                    throw new MethodNotAllowedError("Method not supported", ["GET", "POST"]);
+                }
+
+            } else {
+                throw new HttpError("Resource not found.", 404);
             }
 
-            authenticationFilter.handleAuthenticationRequest(context, callback);
+        },
+
+        /***
+         * determinate the request method from the request
+         *
+         * @param {srv.core.Context} context
+         * @return {String} method
+         * @private
+         */
+        _getRequestMethod: function (context) {
+
+            var parameter = context.request.urlInfo.parameter;
+            if (parameter.method) {
+                return parameter.method.toUpperCase();
+            }
+
+            return context.request.method;
         },
 
         _getAuthenticationFilter: function (context) {
@@ -32,7 +77,6 @@ define(['srv/core/Handler', 'srv/core/AuthenticationFilter', 'srv/core/HttpError
                 }
             }
         }
-
 
     });
 });
