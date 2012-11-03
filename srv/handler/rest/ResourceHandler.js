@@ -182,7 +182,7 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
                             collection.invalidatePageCache();
 
                             // TODO: generate the location header
-                            var body = "";
+                            var body = JSON.stringify(processor.compose(model, null));
 
                             var response = context.response;
                             response.writeHead(201, "", {
@@ -267,7 +267,7 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
                             collection.invalidatePageCache();
 
                             // TODO: generate the location header
-                            var body = "";
+                            var body = JSON.stringify(processor.compose(model, null));
 
                             var response = context.response;
                             response.writeHead(200, "", {

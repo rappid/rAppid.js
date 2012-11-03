@@ -145,27 +145,7 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
 
                     if (xhr.status === 200 || xhr.status === 304) {
                         // find processor that matches the content-type
-                        var contentType = xhr.getResponseHeader("Content-Type");
-                        var formatProcessor = self.getFormatProcessorForContentType(contentType);
-
-                        if (!formatProcessor) {
-                            callback("No formatProcessor for content type '" + contentType + "' found", null, options);
-                            return;
-                        }
-
-                        // deserialize data with format processor
-                        var data = formatProcessor.deserialize(xhr.responses.text);
-
-                        var processor = self.getProcessorForModel(model, options);
-
-                        // parse data inside processor
-                        data = processor.parse(model, data, DataSource.ACTION.LOAD, options);
-
-                        // parse data inside model
-                        data = model.parse(data);
-
-                        // set data
-                        model.set(data);
+                        self._handleModelPayload(xhr, model, options);
 
                         cb(null, model, options);
 
@@ -180,6 +160,29 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
                     }
                 });
 
+        },
+
+        _handleModelPayload: function(xhr, model, options){
+            var contentType = xhr.getResponseHeader("Content-Type");
+            var formatProcessor = this.getFormatProcessorForContentType(contentType);
+
+            if (!formatProcessor) {
+                throw new Error("No formatProcessor for content type '" + contentType + "' found", null, options);
+            }
+
+            // deserialize data with format processor
+            var data = formatProcessor.deserialize(xhr.responses.text);
+
+            var processor = this.getProcessorForModel(model, options);
+
+            // parse data inside processor
+            data = processor.parse(model, data, DataSource.ACTION.LOAD, options);
+
+            // parse data inside model
+            data = model.parse(data);
+
+            // set data
+            model.set(data);
         },
 
         /***
@@ -219,10 +222,15 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
                 }
             };
 
+            var self = this;
+
             try { // get location header
                 var location = xhr.getResponseHeader('Location');
 
                 if (location) {
+
+                    self._handleModelPayload(xhr, model, request.options);
+
                     // extract id
                     var id = this.extractIdFromLocation(location, request);
 
@@ -270,6 +278,8 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
         handleUpdateSuccess: function (request, xhr, callback) {
 
             var model = request.model;
+
+            this._handleModelPayload(xhr, model, request.options);
 
             if (callback) {
                 callback(null, model, request.options);
