@@ -292,13 +292,13 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
         },
 
         _autoGenerateValue: function(valueKey, context, model) {
-            if(valueKey === Model.AUTO_GENERATE.CREATED_AT){
+            if(valueKey === Model.AUTO_GENERATE.CREATION_DATE){
                 if(model.isNew()){
                     return new Date();
                 }
             }
 
-            if(valueKey === Model.AUTO_GENERATE.UPDATED_AT){
+            if(valueKey === Model.AUTO_GENERATE.UPDATED_DATE){
                 return new Date();
             }
 
