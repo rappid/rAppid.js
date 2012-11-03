@@ -137,6 +137,8 @@ define(['js/core/EventDispatcher', 'url', 'querystring', 'underscore', 'flow', '
                     return false;
                 }
 
+                this.finished = true;
+
                 var self = this;
                 this.$context._executeHook("endRequest", function () {
                     self.__end.call(self);
