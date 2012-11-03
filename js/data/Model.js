@@ -19,6 +19,7 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
     };
 
     var Model = Entity.inherit("js.data.Model", {
+
         ctor: function (attributes) {
 
             // stores the current fetch state
@@ -94,19 +95,19 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
                 });
         },
 
-        getCollection: function(key){
+        getCollection: function (key) {
             var schemaDefinition = this.schema[key];
             if (!schemaDefinition) {
                 throw "Couldn't find '" + key + "' in schema";
             }
             var collection = this.get(key);
-            if(!collection){
+            if (!collection) {
                 var context = this.getContextForChild(schemaDefinition.type);
-                if(context){
+                if (context) {
                     collection = context.createCollection(schemaDefinition.type, null);
                     collection.$parent = this;
                     this.set(key, collection);
-                }else{
+                } else {
                     throw "Couldn't determine context for " + key;
                 }
             }
@@ -115,7 +116,7 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
 
         },
 
-        prepare: function(attributes, action) {
+        prepare: function (attributes, action) {
             attributes = this.callBase();
 
             if (action === "create") {
@@ -162,14 +163,15 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
                 });
             }
         },
+
         remove: function (options, callback) {
             // TODO: handle multiple access
             try {
                 var status = this._status();
                 var self = this;
                 if (status === STATE.CREATED) {
-                    this.$context.$dataSource.removeModel(this, options, function(err){
-                        if(!err){
+                    this.$context.$dataSource.removeModel(this, options, function (err) {
+                        if (!err) {
                             self.set('id', false);
                         }
                         callback && callback(err);
@@ -177,7 +179,7 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
                 } else {
                     throw new Error("status '" + status + "' doesn't allow delete");
                 }
-            } catch(e) {
+            } catch (e) {
                 callback && callback(e);
             }
         },
@@ -196,7 +198,8 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
                 return this.$.id ? STATE.CREATED : STATE.NEW;
             }
         }.onChange('id'),
-        isNew: function(){
+
+        isNew: function () {
             return this._status() === STATE.NEW;
         }.onChange('id')
     });

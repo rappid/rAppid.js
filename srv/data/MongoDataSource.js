@@ -6,46 +6,49 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore'],
         TYPE_KEY = "_type";
 
     var MongoDataProcessor = DataSource.Processor.inherit('src.data.MongoDataProcessor', {
-        compose: function(model, action, options){
+        compose: function (model, action, options) {
             var data = this.callBase();
 
-            if(model.$parent){
+            if (model.$parent) {
                 data[PARENT_ID_KEY] = model.$parent.$.id;
                 data[PARENT_TYPE_KEY] = model.$parent.factory.prototype.constructor.name;
             }
 
             var idSchema = model.schema['id'];
-            if(!(idSchema && idSchema.type === String)){
+            if (!(idSchema && idSchema.type === String)) {
                 data[ID_KEY] = this.$dataSource._createIdObject(data[ID_KEY]);
             }
 
             return data;
         },
+
         _composeSubModel: function (model, action, options) {
             return this.$dataSource._createIdObject(model.$.id);
         },
+
         _getReferenceKey: function (key, schemaType) {
             // correct key of id object
             if (key === "id") {
                 return ID_KEY;
             }
-            if(schemaType && schemaType.classof && schemaType.classof(Model)){
+            if (schemaType && schemaType.classof && schemaType.classof(Model)) {
                 return key + "_id";
             }
 
             return this.callBase();
         },
-        _getValueForKey: function(data, key, schemaType){
-            if(schemaType && schemaType.classof && schemaType.classof(Model)){
+
+        _getValueForKey: function (data, key, schemaType) {
+            if (schemaType && schemaType.classof && schemaType.classof(Model)) {
                 var referenceKey = this._getReferenceKey(key, schemaType);
                 var id = data[referenceKey];
                 delete data[referenceKey];
-                if(id){
-                    if(_.isObject(id) && id instanceof mongoDb.ObjectID){
+                if (id) {
+                    if (_.isObject(id) && id instanceof mongoDb.ObjectID) {
                         return {
                             id: id.toHexString()
                         }
-                    }else{
+                    } else {
                         return {
                             id: id
                         }
@@ -61,9 +64,9 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore'],
             if (data['_id']) {
                 var _id = data['_id'];
 
-                if(_.isObject(_id) && _id instanceof mongoDb.ObjectID){
+                if (_.isObject(_id) && _id instanceof mongoDb.ObjectID) {
                     data['id'] = _id.toHexString();
-                }else{
+                } else {
                     data['id'] = _id;
                 }
                 delete data['_id'];
@@ -102,9 +105,11 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore'],
         _getConfigurationForModel: function (model) {
             return this.$dataSourceConfiguration.getConfigurationForModelClass(model.factory);
         },
+
         _createIdObject: function (id) {
             return new mongoDb.ObjectID(id);
         },
+
         loadModel: function (model, options, callback) {
             var configuration = this._getConfigurationForModel(model);
 
@@ -115,7 +120,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore'],
 
             var processor = this.getProcessorForModel(model);
 
-            var data = processor.compose(model,options);
+            var data = processor.compose(model, options);
 
 
             var where = {
@@ -138,9 +143,9 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore'],
                 .seq(function (cb) {
                     this.vars['collection'].findOne(where, function (err, object) {
                         if (!err) {
-                            if(object){
+                            if (object) {
                                 model.set(processor.parse(model, object));
-                            }else{
+                            } else {
                                 err = DataSource.ERROR.NOT_FOUND;
                             }
                         }
@@ -176,7 +181,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore'],
             var data = processor.compose(model, action, options), self = this, connection;
 
             // if you want to set a custom ID
-            if(options.id && action === DataSource.ACTION.CREATE){
+            if (options.id && action === DataSource.ACTION.CREATE) {
                 data[ID_KEY] = options.id;
             }
 
@@ -206,7 +211,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore'],
                         });
                     } else if (method === MongoDataSource.METHOD.SAVE) {
                         this.vars['collection'].update({_id: data._id}, data, {safe: true}, function (err, count) {
-                            if(!err && count === 0){
+                            if (!err && count === 0) {
                                 // no update happend
                                 err = DataSource.ERROR.NOT_FOUND;
                             }
@@ -225,7 +230,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore'],
                 });
         },
 
-        removeModel: function(model, options, callback){
+        removeModel: function (model, options, callback) {
             var configuration = this._getConfigurationForModel(model);
 
             if (!configuration) {
@@ -245,7 +250,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore'],
                 })
                 .seq(function (cb) {
                     this.vars['collection'].remove({_id: data._id}, {safe: true}, function (err, count) {
-                        if(count === 0){
+                        if (count === 0) {
                             err = DataSource.ERROR.NOT_FOUND;
                         }
                         cb(err, model);
@@ -283,7 +288,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore'],
                 where[TYPE_KEY] = modelClassName;
             }
 
-            if(rootCollection.$parent){
+            if (rootCollection.$parent) {
                 where[PARENT_ID_KEY] = rootCollection.$parent.$.id;
                 where[PARENT_TYPE_KEY] = rootCollection.$parent.factory.prototype.constructor.name;
             }
@@ -296,7 +301,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore'],
                 })
                 .seq("cursor", function (cb) {
                     var cursor = this.vars["collection"].find(where);
-                    if(options.limit){
+                    if (options.limit) {
                         cursor = cursor.limit(options.limit);
                     }
 

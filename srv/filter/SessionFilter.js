@@ -43,7 +43,8 @@ define(['srv/core/Filter', 'require', 'flow', 'js/data/DataSource', 'srv/core/Se
             dataSourceContext = this.$dataSource.getContext();
             dataSourceContext.addEntity(session);
 
-            callback();
+            // start session
+            session.start(callback);
 
         },
 
