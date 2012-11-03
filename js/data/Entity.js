@@ -208,20 +208,6 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
 
             },
 
-            validateAndSave: function (options, callback) {
-                var self = this;
-                callback = callback || function () {
-                };
-                flow()
-                    .seq(function (cb) {
-                        self.validate(options, cb);
-                    })
-                    .seq(function (cb) {
-                        self.save(options, cb);
-                    })
-                    .exec(callback);
-            },
-
             _setErrors: function (errors) {
                 this.$errors.clear();
 
