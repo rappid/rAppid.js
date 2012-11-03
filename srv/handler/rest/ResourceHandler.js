@@ -1,4 +1,4 @@
-define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'js/data/Collection', 'js/data/DataSource'], function (Component, HttpError, flow, require, JSON, Collection, DataSource) {
+define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'js/data/Collection', 'js/data/DataSource', 'js/data/Model', 'underscore'], function (Component, HttpError, flow, require, JSON, Collection, DataSource, Model, _) {
 
     return Component.inherit('srv.handler.rest.ResourceHandler', {
         defaults: {
@@ -168,16 +168,15 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
 
             model.set('created', new Date());
 
-            // TODO: add hook to add session data like user id
+            var self = this;
+
             flow()
-                .seq(function (cb) {
-                    model.validate(function(err) {
-                        cb(err);
-                    });
+                .seq(function (cb){
+                    self._beforeSave(model, context, cb);
                 })
                 .seq(function (cb) {
                     // TODO: add sub models
-                    model.save({}, function (err, model) {
+                    model.validateAndSave({}, function (err, model) {
                         if (!err) {
                             // TODO: do correct invalidation
                             collection.invalidatePageCache();
@@ -255,15 +254,14 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
 
             model.set(processor.parse(model, payload));
 
+            var self = this;
             // TODO: add hook to add session data like user id
             flow()
                 .seq(function (cb) {
-                    model.validate(function (err) {
-                        cb(err);
-                    });
+                    self._beforeSave(model, context, cb);
                 })
                 .seq(function(cb){
-                    model.save({}, function (err) {
+                    model.validateAndSave({}, function (err) {
                         if (!err) {
                             // TODO: do correct invalidation
                             collection.invalidatePageCache();
@@ -274,6 +272,7 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
                             var response = context.response;
                             response.writeHead(200, "", {
                                 'Content-Type': 'application/json'
+                                // TODO : add updated date in head ???
                             });
 
                             response.write(body);
@@ -292,6 +291,50 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
 
         },
 
+        _autoGenerateValue: function(valueKey, context, model) {
+            if(valueKey === Model.AUTO_GENERATE.CREATED_AT){
+                if(model.isNew()){
+                    return new Date();
+                }
+            }
+
+            if(valueKey === Model.AUTO_GENERATE.UPDATED_AT){
+                return new Date();
+            }
+
+            if(valueKey === "SESSION_USER"){
+                // TODO: return session user
+                return null;
+            }
+        },
+
+        /**
+         *
+         * @param model
+         * @param options
+         * @param callback
+         * @private
+         */
+        _beforeSave: function(model, context, callback) {
+            var schema = model.schema, schemaObject;
+            for(var schemaKey in schema){
+                if(schema.hasOwnProperty(schemaKey)){
+                    schemaObject = schema[schemaKey];
+                    if(schemaObject.generated){
+                        var value = this._autoGenerateValue(schemaObject.key, context, model);
+                        if(!_.isUndefined(value)){
+                            model.set(schemaKey, value);
+                        }
+                    }
+                }
+            }
+
+            callback && callback();
+        },
+
+        _afterSave: function(model, options, callback){
+            callback && callback();
+        },
         /***
          *
          * @param context
