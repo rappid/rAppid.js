@@ -836,7 +836,6 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
              * @param {Function} callback
              */
             saveModel: function (model, options, callback) {
-                callback = callback || function(){};
 
                 var self = this;
 
