@@ -16,7 +16,8 @@
                 defaults: {
                     label: "",
                     inputId: null,
-                    enabled: true
+                    enabled: true,
+                    error: null
                 },
 
                 $errorAttribute: 'value',
@@ -27,10 +28,12 @@
                         this.set('inputId', 'field_' + (++fieldId));
                     }
                 },
-                _render$error: function(error,oldError){
-                    if(error){
+                _render$error: function (error, oldError) {
+                    if (error) {
+                        this.set('error', error);
                         this.addClass('error');
-                    }else{
+                    } else {
+                        this.set('error', null);
                         this.removeClass('error');
                     }
                 },
@@ -75,4 +78,7 @@
     </js:Script>
     <label class="control-label" for="{inputId}">{label}</label>
     <ui:ContentPlaceHolder class="controls" name="controls" tagName="div" />
+    <div class="error" visible="{error}">
+        {error.message}
+    </div>
 </ui:View>
