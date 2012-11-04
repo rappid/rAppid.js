@@ -181,6 +181,9 @@ define(["require", "js/html/HtmlElement", "js/ui/ContentPlaceHolder", "js/core/M
                 }
 
             },
+            isModuleActive: function (moduleName) {
+                return this.$.currentModuleName == moduleName;
+            }.onChange('currentModuleName'),
 
             _clearContentPlaceHolders: function() {
 
