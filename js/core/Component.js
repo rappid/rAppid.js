@@ -250,7 +250,9 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
 
                             if (_.indexOf(addedDescriptors, child.$descriptor) === -1) {
                                 children.push(child);
-                                addedDescriptors.push(child.$descriptor);
+                                if(child.$descriptor){
+                                    addedDescriptors.push(child.$descriptor);
+                                }
                             }
                         }
                     }
@@ -344,7 +346,7 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                     if(this.$unitializedChildren){
                         var ret = [];
                         while(this.$unitializedChildren.length){
-                            ret.push(this.$unitializedChildren.pop());
+                            ret.push(this.$unitializedChildren.shift());
                         }
                         return ret;
                     }
