@@ -42,11 +42,9 @@ var inherit;
             Inheritance.prototype = baseClass.prototype;
 
             newClass.prototype = new Inheritance();
-            newClass.prototype.constructor = classDefinition;
-
-            if (classDefinition && constructorName) {
-                newClass.prototype.constructor.name = constructorName;
-            }
+            newClass.prototype.constructor = {
+                name: constructorName
+            };
 
             newClass.prototype.base = baseClass.prototype;
             newClass.prototype.factory = newClass;
