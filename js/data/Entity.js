@@ -269,13 +269,15 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                                 value: value
                             });
                         } else if (value instanceof List){
-                            if(value.length && value.at(0) instanceof Entity){
+                            if(!value.size() && value.at(0) instanceof Entity){
                                 value.each(function(item){
                                     subEntities.push({
                                         key: key,
                                         value: item
                                     });
                                 });
+                            } else if(value.size() === 0 && !(this.runsInBrowser() && schemaObject.generated) && schemaObject.required === true) {
+                                errors.push(this._createError("isEmptyError", key + " are empty", key));
                             }
                         }
                     }
