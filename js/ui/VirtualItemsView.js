@@ -422,6 +422,11 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
                 if (index < 0) {
                     index = 0;
                 }
+                if(this.$.$dataAdapter){
+                    if(index >= this.$.$dataAdapter.size()){
+                        index = this.$.$dataAdapter.size() - 1;
+                    }
+                }
                 this._selectItem(index, e.domEvent.shiftKey, false);
                 e.preventDefault();
                 e.stopPropagation();
