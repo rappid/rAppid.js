@@ -4,7 +4,8 @@
         <ui:ItemsView items="{$columns}" itemKey="column" tagName="tr">
             <js:Template name="item">
                 <th style="width: {column.width};" onclick="_handleColumnClick">
-                    {column.title}
+                    <i class="pull-right icon-chevron-{column.sortDirectionStatus()}" visible="{column.isSorted()}"/>
+                    <div>{column.title}</div>
                 </th>
             </js:Template>
         </ui:ItemsView>

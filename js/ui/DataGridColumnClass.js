@@ -4,7 +4,8 @@ define(['js/core/Component'], function (Component) {
 
     return Component.inherit('js.ui.DataGridColumnClass', {
         defaults: {
-            sortable: false,
+            sortable: true,
+            sortDirection: 0,
             name: "column",
             title: ""
         },
@@ -19,6 +20,12 @@ define(['js/core/Component'], function (Component) {
         },
         isDefined: function (value) {
             return value !== null && value !== undefined;
-        }
+        },
+        isSorted: function(){
+            return this.$.sortDirection !== 0;
+        }.onChange('sortDirection'),
+        sortDirectionStatus: function(){
+            return this.$.sortDirection === 1 ? 'up' : 'down';
+        }.onChange('sortDirection')
     });
 });
