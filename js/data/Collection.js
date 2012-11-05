@@ -21,7 +21,7 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore"], funct
                 rootCollection: null,
                 pageSize: null,
                 queryParameters: {},
-                sortParameters: {},
+                sortParameters: null,
                 factory: this.$modelFactory || require('js/data/Model'),
                 type: null,
                 $itemsCount: null
