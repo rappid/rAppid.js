@@ -8,13 +8,11 @@ define(['srv/core/Filter', 'require', 'flow', 'js/data/DataSource', 'srv/core/Se
         },
 
         _start: function (callback) {
-            // FIXME
-//            if (!this.$.authenticationProvider || !(this.$.authenticationProvider instanceof AuthenticationProvider)) {
-//                callback(new Error("AuthenticationProvider not instanceof AuthenticationProvider"));
-//            } else {
-//                callback();
-//            }
-            callback();
+            if (!this.$.authenticationProvider || !(this.$.authenticationProvider instanceof AuthenticationProvider)) {
+                callback(new Error("AuthenticationProvider not instanceof AuthenticationProvider"));
+            } else {
+                callback();
+            }
         },
 
         /***
@@ -32,11 +30,20 @@ define(['srv/core/Filter', 'require', 'flow', 'js/data/DataSource', 'srv/core/Se
          * @param callback
          */
         handleAuthenticationRequest: function(context, callback) {
-            throw new Error("Not implemented");
+
+            var authentication = this._createAuthenticationRequest(context);
+
+            this.$.authenticationProvider.authenticate(authentication, function (err, authentication) {
+
+            });
+        },
+
+        _saveAuthentication: function(context, authentication) {
+            throw new Error("SaveAuthentication not implemented");
         },
 
         _createAuthenticationRequest: function(context, data){
-            context.identity.addAuthorisationRequest(data, this);
+            throw new Error("Not implemented");
         }
     })
 });
