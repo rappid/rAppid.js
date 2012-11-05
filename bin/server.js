@@ -117,6 +117,7 @@ var serverExport = function (args, callback) {
                         server.start(parameter, function(err) {
                             if (err) {
                                 console.error(err);
+                                process.exit(3);
                             } else {
                                 console.log("server started");
                                 for (var i = 0; i < server.$endPoints.$endPoints.length; i++) {
