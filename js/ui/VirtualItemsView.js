@@ -410,9 +410,10 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
         },
 
         _onKeyDown: function (e) {
-            if (e.domEvent.keyCode === 38 || e.domEvent.keyCode === 40 || e.domEvent.keyCode === 37 || e.domEvent.keyCode === 39) {
+            var keyCode = e.domEvent.keyCode;
+            if (keyCode === 38 || keyCode === 40 || keyCode === 37 || keyCode === 39) {
                 var index = this.$currentSelectionIndex ? this.$currentSelectionIndex : 0;
-                switch (e.domEvent.keyCode) {
+                switch (keyCode) {
                     case 38: index -= this.$.cols; break;
                     case 40: index += this.$.cols; break;
                     case 37: index--; break;
