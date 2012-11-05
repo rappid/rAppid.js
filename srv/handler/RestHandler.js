@@ -11,7 +11,7 @@ define(['require', 'srv/core/Handler', 'js/conf/DataSourceConfiguration', 'js/co
         },
 
         defaults: {
-            path: "api"
+            path: "/api"
         },
 
         addChild: function(child) {
