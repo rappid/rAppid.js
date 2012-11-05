@@ -849,7 +849,9 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                     .seq(function(cb){
                         self._afterModelSave(model, options, cb);
                     })
-                    .exec(callback);
+                    .exec(function(err) {
+                        callback && callback(err, model, options);
+                    });
             },
 
             _beforeModelSave: function(model, options, callback){
