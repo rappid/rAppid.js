@@ -28,8 +28,18 @@ define(['srv/core/Handler', 'srv/core/AuthenticationFilter', 'srv/core/HttpError
                     if (!authenticationFilter) {
                         throw new HttpError("No responsible authentication filter found.", 500);
                     }
+                    authenticationFilter.handleAuthenticationRequest(context, function(err) {
+                        if (!err) {
+                            var response = context.response;
 
-                    authenticationFilter.handleAuthenticationRequest(context, callback);
+                            response.writeHead(201, {
+                                Location: context.request.urlInfo.uri + "/current"
+                            });
+                            response.end();
+                        } else {
+                            callback(err);
+                        }
+                    });
                 } else {
                     throw new MethodNotAllowedError("Method not supported", ["POST"]);
                 }
