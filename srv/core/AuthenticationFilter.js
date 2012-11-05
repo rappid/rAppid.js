@@ -42,6 +42,7 @@ define(['srv/core/Filter', 'require', 'flow', 'js/data/DataSource', 'srv/core/Se
                 } else {
                     try {
                         self._saveAuthentication(context, authentication);
+                        callback();
                     } catch (e) {
                         callback(e);
                     }
