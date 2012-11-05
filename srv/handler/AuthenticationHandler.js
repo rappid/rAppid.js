@@ -10,7 +10,7 @@ define(['srv/core/Handler', 'srv/core/AuthenticationFilter', 'srv/core/HttpError
             var ret = this.callBase(),
                 pathName = context.request.urlInfo.pathname;
 
-            return ret && pathName.indexOf(this.$.path);
+            return ret && pathName.indexOf(this.$.path) === 0;
         },
 
         handleRequest: function (context, callback) {
