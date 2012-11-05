@@ -5,7 +5,8 @@ define(['js/ui/View'], function (View) {
             componentClass: 'checkbox',
             checked: false,
             value: null,
-            label: ""
+            label: "",
+            name: null
         },
         _renderLabel: function (label, oldLabel) {
             if (label) {
