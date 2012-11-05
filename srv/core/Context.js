@@ -22,7 +22,7 @@ define(['js/core/EventDispatcher', 'url', 'querystring', 'underscore', 'flow', '
 
                     this._subClassResponse(response);
 
-                    this._parseUrl();
+                    this._parseUrl(request, endPoint);
                     this._parsePostData(request);
 
                     this._extractCookies(request);
@@ -80,13 +80,16 @@ define(['js/core/EventDispatcher', 'url', 'querystring', 'underscore', 'flow', '
                     response.end = Context.Response._end;
                 },
 
-                _parseUrl: function () {
-                    var request = this.request;
+                _parseUrl: function (request, endpoint) {
 
                     var urlInfo = Url.parse(request.url);
                     request.urlInfo = urlInfo;
                     urlInfo.parameter = QueryString.parse(urlInfo.query);
                     request.get = urlInfo;
+
+                    var host = request.headers["host"];
+                    request.urlInfo.uri = endpoint.protocol + "://" + host + request.urlInfo.pathname;
+
                 },
 
                 _parsePostData: function (request) {
