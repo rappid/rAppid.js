@@ -31,10 +31,21 @@ define(['srv/core/Filter', 'require', 'flow', 'js/data/DataSource', 'srv/core/Se
          */
         handleAuthenticationRequest: function(context, callback) {
 
-            var authentication = this._createAuthenticationRequest(context);
+            var self = this,
+                authentication = this._createAuthenticationRequest(context);
 
             this.$.authenticationProvider.authenticate(authentication, function (err, authentication) {
-
+                if (err) {
+                    callback(err);
+                } else if (!authentication) {
+                    callback(new Error("Authenticate without authentication"));
+                } else {
+                    try {
+                        self._saveAuthentication(context, authentication);
+                    } catch (e) {
+                        callback(e);
+                    }
+                }
             });
         },
 
@@ -42,7 +53,7 @@ define(['srv/core/Filter', 'require', 'flow', 'js/data/DataSource', 'srv/core/Se
             throw new Error("SaveAuthentication not implemented");
         },
 
-        _createAuthenticationRequest: function(context, data){
+        _createAuthenticationRequest: function(context){
             throw new Error("Not implemented");
         }
     })
