@@ -184,13 +184,12 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
                             // TODO: do correct invalidation
                             collection.invalidatePageCache();
 
-                            // TODO: generate the location header
                             var body = JSON.stringify(processor.compose(model, null));
 
                             var response = context.response;
                             response.writeHead(201, "", {
                                 'Content-Type': 'application/json',
-                                'Location': 'http://todo' + context.request.url + "/" + model.$.id
+                                'Location': context.request.urlInfo.uri + "/" + model.$.id
                             });
 
                             response.write(body);
