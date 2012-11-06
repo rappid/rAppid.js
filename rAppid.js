@@ -199,7 +199,10 @@
 
             config = config || "config.json";
 
-            callback = callback || function () {
+            callback = callback || function (err) {
+                if (err && typeof console !== "undefined") {
+                    console.error(err.stack || err);
+                }
             };
 
             if (!document) {
