@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
-<ui:TabViewClass xmlns="http://www.w3.org/1999/xhtml" xmlns:js="js.core" xmlns:ui="js.ui">
+<ui:TabViewClass xmlns="http://www.w3.org/1999/xhtml" xmlns:js="js.core" xmlns:ui="js.ui"
+        componentClass="tab-view">
     <js:Template name="layout">
         <ui:SelectionView tagName="ul" class="{tabClassName}" needsSelection="true" forceSelectable="true">
             <js:Template name="item">
