@@ -157,7 +157,7 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
                     modelFetchedComplete(err, model, options, callback);
 
                     _.each(self._fetch.callbacks, function (cb) {
-                        cb(err, model);
+                        cb.call(self, err, model);
                     });
 
                 });
