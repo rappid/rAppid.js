@@ -154,7 +154,7 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
                     self._fetch.state = err ? FETCHSTATE.ERROR : FETCHSTATE.LOADED;
 
                     // execute callbacks
-                    modelFetchedComplete(err, model, options, callback);
+                    modelFetchedComplete.call(self, err, model, options, callback);
 
                     _.each(self._fetch.callbacks, function (cb) {
                         cb.call(self, err, model);
