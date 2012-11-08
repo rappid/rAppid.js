@@ -474,15 +474,18 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                     }
 
                     if(this.$errorAttribute && this.$bindings[this.$errorAttribute]){
-                        var b = this.$bindings[this.$errorAttribute][0];
+                        var b = this.$bindings[this.$errorAttribute][0], errorBinding;
                         if(b.$.twoWay && b.$.path.length > 1){
                             var path = b.$.path.slice(), attrKey = path.pop().name;
                             path = path.concat(bindingCreator.parsePath("errors()."+attrKey));
 
-                            bindingCreator.create({
+                            errorBinding = bindingCreator.create({
                                 type: 'oneWay',
                                 path: path
                             }, this, "$error");
+                            if(errorBinding){
+                                changedAttributes['$error'] = errorBinding.getValue();
+                            }
                         }
                     }
 
