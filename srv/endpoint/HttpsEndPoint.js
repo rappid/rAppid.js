@@ -32,6 +32,8 @@ define(['srv/core/EndPoint', 'https'], function(EndPoint, Https) {
 
         uri: function () {
             return "https://" + this.$.hostname + ":" + this.$.port;
-        }
+        },
+
+        protocol: "https"
     });
 });

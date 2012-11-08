@@ -8,13 +8,11 @@ define(['srv/core/Filter', 'require', 'flow', 'js/data/DataSource', 'srv/core/Se
         },
 
         _start: function (callback) {
-            // FIXME
-//            if (!this.$.authenticationProvider || !(this.$.authenticationProvider instanceof AuthenticationProvider)) {
-//                callback(new Error("AuthenticationProvider not instanceof AuthenticationProvider"));
-//            } else {
-//                callback();
-//            }
-            callback();
+            if (!this.$.authenticationProvider || !(this.$.authenticationProvider instanceof AuthenticationProvider)) {
+                callback(new Error("AuthenticationProvider not instanceof AuthenticationProvider"));
+            } else {
+                callback();
+            }
         },
 
         /***
@@ -32,11 +30,32 @@ define(['srv/core/Filter', 'require', 'flow', 'js/data/DataSource', 'srv/core/Se
          * @param callback
          */
         handleAuthenticationRequest: function(context, callback) {
-            throw new Error("Not implemented");
+
+            var self = this,
+                authentication = this._createAuthenticationRequest(context);
+
+            this.$.authenticationProvider.authenticate(authentication, function (err, authentication) {
+                if (err) {
+                    callback(err);
+                } else if (!authentication) {
+                    callback(new Error("Authenticate without authentication"));
+                } else {
+                    try {
+                        self._saveAuthentication(context, authentication);
+                        callback();
+                    } catch (e) {
+                        callback(e);
+                    }
+                }
+            });
         },
 
-        _createAuthenticationRequest: function(context, data){
-            context.identity.addAuthorisationRequest(data, this);
+        _saveAuthentication: function(context, authentication) {
+            throw new Error("SaveAuthentication not implemented");
+        },
+
+        _createAuthenticationRequest: function(context){
+            throw new Error("Not implemented");
         }
     })
 });

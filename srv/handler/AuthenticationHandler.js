@@ -3,14 +3,14 @@ define(['srv/core/Handler', 'srv/core/AuthenticationFilter', 'srv/core/HttpError
     return Handler.inherit('srv.handler.SessionHandler', {
 
         defaults: {
-            path: "api/authentication"
+            path: "/api/authentication"
         },
 
         isResponsibleForRequest: function (context) {
             var ret = this.callBase(),
                 pathName = context.request.urlInfo.pathname;
 
-            return ret && pathName.indexOf(this.$.path);
+            return ret && pathName.indexOf(this.$.path) === 0;
         },
 
         handleRequest: function (context, callback) {
@@ -28,8 +28,18 @@ define(['srv/core/Handler', 'srv/core/AuthenticationFilter', 'srv/core/HttpError
                     if (!authenticationFilter) {
                         throw new HttpError("No responsible authentication filter found.", 500);
                     }
+                    authenticationFilter.handleAuthenticationRequest(context, function(err) {
+                        if (!err) {
+                            var response = context.response;
 
-                    authenticationFilter.handleAuthenticationRequest(context, callback);
+                            response.writeHead(201, {
+                                Location: context.request.urlInfo.uri + "/current"
+                            });
+                            response.end();
+                        } else {
+                            callback(err);
+                        }
+                    });
                 } else {
                     throw new MethodNotAllowedError("Method not supported", ["POST"]);
                 }

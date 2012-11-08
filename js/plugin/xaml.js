@@ -370,7 +370,7 @@ define([], function () {
                                     }
                                 }
 
-                                var xamlFactory = baseClass.inherit(
+                                var xamlFactory = baseClass.inherit(name.replace(/\//g, "."),
                                     getDeclarationFromScripts(scriptObjects)
                                 );
 

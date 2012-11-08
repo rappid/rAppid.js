@@ -1,6 +1,6 @@
-define(['srv/core/AuthenticationFilter'], function(AuthenticationFilter) {
+define(['srv/filter/SessionAuthenticationFilter', 'srv/core/Authentication'], function(SessionAuthenticationFilter, Authentication) {
 
-    return AuthenticationFilter.inherit('srv.filter.CredentialAuthenticationFilter', {
+    return SessionAuthenticationFilter.inherit('srv.filter.CredentialAuthenticationFilter', {
 
         defaults: {
             usernameParameter: "username",
@@ -17,17 +17,15 @@ define(['srv/core/AuthenticationFilter'], function(AuthenticationFilter) {
             return post.hasOwnProperty(this.$.usernameParameter) && post.hasOwnProperty(this.$.passwordParameter);
         },
 
-        /***
-         *
-         * @param context
-         * @param callback
-         */
-        handleAuthenticationRequest: function (context, callback) {
-            callback();
-        },
+        _createAuthenticationRequest: function (context) {
+            var post = context.request.post;
+            var authentication = new Authentication(this.$.authenticationProvider);
+            authentication.setAuthenticationData({
+                username: post[this.$.usernameParameter],
+                password: post[this.$.passwordParameter]
+            });
 
-        _createAuthenticationRequest: function (context, data) {
-            context.identity.addAuthorisationRequest(data, this);
+            return authentication;
         }
     })
 });

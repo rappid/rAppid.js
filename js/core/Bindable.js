@@ -391,7 +391,6 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
                             if (scope instanceof Bindable) {
                                 if (path.length - 1 === j) {
                                     val = scope.$[pathElement.name];
-                                    // TODO: find another solution
                                     if (_.isUndefined(val)) {
                                         val = scope[pathElement.name];
                                     }
@@ -495,7 +494,6 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
                  * @param {String} [path] - the path from which the event should be unbound
                  * @param {String} event - the type of the event
                  * @param {Function} callback - the event handler which is currently bound
-                 * TODO: why a scope is passed here?
                  * @param {Object} [scope]
                  */
                 unbind: function (path, event, callback, scope) {

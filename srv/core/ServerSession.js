@@ -1,5 +1,6 @@
 define(['js/data/Model'], function (Model) {
     return Model.inherit('srv.core.ServerSession', {
+
         schema: {
             id: String,
             expires: Date

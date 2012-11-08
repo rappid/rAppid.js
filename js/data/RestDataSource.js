@@ -187,6 +187,8 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
 
                 // set data
                 model.set(data);
+            } else {
+                throw new Error("Can't extract payload. ContentLength is 0");
             }
         },
 
