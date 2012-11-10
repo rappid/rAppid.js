@@ -2,6 +2,11 @@
 <ui:View xmlns="http://www.w3.org/1999/xhtml" xmlns:js="js.core" xmlns:ui="js.ui">
     <js:Script><![CDATA[
         (function () {
+
+            var externalLink = /^(([^:]+:\/\/)|(javascript:))/i,
+                    stripHashSlash = /^#?\/?/,
+                    hashBankUrl = /^#?(.*)$/;
+
             return {
                 defaults: {
                     tagName: 'a',
@@ -17,12 +22,19 @@
                 },
                 _renderHref: function (href) {
                     if (this.$tagName == "a") {
-                        this.$el.setAttribute("href", href || "javascript: void 0;");
-                        if (!href) {
-                            this.$el.setAttribute('onclick', "return false;");
-                        }else{
-                            this.$el.removeAttribute('onclick');
+                        href = href || "javascript:void(0);";
+
+                        if (!(this.$.target === "external" || externalLink.test(href) || this.$.target === "_blank")) {
+
+                            href = "#/" + href.replace(stripHashSlash, '');
+
+                            if (!this.runsInBrowser()) {
+                                // node rendering -> hash bang url
+                                href = href.replace(hashBankUrl, "#!$1");
+                            }
                         }
+
+                        this.$el.setAttribute("href", href);
                     }
                 }
             }
