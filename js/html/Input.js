@@ -88,6 +88,13 @@ define(["js/html/HtmlElement", "underscore", "moment"], function (HtmlElement, _
                     this.bindDomEvent(this.$.updateOnEvent, function (e) {
                         self.set('value', self._transformValue(self.$el.value));
                     });
+
+                    this.bindDomEvent("keyup", function(e) {
+                        if (e.which === 13) {
+                            e.target.blur && e.target.blur();
+                        }
+                    });
+
                 } else if (this.$.type === "checkbox" || this.$.type === "radio") {
                     this.bindDomEvent('click', function (e) {
                         self.set('checked', self.$el.checked);
