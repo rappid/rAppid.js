@@ -1,10 +1,12 @@
-define(['srv/filter/SessionAuthenticationFilter', 'srv/core/Authentication'], function(SessionAuthenticationFilter, Authentication) {
+define(['srv/filter/SessionAuthenticationFilter', 'srv/core/AuthenticationRequest'], function(SessionAuthenticationFilter, AuthenticationRequest) {
 
     return SessionAuthenticationFilter.inherit('srv.filter.CredentialAuthenticationFilter', {
 
         defaults: {
             usernameParameter: "username",
-            passwordParameter: "password"
+            passwordParameter: "password",
+
+            sessionKey: "credentialAuthenticationToken"
         },
 
         /***
@@ -19,7 +21,7 @@ define(['srv/filter/SessionAuthenticationFilter', 'srv/core/Authentication'], fu
 
         _createAuthenticationRequest: function (context) {
             var post = context.request.post;
-            var authentication = new Authentication(this.$.authenticationProvider);
+            var authentication = new AuthenticationRequest(this.$.authenticationProvider);
             authentication.setAuthenticationData({
                 username: post[this.$.usernameParameter],
                 password: post[this.$.passwordParameter]
