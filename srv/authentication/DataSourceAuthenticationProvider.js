@@ -1,48 +1,91 @@
-define(['srv/core/AuthenticationProvider', 'srv/core/Authentication', 'js/data/Collection', 'require'], function (AuthenticationProvider, Authentication, Collection, require) {
+define(['srv/core/AuthenticationProvider', 'srv/core/Authentication', 'js/data/Collection', 'require', 'crypto', 'js/data/Model'], function (AuthenticationProvider, Authentication, Collection, require, Crypto, Model) {
 
 
     return AuthenticationProvider.inherit('srv.core.authentication.DataSourceAuthenticationProvider', {
         defaults: {
             userModelClassName: null,
             idKey: 'userId',
-            dataSource: null
+            dataSource: null,
+
+            algorithm: 'sha1',
+            salt: 'rAppid:js',
+
+            usernameParameter: "username",
+            passwordParameter: "password"
         },
 
         _start: function (callback) {
-            if (!this.$.userModelClassName) {
+
+            var self = this;
+
+            if (!this.$.dataSource) {
+                callback(new Error("No dataSource defined"));
+            } else if (!this.$.userModelClassName) {
                 callback(new Error("No userModelClassName defined"));
             } else {
-                var self = this;
-                require(this.$.userModelClassName.replace(/\./g, '/'), function (modelClass) {
-                    self.$userModelClass = modelClass;
-                    callback();
+
+                require([this.$.userModelClassName.replace(/\./g, '/')], function (modelFactory) {
+                    self.$userModelClass = modelFactory;
+                    self.$collectionClass = Collection.of(modelFactory);
+
+                    if (modelFactory.classof(Model)) {
+                        callback();
+                    } else {
+                        callback(new Error("userModelClass must be a Model"));
+                    }
+
+                }, function(err) {
+                    callback(err);
                 });
             }
         },
 
-        authenticate: function (authenticationData, callback) {
-            this._fetchUserForAuthenticationData(authenticationData, function (err, user) {
-                var authentication;
-                if(!err && user){
-                    authentication = new Authentication(user, authenticationData);
+        _cryptPassword: function(password) {
+            var algorithm = Crypto.createHash(this.$.algorithm);
+            algorithm.update(password);
+            return algorithm.digest('hex')
+        },
+
+        _authenticateByData: function (authenticationRequest, callback) {
+            var self = this;
+
+            var collection = this.$.dataSource.createCollection(this.$collectionClass);
+            var where = {};
+
+            where[this.$.usernameParameter] = authenticationRequest.data.username;
+            where[this.$.passwordParameter] = this._cryptPassword(authenticationRequest.data.password);
+
+            collection.fetch({
+                where: where
+            }, function(err) {
+                if (err) {
+                    callback(err);
+                } else if (collection.size() !== 1) {
+                    callback(self._createAuthenticationError("Wrong username and password."));
+                } else {
+                    callback(null, self._createAuthentication(collection.at(0)));
                 }
-                callback(err, authentication);
             });
         },
-        _fetchUserForAuthenticationData: function (authenticationData, callback) {
-            var userId = authenticationData.hasOwnProperty(this.$.idKey);
-            if (userId) {
-                var user = this.$.dataSource.createEntity(this.$userModelClass, userId);
-                user.fetch(null, function (err) {
-                    if (!err) {
-                        callback(err, user);
-                    }
+
+        _authenticateByToken: function (authenticationRequest, callback) {
+            var self = this;
+
+            var collection = this.$.dataSource.createCollection(this.$collectionClass);
+            collection.fetch({
+                where: {
+                    id: authenticationRequest.token
+                }
+            }, function (err) {
+                if (err) {
                     callback(err);
-                });
-                // fetch user with userId
-            }else{
-                callback();
-            }
+                } else if (collection.size() !== 1) {
+                    callback(self._createAuthenticationError("Authentication token not found."));
+                } else {
+                    callback(null, self._createAuthentication(collection.at(0)));
+                }
+            });
         }
+
     });
 });
