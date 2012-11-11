@@ -184,6 +184,7 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
 
                 var validationErrors = [];
 
+                // TODO: specify in entity and provide
                 validators.unshift(new Entity.SchemaValidator());
 
                 flow()
