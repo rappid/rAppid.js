@@ -166,30 +166,27 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
 
         _parseModelPayload: function(xhr, model, options){
             var contentType = xhr.getResponseHeader("Content-Type");
-            var contentLength = xhr.getResponseHeader("Content-Length");
-            if(parseInt(contentLength) > 0){
-                var formatProcessor = this.getFormatProcessorForContentType(contentType);
 
-                if (!formatProcessor) {
-                    throw new Error("No formatProcessor for content type '" + contentType + "' found", null, options);
-                }
+            var formatProcessor = this.getFormatProcessorForContentType(contentType);
 
-                // deserialize data with format processor
-                var data = formatProcessor.deserialize(xhr.responses.text);
-
-                var processor = this.getProcessorForModel(model, options);
-
-                // parse data inside processor
-                data = processor.parse(model, data, DataSource.ACTION.LOAD, options);
-
-                // parse data inside model
-                data = model.parse(data);
-
-                // set data
-                model.set(data);
-            } else {
-                throw new Error("Can't extract payload. ContentLength is 0");
+            if (!formatProcessor) {
+                throw new Error("No formatProcessor for content type '" + contentType + "' found", null, options);
             }
+
+            // deserialize data with format processor
+            var data = formatProcessor.deserialize(xhr.responses.text);
+
+            var processor = this.getProcessorForModel(model, options);
+
+            // parse data inside processor
+            data = processor.parse(model, data, DataSource.ACTION.LOAD, options);
+
+            // parse data inside model
+            data = model.parse(data);
+
+            // set data
+            model.set(data);
+
         },
 
         /***
