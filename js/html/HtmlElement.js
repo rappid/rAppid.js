@@ -178,6 +178,7 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
         _renderHeight: function (height) {
 
             if (typeof(height) !== "string") {
+                // TODO: check browser
                 height = Math.min(17895697, height); // max height in firefox
                 height += "px";
             }
