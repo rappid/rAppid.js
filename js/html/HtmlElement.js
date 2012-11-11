@@ -208,6 +208,19 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
             }
 
         },
+
+        _renderAttributeInternal: function(key, attr) {
+            if (this._isStyleAttribute(key)) {
+                this.$el.style[key] = attr;
+            } else {
+                this.callBase();
+            }
+        },
+
+        _isStyleAttribute: function(key) {
+            return this.$el && key in this.$el.style;
+        },
+
         _createDOMEventHandler: function(type){
             return new HtmlElement.EventHandler(this, type);
         }
