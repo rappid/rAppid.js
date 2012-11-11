@@ -41,6 +41,10 @@ define(['js/core/Bindable'], function (Bindable) {
                 callbackInvoked = false,
                 condition = this.$.condition || defaultConditionFnc;
 
+            if (!this._validationRequired(entity)) {
+                internalCallback(null);
+            }
+
             try {
                 // TOOD: make validate sync
                 internalCallback(null, this._validate(entity));
@@ -54,12 +58,16 @@ define(['js/core/Bindable'], function (Bindable) {
                     return;
                 }
 
-
-
                 callbackInvoked = true;
                 // returns an array of errors
                 callback(err, result);
             }
+        },
+
+        _validationRequired: function(entity) {
+
+            return !(this.$.field && !entity.$[this.$.field] && !entity.schema[this.$.field].required);
+
         },
 
         /***
