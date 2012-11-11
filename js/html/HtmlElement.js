@@ -176,6 +176,12 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
          * @private
          */
         _renderHeight: function (height) {
+
+            if (typeof(height) !== "string") {
+                height = Math.min(17895697, height); // max height in firefox
+                height += "px";
+            }
+
             this._renderPolicyValue('height', height);
         },
         /***
@@ -199,10 +205,6 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
 
             if (policy === POLICY_OUT || policy === POLICY_BOTH) {
                 if(value != null){
-                    if (typeof(value) !== "string") {
-                        value = Math.min(17895697,value); // max height in firefox
-                        value += "px";
-                    }
                     this.$el.style[name] = value;
                 }
             }
