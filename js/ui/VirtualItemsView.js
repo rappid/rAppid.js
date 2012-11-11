@@ -88,10 +88,6 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
 
             this.bindDomEvent('scroll', scroll);
 
-            if (this._isWebkitAndTouch()) {
-                this.bindDomEvent('touchend', scroll);
-            }
-
             function scroll(e) {
                 self.set({
                     scrollTop: self.$el.scrollTop,
