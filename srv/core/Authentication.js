@@ -1,19 +1,11 @@
 define(['js/core/Base'], function(Base) {
     return Base.inherit('srv.core.Authentication', {
-        ctor: function(authenticationProvider) {
-            this.authenticationProvider = authenticationProvider;
-        },
+        ctor: function(authenticationRequest, user, token) {
+            this.authenticationRequest = authenticationRequest;
+            this.authenticationProvider = authenticationRequest.authenticationProvider;
 
-        setAuthenticationData: function (data) {
-            this.data = data;
-        },
-
-        setToken: function (token) {
-            this.token = token;
-        },
-
-        isAuthenticationByToken: function() {
-            return !!this.token;
+            this.user = user;
+            this.token = token || user.$.id;
         }
 
     });
