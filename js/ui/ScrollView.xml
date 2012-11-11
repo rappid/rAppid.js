@@ -1,16 +1,6 @@
 <?xml version="1.0"?>
-<ui:View xmlns="http://www.w3.org/1999/xhtml" xmlns:js="js.core" xmlns:ui="js.ui">
-    <js:Imports>
-        js.ui.View;
-    </js:Imports>
-    <js:Script>
-        <![CDATA[
-        (function (View) {
-            return {}
-        })
-        ]]>
-    </js:Script>
-    <div class="{scrollPaneClass}">
-        <ui:PlaceHolder name="content"/>
+<ui:ScrollViewClass xmlns="http://www.w3.org/1999/xhtml" xmlns:js="js.core" xmlns:ui="js.ui" overflow="hidden">
+    <div cid="container"  class="scrollview-container">
+        <ui:ContentPlaceHolder name="content"/>
     </div>
-</ui:View>
+</ui:ScrollViewClass>

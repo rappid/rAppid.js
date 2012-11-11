@@ -28,7 +28,7 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
      * @param attribute
      */
     var bindSizePolicy = function (element, policy, attribute) {
-        var elAttribute;
+
         if (policy === POLICY_IN || policy === POLICY_BOTH) {
             if (!element["__update"+attribute]) {
                 var self = element;
@@ -61,7 +61,7 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
 
         $classAttributes: ['heightUpdatePolicy', 'widthUpdatePolicy'],
 
-        $renderAsStyle: ['position'],
+        $excludedStyleAttributes: ['src'],
 
         $renderAsStyleWithPx: ['left', 'top'],
         /**
@@ -110,20 +110,14 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
          */
         _setAttribute: function (key, value) {
 
-            var renderAsStyle;
             if (_.indexOf(this.$renderAsStyleWithPx, key) !== -1) {
                 if (!_.isString(value)) {
                     value += "px";
                 }
-
-                renderAsStyle = true;
             }
 
-            if (renderAsStyle || _.indexOf(this.$renderAsStyle, key) !== -1) {
-                this.$el.style[key] = value;
-            } else {
-                this.callBase();
-            }
+            this.callBase(key, value);
+
         },
         /**
          *
@@ -167,6 +161,11 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
          * @private
          */
         _renderWidth: function (width) {
+
+            if (typeof(width) !== "string") {
+                width += "px";
+            }
+
             this._renderPolicyValue('width', width);
         },
 
@@ -176,18 +175,16 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
          * @private
          */
         _renderHeight: function (height) {
+
+            if (typeof(height) !== "string") {
+                // TODO: check browser
+                height = Math.min(17895697, height); // max height in firefox
+                height += "px";
+            }
+
             this._renderPolicyValue('height', height);
         },
-        /***
-         *
-         * @param position
-         * @private
-         */
-        _renderPosition: function (position) {
-            if(position){
-                this.$el.style.position = position;
-            }
-        },
+
         /***
          *
          * @param name
@@ -199,15 +196,31 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
 
             if (policy === POLICY_OUT || policy === POLICY_BOTH) {
                 if(value != null){
-                    if (typeof(value) !== "string") {
-                        value = Math.min(17895697,value); // max height in firefox
-                        value += "px";
-                    }
                     this.$el.style[name] = value;
                 }
             }
 
         },
+
+        _renderAttributeInternal: function(key, value) {
+            if (this._isStyleAttribute(key)) {
+
+                if (_.indexOf(this.$renderAsStyleWithPx, key) !== -1) {
+                    if (!_.isString(value)) {
+                        value += "px";
+                    }
+                }
+
+                this.$el.style[key] = value;
+            } else {
+                this.callBase();
+            }
+        },
+
+        _isStyleAttribute: function(key) {
+            return _.indexOf(this.$excludedStyleAttributes, key) === -1 && this.$el && key in this.$el.style;
+        },
+
         _createDOMEventHandler: function(type){
             return new HtmlElement.EventHandler(this, type);
         }

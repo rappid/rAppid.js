@@ -18,14 +18,7 @@ define(["js/html/HtmlElement", "js/core/Content", "underscore"], function (HtmlE
                 return this.callBase();
             },
             _isDOMNodeAttribute: function(attribute){
-                var allowed;
-                for(var i = 0; i < this.$domAttributes.length; i++){
-                    allowed = this.$domAttributes[i];
-                    if(allowed == attribute){
-                        return true;
-                    }
-                }
-                return false;
+                return ((this.$el && attribute in this.$el) || /^data-/.test(attribute) || _.indexOf(this.$domAttributes, attribute) !== -1);
             },
             _initializeLayoutChildren: function (children) {
                 for (var i = 0; i < children.length; i++) {
