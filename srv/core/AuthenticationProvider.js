@@ -1,4 +1,4 @@
-define(['js/core/Component', 'srv/core/HttpError'], function (Component, HttpError) {
+define(['js/core/Component', 'srv/core/HttpError', 'srv/core/Authentication'], function (Component, HttpError, Authentication) {
 
     return Component.inherit('srv.core.AuthenticationProvider', {
 
@@ -15,24 +15,28 @@ define(['js/core/Component', 'srv/core/HttpError'], function (Component, HttpErr
             callback();
         },
 
-        authenticate: function (authentication, callback) {
-            if (authentication.isAuthenticationByToken()) {
-                this._authenticateByToken(authentication, callback);
+        authenticate: function (authenticationRequest, callback) {
+            if (authenticationRequest.isAuthenticationByToken()) {
+                this._authenticateByToken(authenticationRequest, callback);
             } else {
-                this._authenticateByData(authentication, callback);
+                this._authenticateByData(authenticationRequest, callback);
             }
         },
 
-        _authenticateByToken: function (authentication, callback) {
+        _authenticateByToken: function (authenticationRequest, callback) {
             callback(new Error("AuthenticateByToken not implemented"));
         },
 
-        _authenticateByData: function (authentication, callback) {
+        _authenticateByData: function (authenticationRequest, callback) {
             callback(new Error("AuthenticateByData not implemented"));
         },
 
         _createAuthenticationError: function(message) {
             return new HttpError(message, 400);
+        },
+
+        _createAuthentication: function(user, token) {
+            return new Authentication(this, user, token);
         }
 
     });
