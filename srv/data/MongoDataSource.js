@@ -280,8 +280,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore'],
             }
 
             // TODO: add query, fields and options
-
-            var self = this, connection, where = {};
+            var self = this, connection, where = options.where || {};
 
             // here we have a polymorph type
             if (configuration.$.modelClassName !== modelClassName) {

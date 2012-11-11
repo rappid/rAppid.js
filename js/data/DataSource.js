@@ -945,6 +945,9 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                 var ret = this.callBase();
                 ret.$dataSourceConfiguration = this.$dataSourceConfiguration;
                 return ret;
+            },
+            _translateQueryObject: function (queryObject) {
+                return queryObject;
             }
         });
 

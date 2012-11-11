@@ -434,6 +434,8 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
             // get queryParameter
             params = _.defaults(params, page.$collection.getQueryParameters(RestDataSource.METHOD.GET), rootCollection.$context.getQueryParameter(), this.getQueryParameter(RestDataSource.METHOD.GET));
 
+            params = this._translateQueryObject(params);
+
             // todo: add hook
             var sortParameters = page.$collection.getSortParameters(RestDataSource.METHOD.GET);
             if(sortParameters){
