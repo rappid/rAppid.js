@@ -85,6 +85,9 @@ define(['require', 'js/core/Component', 'srv/core/Context', 'srv/core/Handlers',
                         self.$filters.start(self, cb);
                     })
                     .seq(function (cb) {
+                        self.$authenticationProviders.start(self, cb);
+                    })
+                    .seq(function (cb) {
                         // handlers starts also asynchronous to load e.g. classes
                         self.$handlers.start(self, cb);
                     })
@@ -109,6 +112,11 @@ define(['require', 'js/core/Component', 'srv/core/Context', 'srv/core/Handlers',
                     .seq(function (cb) {
                         self.$handlers.stop(function () {
                             // ignore errors during stop
+                            cb();
+                        });
+                    })
+                    .seq(function (cb) {
+                        self.$authenticationProviders.stop(function() {
                             cb();
                         });
                     })
