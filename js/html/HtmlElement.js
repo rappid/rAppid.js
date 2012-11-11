@@ -28,7 +28,7 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
      * @param attribute
      */
     var bindSizePolicy = function (element, policy, attribute) {
-        var elAttribute;
+
         if (policy === POLICY_IN || policy === POLICY_BOTH) {
             if (!element["__update"+attribute]) {
                 var self = element;
