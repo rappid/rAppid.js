@@ -142,12 +142,34 @@ var build = function (args, callback) {
         optimizeConfig.modules.push(moduleConfig);
     });
     optimizeConfig.xamlClasses = config.xamlClasses;
+
     optimizeConfig.dir = buildConfig.targetDir || optimizeConfig.dir;
+
+    var versionDir;
+    if(buildConfig.usePackageVersion === true){
+        var packagePath = path.join(basePath, "package.json");
+        var package = JSON.parse(fs.readFileSync(packagePath));
+
+        if(package){
+            versionDir = package.version;
+            optimizeConfig.dir = path.join(optimizeConfig.dir,versionDir);
+        }else{
+            throw new Error("No package.json found");
+        }
+    }
+
 
     var buildDirPath = path.join(basePath,optimizeConfig.dir);
     var newConfigPath = path.join(configPath, "config.json");
 
+    // change config.json
+    // set base url
+    var realBaseUrl = config.baseUrl;
+    if (versionDir) {
+        config.baseUrl = path.join(config.baseUrl || ".",versionDir);
+    }
     fs.writeFileSync(configPath, JSON.stringify(config));
+
 
     global.libxml = require("libxml");
 
@@ -155,6 +177,8 @@ var build = function (args, callback) {
     requirejs.optimize(optimizeConfig, function (results) {
         // write back normal config
         delete config['optimizedXAML'];
+        config.baseUrl = realBaseUrl;
+
         fs.writeFileSync(configPath, JSON.stringify(config));
 
 
@@ -162,6 +186,11 @@ var build = function (args, callback) {
         var indexFile = fs.readFileSync(indexFilePath, "utf8");
         var content = String(indexFile);
         content = content.replace("js/lib/rAppid", mainModule);
+        if(versionDir){
+            content = content.replace(/(href|src)=(["'])(?!(http|\/\/))([^'"]+)/g,'$1=$2'+versionDir+'/$4');
+            mainModule = path.join(versionDir, mainModule);
+            indexFilePath = path.join(buildDirPath , "..", buildConfig.indexFile || "index.html");
+        }
 
         fs.writeFileSync(indexFilePath, content);
     });
