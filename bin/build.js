@@ -189,9 +189,9 @@ var build = function (args, callback) {
         if(versionDir){
             content = content.replace(/(href|src)=(["'])(?!(http|\/\/))([^'"]+)/g,'$1=$2'+versionDir+'/$4');
             mainModule = path.join(versionDir, mainModule);
-            indexFilePath = path.join(buildDirPath , "..", buildConfig.indexFile || "index.html");
+            var externalIndexFilePath = path.join(buildDirPath , "..", buildConfig.indexFile || "index.html");
+            fs.writeFileSync(externalIndexFilePath, content);
         }
-
         fs.writeFileSync(indexFilePath, content);
     });
 };
