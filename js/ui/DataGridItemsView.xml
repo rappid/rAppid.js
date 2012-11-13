@@ -7,7 +7,7 @@
             </js:Template>
         </ui:DataGridRow>
     </js:Template>
-    <div cid="$scrollContainer" style="position: relative;">
+    <div cid="$scrollContainer" position="relative">
         <table cid="$table" componentClass="table" onkeydown="_onKeyDown" tabindex="1">
             <thead style="display: none;">
                 <ui:ItemsView items="{columns}" tagName="tr" itemKey="column">
