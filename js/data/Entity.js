@@ -1,11 +1,25 @@
-define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validator/Validator'],
-    function (require, Bindable, List, flow, Validator) {
+define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validator/Validator', 'underscore'],
+    function (require, Bindable, List, flow, Validator, _) {
         var Collection;
 
-        var Entity = Bindable.inherit('js.core.Entity', {
+        var ValidationErrors = Bindable.inherit('js.data.Entity.ValidationErrors', {
+            firstError: function(){
+                for(var key in this.$){
+                    if(this.$.hasOwnProperty(key)){
+                        return this.$[key];
+                    }
+                }
+                return null;
+            }.on('change'),
+            size: function(){
+                return  _.size(this.$);
+            }.on('change')
+        });
+
+        var Entity = Bindable.inherit('js.data.Entity', {
 
             ctor: function (attributes) {
-                this.$errors = new Bindable();
+                this.$errors = new ValidationErrors();
                 this._extendSchema();
 
                 this.callBase(attributes);
@@ -254,13 +268,15 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
         Entity.SchemaValidator = Validator.inherit('js.data.validator.SchemaValidator', {
             validate: function (entity, callback) {
                 var errors = [], subEntities = [], attributes = entity.$;
-                var schema = entity.schema, schemaObject, undefined, value;
+                var schema = entity.schema, schemaObject, undefined, value, type;
                 for (var key in schema) {
                     if (schema.hasOwnProperty(key)) {
                         value = attributes[key];
                         schemaObject = schema[key];
-                        if (!(this.runsInBrowser() && schemaObject.generated) && schemaObject.required === true
-                            && (value === undefined || value === null || value === "")) {
+
+                        type = schemaObject.type;
+
+                        if (this._isUndefined(value, schemaObject) && this._isRequired(entity, schemaObject.required)) {
                             errors.push(this._createError("isUndefinedError", key + " is required", key));
                         } else if (value && !this._isValidType(value, schemaObject.type)) {
                             errors.push(this._createError("wrongTypeError", key + " is from wrong type", key));
@@ -269,15 +285,15 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                                 key: key,
                                 value: value
                             });
-                        } else if (value instanceof List){
-                            if(!value.size() && value.at(0) instanceof Entity){
+                        } else if (value instanceof List && !(value instanceof require('js/data/Collection'))){
+                            if(value.size() > 0 && value.at(0) instanceof Entity){
                                 value.each(function(item){
                                     subEntities.push({
                                         key: key,
                                         value: item
                                     });
                                 });
-                            } else if(value.size() === 0 && !(this.runsInBrowser() && schemaObject.generated) && schemaObject.required === true) {
+                            } else if(value.size() === 0 && !(this.runsInBrowser() && schemaObject.generated) && this._isRequired(entity, schemaObject.required) === true) {
                                 errors.push(this._createError("isEmptyError", key + " are empty", key));
                             }
                         }
@@ -321,8 +337,24 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                     return false;
                 } else if (type.classof && type.classof(Entity) && !(value instanceof type)) {
                     return false;
+                } else if(type === Object && !_.isObject(value)){
+                    return false;
                 }
                 return true;
+            },
+            _isUndefined: function(value, schemaObject){
+                var type = schemaObject.type;
+                if(type.classof && type.classof(require('js/data/Collection'))){
+                    return false;
+                }
+                return (!(this.runsInBrowser() && schemaObject.generated)) && (value === undefined || value === null || value === "");
+            },
+            _isRequired: function(entity, required){
+                if(required instanceof Function){
+                    return required.call(entity);
+                }else{
+                    return required;
+                }
             }
         });
 
