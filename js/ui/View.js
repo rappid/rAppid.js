@@ -19,7 +19,7 @@ define(["js/html/HtmlElement", "js/core/Content", "underscore"], function (HtmlE
             },
             _isDOMNodeAttribute: function(attribute){
 
-                return  this.callBase() && ((this.$el && attribute in this.$el) || /^data-/.test(attribute) || _.indexOf(this.$domAttributes, attribute) !== -1);
+                return  this.callBase() && (/^data-/.test(attribute) || _.indexOf(this.$domAttributes, attribute) !== -1);
             },
             _initializeLayoutChildren: function (children) {
                 for (var i = 0; i < children.length; i++) {
