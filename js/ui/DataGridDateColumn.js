@@ -12,7 +12,7 @@ define(['xaml!js/ui/DataGridColumn','moment'], function (Column, moment) {
                     if (!data) {
                         return null;
                     }
-                    return  moment(data, self.$.parseFormat).format(self.$.dateFormat);
+                    return  moment(data).format(self.$.dateFormat);
                 };
             }
             return this.$formatFnc;
