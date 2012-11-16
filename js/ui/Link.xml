@@ -20,6 +20,18 @@
                         this.getPlaceHolder("icon").clear();
                     }
                 },
+                _renderLabel: function (label) {
+                    if(!this.$.title){
+                        this._renderTitle(label);
+                    }
+                },
+                _renderTitle: function(title){
+                    if (title) {
+                        this.$el.setAttribute("title", title);
+                    } else {
+                        this.$el.removeAttribute("title");
+                    }
+                },
                 _renderHref: function (href) {
                     if (this.$tagName == "a") {
                         href = href || "javascript:void(0);";
