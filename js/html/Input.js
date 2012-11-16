@@ -63,6 +63,9 @@ define(["js/html/HtmlElement", "underscore", "moment"], function (HtmlElement, _
             },
             _transformValue: function(value){
                 if(this.$.type === "number"){
+                    if(value === ""){
+                        return null;
+                    }
                     value = parseInt(value);
                     if (isNaN(value)) {
                         value = this.$.value;
