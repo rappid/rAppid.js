@@ -210,8 +210,9 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
                         value += "px";
                     }
                 }
-
-                this.$el.style[key] = value;
+                if(value){
+                    this.$el.style[key] = value;
+                }
             } else {
                 this.callBase();
             }
