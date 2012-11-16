@@ -29,11 +29,12 @@ define(['js/ui/View', 'xaml!js/ui/DataGridColumn', 'js/core/List', 'underscore',
         _handleColumnClick: function(e){
             if(this.$.data){
                 var column = e.target.$.column;
+                var path = column.getSortPath();
                 // add sortable attribute
-                if(column.$.path){
+                if(path){
                     this.$sortParamter = this.$sortParameter || {};
                     column.set('sortDirection',column.$.sortDirection === -1 ? 1 : -1);
-                    this.$sortParamter[column.$.path] = column.$.sortDirection;
+                    this.$sortParamter[path] = column.$.sortDirection;
                     this.$.$itemsView.sort(this.$sortParamter);
                 }
             }
