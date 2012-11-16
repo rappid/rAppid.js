@@ -187,7 +187,7 @@ define(
             _innerRenderItem: function (item, index) {
                 var component = this._createComponentForItem(item, index);
                 this._cacheComponentForItem(item,component);
-                this.addChild(component);
+                this.addChild(component, {childIndex: index});
             },
 
             /***
