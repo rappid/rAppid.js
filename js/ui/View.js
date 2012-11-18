@@ -3,9 +3,9 @@ define(["js/html/HtmlElement", "js/core/Content", "underscore"], function (HtmlE
             defaults: {
                 tagName: "div"
             },
-            $domAttributes: ['class','id', 'style'],
+            $domAttributes: ['class', 'id', 'style'],
             render: function () {
-                if(this.isRendered()){
+                if (this.isRendered()) {
                     return this.$el;
                 }
                 // look if the component has a layout defined
@@ -17,7 +17,7 @@ define(["js/html/HtmlElement", "js/core/Content", "underscore"], function (HtmlE
                 }
                 return this.callBase();
             },
-            _isDOMNodeAttribute: function(attribute){
+            _isDOMNodeAttribute: function (attribute) {
 
                 return  this.callBase() && (/^data-/.test(attribute) || _.indexOf(this.$domAttributes, attribute) !== -1);
             },
@@ -53,33 +53,25 @@ define(["js/html/HtmlElement", "js/core/Content", "underscore"], function (HtmlE
             _renderTemplateToPlaceHolder: function (templateName, placeholderName, attributes) {
                 this.$renderedPlaceholders = this.$renderedPlaceholders || {};
                 var renderedComponent = this.$renderedPlaceholders[placeholderName], placeHolder;
-                if (!renderedComponent) {
-                    var template = this.getTemplate(templateName);
-                    if (template) {
-                        // or create special method createComponent
-                        renderedComponent = template.createInstance(attributes);
-                        placeHolder = this.getPlaceHolder(placeholderName);
-                        if (placeHolder) {
-                            placeHolder.set({content: renderedComponent});
-                            this.$renderedPlaceholders[placeholderName] = renderedComponent;
-                        } else {
-                            // throw "No placeholder '"+placeholderName+"' found";
-                        }
-
-                    }
-                } else {
+                var template = this.getTemplate(templateName);
+                if (template) {
+                    // or create special method createComponent
+                    renderedComponent = template.createInstance(attributes);
                     placeHolder = this.getPlaceHolder(placeholderName);
-                    if(placeHolder){
+                    if (placeHolder) {
                         placeHolder.set({content: renderedComponent});
+                        this.$renderedPlaceholders[placeholderName] = renderedComponent;
+                    } else {
+                        // throw "No placeholder '"+placeholderName+"' found";
                     }
-                    renderedComponent.set(attributes);
+
                 }
 
             },
             _renderId: function (id) {
                 if (id) {
                     this.$el.setAttribute("id", id);
-                }else{
+                } else {
                     this.$el.removeAttribute("id");
                 }
 
