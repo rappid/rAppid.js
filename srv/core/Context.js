@@ -88,7 +88,10 @@ define(['js/core/EventDispatcher', 'url', 'querystring', 'underscore', 'flow', '
                     request.get = urlInfo;
 
                     var host = request.headers["host"];
-                    request.urlInfo.uri = endpoint.protocol + "://" + host + request.urlInfo.pathname;
+                    var baseUri = endpoint.protocol + "://" + host;
+
+                    request.urlInfo.baseUri = baseUri;
+                    request.urlInfo.uri = baseUri + request.urlInfo.pathname;
 
                 },
 
