@@ -4,10 +4,20 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
 
     var RestDataProcessor = DataSource.Processor.inherit('src.data.RestDataSource.RestDataProcessor', {
         _composeSubModel: function (model, action, options) {
-            // TODO: add href
-            return {
-                id: model.$.id
+
+            // TODO: fix href for submodels
+
+
+            var ret = {
+                    id: model.$.id
+                },
+                configuration = this.$dataSource.getConfigurationForModelClass(model.factory);
+
+            if (options.baseUri && configuration) {
+                ret.href = options.baseUri + "/" + configuration.$.path + "/" + model.$.id
             }
+
+            return ret
         }
     });
 
@@ -20,14 +30,14 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
             parsePayloadOnUpdate: true
         },
 
-        ctor: function(){
+        ctor: function () {
             this.callBase();
         },
         $defaultProcessorFactory: RestDataProcessor,
         initialize: function () {
 
             if (!this.$.endPoint) {
-                this.log("No end-point for RestDataSource defined","warn");
+                this.log("No end-point for RestDataSource defined", "warn");
             }
 
             if (!this.$.gateway) {
@@ -36,7 +46,7 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
 
         },
 
-        _validateConfiguration: function() {
+        _validateConfiguration: function () {
             if (!this.$dataSourceConfiguration) {
                 throw "No DataSourceConfiguration specified";
             }
@@ -94,7 +104,7 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
             return null;
         },
 
-        _buildUriForModel: function(model){
+        _buildUriForModel: function (model) {
             // map model to url
             var modelPathComponents = this.getPathComponentsForModel(model);
 
@@ -130,19 +140,19 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
             var params = _.defaults(model.$context.getQueryParameter(),
                 this.getQueryParameter(RestDataSource.METHOD.GET));
 
-            if(options.noCache){
+            if (options.noCache) {
                 params.timestamp = (new Date().getTime());
             }
 
             flow()
-                .seq("xhr", function(cb) {
+                .seq("xhr", function (cb) {
                     // send request
                     self.$stage.$applicationContext.ajax(url, {
                         type: RestDataSource.METHOD.GET,
                         queryParameter: params
                     }, cb);
                 })
-                .seq(function(cb) {
+                .seq(function (cb) {
                     var xhr = this.vars.xhr;
 
                     if (xhr.status === 200 || xhr.status === 304) {
@@ -156,7 +166,7 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
                         cb("Got status code " + xhr.status + " for '" + url + "'", xhr, null, options);
                     }
                 })
-                .exec(function(err) {
+                .exec(function (err) {
                     if (callback) {
                         callback(err, model, options);
                     }
@@ -164,7 +174,7 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
 
         },
 
-        _parseModelPayload: function(xhr, model, options){
+        _parseModelPayload: function (xhr, model, options) {
             var contentType = xhr.getResponseHeader("Content-Type");
 
             var formatProcessor = this.getFormatProcessorForContentType(contentType);
@@ -220,7 +230,7 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
 
             var model = request.model;
 
-            var cb = function(err) {
+            var cb = function (err) {
                 if (callback) {
                     callback(err, model, request.options);
                 }
@@ -233,7 +243,7 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
 
                 if (location) {
 
-                    if(self.$.parsePayloadOnCreate){
+                    if (self.$.parsePayloadOnCreate) {
                         self._parseModelPayload(xhr, model, request.options);
                     }
 
@@ -244,10 +254,10 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
                         model.set('id', id);
 
                         var schema = model.schema, schemaType;
-                        for(var schemaKey in schema){
-                            if(schema.hasOwnProperty(schemaKey)){
+                        for (var schemaKey in schema) {
+                            if (schema.hasOwnProperty(schemaKey)) {
                                 schemaType = schema[schemaKey];
-                                if(schemaType.classof && schemaType.classof(Collection)){
+                                if (schemaType.classof && schemaType.classof(Collection)) {
                                     var contextForChildren = model.getContextForChild(schemaType);
                                     model.set(schemaKey, contextForChildren.createCollection(schemaType, null));
                                 }
@@ -285,7 +295,7 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
 
             var model = request.model;
 
-            if(this.$.parsePayloadOnUpdate){
+            if (this.$.parsePayloadOnUpdate) {
                 this._parseModelPayload(xhr, model, request.options);
             }
 
@@ -294,7 +304,7 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
             }
         },
 
-        extractIdFromLocation: function(location, request) {
+        extractIdFromLocation: function (location, request) {
             var param = rIdExtractor.exec(location);
 
             if (param) {
@@ -320,10 +330,10 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
 
             // call save of the processor to save sub models
             flow()
-                .seq(function(cb) {
+                .seq(function (cb) {
                     processor.saveSubModels(model, options, cb)
                 })
-                .seq(function(cb) {
+                .seq(function (cb) {
                     // create url
                     var url = self._buildUriForModel(model);
 
@@ -365,7 +375,7 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
 
                     });
                 })
-                .exec(function(err){
+                .exec(function (err) {
                     callback && callback(err, model, options);
                 })
 
@@ -387,13 +397,12 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
         loadCollectionPage: function (page, options, callback) {
 
             var rootCollection = page.getRootCollection();
-            var config =  this.$dataSourceConfiguration.getConfigurationForModelClass(rootCollection.$modelFactory);
+            var config = this.$dataSourceConfiguration.getConfigurationForModelClass(rootCollection.$modelFactory);
 
-            if(!config){
+            if (!config) {
                 throw new Error("Couldnt find path config for " + rootCollection.$modelFactory.prototype.constructor.name);
             }
             var modelPathComponents = [config.$.path];
-
 
 
             if (!modelPathComponents) {
@@ -422,7 +431,7 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
                 params.offset = page.$offset;
             }
 
-            if(options.noCache){
+            if (options.noCache) {
                 params.timestamp = (new Date()).getTime();
             }
             params.fullData = options.fullData || false;
@@ -443,7 +452,7 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
 
             // todo: add hook
             var sortParameters = page.$collection.getSortParameters(RestDataSource.METHOD.GET);
-            if(sortParameters){
+            if (sortParameters) {
                 params["sort"] = JSON.stringify(sortParameters);
             }
 
@@ -503,7 +512,7 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
             });
         },
         removeModel: function (model, options, callback) {
-            callback = callback || function(){
+            callback = callback || function () {
 
             };
 
@@ -521,7 +530,7 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
                 queryParameter: params
             }, function (err, xhr) {
                 if (!err && (xhr.status == 200 || xhr.status == 304)) {
-                    callback(null,model);
+                    callback(null, model);
                 } else {
                     // TODO: better error handling
                     err = err || "wrong status code";
@@ -529,7 +538,7 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
                 }
             });
         },
-        getFormatProcessorForContentType: function(contentType) {
+        getFormatProcessorForContentType: function (contentType) {
             for (var i = 0; i < this.$formatProcessors.length; i++) {
                 var processorEntry = this.$formatProcessors[i];
                 if (processorEntry.regex.test(contentType)) {
@@ -543,7 +552,7 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
     });
 
     RestDataSource.RestContext = DataSource.Context.inherit("js.data.RestDataSource.Context", {
-        ctor: function(dataSource, properties, parentContext){
+        ctor: function (dataSource, properties, parentContext) {
             this.$contextModel = properties;
             this.callBase(dataSource, properties, parentContext);
         },
@@ -552,7 +561,7 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
             return contextModel.constructor.name + "_" + contextModel.$.id;
         },
 
-        getPathComponents: function(){
+        getPathComponents: function () {
 
             var path = [];
 
