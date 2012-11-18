@@ -42,7 +42,7 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore"], funct
 
             for (var key in queryParameters) {
                 if (queryParameters.hasOwnProperty(key)) {
-                    ret.push(key + "=" + queryParameters[key]);
+                    ret.push(key + "=" + JSON.stringify(queryParameters[key]));
                 }
             }
 
