@@ -117,6 +117,10 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
             if(parameters["sort"]) {
                 options["sort"] = JSON.parse(parameters["sort"]);
             }
+            if(parameters["where"]){
+                options["where"] = JSON.parse(parameters["where"]);
+            }
+
             var self = this;
             // TODO: read out offset, limit and query from query string
             collection.fetch(options, function (err, collection) {

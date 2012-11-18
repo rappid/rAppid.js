@@ -431,6 +431,14 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
             // get queryParameter
             params = _.defaults(params, page.$collection.getQueryParameters(RestDataSource.METHOD.GET), rootCollection.$context.getQueryParameter(), this.getQueryParameter(RestDataSource.METHOD.GET));
 
+            for(var key in params){
+                if(params.hasOwnProperty(key)){
+                    if(_.isObject(params[key])){
+                        params[key] = JSON.stringify(params[key]);
+                    }
+                }
+            }
+
             params = this._translateQueryObject(params);
 
             // todo: add hook
