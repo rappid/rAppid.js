@@ -53,6 +53,15 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
             this.createBinding('{$dataAdapter.size()}', this._itemsCountChanged, this);
         },
 
+        initialize: function(){
+            this.callBase();
+            this.bind('selectedItems','reset', this.onSelectedItemsReset, this);
+        },
+
+        onSelectedItemsReset: function(){
+            this._clearSelection();
+        },
+
         _isWebkitAndTouch: function() {
             var window = this.$stage.$window;
             return this.runsInBrowser() && window && window.hasOwnProperty("ontouchend") && /AppleWebKit/i.test(window.navigator.userAgent);
@@ -97,6 +106,11 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
 
         },
 
+        render: function(){
+            var el = this.callBase();
+            this._updateVisibleItems();
+            return el;
+        },
 
         _initializationComplete: function() {
             this.callBase();
@@ -144,84 +158,84 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
         },
 
         _updateVisibleItems: function (forceRefresh) {
-            var dataAdapter = this.$.$dataAdapter;
-            if (!dataAdapter) {
-                return;
-            }
-            // check if some renderers can be released
-            var scrollLeft = this.$.scrollLeft,
-                scrollTop = this.$.scrollTop,
-                realStartIndex = this.getIndexFromPoint(scrollLeft, scrollTop),
-                startIndex = realStartIndex - this.$.prefetchItemCount,
-                realEndIndex = this.getIndexFromPoint(scrollLeft + this.$.width, scrollTop + this.$.height),
-                endIndex = realEndIndex + this.$.prefetchItemCount,
-                renderer, i, pageIndex;
-
-            realStartIndex = Math.max(0, realStartIndex);
-            if((realStartIndex > this.$.scrollToIndex || realStartIndex + this.$.cols < this.$.scrollToIndex)){
-                this.set('scrollToIndex', realStartIndex, {initiator: this});
-            }
-
-            startIndex = Math.max(0, startIndex);
-            var ItemsCount = parseFloat(dataAdapter.size());
-
-            if (!isNaN(ItemsCount)) {
-                // end well known
-                if (ItemsCount <= 0) {
-                    this._releaseActiveRenderer();
+            if(this.isRendered()){
+                var dataAdapter = this.$.$dataAdapter;
+                if (!dataAdapter) {
+                    return;
                 }
-                endIndex = Math.min(ItemsCount - 1, endIndex);
+                // check if some renderers can be released
+                var scrollLeft = this.$.scrollLeft,
+                    scrollTop = this.$.scrollTop,
+                    realStartIndex = this.getIndexFromPoint(scrollLeft, scrollTop),
+                    startIndex = realStartIndex - this.$.prefetchItemCount,
+                    realEndIndex = this.getIndexFromPoint(scrollLeft + this.$.width, scrollTop + this.$.height),
+                    endIndex = realEndIndex + this.$.prefetchItemCount,
+                    renderer, i, pageIndex;
 
-                if (this.$isLoading) {
-                    this.removeClass('loading');
-                    this.$isLoading = false;
+                realStartIndex = Math.max(0, realStartIndex);
+                if ((realStartIndex > this.$.scrollToIndex || realStartIndex + this.$.cols < this.$.scrollToIndex)) {
+                    this.set('scrollToIndex', realStartIndex, {initiator: this});
                 }
-            }
 
-            if (forceRefresh || !(startIndex === this.$lastStartIndex && endIndex === this.$lastEndIndex)) {
+                startIndex = Math.max(0, startIndex);
+                var ItemsCount = parseFloat(dataAdapter.size());
 
+                if (!isNaN(ItemsCount)) {
+                    // end well known
+                    if (ItemsCount <= 0) {
+                        this._releaseActiveRenderer();
+                    }
+                    endIndex = Math.min(ItemsCount - 1, endIndex);
 
-                // some items are not visible any more or scrolled into view
-                // remember the last
-                this.$lastStartIndex = startIndex;
-                this.$lastEndIndex = endIndex;
-
-                this._releaseActiveRenderer(startIndex, endIndex);
-
-                var addedRenderer = [];
-
-                for (i = startIndex; i <= endIndex; i++) {
-                    renderer = this.$activeRenderer[i];
-
-                    if (!renderer) {
-                        // no renderer assigned to this item
-                        renderer = this._reserveRenderer();
-                        this.$activeRenderer[i] = renderer;
-
-                        renderer.set({
-                            width: this.$.itemWidth,
-                            height: this.$.itemHeight,
-                            $dataItem: dataAdapter.getItemAt(i),
-                            $index: i,
-                            $viewIndex: i - startIndex
-                        });
-
-                        this._addRenderer(renderer, renderer.$.$viewIndex);
-                        addedRenderer.push(renderer);
-                    } else if (forceRefresh) {
-                        renderer.set("$dataItem", dataAdapter.getItemAt(i));
+                    if (this.$isLoading) {
+                        this.removeClass('loading');
+                        this.$isLoading = false;
                     }
                 }
 
-                for (i = 0; i < addedRenderer.length; i++) {
-                    this._positionRenderer(addedRenderer[i], addedRenderer);
+                if (forceRefresh || !(startIndex === this.$lastStartIndex && endIndex === this.$lastEndIndex)) {
+
+
+                    // some items are not visible any more or scrolled into view
+                    // remember the last
+                    this.$lastStartIndex = startIndex;
+                    this.$lastEndIndex = endIndex;
+
+                    this._releaseActiveRenderer(startIndex, endIndex);
+
+                    var addedRenderer = [];
+
+                    for (i = startIndex; i <= endIndex; i++) {
+                        renderer = this.$activeRenderer[i];
+
+                        if (!renderer) {
+                            // no renderer assigned to this item
+                            renderer = this._reserveRenderer();
+                            this.$activeRenderer[i] = renderer;
+
+                            renderer.set({
+                                width: this.$.itemWidth,
+                                height: this.$.itemHeight,
+                                $dataItem: dataAdapter.getItemAt(i),
+                                $index: i,
+                                $viewIndex: i - startIndex
+                            });
+
+                            this._addRenderer(renderer, renderer.$.$viewIndex);
+                            addedRenderer.push(renderer);
+                        } else if (forceRefresh) {
+                            renderer.set("$dataItem", dataAdapter.getItemAt(i));
+                        }
+                    }
+
+                    for (i = 0; i < addedRenderer.length; i++) {
+                        this._positionRenderer(addedRenderer[i], addedRenderer);
+                    }
+
+                    this._onVisibleItemsUpdated(startIndex, endIndex);
+
                 }
-
-                this._onVisibleItemsUpdated(startIndex, endIndex);
-
             }
-
-
         },
 
         /***
@@ -408,7 +422,7 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
         _onKeyDown: function (e) {
             var keyCode = e.domEvent.keyCode;
             if (keyCode === 38 || keyCode === 40 || keyCode === 37 || keyCode === 39) {
-                var index = this.$currentSelectionIndex ? this.$currentSelectionIndex : 0;
+                var index = this.$currentSelectionIndex !== null ? this.$currentSelectionIndex : -1;
                 switch (keyCode) {
                     case 38: index -= this.$.cols; break;
                     case 40: index += this.$.cols; break;
@@ -427,7 +441,15 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
                 e.stopPropagation();
             }
         },
-
+        _clearSelection: function(){
+            for (var key in this.$selectionMap) {
+                if (this.$selectionMap.hasOwnProperty(key)) {
+                    this.$selectionMap[key].set({selected: false});
+                    this.$.selectedItems.remove(this.$selectionMap[key].$.data);
+                    delete this.$selectionMap[key];
+                }
+            }
+        },
         _selectItem: function (index, shiftDown, metaKey) {
             if(this.$.selectionMode === SELECTION_MODE_NONE){
                 return;
@@ -437,13 +459,7 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
                 metaKey = false;
             }
             if (!metaKey) {
-                for (var key in this.$selectionMap) {
-                    if (this.$selectionMap.hasOwnProperty(key)) {
-                        this.$selectionMap[key].set({selected: false});
-                        this.$.selectedItems.remove(this.$selectionMap[key].$.data);
-                        delete this.$selectionMap[key];
-                    }
-                }
+                this._clearSelection();
             }
 
             if (!shiftDown || metaKey) {
