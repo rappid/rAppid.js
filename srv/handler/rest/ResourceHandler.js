@@ -215,7 +215,7 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
             var self = this;
 
             // TODO: add fields/include option handling
-            model.fetch({}, function (err, model) {
+            model.fetch(null, function (err, model) {
                 if (!err) {
                     var processor = self.$restHandler.$restDataSource.getProcessorForModel(model);
 
