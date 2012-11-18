@@ -214,25 +214,30 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
          * @private
          */
         _show: function (context, callback) {
-            var modelFactory = this._getModelFactory();
-            var model = context.dataSource.createEntity(modelFactory, this.$resourceId);
-            var self = this;
+
+            var modelFactory = this._getModelFactory(),
+                model = context.dataSource.createEntity(modelFactory, this.$resourceId),
+                self = this;
 
             // TODO: add fields/include option handling
             model.fetch(null, function (err, model) {
                 if (!err) {
                     var processor = self.$restHandler.$restDataSource.getProcessorForModel(model);
 
-                    var body = JSON.stringify(processor.compose(model, null)),
+
+                    var body = JSON.stringify(processor.compose(model, "GET", {
+                            resourceHandler: self,
+                            baseUri: context.request.urlInfo.baseUri + self.$restHandler.$.path
+                        })),
                         response = context.response;
 
-                    response.writeHead(200, "", {
-                        'Content-Length': body.length,
+                    response.writeHead(200, {
                         'Content-Type': 'application/json'
                     });
 
                     response.write(body);
                     response.end();
+
                     callback(null);
                 } else {
                     var statusCode = 500;
