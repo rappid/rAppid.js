@@ -67,7 +67,7 @@ define(["require", "js/core/Component", "underscore", "moment", "flow"], functio
             var args = Array.prototype.slice.call(arguments);
             var key = args.shift(), isPlural;
             if (_.isNumber(key)) {
-                isPlural = key !== 1;
+                isPlural = (key !== 1);
                 key = args.shift();
             }
             if (isPlural) {
@@ -82,6 +82,28 @@ define(["require", "js/core/Component", "underscore", "moment", "flow"], functio
             }
 
             return value;
+        }.onChange("translations"),
+
+        ts: function() {
+            var args = Array.prototype.slice.call(arguments),
+                newArgs = [],
+                key = args.shift(),
+                num;
+
+            if (_.isNumber(key)) {
+                num = key;
+                key = args.shift();
+            }
+
+            // key = scope + "." + key
+            key += "." + args.shift();
+
+            newArgs = num ? [num] : [];
+            newArgs.push(key);
+            newArgs = newArgs.concat(args);
+
+            return this.t.apply(this, newArgs);
+
         }.onChange("translations"),
 
         f: function (value, format) {
