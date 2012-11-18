@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<ui:SelectClass xmlns="http://www.w3.org/1999/xhtml" xmlns:js="js.core" xmlns:ui="js.ui">
+    <div>
+        <a cid="selector" onclick="_handleSelect" onkeydown="_handleKey">
+            <span visible="{selectedItem}">
+                <ui:PlaceHolder name="selectedItem"/>
+            </span>
+            <span visible="{not(selectedItem)}">
+                <ui:PlaceHolder name="emptySelection"/>
+            </span>
+            <i class="icon-remove" visible="{selectedItem}" onclick="_clearSelection"/>
+            <div class="select-icon"></div>
+        </a>
+    </div>
+    <div class="select-container">
+        <input type="text" cid="inputField" value="{{searchTerm}}" onkeydown="_onKeyDown"/>
+        <ui:TileList
+                cid="tileList"
+                onclick="_onListClick"
+                onkeyup="_onEnter"
+                scrollContainerClass="nav nav-pills nav-stacked"
+                cols="1" data="{data}"
+                heightUpdatePolicy="out"
+                widthUpdatePolicy="out"
+                height="100" itemHeight="30" itemWidth="200" selectionMode="single">
+
+        </ui:TileList>
+    </div>
+    <js:Template name="selectedItem">
+        <span>
+            {item.name}
+        </span>
+    </js:Template>
+    <js:Template name="renderer">
+        <span>
+            {$dataItem.data}
+        </span>
+    </js:Template>
+    <js:Template name="emptySelection">
+        <span>
+            {placeHolder}
+        </span>
+    </js:Template>
+</ui:SelectClass>
