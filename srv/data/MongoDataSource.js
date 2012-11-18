@@ -1,9 +1,11 @@
-define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore'], function (DataSource, mongoDb, Model, flow, _) {
+define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore'], function (DataSource, MongoDb, Model, flow, _) {
 
     var ID_KEY = "_id",
         PARENT_ID_KEY = "_parent_id",
         PARENT_TYPE_KEY = "_parent_type",
-        TYPE_KEY = "_type";
+        TYPE_KEY = "_type",
+        REF_ID_KEY = "_ref_id",
+        undefined;
 
     var MongoDataProcessor = DataSource.Processor.inherit('src.data.MongoDataProcessor', {
         compose: function (model, action, options) {
@@ -44,7 +46,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore'],
                 var id = data[referenceKey];
                 delete data[referenceKey];
                 if (id) {
-                    if (_.isObject(id) && id instanceof mongoDb.ObjectID) {
+                    if (_.isObject(id) && id instanceof MongoDb.ObjectID) {
                         return {
                             id: id.toHexString()
                         }
@@ -60,22 +62,44 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore'],
             return this.callBase();
 
         },
-        parse: function (model, data, action, options) {
-            if (data['_id']) {
-                var _id = data['_id'];
 
-                if (_.isObject(_id) && _id instanceof mongoDb.ObjectID) {
-                    data['id'] = _id.toHexString();
-                } else {
-                    data['id'] = _id;
+        parse: function (model, data, action, options) {
+            
+            function readId(fromField) {
+                if (data[fromField] && !data.id) {
+                    var _id = data[fromField];
+
+                    if (_.isObject(_id) && _id instanceof MongoDb.ObjectID) {
+                        data['id'] = _id.toHexString();
+                    } else {
+                        data['id'] = _id;
+                    }
+                    delete data[fromField];
+
+                    return true;
                 }
-                delete data['_id'];
+
+                return false;
             }
+
+            readId(ID_KEY) || readId(REF_ID_KEY);
+
             delete data[PARENT_ID_KEY];
             delete data[PARENT_TYPE_KEY];
             delete data[TYPE_KEY];
+            delete data[REF_ID_KEY];
 
             return this.callBase(model, data, action, options);
+        },
+
+        _getIdForValue: function (value) {
+            var id = this.callBase();
+
+            if (id === undefined && value[REF_ID_KEY] instanceof  MongoDb.ObjectID) {
+                id = value[REF_ID_KEY].toHexString();
+            }
+
+            return id;
         }
     });
 
@@ -96,9 +120,9 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore'],
 
         connect: function (callback) {
 
-            var server = new mongoDb.Server(this.$.host, this.$.port, {});
+            var server = new MongoDb.Server(this.$.host, this.$.port, {});
 
-            var db = new mongoDb.Db(this.$.database, server, {});
+            var db = new MongoDb.Db(this.$.database, server, {});
             db.open(callback);
             return db;
         },
@@ -107,7 +131,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore'],
         },
 
         _createIdObject: function (id) {
-            return new mongoDb.ObjectID(id);
+            return new MongoDb.ObjectID(id);
         },
 
         loadModel: function (model, options, callback) {
@@ -137,7 +161,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore'],
             flow()
                 .seq("collection", function (cb) {
                     connection = self.connect(function (err, client) {
-                        cb(err, new mongoDb.Collection(client, configuration.$.collection));
+                        cb(err, new MongoDb.Collection(client, configuration.$.collection));
                     });
                 })
                 .seq(function (cb) {
@@ -195,7 +219,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore'],
                     connection = self.connect(function (err, client) {
                         var collection;
                         if (!err) {
-                            collection = new mongoDb.Collection(client, configuration.$.collection);
+                            collection = new MongoDb.Collection(client, configuration.$.collection);
                         }
 
                         cb(err, collection);
@@ -245,7 +269,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore'],
             flow()
                 .seq("collection", function (cb) {
                     connection = self.connect(function (err, client) {
-                        cb(err, new mongoDb.Collection(client, configuration.$.collection));
+                        cb(err, new MongoDb.Collection(client, configuration.$.collection));
                     });
                 })
                 .seq(function (cb) {
@@ -300,7 +324,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore'],
             flow()
                 .seq("collection", function (cb) {
                     connection = self.connect(function (err, client) {
-                        cb(err, new mongoDb.Collection(client, mongoCollection));
+                        cb(err, new MongoDb.Collection(client, mongoCollection));
                     });
                 })
                 .seq("cursor", function (cb) {
