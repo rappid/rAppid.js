@@ -121,7 +121,12 @@ define(['js/core/EventDispatcher','js/lib/parser','js/core/Binding', 'underscore
                 if (bindingDef.length) {
                     bindingDefinitions[i] = bindingDef;
                 } else {
-                    binding = this.create(bindingDef, scope, attrKey, bindingDefinitions);
+                    try {
+                        binding = this.create(bindingDef, scope, attrKey, bindingDefinitions);
+                    } catch (e) {
+                        throw new Error("Create binding for '" + text + "'. " + e.message);
+                    }
+
                     if (binding instanceof Binding) {
                         bindings.push(binding);
                         scope.$bindings[attrKey] = scope.$bindings[attrKey] || [];
