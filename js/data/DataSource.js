@@ -418,7 +418,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                                         throw "Factory for type '" + key + "' isn't an instance of Entity";
                                     }
 
-                                    entity = model.getContextForChild(factory).createEntity(factory, value[i].id);
+                                    entity = model.getContextForChild(factory).createEntity(factory, this._getIdForValue(value[i]));
                                     entity.set(this._parseModel(entity, value[i], action, options));
 
                                     if (entity instanceof Entity && !(entity instanceof Model)) {
@@ -460,7 +460,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                                 throw "Factory for type '" + key + "' isn't an instance of Entity";
                             }
 
-                            data[key] = entity = model.getContextForChild(factory).createEntity(factory, value.id);
+                            data[key] = entity = model.getContextForChild(factory).createEntity(factory, this._getIdForValue(value));
                             entity.set(this._parseModel(entity, value, action, options));
 
                             if (entity instanceof Entity && !(entity instanceof Model)) {
@@ -473,6 +473,11 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
 
                 return model.parse(data);
             },
+
+            _getIdForValue: function(value) {
+                return value.id;
+            },
+
             /***
              * Parses the data to a given model
              * @param {js.data.Model} model The model which provides the schema
@@ -503,7 +508,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
 
                 for (var i = 0; i < data.length; i++) {
                     var value = data[i];
-                    var entity = collection.getContextForChild(factory).createEntity(factory, value.id);
+                    var entity = collection.getContextForChild(factory).createEntity(factory, this._getIdForValue(value));
                     entity.set(this._parseModel(entity, value, action, options));
                     data[i] = entity;
                 }
