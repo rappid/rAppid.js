@@ -14,7 +14,7 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
     };
 
     var AUTO_GENERATE = {
-        CREATION_DATE : "CREATION_DATE",
+        CREATION_DATE: "CREATION_DATE",
         UPDATED_DATE: "UPDATED_DATE"
     };
 
@@ -64,7 +64,7 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
                 } else {
                     throw "status '" + status + "' doesn't allow save";
                 }
-            } catch (e) {
+            } catch(e) {
                 if (callback) {
                     callback(e);
                 }
@@ -76,22 +76,22 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
          * @param options
          * @param callback
          */
-        validateAndSave: function(options, callback) {
+        validateAndSave: function (options, callback) {
             var self = this;
 
             flow()
-                .seq(function(cb) {
+                .seq(function (cb) {
                     self.validate(options, cb);
                 })
-                .seq(function(cb) {
-                    if(self.isValid()){
+                .seq(function (cb) {
+                    if (self.isValid()) {
                         self.save(options, cb)
-                    }else{
+                    } else {
                         cb("Model is not valid!");
                     }
                 })
-                .exec(function(err){
-                    callback(err,self);
+                .exec(function (err) {
+                    callback(err, self);
                 });
         },
 
@@ -179,15 +179,15 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
                 } else {
                     throw new Error("status '" + status + "' doesn't allow delete");
                 }
-            } catch (e) {
+            } catch(e) {
                 callback && callback(e);
             }
         },
-        validateSubEntity: function(entity, callback){
-            if(entity instanceof Model){
+        validateSubEntity: function (entity, callback) {
+            if (entity instanceof Model) {
                 // does nothing :)
                 callback();
-            }else{
+            } else {
                 this.callBase();
             }
         },
@@ -206,7 +206,7 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
 
     function fetchSubModels(attributes, subModelTypes, delegates) {
         _.each(attributes, function (value, key) {
-            if (value instanceof Model) {
+            if (value instanceof Model || value instanceof require('js/data/Collection')) {
                 // check if the model is required
                 var subModelTypeEntry = subModelTypes[key];
 
@@ -223,6 +223,7 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
             } else if (value instanceof Object) {
                 // TODO: causes in some cases an unfinity loop
                 // fetchSubModels(value, subModelTypes, delegates);
+                console.log(value);
             }
         });
     }
@@ -272,30 +273,19 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
     }
 
     Model.createSubModelLoadingChain = function (model, subModels) {
-        var ret = {},
-            subModelParser = /^([\w][\w.]*)(?:\/([\w][\w.]*))?$/;
+        var ret = {};
 
         _.each(subModels, function (item) {
-            var parts = subModelParser.exec(item);
-            if (parts) {
-                var subModelType = parts[1];
-                var subModelSubType = parts[2];
-
-                var subModelTypeEntry = ret[subModelType];
-                if (!subModelTypeEntry) {
-                    // create an entry
-                    subModelTypeEntry = {
-                        type: subModelType,
-                        found: false,
-                        subModels: []
-                    };
+            if (item) {
+                var parts = item.split("/");
+                var subModelKey = parts.shift(), subModelEntry = ret[subModelKey] || {};
+                ret[subModelKey] = subModelEntry;
+                subModelEntry.found = false;
+                subModelEntry.type = subModelKey;
+                subModelEntry.subModels = [] || subModelEntry.subModels;
+                if (parts.length > 0) {
+                    subModelEntry.subModels.push(parts.join("/"));
                 }
-
-                // add required subModelTypeStrings
-                if (subModelSubType) {
-                    subModelTypeEntry.subModels.push(subModelSubType);
-                }
-                ret[subModelType] = subModelTypeEntry;
             }
         });
 
