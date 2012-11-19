@@ -6,7 +6,8 @@ define(["js/ui/View", 'js/data/Collection', 'js/core/List'], function (View, Col
                 selectedItem: null,
                 searchTerm: "",
                 placeHolder: 'Select Something',
-                queryCreator: null
+                queryCreator: null,
+                itemHeight: 30
             },
 
             ctor: function () {
@@ -20,12 +21,6 @@ define(["js/ui/View", 'js/data/Collection', 'js/core/List'], function (View, Col
             _initializationComplete: function () {
                 this.$.tileList.addChild(this.getTemplate('renderer'));
                 this.callBase();
-            },
-
-            _commitData: function(data){
-                if (data instanceof Collection) {
-                    data.fetch();
-                }
             },
 
             _bindDomEvents: function(el){
@@ -48,7 +43,9 @@ define(["js/ui/View", 'js/data/Collection', 'js/core/List'], function (View, Col
                     e.target.$el.blur();
                 }
             },
-
+            _onContainerSelect: function(e){
+                e.stopPropagation();
+            },
             _onEnter: function (e) {
                 if (e.domEvent.keyCode === 13) {
                     this._select();

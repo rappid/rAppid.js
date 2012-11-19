@@ -2,17 +2,17 @@
 <ui:SelectClass xmlns="http://www.w3.org/1999/xhtml" xmlns:js="js.core" xmlns:ui="js.ui">
     <div>
         <a cid="selector" onclick="_handleSelect" onkeydown="_handleKey">
+            <i class="icon-remove pull-right" visible="{selectedItem}" onclick="_clearSelection"/>
             <span visible="{selectedItem}">
                 <ui:PlaceHolder name="selectedItem"/>
             </span>
             <span visible="{not(selectedItem)}">
                 <ui:PlaceHolder name="emptySelection"/>
             </span>
-            <i class="icon-remove" visible="{selectedItem}" onclick="_clearSelection"/>
-            <div class="select-icon"></div>
+            <div class="select-icon"/>
         </a>
     </div>
-    <div class="select-container">
+    <div class="select-container" onclick="_onContainerSelect">
         <input type="text" cid="inputField" value="{{searchTerm}}" onkeydown="_onKeyDown"/>
         <ui:TileList
                 cid="tileList"
@@ -22,7 +22,7 @@
                 cols="1" data="{data}"
                 heightUpdatePolicy="out"
                 widthUpdatePolicy="out"
-                height="100" itemHeight="30" itemWidth="200" selectionMode="single">
+                height="200" itemHeight="{itemHeight}" itemWidth="null" selectionMode="single">
 
         </ui:TileList>
     </div>
@@ -33,7 +33,7 @@
     </js:Template>
     <js:Template name="renderer">
         <span>
-            {$dataItem.data}
+            {item}
         </span>
     </js:Template>
     <js:Template name="emptySelection">
