@@ -1,6 +1,6 @@
-define(['js/html/HtmlElement'], function(HtmlElement) {
+define(['js/ui/View'], function(View) {
 
-    return HtmlElement.inherit('js.core.Window', {
+    return View.inherit('js.core.Window', {
 
         defaults: {
             tagName: 'div',
