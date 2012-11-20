@@ -110,6 +110,17 @@ define(
                 }
                 this.$renderedItems = [];
                 this.$renderedItemsMap = {};
+                this.$indexOffset = 0;
+                if(this.$children.length > 0){
+                    var child, elIndex;
+                    for(var k = 0; k < this.$children.length; k++){
+                        child = this.$children[k];
+                        elIndex = this.$elements.indexOf(child);
+                        if(elIndex === k){
+                            this.$indexOffset++;
+                        }
+                    }
+                }
                 for (var i = 0; i < items.length; i++) {
                     this._innerRenderItem(items[i], i);
                 }
@@ -187,7 +198,7 @@ define(
             _innerRenderItem: function (item, index) {
                 var component = this._createComponentForItem(item, index);
                 this._cacheComponentForItem(item,component);
-                this.addChild(component, {childIndex: index});
+                this.addChild(component, {childIndex: index + this.$indexOffset});
             },
 
             /***
