@@ -225,13 +225,14 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
              * @return {JSON} options
              */
             compose: function (entity, action, options) {
+
                 var ret = {},
                     data = entity.compose(action, options),
                     schemaDefinition,
                     schemaType;
 
                 for (var key in data) {
-                    if (data.hasOwnProperty(key)) {
+                    if (data.hasOwnProperty(key) && (!options || !options.includeInIndex || _.contains(options.includeInIndex, key))) {
                         var value = this._getCompositionValue(data[key], key, action, options);
                         if (value !== undefined) {
                             schemaDefinition = entity.schema[key];
@@ -251,9 +252,36 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
              */
             composeCollection: function (collection, action, options) {
                 var results = [];
-                var self = this;
+                var self = this,
+                    includeInIndexCache = {};
+
+                options = options || {};
 
                 collection.each(function (item) {
+
+                    var includeInIndex,
+                        modelClassName = item.constructor.name;
+
+                    if (modelClassName) {
+                        if (includeInIndexCache.hasOwnProperty(modelClassName)) {
+                            includeInIndex = includeInIndexCache[modelClassName];
+                        } else {
+                            includeInIndex = ["id"];
+
+                            for (var key in item.schema) {
+                                if (item.schema.hasOwnProperty(key)) {
+                                    if (item.schema[key].includeInIndex === true) {
+                                        includeInIndex.push(key);
+                                    }
+                                }
+                            }
+
+                            includeInIndexCache[modelClassName] = includeInIndex;
+                        }
+                    }
+
+                    options.includeInIndex = includeInIndex;
+
                     results.push(self.compose(item, action, options));
                 });
 

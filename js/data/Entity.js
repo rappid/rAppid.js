@@ -36,6 +36,8 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
             $isDependentObject: true,
 
             _extendSchema: function () {
+
+                // TODO: add caching for schema
                 var base = this.base;
 
                 while (base instanceof Entity) {
@@ -50,6 +52,7 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
 
                 var schemaDefaults = {
                     required: true,
+                    includeInIndex: false,
                     _rewritten: true
                 }, schemaObject;
 
