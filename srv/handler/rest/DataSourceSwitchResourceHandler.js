@@ -3,28 +3,20 @@ define(['srv/handler/rest/ResourceHandler'], function (ResourceHandler) {
 
         defaults: {
             prefix: null,
-            suffix: null,
-            dataSourceName: null
+            suffix: null
         },
 
         getDataSource: function (context, childResource) {
 
             if (childResource) {
-                for (var i = 0; i < this.$restHandler.$dataSources.length; i++) {
-                    var dataSource = this.$restHandler.$dataSources[i];
-                    if (dataSource.$.name === this.$.dataSourceName) {
+                var dataSource = this.$restHandler.$dataSources[0];
 
-                        // create a clone
-                        dataSource = dataSource.clone();
-                        dataSource.set('database', this.$.prefix + this.$resourceId);
+                // create a clone
+                dataSource = dataSource.clone();
+                dataSource.set('database', this.$.prefix + this.$resourceId);
 
-                        return dataSource;
-                    }
-                }
-
-                return null;
+                return dataSource;
             }
-
             return this.$restHandler.getDataSource(context);
         }
 
