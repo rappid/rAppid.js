@@ -133,7 +133,7 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
                     // call compose
                     var processor = self.$restHandler.$restDataSource.getProcessorForCollection(collection);
 
-                    results = processor.composeCollection(collection, null, options);
+                    results = processor.composeCollection(collection, null, _.defaults(options, self._getCompositionOptions(context)));
 
                     var res = {
                         count: collection.$itemsCount,
@@ -225,10 +225,7 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
                     var processor = self.$restHandler.$restDataSource.getProcessorForModel(model);
 
 
-                    var body = JSON.stringify(processor.compose(model, "GET", {
-                            resourceHandler: self,
-                            baseUri: context.request.urlInfo.baseUri + self.$restHandler.$.path
-                        })),
+                    var body = JSON.stringify(processor.compose(model, "GET", self._getCompositionOptions(context))),
                         response = context.response;
 
                     response.writeHead(200, {
@@ -247,6 +244,13 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
                     callback(new HttpError(err, statusCode));
                 }
             });
+        },
+
+        _getCompositionOptions: function(context) {
+            return {
+                resourceHandler: this,
+                baseUri: context.request.urlInfo.baseUri + this.$restHandler.$.path
+            };
         },
 
         /***
