@@ -13,7 +13,7 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
                 },
                 configuration = this.$dataSource.getConfigurationForModelClass(model.factory);
 
-            if (options.baseUri && configuration) {
+            if (options && options.baseUri && configuration) {
                 ret.href = options.baseUri + "/" + configuration.$.path + "/" + model.$.id
             }
 
