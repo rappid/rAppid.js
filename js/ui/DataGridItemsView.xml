@@ -9,7 +9,7 @@
     </js:Template>
     <div cid="$scrollContainer" position="relative">
         <table cid="$table" componentClass="table" onkeydown="_onKeyDown" tabindex="1">
-            <thead style="display: none;">
+            <thead display="none">
                 <ui:ItemsView items="{columns}" tagName="tr" itemKey="column">
                     <js:Template name="item">
                         <td width="{column.width}">{column.title}</td>

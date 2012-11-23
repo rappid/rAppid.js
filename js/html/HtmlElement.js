@@ -162,7 +162,7 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
          */
         _renderWidth: function (width) {
 
-            if (typeof(width) !== "string") {
+            if (width !== undefined && width !== null && typeof(width) !== "string") {
                 width += "px";
             }
 
@@ -176,7 +176,7 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
          */
         _renderHeight: function (height) {
 
-            if (typeof(height) !== "string") {
+            if (height !== undefined && height !== null && typeof(height) !== "string") {
                 // TODO: check browser
                 height = Math.min(17895697, height); // max height in firefox
                 height += "px";
@@ -195,7 +195,7 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
             var policy = this.$[name + 'UpdatePolicy'];
 
             if (policy === POLICY_OUT || policy === POLICY_BOTH) {
-                if(value != null){
+                if(value != null && value !== undefined){
                     this.$el.style[name] = value;
                 }
             }

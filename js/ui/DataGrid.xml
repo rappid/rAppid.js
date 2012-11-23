@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <ui:DataGridClass xmlns="http://www.w3.org/1999/xhtml" xmlns:js="js.core" xmlns:ui="js.ui" class="data-grid">
-    <table class="data-grid-head" style="margin-bottom: 0;">
+    <table class="data-grid-head" margin-bottom="0">
         <ui:ItemsView items="{$columns}" itemKey="column" tagName="tr">
             <js:Template name="item">
-                <th style="width: {column.width};" onclick="_handleColumnClick">
+                <th width="{column.width}" onclick="_handleColumnClick">
                     <i class="pull-right icon-chevron-{column.sortDirectionStatus()}" visible="{column.isSorted()}"/>
                     <div>{column.title}</div>
                 </th>
