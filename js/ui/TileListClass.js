@@ -38,7 +38,9 @@ define(['js/ui/VirtualItemsView'], function(VirtualItemsView) {
             var template = this.$templates['rendererContainer'];
 
             if (template) {
-                return (template.createComponents(attributes, parentScope)[0]);
+                var container = (template.createComponents(attributes, parentScope)[0]);
+                container.$classAttributes.push('item');
+                return container;
             }
 
             return null;
