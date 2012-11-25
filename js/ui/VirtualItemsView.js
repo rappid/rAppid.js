@@ -646,10 +646,7 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
             } else {
                 dataItem.set('$status',STATUS_LOADING);
                 // add callback after fetch completes, which sets the data
-                pageEntry[index] = function () {
-                    dataItem.set('data', self.$data.at(index));
-                    dataItem.set('$status', STATUS_LOADED);
-                };
+                pageEntry[index] = dataItem;
 
                 if (firstTimeToFetchPage) {
 
@@ -676,8 +673,11 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
                                         var pageEntry = self.$pages[pageIndex];
                                         for (var key in pageEntry) {
                                             if (pageEntry.hasOwnProperty(key)) {
-                                                (pageEntry[key])();
-                                                delete pageEntry[key];
+                                                pageEntry[key].set({
+                                                    data: self.$data.at(key),
+                                                    $status: STATUS_LOADED
+                                                });
+                                                pageEntry[key] = undefined;
                                             }
                                         }
 
@@ -694,7 +694,7 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
                                 });
                             } else {
                                 // we don't need to fetch this page any more
-                                delete self.$pages[pageIndex];
+                                self.$pages[pageIndex] = undefined;
                             }
 
                         }, self.$virtualItemsView.$.fetchPageDelay);
