@@ -61,7 +61,7 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
 
         $classAttributes: ['heightUpdatePolicy', 'widthUpdatePolicy'],
 
-        $excludedStyleAttributes: ['src'],
+        $excludedStyleAttributes: ['src','content'],
 
         $renderAsStyleWithPx: ['left', 'top'],
         /**
