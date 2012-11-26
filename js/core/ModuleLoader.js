@@ -155,6 +155,10 @@ define(["require", "js/html/HtmlElement", "js/ui/ContentPlaceHolder", "js/core/M
                             var moduleInstance = new moduleBaseClass(null, false, self.$stage, null, null);
 
                             if (moduleInstance instanceof Module) {
+                                if (typeof(CollectGarbage) == "function"){
+                                    CollectGarbage();
+                                }
+
                                 moduleInstance._initialize("auto");
 
                                 // cache instance
