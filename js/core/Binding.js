@@ -16,6 +16,9 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
         }
         return str.join(".");
     };
+
+    var bindingsDestroyed = 0;
+
     var Bindable;
     var Binding = EventDispatcher.inherit("js.core.Binding",
         /** @lends Binding */
@@ -91,7 +94,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
                             this.$events.push({eventType: event, callback: this._callback});
                         }
 
-
+                        // TODO: remove this closure
                         var cb = function () {
                             self.trigger();
                         };
@@ -133,9 +136,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
                     }
                 }
 
-                scope.bind('destroy', function () {
-                    self.destroy();
-                });
+                scope.bind('destroy', this.destroy, this);
 
                 this._createSubBinding();
             },
@@ -245,15 +246,15 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
                     e = this.$events[j];
                     this.$.scope.unbind(e.eventType, e.callback, this);
                 }
-                delete this.$events;
+
+                this.$.scope.unbind('destroy', this.destroy, this);
 
                 if (this.$.twoWay === true) {
                     this.$.target.unbind(this.$.targetEvent, this._revCallback, this);
                 }
                 if (this.$subBinding) {
                     this.$subBinding.destroy();
-
-                    delete this.$subBinding;
+                    this.$subBinding = undefined;
                 }
 
                 // destroy parameter bindings
@@ -263,9 +264,18 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
                         par.destroy();
                     }
                 }
-                delete this.$jsonObject;
-                delete this.$parameters;
-                delete this.$;
+
+                this.$ = null;
+
+                this.callBase();
+
+                bindingsDestroyed++;
+                if(bindingsDestroyed === 500){
+                    if (typeof(CollectGarbage) == "function") {
+                        CollectGarbage();
+                    }
+                    bindingsDestroyed = 0;
+                }
             },
             /**
              * Returns an array with values of all function parameters
@@ -293,7 +303,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
                 } else {
                     if (this.$.fnc) {
                         return this.transform(this.$.fnc.apply(this.$.scope, this._getFncParameters()));
-                    } else if (this.$.path.length == 1) {
+                    } else if (this.$.path.length === 1) {
                         return this.transform(this.$.scope.get(this.$.key.name));
                     } else if(this.$jsonObject) {
                         return this.transform(this.$.scope.get(this.$jsonObject, this.$.path.slice(1)));
@@ -323,7 +333,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
                 if (this.$.targetKey) {
                     this.$.target.set(this.$.targetKey, val);
                 } else if (this.$.callback) {
-                    this.$.callback.call(this.$.target, val);
+                    this.$.callback.call(this.$.target, val, this);
                 }
 
             },
