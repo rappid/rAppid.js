@@ -118,7 +118,7 @@ define(["js/core/Bindable", "underscore", "js/core/BindingCreator"], function (B
 
                 this._initializeEventAttributes(this.$);
 
-                if (this == this.$rootScope || (this.$parentScope && this.$parentScope.$initialized) || this.$descriptor === false) {
+                if (this === this.$rootScope || (this.$parentScope && this.$parentScope.$initialized) || this.$descriptor === false) {
                     this._initializeBindings();
                 }
 
