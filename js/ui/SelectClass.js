@@ -140,6 +140,7 @@ define(["js/ui/View", 'js/data/Collection', 'js/core/List'], function (View, Col
             _renderOpen: function (open) {
                 if (open) {
                     this.addClass('open');
+                    this.$.inputField.$el.focus();
                     this.$.inputField.$el.select();
                 } else {
                     this.removeClass('open');
