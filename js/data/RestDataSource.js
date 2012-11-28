@@ -27,7 +27,8 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
             endPoint: null,
             gateway: null,
             parsePayloadOnCreate: true,
-            parsePayloadOnUpdate: true
+            parsePayloadOnUpdate: true,
+            useSafeHttpMethods: false
         },
 
         ctor: function () {
@@ -78,7 +79,30 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
          * @return {Object}
          */
         getQueryParameter: function (action) {
-            return {};
+
+            var params = {};
+
+            if (this.$.useSafeHttpMethods) {
+                if (action === RestDataSource.METHOD.DELETE) {
+                    params.method = "delete"
+                } else if (action === RestDataSource.METHOD.PUT) {
+                    params.method = "put";
+                }
+            }
+
+            return params;
+        },
+
+
+        _getHttpMethod: function (method) {
+
+            if (this.$.useSafeHttpMethods) {
+                if (method === RestDataSource.METHOD.PUT || method === RestDataSource.METHOD.DELETE) {
+                    return RestDataSource.METHOD.POST;
+                }
+            }
+
+            return method
         },
 
         getPathComponentsForModel: function (model) {
@@ -341,6 +365,8 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
                     var params = _.defaults(model.$context.getQueryParameter(),
                         self.getQueryParameter(method));
 
+                    method = self._getHttpMethod(method);
+
                     // TODO: create hook, which can modify url and queryParameter
 
                     var data = processor.compose(model, action, options);
@@ -394,9 +420,9 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
                 }
             }
         },
-        loadCollectionPage: function (page, options, callback) {
+        loadCollectionPage: function (collectionPage, options, callback) {
 
-            var rootCollection = page.getRootCollection();
+            var rootCollection = collectionPage.getRootCollection();
             var config = this.$dataSourceConfiguration.getConfigurationForModelClass(rootCollection.$modelFactory);
 
             if (!config) {
@@ -423,12 +449,12 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
 
             _.defaults(params, (options || {}).params);
 
-            if (page.$limit) {
-                params.limit = page.$limit;
+            if (collectionPage.$limit) {
+                params.limit = collectionPage.$limit;
             }
 
-            if (page.$offset) {
-                params.offset = page.$offset;
+            if (collectionPage.$offset) {
+                params.offset = collectionPage.$offset;
             }
 
             if (options.noCache) {
@@ -438,7 +464,7 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
 
 
             // get queryParameter
-            params = _.defaults(params, page.$collection.getQueryParameters(RestDataSource.METHOD.GET), rootCollection.$context.getQueryParameter(), this.getQueryParameter(RestDataSource.METHOD.GET));
+            params = _.defaults(params, collectionPage.$collection.getQueryParameters(RestDataSource.METHOD.GET), rootCollection.$context.getQueryParameter(), this.getQueryParameter(RestDataSource.METHOD.GET));
 
             for(var key in params){
                 if(params.hasOwnProperty(key)){
@@ -451,7 +477,7 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
             params = this._translateQueryObject(params);
 
             // todo: add hook
-            var sortParameters = page.$collection.getSortParameters(RestDataSource.METHOD.GET);
+            var sortParameters = collectionPage.$collection.getSortParameters(RestDataSource.METHOD.GET);
             if (sortParameters) {
                 params["sort"] = JSON.stringify(sortParameters);
             }
@@ -481,33 +507,33 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
                         var payload = formatProcessor.deserialize(xhr.responses.text);
 
                         // extract meta data
-                        var metaData = self.extractListMetaData(page, payload, options);
+                        var metaData = self.extractListMetaData(collectionPage, payload, options);
 
                         if (metaData && metaData.hasOwnProperty('count')) {
                             // set itemsCount in collection for page calculation
-                            page.$collection.set('$itemsCount', metaData.count);
+                            collectionPage.$collection.set('$itemsCount', metaData.count);
                         }
 
                         // extract data from list result
-                        var data = self.extractListData(page, payload, options);
+                        var data = self.extractListData(collectionPage, payload, options);
 
-                        var processor = self.getProcessorForCollection(page);
+                        var processor = self.getProcessorForCollection(collectionPage);
 
-                        data = processor.parseCollection(page.getRootCollection(), data, DataSource.ACTION.LOAD, options);
+                        data = processor.parseCollection(collectionPage.getRootCollection(), data, DataSource.ACTION.LOAD, options);
 
-                        page.add(data);
+                        collectionPage.add(data);
 
-                        callback(null, page, options)
+                        callback(null, collectionPage, options)
 
                     } catch (e) {
                         self.log(e, 'error');
-                        callback(e, page, options);
+                        callback(e, collectionPage, options);
                     }
 
                 } else {
                     // TODO: better error handling
                     err = err || "wrong status code";
-                    callback(err, page, options);
+                    callback(err, collectionPage, options);
                 }
             });
         },
@@ -524,6 +550,8 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
             // get queryParameter
             var params = _.defaults(model.$context.getQueryParameter(),
                 this.getQueryParameter(method));
+
+            method = this._getHttpMethod(method);
 
             this.$stage.$applicationContext.ajax(url, {
                 type: method,
