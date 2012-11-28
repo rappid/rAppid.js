@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<ui:View xmlns="http://www.w3.org/1999/xhtml" xmlns:js="js.core" xmlns:ui="js.ui" componentClass="progress">
+    <js:Script type="text/javascript">
+        <![CDATA[
+        (function (Content, Button, _) {
+            return {
+                defaults: {
+                    min: 0,
+                    max: 1,
+                    value: 0
+                },
+                _barWidth: function(){
+                    if(this.$.min >= this.$.max){
+                        return 0;
+                    }
+
+                    var width = (this.$.value / (this.$.max - this.$.min)) * 100;
+
+                    width = Math.round(width * 100) / 100;
+
+                    return width + "%";
+                }.onChange('min','max','value')
+            }
+        })
+        ]]>
+    </js:Script>
+    <js:Template name="layout">
+        <div class="bar" width="{_barWidth()}"/>
+    </js:Template>
+</ui:View>
