@@ -16,18 +16,10 @@ define(["js/conf/Configuration", "js/data/Model"], function (Configuration, Mode
                 throw "no modelClassName defined for '" + this.$.path + "'.";
             }
 
-            if(!this.$.collectionClassName){
-                this.$.collectionClassName = "js.data.Collection["+this.$.modelClassName+"]";
-            }
-
         },
 
         getConfigurationForModelClassName: function (modelClassName) {
             return this.getConfigurationByKeyValue("modelClassName",modelClassName);
-        },
-
-        getConfigurationForCollectionClassName: function (collectionClassName) {
-            return this.getConfigurationByKeyValue("collectionClassName", collectionClassName);
         },
 
         /**
