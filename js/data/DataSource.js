@@ -721,19 +721,14 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
             getContextForChild: function (childFactory, requestor) {
                 if (childFactory) {
                     var configuration,
-                        className = childFactory.prototype.constructor.name,
                         key;
+
                     if (childFactory.classof(Model)) {
                         configuration = this.getConfigurationForModelClass(childFactory);
                     } else if (childFactory.classof(Collection)) {
-                        configuration = this.getConfigurationForCollectionClassName(className);
+                        configuration = this.getConfigurationForModelClass(childFactory.prototype.$modelFactory);
                     }
 
-                    if (requestor instanceof Collection) {
-                        key = "collectionClassName";
-                    } else if (requestor instanceof Model) {
-                        key = "modelClassName";
-                    }
 
                     if (configuration) {
 
@@ -745,7 +740,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                                     break;
                                 }
 
-                                if (configuration.$[key] === requestor.constructor.name) {
+                                if (configuration.$["modelClassName"] === requestor.constructor.name) {
                                     // childFactory is configured as descendant of the requestor
                                     // so the childFactory will be created in the context of the requestor
                                     return this.getContext(requestor, requestor.$context);
