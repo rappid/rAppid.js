@@ -34,7 +34,9 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
         ctor: function () {
             this.callBase();
         },
+
         $defaultProcessorFactory: RestDataProcessor,
+
         initialize: function () {
 
             if (!this.$.endPoint) {
@@ -75,10 +77,11 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
 
         /***
          * global query parameter for each REST action
-         * @action {String} Rest action [GET, PUT, DELETE, POST]
+         * @param action {String} Rest action [GET, PUT, DELETE, POST]
+         * @param resource {js.data.Model|js.data.Collection} model or collection which gets loaded
          * @return {Object}
          */
-        getQueryParameter: function (action) {
+        getQueryParameter: function (action, resource) {
 
             var params = {};
 
@@ -105,22 +108,46 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
             return method
         },
 
+
+        getPathComponentsForResource: function(resource) {
+
+            if (resource instanceof Collection) {
+                return this.getPathComponentsForModelClass(resource.$modelFactory);
+            } else if (resource instanceof Model) {
+                return this.getPathComponentsForModel(resource);
+            }
+
+            return null;
+        },
+
         getPathComponentsForModel: function (model) {
 
             if (model) {
-                var config = this.$dataSourceConfiguration.getConfigurationForModelClass(model.factory);
+
+                var path = this.getPathComponentsForModelClass(model.factory);
+                if (path) {
+                    if (!model.isNew()) {
+                        path.push(model.$.id);
+                    }
+
+                    return path;
+                }
+
+            }
+
+            return null;
+        },
+
+        getPathComponentsForModelClass: function (modelClass) {
+
+            if (modelClass) {
+                var config = this.$dataSourceConfiguration.getConfigurationForModelClass(modelClass);
+
                 if (config) {
 
                     var path = config.$.path;
-
                     if (path) {
-                        var ret = [path];
-
-                        if (!model.isNew()) {
-                            ret.push(model.$.id);
-                        }
-
-                        return ret;
+                        return [path];
                     }
                 }
             }
@@ -128,19 +155,20 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
             return null;
         },
 
-        _buildUriForModel: function (model) {
-            // map model to url
-            var modelPathComponents = this.getPathComponentsForModel(model);
+        _buildUriForResource: function (resource, endPoint) {
 
-            if (!modelPathComponents) {
-                callback("path for model unknown", null, options);
-                return;
+
+            // map resource to url
+            var pathComponents = this.getPathComponentsForResource(resource);
+
+            if (!pathComponents) {
+                throw new Error("path for resource unknown");
             }
 
             // build uri
-            var uri = [this.$.gateway];
-            uri = uri.concat(model.$context.getPathComponents());
-            uri = uri.concat(modelPathComponents);
+            var uri = [endPoint || this.$.gateway];
+            uri = uri.concat(resource.$context.getPathComponents());
+            uri = uri.concat(pathComponents);
 
             if (this.$.suffix) {
                 uri[uri.length - 1] = uri[uri.length - 1] + "." + this.$.suffix;
@@ -148,6 +176,7 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
 
             return uri.join("/");
         },
+
         /**
          *
          * @param model
@@ -158,11 +187,11 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
             var self = this;
 
             // create url
-            var url = this._buildUriForModel(model);
+            var url = this._buildUriForResource(model);
 
             // get queryParameter
             var params = _.defaults(model.$context.getQueryParameter(),
-                this.getQueryParameter(RestDataSource.METHOD.GET));
+                this.getQueryParameter(RestDataSource.METHOD.GET, model));
 
             if (options.noCache) {
                 params.timestamp = (new Date().getTime());
@@ -359,11 +388,11 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
                 })
                 .seq(function (cb) {
                     // create url
-                    var url = self._buildUriForModel(model);
+                    var url = self._buildUriForResource(model);
 
                     // get queryParameter
                     var params = _.defaults(model.$context.getQueryParameter(),
-                        self.getQueryParameter(method));
+                        self.getQueryParameter(method, model));
 
                     method = self._getHttpMethod(method);
 
@@ -420,6 +449,7 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
                 }
             }
         },
+
         loadCollectionPage: function (collectionPage, options, callback) {
 
             var rootCollection = collectionPage.getRootCollection();
@@ -434,15 +464,6 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
             if (!modelPathComponents) {
                 callback("path for model unknown", null, options);
                 return;
-            }
-
-            // build uri
-            var uri = [this.$.gateway];
-            uri = uri.concat(rootCollection.$context.getPathComponents());
-            uri = uri.concat(modelPathComponents);
-
-            if (this.$.suffix) {
-                uri[uri.length - 1] = uri[uri.length - 1] + "." + this.$.suffix;
             }
 
             var params = {};
@@ -462,9 +483,10 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
             }
             params.fullData = options.fullData || false;
 
-
             // get queryParameter
-            params = _.defaults(params, collectionPage.$collection.getQueryParameters(RestDataSource.METHOD.GET), rootCollection.$context.getQueryParameter(), this.getQueryParameter(RestDataSource.METHOD.GET));
+            params = _.defaults(params, collectionPage.$collection.getQueryParameters(RestDataSource.METHOD.GET),
+                rootCollection.$context.getQueryParameter(),
+                this.getQueryParameter(RestDataSource.METHOD.GET, rootCollection));
 
             for(var key in params){
                 if(params.hasOwnProperty(key)){
@@ -483,8 +505,7 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
             }
 
             // create url
-            var url = uri.join("/");
-
+            var url = this._buildUriForResource(rootCollection);
             var self = this;
 
             // send request
@@ -543,13 +564,13 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
             };
 
             // create url
-            var url = this._buildUriForModel(model);
+            var url = this._buildUriForResource(model);
 
             var method = RestDataSource.METHOD.DELETE;
 
             // get queryParameter
             var params = _.defaults(model.$context.getQueryParameter(),
-                this.getQueryParameter(method));
+                this.getQueryParameter(method, model));
 
             method = this._getHttpMethod(method);
 
