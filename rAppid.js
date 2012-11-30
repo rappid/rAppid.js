@@ -266,7 +266,7 @@
 
             underscore.extend(s, rAppid.ajaxSettings, options);
 
-            if (s.data && !underscore.isString(s.data)) {
+            if (s.data && !(underscore.isString(s.data) || (typeof FormData !== "undefined" && s.data instanceof FormData))) {
                 throw "data must be a string";
             }
 
@@ -279,6 +279,7 @@
 
             // create new xhr
             var xhr = s.xhr();
+            options && options.xhrCreated instanceof Function && options.xhrCreated(xhr);
             xhr.open(s.type, s.url, s.async);
 
             if (s.hasContent && s.contentType !== false) {
@@ -300,6 +301,7 @@
             } catch(e) {
             } // FF3
 
+            options && options.xhrBeforeSend instanceof Function && options.xhrBeforeSend(xhr);
             xhr.send(s.data);
 
             var xhrCallback = function (_, isAbort) {

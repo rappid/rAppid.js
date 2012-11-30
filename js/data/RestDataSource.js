@@ -368,6 +368,7 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
         },
 
         _saveModel: function (model, options, callback) {
+            options = options || {};
 
             var action = DataSource.ACTION.UPDATE,
                 method = RestDataSource.METHOD.PUT;
@@ -378,7 +379,7 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
             }
 
             var processor = this.getProcessorForModel(model, options);
-            var formatProcessor = this.getFormatProcessor(action);
+            var formatProcessor = this.getFormatProcessor(action, model);
             var self = this;
 
             // call save of the processor to save sub models
@@ -408,6 +409,8 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
                         type: method,
                         queryParameter: params,
                         data: payload,
+                        xhrCreated: options.xhrCreated,
+                        xhrBeforeSend: options.xhrBeforeSend,
                         contentType: formatProcessor.getContentType()
                     }, function (err, xhr) {
 
