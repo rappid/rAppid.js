@@ -1,17 +1,17 @@
 <?xml version="1.0"?>
 <ui:SelectClass xmlns="http://www.w3.org/1999/xhtml" xmlns:js="js.core" xmlns:ui="js.ui">
-    <div>
-        <a cid="selector" onclick="_handleSelect" onkeydown="_handleKey" class="select-choice">
-            <span visible="{selectedItem}">
-                <ui:PlaceHolder name="selectedItem"/>
-            </span>
-            <abbr visible="{selectedItem}" onclick="_clearSelection"/>
-            <span visible="{not(selectedItem)}">
-                <ui:PlaceHolder name="emptySelection"/>
-            </span>
-            <div class="select-icon"/>
-        </a>
-    </div>
+    <a cid="selector" onclick="_handleSelect" onkeydown="_handleKey" class="select-choice">
+        <span visible="{selectedItem}" class="selected-item-container">
+            <ui:PlaceHolder name="selectedItem"/>
+        </span>
+        <span visible="{not(selectedItem)}">
+            <ui:PlaceHolder name="emptySelection"/>
+        </span>
+        <abbr visible="{selectedItem}" onclick="_clearSelection"/>
+        <div class="select-icon">
+            <b></b>
+        </div>
+    </a>
     <div class="select-drop" onclick="_onContainerSelect">
         <div class="select-search">
             <input type="text" cid="inputField" value="{{searchTerm}}" onkeydown="_onKeyDown"/>

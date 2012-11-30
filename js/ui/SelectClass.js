@@ -114,7 +114,7 @@ define(["js/ui/View", 'js/data/Collection', 'js/core/List'], function (View, Col
                 if (!this.$realData) {
                     this.$realData = this.$.data;
                 }
-                this.set('data', this.$.data.createQueryCollection(this.createQuery(searchTerm)));
+                this.set({scrollTop: 0, data: this.$.data.createQueryCollection(this.createQuery(searchTerm))});
             },
 
             createQuery: function (searchTerm) {
