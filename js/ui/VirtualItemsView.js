@@ -126,7 +126,7 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
             // reset indecies
             this.$lastEndIndex = null;
             this.$lastStartIndex = null;
-
+            this.$currentSelectionIndex = -1;
 
             // clear active renderer and scroll to top
             this._releaseActiveRenderer();
