@@ -1,5 +1,10 @@
 define(["js/html/HtmlElement", "js/core/TextElement", "js/core/BindingCreator"], function (HtmlElement, TextElement, BindingCreator) {
         return HtmlElement.inherit("js.html.TextArea", {
+
+            defaults: {
+                updateOnEvent: 'change'
+            },
+
             _renderChild: function (child) {
                 if (child instanceof TextElement) {
                     // contains two way binding ...
@@ -13,7 +18,7 @@ define(["js/html/HtmlElement", "js/core/TextElement", "js/core/BindingCreator"],
             _bindDomEvents: function () {
                 this.callBase();
                 var self = this;
-                this.bindDomEvent('change', function (e) {
+                this.bindDomEvent(this.$.updateOnEvent, function (e) {
                     self.set('value', e.target ? e.target.value : self.$el.innerText);
                 });
             }
