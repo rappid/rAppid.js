@@ -1,4 +1,6 @@
 define(["js/ui/View", 'js/data/Collection', 'js/core/List'], function (View, Collection, List) {
+        var instances = [];
+
         return View.inherit('js.ui.SelectClass', {
             defaults: {
                 componentClass: 'select',
@@ -7,7 +9,8 @@ define(["js/ui/View", 'js/data/Collection', 'js/core/List'], function (View, Col
                 searchTerm: "",
                 placeHolder: 'Select Something',
                 queryCreator: null,
-                itemHeight: 30
+                itemHeight: 30,
+                dropDownHeight: 200
             },
 
             ctor: function () {
@@ -16,6 +19,7 @@ define(["js/ui/View", 'js/data/Collection', 'js/core/List'], function (View, Col
                 this.bind('tileList.selectedItems', 'remove', this._onSelectedItemsChange, this);
                 this.bind('tileList.selectedItems', 'reset', this._onSelectedItemsChange, this);
                 this.bind('change:searchTerm', this._onSearchTermChange, this);
+                instances.push(this);
             },
 
             _initializationComplete: function () {
@@ -128,6 +132,11 @@ define(["js/ui/View", 'js/data/Collection', 'js/core/List'], function (View, Col
 
             },
             _handleSelect: function (e) {
+                for (var i = 0; i < instances.length; i++) {
+                    if (instances[i] != this) {
+                        instances[i].set({open: false});
+                    }
+                }
                 this.set('open', !this.$.open);
                 e.stopPropagation();
             },
@@ -135,6 +144,9 @@ define(["js/ui/View", 'js/data/Collection', 'js/core/List'], function (View, Col
                 if (!this.$.open && (e.domEvent.keyCode === 40 || e.domEvent.keyCode === 38)) {
                     this.set('open', true);
                     e.stopPropagation();
+                } else if(e.domEvent.keyCode === 13){
+                    e.stopPropagation();
+                    e.preventDefault();
                 }
             },
             _renderOpen: function (open) {
