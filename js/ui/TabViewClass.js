@@ -4,6 +4,8 @@ define(['js/ui/ItemsView', 'js/html/HtmlElement','js/ui/Tab','js/core/List'], fu
             selectedIndex: 0,
             selectedView: null,
             tabClassName: 'nav nav-tabs',
+            menuClassName: null,
+            contentClassName: null,
             tabItems: List
         },
         $defaultTemplateName: null,
