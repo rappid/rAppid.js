@@ -37,7 +37,11 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
 
             _extendSchema: function () {
 
-                // TODO: add caching for schema
+                // TODO: add real caching for schema
+                if(this.factory.schema){
+                    this.schema = this.factory.schema;
+                    return;
+                }
                 var base = this.base;
 
                 while (base instanceof Entity) {
@@ -75,6 +79,7 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                         _.defaults(schemaObject, schemaDefaults);
                     }
                 }
+                this.factory.schema = this.schema;
             },
 
             /***
@@ -271,7 +276,7 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
         Entity.SchemaValidator = Validator.inherit('js.data.validator.SchemaValidator', {
             validate: function (entity, callback) {
                 var errors = [], subEntities = [], attributes = entity.$;
-                var schema = entity.schema, schemaObject, undefined, value, type;
+                var schema = entity.schema, schemaObject, value, type;
                 for (var key in schema) {
                     if (schema.hasOwnProperty(key)) {
                         value = attributes[key];
