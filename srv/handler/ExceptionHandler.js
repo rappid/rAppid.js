@@ -1,4 +1,4 @@
-define(['srv/core/Handler', 'srv/core/HttpError'], function(Handler, HttpError) {
+define(['srv/core/Handler', 'srv/core/HttpError', 'underscore'], function(Handler, HttpError, _) {
 
     return Handler.inherit('srv.handler.ExceptionHandler', {
 
@@ -44,6 +44,9 @@ define(['srv/core/Handler', 'srv/core/HttpError'], function(Handler, HttpError) 
                 }
             }
 
+            if(!_.isString(body)) {
+                body = body.toString();
+            }
 
             response.writeHead(statusCode, statusText, {
                 'Content-Length': body.length,

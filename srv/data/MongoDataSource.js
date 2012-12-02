@@ -70,7 +70,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
         },
 
         parse: function (model, data, action, options) {
-            
+
             function readId(fromField) {
                 if (data[fromField] && !data.id) {
                     var _id = data[fromField];
@@ -132,6 +132,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
             db.open(callback);
             return db;
         },
+
         _getConfigurationForModel: function (model) {
             return this.$dataSourceConfiguration.getConfigurationForModelClass(model.factory);
         },
@@ -163,33 +164,47 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
             }
 
             // TODO: add loading/linking of sub models
-            var self = this, connection;
+
+            this.connectCollection(configuration.$.collection, function (collection, cb) {
+                collection.findOne(where, function (err, object) {
+                    if (!err) {
+                        if (object) {
+                            model.set(processor.parse(model, object));
+                        } else {
+                            err = DataSource.ERROR.NOT_FOUND;
+                        }
+                    }
+                    cb(err);
+                });
+            }, function (err) {
+                callback(err, model);
+            });
+
+
+        },
+
+        connectCollection: function (collectionName, hook, callback) {
+
+            var connection,
+                self = this;
+
             flow()
-                .seq("collection", function (cb) {
-                    connection = self.connect(function (err, client) {
-                        cb(err, new MongoDb.Collection(client, configuration.$.collection));
-                    });
+                .seq("client", function (cb) {
+                    connection = self.connect(cb);
+                })
+                .seq("collection", function () {
+                    return new MongoDb.Collection(this.vars["client"], collectionName);
                 })
                 .seq(function (cb) {
-                    this.vars['collection'].findOne(where, function (err, object) {
-                        if (!err) {
-                            if (object) {
-                                model.set(processor.parse(model, object));
-                            } else {
-                                err = DataSource.ERROR.NOT_FOUND;
-                            }
-                        }
-                        cb(err);
-                    });
+                    hook(this.vars['collection'], cb);
                 })
                 .exec(function (err) {
                     if (connection) {
                         connection.close();
                     }
-                    callback(err, model);
 
+                    callback(err);
                 });
-
         },
 
         _saveModel: function (model, options, callback) {
@@ -200,15 +215,16 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
                 return;
             }
 
-            var action = DataSource.ACTION.UPDATE, method = MongoDataSource.METHOD.SAVE;
+            var action = DataSource.ACTION.UPDATE,
+                method = MongoDataSource.METHOD.SAVE;
 
             if (model._status() === Model.STATE.NEW) {
                 action = DataSource.ACTION.CREATE;
                 method = MongoDataSource.METHOD.INSERT;
             }
-            var processor = this.getProcessorForModel(model);
 
-            var data = processor.compose(model, action, options), self = this, connection;
+            var processor = this.getProcessorForModel(model),
+                data = processor.compose(model, action, options);
 
             options = options || {};
             // if you want to set a custom ID
@@ -221,44 +237,28 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
                 data[TYPE_KEY] = model.constructor.name;
             }
 
-            flow()
-                .seq("collection", function (cb) {
-                    connection = self.connect(function (err, client) {
-                        var collection;
+            this.connectCollection(configuration.$.collection, function(collection, cb) {
+                if (method === MongoDataSource.METHOD.INSERT) {
+                    collection.insert(data, {safe: true}, function (err, objects) {
                         if (!err) {
-                            collection = new MongoDb.Collection(client, configuration.$.collection);
+                            model.set(processor.parse(model, objects[0]));
                         }
-
-                        cb(err, collection);
+                        cb(err);
                     });
-                })
-                .seq(function (cb) {
-                    if (method === MongoDataSource.METHOD.INSERT) {
-                        this.vars['collection'].insert(data, {safe: true}, function (err, objects) {
-                            if (!err) {
-                                model.set(processor.parse(model, objects[0]));
-                            }
-                            cb(err);
-                        });
-                    } else if (method === MongoDataSource.METHOD.SAVE) {
-                        this.vars['collection'].update({_id: data._id}, data, {safe: true}, function (err, count) {
-                            if (!err && count === 0) {
-                                // no update happend
-                                err = DataSource.ERROR.NOT_FOUND;
-                            }
-                            cb(err, model);
-                        });
-                    } else {
-                        cb("Wrong method");
-                    }
-                })
-                .exec(function (err) {
-                    if (connection) {
-                        connection.close();
-                    }
-                    callback(err, model);
-
-                });
+                } else if (method === MongoDataSource.METHOD.SAVE) {
+                    collection.update({_id: data._id}, data, {safe: true}, function (err, count) {
+                        if (!err && count === 0) {
+                            // no update happened
+                            err = DataSource.ERROR.NOT_FOUND;
+                        }
+                        cb(err, model);
+                    });
+                } else {
+                    cb("Wrong method");
+                }
+            }, function(err) {
+                callback(err, model);
+            });
         },
 
         removeModel: function (model, options, callback) {
@@ -275,39 +275,30 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
                 self = this,
                 connection;
 
-            flow()
-                .seq("collection", function (cb) {
-                    connection = self.connect(function (err, client) {
-                        cb(err, new MongoDb.Collection(client, configuration.$.collection));
-                    });
-                })
-                .seq(function (cb) {
-                    this.vars['collection'].remove({_id: data._id}, {safe: true}, function (err, count) {
-                        if (count === 0) {
-                            err = DataSource.ERROR.NOT_FOUND;
-                        }
-                        cb(err, model);
-                    });
-                })
-                .exec(function (err) {
-                    if (connection) {
-                        connection.close();
+            this.connectCollection(configuration.$.collection, function(collection, cb) {
+                collection.remove({_id: data._id}, {safe: true}, function (err, count) {
+                    if (count === 0) {
+                        err = DataSource.ERROR.NOT_FOUND;
                     }
-                    callback(err, model);
-
+                    cb(err, model);
                 });
+            }, function(err) {
+                callback(err, model);
+            });
+
         },
 
-        loadCollectionPage: function (collection, options, callback) {
-            var rootCollection = collection.getRootCollection(),
+        loadCollectionPage: function (collectionPage, options, callback) {
+            var rootCollection = collectionPage.getRootCollection(),
                 modelClassName = rootCollection.$modelFactory.prototype.constructor.name,
                 configuration = this.$dataSourceConfiguration.getConfigurationForModelClass(rootCollection.$modelFactory);
 
             if (!configuration) {
-                callback("Couldnt find path config for " + rootCollection.$modelFactory.prototype.constructor.name);
+                callback("Couldn't find path config for " + rootCollection.$modelFactory.prototype.constructor.name);
             }
 
             var mongoCollection = configuration.$.collection;
+
             if (!mongoCollection) {
                 callback("No mongo collection defined for " + rootCollection.$modelFactory.prototype.constructor.name);
             }
@@ -315,7 +306,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
             // TODO: add query, fields and options
             var self = this, connection, where = options.where || {};
 
-            // here we have a polymorph type
+            // here we have a polymorphic type
             if (configuration.$.modelClassName !== modelClassName) {
                 where[TYPE_KEY] = modelClassName;
             }
@@ -326,48 +317,42 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
             }
 
             var sort;
-            if(options["sort"]){
+            if (options["sort"]) {
                 sort = options["sort"];
             }
 
-            flow()
-                .seq("collection", function (cb) {
-                    connection = self.connect(function (err, client) {
-                        cb(err, new MongoDb.Collection(client, mongoCollection));
-                    });
-                })
-                .seq("cursor", function (cb) {
-                    var cursor = this.vars["collection"].find(where);
-                    if(sort){
-                        cursor = cursor.sort(sort);
-                    }
-                    if (options.limit) {
-                        cursor = cursor.limit(options.limit);
-                    }
+            this.connectCollection(mongoCollection, function(collection, cb) {
 
-                    cursor.toArray(function (err, results) {
-                        if (!err) {
-                            var processor = self.getProcessorForCollection(rootCollection);
-
-                            results = processor.parseCollection(rootCollection, results, DataSource.ACTION.LOAD, options);
-
-                            collection.add(results);
+                flow()
+                    .seq("cursor", function (cb) {
+                        var cursor = collection.find(where);
+                        if (sort) {
+                            cursor = cursor.sort(sort);
                         }
-                        cb(err, cursor);
-                    });
-                })
-                .seq(function (cb) {
-                    this.vars["cursor"].count(function (err, count) {
-                        collection.$itemsCount = count;
-                        cb(err);
-                    });
-                })
-                .exec(function (err) {
-                    if (connection) {
-                        connection.close();
-                    }
-                    callback(err, collection, options);
-                });
+                        if (options.limit) {
+                            cursor = cursor.limit(options.limit);
+                        }
+
+                        cursor.toArray(function (err, results) {
+                            if (!err) {
+                                var processor = self.getProcessorForCollection(rootCollection);
+                                results = processor.parseCollection(rootCollection, results, DataSource.ACTION.LOAD, options);
+                                collectionPage.add(results);
+                            }
+
+                            cb(err, cursor);
+                        });
+                    })
+                    .seq(function (cb) {
+                        this.vars["cursor"].count(function (err, count) {
+                            collectionPage.$itemsCount = count;
+                            cb(err);
+                        });
+                    })
+                    .exec(cb);
+            }, function(err) {
+                callback(err, collectionPage, options);
+            });
         }
     });
 

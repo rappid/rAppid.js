@@ -156,7 +156,9 @@ define(['js/core/EventDispatcher', 'url', 'querystring', 'underscore', 'flow', '
                     throw new Error("Headers already sent.");
                 }
 
-                if (typeof arguments[1] == 'string') {
+                var args = Array.prototype.slice.call(arguments);
+
+                if (args.length === 3) {
                     this.$reasonPhrase = arguments[1];
                 } else {
                     headers = reasonPhrase;
