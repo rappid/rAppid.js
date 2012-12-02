@@ -2,7 +2,9 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
 
     return Component.inherit('srv.handler.rest.ResourceHandler', {
         defaults: {
-            autoStartSession: true
+            autoStartSession: true,
+            defaultSortField: null,
+            defaultSortOrder: null
         },
 
         $collectionMethodMap: {
@@ -28,7 +30,7 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
             return !this.$resourceId;
         },
 
-        getResourceHandlerInstance: function() {
+        getResourceHandlerInstance: function () {
             return this;
         },
 
@@ -55,7 +57,7 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
                     // TODO: handle different payload formats -> format processor needed
                     try {
                         context.request.params = JSON.parse(body);
-                    } catch (e) {
+                    } catch(e) {
                         console.warn("Couldn't parse " + body);
                     }
                 }
@@ -100,6 +102,42 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
             return require(this.$resourceConfiguration.$.modelClassName.replace(/\./g, '/'));
         },
 
+        _createOptionsForCollectionFetch: function (context, parameters) {
+
+            var options = {};
+            if (parameters["limit"]) {
+                options["limit"] = parseInt(parameters["limit"]);
+            }
+
+            var sort = this._createSortStatement(context, parameters);
+            if (sort) {
+                options["sort"] = sort;
+            }
+
+            var where = this._createWhereStatement(context, parameters);
+            if (where) {
+                options["where"] = where;
+            }
+
+            return options;
+        },
+        _createSortStatement: function (context, parameters) {
+            var sort;
+            var sortField = parameters["sortField"] || this.$.defaultSortField;
+            if (sortField) {
+                sort = {};
+                sort[sortField] = -1;
+                var sortOrder = parameters["sortOrder"] || this.$.defaultSortOrder;
+                if (sortOrder) {
+                    sort[sortField] = sortOrder === "ASC" ? 1 : -1;
+                }
+            }
+
+            return sort;
+        },
+        _createWhereStatement: function (context, parameters) {
+            return null;
+        },
         /***
          *
          * @param context
@@ -110,19 +148,11 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
             var collection = this._findCollection(context);
 
             var parameters = context.request.urlInfo.parameter;
-            var options = {};
-            if (parameters["limit"]) {
-                options["limit"] = parseInt(parameters["limit"]);
-            }
-            if(parameters["sort"]) {
-                options["sort"] = JSON.parse(parameters["sort"]);
-            }
-            if(parameters["where"]){
-                options["where"] = JSON.parse(parameters["where"]);
-            }
+
+            var options = this._createOptionsForCollectionFetch(context, parameters);
 
             var self = this;
-            // TODO: read out offset, limit and query from query string
+
             collection.fetch(options, function (err, collection) {
                 if (!err) {
                     var response = context.response;
@@ -178,33 +208,36 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
             var self = this;
 
             flow()
-                .seq(function (cb){
-                    self._beforeSave(model, context, cb);
+                .seq(function (cb) {
+                    self._beforeModelSave(model, context, cb);
                 })
                 .seq(function (cb) {
-                    // TODO: add sub models
-                    model.validateAndSave({}, function (err, model) {
-                        if (!err) {
-                            // TODO: do correct invalidation
-                            collection.invalidatePageCache();
+                    model.validateAndSave(null, cb);
+                }).
+                seq(function (cb) {
+                    self._afterModelCreate(model, context, cb);
+                }).
+                exec(function (err) {
+                    if (!err) {
+                        // TODO: do correct invalidation
+                        collection.invalidatePageCache();
 
-                            var body = JSON.stringify(processor.compose(model, null));
+                        var body = JSON.stringify(processor.compose(model, null));
 
-                            var response = context.response;
-                            response.writeHead(201, "", {
-                                'Content-Type': 'application/json',
-                                'Location': context.request.urlInfo.uri + "/" + model.$.id
-                            });
+                        var response = context.response;
+                        response.writeHead(201, "", {
+                            'Content-Type': 'application/json',
+                            'Location': context.request.urlInfo.uri + "/" + model.$.id
+                        });
 
-                            response.write(body);
-                            response.end();
+                        response.write(body);
+                        response.end();
 
-                            cb(null);
-                        } else {
-                            cb(new HttpError(err, 500));
-                        }
-                    });
-                }).exec(callback);
+                        callback(null);
+                    } else {
+                        callback(new HttpError(err, 500));
+                    }
+                });
         },
 
         /***
@@ -238,7 +271,7 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
                     callback(null);
                 } else {
                     var statusCode = 500;
-                    if(err === DataSource.ERROR.NOT_FOUND){
+                    if (err === DataSource.ERROR.NOT_FOUND) {
                         statusCode = 404;
                     }
                     callback(new HttpError(err, statusCode));
@@ -246,7 +279,7 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
             });
         },
 
-        _getCompositionOptions: function(context) {
+        _getCompositionOptions: function (context) {
             return {
                 resourceHandler: this,
                 baseUri: context.request.urlInfo.baseUri + this.$restHandler.$.path
@@ -273,51 +306,55 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
             // TODO: add hook to add session data like user id
             flow()
                 .seq(function (cb) {
-                    self._beforeSave(model, context, cb);
+                    self._beforeModelSave(model, context, cb);
                 })
-                .seq(function(cb){
-                    model.validateAndSave({}, function (err) {
-                        if (!err) {
-                            // TODO: do correct invalidation
-                            collection.invalidatePageCache();
+                .seq(function (cb) {
+                    model.validateAndSave(null, cb);
+                })
+                .seq(function (cb) {
+                    self._afterModelUpdate(model, context, cb);
+                })
+                .exec(function (err) {
+                    if (!err) {
+                        // TODO: do correct invalidation
+                        collection.invalidatePageCache();
 
-                            // TODO: generate the location header
-                            var body = JSON.stringify(processor.compose(model, null));
+                        // TODO: generate the location header
+                        var body = JSON.stringify(processor.compose(model, null));
 
-                            var response = context.response;
-                            response.writeHead(200, "", {
-                                'Content-Type': 'application/json'
-                                // TODO : add updated date in head ???
-                            });
+                        var response = context.response;
+                        response.writeHead(200, "", {
+                            'Content-Type': 'application/json'
+                            // TODO : add updated date in head ???
+                        });
 
-                            response.write(body);
-                            response.end();
+                        response.write(body);
+                        response.end();
 
-                            cb(null);
-                        } else {
-                            var statusCode = 500;
-                            if (err === DataSource.ERROR.NOT_FOUND) {
-                                statusCode = 404;
-                            }
-                            cb(new HttpError(err, statusCode));
+                        callback(null);
+                    } else {
+                        var statusCode = 500;
+                        if (err === DataSource.ERROR.NOT_FOUND) {
+                            statusCode = 404;
                         }
-                    });
-                }).exec(callback);
+                        callback(new HttpError(err, statusCode));
+                    }
+                });
 
         },
 
-        _autoGenerateValue: function(valueKey, context, model) {
-            if(valueKey === Model.AUTO_GENERATE.CREATION_DATE){
-                if(model.isNew()){
+        _autoGenerateValue: function (valueKey, context, model) {
+            if (valueKey === Model.AUTO_GENERATE.CREATION_DATE) {
+                if (model.isNew() || _.isUndefined(model.get(valueKey))) {
                     return new Date();
                 }
             }
 
-            if(valueKey === Model.AUTO_GENERATE.UPDATED_DATE){
+            if (valueKey === Model.AUTO_GENERATE.UPDATED_DATE) {
                 return new Date();
             }
 
-            if(valueKey === "SESSION_USER"){
+            if (valueKey === "SESSION_USER") {
                 // TODO: return session user
                 return null;
             }
@@ -326,28 +363,24 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
         /**
          *
          * @param model
-         * @param options
+         * @param context
          * @param callback
          * @private
          */
-        _beforeSave: function(model, context, callback) {
+        _beforeModelSave: function (model, context, callback) {
             var schema = model.schema, schemaObject;
-            for(var schemaKey in schema){
-                if(schema.hasOwnProperty(schemaKey)){
+            for (var schemaKey in schema) {
+                if (schema.hasOwnProperty(schemaKey)) {
                     schemaObject = schema[schemaKey];
-                    if(schemaObject.generated){
+                    if (schemaObject.generated) {
                         var value = this._autoGenerateValue(schemaObject.key, context, model);
-                        if(!_.isUndefined(value)){
+                        if (!_.isUndefined(value)) {
                             model.set(schemaKey, value);
                         }
                     }
                 }
             }
 
-            callback && callback();
-        },
-
-        _afterSave: function(model, options, callback){
             callback && callback();
         },
         /***
@@ -360,31 +393,57 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
             var collection = this._findCollection(context);
             var model = collection.createItem(this.$resourceId);
 
-            model.remove({}, function (err) {
-                if (!err) {
-                    // TODO: do correct invalidation
-                    collection.invalidatePageCache();
-                    // TODO: generate the location header
-                    var body = "";
+            var self = this;
 
-                    var response = context.response;
-                    response.writeHead(200, "", {
-                        'Content-Type': 'application/json'
-                    });
+            flow()
+                .seq(function (cb) {
+                    self._beforeModelRemove(model, context, cb);
+                })
+                .seq(function (cb) {
+                    model.remove(null, cb)
+                })
+                .seq(function (cb) {
+                    self._afterModelRemove(model, context, cb);
+                })
+                .exec(function (err) {
+                    if (!err) {
+                        // TODO: do correct invalidation
+                        collection.invalidatePageCache();
+                        // TODO: generate the location header
+                        var body = "";
 
-                    response.write(body);
-                    response.end();
+                        var response = context.response;
+                        response.writeHead(200, "", {
+                            'Content-Type': 'application/json'
+                        });
 
-                    callback(null);
-                } else {
-                    var statusCode = 500;
-                    if (err === DataSource.ERROR.NOT_FOUND) {
-                        statusCode = 404;
+                        response.write(body);
+                        response.end();
+
+                        callback(null);
+                    } else {
+                        var statusCode = 500;
+                        if (err === DataSource.ERROR.NOT_FOUND) {
+                            statusCode = 404;
+                        }
+                        callback(new HttpError(err, statusCode));
                     }
-                    callback(new HttpError(err, statusCode));
-                }
-            });
+                });
+        },
+        _afterModelCreate: function (model, options, callback) {
+            callback && callback();
+        },
+        _afterModelUpdate: function (model, options, callback) {
+            callback && callback();
+        },
+        _afterModelSave: function (model, options, callback) {
+            callback && callback();
+        },
+        _beforeModelRemove: function (model, options, callback) {
+            callback && callback();
+        },
+        _afterModelRemove: function (model, options, callback) {
+            callback && callback();
         }
-
     });
 });
