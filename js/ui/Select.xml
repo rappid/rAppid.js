@@ -25,7 +25,7 @@
                 cols="1" data="{data}"
                 heightUpdatePolicy="out"
                 widthUpdatePolicy="out"
-                height="200" itemHeight="{itemHeight}" itemWidth="null" selectionMode="single">
+                height="{dropDownHeight}" itemHeight="{itemHeight}" itemWidth="null" selectionMode="single">
 
         </ui:TileList>
     </div>
