@@ -1,4 +1,4 @@
-define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore'], function (DataSource, MongoDb, Model, flow, _) {
+define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 'js/core/List'], function (DataSource, MongoDb, Model, flow, _, List) {
 
     var ID_KEY = "_id",
         PARENT_ID_KEY = "_parent_id",
@@ -25,16 +25,19 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore'],
         },
 
         _composeSubModel: function (model, action, options) {
-            return this.$dataSource._createIdObject(model.$.id);
+            if(model && model.$.id){
+                var ret = {};
+                ret[TYPE_KEY] = model.constructor.name;
+                ret[REF_ID_KEY] = this.$dataSource._createIdObject(model.$.id);
+                return ret;
+            }
+            return null;
         },
 
         _getReferenceKey: function (key, schemaType) {
             // correct key of id object
             if (key === "id") {
                 return ID_KEY;
-            }
-            if (schemaType && schemaType.classof && schemaType.classof(Model)) {
-                return key + "_id";
             }
 
             return this.callBase();
@@ -43,16 +46,19 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore'],
         _getValueForKey: function (data, key, schemaType) {
             if (schemaType && schemaType.classof && schemaType.classof(Model)) {
                 var referenceKey = this._getReferenceKey(key, schemaType);
-                var id = data[referenceKey];
+                var value = data[referenceKey];
                 delete data[referenceKey];
-                if (id) {
-                    if (_.isObject(id) && id instanceof MongoDb.ObjectID) {
-                        return {
-                            id: id.toHexString()
-                        }
-                    } else {
-                        return {
-                            id: id
+                if(value){
+                    var refId = value[REF_ID_KEY];
+                    if (refId) {
+                        if (_.isObject(refId) && refId instanceof MongoDb.ObjectID) {
+                            return {
+                                id: refId.toHexString()
+                            }
+                        } else {
+                            return {
+                                id: refId
+                            }
                         }
                     }
                 }
@@ -204,6 +210,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore'],
 
             var data = processor.compose(model, action, options), self = this, connection;
 
+            options = options || {};
             // if you want to set a custom ID
             if (options.id && action === DataSource.ACTION.CREATE) {
                 data[ID_KEY] = options.id;
@@ -264,7 +271,9 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore'],
 
             var processor = this.getProcessorForModel(model);
 
-            var data = processor.compose(model, options);
+            var data = processor.compose(model, options),
+                self = this,
+                connection;
 
             flow()
                 .seq("collection", function (cb) {
