@@ -58,9 +58,16 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
             // TODO: handle multiple access
             try {
                 var status = this._status();
-
+                var self = this;
                 if (status === STATE.NEW || status === STATE.CREATED) {
-                    this.$context.$dataSource.saveModel(this, options, callback);
+                    this.$context.$dataSource.saveModel(this, options, function(err){
+                        if(!err){
+                            if(status === STATE.NEW && self.$collection){
+                                self.$collection.invalidatePageCache();
+                            }
+                        }
+                        callback && callback(err, self, options);
+                    });
                 } else {
                     throw "status '" + status + "' doesn't allow save";
                 }
@@ -173,6 +180,9 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
                     this.$context.$dataSource.removeModel(this, options, function (err) {
                         if (!err) {
                             self.set('id', false);
+                            if(self.$collection){
+                                self.$collection.remove(self);
+                            }
                         }
                         callback && callback(err);
                     });
@@ -198,6 +208,24 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
                 return this.$.id ? STATE.CREATED : STATE.NEW;
             }
         }.onChange('id'),
+
+        _cloneAttribute: function(value, key){
+
+            // don't clone a list of model references!
+            if(value instanceof List){
+                if(this.schema.hasOwnProperty(key)){
+                    var type = this.schema[key].type;
+                    if(type instanceof Array && type.length && type[0].classof && type[0].classof(Model)){
+                        var list = new List();
+                        list._$source = value;
+                        list.add(value.$items);
+                        return list;
+                    }
+                }
+            }
+
+            return this.callBase();
+        },
 
         isNew: function () {
             return this._status() === STATE.NEW;
