@@ -148,9 +148,13 @@ define(["js/core/Bindable", "underscore"], function (Bindable, _) {
          * Resets the list with the given items and triggers reset event
          * @param items
          */
-        reset: function (items) {
+        reset: function (items, options) {
             this.$items = items;
-            this.trigger('reset', {items: items});
+
+            options = options || {};
+            if(!options.silent){
+                this.trigger('reset', {items: items});
+            }
         },
         /**
          * Sorts the list by the given function and triggers sort event
@@ -162,8 +166,8 @@ define(["js/core/Bindable", "underscore"], function (Bindable, _) {
         /**
          * Clears all items and triggers reset event
          */
-        clear: function () {
-            this.reset([]);
+        clear: function (options) {
+            this.reset([],options);
         },
         /**
          * Returns the size of the list
@@ -234,6 +238,19 @@ define(["js/core/Bindable", "underscore"], function (Bindable, _) {
             delete scope['return'];
 
             return r;
+        },
+
+        includes: function(item){
+            var ret = this.each(function(innerItem){
+                if(innerItem === item){
+                    this["return"](true);
+                }
+            });
+            if(ret){
+                return ret;
+            }else{
+                return false;
+            }
         },
         /**
          * Returns a fresh copy of the List
