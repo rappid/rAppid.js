@@ -28,6 +28,7 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore"], funct
             });
 
             this.$queryCollectionsCache = {};
+            this.$sortCollections = [];
             this.$pageCache = [];
             this.$options = options;
         },
@@ -69,6 +70,8 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore"], funct
 
             var collection = new Collection(null, options);
             collection.$context = this.$context;
+
+            this.$sortCollections.push(collection);
 
             return collection;
         },
@@ -214,6 +217,19 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore"], funct
 
         invalidatePageCache: function(){
             this.$pageCache = {};
+
+
+            for(var key in this.$queryCollectionsCache){
+                if(this.$queryCollectionsCache.hasOwnProperty(key)){
+                    this.$queryCollectionsCache[key].invalidatePageCache();
+                }
+            }
+
+            for(var i = 0; i < this.$sortCollections.length; i++){
+                this.$sortCollections[i].invalidatePageCache();
+            }
+
+            this.reset([]);
         },
 
         // returns a new collections
@@ -225,6 +241,21 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore"], funct
             }
 
             return this.$queryCollectionsCache[queryKey];
+        },
+
+        remove: function(){
+            this.callBase();
+
+            for (var key in this.$queryCollectionsCache) {
+                if (this.$queryCollectionsCache.hasOwnProperty(key)) {
+                    this.remove.apply(this.$queryCollectionsCache[key], arguments);
+                }
+            }
+
+            for (var i = 0; i < this.$sortCollections.length; i++) {
+                this.remove.apply(this.$sortCollections[i],arguments);
+            }
+
         },
 
         size: function() {
@@ -244,6 +275,11 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore"], funct
         },
         getSortParameters: function (method) {
             return this.$options.sortParameters;
+        },
+        destroy: function(){
+            // TODO: remove destroyed query collections from cache
+
+            this.callBase();
         }
     });
 
