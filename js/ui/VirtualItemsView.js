@@ -445,9 +445,11 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
             for (var key in this.$selectionMap) {
                 if (this.$selectionMap.hasOwnProperty(key)) {
                     this.$selectionMap[key].set({selected: false});
-                    this.$.selectedItems.remove(this.$selectionMap[key].$.data);
                     delete this.$selectionMap[key];
                 }
+            }
+            if(!this.$.selectedItems.isEmpty()){
+                this.$.selectedItems.clear({silent: true});
             }
         },
         _selectItem: function (index, shiftDown, metaKey) {
@@ -477,7 +479,7 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
             var item, id;
             for (var i = startIndex; i <= endIndex; i++) {
                 item = this.$.$dataAdapter.getItemAt(i);
-                id = item.$.data ? item.$.data.$cid : undefined;
+                id = item.$.data ? item.$.data.$.id : undefined;
                 if (id) {
                     if (metaKey && item.$.selected) {
                         delete this.$selectionMap[id];
@@ -507,11 +509,10 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
         },
 
         isItemSelected: function (data) {
-            if (!data) {
+            if (!data || !data.$.id) {
                 return false;
             }
-            var cid = data.$cid;
-            return cid && this.$selectionMap[cid] !== undefined;
+            return this.$selectionMap[data.$.id] !== undefined;
         }.on(["selectedItems","add"], ["selectedItems", "remove"]),
         sort: function (sortParameter) {
             this.$.$dataAdapter.sort(sortParameter);
@@ -613,9 +614,19 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
 
             this.callBase();
 
+            // watch the reset event for invalidation ...
+            data.bind('reset', this._onReset, this);
+
             this.$collectionSizeUnknown = isNaN(this.size);
         },
+        _onReset: function(){
+            this.$pages = {};
+            this.$cache = {};
+            this.$collectionSizeUnknown = true;
 
+            // force view refresh
+            this.$virtualItemsView._updateVisibleItems(true);
+        },
         getItemAt: function (index) {
             // get the page from index
             var self = this,
@@ -709,7 +720,11 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
         },
 
         sort: function(sortParameter){
+            // TODO: clean up old sortCollection or add caching
+
             var sortCollection = this.$data.createSortCollection(sortParameter);
+            this.$sortCollection = sortCollection;
+
             this.$virtualItemsView.set('data', sortCollection);
         },
 
