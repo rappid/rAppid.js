@@ -2,13 +2,15 @@
 <ui:TabViewClass xmlns="http://www.w3.org/1999/xhtml" xmlns:js="js.core" xmlns:ui="js.ui"
         componentClass="tab-view">
     <js:Template name="layout">
-        <ui:SelectionView tagName="ul" class="{tabClassName}" needsSelection="true" forceSelectable="true">
-            <js:Template name="item">
-                <ui:View tagName="li">
-                    <ui:Link label="{item.title}"/>
-                </ui:View>
-            </js:Template>
-        </ui:SelectionView>
-        <ui:SegmentedView componentClass="tab-content"/>
+        <div class="tab-menu {menuClassName}">
+            <ui:SelectionView tagName="ul" cid="tabSelection" items="{tabItems}" class="{tabClassName}" needsSelection="true" forceSelectable="true">
+                <js:Template name="item">
+                    <ui:View tagName="li">
+                        <ui:Link label="{item.title}"/>
+                    </ui:View>
+                </js:Template>
+            </ui:SelectionView>
+        </div>
+        <ui:SegmentedView cid="tabContent" componentClass="tab-content" class="{contentClassName}"/>
     </js:Template>
 </ui:TabViewClass>
