@@ -251,7 +251,7 @@ define(["js/core/Bindable", "underscore"], function (Bindable, _) {
             }else{
                 return false;
             }
-        },
+        }.on('add','remove','reset'),
         /**
          * Returns a fresh copy of the List
          * @return List a fresh copy of the list
