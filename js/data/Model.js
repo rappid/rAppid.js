@@ -55,21 +55,24 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
          */
         save: function (options, callback) {
 
+            options = options || {};
+            _.defaults(options, {
+                invalidatePageCache: true
+            });
+
             // TODO: handle multiple access
             try {
                 var status = this._status();
                 var self = this;
                 if (status === STATE.NEW || status === STATE.CREATED) {
                     this.$context.$dataSource.saveModel(this, options, function(err){
-                        if(!err){
-                            if(status === STATE.NEW && self.$collection){
-                                self.$collection.invalidatePageCache();
-                            }
+                        if(!err && self.$collection && options.invalidatePageCache) {
+                            self.$collection.invalidatePageCache();
                         }
                         callback && callback(err, self, options);
                     });
                 } else {
-                    throw "status '" + status + "' doesn't allow save";
+                    throw new Error("status '" + status + "' doesn't allow save");
                 }
             } catch(e) {
                 if (callback) {
