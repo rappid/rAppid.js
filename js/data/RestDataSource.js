@@ -16,12 +16,6 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
             }
 
             return ret
-        },
-        _parseModel: function(model, data, action, options){
-            if(data['href']){
-                delete data['href'];
-            }
-            return this.callBase();
         }
     });
 
