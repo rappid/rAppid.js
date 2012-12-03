@@ -6,8 +6,6 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
         _composeSubModel: function (model, action, options) {
 
             // TODO: fix href for submodels
-
-
             var ret = {
                     id: model.$.id
                 },
@@ -18,6 +16,12 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
             }
 
             return ret
+        },
+        _parseModel: function(model, data, action, options){
+            if(data['href']){
+                delete data['href'];
+            }
+            return this.callBase();
         }
     });
 
@@ -502,9 +506,9 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
             params = this._translateQueryObject(params);
 
             // todo: add hook
-            var sortParameters = collectionPage.$collection.getSortParameters(RestDataSource.METHOD.GET);
+            var sortParameters = this._createSortParameter(collectionPage.$collection.getSortParameters(RestDataSource.METHOD.GET));
             if (sortParameters) {
-                params["sort"] = JSON.stringify(sortParameters);
+                _.extend(params,sortParameters);
             }
 
             // create url
@@ -561,6 +565,19 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
                 }
             });
         },
+
+        _createSortParameter: function(sortParmeters){
+            var parameters = null;
+            for(var key in sortParmeters){
+                if(sortParmeters.hasOwnProperty(key)){
+                    parameters = parameters || {};
+                    parameters["sortField"] = key;
+                    parameters["sortOrder"] = sortParmeters[key] ===  -1 ? "ASC" : "DESC";
+                }
+            }
+            return parameters;
+        },
+
         removeModel: function (model, options, callback) {
             callback = callback || function () {
 
