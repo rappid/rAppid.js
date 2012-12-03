@@ -707,7 +707,7 @@ var exports = (typeof(exports) === "undefined" ? this : exports); exports.parser
           pos = savedPos1;
         }
         var result2 = result1 !== null
-          ? (function(s, rp) {return s ? [s].concat(rp) : []; })(result1[0], result1[1])
+          ? (function(s, rp) {return typeof s !== "undefined" ? [s].concat(rp) : []; })(result1[0], result1[1])
           : null;
         if (result2 !== null) {
           var result0 = result2;
