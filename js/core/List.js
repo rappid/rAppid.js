@@ -186,7 +186,7 @@ define(["js/core/Bindable", "underscore"], function (Bindable, _) {
                 return this.$items[index];
             }
             return null;
-        },
+        }.on('add','remove','reset'),
         /**
          * Iterates over all items with given callback
          * @param Function callback with signature function(item, index)
