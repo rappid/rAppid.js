@@ -514,6 +514,7 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                     }else{
                         this.$el.appendChild(child.$el);
                     }
+                    child.trigger('add:dom', this.$el);
                     delete this.$invisibleChildMap[child.$cid];
                 }
             },
