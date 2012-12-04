@@ -196,6 +196,7 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
                 callback && callback(e);
             }
         },
+
         validateSubEntity: function (entity, callback) {
             if (entity instanceof Model) {
                 // does nothing :)
@@ -204,6 +205,7 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
                 this.callBase();
             }
         },
+
         _status: function () {
             if (this.$.id === false) {
                 return STATE.DELETED;
@@ -232,7 +234,12 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
 
         isNew: function () {
             return this._status() === STATE.NEW;
+        }.onChange('id'),
+
+        isCreated: function() {
+            return this._status() === STATE.CREATED;
         }.onChange('id')
+
     });
 
     function fetchSubModels(attributes, subModelTypes, delegates) {
