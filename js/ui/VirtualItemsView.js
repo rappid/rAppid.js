@@ -530,7 +530,7 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
                 item = this.$.$dataAdapter.getItemAt(i);
                 id = item.$.data ? item.$.data.$.id : undefined;
                 if (id) {
-                    if (metaKey && item.$.selected) {
+                    if (metaKey && this.$selectionMap[id]) {
                         delete this.$selectionMap[id];
                         this.$.selectedItems.remove(item.$.data);
                     } else {
