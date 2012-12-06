@@ -13,7 +13,7 @@ define(["js/html/HtmlElement", "underscore", "moment"], function (HtmlElement, _
 
                     if(attributes.name){
 
-                        if (this.$previousAttributes.name) {
+                        if (this.$previousAttributes.name && radioNameCache[this.$previousAttributes.name]) {
                             delete radioNameCache[this.$previousAttributes.name][this.$cid];
                         }
 
