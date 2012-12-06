@@ -22,9 +22,7 @@ define(["js/core/Bindable", "underscore"], function (Bindable, _) {
                 self.length = self.size();
             }
 
-            this.bind('add', updateLength);
-            this.bind('remove', updateLength);
-            this.bind('reset', updateLength);
+            this.bind('all', updateLength);
 
             this.length = this.size();
         },
@@ -34,7 +32,7 @@ define(["js/core/Bindable", "underscore"], function (Bindable, _) {
          */
         isEmpty: function () {
             return this.$items.length === 0;
-        }.on("add", "remove", "reset"),
+        }.on("all"),
         /**
          * Pushes one item to the list
          * @param item
@@ -174,7 +172,7 @@ define(["js/core/Bindable", "underscore"], function (Bindable, _) {
          */
         size: function () {
             return this.$items.length;
-        }.on('add', 'remove', 'reset'),
+        }.on('all'),
 
         /**
          * Returns item at a specific index
@@ -186,7 +184,7 @@ define(["js/core/Bindable", "underscore"], function (Bindable, _) {
                 return this.$items[index];
             }
             return null;
-        }.on('add','remove','reset'),
+        }.on('all'),
         /**
          * Iterates over all items with given callback
          * @param Function callback with signature function(item, index)
@@ -251,7 +249,7 @@ define(["js/core/Bindable", "underscore"], function (Bindable, _) {
             }else{
                 return false;
             }
-        }.on('add','remove','reset'),
+        }.on('all'),
         /**
          * Returns a fresh copy of the List
          * @return List a fresh copy of the list
@@ -276,6 +274,14 @@ define(["js/core/Bindable", "underscore"], function (Bindable, _) {
                 this._$source.reset(items);
             }
             return this.callBase();
+        },
+        trigger: function(event, attributes){
+            this.callBase();
+            if(event == "add" || event === "remove" || event === "reset" || event === "sort"){
+                attributes["event"] = event;
+                this.trigger("all",attributes);
+            }
+
         }
     });
 
