@@ -8,6 +8,8 @@ define(['js/core/Component'], function (Component) {
             sortable: true,
             sortDirection: 0,
             name: "column",
+            $dataItem: null,
+            item: '$dataItem.data',
             title: ""
         },
         getFormatFnc: function () {
