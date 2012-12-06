@@ -463,13 +463,15 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
 
                             if (bindingAttribute) {
                                 value = bindingAttribute.value;
-                                bindingDefinitions = bindingAttribute.bindingDefinitions
+                                bindingDefinitions = bindingAttribute.bindingDefinitions;
+                                changedAttributes[key] = bindingCreator.evaluate(value, this, key, bindingDefinitions);
                             } else {
                                 value = $[key];
                                 bindingDefinitions = null;
                             }
 
-                            changedAttributes[key] = bindingCreator.evaluate(value, this, key, bindingDefinitions);
+
+
                         }
                     }
 
