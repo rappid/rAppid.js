@@ -231,12 +231,12 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                     schemaDefinition,
                     schemaType;
 
-                for (var key in data) {
-                    if (data.hasOwnProperty(key) && (!options || !options.includeInIndex || _.contains(options.includeInIndex, key))) {
+                for (var key in entity.schema) {
+                    if (entity.schema.hasOwnProperty(key) && (!options || !options.includeInIndex || _.contains(options.includeInIndex, key))) {
+                        schemaDefinition = entity.schema[key];
+                        schemaType = schemaDefinition ? schemaDefinition['type'] : null;
                         var value = this._getCompositionValue(data[key], key, action, options);
                         if (value !== undefined) {
-                            schemaDefinition = entity.schema[key];
-                            schemaType = schemaDefinition ? schemaDefinition['type'] : null;
                             ret[this._getReferenceKey(key, schemaType)] = value;
                         }
                     }
@@ -735,24 +735,27 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                     if (configuration) {
 
                         if (requestor) {
+                            var parentConfiguration = configuration;
                             do {
-                                configuration = configuration.$parent;
+                                parentConfiguration = parentConfiguration.$parent;
 
-                                if (!(configuration instanceof ResourceConfiguration)) {
+                                if (!(parentConfiguration instanceof ResourceConfiguration)) {
                                     break;
                                 }
 
-                                if (configuration.$["modelClassName"] === requestor.constructor.name) {
+                                if (parentConfiguration.$["modelClassName"] === requestor.constructor.name) {
                                     // childFactory is configured as descendant of the requestor
                                     // so the childFactory will be created in the context of the requestor
                                     return this.getContext(requestor, requestor.$context);
                                 }
 
-                            } while (configuration.$parent);
+                            } while (parentConfiguration.$parent);
                         }
 
 
+
                         // childFactory isn't descendant of the requestor, so return the root context
+
                         return requestor.$context;
                     }
                 }
