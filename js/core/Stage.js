@@ -1,4 +1,4 @@
-define(["js/html/HtmlElement", "js/core/Bus", "js/core/WindowManager"], function (HtmlElement, Bus, WindowManager) {
+define(["js/html/HtmlElement", "js/core/Bus", "js/core/WindowManager", "js/core/ExternalInterface"], function (HtmlElement, Bus, WindowManager, ExternalInterface) {
     return HtmlElement.inherit("js.core.Stage", {
         $containerOrder: {
             'windows' : 0,
@@ -19,6 +19,7 @@ define(["js/html/HtmlElement", "js/core/Bus", "js/core/WindowManager"], function
             this.$document = document;
             this.$window = window;
             this.$bus = new Bus();
+            this.$externalInterface = new ExternalInterface(this);
 
             this.$containers = {};
             this.$elements = {};
@@ -62,6 +63,11 @@ define(["js/html/HtmlElement", "js/core/Bus", "js/core/WindowManager"], function
 
         render: function(target){
             var dom = this.callBase(null);
+
+            if (this.$externalInterface) {
+                this.$externalInterface._stageRendered(dom);
+            }
+
             if (target) {
                 target.appendChild(dom);
                 this.$bus.trigger('Stage.Rendered', target);

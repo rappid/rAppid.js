@@ -413,6 +413,7 @@
             injection.addInstance(stage.$bus);
             injection.addInstance(stage.$history);
             injection.addInstance(stage.$headManager);
+            injection.addInstance(stage.$externalInterface);
 
             var application = new applicationFactory(null, false, stage, null, null);
 
