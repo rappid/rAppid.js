@@ -37,7 +37,6 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
 
             _extendSchema: function () {
 
-                // TODO: add real caching for schema
                 if(this.factory.schema){
                     this.schema = this.factory.schema;
                     return;
@@ -132,7 +131,8 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
             },
 
             /***
-             * Composes the data. Can pe used to pre compose the data for the processor
+             * Composes the data based on the schema.
+             * Can pe used to pre compose the data for the processor
              * @param action
              * @param options
              * @return {Object} all data that should be serialized
@@ -304,14 +304,6 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                             } else if(value.size() === 0 && !(this.runsInBrowser() && schemaObject.generated) && this._isRequired(entity, schemaObject.required) === true) {
                                 errors.push(this._createError("isEmptyError", key + " are empty", key));
                             }
-                        }
-                    }
-                }
-
-                for (key in attributes) {
-                    if (attributes.hasOwnProperty(key) && !schema.hasOwnProperty(key)) {
-                        if(key !== "id"){
-                            errors.push(this._createError("wrongDataError", key + " is not defined in schema", key));
                         }
                     }
                 }
