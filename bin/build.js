@@ -4,6 +4,7 @@ var path = require('path'),
     jsdom = require('jsdom').jsdom,
     flow = require('flow.js').flow,
     fs = require('fs');
+
 fs.existsSync || (fs.existsSync = path.existsSync);
 
 var createOnBuildWriteFnc = function(shim){
@@ -69,18 +70,18 @@ var build = function (args, callback) {
     var buildConfigPath = path.join(basePath, "build.json");
     var publicPath = path.join(basePath, "public");
 
-    if (!path.existsSync(buildConfigPath)) {
+    if (!fs.existsSync(buildConfigPath)) {
         callback("Couldn't find build.json in " + buildConfigPath);
         return;
     }
 
-    if (!path.existsSync(publicPath)) {
+    if (!fs.existsSync(publicPath)) {
         callback("Couldn't find public dir");
         return;
     }
 
     var configPath = path.join(publicPath, "config.json");
-    if (!path.existsSync(configPath)) {
+    if (!fs.existsSync(configPath)) {
         callback("Couldn't find config.json in " + publicPath);
         return;
     }
@@ -147,11 +148,12 @@ var build = function (args, callback) {
 
     var versionDir;
     if(buildConfig.usePackageVersion === true){
-        var packagePath = path.join(basePath, "package.json");
-        var package = JSON.parse(fs.readFileSync(packagePath));
+        var packagePath = path.join(basePath, "package.json"),
+            packageContent = JSON.parse(fs.readFileSync(packagePath)),
+            version;
 
-        if(package){
-            versionDir = package.version;
+        if(packageContent){
+            version = versionDir = packageContent.version;
             optimizeConfig.dir = path.join(optimizeConfig.dir,versionDir);
         }else{
             throw new Error("No package.json found");
@@ -188,6 +190,8 @@ var build = function (args, callback) {
         content = content.replace("js/lib/rAppid", mainModule);
         if(versionDir){
             content = content.replace(/(href|src)=(["'])(?!(http|\/\/))([^'"]+)/g,'$1=$2'+versionDir+'/$4');
+            content = content.replace(/\$\{VERSION\}/g, version);
+
             mainModule = path.join(versionDir, mainModule);
             var externalIndexFilePath = path.join(buildDirPath , "..", buildConfig.indexFile || "index.html");
             fs.writeFileSync(externalIndexFilePath, content);
