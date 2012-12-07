@@ -460,7 +460,6 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                     for (key in $) {
                         if ($.hasOwnProperty(key)) {
                             bindingAttribute = bindingAttributes[key];
-
                             if (bindingAttribute) {
                                 value = bindingAttribute.value;
                                 bindingDefinitions = bindingAttribute.bindingDefinitions;
@@ -469,9 +468,6 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                                 value = $[key];
                                 bindingDefinitions = null;
                             }
-
-
-
                         }
                     }
 
