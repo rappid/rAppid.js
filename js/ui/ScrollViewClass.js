@@ -92,7 +92,7 @@ define(['js/ui/View'], function (View) {
             }
         },
 
-        _stopScrolling: function() {
+        _stopScrolling: function () {
 
             var matrix = this.$stage.$window.getComputedStyle(this.$.container.$el)[this.$transformProperty],
                 content = /^matrix\((.*)\)$/.exec(matrix),
@@ -180,8 +180,8 @@ define(['js/ui/View'], function (View) {
 
             this._stopScrolling();
 
-            this.$pointerStartX = this.hasTouch ? e.changedTouches[0].pageX : e.pageX;
-            this.$pointerStartY = this.hasTouch ? e.changedTouches[0].pageY : e.pageY;
+            this.$pointerStartX = this.$pointerX = this.hasTouch ? e.changedTouches[0].pageX : e.pageX;
+            this.$pointerStartY = this.$pointerY = this.hasTouch ? e.changedTouches[0].pageY : e.pageY;
 
             this.$downX = this.$x;
             this.$downY = this.$y;
@@ -189,7 +189,7 @@ define(['js/ui/View'], function (View) {
             this._setPosition(this.$x, this.$y);
 
             this.$moveDirection = UNSPECIFIED;
-            this.$scrollStartTime = e.timeStamp;
+            this.$pointerTime = e.timeStamp;
         },
 
         _move: function (e) {
@@ -197,10 +197,11 @@ define(['js/ui/View'], function (View) {
                 return;
             }
 
-            var pageX = this.hasTouch ? e.changedTouches[0].pageX : e.pageX,
-                pageY = this.hasTouch ? e.changedTouches[0].pageY : e.pageY,
-                deltaX = pageX - this.$pointerStartX,
-                deltaY = pageY - this.$pointerStartY;
+            this.$pointerX = this.hasTouch ? e.changedTouches[0].pageX : e.pageX;
+            this.$pointerY = this.hasTouch ? e.changedTouches[0].pageY : e.pageY;
+
+            var deltaX = this.$pointerX - this.$pointerStartX,
+                deltaY = this.$pointerY - this.$pointerStartY;
 
             var scrollVertical = this.$.verticalScroll === true;
             var scrollHorizontal = this.$.horizontalScroll === true;
@@ -213,8 +214,7 @@ define(['js/ui/View'], function (View) {
                 }
             }
 
-            var scrolled = false,
-                newX = this.$downX,
+            var newX = this.$downX,
                 newY = this.$downY;
 
 
@@ -226,7 +226,8 @@ define(['js/ui/View'], function (View) {
                 newX = newX + Math.floor(deltaX);
             }
 
-            scrolled = this._setPosition(newX, newY);
+            this._setPosition(newX, newY);
+
 
             e.stopPropagation();
 
@@ -237,11 +238,25 @@ define(['js/ui/View'], function (View) {
                 return false;
             }
 
-            this.$moveDirection = false;
-        },
+            var a = -1.1;
+            var deltaT = (e.timeStamp - this.$pointerTime) / 1000; // seconds
+            var deltaY = this.$pointerStartY - this.$pointerY; // pixel
+            var direction = deltaY < 0 ? 1 : -1;
 
-        _up: function (e) {
+            deltaY = Math.abs(deltaY);
 
+            var v = deltaY / deltaT; // pixel / seconds
+
+            var t = Math.abs(v / a);
+            var s = a/2*t*t / 1000;
+
+            t /= 2;
+            s = Math.abs(s) * direction;
+
+            console.log(v, s, t);
+            this._setPosition(this.$x, this.$y + s, Math.round(t) + "ms");
+
+            this.$moveDirection = NONE;
         },
 
         _bindDomEvents: function () {
