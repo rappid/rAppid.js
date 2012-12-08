@@ -1,6 +1,15 @@
-define(['js/ui/View'], function(View) {
+define(['js/ui/View'], function (View) {
 
-    var AUTO = "AUTO";
+    var AUTO = "auto",
+        DOM_MOUSE_SCROLL = "DOMMouseScroll",
+        MOUSEWHEEL = "mousewheel",
+        START_EVENT, MOVE_EVENT, END_EVENT,
+
+        NONE = 0,
+        UNSPECIFIED = -1,
+        VERTICAL = 1,
+        HORIZONTAL = 2,
+        BOTH = 4;
 
     return View.inherit('js.ui.ScrollViewClass', {
         $defaultContentName: "content",
@@ -11,25 +20,26 @@ define(['js/ui/View'], function(View) {
             lockScrollDirection: true,
 
             enableScroll: AUTO,
-            enableTouch: AUTO,
+            enablePointer: AUTO,
 
             scrollTop: 0,
             scrollLeft: 0,
 
-            denyOutsideScroll: false,
+            restrictScrollToContainer: false,
             syncToScrollPosition: false,
 
             // TODO: read from content, provide refresh method
             scrollContainerHeight: 1116
         },
 
-        ctor: function() {
+        ctor: function () {
+
             this.callBase();
 
             this._initializeCapabilities(this.$stage.$window);
         },
 
-        _initializeCapabilities: function(window) {
+        _initializeCapabilities: function (window) {
             // TODO: implement browser unspecific version http://stackoverflow.com/questions/5661671/detecting-transform-translate3d-support
 
             var runsInBrowser = this.runsInBrowser();
@@ -41,19 +51,37 @@ define(['js/ui/View'], function(View) {
 
         },
 
-        _initializeRenderer: function(el) {
+        _commitChangedAttributes: function (attributes) {
+            if (attributes.hasOwnProperty("enableScroll") || attributes.hasOwnProperty("enablePointer")) {
+                this.$enableScroll = (this.$.enableScroll === AUTO && !this.hasTouch) || this.$.enableScroll;
+                this.$enablePointer = (this.$.enablePointer === AUTO && this.hasTouch) || this.$.enablePointer || !this.$enableScroll;
+
+                if (this.$enablePointer) {
+                    START_EVENT = this.hasTouch ? "touchstart" : "mousedown";
+                    MOVE_EVENT = this.hasTouch ? "touchmove" : "mousemove";
+                    END_EVENT = this.hasTouch ? "touchend" : "mouseup";
+                }
+
+                this._registerEvents();
+            }
+        },
+
+        _initializeRenderer: function (el) {
             this.$transformProperty = this._getTransformProperty(el);
+            var prefix = /^(-[^-]+-)?/.exec(this.$transformProperty)[0];
+            this.$translateDurationProperty = prefix + "transition-duration";
+            this.$transitionTimingFunction = prefix + "transition-timing-function";
+
         },
 
         _getTransformProperty: function (element) {
-            // Note that in some versions of IE9 it is critical that
-            // msTransform appear in this list before MozTransform
+
             var properties = [
-                'transform',
-                'WebkitTransform',
-                'msTransform',
+//                'transform',
+                '-webkit-transform',
+                '-ms-transform',
                 'MozTransform',
-                'OTransform'
+                '-o-transform'
             ];
 
             var p;
@@ -64,18 +92,43 @@ define(['js/ui/View'], function(View) {
             }
         },
 
-        _setPosition: function(x, y) {
+        _stopScrolling: function() {
+
+            var matrix = this.$stage.$window.getComputedStyle(this.$.container.$el)[this.$transformProperty],
+                content = /^matrix\((.*)\)$/.exec(matrix),
+                values;
+
+            if (content) {
+                values = content[1].split(",");
+                this._setPosition(values[4], values[5]);
+            } else {
+                this._setPosition(0, 0);
+            }
+
+        },
+
+        _setPosition: function (x, y, duration) {
+
+            y = Math.min(0, Math.max(-this.$.scrollContainerHeight + this.$.height, y));
+
+            if (y === this.$y && x === this.$x) {
+                return false;
+            }
 
             this.$x = x;
             this.$y = y;
 
             if (this.$transformProperty && this.$.container) {
+                duration = duration || 0;
+                this.$.container.$el.style[this.$translateDurationProperty] = duration;
+                this.$.container.$el.style[this.$transitionTimingFunction] = "ease-out";
                 this.$.container.$el.style[this.$transformProperty] = this.$translateOpen + x + 'px,' + y + 'px' + this.$translateClose;
             }
 
+            return true;
         },
 
-        _commitScrollTop: function(top) {
+        _commitScrollTop: function (top) {
             this._setPosition(this.$x, top);
         },
 
@@ -83,90 +136,230 @@ define(['js/ui/View'], function(View) {
             this._setPosition(left, this.$y);
         },
 
-        _render: function() {
+        _render: function () {
             this.callBase();
 
             this._setPosition(0, 0);
         },
 
-        _renderAttribute: function() {
+        _renderAttribute: function () {
             this.callBase();
         },
 
-        _isDOMNodeAttribute: function(attr) {
+        _isDOMNodeAttribute: function (attr) {
             return attr != "scrollTop" && attr != "scrollLeft" && this.callBase();
         },
 
-        _bindDomEvents: function(el) {
-            var self = this;
+        handleEvent: function (e) {
 
-            this.callBase();
-
-            if (this.$.enableScroll) {
-                "onDOMMouseScroll" in el && this.bindDomEvent("DOMMouseScroll", onWheel);
-                "onmousewheel" in el && this.bindDomEvent("mousewheel", onWheel);
+            switch (e.type) {
+                case MOUSEWHEEL:
+                case DOM_MOUSE_SCROLL:
+                    this.$enableScroll && this._onWheel(e);
+                    break;
+                case START_EVENT:
+                    this._down(e);
+                    break;
+                case MOVE_EVENT:
+                    this._move(e);
+                    break;
+                case END_EVENT:
+                    this._end(e);
+                    break;
             }
 
-            // TODO: handle touch
+        },
 
-            function onWheel(e) {
-                e = e || window.event; // for IE
+        _down: function (e) {
+            if (!this.$enablePointer) {
+                return;
+            }
 
-                var deltaX = 0,
-                    deltaY = 0;
+            e.preventDefault();
+            e.stopPropagation();
 
-                // check target and scroll
-                if (e.wheelDeltaX || e.wheelDeltaY) {
-                    if (e.wheelDeltaX) {
-                        deltaX = e.wheelDeltaX;
-                    }
+            this._stopScrolling();
 
-                    if (e.wheelDeltaY) {
-                        deltaY = e.wheelDeltaY;
-                    }
+            this.$pointerStartX = this.hasTouch ? e.changedTouches[0].pageX : e.pageX;
+            this.$pointerStartY = this.hasTouch ? e.changedTouches[0].pageY : e.pageY;
+
+            this.$downX = this.$x;
+            this.$downY = this.$y;
+
+            this._setPosition(this.$x, this.$y);
+
+            this.$moveDirection = UNSPECIFIED;
+            this.$scrollStartTime = e.timeStamp;
+        },
+
+        _move: function (e) {
+            if (!(this.$enablePointer && this.$moveDirection)) {
+                return;
+            }
+
+            var pageX = this.hasTouch ? e.changedTouches[0].pageX : e.pageX,
+                pageY = this.hasTouch ? e.changedTouches[0].pageY : e.pageY,
+                deltaX = pageX - this.$pointerStartX,
+                deltaY = pageY - this.$pointerStartY;
+
+            var scrollVertical = this.$.verticalScroll === true;
+            var scrollHorizontal = this.$.horizontalScroll === true;
+
+            if (this.$.lockScrollDirection && scrollVertical && scrollHorizontal) {
+                if (Math.abs(deltaX) > Math.abs(deltaY)) {
+                    scrollVertical = false;
                 } else {
-                    var delta = e.detail ? e.detail * (-3) : e.wheelDelta;
+                    scrollHorizontal = false;
+                }
+            }
 
-                    if (e.axis && e.axis == 1) {
-                        deltaX = delta;
-                    } else {
-                        deltaY = delta;
-                    }
+            var scrolled = false,
+                newX = this.$downX,
+                newY = this.$downY;
+
+
+            if (scrollVertical) {
+                newY = newY + Math.floor(deltaY);
+            }
+
+            if (scrollHorizontal) {
+                newX = newX + Math.floor(deltaX);
+            }
+
+            scrolled = this._setPosition(newX, newY);
+
+            e.stopPropagation();
+
+        },
+
+        _end: function (e) {
+            if (!(this.$enablePointer && this.$moveDirection)) {
+                return false;
+            }
+
+            this.$moveDirection = false;
+        },
+
+        _up: function (e) {
+
+        },
+
+        _bindDomEvents: function () {
+            this.callBase();
+
+            this._registerEvents();
+        },
+
+        _registerEvents: function () {
+
+            var el = this.$el;
+            if (!(el && this.runsInBrowser())) {
+                return;
+            }
+
+
+            if (this.$enableScroll) {
+                if (this.$scrollBound) {
+                    // do not bind twice
+                    return;
                 }
 
-                var scrollVertical = self.$.verticalScroll === true;
-                var scrollHorizontal = self.$.horizontalScroll === true;
-
-                if (self.$.lockScrollDirection && scrollVertical && scrollHorizontal) {
-                    if (Math.abs(deltaX) > Math.abs(deltaY)) {
-                        scrollVertical = false;
-                    } else {
-                        scrollHorizontal = false;
-                    }
+                if (this.$stage.$document.attachEvent || "onmousewheel" in el) {
+                    this.bindDomEvent(MOUSEWHEEL, this)
+                } else {
+                    this.bindDomEvent(DOM_MOUSE_SCROLL, this);
                 }
 
-                var scrolled = false;
-
-                if (scrollVertical) {
-                    var oldY = self.$y;
-                    var y = oldY + Math.floor(deltaY);
-
-                    // TODO: check ranges
-                    // y = Math.min(Math.max(self.$.scrollContainerHeight + self.$.height, y), 0);
-
-                    if (oldY != y) {
-                        scrolled = true;
-                        self._setPosition(self.$x, y);
-                    }
-
+                this.$scrollBound = true;
+            } else {
+                if (!this.$pointerBound) {
+                    return;
                 }
+
+                if (this.$stage.$document.attachEvent || "onmousewheel" in el) {
+                    this.unbindDomEvent(MOUSEWHEEL, this)
+                } else {
+                    this.unbindDomEvent(DOM_MOUSE_SCROLL, this);
+                }
+
+                this.$scrollBound = false;
+            }
+
+            if (this.$enablePointer) {
+                if (this.$pointerBound) {
+                    return;
+                }
+
+                this.bindDomEvent(START_EVENT, this);
+                this.bindDomEvent(MOVE_EVENT, this);
+                this.dom(this.$stage.$window).bindDomEvent(END_EVENT, this);
+
+                this.$pointerBound = true;
+            } else {
+                if (!this.$pointerBound) {
+                    return;
+                }
+
+                this.unbindDomEvent(START_EVENT, this);
+                this.unbindDomEvent(MOVE_EVENT, this);
+                this.unbindDomEvent(END_EVENT, this);
+
+                this.$pointerBound = false;
+            }
+
+        },
+
+        _onWheel: function (e) {
+            e = e || window.event; // for IE
+
+            var deltaX = 0,
+                deltaY = 0;
+
+            // check target and scroll
+            if (e.wheelDeltaX || e.wheelDeltaY) {
+                if (e.wheelDeltaX) {
+                    deltaX = e.wheelDeltaX;
+                }
+
+                if (e.wheelDeltaY) {
+                    deltaY = e.wheelDeltaY;
+                }
+            } else {
+                var delta = e.detail ? e.detail * (-3) : e.wheelDelta;
+
+                if (e.axis && e.axis == 1) {
+                    deltaX = delta;
+                } else {
+                    deltaY = delta;
+                }
+            }
+
+            var scrollVertical = this.$.verticalScroll === true;
+            var scrollHorizontal = this.$.horizontalScroll === true;
+
+            if (this.$.lockScrollDirection && scrollVertical && scrollHorizontal) {
+                if (Math.abs(deltaX) > Math.abs(deltaY)) {
+                    scrollVertical = false;
+                } else {
+                    scrollHorizontal = false;
+                }
+            }
+
+            var scrolled = false;
+
+            if (scrollVertical) {
+                var oldY = this.$y;
+                var y = oldY + Math.floor(deltaY);
+
+                scrolled = this._setPosition(this.$x, y);
+            }
 
 //                if (scrollHorizontal) {
 //
 //                    var oldLeft = scrollContainer.position().left;
 //
 //                    var left = oldLeft + Math.floor(deltaX);
-//                    left = Math.min(Math.max(-scrollContainer.outerWidth() + self.$el.width(), left), 0);
+//                    left = Math.min(Math.max(-scrollContainer.outerWidth() + this.$el.width(), left), 0);
 //
 //                    if (oldLeft != left) {
 //                        scrolled = true;
@@ -178,12 +371,10 @@ define(['js/ui/View'], function(View) {
 //
 //                }
 
-                if (scrolled) {
-                    e.preventDefault();
-                }
-
-
+            if (scrolled || this.$.restrictScrollToContainer) {
+                e.preventDefault();
             }
+
 
         }
 
