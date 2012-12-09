@@ -6,7 +6,9 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
         SCROLL_DIRECTION_VERTICAL = "vertical",
         SCROLL_DIRECTION_HORIZONTAL = "horizontal",
 
-        AUTO = "auto";
+        AUTO = "auto",
+
+        undefined;
 
     /***
      * defines an ItemsView which can show parts of data
@@ -48,7 +50,7 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
             fetchPageDelay: 500,
 
             $dataAdapter: null,
-            selectionMode: 'multi',
+            selectionMode: SELECTION_MODE_MULTI,
             selectedItems: List,
 
             _itemWidth: 100,
@@ -448,6 +450,7 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
                 }
             }
         },
+
         _itemsCountChanged: function () {
             this._updateSize();
             this._updateVisibleItems();
@@ -609,6 +612,12 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
          * @private
          */
         _selectItem: function (index, shiftDown, metaKey) {
+            var startIndex,
+                endIndex,
+                item,
+                id,
+                pos;
+
             if (this.$.selectionMode === SELECTION_MODE_NONE) {
                 return;
             }
@@ -623,7 +632,7 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
             if (!shiftDown || metaKey) {
                 this.$lastSelectionIndex = index;
             }
-            var startIndex, endIndex;
+
             if (this.$lastSelectionIndex !== undefined && index < this.$lastSelectionIndex) {
                 startIndex = index;
                 endIndex = this.$lastSelectionIndex;
@@ -631,8 +640,9 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
                 startIndex = this.$lastSelectionIndex;
                 endIndex = index;
             }
+
             this.$currentSelectionIndex = index;
-            var item, id;
+
             for (var i = startIndex; i <= endIndex; i++) {
                 item = this.$.$dataAdapter.getItemAt(i);
                 id = item.$.data ? item.$.data.$.id : undefined;
@@ -643,18 +653,20 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
                     } else {
                         this.$selectionMap[id] = true;
                         this.$.selectedItems.add(item.$.data);
-
                     }
                 } else {
                     this.log("no id defined for data item", "warn");
                 }
             }
-            var pos = this.getPointFromIndex(index);
-            if(this.$.scrollDirection === SCROLL_DIRECTION_VERTICAL){
+
+            pos = this.getPointFromIndex(index);
+
+            if (this.$.scrollDirection === SCROLL_DIRECTION_VERTICAL) {
 
                 var y = pos.y,
                     topDiff = y - this.$el.scrollTop,
                     bottomDiff = topDiff + this.$._itemHeight + this.$.verticalGap - this.$.height;
+
                 topDiff -= this.$.verticalGap;
 
                 if (bottomDiff > 0) {
@@ -678,6 +690,7 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
                     this.$el.scrollLeft += leftDiff;
                 }
             }
+
             if (!shiftDown) {
                 this.$lastSelectionIndex = index;
             }
