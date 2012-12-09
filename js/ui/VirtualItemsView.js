@@ -206,7 +206,7 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
                     }
 
                     if (itemWidth === AUTO) {
-                        itemWidth = Math.ceil((width - (cols - 1) * horizontalGap) / cols);
+                        itemWidth = Math.floor((width - (cols - 1) * horizontalGap) / cols);
                     }
 
                     if (itemHeight === AUTO) {
@@ -225,7 +225,7 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
                     }
 
                     if (itemHeight === AUTO) {
-                        itemHeight = Math.ceil((height - (rows - 1 ) * verticalGap) / rows);
+                        itemHeight = Math.floor((height - (rows - 1) * verticalGap) / rows);
                     }
 
                     if (itemWidth === AUTO) {
