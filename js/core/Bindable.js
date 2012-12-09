@@ -439,6 +439,28 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
                     // override
                 },
 
+                _hasAll: function(attributes, search) {
+
+                    for (var i = 0; i < search.length; i++) {
+                        if (!attributes.hasOwnProperty(search[i])) {
+                            return false;
+                        }
+                    }
+
+                    return true;
+                },
+
+                _hasSome: function(attributes, search) {
+
+                    for (var i = 0; i < search.length; i++) {
+                        if (attributes.hasOwnProperty(search[i])) {
+                            return true;
+                        }
+                    }
+
+                    return false;
+                },
+
                 /***
                  * Unset attribute on $
                  * @param {String|Object} key - the attribute or attributes to unset
