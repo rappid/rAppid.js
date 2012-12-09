@@ -197,16 +197,16 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
                     if (cols === AUTO) {
 
                         if (itemWidth === AUTO) {
-                            var minCols = (width + horizontalGap ) / (this.$.minItemSize + horizontalGap);
-                            var maxCols = (width + horizontalGap ) / (this.$.maxItemSize + horizontalGap);
+                            var minCols = (width - horizontalGap ) / (this.$.minItemSize + horizontalGap);
+                            var maxCols = (width - horizontalGap ) / (this.$.maxItemSize + horizontalGap);
                             cols = Math.round((minCols + maxCols) / 2);
                         } else {
-                            cols = Math.floor((width + horizontalGap) / (itemWidth+ horizontalGap));
+                            cols = Math.floor((width - horizontalGap) / (itemWidth + horizontalGap));
                         }
                     }
 
                     if (itemWidth === AUTO) {
-                        itemWidth = Math.ceil((width - cols * horizontalGap) / cols);
+                        itemWidth = Math.ceil((width - (cols - 1) * horizontalGap) / cols);
                     }
 
                     if (itemHeight === AUTO) {
@@ -216,16 +216,16 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
                     if (rows === AUTO) {
 
                         if (itemHeight === AUTO) {
-                            var minRows = (height + verticalGap ) / (this.$.minItemSize + verticalGap);
-                            var maxRows = (height + verticalGap ) / (this.$.maxItemSize + verticalGap);
+                            var minRows = (height - verticalGap ) / (this.$.minItemSize + verticalGap);
+                            var maxRows = (height - verticalGap ) / (this.$.maxItemSize + verticalGap);
                             rows = Math.round((minRows + maxRows) / 2);
                         } else {
-                            rows = Math.floor((height + horizontalGap) / (itemHeight + verticalGap));
+                            rows = Math.floor((height - horizontalGap) / (itemHeight + verticalGap));
                         }
                     }
 
                     if (itemHeight === AUTO) {
-                        itemHeight = Math.ceil((height - rows * verticalGap) / rows);
+                        itemHeight = Math.ceil((height - (rows - 1 ) * verticalGap) / rows);
                     }
 
                     if (itemWidth === AUTO) {
