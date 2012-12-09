@@ -63,7 +63,6 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
         ctor: function () {
             this.$currentSelectionIndex = null;
             this.$selectionMap = {};
-            this.$selectedViews = {};
             this.$activeRenderer = {};
             this.$availableRenderer = [];
             this.$container = null;
@@ -523,7 +522,6 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
         /***
          *
          * @abstract
-         * @param {Element} el
          * @returns {js.core.DomElement}
          * @private
          */
