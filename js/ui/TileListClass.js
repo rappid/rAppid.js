@@ -5,7 +5,6 @@ define(['js/ui/VirtualItemsView'], function(VirtualItemsView) {
         defaults: {
             heightUpdatePolicy: 'both',
             widthUpdatePolicy: 'both',
-            width: null,
             scrollContainerClass: ""
         },
 

@@ -1,10 +1,12 @@
 define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 'underscore'], function (View, Bindable, List, Collection, _) {
     var SELECTION_MODE_NONE = 'none',
         SELECTION_MODE_MULTI = 'multi',
-        SELECTION_MODE_SINGLE = 'single';
+        SELECTION_MODE_SINGLE = 'single',
 
-    var SCROLL_DIRECTION_VERTICAL = "vertical",
-        SCROLL_DIRECTION_HORIZONTAL = "horizontal";
+        SCROLL_DIRECTION_VERTICAL = "vertical",
+        SCROLL_DIRECTION_HORIZONTAL = "horizontal",
+
+        AUTO = "auto";
 
     /***
      * defines an ItemsView which can show parts of data
@@ -24,14 +26,22 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
             width: 300,
             height: 300,
 
-            itemWidth: 100,
-            itemHeight: 100,
+            minItemSize: 100,
+            maxItemSize: 150,
 
-            rows: 3,
-            cols: 3,
+            itemWidth: AUTO,
+            itemHeight: AUTO,
+
+            rows: AUTO,
+            cols: AUTO,
+
+            // calculates itemHeight, itemWidth if set to AUTO depending on the scrollDirection
+            aspectRatio: 1,
+
             scrollToIndex: 0,
-            horizontalGap: 0,
-            verticalGap: 0,
+            horizontalGap: 10,
+            verticalGap: 10,
+
             scrollDirection: SCROLL_DIRECTION_VERTICAL,
             prefetchItemCount: 0,
 
@@ -39,8 +49,15 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
 
             $dataAdapter: null,
             selectionMode: 'multi',
-            selectedItems: List
+            selectedItems: List,
+
+            _itemWidth: 100,
+            _itemHeight: 100,
+
+            _cols: 3,
+            _rows: 3
         },
+
         events: ["on:itemClick", "on:itemDblClick"],
 
         ctor: function () {
@@ -158,18 +175,83 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
             this._updateVisibleItems();
         },
 
-        _commitChangedAttributes: function (attributes, opt) {
-            if (!_.isUndefined(attributes.scrollToIndex) && opt.initiator !== this) {
-                this._scrollToIndex(attributes.scrollToIndex);
+        _commitChangedAttributes: function ($, opt) {
+            if (!_.isUndefined($.scrollToIndex) && opt.initiator !== this) {
+                this._scrollToIndex($.scrollToIndex);
             }
 
-            if (attributes.hasOwnProperty('itemWidth') || attributes.hasOwnProperty('itemHeight') || attributes.hasOwnProperty('verticalGap') || attributes.hasOwnProperty('horizontalGap') || attributes.hasOwnProperty('cols')) {
+
+            if (this._hasSome($, ["itemWidth", "itemHeight", "aspectRation", "width", "height", "verticalGap", "horizontalGap"])) {
+
+                var cols = this.$.cols,
+                    rows = this.$.rows,
+                    width = this.$.width,
+                    height = this.$.height,
+                    horizontalGap = this.$.horizontalGap,
+                    verticalGap = this.$.verticalGap,
+                    itemWidth = this.$.itemWidth,
+                    itemHeight = this.$.itemHeight,
+                    aspectRatio = this.$.aspectRatio;
+
+                if (this.$.scrollDirection === SCROLL_DIRECTION_VERTICAL) {
+
+                    if (cols === AUTO) {
+
+                        if (itemWidth === AUTO) {
+                            var minCols = (width + horizontalGap ) / (this.$.minItemSize + horizontalGap);
+                            var maxCols = (width + horizontalGap ) / (this.$.maxItemSize + horizontalGap);
+                            cols = Math.round((minCols + maxCols) / 2);
+                        } else {
+                            cols = Math.floor((width + horizontalGap) / (itemWidth+ horizontalGap));
+                        }
+                    }
+
+                    if (itemWidth === AUTO) {
+                        itemWidth = Math.ceil((width - cols * horizontalGap) / cols);
+                    }
+
+                    if (itemHeight === AUTO) {
+                        itemHeight = itemWidth * aspectRatio;
+                    }
+                } else {
+                    if (rows === AUTO) {
+
+                        if (itemHeight === AUTO) {
+                            var minRows = (height + verticalGap ) / (this.$.minItemSize + verticalGap);
+                            var maxRows = (height + verticalGap ) / (this.$.maxItemSize + verticalGap);
+                            rows = Math.round((minRows + maxRows) / 2);
+                        } else {
+                            rows = Math.floor((height + horizontalGap) / (itemHeight + verticalGap));
+                        }
+                    }
+
+                    if (itemHeight === AUTO) {
+                        itemHeight = Math.ceil((height - rows * verticalGap) / rows);
+                    }
+
+                    if (itemWidth === AUTO) {
+                        itemWidth = itemHeight * aspectRatio;
+                    }
+                }
+
+                this.set({
+                    _itemHeight: itemHeight,
+                    _itemWidth: itemWidth,
+                    _cols: cols,
+                    _rows: rows
+                });
+
+
+            }
+
+            if (this._hasSome($, ["_itemWidth", "_itemHeight", "_cols", "_rows", "verticalGap", "horizontalGap"])) {
                 this._positionActiveRenderers();
                 this._updateSize();
                 this._scrollToIndex(this.$.scrollToIndex);
             }
 
-            if (attributes.hasOwnProperty('scrollTop') || attributes.hasOwnProperty('scrollLeft') || attributes.hasOwnProperty('height') || attributes.hasOwnProperty('width')) {
+            // TODO: add scroll position
+            if (this._hasSome($, ["height", "width", "scrollTop", "scrollLeft"])) {
                 this._updateVisibleItems();
             }
 
@@ -235,8 +317,8 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
                             this.$activeRenderer[i] = renderer;
 
                             renderer.set({
-                                width: this.$.itemWidth,
-                                height: this.$.itemHeight,
+                                width: this.$._itemWidth,
+                                height: this.$._itemHeight,
                                 $dataItem: dataAdapter.getItemAt(i),
                                 $index: i,
                                 $viewIndex: i - startIndex
@@ -376,19 +458,23 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
             if (isNaN(count)) {
                 return null;
             }
-            var size = {};
+            var size = {
+                width: null,
+                height: null
+            };
+
             if (this.$.scrollDirection === SCROLL_DIRECTION_VERTICAL) {
-                var itemRows = Math.ceil(count / this.$.cols);
-                size.height = itemRows * (this.$.itemHeight + this.$.verticalGap);
+                var itemRows = Math.ceil(count / this.$._cols);
+                size.height = itemRows * (this.$._itemHeight + this.$.verticalGap);
             } else if (this.$.scrollDirection === SCROLL_DIRECTION_HORIZONTAL) {
-                var itemCols = Math.ceil(count / this.$.rows);
-                size.width = itemCols * (this.$.itemWidth + this.$.horizontalGap);
+                var itemCols = Math.ceil(count / this.$._rows);
+                size.width = itemCols * (this.$._itemWidth + this.$.horizontalGap);
             }
 
             return size;
         },
 
-        getIndexFromPoint: function (x, y, gapHPos, gapVPos) {
+        getIndexFromPoint: function (x, y) {
             var col, row;
 
             /* TODO: add gap position */
@@ -399,32 +485,38 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
             x += (this.$.horizontalGap) * 0.5;
             y += (this.$.verticalGap) * 0.5;
 
-            col = this.$.cols === 1 ? 0 : Math.floor(x / (this.$.itemWidth + this.$.horizontalGap));
-            row = this.$.rows === 1 ? 0 : Math.floor(y / (this.$.itemHeight + this.$.verticalGap));
+            var cols = this.$._cols,
+                rows = this.$._rows;
+
+            col = cols === 1 ? 0 : Math.floor(x / (this.$._itemWidth + this.$.horizontalGap));
+            row = rows === 1 ? 0 : Math.floor(y / (this.$._itemHeight + this.$.verticalGap));
 
             if (this.$.scrollDirection === SCROLL_DIRECTION_VERTICAL) {
-                return row * this.$.cols + col;
+                return row * cols + col;
             } else if (this.$.scrollDirection === SCROLL_DIRECTION_HORIZONTAL) {
-                return col * this.$.rows + row;
+                return col * rows + row;
             }
 
         },
 
         getPointFromIndex: function (index) {
-            var row, col;
+            var row,
+                col,
+                cols= this.$._cols,
+                rows = this.$.rows;
+
             if (this.$.scrollDirection === SCROLL_DIRECTION_VERTICAL) {
-                row = Math.floor(index / this.$.cols);
-                col = index % this.$.cols;
+                row = Math.floor(index / cols);
+                col = index % cols;
             } else if (this.$.scrollDirection === SCROLL_DIRECTION_HORIZONTAL) {
-                col = Math.floor(index / this.$.rows);
-                row = index % this.$.rows;
+                col = Math.floor(index / rows);
+                row = index % rows;
             }
 
             return {
-                x: col * (this.$.itemWidth + this.$.horizontalGap),
-                y: row * (this.$.itemHeight + this.$.verticalGap)
+                x: col * (this.$._itemWidth + this.$.horizontalGap),
+                y: row * (this.$._itemHeight + this.$.verticalGap)
             };
-
 
         },
 
@@ -453,22 +545,24 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
             }
         },
 
+        /***
+         * handles key down
+         * @param e
+         * @private
+         */
         _onKeyDown: function (e) {
-            var keyCode = e.domEvent.keyCode;
+            var keyCode = e.domEvent.keyCode,
+                cols = this.$._cols;
+
             if (keyCode === 38 || keyCode === 40 || keyCode === 37 || keyCode === 39) {
                 var index = this.$currentSelectionIndex !== null ? this.$currentSelectionIndex : -1;
-                var indexOffset;
-                if (this.$.scrollDirection === SCROLL_DIRECTION_VERTICAL) {
-                    indexOffset = this.$.cols;
-                } else {
-                    indexOffset = this.$.rows;
-                }
+
                 switch (keyCode) {
                     case 38:
-                        index -= this.$.cols;
+                        index -= cols;
                         break;
                     case 40:
-                        index += this.$.cols;
+                        index += cols;
                         break;
                     case 37:
                         index--;
@@ -479,17 +573,24 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
                     default:
                         void 0;
                 }
-                if (index < 0) {
-                    index = 0;
-                }
+
+                index = Math.max(0, index);
+
                 if (this.$.$dataAdapter && index >= this.$.$dataAdapter.size()) {
                     index = this.$.$dataAdapter.size() - 1;
                 }
+
                 this._selectItem(index, e.domEvent.shiftKey, false);
+
                 e.preventDefault();
                 e.stopPropagation();
             }
         },
+
+        /***
+         * deselect all elements
+         * @private
+         */
         _clearSelection: function () {
             for (var key in this.$selectionMap) {
                 if (this.$selectionMap.hasOwnProperty(key)) {
@@ -501,6 +602,14 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
             }
             this.trigger('selectionChanged');
         },
+
+        /***
+         * selects the item
+         * @param index
+         * @param shiftDown
+         * @param metaKey
+         * @private
+         */
         _selectItem: function (index, shiftDown, metaKey) {
             if (this.$.selectionMode === SELECTION_MODE_NONE) {
                 return;
@@ -544,17 +653,26 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
             }
             var pos = this.getPointFromIndex(index);
             if(this.$.scrollDirection === SCROLL_DIRECTION_VERTICAL){
-                var y = pos.y, topDiff = y - this.$el.scrollTop, bottomDiff = topDiff + this.$.itemHeight + this.$.verticalGap - this.$.height;
+
+                var y = pos.y,
+                    topDiff = y - this.$el.scrollTop,
+                    bottomDiff = topDiff + this.$.itemHeight + this.$.verticalGap - this.$.height;
                 topDiff -= this.$.verticalGap;
+
                 if (bottomDiff > 0) {
                     this.$el.scrollTop += bottomDiff;
                 }
+
                 if (topDiff < 0) {
                     this.$el.scrollTop += topDiff;
                 }
             } else {
-                var x = pos.x, leftDiff = x - this.$el.scrollLeft, rightDiff = leftDiff + this.$.itemWidth + this.$.horizontalGap - this.$.width;
+                var x = pos.x,
+                    leftDiff = x - this.$el.scrollLeft,
+                    rightDiff = leftDiff + this.$.itemWidth + this.$.horizontalGap - this.$.width;
+
                 leftDiff -= this.$.horizontalGap;
+
                 if (rightDiff > 0) {
                     this.$el.scrollLeft += rightDiff;
                 }
@@ -566,14 +684,25 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
                 this.$lastSelectionIndex = index;
             }
         },
+
+        /***
+         * determinate if the item is selected
+         * @return {Boolean}
+         */
         isItemSelected: function (data) {
             if (!data || !data.$.id) {
                 return false;
             }
             return this.$selectionMap[data.$.id] !== undefined;
         }.on("selectionChanged"),
+
+        /***
+         * sorts the bound dataAdapter
+         * @param sortParameter
+         */
         sort: function (sortParameter) {
-            this.$.$dataAdapter.sort(sortParameter);
+            var dataAdapter = this.$.$dataAdapter;
+            dataAdapter && dataAdapter.sort(sortParameter);
         }
 
 
