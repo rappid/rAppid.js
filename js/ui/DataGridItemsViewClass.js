@@ -49,7 +49,7 @@ define(['js/ui/VirtualItemsView', 'xaml!js/ui/DataGridColumn', 'js/core/List', '
             this.$.$columns.remove(child);
         },
         _onVisibleItemsUpdated: function(startIndex, endIndex){
-            this.$.$table.set('style', ['width: 100%; position: absolute;', 'top:' + (startIndex * this.$.itemHeight) + "px"].join(";"));
+            this.$.$table.set('style', ['width: 100%; position: absolute;', 'top:' + (startIndex * this.$._itemHeight) + "px"].join(";"));
         },
         _positionRenderer: function (renderer, addedRenderer, position) {
             // nothing needs to be done
