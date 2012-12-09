@@ -571,15 +571,18 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
 
         var DomManipulationFunctions = {
             hasClass: function (value) {
-                return this.$el.className.split(" " + value + " ").length != 1;
+                return (this.$el.getAttribute("class") || "").split(" " + value + " ").length != 1;
             },
+
             addClass: function (value) {
                 var classNames = value.split(rspace);
 
-                if (!this.$el.className && classNames.length === 1) {
-                    this.$el.className = value;
+                var className = this.$el.getAttribute("class") || "";
+
+                if (!className && classNames.length === 1) {
+                    this.$el.setAttribute("class", value);
                 } else {
-                    var setClasses = this.$el.className.split(rspace);
+                    var setClasses = className.split(rspace);
 
                     for (var i = 0; i < classNames.length; i++) {
                         if (setClasses.indexOf(classNames[i]) == -1) {
@@ -587,19 +590,21 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                         }
                     }
 
-                    this.$el.className = setClasses.join(" ");
-
+                    this.$el.setAttribute("class", setClasses.join(" "));
                 }
             },
 
             removeClass: function (value) {
 
-                if (!(this.$el.className && this.$el.className.length !== 0)) {
+                var className = this.$el.getAttribute("class") || "";
+
+                if (!(className && className.length)) {
                     return;
                 }
+
                 var removeClasses = value.split(rspace);
 
-                var classes = this.$el.className.split(rspace);
+                var classes = className.split(rspace);
 
                 for (var i = 0; i < removeClasses.length; i++) {
                     var index = classes.indexOf(removeClasses[i]);
@@ -611,9 +616,10 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                 if (classes.length === 0) {
                     this.$el.removeAttribute('class');
                 } else {
-                    this.$el.className = classes.join(" ");
+                    this.$el.setAttribute("class", classes.join(" "));
                 }
             },
+
             bindDomEvent: function (type, cb) {
                 if (this.$el.addEventListener) {
                     this.$el.addEventListener(type, cb, false);
