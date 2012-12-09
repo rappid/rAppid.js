@@ -99,7 +99,6 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
             }
         },
 
-
         _isWebkitAndTouch: function () {
             var window = this.$stage.$window;
             return this.runsInBrowser() && window && window.hasOwnProperty("ontouchend") && /AppleWebKit/i.test(window.navigator.userAgent);
@@ -241,7 +240,6 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
                     _rows: rows
                 });
 
-
             }
 
             if (this._hasSome($, ["_itemWidth", "_itemHeight", "_cols", "_rows", "verticalGap", "horizontalGap"])) {
@@ -273,10 +271,10 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
                     startIndex = realStartIndex - this.$.prefetchItemCount,
                     realEndIndex = this.getIndexFromPoint(scrollLeft + this.$.width, scrollTop + this.$.height),
                     endIndex = realEndIndex + this.$.prefetchItemCount,
-                    renderer, i, pageIndex;
+                    renderer, i;
 
                 realStartIndex = Math.max(0, realStartIndex);
-                if ((realStartIndex > this.$.scrollToIndex || realStartIndex + this.$.cols < this.$.scrollToIndex)) {
+                if ((realStartIndex > this.$.scrollToIndex || realStartIndex + this.$._cols < this.$.scrollToIndex)) {
                     this.set('scrollToIndex', realStartIndex, {initiator: this});
                 }
 
@@ -436,11 +434,12 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
         _positionActiveRenderers: function () {
             for (var index in this.$activeRenderer) {
                 if (this.$activeRenderer.hasOwnProperty(index)) {
-                    this.$activeRenderer[index].set({width: this.$.itemWidth, height: this.$.itemHeight});
+                    this.$activeRenderer[index].set({width: this.$._itemWidth, height: this.$._itemHeight});
                     this._positionRenderer(this.$activeRenderer[index], []);
                 }
             }
         },
+
         _updateSize: function () {
             if (this.$.$dataAdapter) {
                 var size = this.getSizeForItemsCount(this.$.$dataAdapter.size());
@@ -452,6 +451,7 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
         },
         _itemsCountChanged: function () {
             this._updateSize();
+            this._updateVisibleItems();
         },
 
         getSizeForItemsCount: function (count) {
@@ -503,7 +503,7 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
             var row,
                 col,
                 cols= this.$._cols,
-                rows = this.$.rows;
+                rows = this.$._rows;
 
             if (this.$.scrollDirection === SCROLL_DIRECTION_VERTICAL) {
                 row = Math.floor(index / cols);
@@ -656,7 +656,7 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
 
                 var y = pos.y,
                     topDiff = y - this.$el.scrollTop,
-                    bottomDiff = topDiff + this.$.itemHeight + this.$.verticalGap - this.$.height;
+                    bottomDiff = topDiff + this.$._itemHeight + this.$.verticalGap - this.$.height;
                 topDiff -= this.$.verticalGap;
 
                 if (bottomDiff > 0) {
@@ -669,7 +669,7 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
             } else {
                 var x = pos.x,
                     leftDiff = x - this.$el.scrollLeft,
-                    rightDiff = leftDiff + this.$.itemWidth + this.$.horizontalGap - this.$.width;
+                    rightDiff = leftDiff + this.$._itemWidth + this.$.horizontalGap - this.$.width;
 
                 leftDiff -= this.$.horizontalGap;
 
