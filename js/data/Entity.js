@@ -88,12 +88,17 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
              */
             getContextForChild: function (childFactory) {
 
-                // TODO: this is the circle dependency. check different than use model
                 if (this._isChildFactoryDependentObject(childFactory)) {
                     // dependent object, which should be cached in context of the current entity
                     if (!this.$dependentObjectContext) {
-                        // create a new non-cached context for dependent objects
-                        this.$dependentObjectContext = this.$context.$dataSource.createContext();
+
+                        if (this.$parentEntity) {
+                            // entity itself lives inside a model
+                            this.$dependentObjectContext = this.$parentEntity.$dependentObjectContext;
+                        } else {
+                            // create a new non-cached context for dependent objects
+                            this.$dependentObjectContext = this.$context.$dataSource.createContext();
+                        }
                     }
 
                     return this.$dependentObjectContext;

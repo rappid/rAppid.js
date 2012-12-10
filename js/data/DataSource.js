@@ -447,11 +447,11 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                                     }
 
                                     entity = model.getContextForChild(factory).createEntity(factory, this._getIdForValue(value[i]));
-                                    entity.set(this._parseModel(entity, value[i], action, options));
-
                                     if (entity instanceof Entity && !(entity instanceof Model)) {
                                         entity.$parent = model;
+                                        entity.$parentEntity = model;
                                     }
+                                    entity.set(this._parseModel(entity, value[i], action, options));
 
                                     list.add(entity);
                                 }
@@ -467,6 +467,10 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                                 for (i = 0; i < value.length; i++) {
                                     // create new entity based on collection type
                                     entity = list.createItem();
+                                    if (entity instanceof Entity && !(entity instanceof Model)) {
+                                        entity.$parent = model;
+                                        entity.$parentEntity = model;
+                                    }
                                     entity.set(this._parseModel(entity, value[i], action, options));
                                     // and add it to the collection
                                     list.add(entity);
@@ -489,11 +493,11 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                             }
 
                             data[key] = entity = model.getContextForChild(factory).createEntity(factory, this._getIdForValue(value));
-                            entity.set(this._parseModel(entity, value, action, options));
-
                             if (entity instanceof Entity && !(entity instanceof Model)) {
                                 entity.$parent = model;
+                                entity.$parentEntity = model;
                             }
+                            entity.set(this._parseModel(entity, value, action, options));
 
                         }
                     }
