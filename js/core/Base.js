@@ -29,7 +29,7 @@ define(["inherit"], function(inherit){
             level = level || Base.LOGLEVEL.INFO;
 
             if (message instanceof Error) {
-                message = message.toString();
+                message = message.toString() + (message.stack || "");
             }
 
             if (Base.logger.length) {
