@@ -277,7 +277,7 @@ define(["js/core/Bindable", "underscore"], function (Bindable, _) {
         },
         trigger: function(event, attributes){
             this.callBase();
-            if(event == "add" || event === "remove" || event === "reset" || event === "sort"){
+            if(event == "add" || event === "remove" || event === "reset" || event === "sort" || event === "change"){
                 attributes["event"] = event;
                 this.trigger("all",attributes);
             }
