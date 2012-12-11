@@ -536,8 +536,6 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                     throw "data has to be an array";
                 }
 
-                var factory = collection.$modelFactory;
-
                 for (var i = 0; i < data.length; i++) {
                     var value = data[i];
                     if(!(value instanceof Model)){
