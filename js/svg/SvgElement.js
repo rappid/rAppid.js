@@ -7,10 +7,13 @@ define(['js/core/DomElement', 'js/core/List', 'js/core/Bindable'], function (Dom
             _transform: null,
 
             translateX: null,
-            translateY: null
+            translateY: null,
+
+            scaleX: null,
+            scaleY: null
         },
 
-        $classAttributes: ["transformations", "translateX", "translateY"],
+        $classAttributes: ["transformations", "translateX", "translateY", "scaleX", "scaleY"],
 
         ctor: function () {
             // default namespace
@@ -34,14 +37,44 @@ define(['js/core/DomElement', 'js/core/List', 'js/core/Bindable'], function (Dom
         },
 
         _commitChangedAttributes: function ($) {
-            if (this._hasSome($, ["x", "y"])) {
+            if (this._hasSome($, ["translateX", "translateY"])) {
                 var x = this.$.translateX;
                 var y = this.$.translateY;
 
                 (x || y) && this.translate(x, y);
             }
 
+            if (this._hasSome($, ["scaleX", "scaleY"])) {
+                var sx = this.$.scaleX;
+                var sy = this.$.scaleY;
+
+                (sx || sy) && this.scale(sx, sy);
+            }
+
+
             this.callBase();
+        },
+
+        scale: function (sx, sy) {
+
+            if (!sy && sy !== 0) {
+                sy = sx;
+            }
+
+            if (this.$scale) {
+                this.$scale.set({
+                    sx: sx,
+                    sy: sy
+                });
+            } else {
+                this.$scale = new SvgElement.Scale({
+                    sx: sx,
+                    sy: sy
+                });
+                this.$.transformations.add(this.$scale);
+            }
+
+            return this;
         },
 
         translate: function (x, y) {
@@ -148,6 +181,18 @@ define(['js/core/DomElement', 'js/core/List', 'js/core/Bindable'], function (Dom
     SvgElement.Translate = SvgElement.TransformBase.inherit("js.svg.SvgElement.Translate", {
         toString: function () {
             return "translate(" + (this.$.x || 0) + "," + (this.$.y || 0) + ")";
+        }
+    });
+
+    SvgElement.Scale = SvgElement.TransformBase.inherit("js.svg.SvgElement.Scale", {
+
+        defaults: {
+            sx: 1,
+            sy: 1
+        },
+
+        toString: function () {
+            return "scale(" + this.$.sx  + "," + this.$.sy + ")";
         }
     });
 
