@@ -8,8 +8,8 @@ define(['js/ui/VirtualItemsView', 'xaml!js/ui/DataGridColumn', 'js/core/List', '
 
         defaults: {
             columns: List,
-            cols: 1,
-            itemWidth: null,
+            _cols: 1,
+            _itemWidth: null,
             data: null,
             prefetchItemCount: 3
         },

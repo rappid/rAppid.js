@@ -6,6 +6,6 @@
     <js:Template name="rendererContainer">
         <li selected="{isItemSelected($dataItem.data)}" item="{$dataItem.data}"/>
     </js:Template>
-    <ul cid="$scrollContainer" class="scroll-container {scrollContainerClass}" position="relative">
+    <ul cid="$scrollContainer" class="scroll-container {scrollContainerClass}" position="relative" margin="0px">
     </ul>
 </ui:TileListClass>
