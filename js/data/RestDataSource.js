@@ -70,8 +70,8 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
          * @param parentContext
          * @return {js.core.RestDataSource.RestContext}
          */
-        createContext: function (properties, parentContext) {
-            return new RestDataSource.RestContext(this, properties, parentContext);
+        createContext: function (contextModel, properties, parentContext) {
+            return new RestDataSource.RestContext(this, contextModel, properties, parentContext);
         },
 
         /***
@@ -333,32 +333,51 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
                 cb(e || true);
             }
         },
+
         _getContext: function (factory, parent, data) {
             if (this.$.determinateContextAttribute) {
+
+                if (!data) {
+                    return null;
+                }
+
                 if (data && data.hasOwnProperty(this.$.determinateContextAttribute)) {
-                    var path = data[this.$.determinateContextAttribute].substr(this.$.endPoint.length + 1), components = path.split("/"), configuration, context = this.root(), parentFactory, id, tmpParent;
-                    for (var i = 0; i < components.length - 1; i = i + 2) {
+                    var path = data[this.$.determinateContextAttribute].substr(this.$.endPoint.length + 1),
+                        components = path.split("/"),
+                        configuration,
+                        context = this.root(),
+                        contextFactory,
+                        id,
+                        pathElement;
+
+                    if (components[0] === "") {
+                        components.shift();
+                    }
+
+                    for (var i = 0; i < components.length - 2; i = i + 2) {
+                        pathElement = components[i];
+                        id = components[i + 1];
+
                         if (!configuration) {
-                            configuration = this.$dataSourceConfiguration.getConfigurationByKeyValue("path", components[i]);
+                            configuration = this.$dataSourceConfiguration.getConfigurationByKeyValue("path", pathElement);
                         } else {
-                            configuration = configuration.getConfigurationByKeyValue("path", components[i]);
+                            configuration = configuration.getConfigurationByKeyValue("path", pathElement);
                         }
-                        if(!configuration){
+                        if (!configuration) {
                             throw new Error("Couldn't find configuration for path element " + i + " of " + components.join("/") + " ");
                         }
-                        parentFactory = requirejs(configuration.$.modelClassName.replace(/\./g, "/"));
-                        if (components.length > i + 1) {
-                            id = components[i + 1];
-                            if (!tmpParent) {
-                                tmpParent = context.createEntity(parentFactory, id);
-                            }
-                            context = this._getContext(factory, tmpParent);
-                        }
-                    }
-                    return context;
 
+                        contextFactory = requirejs(configuration.$.modelClassName.replace(/\./g, "/"));
+
+                        var entity = context.createEntity(contextFactory, id);
+                        context = context.getContext(entity);
+
+                    }
+
+                    return context;
                 }
             }
+
             return this.callBase();
         },
         /***
@@ -643,14 +662,6 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
     });
 
     RestDataSource.RestContext = DataSource.Context.inherit("js.data.RestDataSource.Context", {
-        ctor: function (dataSource, properties, parentContext) {
-            this.$contextModel = properties;
-            this.callBase(dataSource, properties, parentContext);
-        },
-
-        createContextCacheId: function (contextModel) {
-            return contextModel.constructor.name + "_" + contextModel.$.id;
-        },
 
         getPathComponents: function () {
 
