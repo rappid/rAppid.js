@@ -334,7 +334,7 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
             }
         },
         _getContext: function (factory, parent, data) {
-            if (this.$.hrefSupport) {
+            if (this.$.determinateContextAttribute) {
                 if (data && data.hasOwnProperty(this.$.determinateContextAttribute)) {
                     var path = data[this.$.determinateContextAttribute].substr(this.$.endPoint.length + 1), components = path.split("/"), configuration, context = this.root(), parentFactory, id, tmpParent;
                     for (var i = 0; i < components.length - 1; i = i + 2) {
