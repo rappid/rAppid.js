@@ -8,11 +8,14 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                     collectionPageSize: null
                 },
 
-                ctor: function (dataSource, properties, parentContext) {
+                ctor: function (dataSource, contextModel, properties, parentContext) {
+
                     this.callBase();
 
+                    this.$contextModel = contextModel;
                     this.$contextCache = {};
                     this.$dataSource = dataSource;
+                    this.$properties = properties;
                     this.$parent = parentContext;
                     this.$cache = {};
 
@@ -142,13 +145,14 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                         throw "Factory has to be a function";
                     }
                 },
+
                 /***
                  * Returns the context for given properties
                  * @param {Object} properties
                  * @return {js.data.DataSource.Context}
                  */
-                getContext: function (properties) {
-                    var cacheId = this.createContextCacheId(properties);
+                getContext: function (contextModel, properties) {
+                    var cacheId = this.createContextCacheId(contextModel, properties);
 
                     if (!cacheId) {
                         // empty cacheId indicates the current context
@@ -156,24 +160,30 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                     }
 
                     if (!this.$contextCache.hasOwnProperty(cacheId)) {
-                        this.$contextCache[cacheId] = this.$dataSource.createContext(properties, this);
+                        this.$contextCache[cacheId] = this.$dataSource.createContext(contextModel, properties, this);
                     }
 
                     return this.$contextCache[cacheId];
                 },
+
                 /***
                  * Creates a cache id on base of given properties
                  * @param {Object} properties
                  * @return {String}
                  */
-                createContextCacheId: function (properties) {
+                createContextCacheId: function (contextModel, properties) {
 
                     var ret = [];
+
                     _.each(_.extend({}, properties), function (value, key) {
                         ret.push(key + "=" + value);
                     });
 
                     ret.sort();
+
+                    if (contextModel) {
+                        ret.unshift(Context.generateCacheIdFromEntity(contextModel));
+                    }
 
                     if (ret.length === 0) {
                         return null;
@@ -181,6 +191,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
 
                     return ret.join("&");
                 },
+
                 clear: function() {
                     this.$contextCache = {};
                 }
@@ -459,27 +470,30 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
 
 
                         } else if (Collection && schemaType.classof(Collection)) {
+                                var contextForChildren = this.$dataSource._getContext(schemaType, model, data[key]);
+                                if(contextForChildren){
+                                    // model.getContextForChild(schemaType)
+                                    list = data[key] = contextForChildren.createCollection(schemaType, null);
 
-                            var contextForChildren = this.$dataSource._getContext(schemaType, model, data[key]);
-                            // model.getContextForChild(schemaType)
-                            list = data[key] = contextForChildren.createCollection(schemaType, null);
-
-                            if (value && value instanceof Array) {
-                                for (i = 0; i < value.length; i++) {
-                                    // create new entity based on collection type
-                                    entity = list.createItem();
-                                    if (entity instanceof Entity && !(entity instanceof Model)) {
-                                        entity.$parent = model;
-                                        entity.$parentEntity = model;
+                                    if (value && value instanceof Array) {
+                                        for (i = 0; i < value.length; i++) {
+                                            // create new entity based on collection type
+                                            entity = list.createItem();
+                                            if (entity instanceof Entity && !(entity instanceof Model)) {
+                                                entity.$parent = model;
+                                                entity.$parentEntity = model;
+                                            }
+                                            entity.set(this._parseModel(entity, value[i], action, options));
+                                            // and add it to the collection
+                                            list.add(entity);
+                                        }
+                                    } else {
+                                        // TODO: what here
+        //                                throw 'Schema for type "' + type + '" requires to be an array';
                                     }
-                                    entity.set(this._parseModel(entity, value[i], action, options));
-                                    // and add it to the collection
-                                    list.add(entity);
                                 }
-                            } else {
-                                // TODO: what here
-//                                throw 'Schema for type "' + type + '" requires to be an array';
-                            }
+
+
                         } else if (schemaType === Date && value) {
                             data[key] = moment(value, this.$dataSource.$.dateFormat).toDate();
                         } else if (schemaType.classof(Entity) && value) {
@@ -798,8 +812,8 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
              * @param {js.data.DataSource.Context} [parentContext]
              * @return {js.data.DataSource.Context}
              */
-            createContext: function (properties, parentContext) {
-                return new Context(this, properties, parentContext)
+            createContext: function (contextModel, properties, parentContext) {
+                return new Context(this, contextModel, properties, parentContext)
             },
 
             /***
