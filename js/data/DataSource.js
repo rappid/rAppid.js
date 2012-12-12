@@ -446,7 +446,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                                         throw "Factory for type '" + key + "' isn't an instance of Entity";
                                     }
 
-                                    entity = model.getContextForChild(factory).createEntity(factory, this._getIdForValue(value[i]));
+                                    entity = this.$dataSource._getContext(factory, model, value[i]).createEntity(factory, this._getIdForValue(value[i]));
                                     if (entity instanceof Entity && !(entity instanceof Model)) {
                                         entity.$parent = model;
                                         entity.$parentEntity = model;
@@ -460,7 +460,8 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
 
                         } else if (Collection && schemaType.classof(Collection)) {
 
-                            var contextForChildren = model.getContextForChild(schemaType);
+                            var contextForChildren = this.$dataSource._getContext(schemaType, model, data[key]);
+                            // model.getContextForChild(schemaType)
                             list = data[key] = contextForChildren.createCollection(schemaType, null);
 
                             if (value && value instanceof Array) {
@@ -492,7 +493,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                                 throw "Factory for type '" + key + "' isn't an instance of Entity";
                             }
 
-                            data[key] = entity = model.getContextForChild(factory).createEntity(factory, this._getIdForValue(value));
+                            data[key] = entity = this.$dataSource._getContext(factory, model, value).createEntity(factory, this._getIdForValue(value));
                             if (entity instanceof Entity && !(entity instanceof Model)) {
                                 entity.$parent = model;
                                 entity.$parentEntity = model;
@@ -748,7 +749,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                                 if (parentConfiguration.$["modelClassName"] === requestor.constructor.name) {
                                     // childFactory is configured as descendant of the requestor
                                     // so the childFactory will be created in the context of the requestor
-                                    return this.getContext(requestor, requestor.$context);
+                                    return this.getContextByProperties(requestor, requestor.$context);
                                 }
 
                             } while (parentConfiguration.$parent);
@@ -771,7 +772,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
              * @param {js.data.DataSource.Context} [parentContext]
              * @return {js.data.DataSource.Context}
              */
-            getContext: function (properties, parentContext) {
+            getContextByProperties: function (properties, parentContext) {
 
                 if (!(properties && _.size(properties))) {
                     // no properties or empty object passed
@@ -809,7 +810,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
              * @return {js.data.Entity}
              */
             createEntity: function (factory, id, context) {
-                context = context || this.getContext();
+                context = context || this.getContextByProperties();
                 return context.createEntity(factory, id);
             },
 
@@ -821,7 +822,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
              * @return {js.data.Collection}
              */
             createCollection: function (factory, options, context) {
-                context = context || this.getContext();
+                context = context || this.getContextByProperties();
 
                 return context.createCollection(factory, options);
             },
@@ -981,6 +982,20 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                 ret.$dataSourceConfiguration = this.$dataSourceConfiguration;
                 return ret;
             },
+
+            _getContext: function (factory, parent, data) {
+                if (factory.classof) {
+                    if (factory.classof(Collection)) {
+                        return parent.getContextForChild(factory);
+                    } else if (factory.classof(Model)) {
+                        return parent.getContextForChild(factory);
+                    } else if (factory.classof(Entity)) {
+                        return parent.getContextForChild(factory);
+                    }
+                }
+                return null;
+            },
+
             _translateQueryObject: function (queryObject) {
                 return queryObject;
             }

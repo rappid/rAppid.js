@@ -1,8 +1,8 @@
-define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "flow", "JSON", "js/data/Collection"], function (DataSource, Base, Model, _, flow, JSON, Collection) {
+define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "flow", "JSON", "js/data/Collection", "require"], function (DataSource, Base, Model, _, flow, JSON, Collection, requirejs) {
 
     var rIdExtractor = /http.+\/([^/]+)$/;
 
-    var RestDataProcessor = DataSource.Processor.inherit('src.data.RestDataSource.RestDataProcessor', {
+    var RestDataProcessor = DataSource.Processor.inherit('js.data.RestDataSource.RestDataProcessor', {
         _composeSubModel: function (model, action, options) {
 
             // TODO: fix href for submodels
@@ -24,6 +24,7 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
         defaults: {
             endPoint: null,
             gateway: null,
+            determinateContextAttribute: "href",
             parsePayloadOnCreate: true,
             parsePayloadOnUpdate: true,
             useSafeHttpMethods: false
@@ -107,7 +108,7 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
         },
 
 
-        getPathComponentsForResource: function(resource) {
+        getPathComponentsForResource: function (resource) {
 
             if (resource instanceof Collection) {
                 return this.getPathComponentsForModelClass(resource.$modelFactory);
@@ -328,11 +329,38 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
                     cb('Location header not found');
                 }
 
-            } catch (e) {
+            } catch(e) {
                 cb(e || true);
             }
         },
+        _getContext: function (factory, parent, data) {
+            if (this.$.hrefSupport) {
+                if (data && data.hasOwnProperty(this.$.determinateContextAttribute)) {
+                    var path = data[this.$.determinateContextAttribute].substr(this.$.endPoint.length + 1), components = path.split("/"), configuration, context = this.root(), parentFactory, id, tmpParent;
+                    for (var i = 0; i < components.length - 1; i = i + 2) {
+                        if (!configuration) {
+                            configuration = this.$dataSourceConfiguration.getConfigurationByKeyValue("path", components[i]);
+                        } else {
+                            configuration = configuration.getConfigurationByKeyValue("path", components[i]);
+                        }
+                        if(!configuration){
+                            throw new Error("Couldn't find configuration for path element " + i + " of " + components.join("/") + " ");
+                        }
+                        parentFactory = requirejs(configuration.$.modelClassName.replace(/\./g, "/"));
+                        if (components.length > i + 1) {
+                            id = components[i + 1];
+                            if (!tmpParent) {
+                                tmpParent = context.createEntity(parentFactory, id);
+                            }
+                            context = this._getContext(factory, tmpParent);
+                        }
+                    }
+                    return context;
 
+                }
+            }
+            return this.callBase();
+        },
         /***
          *
          * @param request.url
@@ -489,9 +517,9 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
                 rootCollection.$context.getQueryParameter(),
                 this.getQueryParameter(RestDataSource.METHOD.GET, rootCollection));
 
-            for(var key in params){
-                if(params.hasOwnProperty(key)){
-                    if(_.isObject(params[key])){
+            for (var key in params) {
+                if (params.hasOwnProperty(key)) {
+                    if (_.isObject(params[key])) {
                         params[key] = JSON.stringify(params[key]);
                     }
                 }
@@ -502,7 +530,7 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
             // todo: add hook
             var sortParameters = this._createSortParameter(collectionPage.$collection.getSortParameters(RestDataSource.METHOD.GET));
             if (sortParameters) {
-                _.extend(params,sortParameters);
+                _.extend(params, sortParameters);
             }
 
             // create url
@@ -547,7 +575,7 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
 
                         callback(null, collectionPage, options)
 
-                    } catch (e) {
+                    } catch(e) {
                         self.log(e, 'error');
                         callback(e, collectionPage, options);
                     }
@@ -560,13 +588,13 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
             });
         },
 
-        _createSortParameter: function(sortParmeters){
+        _createSortParameter: function (sortParmeters) {
             var parameters = null;
-            for(var key in sortParmeters){
-                if(sortParmeters.hasOwnProperty(key)){
+            for (var key in sortParmeters) {
+                if (sortParmeters.hasOwnProperty(key)) {
                     parameters = parameters || {};
                     parameters["sortField"] = key;
-                    parameters["sortOrder"] = sortParmeters[key] ===  -1 ? "ASC" : "DESC";
+                    parameters["sortOrder"] = sortParmeters[key] === -1 ? "ASC" : "DESC";
                 }
             }
             return parameters;
