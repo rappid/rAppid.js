@@ -32,6 +32,11 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
         },
 
         schema: {
+            id: {
+                type: String,
+                required: false,
+                generated: true
+            },
             created: {
                 type: Date,
                 generated: true,
