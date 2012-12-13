@@ -141,7 +141,54 @@ define(['js/core/DomElement', 'js/core/List', 'js/core/Bindable'], function (Dom
         // render each href Element in xlink namespace
         _renderHref: function (href, oldHref) {
             this._setAttribute("href", href, SvgElement.XLINK_NAMESPACE);
+        },
+
+        localToGlobalFactor: function () {
+            if (this.$parent) {
+                // TODO: add scale
+                return this.$parent.localToGlobalFactor();
+            }
+
+            return {
+                x: 1,
+                y: 1
+            };
+        },
+
+        globalToLocalFactor: function () {
+            if (this.$parent) {
+                // TODO: add scale
+                return this.$parent.globalToLocalFactor();
+            }
+
+            return {
+                x: 1,
+                y: 1
+            };
+        },
+
+        localPointToGlobal: function (point) {
+
+            var factor = this.localToGlobalFactor();
+
+            return {
+                x: point.x * factor.x,
+                y: point.y * factor.y
+            }
+        },
+
+        globalPointToLocal: function (point) {
+
+            var factor = this.globalToLocalFactor();
+
+            return {
+                x: point.x * factor.x,
+                y: point.y * factor.y
+            }
+
         }
+
+
     });
 
     SvgElement.XLINK_NAMESPACE = "http://www.w3.org/1999/xlink";
