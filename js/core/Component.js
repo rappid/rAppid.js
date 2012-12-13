@@ -129,6 +129,8 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
 
                     if(this.$initializing || this.$initialized){
                         // initialize auto
+                        child.$parent = this;
+
                         if (this.$creationPolicy === "auto") {
                             child._initialize(this.$creationPolicy);
                         }
@@ -138,7 +140,6 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                             child.$rootScope.set(child.$.cid, child);
                         }
 
-                        child.$parent = this;
                         // save under elements
                         this.$elements.push(child);
 
