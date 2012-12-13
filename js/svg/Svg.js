@@ -19,15 +19,15 @@ define(['js/svg/SvgElement'], function (SvgElement) {
 
         localToGlobalFactor: function() {
             return {
-                x: this.$viewBoxWidth / this.$.width,
-                y: this.$viewBoxHeight / this.$.height
+                x: this.$.width / this.$viewBoxWidth,
+                y: this.$.height / this.$viewBoxHeight
             }
         },
 
         globalToLocalFactor: function () {
             return {
-                x: this.$.width / this.$viewBoxWidth,
-                y: this.$.height / this.$viewBoxHeight
+                x: this.$viewBoxWidth / this.$.width,
+                y: this.$viewBoxHeight / this.$.height
             }
         }
 
