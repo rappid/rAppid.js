@@ -38,7 +38,7 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
 
                 if (descriptor) {
                     if (!this.$tagName) {
-                        this.$tagName = descriptor.tagName;
+                        this.$tagName = this._getLocalNameFromNode(descriptor);
                     }
                     if (!this.$namespace) {
                         this.$namespace = descriptor.namespaceURI;
