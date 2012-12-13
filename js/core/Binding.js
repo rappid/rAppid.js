@@ -301,7 +301,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
                 if (this.$subBinding) {
                     return this.$subBinding.getValue();
                 } else {
-                    if (this.$.fnc) {
+                    if (this.$.fnc && !this.$jsonObject) {
                         return this.transform(this.$.fnc.apply(this.$.scope, this._getFncParameters()));
                     } else if (this.$.path.length === 1) {
                         return this.transform(this.$.scope.get(this.$.key.name));
