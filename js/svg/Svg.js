@@ -8,7 +8,27 @@ define(['js/svg/SvgElement'], function (SvgElement) {
         },
 
         setViewBox: function (x, y, width, height) {
+
+            this.$viewBoxX = x;
+            this.$viewBoxY = y;
+            this.$viewBoxWidth = width;
+            this.$viewBoxHeight = height;
+
             this.set("viewBox", [x, y, width, height].join(" "));
+        },
+
+        localToGlobalFactor: function() {
+            return {
+                x: this.$.width / this.$viewBoxWidth,
+                y: this.$.height / this.$viewBoxHeight
+            }
+        },
+
+        globalToLocalFactor: function () {
+            return {
+                x: this.$viewBoxWidth / this.$.width,
+                y: this.$viewBoxHeight / this.$.height
+            }
         }
 
     });

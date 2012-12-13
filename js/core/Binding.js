@@ -74,13 +74,17 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
                     var fncName = this.$.key.name, parameters = this.$.key.parameter;
 
                     if (_.isFunction(scope[fncName])) {
-                        var fnc = scope[fncName];
-                        var events = [];
+                        var fnc = scope[fncName],
+                            events = [];
+
+                        fnc._attributes = this._getOnChangeAttributesForFnc(scope, fnc);
+
                         if (fnc._attributes && fnc._attributes.length > 0) {
                             this.$.scope.bind("change", this._changeCallback, this);
                             this.$events.push({eventType: "change", callback: this._changeCallback});
                         }
 
+                        fnc._events = this._getEventsForFnc(scope, fnc);
                         if (fnc._events) {
                             events = fnc._events;
                         } else {
@@ -140,6 +144,61 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
 
                 this._createSubBinding();
             },
+
+            _getOnChangeAttributesForFnc: function(scope, fnc) {
+                var ret = [];
+                if (fnc._attributes && fnc._attributes.length > 0) {
+
+                    for (var x = 0; x < fnc._attributes.length; x++) {
+                        var attribute = fnc._attributes[x];
+
+                        var fncExtractor = /^(.+)\(\)$/;
+                        var extract = fncExtractor.exec(attribute);
+
+                        if (extract) {
+                            var extendFunction = scope[extract[1]];
+                            if (extendFunction) {
+                                // copy all onChangeAttributes
+                                ret = ret.concat(this._getOnChangeAttributesForFnc(scope, extendFunction));
+                            }
+                        } else {
+                            ret.push(attribute);
+                        }
+                    }
+                }
+
+                return ret;
+
+            },
+
+            _getEventsForFnc: function(scope, fnc){
+                var ret = [];
+                if (fnc._events && fnc._events.length > 0) {
+
+                    for (var x = 0; x < fnc._events.length; x++) {
+                        var event = fnc._events[x];
+
+                        var fncExtractor = /^(.+)\(\)$/;
+                        var extract = fncExtractor.exec(event);
+
+                        if (extract) {
+                            var extendFunction = scope[extract[1]];
+                            if (extendFunction) {
+                                // copy all onChangeAttributes
+                                ret = ret.concat(this._getEventsForFnc(scope, extendFunction));
+                            }
+                        } else {
+                            if(!_.contains(ret,event)){
+                                ret.push(event);
+                            }
+                        }
+                    }
+                }
+
+                return ret;
+
+            },
+
             _checkAttributes: function () {
                 // check infrastructur
                 if (!this.$.path) {
@@ -301,7 +360,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
                 if (this.$subBinding) {
                     return this.$subBinding.getValue();
                 } else {
-                    if (this.$.fnc) {
+                    if (this.$.fnc && !this.$jsonObject) {
                         return this.transform(this.$.fnc.apply(this.$.scope, this._getFncParameters()));
                     } else if (this.$.path.length === 1) {
                         return this.transform(this.$.scope.get(this.$.key.name));
