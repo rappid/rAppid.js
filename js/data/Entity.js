@@ -25,7 +25,14 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                 this.callBase(attributes);
             },
 
-            schema: {},
+            schema: {
+                id: {
+                    type: String,
+                    required: false,
+                    generated: true,
+                    includeInIndex: true
+                }
+            },
 
             validators: [],
 
@@ -43,7 +50,7 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                 }
                 var base = this.base;
 
-                while (base instanceof Entity) {
+                while (base.factory.classof(Entity)) {
                     var baseSchema = base.schema;
                     for (var type in baseSchema) {
                         if (baseSchema.hasOwnProperty(type) && !this.schema.hasOwnProperty(type)) {
@@ -69,11 +76,6 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                                 type: schemaObject
                             };
                             this.schema[key] = schemaObject;
-                        }
-                        if (schemaObject instanceof Object) {
-                            if (schemaObject._rewritten) {
-                                continue;
-                            }
                         }
                         _.defaults(schemaObject, schemaDefaults);
                     }
