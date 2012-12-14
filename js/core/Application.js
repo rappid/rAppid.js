@@ -1,4 +1,4 @@
-define(["js/core/Window", "js/html/HtmlElement"], function (Window, HtmlElement) {
+define(["js/core/Window", "js/html/HtmlElement", "js/lib/extension"], function (Window, HtmlElement, Extension) {
 
         /***
          * An application is a Window, which gets bootstrapped and started by rAppid.js and is attached to the WindowManager.
