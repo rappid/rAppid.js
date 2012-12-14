@@ -3,20 +3,7 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
     var rIdExtractor = /http.+\/([^/]+)$/;
 
     var RestDataProcessor = DataSource.Processor.inherit('js.data.RestDataSource.RestDataProcessor', {
-        _composeSubModel: function (model, action, options) {
 
-            // TODO: fix href for submodels
-            var ret = {
-                    id: model.$.id
-                },
-                configuration = this.$dataSource.getConfigurationForModelClass(model.factory);
-
-            if (options && options.baseUri && configuration) {
-                ret.href = options.baseUri + "/" + configuration.$.path + "/" + model.$.id
-            }
-
-            return ret
-        }
     });
 
     var RestDataSource = DataSource.inherit("js.data.RestDataSource", {
