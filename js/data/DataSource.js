@@ -245,9 +245,15 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                 for (var key in entity.schema) {
                     if (entity.schema.hasOwnProperty(key) && (!options || !options.includeInIndex || _.contains(options.includeInIndex, key))) {
                         schemaDefinition = entity.schema[key];
-                        schemaType = schemaDefinition ? schemaDefinition['type'] : null;
+                        schemaType = schemaDefinition.type;
+
                         var value = this._getCompositionValue(data[key], key, action, options);
                         if (value !== undefined) {
+                            if (schemaDefinition.isReference && schemaType.classof && schemaType.classof(Entity) && !schemaType.classof(Model)){
+                                value = {
+                                    id: value.id
+                                }
+                            }
                             ret[this._getReferenceKey(key, schemaType)] = value;
                         }
                     }
@@ -348,7 +354,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                 } else if (value instanceof Collection) {
                     return this._composeCollection(value, action, options);
                 } else if (value instanceof Entity) {
-                    return this._composeObject(value.compose(action, options), action, options);
+                    return this.compose(value, action, options);
                 } else if (value instanceof List) {
                     var ret = [];
                     var self = this;
@@ -388,6 +394,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                 // just return id
                 return model.$.id;
             },
+
             /***
              * Composes a collection. Returns undefined as collections are not composed into a model.
              * Can be overridden to nest collections
