@@ -40,7 +40,7 @@ define(['srv/core/Filter', 'require', 'flow', 'js/data/DataSource', 'srv/core/Se
             session.$sessionFilter = this;
 
             // TODO: determinate correct context from data source
-            dataSourceContext = this.$dataSource.getContext();
+            dataSourceContext = this.$dataSource.getContextByProperties();
             dataSourceContext.addEntity(session);
 
             // start session
