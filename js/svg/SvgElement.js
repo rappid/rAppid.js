@@ -10,10 +10,14 @@ define(['js/core/DomElement', 'js/core/List', 'js/core/Bindable'], function (Dom
             translateY: null,
 
             scaleX: null,
-            scaleY: null
+            scaleY: null,
+
+            rotation: null,
+            rotationX: null,
+            rotationY: null
         },
 
-        $classAttributes: ["transformations", "translateX", "translateY", "scaleX", "scaleY"],
+        $classAttributes: ["transformations", "translateX", "translateY", "scaleX", "scaleY", "rotation", "rotationX", "rotationY"],
 
         ctor: function () {
             // default namespace
@@ -23,7 +27,7 @@ define(['js/core/DomElement', 'js/core/List', 'js/core/Bindable'], function (Dom
             this.bind("transformations", "all", this._refreshTransform, this);
         },
 
-        transform: function(transform) {
+        transform: function (transform) {
             if (this.$transform) {
                 this.$transform.set("transform", transform);
             } else {
@@ -37,18 +41,28 @@ define(['js/core/DomElement', 'js/core/List', 'js/core/Bindable'], function (Dom
         },
 
         _commitChangedAttributes: function ($) {
+            var x, y, r;
+
             if (this._hasSome($, ["translateX", "translateY"])) {
-                var x = this.$.translateX;
-                var y = this.$.translateY;
+                x = this.$.translateX;
+                y = this.$.translateY;
 
                 (x || y) && this.translate(x, y);
             }
 
             if (this._hasSome($, ["scaleX", "scaleY"])) {
-                var sx = this.$.scaleX;
-                var sy = this.$.scaleY;
+                x = this.$.scaleX;
+                y = this.$.scaleY;
 
-                (sx || sy) && this.scale(sx, sy);
+                (x || y) && this.scale(x, y);
+            }
+
+            if (this._hasSome($, ["rotation", "rotationX", "rotationY"])) {
+                r = this.$.rotation;
+                x = this.$.rotationX;
+                y = this.$.rotationY;
+
+                (x || y || r) && this.rotate(r, x, y);
             }
 
 
@@ -103,23 +117,23 @@ define(['js/core/DomElement', 'js/core/List', 'js/core/Bindable'], function (Dom
                     y: y
                 });
             } else {
-                this.$rotate = new SvgElement.Translate({
+                this.$rotate = new SvgElement.Rotate({
                     r: r,
                     x: x,
                     y: y
                 });
                 this.$.transformations.add(this.$rotate);
             }
-            
+
             return this;
         },
 
         _refreshTransform: function () {
 
-            
+
             var transformations = [];
 
-            this.$.transformations.each(function(t) {
+            this.$.transformations.each(function (t) {
                 if (t instanceof SvgElement.TransformBase) {
                     transformations.push(t.toString());
                 } else {
@@ -130,11 +144,11 @@ define(['js/core/DomElement', 'js/core/List', 'js/core/Bindable'], function (Dom
             this.set('_transform', transformations.join(" "));
         },
 
-        _renderTransform: function() {
+        _renderTransform: function () {
             // transforms needs to be set via transformations
         },
 
-        _render_transform: function(transform) {
+        _render_transform: function (transform) {
             this._setAttribute("transform", transform);
         },
 
@@ -220,7 +234,7 @@ define(['js/core/DomElement', 'js/core/List', 'js/core/Bindable'], function (Dom
             transform: null
         },
 
-        toString: function() {
+        toString: function () {
             return this.$.transform || "";
         }
     });
@@ -239,7 +253,7 @@ define(['js/core/DomElement', 'js/core/List', 'js/core/Bindable'], function (Dom
         },
 
         toString: function () {
-            return "scale(" + this.$.sx  + "," + this.$.sy + ")";
+            return "scale(" + this.$.sx + "," + this.$.sy + ")";
         }
     });
 
