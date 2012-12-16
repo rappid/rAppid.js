@@ -352,7 +352,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                 if (value instanceof Model) {
                     return this._composeSubModel(value, action, options);
                 } else if (value instanceof Collection) {
-                    return this._composeCollection(value, action, options);
+                    return this._composeSubCollection(value, action, options);
                 } else if (value instanceof Entity) {
                     return this.compose(value, action, options);
                 } else if (value instanceof List) {
@@ -404,7 +404,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
              * @return {*}
              * @private
              */
-            _composeCollection: function (collection, action, options) {
+            _composeSubCollection: function (collection, action, options) {
                 return undefined;
             },
             /**
@@ -672,6 +672,11 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
 
         var DataSource = Component.inherit('js.data.DataSource', {
 
+            $processors: {},
+            $entityFactory: Entity,
+            $defaultProcessorFactory: Processor,
+            $defaultProcessor: null,
+
             defaults: {
                 dateFormat: "YYYY-MM-DDTHH:mm:ssZ"
             },
@@ -687,11 +692,6 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                 this.initializeProcessors();
 
             },
-
-            $processors: {},
-            $entityFactory: Entity,
-            $defaultProcessorFactory: Processor,
-            $defaultProcessor: null,
 
             initializeFormatProcessors: function () {
                 // hook
