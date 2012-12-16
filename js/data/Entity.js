@@ -78,6 +78,7 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                             this.schema[key] = schemaObject;
                         }
                         _.defaults(schemaObject, schemaDefaults);
+                        schemaObject._key = key;
                     }
                 }
                 this.factory.schema = this.schema;
