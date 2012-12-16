@@ -1,4 +1,4 @@
-define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 'js/core/List'], function (DataSource, MongoDb, Model, flow, _, List) {
+define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 'js/core/List', 'require', 'js/data/Collection'], function (DataSource, MongoDb, Model, flow, _, List, require, Collection) {
 
     var ID_KEY = "_id",
         PARENT_ID_KEY = "_parent_id",
@@ -16,16 +16,13 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
                 data[PARENT_TYPE_KEY] = model.$parent.factory.prototype.constructor.name;
             }
 
-            var idSchema = model.schema['id'];
-            if (!(idSchema && idSchema.type === String)) {
-                data[ID_KEY] = this.$dataSource._createIdObject(data[ID_KEY]);
-            }
+            data[ID_KEY] = this.$dataSource._createIdObject(data[ID_KEY]);
 
             return data;
         },
 
         _composeSubModel: function (model, action, options) {
-            if(model && model.$.id){
+            if (model && model.$.id) {
                 var ret = {};
                 ret[TYPE_KEY] = model.constructor.name;
                 ret[REF_ID_KEY] = this.$dataSource._createIdObject(model.$.id);
@@ -48,7 +45,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
                 var referenceKey = this._getReferenceKey(key, schemaType);
                 var value = data[referenceKey];
                 delete data[referenceKey];
-                if(value){
+                if (value) {
                     var refId = value[REF_ID_KEY];
                     if (refId) {
                         if (_.isObject(refId) && refId instanceof MongoDb.ObjectID) {
@@ -63,6 +60,11 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
                     }
                 }
                 return null;
+            } else if (key === "id") {
+                if (data[ID_KEY] instanceof MongoDb.ObjectID) {
+                    return key.toHexString();
+                }
+
             }
 
             return this.callBase();
@@ -90,6 +92,11 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
 
             readId(ID_KEY) || readId(REF_ID_KEY);
 
+            if (data[PARENT_ID_KEY]) {
+                var parentId = data[PARENT_ID_KEY],
+                    parentFactory = require(data[PARENT_TYPE_KEY].replace(/\./g, "/"));
+                model.$parent = this.$dataSource.createEntity(parentFactory, parentId);
+            }
             delete data[PARENT_ID_KEY];
             delete data[PARENT_TYPE_KEY];
             delete data[TYPE_KEY];
@@ -101,8 +108,8 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
         _getIdForValue: function (value) {
             var id = this.callBase();
 
-            if (id === undefined && value[REF_ID_KEY] instanceof  MongoDb.ObjectID) {
-                id = value[REF_ID_KEY].toHexString();
+            if (id === undefined && value[ID_KEY] instanceof MongoDb.ObjectID) {
+                id = value[ID_KEY].toHexString();
             }
 
             return id;
@@ -229,7 +236,13 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
             options = options || {};
             // if you want to set a custom ID
             if (options.id && action === DataSource.ACTION.CREATE) {
-                data[ID_KEY] = options.id;
+                var id = options.id;
+                try{
+                    id = this._createIdObject(options.id);
+                } catch(e){
+                    // TODO: warn that ID object couldn't be created
+                }
+                data[ID_KEY] = id;
             }
 
             // here we have a polymorphic type
@@ -237,7 +250,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
                 data[TYPE_KEY] = model.constructor.name;
             }
 
-            this.connectCollection(configuration.$.collection, function(collection, cb) {
+            this.connectCollection(configuration.$.collection, function (collection, cb) {
                 if (method === MongoDataSource.METHOD.INSERT) {
                     collection.insert(data, {safe: true}, function (err, objects) {
                         if (!err) {
@@ -256,7 +269,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
                 } else {
                     cb("Wrong method");
                 }
-            }, function(err) {
+            }, function (err) {
                 callback(err, model);
             });
         },
@@ -275,14 +288,14 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
                 self = this,
                 connection;
 
-            this.connectCollection(configuration.$.collection, function(collection, cb) {
+            this.connectCollection(configuration.$.collection, function (collection, cb) {
                 collection.remove({_id: data._id}, {safe: true}, function (err, count) {
                     if (count === 0) {
                         err = DataSource.ERROR.NOT_FOUND;
                     }
                     cb(err, model);
                 });
-            }, function(err) {
+            }, function (err) {
                 callback(err, model);
             });
 
@@ -321,8 +334,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
                 sort = options["sort"];
             }
 
-            this.connectCollection(mongoCollection, function(collection, cb) {
-
+            this.connectCollection(mongoCollection, function (collection, cb) {
                 flow()
                     .seq("cursor", function (cb) {
                         var cursor = collection.find(where);
@@ -332,12 +344,12 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
                         if (options.limit) {
                             cursor = cursor.limit(options.limit);
                         }
-
                         cursor.toArray(function (err, results) {
                             if (!err) {
-                                var processor = self.getProcessorForCollection(rootCollection);
-                                results = processor.parseCollection(rootCollection, results, DataSource.ACTION.LOAD, options);
-                                collectionPage.add(results);
+                                var processor = self.getProcessorForCollection(rootCollection),
+                                    items;
+                                items = processor.parseCollection(rootCollection, results, DataSource.ACTION.LOAD, options);
+                                collectionPage.add(items);
                             }
 
                             cb(err, cursor);
@@ -350,9 +362,15 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
                         });
                     })
                     .exec(cb);
-            }, function(err) {
+            }, function (err) {
                 callback(err, collectionPage, options);
             });
+        },
+        getContextForChild: function(childFactory, requestor){
+            if(childFactory.classof(Collection)){
+                return this.getContextByProperties(requestor, requestor.$context);
+            }
+            return this.callBase();
         }
     });
 
