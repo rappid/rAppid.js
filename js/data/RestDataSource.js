@@ -3,7 +3,11 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
     var rIdExtractor = /http.+\/([^/]+)$/;
 
     var RestDataProcessor = DataSource.Processor.inherit('js.data.RestDataSource.RestDataProcessor', {
-
+        _composeSubModel: function (model, action, options) {
+            return {
+                id: model.$.id
+            };
+        }
     });
 
     var RestDataSource = DataSource.inherit("js.data.RestDataSource", {
@@ -702,6 +706,8 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
             throw "not implemented";
         }
     });
+
+    RestDataSource.RestDataProcessor = RestDataProcessor;
 
     return RestDataSource;
 });
