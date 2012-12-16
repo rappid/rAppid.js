@@ -30,15 +30,72 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
             return !this.$resourceId;
         },
 
+        getPath: function () {
+            return this.$resourceConfiguration.$.path;
+        },
+
+        getRootResource: function () {
+            var root = this;
+            while (root.$parentResource) {
+                root = root.$parentResource;
+            }
+            return root;
+        },
+
+        isResponsibleForModel: function (model) {
+            return model.constructor.name === this.$resourceConfiguration.$.modelClassName;
+        },
+
+        _fetchPathForModel: function (model, context, callback) {
+            var self = this,
+                rootResource = this.getRootResource(),
+                dataSource = this.getDataSource(context, this);
+
+            var configuration = rootResource.$resourceConfiguration.getConfigurationForModelClassName(model.constructor.name);
+
+            if (!configuration && rootResource.$resourceConfiguration.$.modelClassName === model.constructor.name) {
+                configuration = rootResource.$resourceConfiguration;
+            }
+
+            if (!configuration) {
+                throw new Error("No configuration found for " + model.constructor.name);
+            }
+
+            var modelPath = configuration.$.path + "/" + model.$.id;
+
+            if (rootResource.isResponsibleForModel(model)) {
+                dataSource = rootResource.getDataSource(context);
+            }
+
+
+            model = dataSource.createEntity(model.factory, model.$.id);
+            model.fetch(null, function (err, model) {
+                if (!err) {
+                    if (model.$parent) {
+                        self._fetchPathForModel(model.$parent, context, function (err, path) {
+                            callback(err, path + "/" + modelPath);
+                        });
+                    } else {
+                        callback(err, modelPath);
+                    }
+                } else {
+                    callback(err);
+                }
+            });
+
+
+        },
+
+
         getResourceHandlerInstance: function () {
             return this;
         },
 
-        getDataSource: function (context, childResource) {
+        getDataSource: function (context, resource) {
             if (this.$parentResource) {
-                return this.$parentResource.getDataSource(context, this);
+                return this.$parentResource.getDataSource(context, resource || this);
             } else {
-                return this.$restHandler.getDataSource(context, this);
+                return this.$restHandler.getDataSource(context, resource || this);
             }
         },
 
@@ -50,7 +107,7 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
             var fn = this[map[method]];
 
             if (fn instanceof Function) {
-                context.dataSource = this.getDataSource(context);
+                context.dataSource = this.getDataSource(context, this);
                 var body = context.request.body.content;
 
                 if (body !== "") {
@@ -138,6 +195,45 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
         _createWhereStatement: function (context, parameters) {
             return null;
         },
+        _fetchAllHrefsForModel: function (model, context, callback) {
+            var self = this,
+                baseUri = context.request.urlInfo.baseUri + this.$restHandler.$.path + "/";
+            flow()
+                .seq(function (cb) {
+                    if (!model.$.href) {
+                        self._fetchPathForModel(model, context, function (err, path) {
+                            if (!err) {
+                                model.$.href = baseUri + path;
+                            }
+                            cb(err);
+                        })
+                    } else {
+                        cb();
+                    }
+                })
+                .seq(function (cb) {
+                    flow()
+                        .parEach(model.schema, function (schemaObject, cb) {
+                            if (model.$[schemaObject._key] instanceof Model) {
+                                self._fetchPathForModel(model.$[schemaObject._key], context, function (err, path) {
+                                    if(err){
+                                        model.$[schemaObject._key] = null;
+                                    } else {
+                                        model.$[schemaObject._key].$.href = baseUri + path;
+                                    }
+                                    cb();
+                                });
+                            } else if (model.$[schemaObject._key] instanceof Collection) {
+                                model.$[schemaObject._key].$.href = model.$.href + "/" + schemaObject._key;
+                                cb();
+                            } else {
+                                cb();
+                            }
+                        })
+                        .exec(cb);
+                })
+                .exec(callback);
+        },
         /***
          *
          * @param context
@@ -153,20 +249,38 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
 
             var self = this;
 
-            collection.fetch(options, function (err, collection) {
-                if (!err) {
+            flow()
+                .seq("collection", function (cb) {
+                    collection.fetch(options, function (err, collection) {
+                        cb(err, collection);
+                    });
+                })
+                .seq(function (cb) {
+                    flow()
+                        .seqEach(this.vars["collection"].$items, function (item, cb) {
+                            if (item.$.id) {
+                                item.$["href"] = context.request.urlInfo.uri + "/" + item.$.id;
+
+                                self._fetchAllHrefsForModel(item, context, cb);
+                            } else {
+                                cb();
+                            }
+                        })
+                        .exec(cb);
+                })
+                .seq(function (cb) {
                     var response = context.response;
                     var body = "", results = [];
 
-                    // switch context of collection to restdatasource
+                    // switch context of collection to RestDataSource
 
                     // call compose
                     var processor = self.$restHandler.$restDataSource.getProcessorForCollection(collection);
 
-                    results = processor.composeCollection(collection, null, _.defaults(options, self._getCompositionOptions(context)));
+                    results = processor.composeCollection(this.vars["collection"], null);
 
                     var res = {
-                        count: collection.$itemsCount,
+                        count: this.vars["collection"].$itemsCount,
                         limit: options["limit"],
                         offset: 0,
                         results: results
@@ -180,11 +294,10 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
 
                     response.write(body, 'utf8');
                     response.end();
-                }
 
-
-                callback(err);
-            });
+                    cb();
+                })
+                .exec(callback);
         },
 
         /***
@@ -205,16 +318,18 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
 
             model.set('created', new Date());
 
-            var self = this;
+            var self = this,
+                href;
 
             flow()
                 .seq(function (cb) {
                     self._beforeModelSave(model, context, cb);
                 })
+                // validate and save model
                 .seq(function (cb) {
                     model.validateAndSave(null, cb);
-                }).
-                seq(function (cb) {
+                })
+                .seq(function (cb) {
                     self._afterModelCreate(model, context, cb);
                 }).
                 exec(function (err) {
@@ -247,36 +362,47 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
          * @private
          */
         _show: function (context, callback) {
+            var self = this;
 
             var modelFactory = this._getModelFactory(),
-                model = context.dataSource.createEntity(modelFactory, this.$resourceId),
-                self = this;
+                model = this.getDataSource(context, this).createEntity(modelFactory, this.$resourceId);
 
-            // TODO: add fields/include option handling
-            model.fetch(null, function (err, model) {
-                if (!err) {
-                    var processor = self.$restHandler.$restDataSource.getProcessorForModel(model);
+            if (context) {
+                // TODO: build options
+            }
 
+            flow()
+                .seq(function (cb) {
+                    model.fetch(null, cb);
+                })
+                .seq(function (cb) {
+                    // fetch hrefs for all sub models and sub collections
+                    self._fetchAllHrefsForModel(model, context, cb);
+                })
+                .exec(function (err) {
+                    if (!err) {
+                        var processor = self.$restHandler.$restDataSource.getProcessorForModel(model);
 
-                    var body = JSON.stringify(processor.compose(model, "GET", self._getCompositionOptions(context))),
-                        response = context.response;
+                        var body = JSON.stringify(processor.compose(model, "GET", self._getCompositionOptions(context))),
+                            response = context.response;
 
-                    response.writeHead(200, {
-                        'Content-Type': 'application/json'
-                    });
+                        response.writeHead(200, {
+                            'Content-Type': 'application/json'
+                        });
 
-                    response.write(body);
-                    response.end();
+                        response.write(body);
+                        response.end();
 
-                    callback(null);
-                } else {
-                    var statusCode = 500;
-                    if (err === DataSource.ERROR.NOT_FOUND) {
-                        statusCode = 404;
+                        callback(null);
+                    } else {
+                        var statusCode = 500;
+                        if (err === DataSource.ERROR.NOT_FOUND) {
+                            statusCode = 404;
+                        }
+                        callback(new HttpError(err, statusCode));
                     }
-                    callback(new HttpError(err, statusCode));
-                }
-            });
+
+                });
         },
 
         _getCompositionOptions: function (context) {
@@ -393,12 +519,14 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
             var collection = this._findCollection(context);
             var model = collection.createItem(this.$resourceId);
 
-            var self = this;
+            var self = this,
+                href;
 
             flow()
                 .seq(function (cb) {
                     self._beforeModelRemove(model, context, cb);
                 })
+                // remove model
                 .seq(function (cb) {
                     model.remove(null, cb)
                 })
