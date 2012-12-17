@@ -42,8 +42,8 @@ define(
                 return this.$.selectedItems.length > 0;
             },
             hasSelection: function () {
-                return this.$.selectedViews.length > 0;
-            }.onChange('selectedViews'),
+                return this.$.selectedItem !== null;
+            }.onChange('selectedItem'),
             _renderChild: function (child) {
                 if (child instanceof HtmlElement) {
                     var self = this;
