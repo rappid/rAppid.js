@@ -240,10 +240,11 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                 var ret = {},
                     data = entity.compose(action, options),
                     schemaDefinition,
-                    schemaType;
+                    schemaType,
+                    isModel = entity instanceof Model;
 
                 for (var key in entity.schema) {
-                    if (entity.schema.hasOwnProperty(key) && (!options || !options.includeInIndex || _.contains(options.includeInIndex, key))) {
+                    if (entity.schema.hasOwnProperty(key) && !isModel || (!options || !options.includeInIndex || _.contains(options.includeInIndex, key))) {
                         schemaDefinition = entity.schema[key];
                         schemaType = schemaDefinition.type;
 
@@ -354,7 +355,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                 } else if (value instanceof Collection) {
                     return this._composeSubCollection(value, action, options);
                 } else if (value instanceof Entity) {
-                    return this.compose(value, action, options);
+                    return this._composeEntity(value, action, options);
                 } else if (value instanceof List) {
                     var ret = [];
                     var self = this;
@@ -381,6 +382,19 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                     return value;
                 }
             },
+
+            /**
+             * Composes an entity, calls default compose method
+             * @param entity
+             * @param action
+             * @param options
+             * @return {JSON}
+             * @private
+             */
+            _composeEntity: function(entity, action, options){
+                return this.compose(entity, action, options);
+            },
+
             /**
              * Composes a sub model
              * @param {js.data.Model} model
