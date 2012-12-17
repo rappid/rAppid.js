@@ -112,7 +112,7 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
             }
             var collection = this.get(key);
             if (!collection) {
-                var context = this.getContextForChild(schemaDefinition.type.prototype.$modelFactory);
+                var context = this.getContextForChild(schemaDefinition.type);
                 if (context) {
                     collection = context.createCollection(schemaDefinition.type, null);
                     collection.$parent = this;
