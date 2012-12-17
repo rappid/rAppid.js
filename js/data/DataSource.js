@@ -236,30 +236,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
              * @return {JSON} options
              */
             compose: function (entity, action, options) {
-
-                var ret = {},
-                    data = entity.compose(action, options),
-                    schemaDefinition,
-                    schemaType,
-                    isModel = entity instanceof Model;
-
-                for (var key in entity.schema) {
-                    if (entity.schema.hasOwnProperty(key) && !isModel || (!options || !options.includeInIndex || _.contains(options.includeInIndex, key))) {
-                        schemaDefinition = entity.schema[key];
-                        schemaType = schemaDefinition.type;
-
-                        var value = this._getCompositionValue(data[key], key, action, options);
-                        if (value !== undefined) {
-                            if (schemaDefinition.isReference && schemaType.classof && schemaType.classof(Entity) && !schemaType.classof(Model)){
-                                value = {
-                                    id: value.id
-                                }
-                            }
-                            ret[this._getReferenceKey(key, schemaType)] = value;
-                        }
-                    }
-                }
-                return ret;
+                return this._composeEntity(entity, action, options);
             },
             /***
              * Composes a collection to an array of composed models
@@ -325,9 +302,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
              * @private
              */
             _composeObject: function (object, action, options) {
-
                 var ret = {};
-
                 for (var key in object) {
                     if (object.hasOwnProperty(key)) {
                         var value = this._getCompositionValue(object[key], key, action, options);
@@ -392,7 +367,29 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
              * @private
              */
             _composeEntity: function(entity, action, options){
-                return this.compose(entity, action, options);
+                var ret = {},
+                    data = entity.compose(action, options),
+                    schemaDefinition,
+                    schemaType,
+                    isModel = entity instanceof Model;
+
+                for (var key in entity.schema) {
+                    if (entity.schema.hasOwnProperty(key) && !isModel || (!options || !options.includeInIndex || _.contains(options.includeInIndex, key))) {
+                        schemaDefinition = entity.schema[key];
+                        schemaType = schemaDefinition.type;
+
+                        var value = this._getCompositionValue(data[key], key, action, options);
+                        if (value !== undefined) {
+                            if (schemaDefinition.isReference && schemaType.classof && schemaType.classof(Entity) && !schemaType.classof(Model)) {
+                                value = {
+                                    id: value.id
+                                }
+                            }
+                            ret[this._getReferenceKey(key, schemaType)] = value;
+                        }
+                    }
+                }
+                return ret;
             },
 
             /**
