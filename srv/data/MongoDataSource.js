@@ -8,15 +8,17 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
         undefined;
 
     var MongoDataProcessor = DataSource.Processor.inherit('src.data.MongoDataProcessor', {
-        compose: function (model, action, options) {
+        compose: function (entity, action, options) {
             var data = this.callBase();
 
-            if (model.$parent) {
-                data[PARENT_ID_KEY] = model.$parent.$.id;
-                data[PARENT_TYPE_KEY] = model.$parent.factory.prototype.constructor.name;
-            }
+            if(entity instanceof Model){
+                if (entity.$parent) {
+                    data[PARENT_ID_KEY] = entity.$parent.$.id;
+                    data[PARENT_TYPE_KEY] = entity.$parent.factory.prototype.constructor.name;
+                }
 
-            data[ID_KEY] = this.$dataSource._createIdObject(data[ID_KEY]);
+                data[ID_KEY] = this.$dataSource._createIdObject(data[ID_KEY]);
+            }
 
             return data;
         },
@@ -29,6 +31,14 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
                 return ret;
             }
             return null;
+        },
+
+        _composeEntity: function(entity, action, options){
+            // give entities an ID, so the caching works correctly
+            if(!entity.$.id) {
+                entity.$.id = generateId();
+            }
+            return this.callBase(entity, action, options);
         },
 
         _getReferenceKey: function (key, schemaType) {
@@ -373,6 +383,15 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
             return this.callBase();
         }
     });
+
+    var generateId = function () {
+        var d = new Date().getTime();
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+            var r = (d + Math.random() * 16) % 16 | 0;
+            d = Math.floor(d / 16);
+            return (c == 'x' ? r : (r & 0x7 | 0x8)).toString(16);
+        });
+    };
 
     MongoDataSource.METHOD = {
         SAVE: 'save',
