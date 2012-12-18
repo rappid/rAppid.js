@@ -276,6 +276,7 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
             clone: function () {
                 var ret = this.callBase();
                 ret.$context = this.$context;
+                ret.$parent = this.$parent;
                 return ret;
             }
         });
