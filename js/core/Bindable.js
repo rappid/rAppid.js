@@ -159,6 +159,8 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
                 _cloneAttribute: function (attribute, key) {
                     if (attribute instanceof Bindable) {
                         return attribute.clone();
+                    } else if(attribute && (attribute.clone instanceof Function)){
+                        return attribute.clone();
                     } else if (_.isArray(attribute)) {
                         var retArray = [];
                         for (var i = 0; i < attribute.length; i++) {
