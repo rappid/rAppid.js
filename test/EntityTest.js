@@ -36,7 +36,7 @@ describe('js.data.Entity', function () {
             });
         });
 
-        it('should validate the types of the attribute', function () {
+        it('should validate the types of the attributes', function () {
             EntityClass = C.Entity.inherit('app.entity.Entity', {
                 schema: {
                     name: String,
