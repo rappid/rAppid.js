@@ -102,8 +102,8 @@ define(["js/core/EventDispatcher","js/core/Bindable", "underscore"], function (E
             this.trigger('change', {item: item, index: this.indexOf(item), changedAttributes: e.$});
         },
         _onItemEvent: function(e, item){
-            if(this.$itemEventMap[e.eventType]){
-                var listeners = this.$itemEventMap[e.eventType],
+            if(this.$itemEventMap[e.$.eventType]){
+                var listeners = this.$itemEventMap[e.$.eventType],
                     listener;
                 for(var i = 0; i < listeners.length; i++){
                     listener = listeners[i];
@@ -307,7 +307,7 @@ define(["js/core/EventDispatcher","js/core/Bindable", "underscore"], function (E
 
         bind: function(eventType, callback, scope){
             var i = eventType.indexOf("item:");
-            if(i > -1){
+            if(i === 0){
                 var itemEvent = eventType.substr("item:".length);
                 this.$itemEventMap[itemEvent] = this.$itemEventMap[itemEvent] || [];
                 this.$itemEventMap[itemEvent].push({
@@ -315,14 +315,13 @@ define(["js/core/EventDispatcher","js/core/Bindable", "underscore"], function (E
                     callback: callback,
                     scope: scope
                 });
-            } else {
-                this.callBase();
             }
+            this.callBase();
         },
 
         unbind: function(eventType, callback, scope){
             var i = eventType.indexOf("item:");
-            if (i > -1) {
+            if (i === 0) {
                 var itemEvent = eventType.substr("item:".length),
                     listeners = this.$itemEventMap[itemEvent] || [],
                     listener;
