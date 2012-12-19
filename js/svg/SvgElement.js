@@ -24,7 +24,7 @@ define(['js/core/DomElement', 'js/core/List', 'js/core/Bindable'], function (Dom
             this.$namespace = SvgElement.SVG_NAMESPACE;
             this.callBase();
 
-            this.bind("transformations", "all", this._refreshTransform, this);
+            this.bind("transformations", '*', this._refreshTransform, this);
         },
 
         transform: function (transform) {
