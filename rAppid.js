@@ -154,7 +154,28 @@
                     internalCreateApplicationContext(config);
                 });
             } else {
-                internalCreateApplicationContext(config);
+
+                if (config.loadConfiguration) {
+
+                    if (config.baseUrl) {
+                        requirejs.config({
+                            baseUrl: config.baseUrl
+                        });
+                    }
+
+                    requirejs(["json!" + config.loadConfiguration], function (loadedConfig) {
+                        loadedConfig = loadedConfig || {};
+                        for (var key in config) {
+                            if (config.hasOwnProperty(key)) {
+                                loadedConfig[key] = config[key];
+                            }
+                        }
+
+                        internalCreateApplicationContext(loadedConfig);
+                    });
+                } else {
+                    internalCreateApplicationContext(config);
+                }
             }
 
         },
