@@ -247,8 +247,8 @@ describe('parser test', function () {
         });
 
         it("should parse a , separated parameter list", function(){
-            var string = "'',123213,binding";
-            C.Parser.parse(string,RULE).length.should.equal(3);
+            var string = "'',123213,binding,null";
+            C.Parser.parse(string,RULE).length.should.equal(4);
         });
 
         it("should not parse a , separated parameter list with spaces", function (done) {
