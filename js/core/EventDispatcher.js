@@ -88,7 +88,7 @@ define(["js/core/Base"], function (Base) {
                     return this;
                 },
                 /**
-                 * Triggers an event
+                 * Triggers a specific event and the * event
                  *
                  * @param {String} eventType
                  * @param {EventDispatcher.Event|Object} event If you use an Object the object is wrapped in an Event
@@ -153,6 +153,9 @@ define(["js/core/Base"], function (Base) {
                         }
                     }
                 },
+                /***
+                 * Clears up the instance
+                 */
                 destroy: function(){
                     // remove all events
                     this._eventHandlers = {};
