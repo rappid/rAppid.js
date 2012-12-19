@@ -1,5 +1,6 @@
 var chai = require('chai'),
     should = chai.should(),
+    flow = require('flow.js').flow,
     expect = chai.expect,
     testRunner = require('..').TestRunner.setup();
 
@@ -7,39 +8,68 @@ var C = {};
 
 describe('js.core.Binding', function () {
 
-    var target, model, returnValue = "HALLO",parStr = "abc",parNum = 123,extendedModel,ExtendedClass;
+    var target,
+        model,
+        returnValue = "HALLO",
+        parameters = ["\'abc\'",123,true,false,"null"],
+        parStr = "abc",
+        parNum = 123,
+        extendedModel,
+        ExtendedClass;
 
     before(function (done) {
 
-        testRunner.requireClasses({
-            Binding: 'js/core/Binding',
-            Bindable: 'js/core/Bindable',
-            Parser: 'js/lib/parser'
-        }, C, done);
+        flow()
+            .seq(function(cb){
+                testRunner.requireClasses({
+                    Binding: 'js/core/Binding',
+                    Bindable: 'js/core/Bindable',
+                    Parser: 'js/lib/parser'
+                }, C, cb);
+
+            })
+            .seq(function(cb){
+                ExtendedClass = C.Bindable.inherit('ExtendedClass', {
+                    foo: function () {
+                        return returnValue;
+                    },
+                    bar: function () {
+                        var args = Array.prototype.slice.call(arguments);
+                        if(args.length !== parameters.length){
+                            return false;
+                        }
+                        for(var i = 0; i < args.length; i++){
+                            if(args[i] !== parameters[i]){
+                                return false;
+                            }
+                        }
+                        return true;
+                    },
+                    foobar: function (a,b) {
+                        return a === parStr && b === parNum;
+                    },
+
+                    // MOCK FUNCTION
+                    getScopeForFncName: function (name) {
+                        if (this[name]) {
+                            return this;
+                        }
+                        return null;
+                    },
+                    // MOCK FUNCTION
+                    getScopeForKey: function (name) {
+                        if (this.$[name]) {
+                            return this;
+                        }
+                        return null;
+                    }
+                });
+                cb();
+            })
+            .exec(done);
 
 
-        ExtendedClass = C.Bindable.inherit('ExtendedClass', {
-            foo: function () {
-                return returnValue;
-            },
-            bar: function (par1, par2) {
-                return par1 === parStr && par2 === parNum;
-            },
-            // MOCK FUNCTION
-            getScopeForFncName: function (name) {
-                if (this[name]) {
-                    return this;
-                }
-                return null;
-            },
-            // MOCK FUNCTION
-            getScopeForKey: function (name) {
-                if (this.$[name]) {
-                    return this;
-                }
-                return null;
-            }
-        });
+
     });
 
 
@@ -61,11 +91,11 @@ describe('js.core.Binding', function () {
 
         });
 
-        it('path binding a.b should return null if b is not set', function () {
+        it('path binding a.b should return undefined if b is not set', function () {
             var b1 = new C.Binding({scope: model, path: 'a.b', target: target, targetKey: "val"});
 
             model.set("a", "A");
-            should.equal(target.get('val'), null);
+            should.equal(target.get('val'), undefined);
 
             var m1 = new C.Bindable({b: "B"});
             model.set("a", m1);
@@ -79,18 +109,18 @@ describe('js.core.Binding', function () {
             target.get("val").should.equal("AWESOME");
 
             model.set('a', null);
-            should.equal(target.get('val'), null);
+            should.equal(target.get('val'), undefined);
         });
 
-        it('path binding a.b.c should return null if b or c is not set', function () {
+        it('path binding a.b.c should return undefined if b or c is not set', function () {
             var b1 = new C.Binding({scope: model, path: 'a.b.c', target: target, targetKey: "val"});
 
             model.set("a", "A");
-            should.equal(target.get('val'), null);
+            should.equal(target.get('val'), undefined);
 
             var m1 = new C.Bindable({b: "B"});
             model.set("a", m1);
-            should.equal(target.get("val"), null);
+            should.equal(target.get("val"), undefined);
 
             var m2 = new C.Bindable({c: "WHAT UP"});
             m1.set('b', m2);
@@ -98,7 +128,7 @@ describe('js.core.Binding', function () {
 
             var m3 = new C.Bindable({b: "AWESOME"});
             model.set("a", m3);
-            should.equal(target.get("val"), null);
+            should.equal(target.get("val"), undefined);
         });
 
         it('path binding a.b.c should return c if b is just a json object', function() {
@@ -166,14 +196,14 @@ describe('js.core.Binding', function () {
             target.get('val').should.equal(returnValue);
         });
 
-        var fncBinding = "bar('" + parStr + "'," + parNum + ")";
+        var fncBinding = "bar("+parameters.join(",")+")";
 
         it(fncBinding + " should call bar with parameters and return true", function () {
             new C.Binding({scope: extendedModel, path: fncBinding, target: target, targetKey: 'val'}).trigger();
             target.get('val').should.equal(true);
         });
 
-        var fncBinding2 = "bar(m1.a,m1.b)";
+        var fncBinding2 = "foobar(m1.a,m1.b)";
 
         it(fncBinding2 + ' should be triggered if m1.a or m1.b is changing', function () {
             var extendedTarget = new ExtendedClass();
