@@ -159,7 +159,7 @@ describe('parser test', function () {
         it('should return a object with an array of parameters', function () {
             var fncName = "abc";
 
-            parsed = C.Parser.parse(fncName + "('hello',123,{binding})", RULE);
+            parsed = C.Parser.parse(fncName + "('hello',123,binding)", RULE);
             parsed.type.should.equal('fnc');
             parsed.name.should.equal(fncName);
             parsed.parameter.length.should.equal(3);
@@ -186,6 +186,14 @@ describe('parser test', function () {
             parsed.should.equal(string);
         });
 
+        it('should parse an emptystring', function () {
+            var string = "";
+            var def = "'" + string + "'";
+            parsed = C.Parser.parse(def, RULE);
+
+            parsed.should.equal(string);
+        });
+
         it('should parse a integer', function () {
             var integer = 123123;
             var def = "" + integer;
@@ -207,8 +215,8 @@ describe('parser test', function () {
             C.Parser.parse("false", RULE).should.equal(false);
         });
 
-        it('should parse a binding', function () {
-            should.exist(C.Parser.parse("{abc}", RULE));
+        it('should parse a path', function () {
+            should.exist(C.Parser.parse("abc", RULE));
         });
 
         it('should parse static binding', function () {
@@ -223,19 +231,28 @@ describe('parser test', function () {
                 done();
             }
         });
-
     });
 
     describe('#parse parameterArray', function () {
         var RULE = "parameterArray";
 
+        it("should parse an empty parameter list", function () {
+            var string = "";
+            C.Parser.parse(string, RULE).length.should.equal(0);
+        });
+
+        it("should parse a parameter list with empty string", function () {
+            var string = "''";
+            C.Parser.parse(string, RULE).length.should.equal(1);
+        });
+
         it("should parse a , separated parameter list", function(){
-            var string = "'abc',123213,{binding}";
+            var string = "'',123213,binding";
             C.Parser.parse(string,RULE).length.should.equal(3);
         });
 
         it("should not parse a , separated parameter list with spaces", function (done) {
-            var string = "'abc'   ,   123213  , {binding}";
+            var string = "'abc'   ,   123213  , binding";
 
             try {
                 C.Parser.parse(string, RULE);
