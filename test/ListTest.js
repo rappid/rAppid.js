@@ -67,6 +67,17 @@ describe('js.core.List', function () {
             }
         });
 
+        it('should trigger add event for each element', function (done) {
+            var toAdd = items.length;
+            list.bind('add', function (e) {
+                toAdd--;
+                if (toAdd === 0) {
+                    done();
+                }
+            });
+            list.add(items);
+        });
+
     });
 
     describe('#remove', function () {
@@ -94,7 +105,7 @@ describe('js.core.List', function () {
             list.remove(item);
         });
 
-        it('should trigger a remove event for each element', function (done) {
+        it('should trigger remove event for each element', function (done) {
             var toRemove = items.length;
             list.bind('remove', function (e) {
                 toRemove--;
@@ -106,6 +117,7 @@ describe('js.core.List', function () {
             list.add(item);
             list.remove(items);
         });
+
     });
 
     describe('#removeAt', function () {
@@ -166,6 +178,61 @@ describe('js.core.List', function () {
             list.add(bindable);
             bindable.set('firstname','Peter');
         });
+    });
+
+    describe('#bind to item event', function () {
+        it('should trigger when item triggers event', function (done) {
+            list.bind('item:change', function (e) {
+                expect(e.$.item).to.equal(bindable);
+                expect(e.$.itemEvent.$.eventType).to.equal("change");
+                done();
+            });
+            list.add(bindable);
+            bindable.set('firstname', 'Peter');
+        });
+
+        it('should trigger when item triggers event', function (done) {
+            list.add(bindable);
+            list.bind('item:change', function (e) {
+                expect(e.$.item).to.equal(bindable);
+                done();
+            });
+            bindable.set('firstname', 'Peter');
+        });
+
+
+        it('should trigger when item is set with reset', function (done) {
+            list.bind('item:change', function (e) {
+                expect(e.$.item).to.equal(bindable);
+                done();
+            });
+            list.reset([bindable]);
+            bindable.set('firstname', 'Peter');
+        });
+
+        it('should not trigger when item is removed', function () {
+            list.add(bindable);
+            list.bind('item:change', function (e) {
+                expect(true).to.equal(false);
+            });
+            list.remove(bindable);
+            bindable.set('firstname', 'Peter');
+        });
+
+    });
+
+    describe('#unbind item event', function(){
+        var callback = function (e) {
+            expect(true).to.equal(false);
+        };
+
+        it('should not trigger after unbind', function () {
+            list.add(bindable);
+            list.bind('item:change', callback);
+            list.unbind('item:change', callback);
+            bindable.set('firstname', 'Peter');
+        });
+
     });
 
     describe('#sync', function(){
