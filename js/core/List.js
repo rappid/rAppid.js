@@ -305,6 +305,11 @@ define(["js/core/EventDispatcher","js/core/Bindable", "underscore"], function (E
             return this.callBase();
         },
 
+        destroy: function(){
+            this.$itemEventMap = {};
+            this.callBase();
+        },
+
         bind: function(eventType, callback, scope){
             var i = eventType.indexOf("item:");
             if(i === 0){
