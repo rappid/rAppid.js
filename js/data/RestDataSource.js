@@ -333,7 +333,7 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
                 }
 
                 if (data && data.hasOwnProperty(this.$.determinateContextAttribute)) {
-                    var path = data[this.$.determinateContextAttribute].substr(this.$.endPoint.length + 1),
+                    var path = data[this.$.determinateContextAttribute].replace(/^[a-z]+?:\/{2}[^/]+?\//i, "").substr(this.$.gateway.length),
                         components = path.split("/"),
                         configuration,
                         context = this.root(),
