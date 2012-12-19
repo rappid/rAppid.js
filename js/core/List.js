@@ -1,4 +1,4 @@
-define(["js/core/Bindable", "underscore"], function (Bindable, _) {
+define(["js/core/EventDispatcher","js/core/Bindable", "underscore"], function (EventDispatcher, Bindable, _) {
 
 
     var List = Bindable.inherit("js.core.List", {
@@ -9,6 +9,7 @@ define(["js/core/Bindable", "underscore"], function (Bindable, _) {
          */
         ctor: function (items, attributes) {
             this.$items = [];
+            this.$itemEventMap = {};
 
             this.callBase(attributes);
 
@@ -22,7 +23,7 @@ define(["js/core/Bindable", "underscore"], function (Bindable, _) {
                 self.length = self.size();
             }
 
-            this.bind('all', updateLength);
+            this.bind('*', updateLength);
 
             this.length = this.size();
         },
@@ -32,7 +33,7 @@ define(["js/core/Bindable", "underscore"], function (Bindable, _) {
          */
         isEmpty: function () {
             return this.$items.length === 0;
-        }.on("all"),
+        }.on('*'),
         /**
          * Pushes one item to the list
          * @param item
@@ -82,6 +83,7 @@ define(["js/core/Bindable", "underscore"], function (Bindable, _) {
                 item = items[i];
                 if (item instanceof Bindable) {
                     item.bind('change', this._onItemChange, this);
+                    item.bind('*', this._onItemEvent, this);
                 }
                 itemIndex = index + i;
                 this.$items[itemIndex] = item;
@@ -98,6 +100,16 @@ define(["js/core/Bindable", "underscore"], function (Bindable, _) {
          */
         _onItemChange: function (e, item) {
             this.trigger('change', {item: item, index: this.indexOf(item), changedAttributes: e.$});
+        },
+        _onItemEvent: function(e, item){
+            if(this.$itemEventMap[e.eventType]){
+                var listeners = this.$itemEventMap[e.eventType],
+                    listener;
+                for(var i = 0; i < listeners.length; i++){
+                    listener = listeners[i];
+                    this.trigger(listener.eventType, {item: item, index: this.indexOf(item), itemEvent: e}, listener.callback, listener.scope);
+                }
+            }
         },
         /**
          * Removes an Array or just one item from the list. Triggers remove events.
@@ -136,6 +148,7 @@ define(["js/core/Bindable", "underscore"], function (Bindable, _) {
                     this.trigger('remove', {item: item, index: index});
                 }
                 if (item instanceof Bindable) {
+                    item.unbind('*', this._onItemEvent, this);
                     item.unbind('change', this._onItemChange, this);
                 }
                 return items[0];
@@ -147,7 +160,21 @@ define(["js/core/Bindable", "underscore"], function (Bindable, _) {
          * @param items
          */
         reset: function (items, options) {
+            var self = this;
+            this.each(function(item){
+                if(item instanceof EventDispatcher){
+                    item.unbind('*',self._onItemEvent, self);
+                    item.unbind('change',self._onItemChange, self);
+                }
+            });
+
             this.$items = items;
+            this.each(function(item){
+                if (item instanceof EventDispatcher) {
+                    item.bind('*', self._onItemEvent, self);
+                    item.bind('change', self._onItemChange, self);
+                }
+            });
 
             options = options || {};
             if(!options.silent){
@@ -172,7 +199,7 @@ define(["js/core/Bindable", "underscore"], function (Bindable, _) {
          */
         size: function () {
             return this.$items.length;
-        }.on('all'),
+        }.on('*'),
 
         /**
          * Returns item at a specific index
@@ -184,7 +211,7 @@ define(["js/core/Bindable", "underscore"], function (Bindable, _) {
                 return this.$items[index];
             }
             return null;
-        }.on('all'),
+        }.on('*'),
         /**
          * Iterates over all items with given callback
          * @param Function callback with signature function(item, index)
@@ -249,7 +276,8 @@ define(["js/core/Bindable", "underscore"], function (Bindable, _) {
             }else{
                 return false;
             }
-        }.on('all'),
+        }.on('*'),
+
         /**
          * Returns a fresh copy of the List
          * @return List a fresh copy of the list
@@ -261,6 +289,7 @@ define(["js/core/Bindable", "underscore"], function (Bindable, _) {
             ret._$source = this;
             return ret;
         },
+
         sync: function(){
             if(this._$source){
                 var item, items = [];
@@ -275,13 +304,38 @@ define(["js/core/Bindable", "underscore"], function (Bindable, _) {
             }
             return this.callBase();
         },
-        trigger: function(event, attributes){
-            this.callBase();
-            if(event == "add" || event === "remove" || event === "reset" || event === "sort" || event === "change"){
-                attributes["event"] = event;
-                this.trigger("all",attributes);
-            }
 
+        bind: function(eventType, callback, scope){
+            var i = eventType.indexOf("item:");
+            if(i > -1){
+                var itemEvent = eventType.substr("item:".length);
+                this.$itemEventMap[itemEvent] = this.$itemEventMap[itemEvent] || [];
+                this.$itemEventMap[itemEvent].push({
+                    eventType: eventType,
+                    callback: callback,
+                    scope: scope
+                });
+            } else {
+                this.callBase();
+            }
+        },
+
+        unbind: function(eventType, callback, scope){
+            var i = eventType.indexOf("item:");
+            if (i > -1) {
+                var itemEvent = eventType.substr("item:".length),
+                    listeners = this.$itemEventMap[itemEvent] || [],
+                    listener;
+
+                for(var j = listeners.length - 1; j > -1; j--){
+                    listener = listeners[j];
+                    if(listener.callback === callback && listener.scope === scope){
+                        listeners.splice(i, 1);
+                    }
+                }
+            } else {
+                this.callBase();
+            }
         }
     });
 

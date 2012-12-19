@@ -3,15 +3,15 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
         var Collection;
 
         var ValidationErrors = Bindable.inherit('js.data.Entity.ValidationErrors', {
-            firstError: function(){
-                for(var key in this.$){
-                    if(this.$.hasOwnProperty(key)){
+            firstError: function () {
+                for (var key in this.$) {
+                    if (this.$.hasOwnProperty(key)) {
                         return this.$[key];
                     }
                 }
                 return null;
             }.on('change'),
-            size: function(){
+            size: function () {
                 return  _.size(this.$);
             }.on('change')
         });
@@ -44,7 +44,7 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
 
             _extendSchema: function () {
 
-                if(this.factory.schema){
+                if (this.factory.schema) {
                     this.schema = this.factory.schema;
                     return;
                 }
@@ -165,7 +165,7 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                 return this.$errors;
             }.on('isValidChanged'),
 
-            fieldError: function(field){
+            fieldError: function (field) {
                 return this.$errors.$[field];
             }.on('isValidChanged'),
 
@@ -302,15 +302,15 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                                 key: key,
                                 value: value
                             });
-                        } else if (value instanceof List && !(value instanceof require('js/data/Collection'))){
-                            if(value.size() > 0 && value.at(0) instanceof Entity){
-                                value.each(function(item){
+                        } else if (value instanceof List && !(value instanceof require('js/data/Collection'))) {
+                            if (value.size() > 0 && value.at(0) instanceof Entity) {
+                                value.each(function (item) {
                                     subEntities.push({
                                         key: key,
                                         value: item
                                     });
                                 });
-                            } else if(value.size() === 0 && !(this.runsInBrowser() && schemaObject.generated) && this._isRequired(entity, schemaObject.required) === true) {
+                            } else if (value.size() === 0 && !(this.runsInBrowser() && schemaObject.generated) && this._isRequired(entity, schemaObject.required) === true) {
                                 errors.push(this._createError("isEmptyError", key + " are empty", key));
                             }
                         }
@@ -346,22 +346,22 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                     return false;
                 } else if (type.classof && type.classof(Entity) && !(value instanceof type)) {
                     return false;
-                } else if(type === Object && !_.isObject(value)){
+                } else if (type === Object && !_.isObject(value)) {
                     return false;
                 }
                 return true;
             },
-            _isUndefined: function(value, schemaObject){
+            _isUndefined: function (value, schemaObject) {
                 var type = schemaObject.type;
-                if(type.classof && type.classof(require('js/data/Collection'))){
+                if (type.classof && type.classof(require('js/data/Collection'))) {
                     return false;
                 }
                 return (!(this.runsInBrowser() && schemaObject.generated)) && (value === undefined || value === null || value === "");
             },
-            _isRequired: function(entity, required){
-                if(required instanceof Function){
+            _isRequired: function (entity, required) {
+                if (required instanceof Function) {
                     return required.call(entity);
-                }else{
+                } else {
                     return required;
                 }
             }
