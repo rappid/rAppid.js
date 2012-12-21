@@ -38,7 +38,7 @@
   "dependencies": {
     "underscore": "latest",
     "requirejs": ">=2.0.2",
-    "flow.js": "latest",
+    "flow.js": ">=0.2.5",
     "inherit.js": "latest",
     "ejs": "latest",
     "optimist": ">=0.3.4",
