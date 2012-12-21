@@ -1,5 +1,5 @@
 /*!
- * flow.js JavaScript Library v0.2.2
+ * flow.js JavaScript Library v0.2.5
  * https://github.com/it-ony/flow.js
  *
  * Copyright 2012, Tony Findeisen
@@ -259,7 +259,7 @@
      * @param {Array|Object} values for which fn should be called in parallel,
      *                      if object is passed, keys will be var names
      * @param {Function} fn function which will be executed for each value in values
-     *                      function(value, [cb]) - the function will be called with the value as first parameter
+     *                      function(value, [key], [cb]) - the function will be called with the value as first parameter
      *                      and optional as second parameter with the callback
      */
     Flow.prototype.parEach = function (values, fn) {
@@ -272,23 +272,33 @@
         var noVars = values instanceof Array,
             delegates = noVars ? [] : {};
 
-        function addDelegate(name, value) {
+        function addDelegate(name, value, key) {
             if (noVars) {
+                key = value;
                 value = name;
                 name = null;
             }
 
             var parFn;
 
-            if (fn.length >= 2) {
+
+            if (fn.length >= 3) {
+                // async with key
+                parFn = function (cb) {
+                    this.key = key;
+                    fn.call(this, value, key, cb);
+                };
+            } else if (fn.length == 2) {
                 // async
                 parFn = function (cb) {
-                    fn(value, cb);
+                    this.key = key;
+                    fn.call(this, value, cb);
                 };
             } else {
                 // sync
                 parFn = function () {
-                    return fn(value);
+                    this.key = key;
+                    return fn.call(this, value);
                 };
             }
 
@@ -302,12 +312,12 @@
 
         if (noVars) {
             for (var i = 0; i < values.length; i++) {
-                addDelegate(values[i]);
+                addDelegate(values[i], i);
             }
         } else {
             for (var key in values) {
                 if (values.hasOwnProperty(key)) {
-                    addDelegate(key, values[key]);
+                    addDelegate(key, values[key], key);
                 }
             }
         }
@@ -329,19 +339,27 @@
 
         var self = this;
 
-        function addSequence(value) {
+        function addSequence(value, i) {
 
             var seqFn;
 
-            if (fn.length >= 2) {
+            if (fn.length >= 3) {
                 // async
                 seqFn = function (cb) {
-                    fn(value, cb);
+                    this.key = i;
+                    fn.call(this, value, i, cb);
+                };
+            } else if (fn.length == 2) {
+                // async
+                seqFn = function (cb) {
+                    this.key = i;
+                    fn.call(this, value, cb);
                 };
             } else {
                 // sync
                 seqFn = function () {
-                    return fn(value);
+                    this.key = i;
+                    return fn.call(this, value);
                 };
             }
 
@@ -350,7 +368,7 @@
         }
 
         for (var i = 0; i < values.length; i++) {
-           addSequence(values[i]);
+           addSequence(values[i], i);
         }
 
         return this;

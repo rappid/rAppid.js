@@ -23,7 +23,10 @@ define(["js/core/EventDispatcher","js/core/Bindable", "underscore"], function (E
                 self.length = self.size();
             }
 
-            this.bind('*', updateLength);
+            // TODO: allow array here to give multiple event hin
+            this.bind('add', updateLength);
+            this.bind('remove', updateLength);
+            this.bind('reset', updateLength);
 
             this.length = this.size();
         },
