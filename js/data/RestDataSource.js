@@ -332,8 +332,9 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
                     return null;
                 }
 
-                if (data && data.hasOwnProperty(this.$.determinateContextAttribute)) {
-                    var path = data[this.$.determinateContextAttribute].replace(/^[a-z]+?:\/{2}[^/]+?\//i, "").substr(this.$.gateway.length),
+                if (data.hasOwnProperty(this.$.determinateContextAttribute)) {
+
+                    var path = this._getContextPath(data),
                         components = path.split("/"),
                         configuration,
                         context = this.root(),
@@ -371,6 +372,11 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
 
             return this.callBase();
         },
+
+        _getContextPath: function(data) {
+            return data[this.$.determinateContextAttribute].substr(this.$.endPoint.length + 1);
+        },
+
         /***
          *
          * @param request.url
