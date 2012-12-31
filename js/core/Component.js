@@ -417,7 +417,7 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                                     throw "Couldn't find callback " + value + " for " + key + " event";
                                 }
                             } else if (this._isEventAttribute(key)) {
-                                this.bind(key.split(":")[1], rootScope[value]);
+                                this.bind(key.split(":")[1], rootScope[value], rootScope);
                             }
                         }
                     }
