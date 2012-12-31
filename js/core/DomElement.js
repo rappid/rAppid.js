@@ -689,8 +689,8 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                     elementRect = this.$el.getBoundingClientRect();
 
                 return {
-                    x: point.x + htmlRect.left - htmlRect.offsetLeft - elementRect.left,
-                    y: point.y + htmlRect.top - htmlRect.offsetTop - elementRect.top
+                    x: point.x + htmlRect.left - html.offsetLeft - elementRect.left,
+                    y: point.y + htmlRect.top - html.offsetTop - elementRect.top
                 };
             },
 
