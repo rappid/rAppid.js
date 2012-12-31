@@ -646,10 +646,62 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                     this.$el.detachEvent("on" + type, callback);
                 }
             },
+
             focus: function(){
                 if(this.isRendered()){
                     this.$el.focus();
                 }
+            },
+
+            localToGlobal: function(point) {
+                point = point || {
+                    x: 0,
+                    y: 0
+                };
+
+                var html = this._getHtmlTag();
+                if (!html) {
+                    throw new Error("Html tag not found");
+                }
+
+                var htmlRect = html.getBoundingClientRect(),
+                    elementRect = this.$el.getBoundingClientRect();
+
+                return {
+                    x: -htmlRect.top + elementRect.top + html.offsetTop + point.x,
+                    y: -htmlRect.left + elementRect.left + html.offsetLeft + point.y
+                };
+
+            },
+
+            globalToLocal: function(point) {
+                point = point || {
+                    x: 0,
+                    y: 0
+                };
+
+                var html = this._getHtmlTag();
+                if (!html) {
+                    throw new Error("Html tag not found");
+                }
+
+                var htmlRect = html.getBoundingClientRect(),
+                    elementRect = this.$el.getBoundingClientRect();
+
+                return {
+                    x: point.x + htmlRect.left - htmlRect.offsetLeft - elementRect.left,
+                    y: point.y + htmlRect.top - htmlRect.offsetTop - elementRect.top
+                };
+            },
+
+            _getHtmlTag: function() {
+                var document = this.$stage.$document;
+
+                if (!this.$stage.$html) {
+                    this.$stage.$html = document.getElementsByTagName("html")[0];
+                }
+
+                return this.$stage.$html;
             }
         };
 
