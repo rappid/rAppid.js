@@ -1,7 +1,10 @@
 define(["js/core/Bindable", "underscore", "js/core/BindingCreator"], function (Bindable, _, BindingCreator) {
 
-        var undefined;
-        var bindingCreator = new BindingCreator();
+        var undefined,
+            bindingCreator = new BindingCreator(),
+            prefixMap = {
+                "type:eventHandler": "eventHandler:"
+            };
 
         function stringToPrimitive(str) {
             // if it's not a string
@@ -68,6 +71,13 @@ define(["js/core/Bindable", "underscore", "js/core/BindingCreator"], function (B
                         // don't add xmlns attributes
                         if(node.nodeName.indexOf("xmlns") !== 0){
                             localName = this._getLocalNameFromNode(node);
+
+                            var prefix = prefixMap[node.namespaceURI];
+
+                            if (prefix) {
+                                localName = prefix + localName;
+                            }
+
                             attributes[localName] = stringToPrimitive(node.value);
 
                             if (node.namespaceURI) {

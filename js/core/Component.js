@@ -35,6 +35,7 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                         this.$xamlAttributes = this._getAttributesFromDescriptor(descriptor);
                     }
 
+
                     this.$elements = [];
                     this.$templates = {};
                     this.$configurations = [];
@@ -373,11 +374,11 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                 },
 
                 _isEventAttribute: function (attributeName) {
-                    return attributeName.indexOf("on:") == 0;
+                    return attributeName.indexOf("eventHandler:") === 0;
                 },
 
                 _isXamlEventAttribute: function(attributeName){
-                    return attributeName.indexOf("on") == 0;
+                    return attributeName.indexOf("on") === 0;
                 },
 
                 _getEventName: function(eventDefinition){
@@ -415,6 +416,8 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                                 } else {
                                     throw "Couldn't find callback " + value + " for " + key + " event";
                                 }
+                            } else if (this._isEventAttribute(key)) {
+                                this.bind(key.split(":")[1], rootScope[value]);
                             }
                         }
                     }
