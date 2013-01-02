@@ -47,14 +47,14 @@ define(['js/core/DomElement', 'js/core/List', 'js/core/Bindable'], function (Dom
                 x = this.$.translateX;
                 y = this.$.translateY;
 
-                (x || y) && this.translate(x, y);
+                this.translate(x, y);
             }
 
             if (this._hasSome($, ["scaleX", "scaleY"])) {
                 x = this.$.scaleX;
                 y = this.$.scaleY;
 
-                (x || y) && this.scale(x, y);
+                this.scale(x, y);
             }
 
             if (this._hasSome($, ["rotation", "rotationX", "rotationY"])) {
@@ -62,7 +62,7 @@ define(['js/core/DomElement', 'js/core/List', 'js/core/Bindable'], function (Dom
                 x = this.$.rotationX;
                 y = this.$.rotationY;
 
-                (x || y || r) && this.rotate(r, x, y);
+                this.rotate(r, x, y);
             }
 
 
@@ -70,6 +70,10 @@ define(['js/core/DomElement', 'js/core/List', 'js/core/Bindable'], function (Dom
         },
 
         scale: function (sx, sy) {
+
+            if (sx === null || sy === null) {
+                return;
+            }
 
             if (!sy && sy !== 0) {
                 sy = sx;
