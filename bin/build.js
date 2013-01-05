@@ -197,6 +197,8 @@ var build = function (args, callback) {
             fs.writeFileSync(externalIndexFilePath, content);
         }
         fs.writeFileSync(indexFilePath, content);
+    }, function(err){
+        console.log(err);
     });
 };
 
