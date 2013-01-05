@@ -1,12 +1,10 @@
 /*!
- * flow.js JavaScript Library v0.2.5
- * https://github.com/it-ony/flow.js
+ * query.js
  *
- * Copyright 2012, Tony Findeisen
+ * Copyright 2012 Tony Findeisen, Marcus Krejpowicz
  * Licensed under the MIT license.
- * https://raw.github.com/it-ony/flow.js/master/LICENSE
  *
- * Date: Mon Mar 12 2012 12:36:34 GMT+0100 (CET)
+ * Date: Sat Jan 05 2013 19:00:34 GMT+0100 (CET)
  */
 (function (exports) {
     "use strict";
@@ -51,7 +49,7 @@
         nestedWhereMethods = ["not", "and", "or"];
 
     var Where = function (type) {
-        this.type = type || "and";
+        this.operator = type || "and";
         this.expressions = [];
     };
 
@@ -97,6 +95,21 @@
             }
 
         })(comparatorMethods[i]);
+    }
+
+    for (var j = 0; j < nestedWhereMethods.length; j++) {
+        (function(type) {
+
+            Where.prototype[type] = function(nestedFunction) {
+                var where = new Where(type);
+                nestedFunction.call(where, where);
+
+                this.expressions.push(where);
+            };
+
+            Query.prototype[operator]
+
+        })(nestedWhereMethods[j]);
     }
 
     // global on the server, window in the browser
