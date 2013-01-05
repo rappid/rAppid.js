@@ -38,14 +38,12 @@ describe('query', function () {
                     .toObject()
             ).to.eql({
                     where: {
-                        type: "and",
+                        operator: "and",
                         expressions: [
                             {
                                 operator: "eql",
                                 field: "name",
-                                values: [
-                                    "tony"
-                                ]
+                                value: "tony"
                             }
                         ]
                     }
@@ -60,20 +58,17 @@ describe('query', function () {
                     .toObject()
             ).to.eql({
                     where: {
-                        type: "and",
+                        operator: "and",
                         expressions: [
                             {
                                 operator: "eql",
                                 field: "name",
-                                values: [
-                                    "tony"
-                                ]
-                            }, {
+                                value: "tony"
+                            },
+                            {
                                 operator: "gt",
                                 field: "age",
-                                values: [
-                                    18
-                                ]
+                                value: 18
                             }
                         ]
                     }
@@ -90,25 +85,152 @@ describe('query', function () {
                     .toObject()
             ).to.eql({
                     where: {
-                        type: "and",
+                        operator: "and",
                         expressions: [
                             {
                                 operator: "eql",
                                 field: "name",
-                                values: [
-                                    "tony"
-                                ]
-                            }, {
+                                value: "tony"
+                            },
+                            {
                                 operator: "eql",
                                 field: "age",
-                                values: [
-                                    26
+                                value: 26
+                            }
+                        ]
+                    }
+                });
+        });
+
+    });
+
+
+    describe('nested wheres', function () {
+
+        it('not', function () {
+            expect(
+                query()
+                    .not(function (where) {
+                        where
+                            .eql("name", "tony")
+                    })
+                    .toObject()
+            ).to.eql({
+                    where: {
+                        operator: "and",
+                        expressions: [
+                            {
+                                operator: "not",
+                                expressions: [
+                                    {
+                                        operator: "and",
+                                        expressions: [
+                                            {
+                                                operator: "eql",
+                                                field: "name",
+                                                value: "tony"
+                                            }
+                                        ]
+                                    }
                                 ]
                             }
                         ]
                     }
                 });
         });
+
+        it('or', function () {
+            expect(
+                query()
+                    .or(function () {
+                        this.eql("name", "tony")
+                    }, function () {
+                        this.eql("name", "marcus")
+                    })
+                    .toObject()
+            ).to.eql({
+                    where: {
+                        operator: "and",
+                        expressions: [
+                            {
+                                operator: "or",
+                                expressions: [
+                                    {
+                                        operator: "and",
+                                        expressions: [
+                                            {
+                                                operator: "eql",
+                                                field: "name",
+                                                value: "tony"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        operator: "and",
+                                        expressions: [
+                                            {
+                                                operator: "eql",
+                                                field: "name",
+                                                value: "marcus"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                });
+        });
+
+        it('or with composed wheres', function () {
+
+            var where1 = query()
+                .where()
+                .eql("name", "tony");
+
+            var where2 = query()
+                .where()
+                .eql("name", "marcus");
+
+            expect(
+
+                query()
+                    .or(where1, where2)
+                    .toObject()
+            ).to.eql({
+                    where: {
+                        operator: "and",
+                        expressions: [
+                            {
+                                operator: "or",
+                                expressions: [
+                                    {
+                                        operator: "and",
+                                        expressions: [
+                                            {
+                                                operator: "eql",
+                                                field: "name",
+                                                value: "tony"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        operator: "and",
+                                        expressions: [
+                                            {
+                                                operator: "eql",
+                                                field: "name",
+                                                value: "marcus"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                });
+        });
+
 
     });
 

@@ -53,15 +53,15 @@
         this.expressions = [];
     };
 
-    var Comparator = function (operator, field, values) {
+    var Comparator = function (operator, field, value) {
         this.operator = operator;
         this.field = field;
-        this.values = values;
+        this.value = value;
     };
 
     Comparator.prototype = {
         getValue: function () {
-            return this.values[0];
+            return this.value[0];
         }
     };
 
@@ -77,11 +77,10 @@
                         }
                     }
                 } else {
-                    var values = Array.prototype.slice.call(arguments);
-                    values.shift();
-                    this.expressions.push(new Comparator(operator, field, values));
+                    this.expressions.push(new Comparator(operator, field, value));
                 }
 
+                return this;
 
             };
 
@@ -100,14 +99,38 @@
     for (var j = 0; j < nestedWhereMethods.length; j++) {
         (function(type) {
 
-            Where.prototype[type] = function(nestedFunction) {
-                var where = new Where(type);
-                nestedFunction.call(where, where);
+            Where.prototype[type] = function() {
 
-                this.expressions.push(where);
+                var args = Array.prototype.slice.call(arguments);
+
+                var operationWhere = new Where(type);
+
+                for (var i = 0; i < args.length; i++) {
+
+                    var nestedFunction = args[i];
+                    var where;
+
+                    if (nestedFunction instanceof Where) {
+                        where = nestedFunction;
+                    } else {
+                        where = new Where();
+                        nestedFunction.call(where, where);
+                    }
+
+                    operationWhere.expressions.push(where);
+                }
+
+                this.expressions.push(operationWhere);
             };
 
-            Query.prototype[operator]
+            Query.prototype[type] = function() {
+                var args = Array.prototype.slice.call(arguments);
+
+                var where = this.where();
+                where[type].apply(where, args);
+
+                return this;
+            }
 
         })(nestedWhereMethods[j]);
     }
