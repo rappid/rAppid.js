@@ -5,7 +5,6 @@ define(["js/data/DataSource", "js/data/Model", "flow", "js/data/LocalStorage"],
 
         var LocalStorageProcessor = DataSource.Processor.inherit('src.data.RestDataSource.RestDataProcessor', {
             _composeSubModel: function (model, action, options) {
-                // TODO: add href
                 return {
                     id: model.$.id
                 }
@@ -91,9 +90,6 @@ define(["js/data/DataSource", "js/data/Model", "flow", "js/data/LocalStorage"],
                 page.add(data);
 
                 callback(null, page, options);
-            },
-            _beforeModelSave: function(model, options, callback){
-
             },
             _saveModel: function (model, options, callback) {
 
@@ -202,33 +198,17 @@ define(["js/data/DataSource", "js/data/Model", "flow", "js/data/LocalStorage"],
 
             _saveStorage: function () {
                 this.$storage.setItem(this.$.name, this.getFormatProcessor(null).serialize(this.$data));
-            },
-            /***
-             * creates the context as RestContext
-             *
-             * @param properties
-             * @param parentContext
-             * @return {js.core.LocalStorageDataSource.RestContext}
-             */
-            createContext: function (properties, parentContext) {
-                return new LocalStorageDataSource.RestContext(this, properties, parentContext);
             }
-
         });
 
         LocalStorageDataSource.RestContext = DataSource.Context.inherit("js.data.LocalStorageDataSource.Context", {
-            ctor: function (dataSource, properties, parentContext) {
-                this.$contextModel = properties;
-                this.callBase(dataSource, properties, parentContext);
-            },
-
-            createContextCacheId: function (contextModel) {
-                return contextModel.constructor.name + "_" + contextModel.$.id;
-            },
-
             getPathComponents: function () {
-                if (!this.$parent) {
-                    // rootContext
+
+                var path = [];
+
+                if (this.$parent) {
+                    path = this.$parent.getPathComponents();
+                } else {
                     return [];
                 }
 
@@ -237,7 +217,19 @@ define(["js/data/DataSource", "js/data/Model", "flow", "js/data/LocalStorage"],
                 }
 
                 var configuration = this.$dataSource.getConfigurationForModelClass(this.$contextModel.factory);
-                return [configuration.$.path, this.$contextModel.$.id];
+                path.push(configuration.$.path, this.$contextModel.$.id);
+
+                return path;
+
+            },
+
+            createCollection: function (factory, options, type) {
+                options = options || {};
+                _.defaults(options, {
+                    pageSize: this.$dataSource.$.collectionPageSize || 100
+                });
+
+                return this.callBase(factory, options, type);
             },
 
             getQueryParameter: function () {
