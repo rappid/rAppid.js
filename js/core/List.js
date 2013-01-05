@@ -267,7 +267,10 @@ define(["js/core/EventDispatcher","js/core/Bindable", "underscore"], function (E
 
             return r;
         },
-
+        /**
+         * Checks if item is included in List
+         * @return Boolean
+         */
         includes: function(item){
             var ret = this.each(function(innerItem){
                 if(innerItem === item){
@@ -343,6 +346,26 @@ define(["js/core/EventDispatcher","js/core/Bindable", "underscore"], function (E
             } else {
                 this.callBase();
             }
+        },
+
+        /***
+         * Transforms List to an array
+         * You can specify a transform fnc
+         * @param {Function} transformFnc
+         * @return {Array}
+         */
+        toArray: function(transformFnc) {
+            var ret = [];
+            transformFnc = transformFnc || function (item, index) {
+                return item;
+            };
+
+
+            this.each(function(item,index){
+                ret.push(transformFnc(item,index))
+            });
+
+            return ret;
         }
     });
 
