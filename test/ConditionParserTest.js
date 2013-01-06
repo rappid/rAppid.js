@@ -1,12 +1,26 @@
 var should = require('chai').should(),
     testRunner = require('..').TestRunner.setup(),
     flow = require('flow.js').flow;
-    parser = require("../js/lib/conditionParser.js").parser;
+    parser = require("../srv/lib/conditionParser.js").parser;
 
 var C = {};
 
 
 describe('condition parser test', function () {
+
+
+    describe("#and", function(){
+        var rule = "and";
+
+        it("should parse age<4", function(){
+            var hash = parser.parse("age<4",rule);
+
+            hash.name.should.equal("and");
+            hash.args.length.should.equal(1);
+        });
+
+
+    });
 
     describe("#comparison", function(){
         var rule = "comparison";
@@ -14,7 +28,7 @@ describe('condition parser test', function () {
         it('should parse "="', function(){
             var hash = parser.parse("a=b", rule);
 
-            hash.name.should.equal("eq");
+            hash.name.should.equal("eql");
             hash.args.length.should.equal(2);
         });
 
@@ -61,7 +75,7 @@ describe('condition parser test', function () {
         it('should parse a comparison', function(){
             var hash = parser.parse("name=tom",rule);
 
-            hash.name.should.equal('eq');
+            hash.name.should.equal('eql');
             hash.args.length.should.equal(2);
         });
 
@@ -89,7 +103,7 @@ describe('condition parser test', function () {
         it('should parse a "or" group with comparison', function () {
             var hash = parser.parse("(name=tom or age=22)", rule);
 
-            hash.name.should.equal("and");
+            hash.name.should.equal("or");
             hash.args.length.should.equal(2);
         });
 
