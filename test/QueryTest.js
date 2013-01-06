@@ -17,13 +17,90 @@ describe('query', function () {
 
     describe('sort', function () {
 
-        it('Sorting', function () {
+        it('one field asc', function () {
             expect(
                 query()
                     .sort("name")
                     .toObject()
             ).to.eql({
-                    sort: "name"
+                    sort: [
+                        {
+                            field: "name",
+                            direction: 1
+                        }
+                    ]
+                });
+        });
+
+        it('one field desc', function () {
+            expect(
+                query()
+                    .sort("-name")
+                    .toObject()
+            ).to.eql({
+                    sort: [
+                        {
+                            field: "name",
+                            direction: -1
+                        }
+                    ]
+                });
+        });
+
+
+        it('array', function () {
+            expect(
+                query()
+                    .sort([{
+                        field: "xyz"
+                    }, {
+                        field: "abc",
+                        direction: -1
+                    }])
+                    .toObject()
+            ).to.eql({
+                    sort: [
+                        {
+                            field: "xyz",
+                            direction: 1
+                        },
+                        {
+                            field: "abc",
+                            direction: -1
+                        }
+                    ]
+                });
+        });
+
+        it('mixed up', function () {
+            expect(
+                query()
+                    .sort("name", "-firstname", "+birthday", {
+                        field: "xyz"
+                    }, {
+                        field: "abc",
+                        direction: -1
+                    })
+                    .toObject()
+            ).to.eql({
+                    sort: [
+                        {
+                            field: "name",
+                            direction: 1
+                        }, {
+                            field: "firstname",
+                            direction: -1
+                        }, {
+                            field: "birthday",
+                            direction: 1
+                        }, {
+                            field: "xyz",
+                            direction: 1
+                        }, {
+                            field: "abc",
+                            direction: -1
+                        }
+                    ]
                 });
         });
 
