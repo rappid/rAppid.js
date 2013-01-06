@@ -77,8 +77,8 @@
             return this.query;
         },
 
-        where: function () {
-            this.query.where = this.query.where || new Where();
+        where: function (type) {
+            this.query.where = this.query.where || new Where(type);
             return this.query.where;
         }
 
@@ -96,6 +96,10 @@
         this.operator = operator;
         this.field = field;
         this.value = value;
+    };
+
+    Where.prototype.push = function(expression){
+        this.expressions.push(expression);
     };
 
     Comparator.prototype = {

@@ -8,12 +8,13 @@ define(['js/ui/View', 'js/core/Bindable','moment'], function(View, Bindable, mom
             _viewDate: Date
         },
 
-        _setYearMonthSelection: function(){
+        initialize: function(){
             if(this.$.date){
                 this.set({
                     _viewDate: this.$.date
                 })
             }
+            this.callBase();
         },
 
         _years: function(){

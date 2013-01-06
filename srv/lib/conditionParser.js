@@ -134,7 +134,7 @@ var exports = (typeof(exports) === "undefined" ? this : exports); exports.parser
             pos = savedPos3;
           }
           var result7 = result6 !== null
-            ? (function(d, n) { return d ? n : null; })(result6[0], result6[1])
+            ? (function(o) { return o; })(result6[1])
             : null;
           if (result7 !== null) {
             var result5 = result7;
@@ -168,7 +168,7 @@ var exports = (typeof(exports) === "undefined" ? this : exports); exports.parser
               pos = savedPos3;
             }
             var result7 = result6 !== null
-              ? (function(d, n) { return d ? n : null; })(result6[0], result6[1])
+              ? (function(o) { return o; })(result6[1])
               : null;
             if (result7 !== null) {
               var result5 = result7;
@@ -188,7 +188,7 @@ var exports = (typeof(exports) === "undefined" ? this : exports); exports.parser
           pos = savedPos1;
         }
         var result2 = result1 !== null
-          ? (function(o, rp) { return o && rp.length > 0  ? { type: "group", name: "and", args: [o].concat(rp) } : null; })(result1[0], result1[1])
+          ? (function(o, rp) { return o ? { type: "group", name: "and", args: [o].concat(rp) } : null; })(result1[0], result1[1])
           : null;
         if (result2 !== null) {
           var result0 = result2;
@@ -759,7 +759,7 @@ var exports = (typeof(exports) === "undefined" ? this : exports); exports.parser
           }
         }
         var result15 = result14 !== null
-          ? (function() {return "eq";})()
+          ? (function() {return "eql";})()
           : null;
         if (result15 !== null) {
           var result13 = result15;
@@ -1011,7 +1011,6 @@ var exports = (typeof(exports) === "undefined" ? this : exports); exports.parser
         var savedPos1 = pos;
         var result3 = parse_operator();
         if (result3 !== null) {
-          var result4 = [];
           var savedPos2 = pos;
           var savedPos3 = pos;
           if (input.substr(pos, 4) === " or ") {
@@ -1036,7 +1035,7 @@ var exports = (typeof(exports) === "undefined" ? this : exports); exports.parser
             pos = savedPos3;
           }
           var result7 = result6 !== null
-            ? (function(d, o) { return d ? o : null; })(result6[0], result6[1])
+            ? (function(o) { return o; })(result6[1])
             : null;
           if (result7 !== null) {
             var result5 = result7;
@@ -1044,40 +1043,45 @@ var exports = (typeof(exports) === "undefined" ? this : exports); exports.parser
             var result5 = null;
             pos = savedPos2;
           }
-          while (result5 !== null) {
-            result4.push(result5);
-            var savedPos2 = pos;
-            var savedPos3 = pos;
-            if (input.substr(pos, 4) === " or ") {
-              var result8 = " or ";
-              pos += 4;
-            } else {
-              var result8 = null;
-              if (reportMatchFailures) {
-                matchFailed("\" or \"");
+          if (result5 !== null) {
+            var result4 = [];
+            while (result5 !== null) {
+              result4.push(result5);
+              var savedPos2 = pos;
+              var savedPos3 = pos;
+              if (input.substr(pos, 4) === " or ") {
+                var result8 = " or ";
+                pos += 4;
+              } else {
+                var result8 = null;
+                if (reportMatchFailures) {
+                  matchFailed("\" or \"");
+                }
               }
-            }
-            if (result8 !== null) {
-              var result9 = parse_operator();
-              if (result9 !== null) {
-                var result6 = [result8, result9];
+              if (result8 !== null) {
+                var result9 = parse_operator();
+                if (result9 !== null) {
+                  var result6 = [result8, result9];
+                } else {
+                  var result6 = null;
+                  pos = savedPos3;
+                }
               } else {
                 var result6 = null;
                 pos = savedPos3;
               }
-            } else {
-              var result6 = null;
-              pos = savedPos3;
+              var result7 = result6 !== null
+                ? (function(o) { return o; })(result6[1])
+                : null;
+              if (result7 !== null) {
+                var result5 = result7;
+              } else {
+                var result5 = null;
+                pos = savedPos2;
+              }
             }
-            var result7 = result6 !== null
-              ? (function(d, o) { return d ? o : null; })(result6[0], result6[1])
-              : null;
-            if (result7 !== null) {
-              var result5 = result7;
-            } else {
-              var result5 = null;
-              pos = savedPos2;
-            }
+          } else {
+            var result4 = null;
           }
           if (result4 !== null) {
             var result1 = [result3, result4];
@@ -1090,7 +1094,7 @@ var exports = (typeof(exports) === "undefined" ? this : exports); exports.parser
           pos = savedPos1;
         }
         var result2 = result1 !== null
-          ? (function(o, rp) { return o && rp.length > 0 ? { type: "group", name: "or", args: [o].concat(rp) } : null; })(result1[0], result1[1])
+          ? (function(o, rp) { return o ? { type: "group", name: "or", args: [o].concat(rp) } : null; })(result1[0], result1[1])
           : null;
         if (result2 !== null) {
           var result0 = result2;
