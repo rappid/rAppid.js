@@ -1,7 +1,7 @@
-define(["js/data/QueryMapper","underscore"], function (QueryMapper, _) {
+define(["js/data/QueryMapper", "underscore"], function (QueryMapper, _) {
 
     var comparatorMap = {
-        "eq": "=",
+        "eql": "=",
         "gt": ">",
         "lt": "<",
         "lte": "<=",
@@ -12,28 +12,30 @@ define(["js/data/QueryMapper","underscore"], function (QueryMapper, _) {
 
         compose: function (query) {
 
-            var hash = query.toObject();
+            var hash = query.toObject(),
+                ret = {};
 
-            if(hash.sort){
-                hash.sort = this.translateSort(hashSort);
+            if (hash.sort) {
+                ret.sort = this.translateSort(hash.sort);
             }
 
             if (hash.where) {
-                hash.where = this.translateOperator(hash.where)
+                ret.where = this.translateOperator(hash.where)
             }
 
-            return hash;
+            return ret;
         },
 
-        translateSort: function(sort){
+        translateSort: function (sort) {
             return sort;
         },
 
-        translateOperator: function (operator) {
-            var name = operator.name;
+        translateOperator: function (operator, depth) {
+            depth = _.isUndefined(depth) ? 0 : depth;
+            var name = operator.operator;
             if (name === "and" || name === "or") {
-                var expressions = this.translateExpressions(operator.expressions).join(" " + name + " ");
-                if(expressions.length > 1){
+                var expressions = this.translateExpressions(operator.expressions, depth+1).join(" " + name + " ");
+                if (expressions.length > 1 && depth !== 0) {
                     return "(" + expressions + ")";
                 }
                 return expressions;
@@ -41,19 +43,19 @@ define(["js/data/QueryMapper","underscore"], function (QueryMapper, _) {
                 return operator.field + comparatorMap[name] + operator.value;
             } else if (operator.field && !_.isUndefined(operator.value)) {
                 var value = operator.value;
-                if(operator.value instanceof Array){
+                if (value instanceof Array) {
                     value = "(" + operator.value.join(",") + ")";
                 }
-                return operator.name + " ( " + operator.field + "," + value + ")";
+                return name + "(" + operator.field + "," + value + ")";
             } else {
-                return operator;
+                return name;
             }
         },
 
-        translateExpressions: function (expressions) {
+        translateExpressions: function (expressions, depth) {
             var ret = [];
             for (var i = 0; i < expressions.length; i++) {
-                ret.push(this.translateOperator(expressions[i]));
+                ret.push(this.translateOperator(expressions[i], depth));
             }
             return ret;
         }
