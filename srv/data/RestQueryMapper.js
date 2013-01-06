@@ -1,6 +1,6 @@
-define(['js/core/Base','query','srv/lib/conditionParser'],function(Base, query, parser){
+define(['js/data/mapper/RestQueryMapper','query','srv/lib/conditionParser'],function(RestQueryMapper, query, parser){
 
-    return Base.inherit('srv.data.RestQueryParser', {
+    return RestQueryMapper.inherit('srv.data.RestQueryMapper', {
 
         parse: function(parameter){
             var q = query();
