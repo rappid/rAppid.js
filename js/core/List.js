@@ -11,6 +11,9 @@ define(["js/core/EventDispatcher","js/core/Bindable", "underscore"], function (E
             this.$items = [];
             this.$itemEventMap = {};
 
+            this.$filterCache = {};
+            this.$sortCache = {};
+
             this.callBase(attributes);
 
             if (items) {
@@ -184,13 +187,7 @@ define(["js/core/EventDispatcher","js/core/Bindable", "underscore"], function (E
                 this.trigger('reset', {items: items});
             }
         },
-        /**
-         * Sorts the list by the given function and triggers sort event
-         * @param fnc
-         */
-        sort: function (fnc) {
-            this.trigger('sort', {items: this.$items.sort(fnc), sortFnc: fnc});
-        },
+
         /**
          * Clears all items and triggers reset event
          */
@@ -366,6 +363,22 @@ define(["js/core/EventDispatcher","js/core/Bindable", "underscore"], function (E
             });
 
             return ret;
+        },
+
+        filter: function() {
+
+        },
+
+        /**
+         * Sorts the list by the given function and triggers sort event
+         * @param fnc
+         */
+        sort: function (fnc) {
+            this.trigger('sort', {items: this.$items.sort(fnc), sortFnc: fnc});
+        },
+
+        query: function(query) {
+            this.filter(query.where().getCacheId());
         }
     });
 
