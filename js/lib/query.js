@@ -17,6 +17,8 @@
         this.query = {};
     };
 
+    var sortParser = /^([+-])?(.+)$/;
+
     Query.prototype = {
 
         limit: function (limit) {
@@ -24,7 +26,44 @@
             return this;
         },
 
-        sort: function (sort) {
+        sort: function (fields) {
+
+            fields = Array.prototype.slice.call(arguments);
+            var sort = [];
+
+            function parseFields(fields) {
+                for (var i = 0; i < fields.length; i++) {
+                    parseAndAddField(fields[i]);
+                }
+            }
+
+            function parseAndAddField(field) {
+                if (field instanceof Array) {
+                    parseFields(field);
+                } else if (field instanceof Object) {
+
+                    if (!field.hasOwnProperty("field")) {
+                        throw new Error("Field in sort direction missing");
+                    }
+
+                    field.direction = field.direction || 1;
+                    sort.push(field);
+                } else {
+                    // string
+                    var match = sortParser.exec(field);
+                    if (!match) {
+                        throw new Error("Field cannot be parsed");
+                    }
+
+                    sort.push({
+                        direction: match[1] === "-" ? -1 : 1,
+                        field: match[2]
+                    });
+                }
+            }
+
+            parseFields(fields);
+
             this.query.sort = sort;
             return this;
         },
