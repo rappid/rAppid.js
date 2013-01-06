@@ -81,10 +81,9 @@
             this.query.where = this.query.where || new Where(type);
             return this.query.where;
         }
-
     };
 
-    var comparatorMethods = ["eql", "like", "lt", "lte", "gt", "gte", "in"],
+    var comparatorMethods = ["eql", "like", "lt", "lte", "gt", "gte", "in", "ne"],
         nestedWhereMethods = ["not", "and", "or"];
 
     var Where = function (type) {
@@ -98,7 +97,7 @@
         this.value = value;
     };
 
-    Where.prototype.push = function(expression){
+    Where.prototype.push = function (expression) {
         this.expressions.push(expression);
     };
 
@@ -140,9 +139,9 @@
     }
 
     for (var j = 0; j < nestedWhereMethods.length; j++) {
-        (function(type) {
+        (function (type) {
 
-            Where.prototype[type] = function() {
+            Where.prototype[type] = function () {
 
                 var args = Array.prototype.slice.call(arguments);
 
@@ -166,7 +165,7 @@
                 this.expressions.push(operationWhere);
             };
 
-            Query.prototype[type] = function() {
+            Query.prototype[type] = function () {
                 var args = Array.prototype.slice.call(arguments);
 
                 var where = this.where();
@@ -187,6 +186,7 @@
     };
 
     Query.Where = Where;
+    Query.Comparator = Comparator;
 
     exports.query = query;
     exports.Query = Query;
