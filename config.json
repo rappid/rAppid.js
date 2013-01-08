@@ -5,6 +5,7 @@
         "json": "js/plugin/json",
         "raw": "js/plugin/raw",
         "flow": "js/lib/flow",
+        "Query": "js/lib/query/query",
         "inherit": "js/lib/inherit",
         "underscore": "js/lib/underscore",
         "moment": "js/lib/moment",
@@ -23,7 +24,16 @@
         "JSON": {
             "exports": "JSON"
         },
+        "Query": {
+            "exports": "Query"
+        },
+        "js/lib/query/ArrayExecutor": {
+            "exports": "Executor"
+        },
         "js/lib/parser": {
+            "exports": "parser"
+        },
+        "srv/lib/conditionParser": {
             "exports": "parser"
         },
         "moment" : {

@@ -1,4 +1,4 @@
-define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "flow", "JSON", "js/data/Collection", "require"], function (DataSource, Base, Model, _, flow, JSON, Collection, requirejs) {
+define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "flow", "JSON", "js/data/Collection", "require", "js/lib/query/composer/RestQueryComposer"], function (DataSource, Base, Model, _, flow, JSON, Collection, requirejs, RestQueryComposer) {
 
     var rIdExtractor = /http.+\/([^/]+)$/;
 
@@ -83,7 +83,18 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
                 }
             }
 
+            if(resource instanceof Collection){
+                _.defaults(params, resource.getQueryParameters(action), resource.getRoot().$context.getQueryParameter());
+                if(resource.$options.query){
+                    _.defaults(params, this.getQueryComposer().compose(resource.$options.query));
+                }
+            }
+
             return params;
+        },
+
+        getQueryComposer: function(){
+            return RestQueryComposer;
         },
 
 
@@ -497,7 +508,7 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
 
         loadCollectionPage: function (collectionPage, options, callback) {
 
-            var rootCollection = collectionPage.getRootCollection();
+            var rootCollection = collectionPage.getRoot();
             var config = this.$dataSourceConfiguration.getConfigurationForModelClass(rootCollection.$modelFactory);
 
             if (!config) {
@@ -513,7 +524,7 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
 
             var params = {};
 
-            _.defaults(params, (options || {}).params);
+            _.defaults(params, (options || {}).params, this.getQueryParameter(RestDataSource.METHOD.GET, collectionPage.$collection));
 
             if (collectionPage.$limit) {
                 params.limit = collectionPage.$limit;
@@ -528,25 +539,12 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
             }
             params.fullData = options.fullData || false;
 
-            // get queryParameter
-            params = _.defaults(params, collectionPage.$collection.getQueryParameters(RestDataSource.METHOD.GET),
-                rootCollection.$context.getQueryParameter(),
-                this.getQueryParameter(RestDataSource.METHOD.GET, rootCollection));
-
             for (var key in params) {
                 if (params.hasOwnProperty(key)) {
                     if (_.isObject(params[key])) {
                         params[key] = JSON.stringify(params[key]);
                     }
                 }
-            }
-
-            params = this._translateQueryObject(params);
-
-            // todo: add hook
-            var sortParameters = this._createSortParameter(collectionPage.$collection.getSortParameters(RestDataSource.METHOD.GET));
-            if (sortParameters) {
-                _.extend(params, sortParameters);
             }
 
             // create url
@@ -585,7 +583,7 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
 
                         var processor = self.getProcessorForCollection(collectionPage);
 
-                        data = processor.parseCollection(collectionPage.getRootCollection(), data, DataSource.ACTION.LOAD, options);
+                        data = processor.parseCollection(collectionPage.getRoot(), data, DataSource.ACTION.LOAD, options);
 
                         collectionPage.add(data);
 
@@ -605,12 +603,17 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
         },
 
         _createSortParameter: function (sortParmeters) {
-            var parameters = null;
+            var parameters = null,
+                sortFields = [];
             for (var key in sortParmeters) {
                 if (sortParmeters.hasOwnProperty(key)) {
                     parameters = parameters || {};
-                    parameters["sortField"] = key;
-                    parameters["sortOrder"] = sortParmeters[key] === -1 ? "ASC" : "DESC";
+                    sortFields.push((sortParmeters[key] === -1 ? "+" : "-")+key);
+                }
+            }
+            if(sortFields.length > 0){
+                parameters = {
+                    sort: "("+sortFields.join(",")+")"
                 }
             }
             return parameters;

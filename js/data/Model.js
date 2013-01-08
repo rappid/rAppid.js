@@ -63,7 +63,7 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
 
             options = options || {};
             _.defaults(options, {
-                invalidatePageCache: true
+                invalidatePageCache: false
             });
 
             // TODO: handle multiple access

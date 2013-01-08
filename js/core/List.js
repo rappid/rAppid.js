@@ -1,4 +1,4 @@
-define(["js/core/EventDispatcher","js/core/Bindable", "underscore"], function (EventDispatcher, Bindable, _) {
+define(["js/core/EventDispatcher", "js/core/Bindable", "underscore", "js/data/Query"], function (EventDispatcher, Bindable, _, Query) {
 
 
     var List = Bindable.inherit("js.core.List", {
@@ -7,14 +7,21 @@ define(["js/core/EventDispatcher","js/core/Bindable", "underscore"], function (E
          * @param [Object] items to add
          * @param Object attributes to set
          */
-        ctor: function (items, attributes) {
+        ctor: function (items, options) {
+            options = options || {};
+
+            _.defaults(options, {
+                root: null,
+                query: null
+            });
+
             this.$items = [];
             this.$itemEventMap = {};
 
             this.$filterCache = {};
             this.$sortCache = {};
 
-            this.callBase(attributes);
+            this.callBase({});
 
             if (items) {
                 this.add(items);
@@ -22,7 +29,7 @@ define(["js/core/EventDispatcher","js/core/Bindable", "underscore"], function (E
 
             var self = this;
 
-            function updateLength(){
+            function updateLength() {
                 self.length = self.size();
             }
 
@@ -32,6 +39,10 @@ define(["js/core/EventDispatcher","js/core/Bindable", "underscore"], function (E
             this.bind('reset', updateLength);
 
             this.length = this.size();
+            if(options.root){
+                _.defaults(options, options.root.$options);
+            }
+            this.$options = options;
         },
         /**
          *
@@ -59,14 +70,14 @@ define(["js/core/EventDispatcher","js/core/Bindable", "underscore"], function (E
          * @return {*}
          */
         shift: function () {
-            return this.removeAt(0,{});
+            return this.removeAt(0, {});
         },
         /**
          * Adds item to first position of list
          * @param item
          */
         unshift: function (item) {
-            this.add(item,0);
+            this.add(item, 0);
         },
         /**
          * This method adds one ore items to the array.
@@ -107,11 +118,11 @@ define(["js/core/EventDispatcher","js/core/Bindable", "underscore"], function (E
         _onItemChange: function (e, item) {
             this.trigger('change', {item: item, index: this.indexOf(item), changedAttributes: e.$});
         },
-        _onItemEvent: function(e, item){
-            if(this.$itemEventMap[e.$.eventType]){
+        _onItemEvent: function (e, item) {
+            if (this.$itemEventMap[e.$.eventType]) {
                 var listeners = this.$itemEventMap[e.$.eventType],
                     listener;
-                for(var i = 0; i < listeners.length; i++){
+                for (var i = 0; i < listeners.length; i++) {
                     listener = listeners[i];
                     this.trigger(listener.eventType, {item: item, index: this.indexOf(item), itemEvent: e}, listener.callback, listener.scope);
                 }
@@ -136,7 +147,7 @@ define(["js/core/EventDispatcher","js/core/Bindable", "underscore"], function (E
          * @param item
          * @return {*}
          */
-        indexOf: function(item){
+        indexOf: function (item) {
             return this.$items.indexOf(item);
         },
         /**
@@ -167,15 +178,15 @@ define(["js/core/EventDispatcher","js/core/Bindable", "underscore"], function (E
          */
         reset: function (items, options) {
             var self = this;
-            this.each(function(item){
-                if(item instanceof EventDispatcher){
-                    item.unbind('*',self._onItemEvent, self);
-                    item.unbind('change',self._onItemChange, self);
+            this.each(function (item) {
+                if (item instanceof EventDispatcher) {
+                    item.unbind('*', self._onItemEvent, self);
+                    item.unbind('change', self._onItemChange, self);
                 }
             });
 
             this.$items = items;
-            this.each(function(item){
+            this.each(function (item) {
                 if (item instanceof EventDispatcher) {
                     item.bind('*', self._onItemEvent, self);
                     item.bind('change', self._onItemChange, self);
@@ -183,7 +194,7 @@ define(["js/core/EventDispatcher","js/core/Bindable", "underscore"], function (E
             });
 
             options = options || {};
-            if(!options.silent){
+            if (!options.silent) {
                 this.trigger('reset', {items: items});
             }
         },
@@ -192,7 +203,7 @@ define(["js/core/EventDispatcher","js/core/Bindable", "underscore"], function (E
          * Clears all items and triggers reset event
          */
         clear: function (options) {
-            this.reset([],options);
+            this.reset([], options);
         },
         /**
          * Returns the size of the list
@@ -268,15 +279,15 @@ define(["js/core/EventDispatcher","js/core/Bindable", "underscore"], function (E
          * Checks if item is included in List
          * @return Boolean
          */
-        includes: function(item){
-            var ret = this.each(function(innerItem){
-                if(innerItem === item){
+        includes: function (item) {
+            var ret = this.each(function (innerItem) {
+                if (innerItem === item) {
                     this["return"](true);
                 }
             });
-            if(ret){
+            if (ret) {
                 return ret;
-            }else{
+            } else {
                 return false;
             }
         }.on('*'),
@@ -285,20 +296,20 @@ define(["js/core/EventDispatcher","js/core/Bindable", "underscore"], function (E
          * Returns a fresh copy of the List
          * @return List a fresh copy of the list
          */
-        clone: function(){
+        clone: function () {
             var attributes = this._cloneAttribute(this.$);
             var items = this._cloneAttribute(this.$items);
-            var ret = new this.factory(items,attributes);
+            var ret = new this.factory(items, attributes);
             ret._$source = this;
             return ret;
         },
 
-        sync: function(){
-            if(this._$source){
+        sync: function () {
+            if (this._$source) {
                 var item, items = [];
-                for(var i = 0; i < this.$items.length; i++){
+                for (var i = 0; i < this.$items.length; i++) {
                     item = this.$items[i];
-                    if(item instanceof Bindable && item.sync()){
+                    if (item instanceof Bindable && item.sync()) {
                         item = item._$source;
                     }
                     items.push(item);
@@ -308,14 +319,14 @@ define(["js/core/EventDispatcher","js/core/Bindable", "underscore"], function (E
             return this.callBase();
         },
 
-        destroy: function(){
+        destroy: function () {
             this.$itemEventMap = {};
             this.callBase();
         },
 
-        bind: function(eventType, callback, scope){
+        bind: function (eventType, callback, scope) {
             var i = eventType.indexOf("item:");
-            if(i === 0){
+            if (i === 0) {
                 var itemEvent = eventType.substr("item:".length);
                 this.$itemEventMap[itemEvent] = this.$itemEventMap[itemEvent] || [];
                 this.$itemEventMap[itemEvent].push({
@@ -327,16 +338,16 @@ define(["js/core/EventDispatcher","js/core/Bindable", "underscore"], function (E
             this.callBase();
         },
 
-        unbind: function(eventType, callback, scope){
+        unbind: function (eventType, callback, scope) {
             var i = eventType.indexOf("item:");
             if (i === 0) {
                 var itemEvent = eventType.substr("item:".length),
                     listeners = this.$itemEventMap[itemEvent] || [],
                     listener;
 
-                for(var j = listeners.length - 1; j > -1; j--){
+                for (var j = listeners.length - 1; j > -1; j--) {
                     listener = listeners[j];
-                    if(listener.callback === callback && listener.scope === scope){
+                    if (listener.callback === callback && listener.scope === scope) {
                         listeners.splice(i, 1);
                     }
                 }
@@ -351,34 +362,86 @@ define(["js/core/EventDispatcher","js/core/Bindable", "underscore"], function (E
          * @param {Function} transformFnc
          * @return {Array}
          */
-        toArray: function(transformFnc) {
+        toArray: function (transformFnc) {
             var ret = [];
             transformFnc = transformFnc || function (item, index) {
                 return item;
             };
 
 
-            this.each(function(item,index){
-                ret.push(transformFnc(item,index))
+            this.each(function (item, index) {
+                ret.push(transformFnc(item, index))
             });
 
             return ret;
         },
 
-        filter: function() {
+        /***
+         *
+         * @param {js.data.Query} query
+         * @return {*}
+         */
+        filter: function (query) {
+            if (query.query.where) {
+                var options = {
+                    query: query,
+                    root: this.getRoot()
+                };
 
+                var filterCacheId = query.whereCacheId();
+
+                if (!this.$filterCache[filterCacheId]) {
+                    this.$filterCache[filterCacheId] = this._createFilteredList(query,options);
+                }
+
+                return this.$filterCache[filterCacheId];
+            } else {
+                return this;
+            }
+        },
+
+        _createFilteredList: function(query, options){
+            return new this.factory(query.filterItems(this.$items),options);
         },
 
         /**
          * Sorts the list by the given function and triggers sort event
-         * @param fnc
+         * @param {Function|js.data.Query} fnc
          */
         sort: function (fnc) {
-            this.trigger('sort', {items: this.$items.sort(fnc), sortFnc: fnc});
+            if (fnc instanceof Function) {
+                // TODO:
+                this.trigger('sort', {items: this.$items.sort(fnc), sortFnc: fnc});
+                return this;
+            } else if (fnc instanceof Query && fnc.query.sort) {
+                var query = fnc,
+                    options = {
+                        query: query,
+                        root: this.getRoot()
+                    };
+
+                var sortCacheId = query.sortCacheId();
+
+                if (!this.$sortCache[sortCacheId]) {
+                    this.$filterCache[sortCacheId] = this._createSortedList(query, options);
+                }
+
+                return this.$filterCache[sortCacheId];
+            }
+
+            return this;
         },
 
-        query: function(query) {
-            this.filter(query.where().getCacheId());
+        _createSortedList: function(query, options){
+            return new List(query.sortItems(this.$items), options);
+        },
+
+        query: function (query) {
+            return this.filter(query).sort(query);
+        },
+
+        getRoot: function () {
+            return this.$options.root || this;
         }
     });
 
