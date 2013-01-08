@@ -1,4 +1,4 @@
-define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 'js/core/List', 'require', 'js/data/Collection'], function (DataSource, MongoDb, Model, flow, _, List, require, Collection) {
+define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 'js/core/List', 'require', 'js/data/Collection', 'js/lib/query/composer/MongoQueryComposer'], function (DataSource, MongoDb, Model, flow, _, List, require, Collection, MongoQueryComposer) {
 
     var ID_KEY = "_id",
         PARENT_ID_KEY = "_parent_id",
@@ -6,6 +6,8 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
         TYPE_KEY = "_type",
         REF_ID_KEY = "_ref_id",
         undefined;
+
+    MongoQueryComposer = MongoQueryComposer.MongoQueryComposer;
 
     var MongoDataProcessor = DataSource.Processor.inherit('src.data.MongoDataProcessor', {
         compose: function (entity, action, options) {
@@ -322,12 +324,19 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
 
             var mongoCollection = configuration.$.collection;
 
+            var params;
+            if(collectionPage.$collection.$options.query){
+                params = MongoQueryComposer.compose(collectionPage.$collection.$options.query);
+            }
+
             if (!mongoCollection) {
                 callback("No mongo collection defined for " + rootCollection.$modelFactory.prototype.constructor.name);
             }
 
             // TODO: add query, fields and options
-            var self = this, connection, where = options.where || {};
+            var self = this, connection, where = params.where || {};
+
+            // TODO: convert query to MongoQuery
 
             // here we have a polymorphic type
             if (configuration.$.modelClassName !== modelClassName) {
@@ -340,8 +349,8 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
             }
 
             var sort;
-            if (options["sort"]) {
-                sort = options["sort"];
+            if (params.sort) {
+                sort = params.sort;
             }
 
             this.connectCollection(mongoCollection, function (collection, cb) {
@@ -383,6 +392,13 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
             return this.callBase();
         }
     });
+
+    var operatorMap = {
+        ge: "gte",
+        le: "lte"
+    };
+
+    var knownOperators = [];
 
     var generateId = function () {
         var d = new Date().getTime();
