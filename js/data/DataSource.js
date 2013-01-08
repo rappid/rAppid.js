@@ -374,7 +374,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                     isModel = entity instanceof Model;
 
                 for (var key in entity.schema) {
-                    if (entity.schema.hasOwnProperty(key) && !isModel || (!options || !options.includeInIndex || _.contains(options.includeInIndex, key))) {
+                    if (entity.schema.hasOwnProperty(key) && (!isModel || (!options || !options.includeInIndex || _.contains(options.includeInIndex, key)))) {
                         schemaDefinition = entity.schema[key];
                         schemaType = schemaDefinition.type;
 
