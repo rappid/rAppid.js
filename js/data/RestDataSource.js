@@ -71,7 +71,7 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
          * @param resource {js.data.Model|js.data.Collection} model or collection which gets loaded
          * @return {Object}
          */
-        getQueryParameter: function (action, resource) {
+        getQueryParameters: function (action, resource) {
 
             var params = {};
 
@@ -84,7 +84,7 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
             }
 
             if(resource instanceof Collection){
-                _.defaults(params, resource.getQueryParameters(action), resource.getRoot().$context.getQueryParameter());
+                _.defaults(params, resource.getQueryParameters(action), resource.getRoot().$context.getQueryParameters());
                 if(resource.$options.query){
                     _.defaults(params, this.getQueryComposer().compose(resource.$options.query));
                 }
@@ -191,8 +191,8 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
             var url = this._buildUriForResource(model);
 
             // get queryParameter
-            var params = _.defaults(model.$context.getQueryParameter(),
-                this.getQueryParameter(RestDataSource.METHOD.GET, model));
+            var params = _.defaults(model.$context.getQueryParameters(),
+                this.getQueryParameters(RestDataSource.METHOD.GET, model));
 
             if (options.noCache) {
                 params.timestamp = (new Date().getTime());
@@ -445,8 +445,8 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
                     var url = self._buildUriForResource(model);
 
                     // get queryParameter
-                    var params = _.defaults(model.$context.getQueryParameter(),
-                        self.getQueryParameter(method, model));
+                    var params = _.defaults(model.$context.getQueryParameters(),
+                        self.getQueryParameters(method, model));
 
                     method = self._getHttpMethod(method);
 
@@ -524,7 +524,7 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
 
             var params = {};
 
-            _.defaults(params, (options || {}).params, this.getQueryParameter(RestDataSource.METHOD.GET, collectionPage.$collection));
+            _.defaults(params, (options || {}).params, this.getQueryParameters(RestDataSource.METHOD.GET, collectionPage.$collection));
 
             if (collectionPage.$limit) {
                 params.limit = collectionPage.$limit;
@@ -630,8 +630,8 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
             var method = RestDataSource.METHOD.DELETE;
 
             // get queryParameter
-            var params = _.defaults(model.$context.getQueryParameter(),
-                this.getQueryParameter(method, model));
+            var params = _.defaults(model.$context.getQueryParameters(),
+                this.getQueryParameters(method, model));
 
             method = this._getHttpMethod(method);
 
@@ -693,7 +693,7 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
             return this.callBase(factory, options, type);
         },
 
-        getQueryParameter: function () {
+        getQueryParameters: function () {
             return {};
         }
     });
