@@ -74,14 +74,84 @@
         },
 
         toObject: function () {
-            return this.query;
+            return clone(this.query);
         },
 
         where: function (type) {
             this.query.where = this.query.where || new Where(type);
             return this.query.where;
+        },
+
+        sortCacheId: function () {
+            var ret = [];
+
+            if (this.sort) {
+                for (var i = 0; i < this.query.sort.length; i++) {
+                    var sortItem = this.query.sort[i];
+                    ret.push((sortItem.direction === -1 ? "-" : "+") + sortItem.field);
+                }
+            }
+
+            return ret.join(";");
+        },
+
+        whereCacheId: function () {
+            if (this.query.where) {
+                return this.query.where.operator + ":" + generateExpressionsCache(this.query.where.expressions);
+            } else {
+                return "";
+            }
+        },
+
+        cacheId: function () {
+            return this.sortCacheId() + ":" + this.whereCacheId();
         }
+
     };
+
+    function generateExpressionsCache(expressions) {
+        expressions = expressions || [];
+        var expression,
+            cacheId = "",
+            value;
+        for (var i = 0; i < expressions.length; i++) {
+            expression = expressions[i];
+            if (expression instanceof Where) {
+                cacheId += expression.operator + ":" + generateExpressionsCache(expressions);
+            } else if (expression instanceof Comparator) {
+                value = expression.value;
+                if (!(value instanceof Array)) {
+                    value = [value];
+                }
+                var val = "";
+                for (var k = 0; k < value.length; k++) {
+                    val += value[k] + ":" + typeof(value[k]);
+                }
+                value = val;
+
+                cacheId += expression.operator + ":" + expression.field + ":" + value + ":";
+            }
+        }
+        return cacheId;
+    }
+
+    function clone(obj) {
+
+        if (obj instanceof Array) {
+            return obj.slice();
+        }
+
+        var ret = {};
+        for (var key in obj) {
+            if (obj.hasOwnProperty(key)) {
+                var value = obj[key];
+                ret[key] = value instanceof Object ? clone(value) : value;
+            }
+        }
+
+        return ret;
+
+    }
 
     var comparatorMethods = ["eql", "like", "lt", "lte", "gt", "gte", "in", "ne"],
         nestedWhereMethods = ["not", "and", "or"];
@@ -91,10 +161,13 @@
         this.expressions = [];
     };
 
-    var Comparator = function (operator, field, value) {
+    var Comparator = function (operator, field, value, type) {
         this.operator = operator;
         this.field = field;
         this.value = value;
+        if (type) {
+            this.type = type;
+        }
     };
 
     Where.prototype.push = function (expression) {
@@ -103,13 +176,13 @@
 
     Comparator.prototype = {
         getValue: function () {
-            return this.value[0];
+            return this.value;
         }
     };
 
     for (var i = 0; i < comparatorMethods.length; i++) {
         (function (operator) {
-            Where.prototype[operator] = function (field, value) {
+            Where.prototype[operator] = function (field, value, type) {
 
                 if (field instanceof Object) {
                     // do it for all key values pairs
@@ -119,7 +192,7 @@
                         }
                     }
                 } else {
-                    this.expressions.push(new Comparator(operator, field, value));
+                    this.expressions.push(new Comparator(operator, field, value, type));
                 }
 
                 return this;
@@ -177,7 +250,7 @@
         })(nestedWhereMethods[j]);
     }
 
-    // global on the server, window in the browser
+// global on the server, window in the browser
     var previous_query = exports.query;
 
     query.noConflict = function () {
