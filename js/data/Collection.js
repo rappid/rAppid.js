@@ -12,13 +12,9 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore"], funct
         $modelFactory: Model,
 
         ctor: function (items, options) {
-
             options = options || {};
 
-            this.callBase(items);
-
             _.defaults(options, {
-                rootCollection: null,
                 pageSize: null,
                 queryParameters: {},
                 sortParameters: null,
@@ -27,14 +23,15 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore"], funct
                 $itemsCount: null
             });
 
+            if(options.root){
+                this.$modelFactory = options.root.$modelFactory;
+            }
+
+            this.callBase(items, options);
+
             this.$queryCollectionsCache = {};
             this.$sortCollections = [];
             this.$pageCache = [];
-            this.$options = options;
-        },
-
-        getRootCollection: function () {
-            return this.$options.rootCollection ? this.$options.rootCollection : this;
         },
 
         createQueryCacheKey: function (queryParameters) {
@@ -55,31 +52,28 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore"], funct
 
             return ret.join("&");
         },
-        /***
-         *
-         * @param attributes
-         */
-        createSortCollection: function(sortParameters){
-            var options = {
-                sortParameters: sortParameters,
-                rootCollection: this.getRootCollection()
-            };
 
-            // different queryParameter, same options
-            _.defaults(options, this.$options);
-
-            var collection = new Collection(null, options);
+        _createFilteredList: function(query, options){
+            // TOOD: if fully loaded -> return this.callBase();
+            var collection = new this.factory(null,options);
             collection.$context = this.$context;
-
-            this.$sortCollections.push(collection);
 
             return collection;
         },
+
+        _createSortedList: function(query, options){
+            // TODO: if fully loaded -> return this.callBase();
+            var collection = new this.factory(null, options);
+            collection.$context = this.$context;
+
+            return collection;
+        },
+
         createQueryCollection: function (queryParameters) {
 
             var options = {
                 queryParameters: queryParameters,
-                rootCollection: this.getRootCollection()
+                root: this.getRoot()
             };
 
             // different queryParameter, same options
@@ -312,11 +306,11 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore"], funct
 
 
         parse: function (data, type) {
-            return this.getRootCollection().parse(data, type);
+            return this.getRoot().parse(data, type);
         },
 
-        getRootCollection: function(){
-            return this.$collection.getRootCollection();
+        getRoot: function(){
+            return this.$collection.getRoot();
         },
         /***
          *

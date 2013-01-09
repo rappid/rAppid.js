@@ -232,7 +232,7 @@ define(["js/data/DataSource", "js/data/Model", "flow", "js/data/LocalStorage"],
                 return this.callBase(factory, options, type);
             },
 
-            getQueryParameter: function () {
+            getQueryParameters: function () {
                 return {};
             }
         });
