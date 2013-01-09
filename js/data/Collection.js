@@ -23,6 +23,10 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore"], funct
                 $itemsCount: null
             });
 
+            if(options.root){
+                this.$modelFactory = options.root.$modelFactory;
+            }
+
             this.callBase(items, options);
 
             this.$queryCollectionsCache = {};
