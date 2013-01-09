@@ -92,7 +92,7 @@ define(["js/core/Bindable", "underscore", "js/core/BindingCreator"], function (B
                 return attributes;
             },
             _getLocalNameFromNode: function(node){
-                return node.localName ? node.localName : node.name.split(":").pop();
+                return node.localName ? node.localName : node.nodeName.split(":").pop();
             },
             defaults: {
                 creationPolicy: "auto"
