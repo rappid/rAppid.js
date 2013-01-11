@@ -454,6 +454,11 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
 
                 _hasSome: function(attributes, search) {
 
+                    if (arguments.length === 1) {
+                        search = attributes;
+                        attributes = this.$;
+                    }
+
                     for (var i = 0; i < search.length; i++) {
                         if (attributes.hasOwnProperty(search[i])) {
                             return true;
