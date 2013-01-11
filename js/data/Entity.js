@@ -175,16 +175,16 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
              */
             isValid: function () {
 
-                var $ = this.$.errors.$;
+                var $ = this.$errors.$;
                 for (var key in $) {
                     if ($.hasOwnProperty(key)) {
                         if ($[key]) {
-                            return true;
+                            return false;
                         }
                     }
                 }
 
-                return false;
+                return true;
             }.on('isValidChanged'),
 
             /***
@@ -250,7 +250,7 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
             },
 
             _setError: function(field, error) {
-                this.$.errors.set(field, error);
+                this.$errors.set(field, error);
                 this.trigger('isValidChanged');
             },
 
