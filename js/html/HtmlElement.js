@@ -204,22 +204,65 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
 
         _renderAttributeInternal: function(key, value) {
             if (this._isStyleAttribute(key)) {
-
                 if (_.indexOf(this.$renderAsStyleWithPx, key) !== -1) {
                     if (!_.isString(value)) {
                         value += "px";
                     }
                 }
+
                 if(value){
-                    this.$el.style[key] = value;
+                    if (key in this.$el.style) {
+                        this.$el.style[key] = value;
+                    } else {
+
+                        var transformedKey = HtmlElement.transformCache[key];
+
+                        if (!transformedKey) {
+                            // transform key
+                            var split = key.split("-");
+                            transformedKey = split[0];
+                            for (var i = 1; i < split.length; i++) {
+                                transformedKey += split[i].charAt(0).toUpperCase() + split[1].substr(1);
+                            }
+
+                            HtmlElement.transformCache[key] = transformedKey;
+                        }
+
+                        if (transformedKey in this.$el.style) {
+                            this.$el.style[transformedKey] = value;
+                        }
+                    }
                 }
+
             } else {
                 this.callBase();
             }
         },
 
         _isStyleAttribute: function(key) {
-            return _.indexOf(this.$excludedStyleAttributes, key) === -1 && this.$el && key in this.$el.style;
+
+            var supportedCssProperties = this.$stage.$supportedCssProperties;
+
+            if (!supportedCssProperties && this.runsInBrowser()) {
+
+                var window = this.$stage.$window,
+                    document = this.$stage.$document;
+
+                supportedCssProperties = this.$stage.$supportedCssProperties = [];
+
+                if (document && window) {
+                    var body = document.body || document.getElementsByName("body")[0] || document.getElementsByName("html")[0];
+                    if (body) {
+                        var styles = window.getComputedStyle(body);
+                        for (var i = 0; i < styles.length; i++) {
+                            supportedCssProperties.push(styles[i]);
+                        }
+                    }
+                }
+            }
+
+            return _.indexOf(this.$excludedStyleAttributes, key) === -1 && this.$el && (key in this.$el.style || (supportedCssProperties && _.indexOf(supportedCssProperties, key) !== -1));
+
         },
 
         _createDOMEventHandler: function(type){
@@ -246,6 +289,8 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
             return true;
         }
     });
+
+    HtmlElement.transformCache = {};
 
     HtmlElement.HTML_Namespace = HTML_Namespace;
 
