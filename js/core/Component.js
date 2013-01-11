@@ -83,6 +83,14 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                     this._bindBus();
                 },
 
+                _initializeBindingsBeforeComplete: function() {
+                    for (var c = 0; c < this.$elements.length; c++) {
+                        this.$elements[c]._initializeBindings();
+                    }
+
+                    this.callBase();
+                },
+
                 _bindBus: function () {
                     for (var f in this) {
                         var fn = this[f];
@@ -423,82 +431,6 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                     }
                 },
 
-                /***
-                 * Initialize all Binding and Event attributes
-                 */
-                _initializeBindings: function () {
-                    if(this.$initialized){
-                        return;
-                    }
-                    var $ = this.$,
-                        bindingCreator = this.$bindingCreator,
-                        changedAttributes = {},
-                        bindingAttributes = {},
-                        bindingDefinitions,
-                        bindingAttribute,
-                        value,
-                        key;
-
-                    // we need to find out all attributes which contains binding definitions and set
-                    // the corresponding $[key] to null -> than evaluate the bindings
-                    // this is because some function bindings belong on other binding values which are
-                    // at the time of evaluation maybe unresolved and for example {foo.bar} instead of a value
-                    for (key in $) {
-                        if ($.hasOwnProperty(key)) {
-                            value = $[key];
-                            bindingDefinitions = bindingCreator.parse(value);
-
-                            if (bindingCreator.containsBindingDefinition(bindingDefinitions)) {
-                                // we found an attribute containing a binding definition
-                                bindingAttributes[key] = {
-                                    bindingDefinitions: bindingDefinitions,
-                                    value: value
-                                };
-
-                                $[key] = null;
-                            }
-                        }
-                    }
-
-                    // Resolve bindings and events
-                    for (key in $) {
-                        if ($.hasOwnProperty(key)) {
-                            bindingAttribute = bindingAttributes[key];
-                            if (bindingAttribute) {
-                                value = bindingAttribute.value;
-                                bindingDefinitions = bindingAttribute.bindingDefinitions;
-                                changedAttributes[key] = bindingCreator.evaluate(value, this, key, bindingDefinitions);
-                            } else {
-                                value = $[key];
-                                bindingDefinitions = null;
-                            }
-                        }
-                    }
-
-                    if(this.$errorAttribute && this.$bindings[this.$errorAttribute]){
-                        var b = this.$bindings[this.$errorAttribute][0], errorBinding;
-                        if(b.$.twoWay && b.$.path.length > 1){
-                            var path = b.$.path.slice(), attrKey = path.pop().name;
-                            path = path.concat(bindingCreator.parsePath("errors()."+attrKey));
-
-                            errorBinding = bindingCreator.create({
-                                type: 'oneWay',
-                                path: path
-                            }, this, "$error");
-                            if(errorBinding){
-                                changedAttributes['$error'] = errorBinding.getValue();
-                            }
-                        }
-                    }
-
-                    this.set(changedAttributes);
-
-                    for (var c = 0; c < this.$elements.length; c++) {
-                        this.$elements[c]._initializeBindings();
-                    }
-
-                    this.callBase();
-                },
 
                 /***
                  * Create {@link Component} for DOM Node with given attributes
