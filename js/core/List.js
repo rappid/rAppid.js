@@ -7,7 +7,7 @@ define(["js/core/EventDispatcher", "js/core/Bindable", "underscore", "js/data/Qu
          * @param [Object] items to add
          * @param Object attributes to set
          */
-        ctor: function (items, options) {
+        ctor: function (items, options, attributes) {
             options = options || {};
 
             _.defaults(options, {
@@ -21,7 +21,7 @@ define(["js/core/EventDispatcher", "js/core/Bindable", "underscore", "js/data/Qu
             this.$filterCache = {};
             this.$sortCache = {};
 
-            this.callBase({});
+            this.callBase(attributes || {});
 
             if (items) {
                 this.add(items);
