@@ -181,17 +181,20 @@ var build = function (args, callback) {
     }
     fs.writeFileSync(configPath, JSON.stringify(config));
 
+    var writeBackConfig = function(){
+        // write back normal config
+        delete config['optimizedXAML'];
+        config.baseUrl = realBaseUrl;
+
+        fs.writeFileSync(configPath, JSON.stringify(config));
+    };
 
     global.libxml = require("libxml");
 
     // start optimizing
     requirejs.optimize(optimizeConfig, function (results) {
         // write back normal config
-        delete config['optimizedXAML'];
-        config.baseUrl = realBaseUrl;
-
-        fs.writeFileSync(configPath, JSON.stringify(config));
-
+        writeBackConfig();
 
         var indexFilePath = path.join(buildDirPath, buildConfig.indexFile || "index.html");
         var indexFile = fs.readFileSync(indexFilePath, "utf8");
@@ -207,9 +210,12 @@ var build = function (args, callback) {
         }
         fs.writeFileSync(indexFilePath, content);
     }, function(err){
+        writeBackConfig();
+
         console.log(err);
     });
 };
+
 
 build.usage = "rappidjs build";
 
