@@ -94,7 +94,7 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
         },
 
         getQueryComposer: function(){
-            return RestQueryComposer;
+            return RestQueryComposer.RestQueryComposer;
         },
 
 
