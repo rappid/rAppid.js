@@ -1,6 +1,9 @@
-define(['Query','js/lib/query/ArrayExecutor', 'js/core/Bindable'], function(Query, Executor, Bindable){
+define(['Query', 'js/lib/query/ArrayExecutor', 'js/core/Bindable'], function(Query, ArrayExecutor, Bindable){
 
-    var _getValueForItemField = Executor._getValueForItemField;
+
+    var Executor = ArrayExecutor.Executor,
+        _getValueForItemField = Executor._getValueForItemField;
+
 
     Executor._getValueForItemField = function(item, field){
         if(item instanceof Bindable){
