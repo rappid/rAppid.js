@@ -9,7 +9,8 @@
         "inherit": "js/lib/inherit",
         "underscore": "js/lib/underscore",
         "moment": "js/lib/moment",
-        "JSON": "js/lib/json2.js"
+        "JSON": "js/lib/json2.js",
+        "RestConditionParser" : "srv/lib/RestConditionParser"
     },
     "shim": {
         "inherit": {
@@ -33,7 +34,7 @@
         "js/lib/parser": {
             "exports": "parser"
         },
-        "srv/lib/conditionParser": {
+        "RestConditionParser": {
             "exports": "parser"
         },
         "moment" : {
