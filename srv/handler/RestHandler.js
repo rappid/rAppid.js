@@ -1,5 +1,5 @@
-define(['require', 'srv/core/Handler', 'js/conf/DataSourceConfiguration', 'js/conf/ResourceConfiguration', 'srv/handler/rest/ResourceRouter', 'flow', 'js/data/DataSource', 'js/data/RestDataSource', 'js/data/Model'],
-    function (require, Handler, DataSourceConfiguration, ResourceConfiguration, ResourceRouter, flow, DataSource, RestDataSource, Model) {
+define(['require', 'srv/core/Handler', 'js/conf/DataSourceConfiguration', 'js/conf/ResourceConfiguration', 'srv/handler/rest/ResourceRouter', 'flow', 'js/data/DataSource', 'js/data/RestDataSource', 'js/data/Model', 'srv/lib/RestQueryParser', 'js/data/Query'],
+    function (require, Handler, DataSourceConfiguration, ResourceConfiguration, ResourceRouter, flow, DataSource, RestDataSource, Model, RestQueryParser, Query) {
 
         var RestDataProcessor = RestDataSource.RestDataProcessor.inherit('srv.handler.rest.RestDataProcessor', {
             _composeSubModel: function (model, action, options) {
@@ -128,6 +128,20 @@ define(['require', 'srv/core/Handler', 'js/conf/DataSourceConfiguration', 'js/co
                     })
                     .exec(callback);
 
+            },
+
+            _getQueryParser: function(){
+                return RestQueryParser.RestQueryParser;
+            },
+            /**
+             *
+             * @param {Object} parameters
+             * @param {srv.handler.rest.ResourceHandler} resource
+             * @return {*}
+             */
+            parseQueryForResource: function(parameters, resource){
+                // TODO: add is query allowed
+                return this._getQueryParser().parse(parameters, Query.query());
             }
         });
     });
