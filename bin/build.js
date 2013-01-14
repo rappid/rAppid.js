@@ -44,6 +44,7 @@ var optimizeConfig = {
         "xaml": "js/plugin/xaml",
         "json": "js/plugin/json",
         "raw": "js/plugin/raw",
+        "Query": "js/lib/query/query",
         "flow": "js/lib/flow",
         "inherit": "js/lib/inherit",
         "underscore": "js/lib/underscore",
@@ -104,18 +105,26 @@ var build = function (args, callback) {
     config.optimizedXAML = [];
 
     buildConfig.modules.forEach(function (module, index) {
-        isXamlClass = xamlClasses.indexOf(module) > -1;
-        moduleConfig = {
-            name: module,
-            create: true,
-            include: []
-        };
+
+        if (typeof module === "string"){
+            moduleConfig = {
+                name: module,
+                create: true,
+                include: []
+            };
+        } else {
+            moduleConfig = module;
+            moduleConfig.create = true;
+            moduleConfig.include = moduleConfig.include || [];
+        }
+        isXamlClass = xamlClasses.indexOf(moduleConfig.name) > -1;
 
         if (index === 0) {
             moduleConfig.include = [
                 'rAppid',
                 'inherit',
                 'flow',
+                'Query',
                 'underscore',
                 'js/plugin/json',
                 'json!config.json',
@@ -123,14 +132,15 @@ var build = function (args, callback) {
                 'js/core/Bus',
                 'js/core/Stage',
                 'js/core/WindowManager',
+                'js/core/InterCommunicationBus',
                 'js/core/HeadManager',
                 'js/core/Injection',
-                'js/core/History'];
+                'js/core/History'].concat(moduleConfig.include);
         }
 
-        var realModuleName = (isXamlClass ? "xaml!" : "") + module;
+        var realModuleName = (isXamlClass ? "xaml!" : "") + moduleConfig.name;
         if (index === 0) {
-            mainModule = module;
+            mainModule = moduleConfig.name;
         } else {
             moduleConfig.exclude = [mainModule];
         }
@@ -138,7 +148,7 @@ var build = function (args, callback) {
         moduleConfig.include.push(realModuleName);
 
         if(isXamlClass){
-            config.optimizedXAML.push(module);
+            config.optimizedXAML.push(moduleConfig.name);
         }
 
         optimizeConfig.modules.push(moduleConfig);
