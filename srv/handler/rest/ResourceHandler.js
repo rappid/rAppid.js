@@ -245,7 +245,12 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
 
             var parameters = context.request.urlInfo.parameter;
 
-            var options = this._createOptionsForCollectionFetch(context, parameters);
+            var query = this.$restHandler.parseQueryForResource(parameters, this);
+
+            collection = collection.query(query);
+
+            // TODO: remove this
+//            var options = this._createOptionsForCollectionFetch(context, parameters);
 
             var self = this;
 
