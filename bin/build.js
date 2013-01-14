@@ -66,6 +66,7 @@ var optimizeConfig = {
 
 var build = function (args, callback) {
     var basePath = process.cwd();
+
     // read out config.json
     var buildConfigPath = path.join(basePath, "build.json");
     var publicPath = path.join(basePath, "public");
@@ -143,6 +144,14 @@ var build = function (args, callback) {
         optimizeConfig.modules.push(moduleConfig);
     });
     optimizeConfig.xamlClasses = config.xamlClasses;
+
+    for (var key in config.paths){
+        if(config.paths.hasOwnProperty(key)){
+            if(key !== "JSON"){
+                optimizeConfig.paths[key] = config.paths[key];
+            }
+        }
+    }
 
     optimizeConfig.dir = buildConfig.targetDir || optimizeConfig.dir;
 
