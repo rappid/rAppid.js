@@ -1,6 +1,9 @@
-({define: typeof define != "undefined" ? define : function (deps, factory) {
+(define = typeof define != "undefined" ? define : function (deps, factory) {
     module.exports = factory(exports, require("..").Query);
-}}).define(["exports", "Query"], function (exports, Query) {
+    define = undefined;
+});
+
+define(["exports", "Query"], function (exports, Query) {
 
 
         var Executor = {
@@ -56,7 +59,7 @@
                         field = expression.field,
                         itemValue = this._getValueForItemField(item, field);
 
-                    if (typeof(itemValue) === "undefined") {
+                    if(typeof(itemValue) === "undefined"){
                         return 0;
                     }
 
@@ -142,7 +145,7 @@
              * @return {*}
              * @private
              */
-            _compareExpression: function (a, b, expression) {
+            _compareExpression: function(a, b, expression) {
                 var valueA = this._getValueForItemField(a, expression.field);
                 var valueB = this._getValueForItemField(b, expression.field);
                 if (valueA > valueB) {
@@ -158,4 +161,4 @@
         exports.Executor = Executor;
 
         return exports;
-    });
+});
