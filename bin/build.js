@@ -97,6 +97,8 @@ var build = function (args, callback) {
         optimizeConfig.optimize = 'none';
     }
 
+    optimizeConfig.removeSpaces = buildConfig.removeSpaces || false;
+
     var xamlClasses = config.xamlClasses;
 
     // find modules
