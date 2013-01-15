@@ -1,5 +1,5 @@
 (define = typeof define != "undefined" ? define : function (deps, factory) {
-    module.exports = factory(exports, require("../../../").Query);
+    module.exports = factory(exports, require("../..").Query);
     define = undefined;
 });
 
@@ -32,7 +32,11 @@ define(["exports", "Query"], function (exports, Query) {
         },
 
         translateSort: function (sort) {
-            return sort.join(",");
+            var ret = [];
+            for (var i = 0; i < sort.length; i++) {
+                ret.push((sort[i].direction === 1 ? "+" : "-") + sort[i].field);
+            }
+            return ret.join(",");
         },
 
         translateOperator: function (operator, depth) {
