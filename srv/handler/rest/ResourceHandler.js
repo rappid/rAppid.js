@@ -249,8 +249,12 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
 
             collection = collection.query(query);
 
-            // TODO: remove this
-//            var options = this._createOptionsForCollectionFetch(context, parameters);
+            // TODO: refactor this
+//            var options = {
+//                limit: query.query.limit,
+//                offset: query.query.offset
+//            };
+            var options = this._createOptionsForCollectionFetch(context, parameters);
 
             var self = this;
 
