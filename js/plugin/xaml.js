@@ -300,6 +300,12 @@ define([], function () {
                                 .replace(/'/g, "\\'")
                                 .replace(/<js:Script[^>]*>[\s\S]*<\/js:Script[^>]*>/, "");
 
+                            if(config.removeSpaces === true){
+                                xmlContent = xmlContent.replace(/\s+/g," ").replace(/\\[nr]/g,"");
+
+                            }
+
+
                             var parameter = "",
                                 classDefinition = "",
                                 globals = "";

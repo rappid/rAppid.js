@@ -651,8 +651,12 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
         sort: function (sortParameter) {
             var dataAdapter = this.$.$dataAdapter;
             dataAdapter && dataAdapter.sort(sortParameter);
-        }
+        },
 
+        query: function(query){
+            var dataAdapter = this.$.$dataAdapter;
+            dataAdapter && dataAdapter.query(query);
+        }
 
     }, {
         createDataAdapter: function (data, virtualItemsView) {
@@ -854,13 +858,21 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
 
         },
 
-        sort: function (sortParameter) {
+        sort: function (query) {
             // TODO: clean up old sortCollection or add caching
 
-            var sortCollection = this.$data.createSortCollection(sortParameter);
+            var sortCollection = this.$data.sort(query);
             this.$sortCollection = sortCollection;
 
             this.$virtualItemsView.set('data', sortCollection);
+        },
+
+        query: function(query){
+            // TODO: clean up sort collection
+            var queryCollection = this.$data.query(query);
+            this.$queryCollection = queryCollection;
+
+            this.$virtualItemsView.set('data', queryCollection);
         },
 
         /***

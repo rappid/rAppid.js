@@ -1,4 +1,4 @@
-define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 'js/core/List', 'require', 'js/data/Collection', 'js/lib/query/composer/MongoQueryComposer'], function (DataSource, MongoDb, Model, flow, _, List, require, Collection, MongoQueryComposer) {
+define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 'js/core/List', 'require', 'js/data/Collection', 'srv/lib/MongoQueryComposer'], function (DataSource, MongoDb, Model, flow, _, List, require, Collection, MongoQueryComposer) {
 
     var ID_KEY = "_id",
         PARENT_ID_KEY = "_parent_id",
@@ -314,7 +314,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
         },
 
         loadCollectionPage: function (collectionPage, options, callback) {
-            var rootCollection = collectionPage.getRootCollection(),
+            var rootCollection = collectionPage.getRoot(),
                 modelClassName = rootCollection.$modelFactory.prototype.constructor.name,
                 configuration = this.$dataSourceConfiguration.getConfigurationForModelClass(rootCollection.$modelFactory);
 
@@ -324,7 +324,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
 
             var mongoCollection = configuration.$.collection;
 
-            var params;
+            var params = {};
             if(collectionPage.$collection.$options.query){
                 params = MongoQueryComposer.compose(collectionPage.$collection.$options.query);
             }

@@ -1,9 +1,9 @@
-var define = typeof define != "undefined" ? define : function (deps, factory) {
-    module.exports = factory(exports, require("..").query, require("..").Parser.RestConditionParser);
+(define = typeof define != "undefined" ? define : function (deps, factory) {
+    module.exports = factory(exports, require("..").Query, require("..").Parser.RestConditionParser);
     define = undefined;
-};
+});
 
-define(["exports", "../query", "RestConditionParser"], function (exports, query, parser) {
+define(["exports", "Query", "RestConditionParser"], function (exports, Query, parser) {
 
     var comparatorMap = {
         "eql": "=",
@@ -21,7 +21,7 @@ define(["exports", "../query", "RestConditionParser"], function (exports, query,
          * @return {Query}
          */
         parse: function (params, q) {
-            q = q || query();
+            q = q || new Query();
 
             if (params.sort) {
                 this._parseSort(params.sort, q);
@@ -29,6 +29,22 @@ define(["exports", "../query", "RestConditionParser"], function (exports, query,
 
             if (params.where) {
                 this._parseCondition(params.where, q);
+            }
+
+            var undefined;
+            if (params.limit !== undefined) {
+                var limit = parseInt(params.limit);
+                if (!isNaN(limit)) {
+                    q.limit(limit);
+                }
+
+            }
+
+            if (params.offset !== undefined) {
+                var offset = parseInt(params.offset);
+                if (!isNaN(offset)) {
+                    q.offset(offset);
+                }
             }
 
             return q;
@@ -54,7 +70,7 @@ define(["exports", "../query", "RestConditionParser"], function (exports, query,
 
             // || name === "or"
             if (name === "and" || name === "or" || name === "not") {
-                q = q || query();
+                q = q || new Query();
                 var w = q.where(name),
                     arg;
                 for (var i = 0; i < args.length; i++) {
