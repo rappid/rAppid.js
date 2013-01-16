@@ -185,7 +185,7 @@ define(["js/core/EventDispatcher", "js/core/Bindable", "underscore", "js/data/Qu
                 }
             });
 
-            this.$items = items;
+            this.$items = items || [];
             this.each(function (item) {
                 if (item instanceof EventDispatcher) {
                     item.bind('*', self._onItemEvent, self);
