@@ -91,7 +91,7 @@ define(["require", "js/html/HtmlElement", "js/ui/ContentPlaceHolder", "js/core/M
                     self.set('state', err ? 'error' : null);
 
                     if (callback) {
-                        callback(err);
+                        callback(err, moduleInstance);
                     }
                 };
 
