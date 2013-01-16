@@ -132,6 +132,18 @@ define(["require", "js/html/HtmlElement", "js/ui/ContentPlaceHolder", "js/core/M
              * @param {js.core.Router.RouteContext} [routeContext]
              */
             loadModule: function (module, callback, routeContext) {
+
+                callback = callback || function() {};
+
+                if (!module.hasOwnProperty("name")) {
+                    // load by name
+                    module = this.$modules[module];
+                }
+
+                if (!module) {
+                    callback("module not found");
+                }
+
                 if (module.name === this.$.currentModuleName) {
                     // module already shown
                     if (callback) {
