@@ -55,20 +55,22 @@ define(
                     });
                 }
                 this.callBase();
-                if (this.$.needsSelection === true && this.$.selectedItem === null && this.hasSelection() === false) {
-                    child.set({selected: true});
-                } else {
-                    // get item for child, if item is in selectedItems, select child!
-                    var item = child.get(this._getItemKey());
-                    if (item) {
-                        for (var i = 0; i < this.$.selectedItems.length; i++) {
-                            if (this._areItemsEqual(item,this.$.selectedItems[i])) {
-                                child.set({selected: true});
-                                break;
+                if(child.$.enabled){
+                    if (this.$.needsSelection === true && this.$.selectedItem === null && this.hasSelection() === false) {
+                        child.set({selected: true});
+                    } else {
+                        // get item for child, if item is in selectedItems, select child!
+                        var item = child.get(this._getItemKey());
+                        if (item) {
+                            for (var i = 0; i < this.$.selectedItems.length; i++) {
+                                if (this._areItemsEqual(item,this.$.selectedItems[i])) {
+                                    child.set({selected: true});
+                                    break;
+                                }
                             }
-                        }
-                        if(this._areItemsEqual(item,this.$.selectedItem)){
-                            child.set({selected: true});
+                            if(this._areItemsEqual(item,this.$.selectedItem)){
+                                child.set({selected: true});
+                            }
                         }
                     }
                 }
@@ -127,7 +129,7 @@ define(
                         }
                     }
                 }
-                if (this.$.needsSelection === true && somethingSelected === false && child.$.selected === false) {
+                if (this.$.needsSelection === true && somethingSelected === false && child.$.selected === false && child.$.enabled) {
                     child.set({selected: true});
                     correctSelection = true;
                 }

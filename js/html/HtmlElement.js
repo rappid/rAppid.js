@@ -125,11 +125,13 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
          * @private
          */
         _renderSelectable: function (selectable) {
-            if (selectable === true) {
+            if (selectable) {
                 if (!this._onSelect) {
                     var self = this;
                     this._onSelect = function () {
-                        self.set({selected: !self.$.selected});
+                        if(self.$.enabled){
+                            self.set({selected: !self.$.selected});
+                        }
                     };
                 }
                 this.bindDomEvent('click', this._onSelect);
@@ -152,6 +154,9 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
                 } else {
                     this.addClass('disabled');
                 }
+            }
+            if(!enabled){
+                this.set('selected',false);
             }
         },
 
