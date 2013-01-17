@@ -30,6 +30,14 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                         current = current.base;
                     }
 
+                    attributes = attributes || {};
+
+                    var internalCid = this.$xamlDefaults.cid;
+                    if (internalCid) {
+                        // internal cid
+                        attributes[internalCid] = this;
+                    }
+
                     if (descriptor) {
                         this._cleanUpDescriptor(descriptor);
                         this.$xamlAttributes = this._getAttributesFromDescriptor(descriptor);
@@ -41,7 +49,6 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                     this.$configurations = [];
                     this.$children = [];
 
-                    attributes = attributes || {};
                     _.defaults(attributes, this.$xamlAttributes, this.$xamlDefaults);
                     // added parameters, otherwise it comes to problems in Chrome!
                     this.callBase(attributes, descriptor, stage, parentScope, rootScope);
