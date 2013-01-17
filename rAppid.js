@@ -247,17 +247,21 @@
                             callback(err);
                         } else {
 
-                            // start the application
-                            application.start(parameter, function (err) {
-                                if (err) {
-                                    callback(err);
+                            application._setup(function(err) {
+                                if (!err) { // start the application
+                                    application.start(parameter, function (err) {
+                                        if (err) {
+                                            callback(err);
+                                        } else {
+                                            // render stage to target
+                                            stage.render(target);
+                                            callback(null, stage, application);
+                                        }
+                                    })
                                 } else {
-                                    // render stage to target
-                                    stage.render(target);
-
-                                    callback(null, stage, application);
+                                    callback(err);
                                 }
-                            })
+                            });
                         }
                     })
                 }
@@ -429,7 +433,7 @@
 
         var stage = new Stage(this.$requirejsContext, this, document, window);
 
-        this.$requirejsContext(["js/core/Application", "js/core/HeadManager", "js/core/History", "js/core/Injection", "js/core/InterCommunicationBus"], function (Application, HeadManager, History, Injection, InterCommunicationBus) {
+        this.$requirejsContext(["js/core/Application", "js/core/HeadManager", "js/core/History", "js/core/Injection", "js/core/InterCommunicationBus", "js/core/Bindable"], function (Application, HeadManager, History, Injection, InterCommunicationBus, Bindable) {
 
             interCommunicationBus = interCommunicationBus || new InterCommunicationBus();
 
@@ -437,11 +441,14 @@
             stage.$history = new History();
             var injection = stage.$injection = new Injection(null, null, stage);
 
+            stage.$environment = new Bindable();
+
             injection.addInstance(stage.$bus);
             injection.addInstance(stage.$history);
             injection.addInstance(stage.$headManager);
             injection.addInstance(stage.$externalInterface);
             injection.addInstance(interCommunicationBus);
+            injection.addInstance("ENV", stage.$environment);
 
             var application = new applicationFactory(null, false, stage, null, null);
 

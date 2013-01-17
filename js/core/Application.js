@@ -1,4 +1,4 @@
-define(["js/core/Window", "js/html/HtmlElement", "js/lib/extension"], function (Window, HtmlElement, Extension) {
+define(["js/core/Window", "js/html/HtmlElement", "js/lib/extension", "underscore", "require", "flow", "js/core/Bindable"], function (Window, HtmlElement, Extension, _, require, flow, Bindable) {
 
         /***
          * An application is a Window, which gets bootstrapped and started by rAppid.js and is attached to the WindowManager.
@@ -9,6 +9,10 @@ define(["js/core/Window", "js/html/HtmlElement", "js/lib/extension"], function (
             $classAttributes: [/.+/],
             ctor: function () {
                 this.callBase();
+            },
+
+            defaults: {
+                ENV: null
             },
 
             _inject: function () {
@@ -29,10 +33,64 @@ define(["js/core/Window", "js/html/HtmlElement", "js/lib/extension"], function (
             start: function (parameter, callback) {
                 parameter = parameter || {};
                 this.$stage.$parameter = parameter;
+                this.$stage.$environmentName = parameter.environment;
                 this.show();
 
                 this._startHistory(callback, parameter.initialHash);
             },
+
+            _setup: function(callback) {
+
+                var ENV = this.$stage.$injection.$singletonInstanceCache["ENV"];
+                this.set('ENV', ENV);
+
+                if (!this.supportEnvironments) {
+                    callback && callback();
+                    return;
+                }
+
+                var env = this._getEnvironment(),
+                    self = this,
+                    defaultEnvironment,
+                    environment;
+
+                flow()
+                    .par(function(cb) {
+
+                        require(["json!" + self.applicationDefaultNamespace +"/env/default"], function(d) {
+                            defaultEnvironment = d;
+                            cb();
+                        }, function(err) {
+                            cb(err);
+                        });
+                    }, function(cb) {
+                        if (env) {
+                            require(["json!" + self.applicationDefaultNamespace + "/env/" + env], function (d) {
+                                environment = d;
+                                cb();
+                            }, function (err) {
+                                cb(err);
+                            })
+                        } else {
+                            cb();
+                        }
+                    })
+                    .exec(function(err) {
+                        ENV.set(_.extend({}, defaultEnvironment, environment));
+                        callback && callback(err);
+                    });
+
+                this.$stage.$environment = env;
+
+            },
+
+            _getEnvironment: function() {
+                return this.$stage.$environmentName;
+            },
+
+            applicationDefaultNamespace: "app",
+
+            supportEnvironments: false,
 
             /***
              * Starts the history, which is responsible for navigation
