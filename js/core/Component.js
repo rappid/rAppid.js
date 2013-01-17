@@ -79,7 +79,9 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                  * @key {String} name of the variable for this.$key
                  * @value {Required Class}
                  */
-                inject: {},
+                inject: {
+                    ENV: "ENV"
+                },
 
                 _injectChain: function () {
                     return this._generateDefaultsChain("inject");

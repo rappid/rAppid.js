@@ -41,6 +41,9 @@ define(["js/core/Window", "js/html/HtmlElement", "js/lib/extension", "underscore
 
             _setup: function(callback) {
 
+                var ENV = this.$stage.$injection.$singletonInstanceCache["ENV"];
+                this.set('ENV', ENV);
+
                 if (!this.supportEnvironments) {
                     callback && callback();
                     return;
@@ -73,11 +76,7 @@ define(["js/core/Window", "js/html/HtmlElement", "js/lib/extension", "underscore
                         }
                     })
                     .exec(function(err) {
-                        var environmentConfiguration = new Bindable(_.extend({}, defaultEnvironment, environment));
-                        self.$stage.$injection.$singletonInstanceCache["ENV"] = environmentConfiguration;
-                        self.set("ENV", environmentConfiguration);
-                        self.$stage.$environment = environmentConfiguration;
-
+                        ENV.set(_.extend({}, defaultEnvironment, environment));
                         callback && callback(err);
                     });
 
