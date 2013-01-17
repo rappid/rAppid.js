@@ -326,7 +326,7 @@ describe('js.core.Bindable', function () {
         });
     });
 
-    describe('#isEqual', function(){
+    describe('#isDeepEqual', function(){
         var original, nestedBindable, copy;
         beforeEach(function () {
             nestedBindable = new C.Bindable({
@@ -351,7 +351,7 @@ describe('js.core.Bindable', function () {
         });
 
         it('#exact clone should be equal', function () {
-            expect(original.isEqual(copy)).to.equal(true);
+            expect(original.isDeepEqual(copy)).to.equal(true);
         });
 
         it('#modified clone with same values should be equal', function(){
@@ -362,12 +362,12 @@ describe('js.core.Bindable', function () {
                 "what",
                 ["a", "b"]
             ]);
-            expect(original.isEqual(copy)).to.equal(true);
+            expect(original.isDeepEqual(copy)).to.equal(true);
         });
 
         it('#modified clone should not equal', function(){
             copy.set('number',312);
-            expect(original.isEqual(copy)).to.equal(false);
+            expect(original.isDeepEqual(copy)).to.equal(false);
         });
     })
 

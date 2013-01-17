@@ -37,18 +37,18 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
 
         };
 
-        var isEqual = function (a, b) {
+        var isDeepEqual = function(a, b){
             if (a === b) {
                 return true;
             }
 
-            if(a instanceof Bindable && b instanceof Bindable){
-                if(_.size(a.$) !== _.size(b.$)){
+            if (a instanceof Bindable && b instanceof Bindable) {
+                if (_.size(a.$) !== _.size(b.$)) {
                     return false;
                 }
-                for(var key in a.$){
-                    if(a.$.hasOwnProperty(key) && b.$.hasOwnProperty(key)){
-                        if(!isEqual(a.$[key], b.$[key])){
+                for (var key in a.$) {
+                    if (a.$.hasOwnProperty(key) && b.$.hasOwnProperty(key)) {
+                        if (!isDeepEqual(a.$[key], b.$[key])) {
                             return false;
                         }
                     } else {
@@ -56,20 +56,27 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
                     }
                 }
                 return true;
-            } else if(a instanceof Bindable || b instanceof Bindable){
+            } else if (a instanceof Bindable || b instanceof Bindable) {
                 return false;
-            } else if(a instanceof Array && b instanceof Array){
-                if(a.length !== b.length){
+            } else if (a instanceof Array && b instanceof Array) {
+                if (a.length !== b.length) {
                     return false;
                 }
-                for(var i = 0; i < a.length; i++){
-                    if(!isEqual(a[i],b[i])){
+                for (var i = 0; i < a.length; i++) {
+                    if (!isDeepEqual(a[i], b[i])) {
                         return false;
                     }
                 }
                 return true;
             }
 
+            return _.isEqual(a, b);
+        };
+
+        var isEqual = function (a, b) {
+            if (a instanceof EventDispatcher || b instanceof EventDispatcher) {
+                return a === b;
+            }
             return _.isEqual(a, b);
         };
 
@@ -730,8 +737,14 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
                     this.trigger('destroy', this);
                     return this;
                 },
-                isEqual: function (b) {
+                isDeepEqual : function(b){
                     return isEqual(this, b);
+                },
+                isEqual: function (b) {
+                    if(!(b instanceof EventDispatcher)){
+                        return false;
+                    }
+                    return this === b;
                 }
             });
 

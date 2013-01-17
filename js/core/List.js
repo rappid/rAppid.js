@@ -444,7 +444,7 @@ define(["js/core/EventDispatcher", "js/core/Bindable", "underscore", "js/data/Qu
             return this.$options.root || this;
         },
 
-        isEqual: function(list){
+        isDeepEqual: function(list){
             if(list.size() !== this.size()){
                 return false;
             }
@@ -454,7 +454,7 @@ define(["js/core/EventDispatcher", "js/core/Bindable", "underscore", "js/data/Qu
                 a = this.$items[i];
                 b = list.at(i);
                 if(a instanceof Bindable && b instanceof Bindable){
-                    if(!a.isEqual(b)){
+                    if(!a.isDeepEqual(b)){
                         return false;
                     }
                 } else if(a instanceof Bindable || b instanceof Bindable){
