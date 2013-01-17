@@ -396,7 +396,7 @@ define(["js/core/EventDispatcher", "js/core/Bindable", "underscore", "js/data/Qu
 
                 return this.$filterCache[filterCacheId];
             } else {
-                return this;
+                return this.getRoot();
             }
         },
 
@@ -442,6 +442,29 @@ define(["js/core/EventDispatcher", "js/core/Bindable", "underscore", "js/data/Qu
 
         getRoot: function () {
             return this.$options.root || this;
+        },
+
+        isDeepEqual: function(list){
+            if(list.size() !== this.size()){
+                return false;
+            }
+            var isEqual = true,
+                a, b;
+            for(var i = 0; i < this.$items.length; i++){
+                a = this.$items[i];
+                b = list.at(i);
+                if(a instanceof Bindable && b instanceof Bindable){
+                    if(!a.isDeepEqual(b)){
+                        return false;
+                    }
+                } else if(a instanceof Bindable || b instanceof Bindable){
+                    return false;
+                } else {
+                    isEqual = _.isEqual(a,b);
+                }
+            }
+
+            return isEqual;
         }
     });
 

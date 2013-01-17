@@ -568,11 +568,13 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                 if (!(data instanceof Array)) {
                     throw "data has to be an array";
                 }
-
+                var context,
+                    entity;
                 for (var i = 0; i < data.length; i++) {
                     var value = data[i];
                     if(!(value instanceof Model)){
-                        var entity = collection.createItem(this._getIdForValue(value));
+                        context = this.$dataSource._getContext(collection.$modelFactory, collection, value);
+                        entity = context.createEntity(collection.$modelFactory,this._getIdForValue(value));
                         entity.set(this._parseModel(entity, value, action, options));
                         data[i] = entity;
                     }
