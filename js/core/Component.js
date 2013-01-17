@@ -36,6 +36,8 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                     if (internalCid) {
                         // internal cid
                         attributes[internalCid] = this;
+                        this.$classAttributes = this.$classAttributes || [];
+                        this.$classAttributes.push(internalCid);
                     }
 
                     if (descriptor) {
