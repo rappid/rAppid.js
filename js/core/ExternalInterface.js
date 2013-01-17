@@ -19,12 +19,17 @@ define(["js/core/Base"], function(Base) {
 
         },
 
-        addCallback: function(functionName, callback) {
-            this.$interface[functionName] = callback;
+        addCallback: function(functionName, callback, scope) {
+            var scopedCallback = function () {
+                var args = Array.prototype.slice.call(arguments);
+                callback.apply(scope, args);
+            };
+
+            this.$interface[functionName] = scopedCallback;
 
             if (this.runsInBrowser() && this.$stage && this.$stage.$el) {
                 // add callback to stage dom element
-                this.$stage.$el[functionName] = callback;
+                this.$stage.$el[functionName] = scopedCallback;
             }
         },
 
