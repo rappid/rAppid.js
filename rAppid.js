@@ -247,17 +247,21 @@
                             callback(err);
                         } else {
 
-                            // start the application
-                            application.start(parameter, function (err) {
-                                if (err) {
-                                    callback(err);
+                            application._setup(function(err) {
+                                if (!err) { // start the application
+                                    application.start(parameter, function (err) {
+                                        if (err) {
+                                            callback(err);
+                                        } else {
+                                            // render stage to target
+                                            stage.render(target);
+                                            callback(null, stage, application);
+                                        }
+                                    })
                                 } else {
-                                    // render stage to target
-                                    stage.render(target);
-
-                                    callback(null, stage, application);
+                                    callback(err);
                                 }
-                            })
+                            });
                         }
                     })
                 }
