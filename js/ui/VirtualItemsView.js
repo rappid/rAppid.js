@@ -202,6 +202,7 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
                 this.$isLoading = true;
                 this.addClass('loading');
             }
+            this._scrollToIndex(0);
             this._updateVisibleItems();
         },
 
