@@ -33,13 +33,14 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                     includeInIndex: true
                 }
             },
-
             validators: [],
 
             $context: null,
 
             $dependentObjectContext: null,
 
+            // TODO: merge this together
+            $isEntity: true,
             $isDependentObject: true,
 
             _extendSchema: function () {
@@ -293,6 +294,23 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                 ret.$context = this.$context;
                 ret.$parent = this.$parent;
                 return ret;
+            },
+            _cloneAttribute: function (value, key) {
+
+                // don't clone a list of model references!
+                if (value instanceof List) {
+                    if (this.schema.hasOwnProperty(key)) {
+                        var type = this.schema[key].type;
+                        if (type instanceof Array && type.length && type[0].classof && type[0].classof(Entity) && !type[0].prototype.$isEntity) {
+                            var list = new List();
+                            list._$source = value;
+                            list.add(value.$items);
+                            return list;
+                        }
+                    }
+                }
+
+                return this.callBase();
             }
         });
 
