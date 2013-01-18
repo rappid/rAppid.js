@@ -28,9 +28,6 @@
         "Query": {
             "exports": "Query"
         },
-        "js/lib/query/ArrayExecutor": {
-            "exports": "Executor"
-        },
         "js/lib/parser": {
             "exports": "parser"
         },
