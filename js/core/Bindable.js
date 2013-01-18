@@ -32,11 +32,6 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
             }
         })();
 
-
-        var areAttributesEqual = function(attributes, attributes){
-
-        };
-
         var isDeepEqual = function(a, b){
             if (a === b) {
                 return true;
