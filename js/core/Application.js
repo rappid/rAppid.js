@@ -39,51 +39,6 @@ define(["js/core/Window", "js/html/HtmlElement", "js/lib/extension", "underscore
                 this._startHistory(callback, parameter.initialHash);
             },
 
-            _setup: function(callback) {
-
-                var ENV = this.$stage.$injection.$singletonInstanceCache["ENV"];
-                this.set('ENV', ENV);
-
-                if (!this.supportEnvironments) {
-                    callback && callback();
-                    return;
-                }
-
-                var env = this._getEnvironment(),
-                    self = this,
-                    defaultEnvironment,
-                    environment;
-
-                flow()
-                    .par(function(cb) {
-
-                        require(["json!" + self.applicationDefaultNamespace +"/env/default"], function(d) {
-                            defaultEnvironment = d;
-                            cb();
-                        }, function(err) {
-                            cb(err);
-                        });
-                    }, function(cb) {
-                        if (env) {
-                            require(["json!" + self.applicationDefaultNamespace + "/env/" + env], function (d) {
-                                environment = d;
-                                cb();
-                            }, function (err) {
-                                cb(err);
-                            })
-                        } else {
-                            cb();
-                        }
-                    })
-                    .exec(function(err) {
-                        ENV.set(_.extend({}, defaultEnvironment, environment));
-                        callback && callback(err);
-                    });
-
-                this.$stage.$environment = env;
-
-            },
-
             _getEnvironment: function() {
                 return this.$stage.$environmentName;
             },
@@ -114,6 +69,43 @@ define(["js/core/Window", "js/html/HtmlElement", "js/lib/extension", "underscore
                 this.$stage.$bus.trigger('Application.Rendered');
 
                 return dom;
+            }
+
+        }, {
+
+            setupEnvironment: function(ENV, environmentName, applicationDefaultNamespace, callback) {
+
+                var defaultEnvironment,
+                    environment;
+
+                flow()
+                    .par(function (cb) {
+
+                        require(["json!" + applicationDefaultNamespace + "/env/default"], function (d) {
+                            defaultEnvironment = d;
+                            cb();
+                        }, function (err) {
+                            cb(err);
+                        });
+                    }, function (cb) {
+                        if (environmentName) {
+                            require(["json!" + applicationDefaultNamespace + "/env/" + environmentName], function (d) {
+                                environment = d;
+                                cb();
+                            }, function (err) {
+                                cb(err);
+                            })
+                        } else {
+                            cb();
+                        }
+                    })
+                    .exec(function (err) {
+                        ENV.set(_.extend({}, defaultEnvironment, environment));
+                        callback && callback(err);
+                    });
+
+
+
             }
 
         });
