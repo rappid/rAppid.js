@@ -270,8 +270,8 @@ define(["js/core/EventDispatcher", "js/core/Bindable", "underscore", "js/data/Qu
             }
 
 
-            delete scope['break'];
-            delete scope['return'];
+            scope['break'] = undefined;
+            scope['return'] = undefined;
 
             return r;
         },
