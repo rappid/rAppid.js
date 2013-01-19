@@ -249,6 +249,7 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
 
             },
 
+            // TODO: combine _setError and _setErrors
             _setError: function(field, error) {
 
                 if (error) {
