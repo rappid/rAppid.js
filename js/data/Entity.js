@@ -250,7 +250,17 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
             },
 
             _setError: function(field, error) {
-                this.$errors.set(field, error);
+
+                if (error) {
+                    console.log(field, error);
+                }
+
+                if (field instanceof Object) {
+                    this.$errors.set(field);
+                } else {
+                    this.$errors.set(field, error);
+                }
+
                 this.trigger('isValidChanged');
             },
 
