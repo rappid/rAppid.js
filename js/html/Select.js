@@ -7,9 +7,11 @@ define(["js/ui/SelectionView", "underscore"], function (SelectionView, _) {
                 tagName: 'select'
             },
             $defaultTemplateName: 'item',
+
             _renderMultiSelect: function (multiSelect) {
                 this.$el.multiple = multiSelect;
             },
+
             _bindDomEvents: function () {
                 var self = this;
                 this.bindDomEvent('change', function (e) {
@@ -17,6 +19,7 @@ define(["js/ui/SelectionView", "underscore"], function (SelectionView, _) {
                 });
                 this.callBase();
             },
+
             _checkOptions: function () {
                 var deselected = [],
                     child;
@@ -30,7 +33,7 @@ define(["js/ui/SelectionView", "underscore"], function (SelectionView, _) {
                     }
                 }
                 for (i = 0; i < deselected.length; i++){
-                    deselected[i].set({selected: false});
+                    deselected[i].set({selected: false},{silent: true});
                 }
             }
         });
