@@ -125,10 +125,6 @@ define(["js/core/Base"], function (Base) {
                         }
                     }
 
-//                    if(eventType !== '*'){
-//                        this.trigger('*', {eventType: eventType, event: event}, target);
-//                    }
-
                     return event;
                 },
                 /***
