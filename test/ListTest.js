@@ -184,7 +184,7 @@ describe('js.core.List', function () {
         it('should trigger when item triggers event', function (done) {
             list.bind('item:change', function (e) {
                 expect(e.$.item).to.equal(bindable);
-                expect(e.$.itemEvent.$.eventType).to.equal("change");
+                expect(e.$.itemEvent.type).to.equal("change");
                 done();
             });
             list.add(bindable);

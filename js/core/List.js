@@ -119,8 +119,8 @@ define(["js/core/EventDispatcher", "js/core/Bindable", "underscore", "js/data/Qu
             this.trigger('change', {item: item, index: this.indexOf(item), changedAttributes: e.$});
         },
         _onItemEvent: function (e, item) {
-            if (this.$itemEventMap[e.$.eventType]) {
-                var listeners = this.$itemEventMap[e.$.eventType],
+            if (this.$itemEventMap[e.type]) {
+                var listeners = this.$itemEventMap[e.type],
                     listener;
                 for (var i = 0; i < listeners.length; i++) {
                     listener = listeners[i];
