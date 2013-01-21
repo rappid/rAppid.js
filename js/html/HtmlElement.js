@@ -148,15 +148,11 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
                 } else {
                     this.$el.removeAttribute('disabled');
                 }
-            } else {
-                if (enabled) {
-                    this.removeClass('disabled');
-                } else {
-                    this.addClass('disabled');
-                }
             }
-            if(!enabled){
-                this.set('selected',false);
+            if (enabled) {
+                this.removeClass('disabled');
+            } else {
+                this.addClass('disabled');
             }
         },
 
