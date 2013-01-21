@@ -247,21 +247,16 @@
                             callback(err);
                         } else {
 
-                            application._setup(function(err) {
-                                if (!err) { // start the application
-                                    application.start(parameter, function (err) {
-                                        if (err) {
-                                            callback(err);
-                                        } else {
-                                            // render stage to target
-                                            stage.render(target);
-                                            callback(null, stage, application);
-                                        }
-                                    })
-                                } else {
+                            application.start(parameter, function (err) {
+                                if (err) {
                                     callback(err);
+                                } else {
+                                    // render stage to target
+                                    stage.render(target);
+                                    callback(null, stage, application);
                                 }
                             });
+
                         }
                     })
                 }
@@ -309,7 +304,7 @@
 
             if (s.hasContent && s.contentType !== false) {
                 xhr.setRequestHeader("Content-Type", s.contentType);
-                if(typeof window === "undefined"){
+                if (typeof window === "undefined") {
                     // On NodeJs the XMLHttprequest does not set Content-Length
                     // In the browser it's not allowed to set the Content-length
                     xhr.setRequestHeader("Content-Length", s.data ? s.data.length.toString() : "0");
@@ -323,7 +318,7 @@
                         xhr.setRequestHeader(header, s.headers[header]);
                     }
                 }
-            } catch(e) {
+            } catch (e) {
             } // FF3
 
             options && options.xhrBeforeSend instanceof Function && options.xhrBeforeSend(xhr);
@@ -381,7 +376,7 @@
 
         try {
             this.statusText = xhr.statusText;
-        } catch(e) {
+        } catch (e) {
             this.statusText = "";
         }
     };
@@ -454,15 +449,31 @@
 
             if (application instanceof Application) {
 
-                stage.$application = application;
-                stage._initialize("auto");
 
-                application._initialize("auto");
+                var environmentSetupComplete = function (err) {
+                    if (!err) {
+                        application.set('ENV', stage.$environment);
 
-                // return rAppid instance
-                if (callback) {
-                    callback(null, stage, application);
+                        stage.$application = application;
+                        stage._initialize("auto");
+
+                        application._initialize("auto");
+
+                        // return rAppid instance
+                        if (callback) {
+                            callback(null, stage, application);
+                        }
+                    } else {
+                        callback && callback(err, stage, application);
+                    }
+                };
+
+                if (application.supportEnvironments) {
+                    Application.setupEnvironment(stage.$environment, application._getEnvironment(), application.applicationDefaultNamespace, environmentSetupComplete);
+                } else {
+                    environmentSetupComplete();
                 }
+
 
             } else {
                 var errMessage = "mainClass isn't an instance of js.core.Application";
@@ -534,7 +545,7 @@
         try {
             ret = construct(classDefinition, args);
             ret.className = className;
-        } catch(e) {
+        } catch (e) {
             console.warn(["Cannot create instance of '" + fqClassName + "'", e, args]);
             throw e;
         }

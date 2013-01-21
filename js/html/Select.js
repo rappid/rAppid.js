@@ -3,6 +3,7 @@ define(["js/ui/SelectionView", "underscore"], function (SelectionView, _) {
             defaults: {
                 multiSelect: false,
                 forceSelectable: false,
+                needsSelection: true,
                 tagName: 'select'
             },
             $defaultTemplateName: 'item',
