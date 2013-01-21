@@ -42,13 +42,18 @@ define(
              * @private
              */
             _renderItems: function (items) {
-                if(!items){
-                    this._innerRenderItems([]);
-                }else if (items instanceof List) {
-                    this._innerRenderItems(items.$items);
+                this._innerRenderItems(this._getItemsArray(items));
+            },
+
+            _getItemsArray: function(items){
+                if (!items) {
+                    return [];
+                } else if (items instanceof List) {
+                    return items.$items;
                 } else if (_.isArray(items)) {
-                    this._innerRenderItems(items);
+                    return items;
                 }
+                return [];
             },
             /***
              * This method is called when the sort event is fired,
