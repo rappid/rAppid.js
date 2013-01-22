@@ -108,6 +108,11 @@ define(
                 }
 
 
+                if (this.$.needsSelection && !this.$.selectedItem) {
+                    this.set('selectedItem', child.get(this._getItemKey()));
+                }
+
+
             },
 
             _renderSelectedItem: function (item, oldItem) {
