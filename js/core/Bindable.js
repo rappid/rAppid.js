@@ -38,28 +38,30 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
             }
 
             if (a instanceof Bindable && b instanceof Bindable) {
-                if (_.size(a.$) !== _.size(b.$)) {
-                    return false;
-                }
-                for (var key in a.$) {
-                    if (a.$.hasOwnProperty(key) && b.$.hasOwnProperty(key)) {
-                        if (!isDeepEqual(a.$[key], b.$[key])) {
-                            return false;
-                        }
-                    } else {
-                        return false;
-                    }
-                }
-                return true;
+                return a.isDeepEqual(b);
             } else if (a instanceof Bindable || b instanceof Bindable) {
                 return false;
-            } else if (a instanceof Array && b instanceof Array) {
+            } else if (_.isArray(a) && _.isArray(b)) {
                 if (a.length !== b.length) {
                     return false;
                 }
                 for (var i = 0; i < a.length; i++) {
                     if (!isDeepEqual(a[i], b[i])) {
                         return false;
+                    }
+                }
+                return true;
+            } else if(a instanceof Date && b instanceof Date){
+                return a.getTime() === b.getTime();
+            } else if(_.isObject(a) && _.isObject(b)){
+                if (_.size(a) !== _.size(b)) {
+                    return false;
+                }
+                for (var objectKey in a) {
+                    if(a.hasOwnProperty(objectKey) && b.hasOwnProperty(objectKey)){
+                        if (!isDeepEqual(a[objectKey], b[objectKey])) {
+                            return false;
+                        }
                     }
                 }
                 return true;
@@ -733,13 +735,22 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
                     return this;
                 },
                 isDeepEqual : function(b){
-                    return isEqual(this, b);
-                },
-                isEqual: function (b) {
-                    if(!(b instanceof EventDispatcher)){
+                    if (_.size(this.$) !== _.size(b.$)) {
                         return false;
                     }
-                    return this === b;
+                    for (var key in this.$) {
+                        if (this.$.hasOwnProperty(key) && b.$.hasOwnProperty(key)) {
+                            if (!isDeepEqual(this.$[key], b.$[key])) {
+                                return false;
+                            }
+                        } else {
+                            return false;
+                        }
+                    }
+                    return true;
+                },
+                isEqual: function (b) {
+                    return isEqual(this, b);
                 }
             });
 
