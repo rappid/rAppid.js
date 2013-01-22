@@ -425,10 +425,10 @@ define(["js/core/EventDispatcher", "js/core/Bindable", "underscore", "js/data/Qu
                 var sortCacheId = query.sortCacheId();
 
                 if (!this.$sortCache[sortCacheId]) {
-                    this.$filterCache[sortCacheId] = this._createSortedList(query, options);
+                    this.$sortCache[sortCacheId] = this._createSortedList(query, options);
                 }
 
-                return this.$filterCache[sortCacheId];
+                return this.$sortCache[sortCacheId];
             }
 
             return this;
