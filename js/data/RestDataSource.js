@@ -85,8 +85,8 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
 
             if(resource instanceof Collection){
                 _.defaults(params, resource.getQueryParameters(action), resource.getRoot().$context.getQueryParameters());
-                if(resource.$options.query){
-                    _.defaults(params, this.getQueryComposer().compose(resource.$options.query));
+                if(resource.$.query){
+                    _.defaults(params, this.getQueryComposer().compose(resource.$.query));
                 }
             }
 

@@ -21,7 +21,7 @@ define(["js/core/EventDispatcher", "js/core/Bindable", "underscore", "js/data/Qu
             this.$filterCache = {};
             this.$sortCache = {};
 
-            this.callBase(attributes || {});
+            this.callBase(options);
 
             if (items) {
                 this.add(items);
