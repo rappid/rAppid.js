@@ -300,6 +300,10 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
              * Unbinds all events and destroys subBinding...
              */
             destroy: function () {
+                // binding already destroyed?
+                if(!this.$){
+                    return;
+                }
                 var e;
                 for (var j = 0; j < this.$events.length; j++) {
                     e = this.$events[j];
