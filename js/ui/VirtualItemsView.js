@@ -750,7 +750,7 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
             // stores the waiting queue or true, if page already fetched
             this.$pages = {};
             this.$cache = {};
-            this.$pageSize = data.$options.pageSize;
+            this.$pageSize = data.$.pageSize;
 
             this.callBase();
 

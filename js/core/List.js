@@ -21,6 +21,11 @@ define(["js/core/EventDispatcher", "js/core/Bindable", "underscore", "js/data/Qu
             this.$filterCache = {};
             this.$sortCache = {};
 
+
+            if (options.root) {
+                _.defaults(options, options.root.options);
+            }
+
             this.callBase(options);
 
             if (items) {
@@ -39,10 +44,6 @@ define(["js/core/EventDispatcher", "js/core/Bindable", "underscore", "js/data/Qu
             this.bind('reset', updateLength);
 
             this.length = this.size();
-            if(options.root){
-                _.defaults(options, options.root.$options);
-            }
-            this.$options = options;
         },
         /**
          *
@@ -383,15 +384,15 @@ define(["js/core/EventDispatcher", "js/core/Bindable", "underscore", "js/data/Qu
          */
         filter: function (query) {
             if (query.query.where) {
-                var options = {
+                var options = _.defaults({}, this.$, {
                     query: query,
                     root: this.getRoot()
-                };
+                });
 
                 var filterCacheId = query.whereCacheId();
 
                 if (!this.$filterCache[filterCacheId]) {
-                    this.$filterCache[filterCacheId] = this._createFilteredList(query,options);
+                    this.$filterCache[filterCacheId] = this._createFilteredList(query, options);
                 }
 
                 return this.$filterCache[filterCacheId];
@@ -400,8 +401,8 @@ define(["js/core/EventDispatcher", "js/core/Bindable", "underscore", "js/data/Qu
             }
         },
 
-        _createFilteredList: function(query, options){
-            return new this.factory(query.filterItems(this.$items),options);
+        _createFilteredList: function (query, options) {
+            return new this.factory(query.filterItems(this.$items), options);
         },
 
         /**
@@ -415,10 +416,11 @@ define(["js/core/EventDispatcher", "js/core/Bindable", "underscore", "js/data/Qu
                 return this;
             } else if (fnc instanceof Query && fnc.query.sort) {
                 var query = fnc,
-                    options = {
+
+                    options = _.defaults({},this.$,{
                         query: query,
                         root: this.getRoot()
-                    };
+                    });
 
                 var sortCacheId = query.sortCacheId();
 
@@ -432,7 +434,7 @@ define(["js/core/EventDispatcher", "js/core/Bindable", "underscore", "js/data/Qu
             return this;
         },
 
-        _createSortedList: function(query, options){
+        _createSortedList: function (query, options) {
             return new List(query.sortItems(this.$items), options);
         },
 
@@ -441,26 +443,26 @@ define(["js/core/EventDispatcher", "js/core/Bindable", "underscore", "js/data/Qu
         },
 
         getRoot: function () {
-            return this.$options.root || this;
+            return this.$.root || this;
         },
 
-        isDeepEqual: function(list){
-            if(list.size() !== this.size()){
+        isDeepEqual: function (list) {
+            if (list.size() !== this.size()) {
                 return false;
             }
             var isEqual = true,
                 a, b;
-            for(var i = 0; i < this.$items.length; i++){
+            for (var i = 0; i < this.$items.length; i++) {
                 a = this.$items[i];
                 b = list.at(i);
-                if(a instanceof Bindable && b instanceof Bindable){
-                    if(!a.isDeepEqual(b)){
+                if (a instanceof Bindable && b instanceof Bindable) {
+                    if (!a.isDeepEqual(b)) {
                         return false;
                     }
-                } else if(a instanceof Bindable || b instanceof Bindable){
+                } else if (a instanceof Bindable || b instanceof Bindable) {
                     return false;
                 } else {
-                    isEqual = _.isEqual(a,b);
+                    isEqual = _.isEqual(a, b);
                 }
             }
 
