@@ -23,7 +23,7 @@ define(
                 for (var i = 0; i < this.$renderedItems.length; i++) {
                     item = this.$renderedItems[i].item;
                     if (e.$ === item && !this.$renderedItems[i].component.$.selected) {
-                        this.$renderedItems[i].component.set({selected: true});
+                        this.$renderedItems[i].component.set({selected: true},{silent: true});
                     }
                 }
             },
@@ -32,7 +32,7 @@ define(
                 for (var i = 0; i < this.$renderedItems.length; i++) {
                     item = this.$renderedItems[i].item;
                     if (e.$ === item && this.$renderedItems[i].component.$.selected) {
-                        this.$renderedItems[i].component.set({selected: false});
+                        this.$renderedItems[i].component.set({selected: false},{silent: true});
                     }
                 }
             },
@@ -98,7 +98,7 @@ define(
                 if (item) {
                     for (var i = 0; i < this.$.selectedItems.length; i++) {
                         if (this._areItemsEqual(item, this.$.selectedItems[i])) {
-                            child.set({selected: true});
+                            child.set({selected: true}, {silent: true});
                             break;
                         }
                     }
@@ -117,7 +117,7 @@ define(
                 } else {
                     if (oldItem && !this.$.multiSelect) {
                         comp = this.getComponentForItem(oldItem);
-                        comp && comp.set({selected: false});
+                        comp && comp.set({selected: false},{silent: true});
                     }
                 }
             },
