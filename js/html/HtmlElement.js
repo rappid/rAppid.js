@@ -59,7 +59,7 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
             widthUpdatePolicy: POLICY_OUT
         },
 
-        $classAttributes: ['heightUpdatePolicy', 'widthUpdatePolicy'],
+        $classAttributes: ['heightUpdatePolicy', 'widthUpdatePolicy', 'content'],
 
         $excludedStyleAttributes: ['src','content'],
 
