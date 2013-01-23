@@ -22,7 +22,7 @@ define(["js/core/Base"], function(Base) {
         addCallback: function(functionName, callback, scope) {
             var scopedCallback = function () {
                 var args = Array.prototype.slice.call(arguments);
-                callback.apply(scope, args);
+                return callback.apply(scope, args);
             };
 
             this.$interface[functionName] = scopedCallback;
