@@ -8,7 +8,7 @@ define(["js/html/HtmlElement", "js/core/Bus", "js/core/WindowManager", "js/core/
 
         defaults: {
             tagName: "div",
-            'class': 'stage'
+            componentClass: 'stage'
         },
 
         ctor: function(requireJsContext, applicationContext, document, window){
@@ -51,7 +51,7 @@ define(["js/html/HtmlElement", "js/core/Bus", "js/core/WindowManager", "js/core/
                 classes.push("node");
             }
 
-            this.set('class', classes.join(" "));
+            this.set('componentClass', classes.join(" "));
         },
 
         createChildren: function() {
