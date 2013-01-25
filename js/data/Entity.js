@@ -20,6 +20,9 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
 
             ctor: function (attributes) {
                 this.$errors = new ValidationErrors();
+                this.$entityInitialized = false;
+                this.$$ = {};
+                this._extendInitSchema();
                 this._extendSchema();
 
                 this.callBase(attributes);
@@ -29,10 +32,14 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                 id: {
                     type: String,
                     required: false,
-                    generated: true,
                     includeInIndex: true
                 }
             },
+
+            initSchema: {
+
+            },
+
             validators: [],
 
             $context: null,
@@ -42,6 +49,24 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
             // TODO: merge this together
             $isEntity: true,
             $isDependentObject: true,
+
+            _extendInitSchema: function () {
+                if (this.factory.initSchema) {
+                    this.schema = this.factory.initSchema;
+                    return;
+                }
+                var base = this.base;
+
+                while (base.factory.classof(Entity)) {
+                    var baseSchema = base.initSchema;
+                    for (var type in baseSchema) {
+                        if (baseSchema.hasOwnProperty(type) && !this.initSchema.hasOwnProperty(type)) {
+                            this.initSchema[type] = baseSchema[type];
+                        }
+                    }
+                    base = base.base;
+                }
+            },
 
             _extendSchema: function () {
 
@@ -101,7 +126,7 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                             this.$dependentObjectContext = this.$parentEntity.$dependentObjectContext;
                         } else {
                             // create a new non-cached context for dependent objects
-                            this.$dependentObjectContext = this.$context.$dataSource.createContext();
+                            this.$dependentObjectContext = this.$context.$dataSource.createContext(this);
                         }
                     }
 
@@ -136,6 +161,11 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
              * @param [options]
              */
             parse: function (data, action, options) {
+                for(var key in this.initSchema){
+                    if(this.initSchema.hasOwnProperty(key)){
+                        this.$$[key] = data[key];
+                    }
+                }
                 return data;
             },
 
@@ -147,7 +177,7 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
              * @return {Object} all data that should be serialized
              */
             compose: function (action, options) {
-                return this.$;
+                return _.clone(this.$);
             },
 
             /***
@@ -251,7 +281,7 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
             },
 
             // TODO: combine _setError and _setErrors
-            _setError: function(field, error) {
+            _setError: function (field, error) {
 
                 if (field instanceof Object) {
                     this.$errors.set(field);
@@ -318,6 +348,30 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                 }
 
                 return this.callBase();
+            },
+            init: function (callback) {
+
+                var self = this,
+                    ret = {};
+
+                flow()
+                    .parEach(this.initSchema, function (fnc, key, cb) {
+                        if (fnc instanceof Function) {
+                            fnc.call(self, self.$$[key], key, function (err, value) {
+                                ret[key] = value;
+
+                                cb(err);
+                            });
+                        }
+                    })
+                    .exec(function (err) {
+                        if (!err) {
+                            self.$entityInitialized = true;
+                            self.set(ret, {force: true});
+                        }
+                        callback && callback(err);
+                    });
+
             }
         });
 
