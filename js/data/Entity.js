@@ -21,8 +21,6 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
             ctor: function (attributes) {
                 this.$errors = new ValidationErrors();
                 this.$entityInitialized = false;
-                this.$$ = {};
-                this._extendInitSchema();
                 this._extendSchema();
 
                 this.callBase(attributes);
@@ -36,10 +34,6 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                 }
             },
 
-            initSchema: {
-
-            },
-
             validators: [],
 
             $context: null,
@@ -49,24 +43,6 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
             // TODO: merge this together
             $isEntity: true,
             $isDependentObject: true,
-
-            _extendInitSchema: function () {
-                if (this.factory.initSchema) {
-                    this.schema = this.factory.initSchema;
-                    return;
-                }
-                var base = this.base;
-
-                while (base.factory.classof(Entity)) {
-                    var baseSchema = base.initSchema;
-                    for (var type in baseSchema) {
-                        if (baseSchema.hasOwnProperty(type) && !this.initSchema.hasOwnProperty(type)) {
-                            this.initSchema[type] = baseSchema[type];
-                        }
-                    }
-                    base = base.base;
-                }
-            },
 
             _extendSchema: function () {
 
@@ -161,8 +137,8 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
              * @param [options]
              */
             parse: function (data, action, options) {
-                for(var key in this.initSchema){
-                    if(this.initSchema.hasOwnProperty(key)){
+                for (var key in this.initSchema) {
+                    if (this.initSchema.hasOwnProperty(key)) {
                         this.$$[key] = data[key];
                     }
                 }
@@ -305,7 +281,7 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                             this.$errors.set('_base', error);
                         }
                     }
-                } catch(e) {
+                } catch (e) {
                     this.log(e, 'warn');
                 }
                 this.trigger('isValidChanged');
@@ -349,29 +325,9 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
 
                 return this.callBase();
             },
+
             init: function (callback) {
-
-                var self = this,
-                    ret = {};
-
-                flow()
-                    .parEach(this.initSchema, function (fnc, key, cb) {
-                        if (fnc instanceof Function) {
-                            fnc.call(self, self.$$[key], key, function (err, value) {
-                                ret[key] = value;
-
-                                cb(err);
-                            });
-                        }
-                    })
-                    .exec(function (err) {
-                        if (!err) {
-                            self.$entityInitialized = true;
-                            self.set(ret, {force: true});
-                        }
-                        callback && callback(err);
-                    });
-
+                callback && callback();
             }
         });
 
