@@ -24,7 +24,8 @@ define(["require", "js/core/Component", "underscore", "moment", "flow"], functio
             var self = this;
 
             if (!locale) {
-                throw "locale not defined";
+                callback && callback("locale not defined");
+                return;
             }
 
             flow()
