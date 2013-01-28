@@ -698,6 +698,9 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
                     }
 
                     this.trigger('sizeChanged');
+                    if(e.type == "reset"){
+                        virtualItemsView._scrollToIndex(0);
+                    }
                     virtualItemsView._updateVisibleItems(force);
                 };
 
