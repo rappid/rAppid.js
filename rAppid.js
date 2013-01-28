@@ -93,6 +93,7 @@
 
         createApplicationContext: function (mainClass, config, callback) {
 
+            var time = (new Date()).getTime();
             config = config || {};
 
             var internalCreateApplicationContext = function (config) {
@@ -134,14 +135,15 @@
 
                             requirejsContext([mainClass], function (applicationFactory) {
                                 applicationContext.$applicationFactory = applicationFactory;
+                                applicationContext.$creationTime = (new Date()).getTime() - time;
                                 callback(null, applicationContext);
                             }, function (err) {
                                 callback(err);
                             });
                         } else {
+                            applicationContext.$creationTime = (new Date()).getTime() - time;
                             callback(null, applicationContext);
                         }
-
                     } else {
                         callback("inherit or underscore missing");
                     }
@@ -235,7 +237,6 @@
                 callback("Target missing");
                 return;
             }
-
 
             // flow.js is not available here, so do it in a dirty way
             rAppid.createApplicationContext(mainClass, config, function (err, applicationContext) {
@@ -414,7 +415,9 @@
 
     ApplicationContext.prototype.createApplicationInstance = function (window, callback) {
 
-        var document;
+        var document,
+            time = (new Date()).getTime(),
+            self = this;
 
         // create instance
         var applicationFactory = this.$applicationFactory;
@@ -449,7 +452,6 @@
 
             if (application instanceof Application) {
 
-
                 var environmentSetupComplete = function (err) {
                     if (!err) {
                         application.set('ENV', stage.$environment);
@@ -458,6 +460,8 @@
                         stage._initialize("auto");
 
                         application._initialize("auto");
+
+                        application.$creationTime = (new Date()).getTime() - time;
 
                         // return rAppid instance
                         if (callback) {
