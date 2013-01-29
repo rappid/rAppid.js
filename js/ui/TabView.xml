@@ -12,6 +12,6 @@
                 </js:Template>
             </ui:SelectionView>
         </div>
-        <ui:SegmentedView cid="tabContent" componentClass="tab-content" class="{contentClassName}"/>
+        <ui:SegmentedView cid="tabContent" componentClass="tab-content" class="{contentClassName}" visibleView="{tabSelection.selectedItem}"/>
     </js:Template>
 </ui:TabViewClass>
