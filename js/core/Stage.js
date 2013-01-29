@@ -39,13 +39,37 @@ define(["js/html/HtmlElement", "js/core/Bus", "js/core/WindowManager", "js/core/
                 classes.push("browser");
                 classes.push("ontouchend" in window ? "touch" : "no-touch");
 
-                var mobile = (/(iphone|ipad|ipod|android|blackberry|mini|windows\sce|palm)/i.test(window.navigator.userAgent));
-                if (mobile) {
-                    classes.push('mobile');
-                    classes.push(mobile[1]);
-                } else {
-                    classes.push('desktop');
+                var navigator = window.navigator;
+
+                if (navigator) {
+
+                    var userAgent = navigator.userAgent || navigator.appVersion;
+                    var mobile = /(iphone|ipad|ipod|android|blackberry|mini|windows\sce|palm)/i.exec(userAgent);
+                    if (mobile) {
+                        classes.push('mobile');
+                        classes.push(mobile[1]);
+                    } else {
+                        classes.push('desktop');
+                    }
+
+                    var os = /win|mac|linux|x11/i.exec(userAgent);
+                    if (os) {
+                        os = {
+                            win: "windows",
+                            mac: "mac",
+                            linux: "linux unix",
+                            x11: "unix"
+                        }[os[0].toLowerCase()];
+
+                        os && classes.push(os);
+                    }
+
+                    var browser = /firefox|chrome|safari/i.exec(userAgent);
+                    if (browser) {
+                        classes.push(browser[0].toLowerCase());
+                    }
                 }
+
 
             } else {
                 classes.push("node");
