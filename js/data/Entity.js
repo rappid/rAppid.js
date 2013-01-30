@@ -5,7 +5,7 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
         var ValidationErrors = Bindable.inherit('js.data.Entity.ValidationErrors', {
             firstError: function () {
                 for (var key in this.$) {
-                    if (this.$.hasOwnProperty(key)) {
+                    if (this.$.hasOwnProperty(key) && this.$[key]) {
                         return this.$[key];
                     }
                 }
