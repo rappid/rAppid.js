@@ -68,6 +68,12 @@ define(["js/html/HtmlElement", "js/core/Bus", "js/core/WindowManager", "js/core/
                     if (browser) {
                         classes.push(browser[0].toLowerCase());
                     }
+
+                    browser = /msie\s(\d+)/i.exec(userAgent);
+                    if (browser) {
+                        classes.push("ie ie" + browser[1]);
+                    }
+
                 }
 
 
