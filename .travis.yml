@@ -6,3 +6,6 @@ env:
   global:
    - secure: "c99xMZW5UrW4o76KA/xzPzX9c0clHvPQuyp/v24tJVYEinx1xazYynVc7b1e\n76FYuFhuLkgAW33KCaL/yknwSkQ5QmtjrrZ+eNzUUJM7uAbCe2WX58NPH6WE\nr/Kvc0Axc/k4q0l2UFGOT5ehaDgjqt7yHpqZO29ivhsrxtVffLo="
    - secure: "Ev8BKiqsh2GWwNv30DLvbIvp2zgK5JJxJDw7+GXOIYTVkR9sigEPSgW6Q4+M\n+QQJFEIbP0QSVCS9/Q5jRatd6rrKDEi6QFYwsbZblpWrb4WLOcT1O/kSNCbL\nsMEwPyYiOxViO2WmpHuR8LP8XE2aQiMQ5Vb1AjbuBmFJxG0a3OE="
+branches:
+ only:
+   - dev
