@@ -10,5 +10,11 @@ define([],function(){
         return round(value);
     };
 
+    if (!Date.now) {
+        Date.now = function now() {
+            return +(new Date);
+        };
+    }
+
     return true;
 });

@@ -32,6 +32,12 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
         },
 
         schema: {
+            id: {
+                type: String,
+                required: false,
+                generated: true,
+                includeInIndex: true
+            },
             href: {
                 type: String,
                 generated: true,

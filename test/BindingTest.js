@@ -11,7 +11,7 @@ describe('js.core.Binding', function () {
     var target,
         model,
         returnValue = "HALLO",
-        parameters = ["\'abc\'",123,true,false,"null"],
+        parameters = ["'abc'",123,true,false,"null"],
         parStr = "abc",
         parNum = 123,
         extendedModel,
@@ -38,8 +38,14 @@ describe('js.core.Binding', function () {
                         if(args.length !== parameters.length){
                             return false;
                         }
+                        var parameter;
                         for(var i = 0; i < args.length; i++){
-                            if(args[i] !== parameters[i]){
+                            parameter = parameters[i];
+                            parameter = parameter === "null" ? null : parameter;
+                            if(parameter && parameter.replace){
+                                parameter = parameter.replace(/'/gi,"");
+                            }
+                            if(args[i] !== parameter){
                                 return false;
                             }
                         }

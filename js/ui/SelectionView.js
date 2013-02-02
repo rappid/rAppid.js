@@ -118,7 +118,16 @@ define(
             _renderSelectedItem: function (item, oldItem) {
                 var comp = this.getComponentForItem(item);
                 if (comp) {
-                    comp.set({selected: true});
+                    comp.set({selected: true},{silent: true});
+                    var c;
+                    if(!this.$.multiSelect){
+                        for (var i = 0; i < this.$renderedChildren.length; i++) {
+                            c = this.$renderedChildren[i];
+                            if (c != comp && c.$.selected === true) {
+                                c.set({selected: false}, {silent: true});
+                            }
+                        }
+                    }
                 } else {
                     if (oldItem && !this.$.multiSelect) {
                         comp = this.getComponentForItem(oldItem);

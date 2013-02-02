@@ -62,7 +62,7 @@ define(["js/data/DataSource", "js/data/Model", "flow", "js/data/LocalStorage"],
                 callback = callback || function () {
                 };
 
-                var rootCollection = page.getRootCollection();
+                var rootCollection = page.getRoot();
                 var configuration = this.getConfigurationForModelClass(page.$collection.$modelFactory);
 
                 if (!configuration) {
@@ -85,7 +85,7 @@ define(["js/data/DataSource", "js/data/Model", "flow", "js/data/LocalStorage"],
 
                 var processor = this.getProcessorForCollection(page);
 
-                data = processor.parseCollection(page.getRootCollection(), data, DataSource.ACTION.LOAD, options);
+                data = processor.parseCollection(page.getRoot(), data, DataSource.ACTION.LOAD, options);
 
                 page.add(data);
 

@@ -721,6 +721,19 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                 }
             },
 
+            composeModel: function(model, options){
+                var processor = this.getProcessorForModel(model, options);
+
+                return processor.compose(model, DataSource.ACTION.CREATE, options);
+            },
+
+            parseModel: function(model, data, options){
+                var processor = this.getProcessorForModel(model, options);
+
+                model.set(processor.parse(model, data, DataSource.ACTION.CREATE, options));
+                return model;
+            },
+
             _childrenInitialized: function () {
                 this.callBase();
 
@@ -797,7 +810,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                     }
                 }
 
-                return null;
+                return requestor.$context;
             },
 
             /***

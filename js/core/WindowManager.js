@@ -17,8 +17,15 @@ define(['js/html/HtmlElement', 'underscore'], function(HtmlElement, _){
 
         defaults: {
             tagName: 'div',
-            'class': 'window-manager'
+            modalActive: false,
+            'class': 'window-manager {modalActiveClass()}'
         },
+
+        $classAttributes: ["modalActive"],
+
+        modalActiveClass: function() {
+            return this.$.modalActive ? "modal-active" : "";
+        }.onChange("modalActive"),
 
         /***
          * Adds a window to the WindowManager and shows it
@@ -46,6 +53,7 @@ define(['js/html/HtmlElement', 'underscore'], function(HtmlElement, _){
                 child.addChild(window);
 
                 window.set('componentClass', 'modal window');
+                self.set("modalActive", true);
             }
 
             this.addChild(child);
@@ -56,6 +64,7 @@ define(['js/html/HtmlElement', 'underscore'], function(HtmlElement, _){
                 list.splice(_.indexOf(list, window), 1);
 
                 window.unbind('close', closeHandler);
+                self.set("modalActive", false);
 
                 if (windowCloseCallback) {
                     windowCloseCallback(null, window, e.$);

@@ -53,6 +53,7 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore"], funct
         },
 
         _createFilteredList: function(query, options){
+            options.$itemsCount = undefined;
             // TOOD: if fully loaded -> return this.callBase();
             var collection = new this.factory(null,options);
             collection.$context = this.$context;

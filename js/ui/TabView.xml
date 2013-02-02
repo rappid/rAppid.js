@@ -1,16 +1,17 @@
 <?xml version="1.0"?>
 <ui:TabViewClass xmlns="http://www.w3.org/1999/xhtml" xmlns:js="js.core" xmlns:ui="js.ui"
-        componentClass="tab-view">
+                 componentClass="tab-view" selectedIndex="null" selectedTab="null">
     <js:Template name="layout">
         <div class="tab-menu {menuClassName}">
-            <ui:SelectionView tagName="ul" cid="tabSelection" items="{tabItems}" class="{tabClassName}" needsSelection="true" forceSelectable="true">
+            <ui:SelectionView tagName="ul" cid="tabSelection" items="{tabItems}" class="{tabClassName}"
+                              needsSelection="true" forceSelectable="true" selectedIndex="{{selectedIndex}}">
                 <js:Template name="item">
-                    <ui:View tagName="li">
+                    <ui:View tagName="li" enabled="{item.enabled}">
                         <ui:Link label="{item.title}"/>
                     </ui:View>
                 </js:Template>
             </ui:SelectionView>
         </div>
-        <ui:SegmentedView cid="tabContent" componentClass="tab-content" class="{contentClassName}"/>
+        <ui:SegmentedView cid="tabContent" componentClass="tab-content" class="{contentClassName}" visibleView="{tabSelection.selectedItem}"/>
     </js:Template>
 </ui:TabViewClass>

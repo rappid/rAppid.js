@@ -5,7 +5,7 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
         var ValidationErrors = Bindable.inherit('js.data.Entity.ValidationErrors', {
             firstError: function () {
                 for (var key in this.$) {
-                    if (this.$.hasOwnProperty(key)) {
+                    if (this.$.hasOwnProperty(key) && this.$[key]) {
                         return this.$[key];
                     }
                 }
@@ -20,6 +20,7 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
 
             ctor: function (attributes) {
                 this.$errors = new ValidationErrors();
+                this.$entityInitialized = false;
                 this._extendSchema();
 
                 this.callBase(attributes);
@@ -29,10 +30,10 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                 id: {
                     type: String,
                     required: false,
-                    generated: true,
                     includeInIndex: true
                 }
             },
+
             validators: [],
 
             $context: null,
@@ -101,7 +102,7 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                             this.$dependentObjectContext = this.$parentEntity.$dependentObjectContext;
                         } else {
                             // create a new non-cached context for dependent objects
-                            this.$dependentObjectContext = this.$context.$dataSource.createContext();
+                            this.$dependentObjectContext = this.$context.$dataSource.createContext(this);
                         }
                     }
 
@@ -136,6 +137,11 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
              * @param [options]
              */
             parse: function (data, action, options) {
+                for (var key in this.initSchema) {
+                    if (this.initSchema.hasOwnProperty(key)) {
+                        this.$$[key] = data[key];
+                    }
+                }
                 return data;
             },
 
@@ -147,7 +153,7 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
              * @return {Object} all data that should be serialized
              */
             compose: function (action, options) {
-                return this.$;
+                return _.clone(this.$);
             },
 
             /***
@@ -174,9 +180,8 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
              *
              * @return {Boolean} true if valid
              */
-            isValid: function () {
-
-                var $ = this.$errors.$;
+            isValid: function ($) {
+                $ = $ || this.$errors.$;
                 for (var key in $) {
                     if ($.hasOwnProperty(key)) {
                         if ($[key]) {
@@ -251,7 +256,7 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
             },
 
             // TODO: combine _setError and _setErrors
-            _setError: function(field, error) {
+            _setError: function (field, error) {
 
                 if (field instanceof Object) {
                     this.$errors.set(field);
@@ -275,7 +280,7 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                             this.$errors.set('_base', error);
                         }
                     }
-                } catch(e) {
+                } catch (e) {
                     this.log(e, 'warn');
                 }
                 this.trigger('isValidChanged');
@@ -318,6 +323,10 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                 }
 
                 return this.callBase();
+            },
+
+            init: function (callback) {
+                callback && callback();
             }
         });
 

@@ -546,6 +546,16 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
 
                     var st = domNode.tagName.split(":");
                     return st[st.length - 1];
+                },
+
+                baseUrl: function (path) {
+                    path = path || "";
+
+                    if (this.$stage) {
+                        path = (this.$stage.$applicationContext.$config.baseUrl || "") + path;
+                    }
+
+                    return path;
                 }
             });
 
