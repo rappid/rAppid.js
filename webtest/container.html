@@ -65,13 +65,11 @@
                             reporter: function (r) {
 
                                 r.on('pass', function (test) {
-                                    test.fileName = test;
-                                    results.passedTests.push(test);
+                                    results.passedTests.push(testResult(test, fileName));
                                 });
 
                                 r.on('fail', function (test, err) {
-                                    test.fileName = fileName;
-                                    test.error = err;
+                                    test = testResult(test, fileName);
 
                                     if (err instanceof window.SkipError) {
                                         results.skippedTests.push(test);
@@ -116,6 +114,27 @@
                 callback(err);
             })
         };
+
+        function testResult(test, filename) {
+            var path = [],
+                parent = test.parent;
+
+            while (parent && !parent.root) {
+                path.unshift(parent.title);
+                parent = parent.parent;
+            }
+
+            return {
+                fileName: filename,
+                duration: test.duration,
+                title: test.title,
+                state: test.state,
+                timedOut: test.timedOut,
+                fn: test.fn.toString(),
+                sync: test.sync,
+                suitePath: path
+            }
+        }
     })(window, document, requirejs, rAppid);
 </script>
 </body>
