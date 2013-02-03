@@ -7,9 +7,10 @@ define(["js/core/Application", "js/core/ExternalInterface"], function (Applicati
 
         start: function() {
 
+            var self = this;
             var externalInterface = this.$.externalInterface;
             externalInterface.addCallback("test", function (value) {
-                window.testValue = value;
+                self.$stage.testValue = value;
             });
 
             this.callBase();
