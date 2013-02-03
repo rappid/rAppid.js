@@ -6,6 +6,8 @@
     <script type="text/javascript" src="../js/lib/require.js"></script>
     <script type="text/javascript" src="../js/lib/rAppid.js"></script>
 
+    <script type="text/javascript" src="lib/jquery-1.9.0.min.js"></script>
+    <script type="text/javascript" src="lib/jquery.expect.min.js"></script>
 </head>
 <body>
 
@@ -28,6 +30,9 @@
                 },
                 mocha: {
                     exports: "mocha"
+                },
+                chai: {
+                    exports: "chai"
                 }
             },
             baseUrl: ".."
@@ -41,6 +46,8 @@
 
             require(["require", "flow", "mocha", "chai"], function (require, flow, mocha, chai) {
 
+                window.expect = chai.expect;
+
                 var results = {
                     failedTests: [],
                     skippedTests: [],
@@ -48,9 +55,6 @@
                 };
 
                 var fileName = "/webtest/test/" + test.test;
-
-                window.chai = chai;
-                window.expect = chai.expect;
 
                 flow()
                     .seq(function () {
