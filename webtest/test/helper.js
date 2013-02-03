@@ -1,0 +1,6 @@
+var helper = (function() {
+
+    return {
+
+    };
+})();
