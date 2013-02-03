@@ -1,0 +1,139 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <link rel="stylesheet" href="lib/mocha.css"/>
+
+    <style type="text/css">
+
+        html {
+            height: 100%;
+        }
+
+        body {
+            margin: 0;
+            height: 100%;
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+        }
+
+        #mocha {
+            position: fixed;
+            right: 0;
+            width: 30%;
+            min-width: 500px;
+            top: 0;
+            height: 100%;
+            overflow: auto;
+        }
+
+    </style>
+
+    <title>rAppid:js TestRunner</title>
+
+    <script type="text/javascript" src="../js/lib/require.js"></script>
+
+</head>
+<body>
+
+<div id="mocha"></div>
+<div id="container"></div>
+
+<script type="text/javascript">
+
+    (function (window, document, requirejs) {
+
+        var require = requirejs({
+            paths: {
+                flow: "js/lib/flow",
+                json: "js/plugin/json",
+                JSON: "js/lib/json2"
+            },
+            shim: {
+                flow: {
+                    exports: "flow"
+                },
+                JSON: {
+                    exports: "JSON"
+                }
+            },
+            baseUrl: ".."
+        }),
+        container = document.getElementById("container"),
+        mocha = document.getElementById("mocha");
+
+        if (typeof JSON !== "undefined") {
+            define("JSON", function () {
+                return JSON;
+            });
+        }
+
+        require(["require", "flow", "json!webtest/groups"], function (require, flow, groups) {
+
+            var testGroup,
+                tests,
+                failedTests = [],
+                skippedTests = [],
+                passedTests = [];
+
+
+            // determinate test group from url
+            testGroup = /testgroup=([^&]+)/.exec(window.location.search);
+            if (testGroup) {
+                testGroup = testGroup[1];
+            }
+            testGroup = testGroup || "all";
+
+            // get tests from test group
+            tests = groups.hasOwnProperty(testGroup) ? groups[testGroup] : groups["all"];
+
+            flow()
+                .seqEach(tests, function (test, cb) {
+
+                    if (test.type === "browser") {
+
+                        var fileName = "webtest/test/" + test.test,
+                            iFrame;
+
+                        flow()
+                            .seq(function(cb) {
+                                container.innerHTML = "";
+                                iFrame = document.createElement("iframe");
+                                iFrame.onload = function() {
+                                    cb();
+                                };
+                                iFrame.src = "container.html";
+                                container.appendChild(iFrame);
+                            })
+                            .seq(function(cb) {
+                                iFrame.contentWindow.startTest(test, function(err, results) {
+                                     if (!err) {
+                                         failedTests = failedTests.concat(results.failedTests);
+                                         skippedTests = skippedTests.concat(results.skippedTests);
+                                         passedTests = passedTests.concat(results.passedTests);
+                                     } else {
+                                         failedTests.push(err);
+                                     }
+                                    cb(err);
+                                }, mocha);
+                            })
+                            .exec(function(err) {
+                                // no error so we can run the other tests
+                                cb();
+                            });
+                    } else {
+                        cb();
+                    }
+                })
+                .exec(function(err) {
+                    err && console.error(err);
+                });
+        })
+
+
+    })(window, document, requirejs);
+</script>
+</body>
+</html>
