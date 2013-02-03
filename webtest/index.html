@@ -74,10 +74,12 @@
 
             var testGroup,
                 tests,
-                failedTests = [],
-                skippedTests = [],
-                passedTests = [];
-
+                testResults = {
+                    errorTests:  [],
+                    failedTests: [],
+                    skippedTests: [],
+                    passedTests: []
+                };
 
             // determinate test group from url
             testGroup = /testgroup=([^&]+)/.exec(window.location.search);
@@ -110,16 +112,21 @@
                             .seq(function(cb) {
                                 iFrame.contentWindow.startTest(test, function(err, results) {
                                      if (!err) {
-                                         failedTests = failedTests.concat(results.failedTests);
-                                         skippedTests = skippedTests.concat(results.skippedTests);
-                                         passedTests = passedTests.concat(results.passedTests);
-                                     } else {
-                                         failedTests.push(err);
+                                         testResults.failedTests = testResults.failedTests.concat(results.failedTests);
+                                         testResults.skippedTests = testResults.skippedTests.concat(results.skippedTests);
+                                         testResults.passedTests = testResults.passedTests.concat(results.passedTests);
                                      }
                                     cb(err);
                                 }, mocha);
                             })
                             .exec(function(err) {
+                                if (err) {
+                                    testResults.errorTests.push({
+                                        error: err,
+                                        file: fileName
+                                    });
+                                }
+
                                 // no error so we can run the other tests
                                 cb();
                             });
@@ -129,6 +136,9 @@
                 })
                 .exec(function(err) {
                     err && console.error(err);
+
+                    window.testsCompleted = true;
+                    window.testResults = testResults;
                 });
         })
 
