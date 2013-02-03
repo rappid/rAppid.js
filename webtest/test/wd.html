@@ -1,0 +1,51 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>rAppid:js TestRunner</title>
+
+    <script type="text/javascript" src="../../js/lib/require.js"></script>
+    <script type="text/javascript" src="../../js/lib/rAppid.js"></script>
+
+    <script type="text/javascript" src="helper.js"></script>
+</head>
+<body>
+<script type="text/javascript">
+
+    (function (window, document, rAppid) {
+
+        var application,
+            paramMatcher = /^([^=]+)=?(.*)$/,
+            parameter = {},
+            urlParameter = window.location.search.replace(/^\?/, "").split("&");
+
+        for (var i = 0; i < urlParameter.length; i++) {
+            var param = paramMatcher.exec(urlParameter[i]);
+            if (param) {
+                parameter[param[1]] = param[2];
+            }
+        }
+
+        application = parameter.application;
+
+        if (application) {
+            application = "webtest/test/" + application;
+
+            rAppid.bootStrap(application, document.body, parameter, {
+                baseUrl: "../..",
+                loadConfiguration: "config.json"
+            }, function (err, stage, application) {
+                helper.err = err;
+                helper.stage = stage;
+                helper.application = application;
+
+            });
+        } else {
+            console.log("application not specified");
+        }
+
+
+    })(window, document, rAppid);
+
+</script>
+</body>
+</html>
