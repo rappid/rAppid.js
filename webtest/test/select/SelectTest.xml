@@ -1,0 +1,12 @@
+<app:SelectTestClass xmlns:app="webtest.test.select" xmlns="http://www.w3.org/1999/xhtml">
+    <select cid="simple" class="simple">
+        <option>A</option>
+        <option>B</option>
+        <option>C</option>
+    </select>
+
+    <select cid="bound" items="{items}" id="bound">
+        <option value="{item.id}">{item.value}</option>
+    </select>
+
+</app:SelectTestClass>
