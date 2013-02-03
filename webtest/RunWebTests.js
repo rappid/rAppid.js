@@ -11,6 +11,7 @@ var fs = require("fs"),
         .default("host", "127.0.0.1")
         .default("port", "4444")
         .default("timeout", "30000")
+        .default("browser", "firefox")
         .default("baseUrl", "http://localhost:8080")
         .default("username", process.env["SAUCE_USERNAME"])
         .default("password", process.env["SAUCE_ACCESS_KEY"])
@@ -34,7 +35,8 @@ var testGroup = argv["test-group"],
     desired,
     failedTests = [],
     skippedTests = [],
-    passedTests = [];
+    passedTests = [],
+    errorTests = [];
 
 groups = JSON.parse(fs.readFileSync(path.join(__dirname + "/groups.json"), "utf8"));
 tests = testGroup in groups ? groups[testGroup] : groups["all"];
@@ -68,6 +70,51 @@ flow()
     })
     .seq(function (cb) {
         // run browser tests
+
+        flow()
+            .seq(function(cb) {
+                browser.get(argv.baseUrl + "/webtest/?testgroup=" + argv["test-group"], cb);
+            })
+            .seq("testResults", function(cb) {
+
+                waitForComplete();
+
+                function waitForComplete() {
+
+                    setTimeout(function() {
+                        // TODO: better make use of execute_async
+                        browser.execute("return window.testResults", function(err, testResults) {
+
+                            if (err) {
+                                cb(err);
+                            } else {
+                                if (testResults) {
+                                    cb(null, testResults);
+                                } else {
+                                    // another round trip
+                                    waitForComplete();
+                                }
+                            }
+                        });
+                    }, 1000);
+                }
+            })
+            .exec(function(err, results) {
+                if (err) {
+                    errorTests.push({
+                        fileName: "browser tests",
+                        error: err
+                    });
+                } else {
+                    var testResults = results["testResults"];
+                    errorTests = errorTests.concat(testResults.errorTests);
+                    failedTests = failedTests.concat(testResults.failedTests);
+                    skippedTests = skippedTests.concat(testResults.skippedTests);
+                    passedTests = passedTests.concat(testResults.passedTests);
+                }
+
+                cb();
+            });
     })
     .seqEach(tests, function (test, cb) {
 
@@ -114,7 +161,14 @@ flow()
                         cb();
                     });
                 })
-                .exec(function () {
+                .exec(function (err) {
+                    if (err){
+                        errorTests.push({
+                            fileName: fileName,
+                            error: err
+                        });
+                    }
+
                     cb();
                 });
         } else {
@@ -124,8 +178,9 @@ flow()
     })
     .seq(function () {
 
-        console.log(failedTests.length === 0 ? "SUCCESS" : "FAILED");
+        console.log(failedTests.length === 0 && errorTests.length === 0 ? "SUCCESS" : "FAILED");
 
+        console.log("Error Tests: " + errorTests.length);
         console.log("Failed tests: " + failedTests.length);
         console.log("Skipped tests: " + skippedTests.length);
         console.log("Passed tests: " + passedTests.length);
