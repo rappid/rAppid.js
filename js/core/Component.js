@@ -195,7 +195,12 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                         // remove it from templates
                         delete this.$templates[child.$.name];
                     }
+                },
 
+                removeAllChildren: function () {
+                    for (var i = this.$elements.length - 1; i > -1; i--) {
+                        this.removeChild(this.$elements[i]);
+                    }
                 },
 
                 _addTemplate: function (template) {
