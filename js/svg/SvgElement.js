@@ -1,20 +1,21 @@
 define(['js/core/DomElement', 'js/core/List', 'js/core/Bindable'], function (DomElement, List, Bindable) {
 
-    var SvgElement = DomElement.inherit("js.svg.SvgElement", {
+    var undefined,
+        SvgElement = DomElement.inherit("js.svg.SvgElement", {
 
         defaults: {
             transformations: List,
             _transform: null,
 
-            translateX: null,
-            translateY: null,
+            translateX: undefined,
+            translateY: undefined,
 
-            scaleX: null,
-            scaleY: null,
+            scaleX: undefined,
+            scaleY: undefined,
 
-            rotation: null,
-            rotationX: null,
-            rotationY: null
+            rotation: undefined,
+            rotationX: undefined,
+            rotationY: undefined
         },
 
         $classAttributes: ["transformations", "translateX", "translateY", "scaleX", "scaleY", "rotation", "rotationX", "rotationY"],
@@ -47,14 +48,14 @@ define(['js/core/DomElement', 'js/core/List', 'js/core/Bindable'], function (Dom
                 x = this.$.translateX;
                 y = this.$.translateY;
 
-                this.translate(x, y);
+                !(x === undefined && y === undefined) && this.translate(x, y);
             }
 
             if (this._hasSome($, ["scaleX", "scaleY"])) {
                 x = this.$.scaleX;
                 y = this.$.scaleY;
 
-                this.scale(x, y);
+                !(x === undefined && y === undefined) && this.scale(x, y);
             }
 
             if (this._hasSome($, ["rotation", "rotationX", "rotationY"])) {
@@ -62,7 +63,7 @@ define(['js/core/DomElement', 'js/core/List', 'js/core/Bindable'], function (Dom
                 x = this.$.rotationX;
                 y = this.$.rotationY;
 
-                this.rotate(r, x, y);
+                !(x === undefined && y === undefined && r === undefined) && this.rotate(r, x, y);
             }
 
 
