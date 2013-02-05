@@ -76,6 +76,13 @@ define(["js/html/HtmlElement", "js/core/Bus", "js/core/WindowManager", "js/core/
 
                 }
 
+                var s = window.document.createElement('div').style,
+                    supportsTransitions = 'transition' in s ||
+                        'WebkitTransition' in s ||
+                        'MozTransition' in s ||
+                        'msTransition' in s ||
+                        'OTransition' in s;
+                classes.push(supportsTransitions ? "transition" : "no-transition");
 
             } else {
                 classes.push("node");
