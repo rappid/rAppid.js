@@ -104,7 +104,11 @@ define(["js/core/EventDispatcher", "js/core/Bindable", "underscore", "js/data/Qu
                     item.bind('*', this._onItemEvent, this);
                 }
                 itemIndex = index + i;
-                this.$items[itemIndex] = item;
+                if(_.isUndefined(this.$items[itemIndex]) || itemIndex >= this.$items.length){
+                    this.$items[itemIndex] = item;
+                } else {
+                    this.$items.splice(itemIndex,0,item);
+                }
                 if (options.silent !== true) {
                     this.trigger('add', {item: item, index: itemIndex})
                 }
