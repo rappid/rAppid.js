@@ -1,10 +1,17 @@
-define(['js/svg/SvgElement'], function (SvgElement) {
+define(['xaml!js/svg/SvgDescriptor', 'js/core/Base'], function (SvgElement, Base) {
 
-    return SvgElement.inherit("js.svg.Svg", {
+    var Svg = SvgElement.inherit("js.svg.Svg", {
 
         defaults: {
             tagName: "svg",
             viewBox: "0 0 100 100"
+        },
+
+        $classAttributes: ["defs"],
+
+        ctor: function() {
+            this.callBase();
+            this.fontManager = new Svg.FontManager(this);
         },
 
         setViewBox: function (x, y, width, height) {
@@ -32,4 +39,31 @@ define(['js/svg/SvgElement'], function (SvgElement) {
         }
 
     });
+
+    Svg.FontManager = Base.inherit("js.svg.Svg.FontManager", {
+
+        ctor: function(svg) {
+            this.$svg = svg;
+            this.$fontCache = {};
+
+            this.callBase();
+        },
+
+        loadExternalFont: function (fontFamily, src) {
+            var svg = this.$svg;
+
+            var ret = svg.$templates["external-font"].createInstance({
+                $fontFamily: fontFamily,
+                $src: src
+            });
+
+            svg.$.defs.addChild(ret);
+
+            this.$fontCache[fontFamily] = ret;
+
+            return ret;
+        }
+    });
+
+    return Svg;
 });
