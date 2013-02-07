@@ -575,7 +575,7 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                 rootScope = rootScope || this.$rootScope;
                 parentScope = parentScope || this.$parentScope;
                 // foreach child Descriptor
-                var components = this._getChildrenFromDescriptor(this.$descriptor, null, rootScope);
+                var components = this._getChildrenFromDescriptor(this.$descriptor.cloneNode(true), null, rootScope);
 
                 for (var c = 0; c < components.length; c++) {
                     components[c].$parentScope = parentScope;
