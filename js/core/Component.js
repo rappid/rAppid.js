@@ -274,7 +274,7 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                         for (var j = 0; j < childrenFromDescriptor.length; j++) {
                             child = childrenFromDescriptor[j];
 
-                            if (_.indexOf(addedDescriptors, child.$descriptor) === -1) {
+                            if (child.$createdByTemplate || _.indexOf(addedDescriptors, child.$descriptor) === -1) {
                                 children.push(child);
                                 if(child.$descriptor){
                                     addedDescriptors.push(child.$descriptor);
@@ -575,9 +575,11 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                 rootScope = rootScope || this.$rootScope;
                 parentScope = parentScope || this.$parentScope;
                 // foreach child Descriptor
-                var components = this._getChildrenFromDescriptor(this.$descriptor.cloneNode(true), null, rootScope);
+
+                var components = this._getChildrenFromDescriptor(this.$descriptor, null, rootScope);
 
                 for (var c = 0; c < components.length; c++) {
+                    components[c].$createdByTemplate = true;
                     components[c].$parentScope = parentScope;
                     components[c].set(attributes);
                 }
