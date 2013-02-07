@@ -12,6 +12,9 @@ define(['xaml!js/svg/SvgDescriptor', 'js/core/Base'], function (SvgElement, Base
         ctor: function() {
             this.callBase();
             this.fontManager = new Svg.FontManager(this);
+            this.$svgRoot = this;
+
+            this.setViewBox.apply(this,this.$.viewBox.split(" "));
         },
 
         setViewBox: function (x, y, width, height) {
