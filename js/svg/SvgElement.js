@@ -52,6 +52,11 @@ define(['js/core/DomElement', 'js/core/List', 'js/core/Bindable'], function (Dom
                     while(parent instanceof SvgElement && !parent.$svgRoot){
                         parent = this.$parent.$parent;
                     }
+
+                    if (!parent) {
+                        return null;
+                    }
+
                     return parent.$svgRoot;
 
                 }
