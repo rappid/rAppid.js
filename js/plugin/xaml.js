@@ -198,10 +198,14 @@ define([], function () {
                 xhr.open('GET', url, true);
                 xhr.onreadystatechange = function () {
                     if (xhr.readyState === 4) {
-                        if (xhr.responseXML) {
-                            callback(null, xhr.responseXML);
+                        if (xhr.status === 200 || xhr.status === 304) {
+                            if (xhr.responseXML) {
+                                callback(null, xhr.responseXML);
+                            } else {
+                                callback("no responseXML found");
+                            }
                         } else {
-                            callback("no responseXML found");
+                            callback("got status " + xhr.status  + " for " + url);
                         }
                     }
                 };
