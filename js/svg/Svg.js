@@ -55,16 +55,19 @@ define(['xaml!js/svg/SvgDescriptor', 'js/core/Base'], function (SvgElement, Base
         loadExternalFont: function (fontFamily, src) {
             var svg = this.$svg;
 
-            var ret = svg.$templates["external-font"].createInstance({
-                $fontFamily: fontFamily,
-                $src: src
-            });
+            if (!this.$fontCache[fontFamily]) {
+                var font = svg.$templates["external-font"].createInstance({
+                    $fontFamily: fontFamily,
+                    $src: src
+                });
 
-            svg.$.defs.addChild(ret);
+                svg.$.defs.addChild(font);
 
-            this.$fontCache[fontFamily] = ret;
+                this.$fontCache[fontFamily] = font;
+            }
 
-            return ret;
+
+            return this.$fontCache[fontFamily];
         }
     });
 
