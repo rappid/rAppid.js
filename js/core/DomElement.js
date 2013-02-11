@@ -718,6 +718,8 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
             ctor: function (domEvent) {
                 this.domEvent = domEvent;
                 this.callBase(domEvent);
+
+                this.isDefaultPrevented = !!domEvent.defaultPrevented;
             },
             stopPropagation: function () {
                 this.callBase();
