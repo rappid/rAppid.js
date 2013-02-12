@@ -2,7 +2,7 @@ var chai = require('chai'),
     should = chai.should(),
     expect = chai.expect,
     testRunner = require('..').TestRunner.setup(),
-    query = require('../js/lib/query.js').query;
+    query = require('../js/lib/query/query.js').query;
 
 var C = {};
 
