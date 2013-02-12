@@ -15,13 +15,17 @@ describe('js.data.Entity', function () {
         testRunner.requireClasses({
             Entity: 'js/data/Entity',
             List: 'js/core/List'
-        }, C, done);
+        }, C, function(err) {
 
-        EntityClass = C.Entity.inherit('app.entity.Entity', {
-            schema: {
-                name: String
-            }
+            EntityClass = C.Entity.inherit('app.entity.Entity', {
+                schema: {
+                    name: String
+                }
+            });
+
+            done(err);
         });
+
     });
 
     describe('#validate', function () {
