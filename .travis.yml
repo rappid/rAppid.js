@@ -1,11 +1,13 @@
 language: node_js
 node_js:
 - 0.8
-script: "grunt webtest-saucelabs --force"
+script:
+  - "mocha -R spec"
+  - "grunt webtest-saucelabs --force"
 env:
   global:
-   - secure: "c99xMZW5UrW4o76KA/xzPzX9c0clHvPQuyp/v24tJVYEinx1xazYynVc7b1e\n76FYuFhuLkgAW33KCaL/yknwSkQ5QmtjrrZ+eNzUUJM7uAbCe2WX58NPH6WE\nr/Kvc0Axc/k4q0l2UFGOT5ehaDgjqt7yHpqZO29ivhsrxtVffLo="
-   - secure: "Ev8BKiqsh2GWwNv30DLvbIvp2zgK5JJxJDw7+GXOIYTVkR9sigEPSgW6Q4+M\n+QQJFEIbP0QSVCS9/Q5jRatd6rrKDEi6QFYwsbZblpWrb4WLOcT1O/kSNCbL\nsMEwPyYiOxViO2WmpHuR8LP8XE2aQiMQ5Vb1AjbuBmFJxG0a3OE="
+   - secure: "PXKszsSMkq3W6JrQmRZwHJ3BJTxAQ6m4Ac/QXCnTbWzXPLn95otw5II0DSX+\nfdbDKwPfvaAd+j8X6LJkBlkwpzpTUf9s9V3gccvraq14E7UG8Sz1rHqQOlY4\nSrirb0DUQVeVKikFz0LZkYBetAspNr6M+Z136kvDqgi6/4FGbVM="
+   - secure: "dON8SsNoETgtSQnIJXuD29J58qyWR6I7u2cVuFvOPG7C0mzpJoQ3sPKFZ/MG\n0QNxzyVFV3UDy6sFhFbRsXJcgmq4+8rtawkuINk9fMW9i8jvHBbL5lpUJIDV\nwrkv0BMrc9vedaB4dzDaGi+DlLekuhhHB5MvN180WxAmlDHbx2o="
 branches:
  only:
    - dev
