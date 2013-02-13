@@ -1,6 +1,7 @@
 module.exports = function (grunt) {
     var flow = require("flow.js").flow,
-        tunnel;
+        tunnel,
+        afterWebTestCallback;
 
     grunt.initConfig({
         lint: {
@@ -20,11 +21,10 @@ module.exports = function (grunt) {
             firefox: {
                 browserName: "firefox"
             }
-            ,
-            chrome: {
+            ,chrome: {
                 browserName: "chrome"
-            },
-            ie: {
+            }
+            ,ie: {
                 browserName: "internet explorer",
                 version: "9"
             }
@@ -49,10 +49,16 @@ module.exports = function (grunt) {
 
         WebTestRunner(_.extend({}, grid, {
             desired: desired
-        }), function(err) {
+        }), function(err, runner) {
 
-            // TODO: update job status if saucelabs was used
-            done(err ? false : null);
+            if (afterWebTestCallback) {
+                afterWebTestCallback(runner, function() {
+                    done(err ? false : null);
+                });
+            } else {
+                done(err ? false : null);
+            }
+
         });
 
     });
@@ -61,7 +67,9 @@ module.exports = function (grunt) {
     grunt.registerTask('connectToSauceLabs', 'Establish a tunnel between this machine an saucelabs.com', function (username, password) {
 
         var done = this.async(),
-            Tunnel = require("saucelabs-tunnel").Tunnel;
+            Tunnel = require("saucelabs-tunnel").Tunnel,
+            SauceLabs = require("SauceLabs"),
+            saucelabs;
 
         username = username || process.env["SAUCE_USERNAME"];
         password = password || process.env["SAUCE_ACCESS_KEY"];
@@ -70,6 +78,22 @@ module.exports = function (grunt) {
             username: username,
             password: password
         });
+
+        saucelabs = new SauceLabs({
+            username: username,
+            password: password
+        });
+
+        afterWebTestCallback = function(runner, callback) {
+
+            saucelabs.updateJob(runner.sessionId, {
+                name: "rappidjs-" + (process.env["TRAVIS_BRANCH"] || "") + "#" + (process.env["TRAVIS_BUILD_NUMBER"] || ""),
+                public: true,
+                build: process.env["TRAVIS_JOB_ID"],
+                passed: runner.results.failedTests.length === 0 && runner.results.errorTests.length === 0,
+                "custom-data": runner.results
+            }, callback);
+        };
 
         tunnel.connect(function (err) {
             if (!err) {
