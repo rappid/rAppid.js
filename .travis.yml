@@ -9,3 +9,7 @@ env:
 branches:
  only:
    - dev
+notifications:
+ email:
+   - tony@rappidjs.com
+   - marcus@rappidjs.com
