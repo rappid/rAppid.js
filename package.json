@@ -57,7 +57,8 @@
         "chai": "*",
         "mocha": "*",
         "pegjs": "*",
-        "grunt": "*"
+        "grunt": "*",
+        "wd": "*"
     },
     "license": "MIT",
     "engine": {
