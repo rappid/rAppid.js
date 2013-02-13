@@ -45,8 +45,6 @@ module.exports = function (grunt) {
             },
             desired = this.data;
 
-        console.log(grid, desired);
-
         WebTestRunner(_.extend({}, grid, {
             desired: desired
         }), function(err, runner) {
@@ -68,7 +66,7 @@ module.exports = function (grunt) {
 
         var done = this.async(),
             Tunnel = require("saucelabs-tunnel").Tunnel,
-            SauceLabs = require("SauceLabs"),
+            SauceLabs = require("saucelabs"),
             saucelabs;
 
         username = username || process.env["SAUCE_USERNAME"];
