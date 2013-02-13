@@ -5,11 +5,14 @@ var path = require("path"),
         };
 
         var optimist = require("optimist")(args)
+            .usage("rappidjs webtest [--desired.browser=chrome --desired.version=19]")
             .default("testGroup", "all")
             .default("host", "127.0.0.1")
             .default("port", "4444")
             .default("timeout", "30000")
-            .default("browser", "firefox")
+            .default("desired", {
+                browserName: "firefox"
+            })
             .default("baseUrl", "http://localhost:8080")
             .default("dir", path.resolve("webtest"))
             .default("sessionName", "webtest")
