@@ -735,6 +735,9 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
                     return this;
                 },
                 isDeepEqual : function(b){
+                    if(!b){
+                        return false;
+                    }
                     if (_.size(this.$) !== _.size(b.$)) {
                         return false;
                     }
