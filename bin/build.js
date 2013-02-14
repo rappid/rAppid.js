@@ -40,7 +40,6 @@ var optimizeConfig = {
     },
     "paths": {
         "rAppid": "js/lib/rAppid",
-        "text": 'js/plugin/text',
         "xaml": "js/plugin/xaml",
         "json": "js/plugin/json",
         "raw": "js/plugin/raw",
