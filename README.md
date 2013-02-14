@@ -1,3 +1,5 @@
+[![Selenium Test Status](https://saucelabs.com/buildstatus/rappidjs)](https://saucelabs.com/u/rappidjs)
+
 # rAppid.js - the way you want to do it.
 ## Introduction
 
