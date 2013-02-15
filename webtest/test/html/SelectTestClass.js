@@ -18,7 +18,9 @@ define(["js/core/Application", "js/core/List"], function (Application, List) {
                     value: "B"
                 }
             ]));
-
+        },
+        addItemAt: function(item, index){
+            this.$.items.add(item,{index: index});
         }
     });
 });
