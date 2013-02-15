@@ -30,7 +30,8 @@
         };
     }
 
-    var underscore,
+    var undefined,
+        underscore,
         Stage,
         document = window.document; // TODO: create workaround for node
 

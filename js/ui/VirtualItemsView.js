@@ -9,7 +9,8 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
     /***
      * defines an ItemsView which can show parts of data
      */
-    var VirtualItemsView = View.inherit('js.ui.VirtualItemsView', {
+    var undefined,
+        VirtualItemsView = View.inherit('js.ui.VirtualItemsView', {
 
         defaults: {
 

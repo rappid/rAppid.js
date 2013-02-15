@@ -1,5 +1,6 @@
 define(["js/ui/View", 'js/data/Collection', 'js/core/List'], function (View, Collection, List) {
-        var instances = [];
+        var undefined,
+            instances = [];
 
         return View.inherit('js.ui.SelectClass', {
             defaults: {

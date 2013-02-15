@@ -1,4 +1,5 @@
 (define = typeof define != "undefined" ? define : function (deps, factory) {
+    var undefined;
     module.exports = factory(exports, require("..").Query, require("..").Parser.RestConditionParser);
     define = undefined;
 });
