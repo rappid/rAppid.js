@@ -747,7 +747,7 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
 
     VirtualItemsView.VirtualCollectionDataAdapter = VirtualItemsView.VirtualDataAdapter.inherit('js.ui.VirtualItemsView.VirtualCollectionDataAdapter', {
 
-        ctor: function (data, virtualItemsView) {
+        ctor: function (data) {
 
             if (data && !(data instanceof Collection)) {
                 throw  "data needs to be a Collection";
@@ -757,7 +757,6 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
             this.$pages = {};
             this.$cache = {};
             this.$pageSize = data.$.pageSize;
-            this.$virutalItemsView = virtualItemsView;
 
             this.callBase();
 
