@@ -1,13 +1,15 @@
 {
     "all": [
         {
-            "app": "select/SelectTest.xml",
-            "test": "select/SelectTests.js",
-            "type": "wb"
-        },
-        {
             "app": "stage/StageTest.xml",
             "test": "stage/StageTests.js",
+            "type": "browser"
+        }
+    ],
+    "ui": [
+        {
+            "app": "ui/ItemsViewTest.xml",
+            "test": "ui/ItemsViewTests.js",
             "type": "browser"
         }
     ]
