@@ -575,7 +575,7 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
             },
 
             addClass: function (value) {
-                var classNames = value.split(rspace);
+                var classNames = (""+value).split(rspace);
 
                 var className = this.$el.getAttribute("class") || "";
 
