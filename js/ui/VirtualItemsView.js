@@ -38,6 +38,8 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
 
             fetchPageDelay: 500,
 
+            fetchWithFullData: false,
+
             $dataAdapter: null,
             selectionMode: 'multi',
             selectedItems: List,
@@ -745,7 +747,7 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
 
     VirtualItemsView.VirtualCollectionDataAdapter = VirtualItemsView.VirtualDataAdapter.inherit('js.ui.VirtualItemsView.VirtualCollectionDataAdapter', {
 
-        ctor: function (data) {
+        ctor: function (data, virtualItemsView) {
 
             if (data && !(data instanceof Collection)) {
                 throw  "data needs to be a Collection";
@@ -755,6 +757,7 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
             this.$pages = {};
             this.$cache = {};
             this.$pageSize = data.$.pageSize;
+            this.$virutalItemsView = virtualItemsView;
 
             this.callBase();
 
@@ -819,7 +822,9 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
                                 virtualItemsView.$lastEndIndex >= pageStartIndex) {
 
                                 // we need to fetch the page
-                                self.$data.fetchPage(pageIndex, null, function (err) {
+                                self.$data.fetchPage(pageIndex, {
+                                    fullData: self.$virtualItemsView.$.fetchWithFullData
+                                }, function (err) {
                                     if (err) {
                                         // delete page so it will be fetched again on scrolling
                                         delete self.$pages[pageIndex];
