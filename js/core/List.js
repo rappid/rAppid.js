@@ -78,7 +78,9 @@ define(["js/core/EventDispatcher", "js/core/Bindable", "underscore", "js/data/Qu
          * @param item
          */
         unshift: function (item) {
-            this.add(item, 0);
+            this.add(item, {
+                index: 0
+            });
         },
         /**
          * This method adds one ore items to the array.
