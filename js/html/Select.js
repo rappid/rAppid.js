@@ -6,7 +6,7 @@ define(["js/ui/SelectionView", "underscore"], function (SelectionView, _) {
                 needsSelection: true,
                 tagName: 'select'
             },
-            $defaultTemplateName: 'item',
+            $defaultTemplateName: null,
 
             _renderMultiSelect: function (multiSelect) {
                 this.$el.multiple = multiSelect;
