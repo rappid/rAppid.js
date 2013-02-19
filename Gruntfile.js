@@ -3,13 +3,19 @@ module.exports = function (grunt) {
         tunnel,
         afterWebTestCallback;
 
+    grunt.loadNpmTasks('grunt-contrib-connect');
+
     grunt.initConfig({
         lint: {
             files: ['grunt.js', 'js/**/*.js', 'srv/**/*.js', 'lib/*.js', 'bin/**/*.js']
         },
 
-        server: {
-            port: 8080
+        connect: {
+            server: {
+                options: {
+                    port: 8080
+                }
+            }
         },
 
         seleniumGrid: {
@@ -34,7 +40,7 @@ module.exports = function (grunt) {
 
     grunt.registerMultiTask('runWebTests', 'runs the webtest', function () {
 
-        this.requires("server");
+        this.requires("connect");
 
         var WebTestRunner = require("./").WebTestRunner,
             _ = require("underscore"),
@@ -113,9 +119,9 @@ module.exports = function (grunt) {
         tunnel.disconnect(this.async());
     });
 
-    grunt.registerTask('webtest-saucelabs', ["server", "connectToSauceLabs", "runWebTests", "disconnectFromSauceLabs"]);
+    grunt.registerTask('webtest-saucelabs', ["connect", "connectToSauceLabs", "runWebTests", "disconnectFromSauceLabs"]);
 
-    grunt.registerTask('webtest-local', ["server", "runWebTests"]);
+    grunt.registerTask('webtest-local', ["connect", "runWebTests"]);
 
 
     grunt.registerTask("default")

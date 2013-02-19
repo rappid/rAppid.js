@@ -57,7 +57,8 @@
     "chai": "*",
     "mocha": "*",
     "pegjs": "*",
-    "grunt": "*",
+    "grunt": "~0.4.0",
+    "grunt-contrib-connect": "*",
     "wd": "*"
   },
   "license": "MIT",
