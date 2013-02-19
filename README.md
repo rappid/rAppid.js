@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/it-ony/rAppid.js.png?branch=dev)](https://travis-ci.org/it-ony/rAppid.js)
 [![Selenium Test Status](https://saucelabs.com/buildstatus/rappidjs)](https://saucelabs.com/u/rappidjs)
 
 # rAppid.js - the way you want to do it.
