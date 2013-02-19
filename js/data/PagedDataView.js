@@ -111,7 +111,7 @@ define(["js/data/DataView", "js/core/List", "js/data/Collection", "flow", "under
 
                 if (baseList instanceof Collection) {
                     // determinate pages to load based on the page size
-                    var collectionPageSize = this.$.baseList.$options.pageSize;
+                    var collectionPageSize = this.$.baseList.$.pageSize;
 
                     var collectionStartPage = this._itemIndexToPageIndex(this._pageIndexToItemIndex(pageIndex), collectionPageSize);
                     var collectionEndPage = this._itemIndexToPageIndex(this._pageIndexToItemIndex(pageIndex + 1) - 1, collectionPageSize);

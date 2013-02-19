@@ -40,10 +40,10 @@ var optimizeConfig = {
     },
     "paths": {
         "rAppid": "js/lib/rAppid",
-        "text": 'js/plugin/text',
         "xaml": "js/plugin/xaml",
         "json": "js/plugin/json",
         "raw": "js/plugin/raw",
+        "Query": "js/lib/query/query",
         "flow": "js/lib/flow",
         "inherit": "js/lib/inherit",
         "underscore": "js/lib/underscore",
@@ -66,6 +66,7 @@ var optimizeConfig = {
 
 var build = function (args, callback) {
     var basePath = process.cwd();
+
     // read out config.json
     var buildConfigPath = path.join(basePath, "build.json");
     var publicPath = path.join(basePath, "public");
@@ -95,6 +96,8 @@ var build = function (args, callback) {
         optimizeConfig.optimize = 'none';
     }
 
+    optimizeConfig.removeSpaces = buildConfig.removeSpaces || false;
+
     var xamlClasses = config.xamlClasses;
 
     // find modules
@@ -103,18 +106,26 @@ var build = function (args, callback) {
     config.optimizedXAML = [];
 
     buildConfig.modules.forEach(function (module, index) {
-        isXamlClass = xamlClasses.indexOf(module) > -1;
-        moduleConfig = {
-            name: module,
-            create: true,
-            include: []
-        };
+
+        if (typeof module === "string"){
+            moduleConfig = {
+                name: module,
+                create: true,
+                include: []
+            };
+        } else {
+            moduleConfig = module;
+            moduleConfig.create = true;
+            moduleConfig.include = moduleConfig.include || [];
+        }
+        isXamlClass = xamlClasses.indexOf(moduleConfig.name) > -1;
 
         if (index === 0) {
             moduleConfig.include = [
                 'rAppid',
                 'inherit',
                 'flow',
+                'Query',
                 'underscore',
                 'js/plugin/json',
                 'json!config.json',
@@ -122,14 +133,15 @@ var build = function (args, callback) {
                 'js/core/Bus',
                 'js/core/Stage',
                 'js/core/WindowManager',
+                'js/core/InterCommunicationBus',
                 'js/core/HeadManager',
                 'js/core/Injection',
-                'js/core/History'];
+                'js/core/History'].concat(moduleConfig.include);
         }
 
-        var realModuleName = (isXamlClass ? "xaml!" : "") + module;
+        var realModuleName = (isXamlClass ? "xaml!" : "") + moduleConfig.name;
         if (index === 0) {
-            mainModule = module;
+            mainModule = moduleConfig.name;
         } else {
             moduleConfig.exclude = [mainModule];
         }
@@ -137,12 +149,24 @@ var build = function (args, callback) {
         moduleConfig.include.push(realModuleName);
 
         if(isXamlClass){
-            config.optimizedXAML.push(module);
+            config.optimizedXAML.push(moduleConfig.name);
         }
 
         optimizeConfig.modules.push(moduleConfig);
     });
     optimizeConfig.xamlClasses = config.xamlClasses;
+
+    for (var key in config.paths){
+        if(config.paths.hasOwnProperty(key)){
+            if(key !== "JSON"){
+                optimizeConfig.paths[key] = config.paths[key];
+
+            }
+            if (optimizeConfig.paths[key].indexOf("http") === 0) {
+                optimizeConfig.paths[key] = "empty:";
+            }
+        }
+    }
 
     optimizeConfig.dir = buildConfig.targetDir || optimizeConfig.dir;
 
@@ -172,17 +196,21 @@ var build = function (args, callback) {
     }
     fs.writeFileSync(configPath, JSON.stringify(config));
 
-
-    global.libxml = require("libxml");
-
-    // start optimizing
-    requirejs.optimize(optimizeConfig, function (results) {
+    var writeBackConfig = function(){
         // write back normal config
         delete config['optimizedXAML'];
         config.baseUrl = realBaseUrl;
 
         fs.writeFileSync(configPath, JSON.stringify(config));
+    };
 
+    global.libxml = require("libxml");
+
+    // start optimizing
+    requirejs.optimize(optimizeConfig, function (results) {
+        console.log(results);
+        // write back normal config
+        writeBackConfig();
 
         var indexFilePath = path.join(buildDirPath, buildConfig.indexFile || "index.html");
         var indexFile = fs.readFileSync(indexFilePath, "utf8");
@@ -197,8 +225,13 @@ var build = function (args, callback) {
             fs.writeFileSync(externalIndexFilePath, content);
         }
         fs.writeFileSync(indexFilePath, content);
+    }, function(err){
+        writeBackConfig();
+
+        console.log(err);
     });
 };
+
 
 build.usage = "rappidjs build";
 

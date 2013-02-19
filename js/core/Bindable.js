@@ -1,7 +1,8 @@
-define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "underscore"],
+define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "underscore", "js/core/BindingCreator"],
+    function (EventDispatcher, Parser, Binding, _, BindingCreator) {
 
+        var bindingCreator = new BindingCreator();
 
-    function (EventDispatcher, Parser, Binding, _) {
         // global invalidation timer
         var globalInvalidationQueue = (function () {
 
@@ -31,6 +32,43 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
             }
         })();
 
+        var isDeepEqual = function(a, b){
+            if (a === b) {
+                return true;
+            }
+
+            if (a instanceof Bindable && b instanceof Bindable) {
+                return a.isDeepEqual(b);
+            } else if (a instanceof Bindable || b instanceof Bindable) {
+                return false;
+            } else if (_.isArray(a) && _.isArray(b)) {
+                if (a.length !== b.length) {
+                    return false;
+                }
+                for (var i = 0; i < a.length; i++) {
+                    if (!isDeepEqual(a[i], b[i])) {
+                        return false;
+                    }
+                }
+                return true;
+            } else if(a instanceof Date && b instanceof Date){
+                return a.getTime() === b.getTime();
+            } else if(_.isObject(a) && _.isObject(b)){
+                if (_.size(a) !== _.size(b)) {
+                    return false;
+                }
+                for (var objectKey in a) {
+                    if(a.hasOwnProperty(objectKey) && b.hasOwnProperty(objectKey)){
+                        if (!isDeepEqual(a[objectKey], b[objectKey])) {
+                            return false;
+                        }
+                    }
+                }
+                return true;
+            }
+
+            return _.isEqual(a, b);
+        };
 
         var isEqual = function (a, b) {
             if (a instanceof EventDispatcher || b instanceof EventDispatcher) {
@@ -48,6 +86,8 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
                  */
                 ctor: function (attributes) {
                     this.$eventBindables = [];
+                    this.$bindings = {};
+                    this.$bindingCreator = bindingCreator;
 
                     // call the base class constructor
                     this.callBase(null);
@@ -84,9 +124,148 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
 
                     this.$ = attributes;
 
-                    this.$previousAttributes = {}
+                    this.$previousAttributes = {};
+
+                    this._initializeFromCtor();
 
                 },
+
+                _initializeFromCtor: function() {
+                    // hook
+                    this._initialize();
+                },
+
+                _initialize: function() {
+                    if (this.$initialized) {
+                        return;
+                    }
+
+                    this.$initializing = true;
+
+                    this.initialize();
+
+                    this._initializeBindings();
+                },
+
+                initialize: function () {
+
+                },
+
+                /***
+                 * Initialize all Binding and Event attributes
+                 */
+                _initializeBindings: function () {
+                    if (this.$initialized) {
+                        return;
+                    }
+
+                    var $ = this.$,
+                        bindingCreator = this.$bindingCreator,
+                        changedAttributes = {},
+                        bindingAttributes = {},
+                        bindingDefinitions,
+                        bindingAttribute,
+                        value,
+                        key;
+
+                    // we need to find out all attributes which contains binding definitions and set
+                    // the corresponding $[key] to null -> than evaluate the bindings
+                    // this is because some function bindings belong on other binding values which are
+                    // at the time of evaluation maybe unresolved and for example {foo.bar} instead of a value
+                    for (key in $) {
+                        if ($.hasOwnProperty(key)) {
+                            value = $[key];
+                            bindingDefinitions = bindingCreator.parse(value);
+
+                            if (bindingCreator.containsBindingDefinition(bindingDefinitions)) {
+                                // we found an attribute containing a binding definition
+                                bindingAttributes[key] = {
+                                    bindingDefinitions: bindingDefinitions,
+                                    value: value
+                                };
+
+                                $[key] = null;
+                            }
+                        }
+                    }
+
+                    // Resolve bindings and events
+                    for (key in $) {
+                        if ($.hasOwnProperty(key)) {
+                            bindingAttribute = bindingAttributes[key];
+                            if (bindingAttribute) {
+                                value = bindingAttribute.value;
+                                bindingDefinitions = bindingAttribute.bindingDefinitions;
+                                changedAttributes[key] = bindingCreator.evaluate(value, this, key, bindingDefinitions);
+                            } else {
+                                value = $[key];
+                                bindingDefinitions = null;
+                            }
+                        }
+                    }
+
+                    if (this.$errorAttribute && this.$bindings[this.$errorAttribute]) {
+                        var b = this.$bindings[this.$errorAttribute][0], errorBinding;
+                        if (b.$.twoWay && b.$.path.length > 1) {
+                            var path = b.$.path.slice(), attrKey = path.pop().name;
+                            path = path.concat(bindingCreator.parsePath("errors()." + attrKey));
+
+                            errorBinding = bindingCreator.create({
+                                type: 'oneWay',
+                                path: path
+                            }, this, "$error");
+                            if (errorBinding) {
+                                changedAttributes['$error'] = errorBinding.getValue();
+                            }
+                        }
+                    }
+
+                    this.set(changedAttributes);
+
+                    this._initializeBindingsBeforeComplete();
+
+                    this._initializationComplete();
+                },
+
+                _initializeBindingsBeforeComplete: function() {
+                    // hook
+                },
+
+                _initializationComplete: function () {
+
+                    // call commitChangedAttributes for all attributes
+                    this.set(this.$, {
+                        force: true,
+                        silent: true,
+                        initial: true
+                    });
+
+                    this.$initialized = true;
+                    this.$initializing = false;
+                },
+
+                getScopeForKey: function (key) {
+                    // if value was found
+                    if (this.$.hasOwnProperty(key)) {
+                        return this;
+                    } else if (this.$parentScope) {
+                        return this.$parentScope.getScopeForKey(key);
+                    } else {
+                        return null;
+                    }
+                },
+
+                getScopeForFncName: function (fncName) {
+                    var fnc = this[fncName];
+                    if (!_.isUndefined(fnc) && _.isFunction(fnc)) {
+                        return this;
+                    } else if (this.$parentScope) {
+                        return this.$parentScope.getScopeForFncName(fncName);
+                    } else {
+                        return null;
+                    }
+                },
+
                 /**
                  * Here you can define the default attributes of the instance.
                  *
@@ -554,6 +733,24 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
 
                     this.trigger('destroy', this);
                     return this;
+                },
+                isDeepEqual : function(b){
+                    if(!b){
+                        return false;
+                    }
+                    if (_.size(this.$) !== _.size(b.$)) {
+                        return false;
+                    }
+                    for (var key in this.$) {
+                        if (this.$.hasOwnProperty(key) && b.$.hasOwnProperty(key)) {
+                            if (!isDeepEqual(this.$[key], b.$[key])) {
+                                return false;
+                            }
+                        } else {
+                            return false;
+                        }
+                    }
+                    return true;
                 },
                 isEqual: function (b) {
                     return isEqual(this, b);

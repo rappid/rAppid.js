@@ -326,5 +326,50 @@ describe('js.core.Bindable', function () {
         });
     });
 
+    describe('#isDeepEqual', function(){
+        var original, nestedBindable, copy;
+        beforeEach(function () {
+            nestedBindable = new C.Bindable({
+                street: 'Street 1',
+                city: 'City 1'
+            });
+            original = new C.Bindable({
+                str: 'String',
+                number: 123,
+                boolean: true,
+                person: {
+                    firstName: 'Peter',
+                    lastName: 'Pan'
+                },
+                nested: nestedBindable,
+                arr: [
+                    nestedBindable, "ab", 2, "what", ["a", "b"]
+                ]
+            });
+
+            copy = original.clone();
+        });
+
+        it('#exact clone should be equal', function () {
+            expect(original.isDeepEqual(copy)).to.equal(true);
+        });
+
+        it('#modified clone with same values should be equal', function(){
+            copy.set("arr", [
+                nestedBindable.clone(),
+                "ab",
+                2,
+                "what",
+                ["a", "b"]
+            ]);
+            expect(original.isDeepEqual(copy)).to.equal(true);
+        });
+
+        it('#modified clone should not equal', function(){
+            copy.set('number',312);
+            expect(original.isDeepEqual(copy)).to.equal(false);
+        });
+    })
+
 
 });

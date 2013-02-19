@@ -1,7 +1,9 @@
-define(["js/core/Bindable", "underscore", "js/core/BindingCreator"], function (Bindable, _, BindingCreator) {
+define(["js/core/Bindable", "underscore"], function (Bindable, _) {
 
-        var undefined;
-        var bindingCreator = new BindingCreator();
+        var undefined,
+            prefixMap = {
+                "type:eventHandler": "eventHandler:"
+            };
 
         function stringToPrimitive(str) {
             // if it's not a string
@@ -35,13 +37,11 @@ define(["js/core/Bindable", "underscore", "js/core/BindingCreator"], function (B
                         rootScope = this;
                     }
                 }
-                this.$bindings = {};
                 this.$stage = stage;
                 this.$descriptor = descriptor;
                 this.$parentScope = parentScope || null;
                 this.$rootScope = rootScope || null;
                 this.$attributesNamespace = this.$attributesNamespace || {};
-                this.$bindingCreator = bindingCreator;
 
                 this.callBase(attributes);
 
@@ -68,6 +68,13 @@ define(["js/core/Bindable", "underscore", "js/core/BindingCreator"], function (B
                         // don't add xmlns attributes
                         if(node.nodeName.indexOf("xmlns") !== 0){
                             localName = this._getLocalNameFromNode(node);
+
+                            var prefix = prefixMap[node.namespaceURI];
+
+                            if (prefix) {
+                                localName = prefix + localName;
+                            }
+
                             attributes[localName] = stringToPrimitive(node.value);
 
                             if (node.namespaceURI) {
@@ -82,7 +89,7 @@ define(["js/core/Bindable", "underscore", "js/core/BindingCreator"], function (B
                 return attributes;
             },
             _getLocalNameFromNode: function(node){
-                return node.localName ? node.localName : node.name.split(":").pop();
+                return node.localName ? node.localName : node.nodeName.split(":").pop();
             },
             defaults: {
                 creationPolicy: "auto"
@@ -124,12 +131,11 @@ define(["js/core/Bindable", "underscore", "js/core/BindingCreator"], function (B
 
             },
 
-            _initializeBindings: function () {
-                this._initializationComplete();
+            _initializeFromCtor: function () {
+                // don't callBase() here, because initialization is made after all components in XAML are
+                // available or component is the root scope. See 8 lines above.
             },
-            initialize: function () {
 
-            },
             find: function (key) {
                 var scope = this.getScopeForKey(key);
                 if (this === scope) {
@@ -140,41 +146,11 @@ define(["js/core/Bindable", "underscore", "js/core/BindingCreator"], function (B
                     return null;
                 }
             },
-            getScopeForKey: function (key) {
-                // if value was found
-                if (this.$.hasOwnProperty(key)) {
-                    return this;
-                } else if (this.$parentScope) {
-                    return this.$parentScope.getScopeForKey(key);
-                } else {
-                    return null;
-                }
-            },
-            getScopeForFncName: function (fncName) {
-                var fnc = this[fncName];
-                if (!_.isUndefined(fnc) && _.isFunction(fnc)) {
-                    return this;
-                } else if (this.$parentScope) {
-                    return this.$parentScope.getScopeForFncName(fncName);
-                } else {
-                    return null;
-                }
-            },
+
             _preinitialize: function () {
 
             },
-            _initializationComplete: function () {
 
-                // call commitChangedAttributes for all attributes
-                this.set(this.$, {
-                    force: true,
-                    silent: true,
-                    initial: true
-                });
-
-                this.$initialized = true;
-                this.$initializing = false;
-            },
             _getTextContentFromDescriptor: function (desc) {
                 var textContent = desc.textContent || desc.text || desc.data;
                 if (!textContent) {

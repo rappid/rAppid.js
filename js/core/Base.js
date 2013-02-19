@@ -1,6 +1,7 @@
 define(["inherit"], function(inherit){
 
-    var cid = 0;
+    var cid = 0,
+        emptyCallback = function() {};
 
     var Base = inherit.Base.inherit("js.core.Base",{
 
@@ -17,6 +18,10 @@ define(["inherit"], function(inherit){
          */
         runsInBrowser: function () {
             return typeof window !== "undefined";
+        },
+
+        emptyCallback: function() {
+            return emptyCallback;
         },
 
         /***

@@ -275,7 +275,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
             _changeCallback: function (event) {
                 for (var i = 0; i < this.$.fnc._attributes.length; i++) {
                     if (!_.isUndefined(event.$[this.$.fnc._attributes[i]])) {
-                        this.trigger();
+                        this._callback();
                         return;
                     }
                 }
@@ -300,6 +300,10 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
              * Unbinds all events and destroys subBinding...
              */
             destroy: function () {
+                // binding already destroyed?
+                if(!this.$){
+                    return;
+                }
                 var e;
                 for (var j = 0; j < this.$events.length; j++) {
                     e = this.$events[j];

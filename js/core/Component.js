@@ -30,17 +30,27 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                         current = current.base;
                     }
 
+                    attributes = attributes || {};
+
+                    var internalCid = this.$xamlDefaults.cid;
+                    if (internalCid) {
+                        // internal cid
+                        attributes[internalCid] = this;
+                        this.$classAttributes = this.$classAttributes || [];
+                        this.$classAttributes.push(internalCid);
+                    }
+
                     if (descriptor) {
                         this._cleanUpDescriptor(descriptor);
                         this.$xamlAttributes = this._getAttributesFromDescriptor(descriptor);
                     }
+
 
                     this.$elements = [];
                     this.$templates = {};
                     this.$configurations = [];
                     this.$children = [];
 
-                    attributes = attributes || {};
                     _.defaults(attributes, this.$xamlAttributes, this.$xamlDefaults);
                     // added parameters, otherwise it comes to problems in Chrome!
                     this.callBase(attributes, descriptor, stage, parentScope, rootScope);
@@ -71,6 +81,14 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                  */
                 inject: {},
 
+                /**
+                 * Returns the ENVIRONMENT object
+                 * @constructor
+                 */
+                ENV: function(){
+                    return this.$stage.$environment;
+                },
+
                 _injectChain: function () {
                     return this._generateDefaultsChain("inject");
                 },
@@ -80,6 +98,14 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
 
                     this._inject();
                     this._bindBus();
+                },
+
+                _initializeBindingsBeforeComplete: function() {
+                    for (var c = 0; c < this.$elements.length; c++) {
+                        this.$elements[c]._initializeBindings();
+                    }
+
+                    this.callBase();
                 },
 
                 _bindBus: function () {
@@ -175,7 +201,12 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                         // remove it from templates
                         delete this.$templates[child.$.name];
                     }
+                },
 
+                removeAllChildren: function () {
+                    for (var i = this.$elements.length - 1; i > -1; i--) {
+                        this.removeChild(this.$elements[i]);
+                    }
                 },
 
                 _addTemplate: function (template) {
@@ -249,7 +280,7 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                         for (var j = 0; j < childrenFromDescriptor.length; j++) {
                             child = childrenFromDescriptor[j];
 
-                            if (_.indexOf(addedDescriptors, child.$descriptor) === -1) {
+                            if (child.$createdByTemplate || _.indexOf(addedDescriptors, child.$descriptor) === -1) {
                                 children.push(child);
                                 if(child.$descriptor){
                                     addedDescriptors.push(child.$descriptor);
@@ -373,11 +404,11 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                 },
 
                 _isEventAttribute: function (attributeName) {
-                    return attributeName.indexOf("on:") == 0;
+                    return attributeName.indexOf("eventHandler:") === 0;
                 },
 
                 _isXamlEventAttribute: function(attributeName){
-                    return attributeName.indexOf("on") == 0;
+                    return attributeName.indexOf("on") === 0;
                 },
 
                 _getEventName: function(eventDefinition){
@@ -415,87 +446,13 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                                 } else {
                                     throw "Couldn't find callback " + value + " for " + key + " event";
                                 }
+                            } else if (this._isEventAttribute(key)) {
+                                this.bind(key.split(":")[1], rootScope[value], rootScope);
                             }
                         }
                     }
                 },
 
-                /***
-                 * Initialize all Binding and Event attributes
-                 */
-                _initializeBindings: function () {
-                    if(this.$initialized){
-                        return;
-                    }
-                    var $ = this.$,
-                        bindingCreator = this.$bindingCreator,
-                        changedAttributes = {},
-                        bindingAttributes = {},
-                        bindingDefinitions,
-                        bindingAttribute,
-                        value,
-                        key;
-
-                    // we need to find out all attributes which contains binding definitions and set
-                    // the corresponding $[key] to null -> than evaluate the bindings
-                    // this is because some function bindings belong on other binding values which are
-                    // at the time of evaluation maybe unresolved and for example {foo.bar} instead of a value
-                    for (key in $) {
-                        if ($.hasOwnProperty(key)) {
-                            value = $[key];
-                            bindingDefinitions = bindingCreator.parse(value);
-
-                            if (bindingCreator.containsBindingDefinition(bindingDefinitions)) {
-                                // we found an attribute containing a binding definition
-                                bindingAttributes[key] = {
-                                    bindingDefinitions: bindingDefinitions,
-                                    value: value
-                                };
-
-                                $[key] = null;
-                            }
-                        }
-                    }
-
-                    // Resolve bindings and events
-                    for (key in $) {
-                        if ($.hasOwnProperty(key)) {
-                            bindingAttribute = bindingAttributes[key];
-                            if (bindingAttribute) {
-                                value = bindingAttribute.value;
-                                bindingDefinitions = bindingAttribute.bindingDefinitions;
-                                changedAttributes[key] = bindingCreator.evaluate(value, this, key, bindingDefinitions);
-                            } else {
-                                value = $[key];
-                                bindingDefinitions = null;
-                            }
-                        }
-                    }
-
-                    if(this.$errorAttribute && this.$bindings[this.$errorAttribute]){
-                        var b = this.$bindings[this.$errorAttribute][0], errorBinding;
-                        if(b.$.twoWay && b.$.path.length > 1){
-                            var path = b.$.path.slice(), attrKey = path.pop().name;
-                            path = path.concat(bindingCreator.parsePath("errors()."+attrKey));
-
-                            errorBinding = bindingCreator.create({
-                                type: 'oneWay',
-                                path: path
-                            }, this, "$error");
-                            if(errorBinding){
-                                changedAttributes['$error'] = errorBinding.getValue();
-                            }
-                        }
-                    }
-
-                    this.set(changedAttributes);
-
-                    for (var c = 0; c < this.$elements.length; c++) {
-                        this.$elements[c]._initializeBindings();
-                    }
-
-                    this.callBase();
-                },
 
                 /***
                  * Create {@link Component} for DOM Node with given attributes
@@ -600,6 +557,16 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
 
                     var st = domNode.tagName.split(":");
                     return st[st.length - 1];
+                },
+
+                baseUrl: function (path) {
+                    path = path || "";
+
+                    if (this.$stage) {
+                        path = (this.$stage.$applicationContext.$config.baseUrl || "") + path;
+                    }
+
+                    return path;
                 }
             });
 
@@ -614,9 +581,11 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                 rootScope = rootScope || this.$rootScope;
                 parentScope = parentScope || this.$parentScope;
                 // foreach child Descriptor
+
                 var components = this._getChildrenFromDescriptor(this.$descriptor, null, rootScope);
 
                 for (var c = 0; c < components.length; c++) {
+                    components[c].$createdByTemplate = true;
                     components[c].$parentScope = parentScope;
                     components[c].set(attributes);
                 }

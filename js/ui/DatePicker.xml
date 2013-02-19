@@ -1,0 +1,45 @@
+<ui:DatePickerClass xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="js.ui" xmlns:js="js.core"
+                    componentClass="date-picker">
+    <div>
+        {date}
+    </div>
+    <div class="date-picker-menu">
+        <div class="date-picker-month-year">
+            <a onclick="_onNextMonth">N</a>
+            <div class="date-picker-month">
+                <select items="{_months()}" itemKey="month" onchange="_onMonthChange" selectedItem="{_viewDate.getMonth()}">
+                    <option>{_monthName(month)}</option>
+                </select>
+            </div>
+            <div class="date-picker-year">
+                <select items="{_years()}" itemKey="year" onchange="_onYearChange" selectedItem="{_viewDate.getFullYear()}">
+                    <option>{year}</option>
+                </select>
+            </div>
+            <a onclick="_onPrevMonth">P</a>
+        </div>
+        <div class="date-picker-days">
+            <table>
+                <thead>
+                    <ui:ItemsView items="{_days()}" itemKey="day" tagName="tr">
+                        <js:Template name="item">
+                            <td>{_dayName(day)}</td>
+                        </js:Template>
+                    </ui:ItemsView>
+                </thead>
+                <ui:ItemsView items="{_weeks()}" itemKey="week" tagName="tbody">
+                    <js:Template name="item">
+                        <ui:ItemsView items="{_days()}" itemKey="day" tagName="tr">
+                            <js:Template name="item">
+                                <td class="days" _itemDate="{_calendarDate(week,day)}" selected="{_isCurrentDate(_itemDate)}">
+                                    <a onclick="_onDateSelect">{_itemDate.getDate()}</a>
+                                </td>
+                            </js:Template>
+                        </ui:ItemsView>
+                    </js:Template>
+                </ui:ItemsView>
+            </table>
+        </div>
+    </div>
+
+</ui:DatePickerClass>

@@ -1,0 +1,18 @@
+<svg:SvgClass xmlns:svg="js.svg" xmlns="http://www.w3.org/2000/svg" xmlns:js="js.core"
+        xmlns:xlink="http://www.w3.org/1999/xlink" version="1.2">
+    <defs cid="defs" />
+
+    <js:Template name="external-font">
+        <font-face font-family="{$fontFamily}">
+            <font-face-src>
+                <font-face-name name="{$fontFamily}"/>
+                <font-face-uri xlink:href="{$src}">
+                    <font-face-format string="svg"/>
+                </font-face-uri>
+            </font-face-src>
+        </font-face>
+    </js:Template>
+
+</svg:SvgClass>
+
+

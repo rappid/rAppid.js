@@ -7,7 +7,8 @@
                 $defaultContentName: "body",
 
                 defaults: {
-                    title: ''
+                    title: '',
+                    closable: true
                 },
 
                 $keyHandlers: {
@@ -68,7 +69,7 @@
     </js:Script>
 
     <div class="modal-header">
-        <button type="button" class="close" onclick="closeDialog">×</button>
+        <button type="button" class="close" onclick="closeDialog" visible="{closable}">×</button>
         <h3>{title}</h3>
     </div>
 

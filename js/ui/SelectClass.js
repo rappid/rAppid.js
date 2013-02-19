@@ -1,5 +1,6 @@
 define(["js/ui/View", 'js/data/Collection', 'js/core/List'], function (View, Collection, List) {
-        var instances = [];
+        var undefined,
+            instances = [];
 
         return View.inherit('js.ui.SelectClass', {
             defaults: {
@@ -103,7 +104,7 @@ define(["js/ui/View", 'js/data/Collection', 'js/core/List'], function (View, Col
             _search: function () {
                 if (this.$.searchTerm && this.$.searchTerm.length > 1) {
                     if (this.$.data instanceof Collection) {
-                        this.queryCollection(this.$.searchTerm);
+                        this.queryList(this.$.searchTerm);
                     } else if (this.$.data instanceof List) {
                         this.filterList(this.$.searchTerm);
                     }
@@ -114,11 +115,11 @@ define(["js/ui/View", 'js/data/Collection', 'js/core/List'], function (View, Col
                 this.$searchTimeout = undefined;
             },
 
-            queryCollection: function (searchTerm) {
+            queryList: function (searchTerm) {
                 if (!this.$realData) {
                     this.$realData = this.$.data;
                 }
-                this.set({scrollTop: 0, data: this.$.data.createQueryCollection(this.createQuery(searchTerm))});
+                this.set({scrollTop: 0, data: this.$.data.query(this.createQuery(searchTerm))});
             },
 
             createQuery: function (searchTerm) {

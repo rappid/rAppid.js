@@ -12,29 +12,25 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore"], funct
         $modelFactory: Model,
 
         ctor: function (items, options) {
-
             options = options || {};
 
-            this.callBase(items);
-
             _.defaults(options, {
-                rootCollection: null,
                 pageSize: null,
                 queryParameters: {},
                 sortParameters: null,
                 factory: this.$modelFactory || require('js/data/Model'),
-                type: null,
-                $itemsCount: null
+                type: null
             });
+
+            if(options.root){
+                this.$modelFactory = options.root.$modelFactory;
+            }
+
+            this.callBase(items, options);
 
             this.$queryCollectionsCache = {};
             this.$sortCollections = [];
             this.$pageCache = [];
-            this.$options = options;
-        },
-
-        getRootCollection: function () {
-            return this.$options.rootCollection ? this.$options.rootCollection : this;
         },
 
         createQueryCacheKey: function (queryParameters) {
@@ -55,35 +51,33 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore"], funct
 
             return ret.join("&");
         },
-        /***
-         *
-         * @param attributes
-         */
-        createSortCollection: function(sortParameters){
-            var options = {
-                sortParameters: sortParameters,
-                rootCollection: this.getRootCollection()
-            };
 
-            // different queryParameter, same options
-            _.defaults(options, this.$options);
-
-            var collection = new Collection(null, options);
+        _createFilteredList: function(query, options){
+            options.$itemsCount = undefined;
+            // TOOD: if fully loaded -> return this.callBase();
+            var collection = new this.factory(null,options);
             collection.$context = this.$context;
-
-            this.$sortCollections.push(collection);
 
             return collection;
         },
+
+        _createSortedList: function(query, options){
+            // TODO: if fully loaded -> return this.callBase();
+            var collection = new this.factory(null, options);
+            collection.$context = this.$context;
+
+            return collection;
+        },
+
         createQueryCollection: function (queryParameters) {
 
             var options = {
                 queryParameters: queryParameters,
-                rootCollection: this.getRootCollection()
+                root: this.getRoot()
             };
 
             // different queryParameter, same options
-            _.defaults(options, this.$options);
+            _.defaults(options, this.$);
 
             var cacheKey = this.createQueryCacheKey(queryParameters);
             if(!this.$queryCollectionsCache[cacheKey]){
@@ -123,7 +117,7 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore"], funct
                     });
             }
 
-            if (!this.$options.pageSize) {
+            if (!this.$.pageSize) {
                 // unlimited pageSize -> create one and only page and fetch
                 this.fetchPage(0, options, callback);
             } else {
@@ -161,7 +155,7 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore"], funct
 
         pageCount: function () {
             if (this.$.hasOwnProperty("$itemsCount")) {
-                return Math.ceil(this.$.$itemsCount / this.$options.pageSize);
+                return Math.ceil(this.$.$itemsCount / this.$.pageSize);
             } else {
                 // we actually don't know how many pages there will be
                 return NaN;
@@ -197,7 +191,7 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore"], funct
             }
 
             var self = this;
-            options = _.extend(this.$options, options);
+            options = _.extend(this.$, options);
             page.fetch(options, function (err, page) {
                 // insert data into items if not already inserted
                 if (!err && !page.itemsInsertedIntoCollection) {
@@ -205,7 +199,7 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore"], funct
 
                     // add items to collection
                     self.add(page.$items, {
-                        index: (pageIndex || 0) * self.$options.pageSize
+                        index: (pageIndex || 0) * self.$.pageSize
                     });
                 }
 
@@ -271,10 +265,10 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore"], funct
         }.onChange('$itemsCount'),
 
         getQueryParameters: function(method){
-            return this.$options.queryParameters;
+            return this.$.queryParameters;
         },
         getSortParameters: function (method) {
-            return this.$options.sortParameters;
+            return this.$.sortParameters;
         },
         destroy: function(){
             // TODO: remove destroyed query collections from cache
@@ -286,11 +280,11 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore"], funct
     var Page = Collection.Page = List.inherit({
 
         ctor: function (items, collection, pageIndex) {
-            if (!collection.$options.pageSize && pageIndex !== 0) {
+            if (!collection.$.pageSize && pageIndex !== 0) {
                 throw "Cannot create page for index '" + pageIndex + "' with pageSize '" + collection.options.pageSize + "'";
             }
 
-            var options = collection.$options;
+            var options = collection.$;
 
             if (options.pageSize) {
                 this.$offset = pageIndex * options.pageSize;
@@ -312,11 +306,11 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore"], funct
 
 
         parse: function (data, type) {
-            return this.getRootCollection().parse(data, type);
+            return this.getRoot().parse(data, type);
         },
 
-        getRootCollection: function(){
-            return this.$collection.getRootCollection();
+        getRoot: function(){
+            return this.$collection.getRoot();
         },
         /***
          *

@@ -5,7 +5,7 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
         var ValidationErrors = Bindable.inherit('js.data.Entity.ValidationErrors', {
             firstError: function () {
                 for (var key in this.$) {
-                    if (this.$.hasOwnProperty(key)) {
+                    if (this.$.hasOwnProperty(key) && this.$[key]) {
                         return this.$[key];
                     }
                 }
@@ -20,6 +20,7 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
 
             ctor: function (attributes) {
                 this.$errors = new ValidationErrors();
+                this.$entityInitialized = false;
                 this._extendSchema();
 
                 this.callBase(attributes);
@@ -29,7 +30,6 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                 id: {
                     type: String,
                     required: false,
-                    generated: true,
                     includeInIndex: true
                 }
             },
@@ -40,6 +40,8 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
 
             $dependentObjectContext: null,
 
+            // TODO: merge this together
+            $isEntity: true,
             $isDependentObject: true,
 
             _extendSchema: function () {
@@ -100,7 +102,7 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                             this.$dependentObjectContext = this.$parentEntity.$dependentObjectContext;
                         } else {
                             // create a new non-cached context for dependent objects
-                            this.$dependentObjectContext = this.$context.$dataSource.createContext();
+                            this.$dependentObjectContext = this.$context.$dataSource.createContext(this);
                         }
                     }
 
@@ -135,6 +137,11 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
              * @param [options]
              */
             parse: function (data, action, options) {
+                for (var key in this.initSchema) {
+                    if (this.initSchema.hasOwnProperty(key)) {
+                        this.$$[key] = data[key];
+                    }
+                }
                 return data;
             },
 
@@ -146,7 +153,7 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
              * @return {Object} all data that should be serialized
              */
             compose: function (action, options) {
-                return this.$;
+                return _.clone(this.$);
             },
 
             /***
@@ -173,8 +180,17 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
              *
              * @return {Boolean} true if valid
              */
-            isValid: function () {
-                return _.size(this.$errors.$) === 0;
+            isValid: function ($) {
+                $ = $ || this.$errors.$;
+                for (var key in $) {
+                    if ($.hasOwnProperty(key)) {
+                        if ($[key]) {
+                            return false;
+                        }
+                    }
+                }
+
+                return true;
             }.on('isValidChanged'),
 
             /***
@@ -239,6 +255,18 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
 
             },
 
+            // TODO: combine _setError and _setErrors
+            _setError: function (field, error) {
+
+                if (field instanceof Object) {
+                    this.$errors.set(field);
+                } else {
+                    this.$errors.set(field, error);
+                }
+
+                this.trigger('isValidChanged');
+            },
+
             _setErrors: function (errors) {
                 this.$errors.clear();
 
@@ -252,7 +280,7 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                             this.$errors.set('_base', error);
                         }
                     }
-                } catch(e) {
+                } catch (e) {
                     this.log(e, 'warn');
                 }
                 this.trigger('isValidChanged');
@@ -278,6 +306,27 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                 ret.$context = this.$context;
                 ret.$parent = this.$parent;
                 return ret;
+            },
+            _cloneAttribute: function (value, key) {
+
+                // don't clone a list of model references!
+                if (value instanceof List) {
+                    if (this.schema.hasOwnProperty(key)) {
+                        var type = this.schema[key].type;
+                        if (type instanceof Array && type.length && type[0].classof && type[0].classof(Entity) && !type[0].prototype.$isEntity) {
+                            var list = new List();
+                            list._$source = value;
+                            list.add(value.$items);
+                            return list;
+                        }
+                    }
+                }
+
+                return this.callBase();
+            },
+
+            init: function (callback) {
+                callback && callback();
             }
         });
 

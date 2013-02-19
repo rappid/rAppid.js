@@ -1,0 +1,141 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>rAppid:js TestRunner</title>
+
+    <script type="text/javascript" src="../js/lib/require.js"></script>
+    <script type="text/javascript" src="../js/lib/rAppid.js"></script>
+
+    <script type="text/javascript" src="lib/jquery-1.9.0.min.js"></script>
+    <script type="text/javascript" src="lib/jquery.expect.min.js"></script>
+</head>
+<body>
+
+<div id="mocha"></div>
+
+<script type="text/javascript">
+
+
+    (function (window, document, requirejs, rAppid) {
+
+        var require = requirejs({
+            paths: {
+                flow: "js/lib/flow",
+                mocha: "webtest/lib/mocha",
+                chai: "webtest/lib/chai"
+            },
+            shim: {
+                flow: {
+                    exports: "flow"
+                },
+                mocha: {
+                    exports: "mocha"
+                },
+                chai: {
+                    exports: "chai"
+                }
+            },
+            baseUrl: ".."
+        });
+
+        window.SkipError = function (message) {
+            this.message = message;
+        };
+
+        window.startTest = function (test, callback, htmlRunnerTarget) {
+
+            require(["require", "flow", "mocha", "chai"], function (require, flow, mocha, chai) {
+
+                window.expect = chai.expect;
+
+                var results = {
+                    failedTests: [],
+                    skippedTests: [],
+                    passedTests: []
+                };
+
+                var fileName = "/webtest/test/" + test.test;
+
+                flow()
+                    .seq(function () {
+                        // setup mocha
+                        mocha.setup({
+                            ui: 'bdd',
+                            timeout: 30000,
+                            reporter: function (r) {
+
+                                r.on('pass', function (test) {
+                                    results.passedTests.push(testResult(test, fileName));
+                                });
+
+                                r.on('fail', function (test, err) {
+                                    test = testResult(test, fileName);
+
+                                    if (err instanceof window.SkipError) {
+                                        results.skippedTests.push(test);
+                                    } else {
+                                        results.failedTests.push(test);
+                                    }
+                                });
+
+                                new Mocha.reporters.HTML(r, htmlRunnerTarget);
+                            }
+                        });
+                    })
+                    .seq(function (cb) {
+                        // require test
+                        require([fileName], function () {
+                            cb();
+                        }, function (err) {
+                            cb(err);
+                        })
+                    })
+                    .seq(function (cb) {
+                        // bootstrap application
+
+                        rAppid.bootStrap("webtest/test/" + test.app, document.body, null, {
+                            baseUrl: "..",
+                            loadConfiguration: "config.json"
+                        }, function (err, stage, application) {
+
+                            window.application = application;
+                            window.stage = stage;
+
+                            cb(err);
+                        });
+                    })
+                    .seq(function (cb) {
+                        mocha.run(cb);
+                    })
+                    .exec(function(err) {
+                        callback(err, results);
+                    });
+            }, function(err) {
+                callback(err);
+            })
+        };
+
+        function testResult(test, filename) {
+            var path = [],
+                parent = test.parent;
+
+            while (parent && !parent.root) {
+                path.unshift(parent.title);
+                parent = parent.parent;
+            }
+
+            return {
+                fileName: filename,
+                duration: test.duration,
+                title: test.title,
+                state: test.state,
+                timedOut: test.timedOut,
+                fn: test.fn.toString(),
+                sync: test.sync,
+                suitePath: path
+            }
+        }
+    })(window, document, requirejs, rAppid);
+</script>
+</body>
+</html>

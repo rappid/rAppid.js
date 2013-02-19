@@ -1,0 +1,16 @@
+{
+    "all": [
+        {
+            "app": "stage/StageTest.xml",
+            "test": "stage/StageTests.js",
+            "type": "browser"
+        }
+    ],
+    "ui": [
+        {
+            "app": "ui/ItemsViewTest.xml",
+            "test": "ui/ItemsViewTests.js",
+            "type": "browser"
+        }
+    ]
+}

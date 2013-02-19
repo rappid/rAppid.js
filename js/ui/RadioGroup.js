@@ -13,7 +13,8 @@ define(['js/ui/View', 'xaml!js/ui/Radio'], function(View, Radio) {
         },
 
         defaults: {
-            value: null
+            value: null,
+            componentClass: "radio-group"
         },
 
         addChild: function(child) {

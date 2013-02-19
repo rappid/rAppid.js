@@ -30,7 +30,8 @@
         };
     }
 
-    var underscore,
+    var undefined,
+        underscore,
         Stage,
         document = window.document; // TODO: create workaround for node
 
@@ -93,6 +94,7 @@
 
         createApplicationContext: function (mainClass, config, callback) {
 
+            var time = (new Date()).getTime();
             config = config || {};
 
             var internalCreateApplicationContext = function (config) {
@@ -134,14 +136,15 @@
 
                             requirejsContext([mainClass], function (applicationFactory) {
                                 applicationContext.$applicationFactory = applicationFactory;
+                                applicationContext.$creationTime = (new Date()).getTime() - time;
                                 callback(null, applicationContext);
                             }, function (err) {
                                 callback(err);
                             });
                         } else {
+                            applicationContext.$creationTime = (new Date()).getTime() - time;
                             callback(null, applicationContext);
                         }
-
                     } else {
                         callback("inherit or underscore missing");
                     }
@@ -236,7 +239,6 @@
                 return;
             }
 
-
             // flow.js is not available here, so do it in a dirty way
             rAppid.createApplicationContext(mainClass, config, function (err, applicationContext) {
                 if (err) {
@@ -247,17 +249,16 @@
                             callback(err);
                         } else {
 
-                            // start the application
                             application.start(parameter, function (err) {
                                 if (err) {
                                     callback(err);
                                 } else {
                                     // render stage to target
                                     stage.render(target);
-
                                     callback(null, stage, application);
                                 }
-                            })
+                            });
+
                         }
                     })
                 }
@@ -305,7 +306,7 @@
 
             if (s.hasContent && s.contentType !== false) {
                 xhr.setRequestHeader("Content-Type", s.contentType);
-                if(typeof window === "undefined"){
+                if (typeof window === "undefined") {
                     // On NodeJs the XMLHttprequest does not set Content-Length
                     // In the browser it's not allowed to set the Content-length
                     xhr.setRequestHeader("Content-Length", s.data ? s.data.length.toString() : "0");
@@ -319,7 +320,7 @@
                         xhr.setRequestHeader(header, s.headers[header]);
                     }
                 }
-            } catch(e) {
+            } catch (e) {
             } // FF3
 
             options && options.xhrBeforeSend instanceof Function && options.xhrBeforeSend(xhr);
@@ -377,7 +378,7 @@
 
         try {
             this.statusText = xhr.statusText;
-        } catch(e) {
+        } catch (e) {
             this.statusText = "";
         }
     };
@@ -415,7 +416,9 @@
 
     ApplicationContext.prototype.createApplicationInstance = function (window, callback) {
 
-        var document;
+        var document,
+            time = (new Date()).getTime(),
+            self = this;
 
         // create instance
         var applicationFactory = this.$applicationFactory;
@@ -429,7 +432,7 @@
 
         var stage = new Stage(this.$requirejsContext, this, document, window);
 
-        this.$requirejsContext(["js/core/Application", "js/core/HeadManager", "js/core/History", "js/core/Injection", "js/core/InterCommunicationBus"], function (Application, HeadManager, History, Injection, InterCommunicationBus) {
+        this.$requirejsContext(["js/core/Application", "js/core/HeadManager", "js/core/History", "js/core/Injection", "js/core/InterCommunicationBus", "js/core/Bindable"], function (Application, HeadManager, History, Injection, InterCommunicationBus, Bindable) {
 
             interCommunicationBus = interCommunicationBus || new InterCommunicationBus();
 
@@ -437,25 +440,45 @@
             stage.$history = new History();
             var injection = stage.$injection = new Injection(null, null, stage);
 
+            stage.$environment = new Bindable();
+
             injection.addInstance(stage.$bus);
             injection.addInstance(stage.$history);
             injection.addInstance(stage.$headManager);
             injection.addInstance(stage.$externalInterface);
             injection.addInstance(interCommunicationBus);
+            injection.addInstance("ENV", stage.$environment);
 
             var application = new applicationFactory(null, false, stage, null, null);
 
             if (application instanceof Application) {
 
-                stage.$application = application;
-                stage._initialize("auto");
+                var environmentSetupComplete = function (err) {
+                    if (!err) {
+                        application.set('ENV', stage.$environment);
 
-                application._initialize("auto");
+                        stage.$application = application;
+                        stage._initialize("auto");
 
-                // return rAppid instance
-                if (callback) {
-                    callback(null, stage, application);
+                        application._initialize("auto");
+
+                        application.$creationTime = (new Date()).getTime() - time;
+
+                        // return rAppid instance
+                        if (callback) {
+                            callback(null, stage, application);
+                        }
+                    } else {
+                        callback && callback(err, stage, application);
+                    }
+                };
+
+                if (application.supportEnvironments) {
+                    Application.setupEnvironment(stage.$environment, application._getEnvironment(), application.applicationDefaultNamespace, environmentSetupComplete);
+                } else {
+                    environmentSetupComplete();
                 }
+
 
             } else {
                 var errMessage = "mainClass isn't an instance of js.core.Application";
@@ -527,7 +550,7 @@
         try {
             ret = construct(classDefinition, args);
             ret.className = className;
-        } catch(e) {
+        } catch (e) {
             console.warn(["Cannot create instance of '" + fqClassName + "'", e, args]);
             throw e;
         }

@@ -9,7 +9,8 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
     /***
      * defines an ItemsView which can show parts of data
      */
-    var VirtualItemsView = View.inherit('js.ui.VirtualItemsView', {
+    var undefined,
+        VirtualItemsView = View.inherit('js.ui.VirtualItemsView', {
 
         defaults: {
 
@@ -37,11 +38,16 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
 
             fetchPageDelay: 500,
 
+            fetchWithFullData: false,
+
             $dataAdapter: null,
             selectionMode: 'multi',
-            selectedItems: List
+            selectedItems: List,
+
+            hoverItem: null
         },
-        events: ["on:itemClick", "on:itemDblClick"],
+
+        events: ["on:itemClick", "on:itemDblClick", "on:itemMouseOver", "on:itemMouseOut"],
 
         ctor: function () {
             this.$currentSelectionIndex = null;
@@ -117,6 +123,16 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
             var self = this;
 
             this.bindDomEvent('scroll', scroll);
+            this.bindDomEvent("mousemove", function(e) {
+                self._mouseMove(e);
+            });
+            this.bindDomEvent("mouseout", function (e) {
+                if (self.$.hoverItem) {
+                    self.trigger("on:itemMouseOut", null, self.$.hoverItem);
+                }
+
+                self.set('hoverItem', null);
+            });
 
             function scroll(e) {
                 self.set({
@@ -124,7 +140,41 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
                     scrollLeft: self.$el.scrollLeft
                 });
             }
+        },
 
+        _mouseMove: function(e) {
+
+            var dataAdapter = this.$.$dataAdapter;
+
+            if (!dataAdapter) {
+                return;
+            }
+
+            var localPoint = this.globalToLocal({
+                x: e.clientX + this.$el.scrollLeft,
+                y: e.clientY + this.$el.scrollTop
+            });
+
+            var indexFromPoint = this.getIndexFromPoint(localPoint.x, localPoint.y);
+            var item = dataAdapter.getItemAt(indexFromPoint);
+
+            if (item) {
+                item = item.$.data;
+            }
+
+            if (item === this.$.hoverItem) {
+                return;
+            }
+
+            if (this.$.hoverItem) {
+                this.trigger("on:itemMouseOut", null, this.$.hoverItem);
+            }
+
+            this.set('hoverItem', item);
+
+            if (item) {
+                this.trigger("on:itemMouseOver", null, this.$.hoverItem);
+            }
         },
 
         render: function () {
@@ -155,6 +205,7 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
                 this.$isLoading = true;
                 this.addClass('loading');
             }
+            this._scrollToIndex(0);
             this._updateVisibleItems();
         },
 
@@ -604,8 +655,12 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
         sort: function (sortParameter) {
             var dataAdapter = this.$.$dataAdapter;
             dataAdapter && dataAdapter.sort(sortParameter);
-        }
+        },
 
+        query: function(query){
+            var dataAdapter = this.$.$dataAdapter;
+            dataAdapter && dataAdapter.query(query);
+        }
 
     }, {
         createDataAdapter: function (data, virtualItemsView) {
@@ -646,6 +701,9 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
                     }
 
                     this.trigger('sizeChanged');
+                    if(e.type == "reset"){
+                        virtualItemsView._scrollToIndex(0);
+                    }
                     virtualItemsView._updateVisibleItems(force);
                 };
 
@@ -698,7 +756,7 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
             // stores the waiting queue or true, if page already fetched
             this.$pages = {};
             this.$cache = {};
-            this.$pageSize = data.$options.pageSize;
+            this.$pageSize = data.$.pageSize;
 
             this.callBase();
 
@@ -763,7 +821,9 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
                                 virtualItemsView.$lastEndIndex >= pageStartIndex) {
 
                                 // we need to fetch the page
-                                self.$data.fetchPage(pageIndex, null, function (err) {
+                                self.$data.fetchPage(pageIndex, {
+                                    fullData: self.$virtualItemsView.$.fetchWithFullData
+                                }, function (err) {
                                     if (err) {
                                         // delete page so it will be fetched again on scrolling
                                         delete self.$pages[pageIndex];
@@ -807,13 +867,21 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
 
         },
 
-        sort: function (sortParameter) {
+        sort: function (query) {
             // TODO: clean up old sortCollection or add caching
 
-            var sortCollection = this.$data.createSortCollection(sortParameter);
+            var sortCollection = this.$data.sort(query);
             this.$sortCollection = sortCollection;
 
             this.$virtualItemsView.set('data', sortCollection);
+        },
+
+        query: function(query){
+            // TODO: clean up sort collection
+            var queryCollection = this.$data.query(query);
+            this.$queryCollection = queryCollection;
+
+            this.$virtualItemsView.set('data', queryCollection);
         },
 
         /***

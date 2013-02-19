@@ -32,6 +32,12 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
         },
 
         schema: {
+            id: {
+                type: String,
+                required: false,
+                generated: true,
+                includeInIndex: true
+            },
             href: {
                 type: String,
                 generated: true,
@@ -50,6 +56,7 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
             }
         },
 
+        $isEntity: false,
         $isDependentObject: false,
 
         /***
@@ -63,7 +70,7 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
 
             options = options || {};
             _.defaults(options, {
-                invalidatePageCache: true
+                invalidatePageCache: false
             });
 
             // TODO: handle multiple access
@@ -219,24 +226,6 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
                 return this.$.id ? STATE.CREATED : STATE.NEW;
             }
         }.onChange('id'),
-
-        _cloneAttribute: function(value, key){
-
-            // don't clone a list of model references!
-            if(value instanceof List){
-                if(this.schema.hasOwnProperty(key)){
-                    var type = this.schema[key].type;
-                    if(type instanceof Array && type.length && type[0].classof && type[0].classof(Model)){
-                        var list = new List();
-                        list._$source = value;
-                        list.add(value.$items);
-                        return list;
-                    }
-                }
-            }
-
-            return this.callBase();
-        },
 
         isNew: function () {
             return this._status() === STATE.NEW;

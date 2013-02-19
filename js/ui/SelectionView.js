@@ -1,37 +1,38 @@
 define(
     ["js/ui/ItemsView", "js/html/HtmlElement", "underscore", "js/core/List"], function (ItemsView, HtmlElement, _, List) {
-        return ItemsView.inherit("js.ui.SelectionView",{
+        return ItemsView.inherit("js.ui.SelectionView", {
             $defaultTemplateName: null,
             defaults: {
-                needsSelection: false,
                 multiSelect: false,
                 selectedViews: List,
                 selectedItems: List,
                 selectedItem: null,
+                needsSelection: false,
                 items: [],
-                forceSelectable: true
+                forceSelectable: true,
+                allowDeselection: false
             },
-            ctor: function(){
+            ctor: function () {
                 this.callBase();
-                this.bind('selectedItems','add', this._onSelectedItemAdd, this);
-                this.bind('selectedItems','remove', this._onSelectedItemRemove, this);
-                this.bind('selectedItems','reset', this._onSelectedItemReset, this);
+                this.bind('selectedItems', 'add', this._onSelectedItemAdd, this);
+                this.bind('selectedItems', 'remove', this._onSelectedItemRemove, this);
+                this.bind('selectedItems', 'reset', this._onSelectedItemReset, this);
             },
-            _onSelectedItemAdd: function(e){
+            _onSelectedItemAdd: function (e) {
                 var item;
                 for (var i = 0; i < this.$renderedItems.length; i++) {
                     item = this.$renderedItems[i].item;
-                    if(e.$ === item && !this.$renderedItems[i].component.$.selected){
-                        this.$renderedItems[i].component.set({selected: true});
+                    if (e.$ === item && !this.$renderedItems[i].component.$.selected) {
+                        this.$renderedItems[i].component.set({selected: true},{silent: true});
                     }
                 }
             },
-            _onSelectedItemRemove: function(e){
+            _onSelectedItemRemove: function (e) {
                 var item;
                 for (var i = 0; i < this.$renderedItems.length; i++) {
                     item = this.$renderedItems[i].item;
                     if (e.$ === item && this.$renderedItems[i].component.$.selected) {
-                        this.$renderedItems[i].component.set({selected: false});
+                        this.$renderedItems[i].component.set({selected: false},{silent: true});
                     }
                 }
             },
@@ -42,45 +43,95 @@ define(
                 return this.$.selectedItems.length > 0;
             },
             hasSelection: function () {
-                return this.$.selectedItem !== null;
+                if (!this.$.selectedItem) {
+                    return false;
+                }
+                var c,
+                    itemKey = this._getItemKey();
+                for (var i = 0; i < this.$renderedChildren.length; i++) {
+                    c = this.$renderedChildren[i].get(itemKey);
+                    if (this._areItemsEqual(c, this.$.selectedItem)) {
+                        return true;
+                    }
+                }
+                return false;
             }.onChange('selectedItem'),
+
+            _innerRenderItems: function (items) {
+
+                this.callBase();
+
+                if (this.$.needsSelection) {
+                    if (items && items.length) {
+                        for (var i = 0; i < items.length; i++) {
+                            if (this.$.selectedItem === items[i]) {
+                                return;
+                            }
+                        }
+                        this.set('selectedItem', this.$renderedChildren[0].get(this._getItemKey()));
+                    } else {
+                        this.set('selectedItem', null);
+                    }
+                }
+
+            },
+
             _renderChild: function (child) {
                 if (child instanceof HtmlElement) {
                     var self = this;
                     if (this.$.forceSelectable === true) {
                         child.set({selectable: true});
                     }
-                    child.bind('change:selected', function (e) {
-                        self._onChildSelected(e.target);
+                    child.bind('change:selected', function (e, options) {
+                        if (!e.$ && !self.$.allowDeselection) {
+                            child.set('selected', true, {silent: true});
+                        }
+                        if (self.$.allowDeselection || (e.$ && !self.$.allowDeselection)) {
+                            self._onChildSelected(e.target);
+                        }
                     });
                 }
                 this.callBase();
-                if (this.$.needsSelection === true && this.$.selectedItem === null && this.hasSelection() === false) {
-                    child.set({selected: true});
-                } else {
-                    // get item for child, if item is in selectedItems, select child!
-                    var item = child.get(this._getItemKey());
-                    if (item) {
-                        for (var i = 0; i < this.$.selectedItems.length; i++) {
-                            if (this._areItemsEqual(item,this.$.selectedItems[i])) {
-                                child.set({selected: true});
-                                break;
-                            }
-                        }
-                        if(this._areItemsEqual(item,this.$.selectedItem)){
-                            child.set({selected: true});
+
+                // get item for child, if item is in selectedItems, select child!
+                var item = child.get(this._getItemKey());
+                if (item) {
+                    for (var i = 0; i < this.$.selectedItems.length; i++) {
+                        if (this._areItemsEqual(item, this.$.selectedItems[i])) {
+                            child.set({selected: true}, {silent: true});
+                            break;
                         }
                     }
+                    if (this._areItemsEqual(item, this.$.selectedItem)) {
+                        child.set({selected: true},{silent: true});
+                    }
                 }
+
+
+                if (this.$.needsSelection && !this.$.selectedItem) {
+                    this.set('selectedItem', child.get(this._getItemKey()));
+                }
+
+
             },
+
             _renderSelectedItem: function (item, oldItem) {
                 var comp = this.getComponentForItem(item);
                 if (comp) {
-                    comp.set({selected: true});
-                }else{
-                    if(oldItem && !this.$.multiSelect){
+                    comp.set({selected: true},{silent: true});
+                    var c;
+                    if(!this.$.multiSelect){
+                        for (var i = 0; i < this.$renderedChildren.length; i++) {
+                            c = this.$renderedChildren[i];
+                            if (c != comp && c.$.selected === true) {
+                                c.set({selected: false}, {silent: true});
+                            }
+                        }
+                    }
+                } else {
+                    if (oldItem && !this.$.multiSelect) {
                         comp = this.getComponentForItem(oldItem);
-                        comp && comp.set({selected: false});
+                        comp && comp.set({selected: false},{silent: true});
                     }
                 }
             },
@@ -99,9 +150,7 @@ define(
             _onChildSelected: function (child) {
                 var c, i;
                 var checkMultiSelect = (child.$.selected === true && this.$.multiSelect === false),
-                    checkMinSelect = !checkMultiSelect && (child.$.selected === false && this.$.needsSelection === true),
                     correctSelection = false,
-                    somethingSelected = false,
                     selectedChildren = [],
                     selectedItems = [],
                     selectedIndex,
@@ -111,12 +160,10 @@ define(
                     c = this.$renderedChildren[i];
                     if (checkMultiSelect) {
                         if (c != child && c.$.selected === true) {
-                            correctSelection = true;
-                            c.set({selected: false});
+                            c.set({selected: false}, {silent: true});
                         }
-                    } else if (checkMinSelect && c.$.selected === true) {
-                        somethingSelected = true;
                     }
+
                     if (c.$.selected === true) {
                         selectedIndex = i;
                         selectedChildren.push(c);
@@ -127,23 +174,19 @@ define(
                         }
                     }
                 }
-                if (this.$.needsSelection === true && somethingSelected === false && child.$.selected === false) {
-                    child.set({selected: true});
-                    correctSelection = true;
-                }
 
                 if (!correctSelection) {
                     this.set({selectedViews: selectedChildren, selectedIndex: selectedIndex, selectedItem: selectedItem});
                     this.$.selectedItems.reset(selectedItems);
                 }
             },
-            _areItemsEqual: function(itemA,itemB){
-                if(this.$.keyPath){
-                    if(!itemA || !itemB){
+            _areItemsEqual: function (itemA, itemB) {
+                if (this.$.keyPath) {
+                    if (!itemA || !itemB) {
                         return false;
                     }
                     return itemA.get(this.$.keyPath) === itemB.get(this.$.keyPath);
-                }else{
+                } else {
                     return itemA === itemB;
                 }
             }

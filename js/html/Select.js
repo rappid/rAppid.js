@@ -3,12 +3,15 @@ define(["js/ui/SelectionView", "underscore"], function (SelectionView, _) {
             defaults: {
                 multiSelect: false,
                 forceSelectable: false,
+                needsSelection: true,
                 tagName: 'select'
             },
-            $defaultTemplateName: 'item',
+            $defaultTemplateName: null,
+
             _renderMultiSelect: function (multiSelect) {
                 this.$el.multiple = multiSelect;
             },
+
             _bindDomEvents: function () {
                 var self = this;
                 this.bindDomEvent('change', function (e) {
@@ -16,9 +19,21 @@ define(["js/ui/SelectionView", "underscore"], function (SelectionView, _) {
                 });
                 this.callBase();
             },
+
             _checkOptions: function () {
+                var deselected = [],
+                    child;
+                // first trigger selected elements -> then deselected
                 for (var i = 0; i < this.$renderedChildren.length; i++) {
-                    this.$renderedChildren[i].set({selected: this.$renderedChildren[i].$el.selected});
+                    child = this.$renderedChildren[i];
+                    if(child.$el.selected){
+                        child.set({selected: true});
+                    } else {
+                        deselected.push(this.$renderedChildren[i]);
+                    }
+                }
+                for (i = 0; i < deselected.length; i++){
+                    deselected[i].set({selected: false},{silent: true});
                 }
             }
         });

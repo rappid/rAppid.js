@@ -1,4 +1,4 @@
-define(['js/ui/View', 'xaml!js/ui/DataGridColumn', 'js/core/List', 'underscore', 'js/ui/DataGridItemsViewClass'], function (View, DataGridColumn, List, _, DataGridItemsViewClass) {
+define(['js/ui/View', 'xaml!js/ui/DataGridColumn', 'js/core/List', 'underscore', 'js/ui/DataGridItemsViewClass','js/data/Query'], function (View, DataGridColumn, List, _, DataGridItemsViewClass, Query) {
 
     return View.inherit('js.ui.DataGridClass', {
 
@@ -32,11 +32,21 @@ define(['js/ui/View', 'xaml!js/ui/DataGridColumn', 'js/core/List', 'underscore',
                 var path = column.getSortPath();
                 // add sortable attribute
                 if(path){
+                    var query = new Query();
+                    query.sort((column.$.sortDirection === 1 ? "+" : "-") + path);
                     this.$sortParamter = this.$sortParameter || {};
                     column.set('sortDirection',column.$.sortDirection === -1 ? 1 : -1);
-                    this.$sortParamter[path] = column.$.sortDirection;
-                    this.$.$itemsView.sort(this.$sortParamter);
+                      this.$sortParamter[path] = column.$.sortDirection;
+                    this.set('query',query);
                 }
+            }
+        },
+        _commitQuery: function(query){
+            if(query){
+                // TODO: if sort parameters are set, use them
+                this.$.$itemsView.query(query);
+            } else {
+                // CLEAN UP
             }
         },
         addChild: function (child) {

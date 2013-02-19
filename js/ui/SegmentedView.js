@@ -3,7 +3,6 @@ define(
         return ItemsView.inherit({
             defaults: {
                 tagName: "div",
-                visibleIndex: 0,
                 visibleView: null
             },
             ctor: function () {

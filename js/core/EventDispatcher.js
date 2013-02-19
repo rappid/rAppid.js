@@ -96,22 +96,30 @@ define(["js/core/Base"], function (Base) {
                  */
                 trigger: function (eventType, event, target) {
 
+                    if (!(this._eventHandlers[eventType] || this._eventHandlers["*"])) {
+                        return;
+                    }
+
+                    var list,
+                        result, i;
+
+                    if (!(event instanceof EventDispatcher.Event)) {
+                        event = new EventDispatcher.Event(event);
+                    }
+
+                    if (!event.target) {
+                        event.target = target || arguments.callee.caller;
+                    }
+                    event.type = eventType;
+
                     if (this._eventHandlers[eventType]) {
-                        if (!(event instanceof EventDispatcher.Event)) {
-                            event = new EventDispatcher.Event(event);
-                        }
 
-                        if(!event.target){
-                            event.target = target || arguments.callee.caller;
-                        }
-                        event.type = eventType;
-
-                        var list = this._eventHandlers[eventType];
-                        for (var i = 0; i < list.length; i++) {
+                        list = this._eventHandlers[eventType];
+                        for (i = 0; i < list.length; i++) {
                             if (list[i]) {
-                                var result = list[i].trigger(event, target);
+                                result = list[i].trigger(event, target);
                                 if (result !== undefinedValue) {
-                                    ret = result;
+
                                     if (result === false) {
                                         event.preventDefault();
                                         event.stopPropagation();
@@ -125,8 +133,25 @@ define(["js/core/Base"], function (Base) {
                         }
                     }
 
-                    if(eventType !== '*'){
-                        this.trigger('*', {eventType: eventType, event: event}, target);
+                    if (this._eventHandlers["*"]) {
+
+                        list = this._eventHandlers["*"];
+                        for (i = 0; i < list.length; i++) {
+                            if (list[i]) {
+                                result = list[i].trigger(event, target);
+                                if (result !== undefinedValue) {
+
+                                    if (result === false) {
+                                        event.preventDefault();
+                                        event.stopPropagation();
+                                    }
+                                }
+
+                                if (event.isImmediatePropagationStopped) {
+                                    break;
+                                }
+                            }
+                        }
                     }
 
                     return event;

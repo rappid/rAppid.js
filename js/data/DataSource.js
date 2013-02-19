@@ -374,7 +374,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                     isModel = entity instanceof Model;
 
                 for (var key in entity.schema) {
-                    if (entity.schema.hasOwnProperty(key) && !isModel || (!options || !options.includeInIndex || _.contains(options.includeInIndex, key))) {
+                    if (entity.schema.hasOwnProperty(key) && (!isModel || (!options || !options.includeInIndex || _.contains(options.includeInIndex, key)))) {
                         schemaDefinition = entity.schema[key];
                         schemaType = schemaDefinition.type;
 
@@ -568,11 +568,13 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                 if (!(data instanceof Array)) {
                     throw "data has to be an array";
                 }
-
+                var context,
+                    entity;
                 for (var i = 0; i < data.length; i++) {
                     var value = data[i];
                     if(!(value instanceof Model)){
-                        var entity = collection.createItem(this._getIdForValue(value));
+                        context = this.$dataSource._getContext(collection.$modelFactory, collection, value);
+                        entity = context.createEntity(collection.$modelFactory,this._getIdForValue(value));
                         entity.set(this._parseModel(entity, value, action, options));
                         data[i] = entity;
                     }
@@ -719,6 +721,19 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                 }
             },
 
+            composeModel: function(model, options){
+                var processor = this.getProcessorForModel(model, options);
+
+                return processor.compose(model, DataSource.ACTION.CREATE, options);
+            },
+
+            parseModel: function(model, data, options){
+                var processor = this.getProcessorForModel(model, options);
+
+                model.set(processor.parse(model, data, DataSource.ACTION.CREATE, options));
+                return model;
+            },
+
             _childrenInitialized: function () {
                 this.callBase();
 
@@ -795,7 +810,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                     }
                 }
 
-                return null;
+                return requestor.$context;
             },
 
             /***
@@ -804,7 +819,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
              * @param {js.data.DataSource.Context} [parentContext]
              * @return {js.data.DataSource.Context}
              */
-            getContextByProperties: function (properties, parentContext) {
+            getContextByProperties: function (contextModel, properties, parentContext) {
 
                 if (!(properties && _.size(properties))) {
                     // no properties or empty object passed
@@ -812,7 +827,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                 }
 
                 parentContext = parentContext || this.root();
-                return parentContext.getContext(properties);
+                return parentContext.getContext(contextModel, properties);
 
             },
 

@@ -78,10 +78,11 @@ define(['js/core/Component' , 'inherit'], function (Component, inherit) {
             }
             document.cookie = escape(sKey) + "=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/";
             this.length--;
-        },
-        hasOwnProperty: function (sKey) {
-            return (new RegExp("(?:^|;\\s*)" + escape(sKey).replace(/[\-\.\+\*]/g, "\\$&") + "\\s*\\=")).test(document.cookie);
         }
+//        ,
+//        hasOwnProperty: function (sKey) {
+//            return (new RegExp("(?:^|;\\s*)" + escape(sKey).replace(/[\-\.\+\*]/g, "\\$&") + "\\s*\\=")).test(document.cookie);
+//        }
     });
 
     // TODO: implement length as getter

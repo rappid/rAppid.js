@@ -5,10 +5,6 @@ define(
             defaults: {
                 visible: true
             },
-            _initializeBindings: function () {
-                this.$.textContent = this.$bindingCreator.evaluate(this.$.textContent || "", this, "textContent");
-                this.callBase();
-            },
             _initializeDescriptors: function(){
                 if (this.$descriptor) {
                     this.$.textContent = this._getTextContentFromDescriptor(this.$descriptor);
