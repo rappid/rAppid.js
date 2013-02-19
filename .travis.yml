@@ -2,7 +2,7 @@ language: node_js
 node_js:
 - 0.8
 script:
-#  - "mocha -R spec"
+  - "mocha -R spec"
   - "grunt webtest-saucelabs --force"
 env:
   global:
