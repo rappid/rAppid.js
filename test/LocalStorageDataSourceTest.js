@@ -5,7 +5,8 @@ var chai = require('chai'),
 
 var C = {};
 
-describe('#DataSource', function () {
+// FIXME Add resource configuration to LocalStorageDataSource
+describe.skip('js.data.LocalStorageDataSource', function () {
 
     var ds;
     var Person, person;
@@ -13,6 +14,7 @@ describe('#DataSource', function () {
     before(function (done) {
         testRunner.requireClasses({
             LocalStorageDataSource: 'js/data/LocalStorageDataSource',
+            LocalStorage: 'js/data/LocalStorage',
             Model: 'js/data/Model',
             Entity: 'js/data/Entity',
             Collection: 'js/data/Collection',
@@ -30,18 +32,8 @@ describe('#DataSource', function () {
                 });
 
                 C.LocalStorageDataSource.prototype._getStorage = function () {
-
-                    var dataStorage = {};
-
-                    return {
-                        getItem: function (key) {
-                            return dataStorage[key];
-                        },
-                        setItem: function (key, value) {
-                            return dataStorage[key] = value;
-                        }
-                    }
-                }
+                    return new C.LocalStorage.ObjectImplementation();
+                };
 
             }
 
@@ -49,7 +41,7 @@ describe('#DataSource', function () {
                 name: ''
             });
 
-            ds.addTypeConfiguration(new C.Configuration({
+            ds.addChild(new C.Configuration({
                 modelClassName: 'test.Person',
                 path: 'persons',
                 collectionClassName: 'js.data.Collection[test.Person]'
@@ -97,13 +89,17 @@ describe('#DataSource', function () {
         it('should fetch a single model with id', function () {
             var id;
             var p2, p1 = ds.createEntity(Person);
-            flow().seq(function (cb) {
-                p1.save(null, cb);
-            }).seq(function (cb) {
+            flow().
+                seq(function (cb) {
+                    p1.save(null, cb);
+                }).
+                seq(function (cb) {
                     p2 = ds.createEntity(Person);
                     p2.set('id', p1.$.id);
                     p2.fetch(null, cb)
-                }).exec(function () {
+                }).
+                exec(function (err) {
+                    expect(err).not.to.exist;
                     expect(p2.$.firstname).to.be.equal(p1.$.firstname);
                     expect(p2.$.lastname).to.be.equal(p1.$.lastname);
                 });
@@ -111,8 +107,8 @@ describe('#DataSource', function () {
 
         it('should throw error if model has no id', function () {
             var p1 = ds.createEntity(Person);
-            p1.fetch(null, function(err){
-               expect(err).to.exist;
+            p1.fetch(null, function (err) {
+                expect(err).to.exist;
             });
         });
 

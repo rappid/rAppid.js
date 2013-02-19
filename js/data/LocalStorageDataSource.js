@@ -28,7 +28,7 @@ define(["js/data/DataSource", "js/data/Model", "flow", "js/data/LocalStorage"],
                 this.$data = (value && this.getFormatProcessor(null).deserialize(value)) || {};
             },
             _getStorage: function () {
-                return this.createComponent(LocalStorage)
+                return this.createComponent(LocalStorage);
             },
             getFormatProcessor: function (action) {
                 return jsonFormatProcessor;

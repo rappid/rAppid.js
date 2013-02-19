@@ -57,7 +57,7 @@ describe('#DataSource', function () {
         it('createEntity without context and within rootContext should be the same instance', function () {
 
             var a = ds.createEntity(C.Entity, 1),
-                b = ds.getContext().createEntity(C.Entity, 1);
+                b = ds.getContextByProperties().createEntity(C.Entity, 1);
 
             expect(a).to.exist;
             expect(b).to.exist;
@@ -67,7 +67,7 @@ describe('#DataSource', function () {
         it('same type same id but different context should not be same instance', function () {
 
             var a = ds.createEntity(C.Entity, 1),
-                b = ds.getContext({
+                b = ds.getContextByProperties(null,{
                     foo: 'bar'
                 }).createEntity(C.Entity, 1);
 
@@ -78,11 +78,11 @@ describe('#DataSource', function () {
 
         it('context properties order should be independent', function () {
 
-            var a = ds.getContext({
+            var a = ds.getContextByProperties(null,{
                     a: 'a',
                     b: 'b'
                 }),
-                b = ds.getContext({
+                b = ds.getContextByProperties(null,{
                     b: 'b',
                     a: 'a'
                 });

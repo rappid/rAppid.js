@@ -79,8 +79,14 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                  * @key {String} name of the variable for this.$key
                  * @value {Required Class}
                  */
-                inject: {
-                    ENV: "ENV"
+                inject: {},
+
+                /**
+                 * Returns the ENVIRONMENT object
+                 * @constructor
+                 */
+                ENV: function(){
+                    return this.$stage.$environment;
                 },
 
                 _injectChain: function () {
