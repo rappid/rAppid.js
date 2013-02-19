@@ -126,8 +126,10 @@ define(
                         }
                     }
                 }
-                for (var i = 0; i < items.length; i++) {
-                    this._innerRenderItem(items[i], i);
+                if(items){
+                    for (var i = 0; i < items.length; i++) {
+                        this._innerRenderItem(items[i], i);
+                    }
                 }
 
             },

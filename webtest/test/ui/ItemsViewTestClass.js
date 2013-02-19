@@ -19,6 +19,23 @@ define(["js/core/Application", "js/core/List"], function (Application, List) {
                 }
             ]));
 
+            this.set('woTemplateItems', new List([
+                {
+                    value: "A"
+                },
+                {
+                    value: "B"
+                }
+            ]));
+        },
+        addItemAt: function (item, index) {
+            this.$.items.add(item, {index: index});
+        },
+        removeItemAt: function(index){
+            this.$.items.removeAt(index);
+        },
+        resetItems: function(){
+            this.$.items.reset();
         }
     });
 });

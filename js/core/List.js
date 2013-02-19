@@ -184,6 +184,7 @@ define(["js/core/EventDispatcher", "js/core/Bindable", "underscore", "js/data/Qu
          * @param items
          */
         reset: function (items, options) {
+            items = items || [];
             var self = this;
             this.each(function (item) {
                 if (item instanceof EventDispatcher) {

@@ -1,0 +1,15 @@
+<app:SelectTestClass xmlns:app="webtest.test.html.select" xmlns="http://www.w3.org/1999/xhtml" xmlns:js="js.core">
+
+    <select cid="simple" id="simple">
+        <option value="0">A</option>
+        <option value="1">B</option>
+        <option value="2">C</option>
+    </select>
+
+    <select cid="bound" items="{items}" id="bound">
+        <js:Template name="item">
+            <option value="{item.id}">{item.value}</option>
+        </js:Template>
+    </select>
+
+</app:SelectTestClass>

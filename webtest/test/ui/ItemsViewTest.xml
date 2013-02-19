@@ -1,0 +1,24 @@
+<app:ItemsViewTestClass xmlns:app="webtest.test.ui" xmlns="http://www.w3.org/1999/xhtml" xmlns:js="js.core"
+                        xmlns:ui="js.ui">
+
+    <ui:ItemsView cid="simple" items="{items}" tagName="ul" id="simple">
+        <js:Template name="item">
+            <li class="{item.id}">{item.value}</li>
+        </js:Template>
+    </ui:ItemsView>
+
+    <ui:ItemsView cid="woTemplate" items="{woTemplateItems}" id="woTemplate">
+        <div>{item.value}</div>
+    </ui:ItemsView>
+
+    <ui:ItemsView cid="wTemplate" items="{woTemplateItems}" id="wTemplate">
+        <div>BEFORE1</div>
+        <div>BEFORE2</div>
+        <js:Template name="item">
+            <div>{item.value}</div>
+        </js:Template>
+        <div>AFTER1</div>
+        <div>AFTER2</div>
+    </ui:ItemsView>
+
+</app:ItemsViewTestClass>
