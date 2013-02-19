@@ -160,6 +160,10 @@ var build = function (args, callback) {
         if(config.paths.hasOwnProperty(key)){
             if(key !== "JSON"){
                 optimizeConfig.paths[key] = config.paths[key];
+
+            }
+            if (optimizeConfig.paths[key].indexOf("http") === 0) {
+                optimizeConfig.paths[key] = "empty:";
             }
         }
     }
@@ -204,6 +208,7 @@ var build = function (args, callback) {
 
     // start optimizing
     requirejs.optimize(optimizeConfig, function (results) {
+        console.log(results);
         // write back normal config
         writeBackConfig();
 
