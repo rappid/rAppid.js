@@ -819,7 +819,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
              * @param {js.data.DataSource.Context} [parentContext]
              * @return {js.data.DataSource.Context}
              */
-            getContextByProperties: function (properties, parentContext) {
+            getContextByProperties: function (contextModel, properties, parentContext) {
 
                 if (!(properties && _.size(properties))) {
                     // no properties or empty object passed
@@ -827,7 +827,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                 }
 
                 parentContext = parentContext || this.root();
-                return parentContext.getContext(properties);
+                return parentContext.getContext(contextModel, properties);
 
             },
 
