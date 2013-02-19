@@ -178,7 +178,7 @@ describe('parser test', function () {
             parsed.should.equal(string);
         });
 
-        it('should parse a double escaped string', function () {
+        it.skip('should parse a double escaped string', function () {
             var string = "myString";
             var def = "\"" + string + "\"";
             parsed = C.Parser.parse(def, RULE);
