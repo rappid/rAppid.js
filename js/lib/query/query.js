@@ -74,7 +74,20 @@
         },
 
         toObject: function () {
-            return clone(this.query);
+            var ret = {};
+            if(this.query.offset){
+                ret.offset = this.query.offset;
+            }
+            if(this.query.where){
+                ret.where = this.query.where.toObject();
+            }
+            if(this.query.limit){
+                ret.limit = this.query.limit;
+            }
+            if(this.query.sort){
+                ret.sort = clone(this.query.sort);
+            }
+            return ret;
         },
 
         where: function (type) {
@@ -96,7 +109,7 @@
         },
 
         whereCacheId: function () {
-            if (this.query.where) {
+            if(this.query.where){
                 return this.query.where.operator + ":" + generateExpressionsCache(this.query.where.expressions);
             } else {
                 return "";
@@ -172,6 +185,25 @@
 
     Where.prototype.push = function (expression) {
         this.expressions.push(expression);
+    };
+
+    Where.prototype.toObject = function(){
+
+        var expressions = [], expression;
+        for(var i =0; i < this.expressions.length; i++){
+            expression = this.expressions[i];
+            if(expression instanceof Where){
+                expressions.push(expression.toObject());
+            } else {
+                expressions.push(clone(expression));
+            }
+        }
+
+        return {
+            operator: this.operator,
+            expressions: expressions
+        };
+
     };
 
     Comparator.prototype = {
