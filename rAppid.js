@@ -63,7 +63,7 @@
             new Rewrite(/^js\/html\/(option)$/, "js/html/Option"),
             new Rewrite(/^js\/html\/(.+)$/, "js/html/HtmlElement"),
 
-            new Rewrite(/^js\/svg\/svg$/, "js/svg/Svg"),
+            new Rewrite(/^js\/svg\/[sS]vg$/, "js/svg/Svg"),
             new Rewrite(/^js\/svg\/(.+)$/, "js/svg/SvgElement")
         ];
 
