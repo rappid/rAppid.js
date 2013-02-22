@@ -220,7 +220,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
                         }
                     }
 
-                    this.set(changedAttributes);
+                    _.extend(this.$,changedAttributes);
 
                     this._initializeBindingsBeforeComplete();
 
@@ -236,7 +236,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
                     // call commitChangedAttributes for all attributes
                     this.set(this.$, {
                         force: true,
-                        silent: true,
+                        silent: false,
                         initial: true
                     });
 
