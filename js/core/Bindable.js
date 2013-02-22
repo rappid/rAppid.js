@@ -130,6 +130,13 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
 
                 },
 
+                /**
+                 * values to be injected
+                 * @key {String} name of the variable for this.$key
+                 * @value {Required Class}
+                 */
+                inject: {},
+
                 _initializeFromCtor: function() {
                     // hook
                     this._initialize();
@@ -148,6 +155,51 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
                 },
 
                 initialize: function () {
+
+                },
+
+                _injectChain: function () {
+                    return this._generateDefaultsChain("inject");
+                },
+
+                _inject: function () {
+
+                    var inject = this._injectChain();
+
+                    if (_.keys(inject).length > 0) {
+                        // we need to inject at least on item
+
+                        // synchronous singleton instantiation of Injection,
+                        // because if module requires injection, application also depends on
+                        // Injection.js and class should be installed.
+                        var injection = this.$stage.$injection;
+                        if (injection) {
+                            for (var name in inject) {
+                                if (inject.hasOwnProperty(name)) {
+                                    this.$[name] = injection.getInstance(inject[name]);
+                                }
+                            }
+                        } else {
+                            throw "injection not available in systemManager";
+                        }
+
+                    }
+
+                    this._postConstruct();
+                },
+
+                _extract: function() {
+                    this._preDestroy();
+
+                    var inject = this._injectChain();
+
+                    if (_.keys(inject).length > 0) {
+                        for (var name in inject) {
+                            if (inject.hasOwnProperty(name)) {
+                                this.$[name] = null;
+                            }
+                        }
+                    }
 
                 },
 
@@ -242,6 +294,14 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
 
                     this.$initialized = true;
                     this.$initializing = false;
+                },
+
+                _postConstruct: function() {
+                    // hook: after the injection is completed
+                },
+
+                _preDestroy: function() {
+                    // hook: before the object is teared down
                 },
 
                 getScopeForKey: function (key) {
