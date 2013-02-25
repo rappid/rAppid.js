@@ -264,30 +264,6 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
 
             return _.indexOf(this.$excludedStyleAttributes, key) === -1 && this.$el && (key in this.$el.style || (supportedCssProperties && _.indexOf(supportedCssProperties, key) !== -1));
 
-        },
-
-        _createDOMEventHandler: function(type){
-            return new HtmlElement.EventHandler(this, type);
-        }
-
-    });
-
-    HtmlElement.EventHandler = DomElement.EventHandler.inherit('js.html.HtmlElement.EventHandler',{
-        handleEvent: function(e){
-            if(this._isEventEnabled()){
-                this.callBase();
-            }else{
-                e.preventDefault();
-                return false;
-            }
-        },
-        _isEventEnabled: function(){
-            if(!this.component.$.enabled){
-                if(_.include(['on:click','on:dblclick'],this.type)){
-                    return false;
-                }
-            }
-            return true;
         }
     });
 

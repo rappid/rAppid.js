@@ -1,4 +1,11 @@
 define(["js/html/HtmlElement", "js/core/Bus", "js/core/WindowManager", "js/core/ExternalInterface"], function (HtmlElement, Bus, WindowManager, ExternalInterface) {
+
+    var browserClassMap = {
+        "hasTouch" : ["touch","no-touch"],
+        "supportsTransition" : ["transition","no-transition"],
+        "isMobile" : ["mobile","desktop"]
+    };
+
     return HtmlElement.inherit("js.core.Stage", {
         $containerOrder: {
             'windows' : 0,
@@ -26,18 +33,24 @@ define(["js/html/HtmlElement", "js/core/Bus", "js/core/WindowManager", "js/core/
 
             this.callBase(null, false, this, null, this);
 
-            this._annotateDevice();
+            this.$browser = this._createBrowserObject();
+
+            this._annotateBrowserInformation(this.$browser);
         },
 
-        _annotateDevice: function() {
+        _createBrowserObject: function() {
 
-            var classes = ["stage"];
+            var browser = {};
+
+            browser.isBrowser = this.runsInBrowser();
 
             if (this.runsInBrowser()) {
                 var window = this.$window;
 
-                classes.push("browser");
-                classes.push("ontouchend" in window ? "touch" : "no-touch");
+
+                browser.hasTouch = "ontouchend" in window;
+                browser.has3D = ('WebKitCSSMatrix' in window && 'm11' in new WebKitCSSMatrix());
+                browser.msPointerEnabled = "msPointerEnabled" in window.navigator;
 
                 var navigator = window.navigator;
 
@@ -45,11 +58,9 @@ define(["js/html/HtmlElement", "js/core/Bus", "js/core/WindowManager", "js/core/
 
                     var userAgent = navigator.userAgent || navigator.appVersion;
                     var mobile = /(iphone|ipad|ipod|android|blackberry|mini|windows\sce|palm)/i.exec(userAgent);
+                    browser.isMobile = !!mobile;
                     if (mobile) {
-                        classes.push('mobile');
-                        classes.push(mobile[1]);
-                    } else {
-                        classes.push('desktop');
+                        browser.mobileType = mobile[1];
                     }
 
                     var os = /win|mac|linux|x11/i.exec(userAgent);
@@ -61,33 +72,50 @@ define(["js/html/HtmlElement", "js/core/Bus", "js/core/WindowManager", "js/core/
                             x11: "unix"
                         }[os[0].toLowerCase()];
 
-                        os && classes.push(os);
+                        browser.os = os;
                     }
 
-                    var browser = /firefox|chrome|safari/i.exec(userAgent);
-                    if (browser) {
-                        classes.push(browser[0].toLowerCase());
+                    var browserName = /firefox|chrome|safari/i.exec(userAgent);
+                    if (browserName) {
+                        browserName = browserName[0].toLowerCase();
+                        browser.name = browserName;
                     }
 
-                    browser = /msie\s(\d+)/i.exec(userAgent);
-                    if (browser) {
-                        classes.push("ie ie" + browser[1]);
+                    browserName = /msie\s(\d+)/i.exec(userAgent);
+                    if (browserName) {
+                        browserName = "ie ie" + browserName[1];
+                        browser.name = browserName;
                     }
 
                 }
 
-                var s = window.document.createElement('div').style,
-                    supportsTransitions = 'transition' in s ||
-                        'WebkitTransition' in s ||
-                        'MozTransition' in s ||
-                        'msTransition' in s ||
-                        'OTransition' in s;
-                classes.push(supportsTransitions ? "transition" : "no-transition");
+                var s = window.document.createElement('div').style;
 
-            } else {
-                classes.push("node");
+                browser.supportsTransition = 'transition' in s ||
+                    'WebkitTransition' in s ||
+                    'MozTransition' in s ||
+                    'msTransition' in s ||
+                    'OTransition' in s;
             }
 
+            return browser;
+
+        },
+
+        _annotateBrowserInformation: function(browser){
+            var classes = ["stage"], value;
+            for(var key in browser){
+                if(browser.hasOwnProperty(key)){
+                    value = browser[key];
+                    if(typeof(value) === "boolean"){
+                        if(browserClassMap.hasOwnProperty(key)){
+                            classes.push(browserClassMap[key][value ? 0 : 1]);
+                        }
+                    } else {
+                        classes.push(value);
+                    }
+                }
+            }
             this.set('componentClass', classes.join(" "));
         },
 

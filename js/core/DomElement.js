@@ -5,6 +5,33 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
         var undefined;
         var ContentPlaceHolder;
 
+        var pointerToTouchMap = {
+            'on:pointer' : 'on:touchstart',
+            'on:pointerdown': 'on:touchstart',
+            'on:pointermove': 'on:touchmove',
+            'on:pointerup': 'on:touchend'
+        };
+
+        var pointerToMouseMap = {
+            'on:pointer': 'on:click',
+            'on:pointerdown': 'on:mousedown',
+            'on:pointermove': 'on:mousemove',
+            'on:pointerup': 'on:mouseup',
+            'on:pointerout': 'on:mouseout',
+            'on:pointerover': 'on:mouseover',
+            'on:pointerhover': 'on:mouseover'
+
+        };
+
+        var pointerToMSPointerMap = {
+            'on:pointerdown': 'on:mspointerdown',
+            'on:pointermove': 'on:mspointermove',
+            'on:pointerup': 'on:mspointerup',
+            'on:pointerout' : 'on:mspointerout',
+            'on:pointerover' : 'on:mspointerover',
+            'on:pointerhover' : 'on:mspointerhover'
+        };
+
         var DomElementFunctions = {
 
             $classAttributes: [
@@ -47,6 +74,7 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
 
                 this.bind('add:dom', this._onDomAdded, this);
             },
+
             /**
              * This method is called when the stage or the parent is added to the DOM
              * @private
@@ -87,7 +115,7 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
             addChild: function (child, options) {
                 this.callBase();
 
-                if(child.$initialized || child.$initializing){
+                if (child.$initialized || child.$initializing) {
                     if (child instanceof DomElement || child.render) {
                         var pos = options && typeof(options.childIndex) !== "undefined" ? options.childIndex : this.$children.length;
 
@@ -271,13 +299,13 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                         if (this.$addedToDom) {
                             child.trigger('add:dom', this.$el);
                         }
-                    }else{
+                    } else {
                         this.$invisibleChildMap[child.$cid] = child;
                     }
                 }
             },
             _renderVisible: function (visible) {
-                if(this.$renderParent){
+                if (this.$renderParent) {
                     if (visible) {
                         this.$renderParent.setChildVisible(this);
                     } else {
@@ -323,7 +351,7 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                     var rc;
                     for (var i = this.$renderedChildren.length - 1; i >= 0; i--) {
                         rc = this.$renderedChildren[i];
-                        if(rc.$.visible){
+                        if (rc.$.visible) {
                             this.$el.removeChild(rc.$el);
                         }
                     }
@@ -382,7 +410,7 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                 }
             },
 
-            _renderAttributeInternal: function(key, attr) {
+            _renderAttributeInternal: function (key, attr) {
                 if (this._isDOMNodeAttribute(key)) {
                     this._setAttribute(key, attr);
                 }
@@ -395,7 +423,7 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
              * @return {Boolean}
              * @private
              */
-            _isDOMNodeAttribute: function(key){
+            _isDOMNodeAttribute: function (key) {
                 var cAttr;
                 for (var i = 0; i < this.$classAttributes.length; i++) {
                     cAttr = this.$classAttributes[i];
@@ -498,35 +526,35 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                     this.$parent.setChildIndex(this, 0);
                 }
             },
-            setChildInvisible: function(child){
-                if(this.isRendered() && this.$renderedChildren.indexOf(child) > -1){
-                    if(child.$el.parentNode){
+            setChildInvisible: function (child) {
+                if (this.isRendered() && this.$renderedChildren.indexOf(child) > -1) {
+                    if (child.$el.parentNode) {
                         this.$el.removeChild(child.$el);
                     }
                     this.$invisibleChildMap[child.$cid] = child;
                 }
             },
-            setChildVisible: function(child){
-                if(this.isRendered() && this.$invisibleChildMap[child.$cid]){
+            setChildVisible: function (child) {
+                if (this.isRendered() && this.$invisibleChildMap[child.$cid]) {
                     var next = this._getNextVisibleChild(child);
-                    if(next){
-                        this.$el.insertBefore(child.$el,next.$el);
-                    }else{
+                    if (next) {
+                        this.$el.insertBefore(child.$el, next.$el);
+                    } else {
                         this.$el.appendChild(child.$el);
                     }
-                    if(this.$addedToDom){
+                    if (this.$addedToDom) {
                         child.trigger('add:dom', this.$el);
                     }
                     delete this.$invisibleChildMap[child.$cid];
                 }
             },
-            _getNextVisibleChild: function(child){
-                if(this.$el.childNodes.length === 0){
+            _getNextVisibleChild: function (child) {
+                if (this.$el.childNodes.length === 0) {
                     return null;
                 }
                 var index = this.$renderedChildren.indexOf(child);
-                for(i = index + 1; i < this.$renderedChildren.length; i++ ){
-                    if(!this.$invisibleChildMap[this.$renderedChildren[i].$cid]){
+                for (var i = index + 1; i < this.$renderedChildren.length; i++) {
+                    if (!this.$invisibleChildMap[this.$renderedChildren[i].$cid]) {
                         break;
                     }
                 }
@@ -535,15 +563,17 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                 }
                 return null;
             },
-            _createDOMEventHandler: function(type){
+            _createDOMEventHandler: function (type) {
+                if(type.indexOf("on:pointer") === 0){
+                    return new DomElement.PointerEventHandler(this, type);
+                }
                 return new DomElement.EventHandler(this, type);
             },
             bind: function (type, eventHandler, scope) {
-                var self = this;
                 if (type.indexOf("on:") === 0 && !this.$domEventHandler[type] && !this._isComponentEvent(type)) {
                     if (this.isRendered()) {
                         var cb = this.$domEventHandler[type] = this._createDOMEventHandler(type);
-                        this.bindDomEvent(type.substr(3), cb);
+                        this.bindDomEvent(this._mapDOMEventType(type).substr(3), cb);
                         this.callBase();
                     } else {
                         this.$eventDefinitions.push({
@@ -562,10 +592,23 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                 var handlers = this._eventHandlers[type];
                 if (handlers && handlers.length === 0) {
                     var cb = this.$domEventHandler[type];
+
                     if (cb) {
-                        this.unbindDomEvent(type, cb);
+                        this.unbindDomEvent(this._mapDOMEventType(type), cb);
                     }
                 }
+            },
+            _mapDOMEventType: function(type){
+                if(type.indexOf("on:pointer") === 0){
+                    if(this.$stage.$browser.msPointerEnabled){
+                        return pointerToMSPointerMap[type] || type;
+                    } else if (this.$stage.$browser.hasTouch) {
+                        return pointerToTouchMap[type] || type;
+                    } else {
+                        return pointerToMouseMap[type] || type;
+                    }
+                }
+                return type;
             }
         };
 
@@ -575,7 +618,7 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
             },
 
             addClass: function (value) {
-                var classNames = (""+value).split(rspace);
+                var classNames = ("" + value).split(rspace);
 
                 var className = this.$el.getAttribute("class") || "";
 
@@ -626,8 +669,8 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
 
                 } else if (this.$el.attachEvent) {
                     var callback = cb;
-                    if(cb instanceof DomElement.EventHandler){
-                        callback = cb._handleEvent = function(e){
+                    if (cb instanceof DomElement.EventHandler) {
+                        callback = cb._handleEvent = function (e) {
                             return cb.handleEvent(e);
                         }
                     }
@@ -647,13 +690,13 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                 }
             },
 
-            focus: function(){
-                if(this.isRendered()){
+            focus: function () {
+                if (this.isRendered()) {
                     this.$el.focus();
                 }
             },
 
-            localToGlobal: function(point) {
+            localToGlobal: function (point) {
                 point = point || {
                     x: 0,
                     y: 0
@@ -674,7 +717,7 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
 
             },
 
-            globalToLocal: function(point) {
+            globalToLocal: function (point) {
                 point = point || {
                     x: 0,
                     y: 0
@@ -694,7 +737,7 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                 };
             },
 
-            _getHtmlTag: function() {
+            _getHtmlTag: function () {
                 var document = this.$stage.$document;
 
                 if (!this.$stage.$html) {
@@ -745,18 +788,52 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
             }
         });
 
+        DomElement.PointerEvent = DomElement.Event.inherit('js.core.DomElement.PointerEvent', {
+            ctor: function (domEvent) {
+                if (domEvent.touches) {
+                    this.isTouch = true;
+                    this.pointerEvent = domEvent.touches[0];
+                } else {
+                    this.pointerEvent = domEvent;
+                }
+                this.callBase(domEvent);
+            }
+
+        });
+
+
         DomElement.EventHandler = Base.inherit('js.core.DomEvent.EventHandler', {
-              ctor: function(component, type){
-                  this.component = component;
-                  this.type = type;
-              },
-              handleEvent: function(e){
-                  e = new DomElement.Event(e);
-                  this.component.trigger(this.type, e, this.component);
-                  if (e.isPropagationStopped) {
-                      return false;
-                  }
-              }
+            ctor: function (component, type) {
+                this.component = component;
+                this.type = type;
+            },
+            handleEvent: function (e) {
+                if (this._isEventEnabled()) {
+                    e = this._createEvent(e);
+                    this.component.trigger(this.type, e, this.component);
+                    return !e.isPropagationStopped;
+                } else {
+                    e.preventDefault();
+                    return false;
+                }
+            },
+            _isEventEnabled: function () {
+                if (!this.component.$.enabled) {
+                    if (_.include(['on:click', 'on:dblclick', 'on:pointer'], this.type)) {
+                        return false;
+                    }
+                }
+                return true;
+            },
+            _createEvent: function (domEvent) {
+                return new DomElement.Event(domEvent);
+            }
+        });
+
+        DomElement.PointerEventHandler = DomElement.EventHandler.inherit('js.core.DomEvent.PointerEventHandler', {
+            _createEvent: function(domEvent){
+                return new DomElement.PointerEvent(domEvent);
+            }
         });
 
         return DomElement;
