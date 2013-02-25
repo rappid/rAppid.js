@@ -74,12 +74,7 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                  */
                 events: [
                 ],
-                /**
-                 * values to be injected
-                 * @key {String} name of the variable for this.$key
-                 * @value {Required Class}
-                 */
-                inject: {},
+
 
                 /**
                  * Returns the ENVIRONMENT object
@@ -89,8 +84,8 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                     return this.$stage.$environment;
                 },
 
-                _injectChain: function () {
-                    return this._generateDefaultsChain("inject");
+                bus: function() {
+                    return this.$stage.$bus;
                 },
 
                 _preinitialize: function () {
@@ -119,38 +114,13 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                     }
                 },
 
-                _inject: function () {
-
-                    var inject = this._injectChain();
-
-                    if (_.keys(inject).length > 0) {
-                        // we need to inject at least on item
-
-                        // synchronous singleton instantiation of Injection,
-                        // because if module requires injection, application also depends on
-                        // Injection.js and class should be installed.
-                        var injection = this.$stage.$injection;
-                        if (injection) {
-                            for (var name in inject) {
-                                if (inject.hasOwnProperty(name)) {
-                                    this.$[name] = injection.getInstance(inject[name]);
-                                }
-                            }
-                        } else {
-                            throw "injection not available in systemManager";
-                        }
-
-                    }
-
-                },
-
                 /***
                  * adds a children
                  * @param {js.core.Element} child
                  */
                 addChild: function (child, options) {
                     if (!(child instanceof Element)) {
-                        throw "only children of type js.core.Component can be added"
+                        throw "only children of type js.core.Component can be added";
                     }
 
                     if(this.$initializing || this.$initialized){
@@ -183,7 +153,7 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
 
                 removeChild: function (child) {
                     if (!(child instanceof Element)) {
-                        throw "only children of type js.core.Component can be removed"
+                        throw "only children of type js.core.Component can be removed";
                     }
 
                     var index = this.$elements.indexOf(child);
@@ -233,7 +203,7 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                     } else if (this.$parent && this.$parent != this) {
                         return this.$parent.getTemplate(name);
                     } else {
-                        return null
+                        return null;
                     }
                 },
 
@@ -330,11 +300,11 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                     if (this.$defaultContentName && this.$descriptor) {
                         // check if content block is already defined
                         var contentBlock,
-                            internAndExternChildren = children.concat(externalDescriptorChildren);
+                            internAndExternalChildren = children.concat(externalDescriptorChildren);
 
 
-                        for (i = 0; i < internAndExternChildren.length; i++) {
-                            child = internAndExternChildren[i];
+                        for (i = 0; i < internAndExternalChildren.length; i++) {
+                            child = internAndExternalChildren[i];
 
                             if (child instanceof Content && child.$.name === this.$defaultContentName) {
                                 // content block already defined

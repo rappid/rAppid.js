@@ -31,14 +31,14 @@ define(['xaml!js/svg/SvgDescriptor', 'js/core/Base'], function (SvgElement, Base
             return {
                 x: this.$.width / this.$viewBoxWidth,
                 y: this.$.height / this.$viewBoxHeight
-            }
+            };
         },
 
         globalToLocalFactor: function () {
             return {
                 x: this.$viewBoxWidth / this.$.width,
                 y: this.$viewBoxHeight / this.$.height
-            }
+            };
         },
 
         save: function() {
@@ -72,7 +72,7 @@ define(['xaml!js/svg/SvgDescriptor', 'js/core/Base'], function (SvgElement, Base
             this.callBase();
         },
 
-        loadExternalFont: function (fontFamily, src) {
+        loadExternalFont: function (fontFamily, src, callback) {
             var svg = this.$svg;
 
             if (!this.$fontCache[fontFamily]) {
@@ -86,8 +86,9 @@ define(['xaml!js/svg/SvgDescriptor', 'js/core/Base'], function (SvgElement, Base
                 this.$fontCache[fontFamily] = font;
             }
 
+            // TODO: check when font loaded
+            callback && callback();
 
-            return this.$fontCache[fontFamily];
         }
     });
 
