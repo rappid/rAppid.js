@@ -796,7 +796,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                                 if (parentConfiguration.$["modelClassName"] === requestor.constructor.name) {
                                     // childFactory is configured as descendant of the requestor
                                     // so the childFactory will be created in the context of the requestor
-                                    return this.getContextByProperties(requestor, requestor.$context);
+                                    return this.getContextByProperties(requestor, null, requestor.$context);
                                 }
 
                             } while (parentConfiguration.$parent);
@@ -815,14 +815,15 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
 
             /***
              * Returns the context for a properties object
+             * @param {js.data.Model} contextModel
              * @param {Object} properties
              * @param {js.data.DataSource.Context} [parentContext]
              * @return {js.data.DataSource.Context}
              */
             getContextByProperties: function (contextModel, properties, parentContext) {
 
-                if (!(properties && _.size(properties))) {
-                    // no properties or empty object passed
+                if (!(contextModel || properties && _.size(properties))) {
+                    // no contextModel OR no properties or empty object passed
                     return this.root();
                 }
 
