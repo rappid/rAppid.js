@@ -90,7 +90,7 @@ define(['js/ui/View', 'js/type/Color'], function (View, Color) {
             }
         },
 
-        _hueBarUp: function (e) {
+        _hueBarUp: function () {
             this.$hueBarDown = false;
         },
 
