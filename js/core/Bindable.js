@@ -241,6 +241,9 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
                         }
                     }
 
+                    // FIXME: resolve dependencies between bindings and loop in the correct order
+                    // e.g. view="{{product.view}}" needs product
+
                     // Resolve bindings and events
                     for (key in $) {
                         if ($.hasOwnProperty(key)) {
@@ -248,7 +251,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
                             if (bindingAttribute) {
                                 value = bindingAttribute.value;
                                 bindingDefinitions = bindingAttribute.bindingDefinitions;
-                                changedAttributes[key] = bindingCreator.evaluate(value, this, key, bindingDefinitions);
+                                $[key] = bindingCreator.evaluate(value, this, key, bindingDefinitions);
                             } else {
                                 value = $[key];
                                 bindingDefinitions = null;
@@ -267,12 +270,10 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
                                 path: path
                             }, this, "$error");
                             if (errorBinding) {
-                                changedAttributes['$error'] = errorBinding.getValue();
+                                $['$error'] = errorBinding.getValue();
                             }
                         }
                     }
-
-                    _.extend(this.$,changedAttributes);
 
                     this._initializeBindingsBeforeComplete();
 
