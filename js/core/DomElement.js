@@ -790,9 +790,9 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
 
         DomElement.PointerEvent = DomElement.Event.inherit('js.core.DomElement.PointerEvent', {
             ctor: function (domEvent) {
-                if (domEvent.touches) {
+                if (domEvent.changedTouches || domEvent.touches) {
                     this.isTouch = true;
-                    this.pointerEvent = domEvent.touches[0];
+                    this.pointerEvent = domEvent.touches.length ? domEvent.touches[0] : domEvent.changedTouches[0];
                 } else {
                     this.pointerEvent = domEvent;
                 }
