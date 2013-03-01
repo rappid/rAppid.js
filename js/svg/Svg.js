@@ -1,13 +1,15 @@
-define(['xaml!js/svg/SvgDescriptor', 'js/core/Base'], function (SvgElement, Base) {
+define(['xaml!js/svg/SvgDescriptor', "js/svg/SvgElement", 'js/core/Base'], function (SvgDescriptor, SvgElement, Base) {
 
-    var Svg = SvgElement.inherit("js.svg.Svg", {
+    var Svg = SvgDescriptor.inherit("js.svg.Svg", {
 
         defaults: {
             tagName: "svg",
-            viewBox: "0 0 100 100"
+            viewBox: "0 0 100 100",
+
+            hidden: null
         },
 
-        $classAttributes: ["defs"],
+        $classAttributes: ["defs", "hidden"],
 
         ctor: function() {
             this.callBase();
@@ -75,19 +77,63 @@ define(['xaml!js/svg/SvgDescriptor', 'js/core/Base'], function (SvgElement, Base
         loadExternalFont: function (fontFamily, src, callback) {
             var svg = this.$svg;
 
-            if (!this.$fontCache[fontFamily]) {
+            var cache = this.$fontCache[fontFamily];
+
+            if (!cache) {
                 var font = svg.$templates["external-font"].createInstance({
                     $fontFamily: fontFamily,
                     $src: src
                 });
 
+                cache = this.$fontCache[fontFamily] = {
+                    font: font,
+                    loaded: false,
+                    callbacks: [callback]
+                };
+
+                var text = svg.$stage.$document.createElementNS(SvgElement.SVG_NAMESPACE, "text");
+                text.textContent = "SvgFontMeasurer";
+
+                var hidden = svg.$.hidden.$el;
+                hidden.appendChild(text);
+
+                var originalBox = text.getBBox();
                 svg.$.defs.addChild(font);
+                text.setAttribute("font-family", fontFamily);
 
-                this.$fontCache[fontFamily] = font;
+                setTimeout(checkFontLoaded, 0);
+
+                function checkFontLoaded() {
+                    var current = text.getBBox();
+
+                    if (current.x === originalBox.x && current.y === originalBox.y &&
+                        current.width === originalBox.width && current.height === originalBox.height) {
+
+                        // same check later
+                        setTimeout(checkFontLoaded, 100);
+                    } else {
+                        cache.loaded = true;
+                        hidden.removeChild(text);
+
+                        for (var i = 0; i < cache.callbacks.length; i++) {
+                            try {
+                                cache.callbacks[i] && cache.callbacks[i]();
+                            } catch (e) {
+                                // invoke callbacks
+                            }
+                        }
+                    }
+                }
+
+            } else {
+
+                if (cache.loaded) {
+                    callback && callback();
+                } else {
+                    cache.callbacks.push(callback);
+                }
+
             }
-
-            // TODO: check when font loaded
-            callback && callback();
 
         }
     });

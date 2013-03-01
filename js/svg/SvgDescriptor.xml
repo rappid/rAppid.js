@@ -13,6 +13,8 @@
         </font-face>
     </js:Template>
 
+    <g cid="hidden" style="visibility:hidden" />
+
 </svg:SvgClass>
 
 
