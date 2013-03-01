@@ -266,7 +266,9 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
             if (callback) {
                 callback({
                     status: xhr.status,
-                    statusText: xhr.statusText
+                    statusText: xhr.statusText,
+                    responses: xhr.responses,
+                    xhr: xhr
                 });
             }
         },
