@@ -92,18 +92,6 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
         },
         /**
          *
-         * @param selected
-         * @private
-         */
-        _renderSelected: function (selected) {
-            if (selected) {
-                this.addClass('active');
-            } else {
-                this.removeClass('active');
-            }
-        },
-        /**
-         *
          * @param key
          * @param value
          * @private

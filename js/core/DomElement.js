@@ -304,6 +304,18 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                     }
                 }
             },
+            /**
+             *
+             * @param selected
+             * @private
+             */
+            _renderSelected: function (selected) {
+                if (selected) {
+                    this.addClass('active');
+                } else {
+                    this.removeClass('active');
+                }
+            },
             _renderVisible: function (visible) {
                 if (this.$renderParent) {
                     if (visible) {
