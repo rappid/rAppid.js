@@ -117,10 +117,6 @@ define(["js/core/Component", "underscore"], function (Component, _) {
                 key = null;
             }
 
-            if (instance instanceof Function) {
-                throw "got a factory instead of an instance"
-            }
-
             if (key) {
                 this.$singletonInstanceCache[key] = instance;
             } else {
