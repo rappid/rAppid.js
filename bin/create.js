@@ -196,24 +196,22 @@ function createApplication(appName, dir, callback) {
 
         var rappidPath = path.join(fs.realpathSync(process.argv[1]), "../..");
 
-        Helper.copyDirectory(path.join(rappidPath, "node_modules"), path.join(dir, "node_modules"), function () {
-            install(["rAppid.js", "latest", dir], function (err) {
-                if (!err) {
-                    // link config json
-                    var configPath = path.join(serverDir, "config.json");
-                    if (!fs.existsSync(configPath)) {
-                        var relativePath = path.join(path.relative(serverDir, publicDir), "config.json");
-                        fs.symlinkSync(relativePath, configPath);
-                    }
-
-                    // scaffold default app directory structure
-                    console.log("");
-                    console.log("Application '" + appName + "' in directory '" + publicDir + "' successfully created.");
-                    console.log("");
-                } else {
-                    callback(err)
+        install(["rAppid.js", "latest", dir], function (err) {
+            if (!err) {
+                // link config json
+                var configPath = path.join(serverDir, "config.json");
+                if (!fs.existsSync(configPath)) {
+                    var relativePath = path.join(path.relative(serverDir, publicDir), "config.json");
+                    fs.symlinkSync(relativePath, configPath);
                 }
-            })
+
+                // scaffold default app directory structure
+                console.log("");
+                console.log("Application '" + appName + "' in directory '" + publicDir + "' successfully created.");
+                console.log("");
+            } else {
+                callback(err)
+            }
         });
 
     }
