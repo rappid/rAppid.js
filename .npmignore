@@ -1,0 +1,10 @@
+.git*
+docs/
+test/
+support/
+build/
+coverage.html
+.travis.yml
+.mailmap
+*.swp
+.DS_Store
