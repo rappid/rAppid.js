@@ -38,7 +38,7 @@ function install(args, callback) {
 
 
     if (!fs.existsSync(path.join(dir,"node_modules", packageName))) {
-        child = child_process.exec(["npm", "install", what, "-d"].join(" "), {cwd: dir}, function (err, stdout, stderr) {
+        child = child_process.exec(["npm", "--production", "install", what, "-d"].join(" "), {cwd: dir}, function (err, stdout, stderr) {
             sys.print('stdout: ' + stdout);
             sys.print('stderr: ' + stderr);
 
