@@ -43,7 +43,6 @@
     "inherit.js": "latest",
     "ejs": "latest",
     "optimist": ">=0.3.4",
-    "xmlhttprequest": "latest",
     "colors": "*"
   },
   "optionalDependencies": {
