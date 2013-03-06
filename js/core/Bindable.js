@@ -553,7 +553,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
                                 this.$previousAttributes[key] = prev;
                             } else {
                                 if (options.force || !isEqual(now[key], attributes[key])) {
-                                    prev = now[key];
+                                    prev = options.initial ? null : now[key];
                                     this.$previousAttributes[key] = prev;
                                     now[key] = attributes[key];
                                     changedAttributes[key] = now[key];
