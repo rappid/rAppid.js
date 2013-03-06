@@ -6,7 +6,7 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
         var ContentPlaceHolder;
 
         var pointerToTouchMap = {
-            'on:pointer' : 'on:touchstart',
+            'on:pointer' : 'on:click',
             'on:pointerdown': 'on:touchstart',
             'on:pointermove': 'on:touchmove',
             'on:pointerup': 'on:touchend'
