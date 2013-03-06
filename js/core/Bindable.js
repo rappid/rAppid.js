@@ -162,6 +162,16 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
                     return this._generateDefaultsChain("inject");
                 },
 
+                _setUp: function() {
+                    this._inject();
+                    this._bindBus();
+                },
+
+                _tearDown: function() {
+                    this._extract();
+                    this._unbindBus();
+                },
+
                 _inject: function () {
 
                     var inject = this._injectChain();
@@ -186,6 +196,29 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
                     }
 
                     this._postConstruct();
+                },
+
+
+                _bindBus: function () {
+                    for (var f in this) {
+                        var fn = this[f];
+                        if (fn instanceof Function && fn._busEvents) {
+                            for (var i = 0; i < fn._busEvents.length; i++) {
+                                this.$stage.$bus.bind(fn._busEvents[i], fn, this);
+                            }
+                        }
+                    }
+                },
+
+                _unbindBus: function () {
+                    for (var f in this) {
+                        var fn = this[f];
+                        if (fn instanceof Function && fn._busEvents) {
+                            for (var i = 0; i < fn._busEvents.length; i++) {
+                                this.$stage.$bus.unbind(fn._busEvents[i], fn, this);
+                            }
+                        }
+                    }
                 },
 
                 _extract: function() {

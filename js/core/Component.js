@@ -90,9 +90,7 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
 
                 _preinitialize: function () {
                     this.callBase();
-
-                    this._inject();
-                    this._bindBus();
+                    this._setUp();
                 },
 
                 _initializeBindingsBeforeComplete: function() {
@@ -101,17 +99,6 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                     }
 
                     this.callBase();
-                },
-
-                _bindBus: function () {
-                    for (var f in this) {
-                        var fn = this[f];
-                        if (fn instanceof Function && fn._busEvents) {
-                            for (var i = 0; i < fn._busEvents.length; i++) {
-                                this.$stage.$bus.bind(fn._busEvents[i], fn, this);
-                            }
-                        }
-                    }
                 },
 
                 /***

@@ -19,7 +19,7 @@ define(['js/core/EventDispatcher'], function(EventDispatcher) {
             }
 
             bindable.$stage = this.$stage;
-            bindable._inject();
+            bindable._setUp();
         },
 
         tearDown: function(bindable) {
@@ -28,7 +28,7 @@ define(['js/core/EventDispatcher'], function(EventDispatcher) {
                 return;
             }
 
-            bindable._extract();
+            bindable._tearDown();
             bindable.$stage = null;
         },
 
