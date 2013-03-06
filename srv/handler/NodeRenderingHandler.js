@@ -118,7 +118,14 @@ define(['srv/core/Handler', 'path', 'flow', 'fs', 'jsdom', 'underscore'], functi
                 .seq(function (cb) {
                     // start application
                     var startParameter = _.extend({}, self.$.defaultStartParameter);
-                    startParameter.initialHash = context.request.urlInfo.parameter["_escaped_fragment_"] || "";
+                    var initialHash = context.request.urlInfo.parameter["_escaped_fragment_"] || "";
+
+                    if (initialHash instanceof Array) {
+                        // _escaped_fragment_ parameter was given more the once
+                        initialHash = initialHash[0];
+                    }
+
+                    startParameter.initialHash = initialHash;
                     cb.vars["app"].start(startParameter, cb);
                 })
                 .seq("html", function () {
