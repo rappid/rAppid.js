@@ -135,8 +135,8 @@ define(["js/html/HtmlElement", "js/core/Bus", "js/core/WindowManager", "js/core/
 
             if (target) {
                 target.appendChild(dom);
+                this.rendered = true;
                 this.$bus.trigger('Stage.Rendered', target);
-
                 this.trigger('add:dom', target);
             }
             return dom;
