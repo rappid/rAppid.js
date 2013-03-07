@@ -114,7 +114,7 @@ define(["js/core/Base"], function (Base) {
 
                     if (this._eventHandlers[eventType]) {
 
-                        list = this._eventHandlers[eventType];
+                        list = this._eventHandlers[eventType].slice();
                         for (i = 0; i < list.length; i++) {
                             if (list[i]) {
                                 result = list[i].trigger(event, target);
@@ -135,7 +135,7 @@ define(["js/core/Base"], function (Base) {
 
                     if (this._eventHandlers["*"]) {
 
-                        list = this._eventHandlers["*"];
+                        list = this._eventHandlers["*"].slice();
                         for (i = 0; i < list.length; i++) {
                             if (list[i]) {
                                 result = list[i].trigger(event, target);
