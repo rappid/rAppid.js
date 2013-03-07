@@ -820,12 +820,20 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
                  * @return {this}
                  */
                 destroy: function () {
-                    this.callBase();
-                    for (var i = 0; i < this.$eventBindables.length; i++) {
-                        this.$eventBindables[i].destroy();
-                    }
 
                     this.trigger('destroy', this);
+
+                    if(this.$eventBindables){
+                        for (var i = 0; i < this.$eventBindables.length; i++) {
+                            this.$eventBindables[i].destroy();
+                        }
+                    }
+                    this.$eventBindables = null;
+
+                    this.callBase();
+
+                    this.$bindings = null;
+
                     return this;
                 },
                 isDeepEqual : function(b){
