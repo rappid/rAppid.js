@@ -70,6 +70,11 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
                 this.$.key = this.$.path[0];
                 var self = this;
 
+                // destroy yourself on target or scope destroy
+                this.$.target.bind('destroy', this.destroy, this);
+                scope.bind('destroy', this.destroy, this);
+
+
                 if (this.$.key.type == TYPE_FNC) {
                     var fncName = this.$.key.name, parameters = this.$.key.parameter;
 
@@ -139,8 +144,6 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
                         this.$.target.bind(this.$.targetEvent, this._revCallback, this);
                     }
                 }
-
-                scope.bind('destroy', this.destroy, this);
 
                 this._createSubBinding();
             },
@@ -263,7 +266,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
                     params.unshift(e.$);
                     this.$.fnc.apply(this.$.scope, params);
                 } else {
-                    this.$.scope.set(pathToString(this.$.path), this.transformBack(e.$));
+                    this.$.scope.set(pathToString(this.$.path), this.transformBack(e.$, this.$originalValue));
                 }
             },
             /**
@@ -296,6 +299,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
                 this._createSubBinding();
                 this.trigger();
             },
+
             /**
              * Unbinds all events and destroys subBinding...
              */
@@ -317,7 +321,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
                 }
                 if (this.$subBinding) {
                     this.$subBinding.destroy();
-                    this.$subBinding = undefined;
+                    this.$subBinding = null;
                 }
 
                 // destroy parameter bindings
@@ -327,7 +331,8 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
                         par.destroy();
                     }
                 }
-
+                this.$parameters = null;
+                this.$.scope = this.$.target = this.$.callback = null;
                 this.$ = null;
 
                 this.callBase();
@@ -364,15 +369,15 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
                 if (this.$subBinding) {
                     return this.$subBinding.getValue();
                 } else {
+                    this.$originalValue = null;
                     if (this.$.fnc && !this.$jsonObject) {
-                        return this.transform(this.$.fnc.apply(this.$.scope, this._getFncParameters()));
+                        this.$originalValue = this.$.fnc.apply(this.$.scope, this._getFncParameters());
                     } else if (this.$.path.length === 1) {
-                        return this.transform(this.$.scope.get(this.$.key.name));
+                        this.$originalValue = this.$.scope.get(this.$.key.name);
                     } else if(this.$jsonObject) {
-                        return this.transform(this.$.scope.get(this.$jsonObject, this.$.path.slice(1)));
-                    } else {
-                        return null;
+                        this.$originalValue = this.$.scope.get(this.$jsonObject, this.$.path.slice(1));
                     }
+                    return this.transform(this.$originalValue);
                 }
 
             },
