@@ -70,9 +70,11 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
                 this.$.key = this.$.path[0];
                 var self = this;
 
-                // destroy yourself on target or scope destroy
-                this.$.target.bind('destroy', this.destroy, this);
-                scope.bind('destroy', this.destroy, this);
+                if(!this.$.parent){
+                    // destroy yourself on target or scope destroy
+                    this.$.target.bind('destroy', this.destroy, this);
+                    scope.bind('destroy', this.destroy, this);
+                }
 
 
                 if (this.$.key.type == TYPE_FNC) {
@@ -116,7 +118,8 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
                             if(para instanceof Array) {
                                 para = {
                                     path: para,
-                                    type: TYPE_NORMAL
+                                    type: TYPE_NORMAL,
+                                    parent: this
                                 };
                             }
                             if(_.isObject(para)){
@@ -250,7 +253,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
                     // get value for first child
                     if(nScope instanceof Bindable){
                         // init new binding, which triggers this binding
-                        this.$subBinding = new Binding({scope: nScope, path: this.$.path.slice(1), target: this.$.target, targetKey: this.$.targetKey, rootScope: this.$.rootScope, callback: this.$.callback, context: this.$.context, twoWay: this.$.twoWay, transform: this.$.transform, transformBack: this.$.transformBack, bindingCreator: this.$.bindingCreator});
+                        this.$subBinding = new Binding({scope: nScope, path: this.$.path.slice(1), target: this.$.target, targetKey: this.$.targetKey, rootScope: this.$.rootScope, callback: this.$.callback, context: this.$.context, twoWay: this.$.twoWay, transform: this.$.transform, transformBack: this.$.transformBack, bindingCreator: this.$.bindingCreator, parent: this});
                     } else if(nScope instanceof Object){
                         // we have a object which is not bindable
                         this.$jsonObject = nScope;
@@ -294,6 +297,11 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
              * @private
              */
             _callback: function () {
+
+                if(!this.$){
+                    return;
+                }
+
                 // remove subBindings!
                 if (this.$subBinding) {
                     this.$subBinding.destroy();
@@ -419,6 +427,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
                     target: target,
                     callback: callback,
                     path: bindingDef.path,
+                    parent: bindingDef.parent,
                     twoWay : bindingDef.type === TYPE_TWOWAY, bindingCreator: this.$.bindingCreator};
 
                 var fncEl;

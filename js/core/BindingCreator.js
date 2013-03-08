@@ -60,6 +60,7 @@ define(['js/core/EventDispatcher','js/lib/parser','js/core/Binding', 'underscore
                     var options = {
                         scope: scope,
                         path: path,
+                        parent: bindingDef,
                         target: targetScope,
                         twoWay: twoWay,
                         context: context,
