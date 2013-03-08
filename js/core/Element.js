@@ -152,7 +152,7 @@ define(["js/core/Bindable", "underscore"], function (Bindable, _) {
             },
 
             _getTextContentFromDescriptor: function (desc) {
-                var textContent = desc.textContent || desc.text || desc.data;
+                var textContent = desc.textContent || desc.nodeValue || desc.data || desc.text;
                 if (!textContent) {
                     textContent = "";
                     for (var i = 0; i < desc.childNodes.length; i++) {

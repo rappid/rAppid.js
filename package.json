@@ -47,8 +47,7 @@
   },
   "optionalDependencies": {
     "xmlhttprequest": "latest",
-    "libxml": "latest",
-    "jsdom": "latest"
+    "xmldom": "latest"
   },
   "devDependencies": {
     "saucelabs-tunnel": "*",

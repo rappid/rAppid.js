@@ -5,7 +5,7 @@ define(
             defaults: {
                 visible: true
             },
-            _initializeDescriptors: function(){
+            _initializeDescriptors: function () {
                 if (this.$descriptor) {
                     this.$.textContent = this._getTextContentFromDescriptor(this.$descriptor);
                 }
@@ -22,11 +22,11 @@ define(
                 return this.$el;
             },
             _renderTextContent: function (textContent) {
-                if(_.isUndefined(this.$.textContent) || textContent === null){
+                if (_.isUndefined(this.$.textContent) || textContent === null) {
                     textContent = "";
                 }
                 this.$el.nodeValue = textContent;
-
+                this.$el.data = textContent;
             },
             _commitChangedAttributes: function (attributes) {
                 if (this.$el) {

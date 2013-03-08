@@ -369,6 +369,42 @@ describe('js.core.Bindable', function () {
             copy.set('number',312);
             expect(original.isDeepEqual(copy)).to.equal(false);
         });
+    });
+
+    describe('#_commit methods', function () {
+
+        it('#_commit method should be invoked once', function () {
+
+            var MyBindable = C.Bindable.inherit({
+
+                defaults: {
+                    foo: "bar"
+                },
+
+                ctor: function() {
+                    this.data = [];
+                    this.callBase();
+                },
+
+                _commitFoo: function(value, oldValue) {
+                    this.data.push({
+                        value: value,
+                        oldValue: oldValue
+                    });
+                }
+
+            });
+
+            var b = new MyBindable();
+
+            expect(b.data).to.have.length(1);
+            expect(b.data[0]).to.eql({
+                value: "bar",
+                oldValue: null
+            });
+
+        });
+
     })
 
 

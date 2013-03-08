@@ -162,6 +162,16 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
                     return this._generateDefaultsChain("inject");
                 },
 
+                _setUp: function() {
+                    this._inject();
+                    this._bindBus();
+                },
+
+                _tearDown: function() {
+                    this._extract();
+                    this._unbindBus();
+                },
+
                 _inject: function () {
 
                     var inject = this._injectChain();
@@ -186,6 +196,29 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
                     }
 
                     this._postConstruct();
+                },
+
+
+                _bindBus: function () {
+                    for (var f in this) {
+                        var fn = this[f];
+                        if (fn instanceof Function && fn._busEvents) {
+                            for (var i = 0; i < fn._busEvents.length; i++) {
+                                this.$stage.$bus.bind(fn._busEvents[i], fn, this);
+                            }
+                        }
+                    }
+                },
+
+                _unbindBus: function () {
+                    for (var f in this) {
+                        var fn = this[f];
+                        if (fn instanceof Function && fn._busEvents) {
+                            for (var i = 0; i < fn._busEvents.length; i++) {
+                                this.$stage.$bus.unbind(fn._busEvents[i], fn, this);
+                            }
+                        }
+                    }
                 },
 
                 _extract: function() {
@@ -373,6 +406,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
                 clone: function (options) {
                     var ret = {};
                     options = options || {};
+                    this._generateDefaultsChain();
                     for (var key in this.$) {
                         if (this.$.hasOwnProperty(key)) {
                             if (options.exclude) {
@@ -397,7 +431,9 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
                  * @private
                  */
                 _cloneAttribute: function (attribute, key) {
-                    if (attribute instanceof Bindable) {
+                    if(this.inject && this.inject.hasOwnProperty(key)){
+                        return attribute;
+                    } else if (attribute instanceof Bindable) {
                         return attribute.clone();
                     } else if(attribute && (attribute.clone instanceof Function)){
                         return attribute.clone();
@@ -520,7 +556,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
                                 this.$previousAttributes[key] = prev;
                             } else {
                                 if (options.force || !isEqual(now[key], attributes[key])) {
-                                    prev = now[key];
+                                    prev = options.initial ? null : now[key];
                                     this.$previousAttributes[key] = prev;
                                     now[key] = attributes[key];
                                     changedAttributes[key] = now[key];
@@ -787,12 +823,20 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
                  * @return {this}
                  */
                 destroy: function () {
-                    this.callBase();
-                    for (var i = 0; i < this.$eventBindables.length; i++) {
-                        this.$eventBindables[i].destroy();
-                    }
 
                     this.trigger('destroy', this);
+
+                    if(this.$eventBindables){
+                        for (var i = 0; i < this.$eventBindables.length; i++) {
+                            this.$eventBindables[i].destroy();
+                        }
+                    }
+                    this.$eventBindables = null;
+
+                    this.callBase();
+
+                    this.$bindings = null;
+
                     return this;
                 },
                 isDeepEqual : function(b){

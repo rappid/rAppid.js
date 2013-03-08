@@ -90,9 +90,7 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
 
                 _preinitialize: function () {
                     this.callBase();
-
-                    this._inject();
-                    this._bindBus();
+                    this._setUp();
                 },
 
                 _initializeBindingsBeforeComplete: function() {
@@ -101,17 +99,6 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                     }
 
                     this.callBase();
-                },
-
-                _bindBus: function () {
-                    for (var f in this) {
-                        var fn = this[f];
-                        if (fn instanceof Function && fn._busEvents) {
-                            for (var i = 0; i < fn._busEvents.length; i++) {
-                                this.$stage.$bus.bind(fn._busEvents[i], fn, this);
-                            }
-                        }
-                    }
                 },
 
                 /***
@@ -447,11 +434,6 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                         return this.$stage.$applicationContext.createInstance(fqClassName, [attributes, node, this.$stage, this, rootScope], className);
 
                     } else if (node.nodeType == 3 || node.nodeType == 4) { // Text nodes
-                        // remove whitespaces from text text nodes
-                        var text = node.textContent ? node.textContent : node.text;
-                        if (node.textContent) {
-                            node.textContent = text;
-                        }
                         // only instantiation and construction but no initialization
                         return this._createTextElement(node, rootScope);
                     }

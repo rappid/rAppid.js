@@ -54,6 +54,9 @@ describe('js.core.Binding', function () {
                     foobar: function (a,b) {
                         return a === parStr && b === parNum;
                     },
+                    calculatedAttribute: function(){
+                        return "test";
+                    }.onChange('m1'),
 
                     // MOCK FUNCTION
                     getScopeForFncName: function (name) {
@@ -228,5 +231,43 @@ describe('js.core.Binding', function () {
             extendedTarget.get('val').should.equal(false);
         });
 
-    })
+    });
+
+    describe('#destroy', function(){
+
+        it('should be called on target.destroy', function(){
+            var binding = new C.Binding({scope: extendedModel, path: "foo()", target: target, targetKey: 'val'}),
+                binding2 = new C.Binding({scope: extendedModel, path: "foobar(m1.a,m1.b)", target: target, targetKey: 'val2'}),
+                binding3 = new C.Binding({scope: extendedModel, path: "calculatedAttribute()", target: target, targetKey: 'val3'});
+
+            target.destroy();
+
+            extendedModel.set('m1', new ExtendedClass({
+                a: 'a',
+                b: 'b'
+            }));
+
+            expect(binding.$).to.not.exist;
+            expect(binding2.$).to.not.exist;
+            expect(binding3.$).to.not.exist;
+
+
+
+        });
+
+        it('should be called on scope.destroy', function () {
+            var binding = new C.Binding({scope: extendedModel, path: "foo()", target: target, targetKey: 'val'}),
+                binding2 = new C.Binding({scope: extendedModel, path: "foobar(m1.a,m1.b)", target: target, targetKey: 'val2'}),
+                binding3 = new C.Binding({scope: extendedModel, path: "calculatedAttribute()", target: target, targetKey: 'val3'});
+
+            extendedModel.destroy();
+
+            expect(binding.$).to.not.exist;
+            expect(binding2.$).to.not.exist;
+            expect(binding3.$).to.not.exist;
+
+
+        });
+
+    });
 });

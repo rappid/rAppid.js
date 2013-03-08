@@ -136,10 +136,12 @@ define(
                 }
             },
             _renderSelectedItems: function (list) {
-                var item;
-                for (var i = 0; i < this.$renderedItems.length; i++) {
-                    item = this.$renderedItems[i].item;
-                    this.$renderedItems[i].component.set({selected: (list.indexOf(item) > -1)});
+                if(list && list.length){
+                    var item;
+                    for (var i = 0; i < this.$renderedItems.length; i++) {
+                        item = this.$renderedItems[i].item;
+                        this.$renderedItems[i].component.set({selected: (list.indexOf(item) > -1)},{silent: true});
+                    }
                 }
             },
             _renderSelectedIndex: function (i) {

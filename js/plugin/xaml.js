@@ -221,8 +221,9 @@ define([], function () {
 
         fetchXaml = function (path, callback) {
             try {
-                var content = fs.readFileSync(path, 'utf8');
-                callback(null, require.nodeRequire('libxml').parseFromString(content));
+                var content = fs.readFileSync(path, 'utf8'),
+                    DOMParser = require.nodeRequire('xmldom').DOMParser;
+                callback(null, (new DOMParser()).parseFromString(content));
             } catch(e) {
                 callback(e);
             }

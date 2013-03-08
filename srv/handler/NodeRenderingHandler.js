@@ -1,4 +1,4 @@
-define(['srv/core/Handler', 'path', 'flow', 'fs', 'jsdom', 'underscore'], function(Handler, Path, flow, Fs, JsDom, _) {
+define(['srv/core/Handler', 'path', 'flow', 'fs', 'xmldom', 'underscore'], function(Handler, Path, flow, Fs, xmldom, _) {
 
     return Handler.inherit('srv.handler.NodeRenderingHandler', {
 
@@ -64,19 +64,36 @@ define(['srv/core/Handler', 'path', 'flow', 'fs', 'jsdom', 'underscore'], functi
                 })
                 .seq("html", function () {
                     var indexContent = Fs.readFileSync(Path.join(self.$.applicationDirectory, self.$.indexFile));
-
                     // clean up html
-                    var doc = JsDom.jsdom(indexContent);
-
+                    var doc = (new xmldom.DOMParser()).parseFromString(indexContent.toString()).documentElement;
+                    doc.constructor.prototype.style = {};
+                    if(!doc.innerHTML){
+                        Object.defineProperty(doc.constructor.prototype, 'innerHTML', {
+                            get: function () {
+                                return ""; // TODO
+                            },
+                            set: function(data){
+                                var doc = (new xmldom.DOMParser()).parseFromString(data);
+                                if(!doc.documentElement){
+                                    this.data = data;
+                                } else{
+                                    while(this.firstChild){
+                                        this.removeChild(this.firstChild);
+                                    }
+                                    this.appendChild(doc.documentElement);
+                                }
+                            }
+                        });
+                    }
                     var scripts = doc.getElementsByTagName('script');
-                    scripts._snapshot.forEach(function (script) {
-                        var usage = script.getAttribute("data-usage");
+                    for(var i = scripts.length-1; i >= 0; i--){
+                        var usage = scripts[i].getAttribute("data-usage");
                         if (usage == "bootstrap" || usage == "lib") {
-                            script.parentNode.removeChild(script);
+                            scripts[i].parentNode.removeChild(scripts[i]);
                         }
-                    });
+                    }
 
-                    return doc.innerHTML;
+                    return (new xmldom.XMLSerializer()).serializeToString(doc);
                 })
                 .exec(function(err, results) {
 
@@ -101,13 +118,17 @@ define(['srv/core/Handler', 'path', 'flow', 'fs', 'jsdom', 'underscore'], functi
         handleRequest: function(context, callback) {
 
             var self = this,
-                stage;
+                stage,
+                now = new Date();
 
             flow()
                 .seq("window", function () {
                     // generate document
-                    var document = JsDom.jsdom(self.$html);
-                    return document.createWindow();
+                    var document = (new xmldom.DOMParser()).parseFromString(self.$html);
+                    return {
+                        document: document
+                    }
+
                 })
                 .seq("app", function (cb) {
                     self.$applicationContext.createApplicationInstance(cb.vars.window, function (err, s, application) {
@@ -118,16 +139,22 @@ define(['srv/core/Handler', 'path', 'flow', 'fs', 'jsdom', 'underscore'], functi
                 .seq(function (cb) {
                     // start application
                     var startParameter = _.extend({}, self.$.defaultStartParameter);
-                    startParameter.initialHash = context.request.urlInfo.parameter["_escaped_fragment_"] || "";
+                    var initialHash = context.request.urlInfo.parameter["_escaped_fragment_"] || "";
+
+                    if (initialHash instanceof Array) {
+                        // _escaped_fragment_ parameter was given more the once
+                        initialHash = initialHash[0];
+                    }
+
+                    startParameter.initialHash = initialHash;
                     cb.vars["app"].start(startParameter, cb);
                 })
                 .seq("html", function () {
-                    stage.render(this.vars.window.document.body);
-                    return '<!DOCTYPE html>\n' + this.vars.window.document.innerHTML;
+
+                    stage.render(this.vars.window.document.getElementsByTagName("body")[0]);
+                    return '<!DOCTYPE html>\n' + (new xmldom.XMLSerializer()).serializeToString(this.vars.window.document.documentElement);
                 })
                 .exec(function (err, results) {
-
-
                     if (!err) {
                         context.response.writeHead(200, {'Content-Type': 'text/html; charset=utf-8'});
                         context.response.write(results.html);

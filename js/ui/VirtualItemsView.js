@@ -383,7 +383,7 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
             }
             var renderer = this._createRenderer();
             renderer.bind('on:dblclick', this._onRendererDblClick, this);
-            renderer.bind('on:click', this._onRendererClick, this);
+            renderer.bind('on:pointer', this._onRendererClick, this);
             return renderer;
         },
 
