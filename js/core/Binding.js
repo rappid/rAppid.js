@@ -276,6 +276,11 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
              * @private
              */
             _changeCallback: function (event) {
+
+                if (!this.$) {
+                    return;
+                }
+
                 for (var i = 0; i < this.$.fnc._attributes.length; i++) {
                     if (!_.isUndefined(event.$[this.$.fnc._attributes[i]])) {
                         this._callback();
