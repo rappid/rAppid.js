@@ -436,7 +436,7 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                     } else if (node.nodeType == 3 || node.nodeType == 4) { // Text nodes
                         // remove whitespaces from text text nodes
                         var text = node.textContent ? node.textContent : node.text;
-                        if (node.textContent) {
+                        if (!node.textContent) {
                             node.textContent = text;
                         }
                         // only instantiation and construction but no initialization
