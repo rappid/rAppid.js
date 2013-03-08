@@ -44,7 +44,11 @@ define(["inherit"], function(inherit){
             } else if (typeof console !== "undefined") {
                 var method = (console[level] || console.log);
                 if(method){
-                    method.call(console,"[ " + (new Date()) + " ]: ", message);
+                    try {
+                        method.call(console, "[ " + (new Date()) + " ]: ", message);
+                    } catch (e) {
+                        //
+                    }
                 }
             }
         }
