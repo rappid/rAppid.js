@@ -90,7 +90,7 @@ define(["js/html/HtmlElement", "underscore", "moment"], function (HtmlElement, _
                     }
                     // fix for IE
                     if(this.$.updateOnEvent === "input" && "onpropertychange" in this.$el){
-                        this.bindDomEvent("propertychange", function (e) {
+                        this.bindDomEvent("keyup", function (e) {
                             self.set('value', self._transformValue(self.$el.value));
                         });
                     } else {
