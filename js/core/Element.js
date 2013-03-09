@@ -7,7 +7,7 @@ define(["js/core/Bindable", "underscore"], function (Bindable, _) {
 
         function stringToPrimitive(str) {
             // if it's not a string
-            if (_.isString(str)) {
+            if (_.isString(str) && str !== "") {
 
                 var num = Number(str);
                 if (!isNaN(num)) {
