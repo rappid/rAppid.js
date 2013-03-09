@@ -43,6 +43,7 @@ define(['js/core/Bindable'], function (Bindable) {
 
             if (!this._validationRequired(entity)) {
                 internalCallback(null);
+                return;
             }
 
             try {
