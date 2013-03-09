@@ -6,7 +6,7 @@ define(["js/html/HtmlElement", "underscore", "moment"], function (HtmlElement, _
             defaults: {
                 type: 'text',
                 checked: false,
-                updateOnEvent: 'keyup'
+                updateOnEvent: 'input'
             },
             _commitChangedAttributes: function(attributes){
                 if(this.$.type === 'radio'){
@@ -88,9 +88,19 @@ define(["js/html/HtmlElement", "underscore", "moment"], function (HtmlElement, _
                     if(this.$.type === "date" || this.$.type === "number"){
                         this.$.updateOnEvent = "change";
                     }
+
                     this.bindDomEvent(this.$.updateOnEvent, function (e) {
                         self.set('value', self._transformValue(self.$el.value));
                     });
+
+                    // fix for IE
+                    if(this.$.updateOnEvent === "input"){
+                        if("onpropertychange" in this.$el){
+                            this.bindDomEvent("propertychange", function (e) {
+                                self.set('value', self._transformValue(self.$el.value));
+                            });
+                        }
+                    }
 
                 } else if (this.$.type === "checkbox" || this.$.type === "radio") {
                     this.bindDomEvent('click', function (e) {
