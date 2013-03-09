@@ -88,18 +88,15 @@ define(["js/html/HtmlElement", "underscore", "moment"], function (HtmlElement, _
                     if(this.$.type === "date" || this.$.type === "number"){
                         this.$.updateOnEvent = "change";
                     }
-
-                    this.bindDomEvent(this.$.updateOnEvent, function (e) {
-                        self.set('value', self._transformValue(self.$el.value));
-                    });
-
                     // fix for IE
-                    if(this.$.updateOnEvent === "input"){
-                        if("onpropertychange" in this.$el){
-                            this.bindDomEvent("propertychange", function (e) {
-                                self.set('value', self._transformValue(self.$el.value));
-                            });
-                        }
+                    if(this.$.updateOnEvent === "input" && "onpropertychange" in this.$el){
+                        this.bindDomEvent("propertychange", function (e) {
+                            self.set('value', self._transformValue(self.$el.value));
+                        });
+                    } else {
+                        this.bindDomEvent(this.$.updateOnEvent, function (e) {
+                            self.set('value', self._transformValue(self.$el.value));
+                        });
                     }
 
                 } else if (this.$.type === "checkbox" || this.$.type === "radio") {
