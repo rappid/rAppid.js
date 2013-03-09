@@ -11,6 +11,8 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore"], funct
 
         $modelFactory: Model,
 
+        isCollection: true, // read only to determinate if its a collection and prevent circular dependencies
+
         ctor: function (items, options) {
             options = options || {};
 

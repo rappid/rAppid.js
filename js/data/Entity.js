@@ -351,7 +351,7 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                                 key: key,
                                 value: value
                             });
-                        } else if (value instanceof List && !(value instanceof require('js/data/Collection'))) {
+                        } else if (value instanceof List && value.isCollection) {
                             if (value.size() > 0 && value.at(0) instanceof Entity) {
                                 value.each(function (item) {
                                     subEntities.push({
@@ -402,7 +402,7 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
             },
             _isUndefined: function (value, schemaObject) {
                 var type = schemaObject.type;
-                if (type.classof && type.classof(require('js/data/Collection'))) {
+                if (type.isCollection) {
                     return false;
                 }
                 return (!(this.runsInBrowser() && schemaObject.generated)) && (value === undefined || value === null || value === "");
