@@ -233,15 +233,7 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
 
         isCreated: function() {
             return this._status() === STATE.CREATED;
-        }.onChange('id'),
-
-        _cloneAttribute: function (value) {
-            // if the attribute is a model, just link it and don't clone
-            if(value instanceof Model){
-                return value;
-            }
-            return this.callBase();
-        }
+        }.onChange('id')
 
     });
 
