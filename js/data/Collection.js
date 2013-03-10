@@ -226,6 +226,7 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore"], funct
                 }
             }
 
+            this.set('$itemsCount', NaN, {silent: true});
             this.reset([]);
         },
 
