@@ -43,6 +43,17 @@ define(["js/data/DataSource", "js/data/Model", "flow", "js/data/LocalStorage"],
                 return null;
             },
 
+            /***
+             * creates the context as RestContext
+             *
+             * @param properties
+             * @param parentContext
+             * @return {js.core.RestDataSource.RestContext}
+             */
+            createContext: function (contextModel, properties, parentContext) {
+                return new LocalStorageDataSource.Context(this, contextModel, properties, parentContext);
+            },
+
             _getCollectionData: function (path, contextPath) {
                 if (!path) {
                     callback("path for model unknown", null, options);
@@ -85,9 +96,12 @@ define(["js/data/DataSource", "js/data/Model", "flow", "js/data/LocalStorage"],
 
                 var processor = this.getProcessorForCollection(page);
 
+                rootCollection.set('$itemsCount', data.length);
+
                 data = processor.parseCollection(page.getRoot(), data, DataSource.ACTION.LOAD, options);
 
                 page.add(data);
+
 
                 callback(null, page, options);
             },
@@ -201,7 +215,7 @@ define(["js/data/DataSource", "js/data/Model", "flow", "js/data/LocalStorage"],
             }
         });
 
-        LocalStorageDataSource.RestContext = DataSource.Context.inherit("js.data.LocalStorageDataSource.Context", {
+        LocalStorageDataSource.Context = DataSource.Context.inherit("js.data.LocalStorageDataSource.Context", {
             getPathComponents: function () {
 
                 var path = [];
@@ -226,7 +240,7 @@ define(["js/data/DataSource", "js/data/Model", "flow", "js/data/LocalStorage"],
             createCollection: function (factory, options, type) {
                 options = options || {};
                 _.defaults(options, {
-                    pageSize: this.$dataSource.$.collectionPageSize || 100
+                    pageSize: Number.MAX_VALUE
                 });
 
                 return this.callBase(factory, options, type);
