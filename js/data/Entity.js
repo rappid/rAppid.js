@@ -321,6 +321,9 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                             return list;
                         }
                     }
+                } else if(value instanceof Entity && !value.$isEntity){
+                    // dont clone linked models
+                    return value;
                 }
 
                 return this.callBase();

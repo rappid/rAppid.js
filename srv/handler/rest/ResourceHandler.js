@@ -51,7 +51,7 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
                 rootResource = this.getRootResource(),
                 dataSource = this.getDataSource(context, this);
 
-            var configuration = rootResource.$resourceConfiguration.getConfigurationForModelClassName(model.constructor.name);
+            var configuration = rootResource.$resourceConfiguration.$parent.getConfigurationForModelClassName(model.constructor.name);
 
             if (!configuration && rootResource.$resourceConfiguration.$.modelClassName === model.constructor.name) {
                 configuration = rootResource.$resourceConfiguration;
