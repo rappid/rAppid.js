@@ -1,7 +1,7 @@
 {
   "name": "rAppid.js",
   "preferGlobal": "false",
-  "version": "0.5.5",
+  "version": "0.5.6",
   "author": "rAppid <support@rappidjs.com> (http://rappidjs.com)",
   "contributors": [
     "Tony Findeisen <tony@rappidjs.com>",
@@ -43,7 +43,9 @@
     "inherit.js": "latest",
     "ejs": "latest",
     "optimist": ">=0.3.4",
-    "colors": "*"
+    "colors": "*",
+    "xmlhttprequest": "latest",
+    "xmldom": "latest"
   },
   "optionalDependencies": {
     "xmlhttprequest": "latest",
