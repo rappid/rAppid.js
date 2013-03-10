@@ -1,6 +1,7 @@
 define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validator/Validator', 'underscore'],
     function (require, Bindable, List, flow, Validator, _) {
-        var Collection;
+
+        var undefined;
 
         var ValidationErrors = Bindable.inherit('js.data.Entity.ValidationErrors', {
             firstError: function () {
@@ -333,42 +334,58 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
 
         Entity.SchemaValidator = Validator.inherit('js.data.validator.SchemaValidator', {
             validate: function (entity, callback) {
-                var errors = [], subEntities = [], attributes = entity.$;
-                var schema = entity.schema, schemaObject, value, type;
-                for (var key in schema) {
-                    if (schema.hasOwnProperty(key)) {
-                        value = attributes[key];
-                        schemaObject = schema[key];
+                var errors = [],
+                    subEntities = [],
+                    attributes = entity.$,
+                    schema = entity.schema,
+                    schemaObject,
+                    value,
+                    type, err;
 
-                        type = schemaObject.type;
 
-                        if (this._isUndefined(value, schemaObject) && this._isRequired(entity, schemaObject.required)) {
-                            errors.push(this._createError("isUndefinedError", key + " is required", key));
-                        } else if (value && !this._isValidType(value, schemaObject.type)) {
-                            errors.push(this._createError("wrongTypeError", key + " is from wrong type", key));
-                        } else if (value instanceof Entity) {
-                            subEntities.push({
-                                key: key,
-                                value: value
-                            });
-                        } else if (value instanceof List && value.isCollection) {
-                            if (value.size() > 0 && value.at(0) instanceof Entity) {
-                                value.each(function (item) {
-                                    subEntities.push({
-                                        key: key,
-                                        value: item
-                                    });
+                try {
+                    for (var key in schema) {
+                        if (schema.hasOwnProperty(key)) {
+                            value = attributes[key];
+                            schemaObject = schema[key];
+
+                            type = schemaObject.type;
+
+                            if (this._isUndefined(value, schemaObject) && this._isRequired(entity, schemaObject.required)) {
+                                errors.push(this._createError("isUndefinedError", key + " is required", key));
+                            } else if (value && !this._isValidType(value, schemaObject.type)) {
+                                errors.push(this._createError("wrongTypeError", key + " is from wrong type", key));
+                            } else if (value instanceof Entity) {
+                                subEntities.push({
+                                    key: key,
+                                    value: value
                                 });
-                            } else if (value.size() === 0 && !(this.runsInBrowser() && schemaObject.generated) && this._isRequired(entity, schemaObject.required) === true) {
-                                errors.push(this._createError("isEmptyError", key + " are empty", key));
+                            } else if (value instanceof List && value.isCollection) {
+                                if (value.size() > 0 && value.at(0) instanceof Entity) {
+                                    value.each(function (item) {
+                                        subEntities.push({
+                                            key: key,
+                                            value: item
+                                        });
+                                    });
+                                } else if (value.size() === 0 && !(this.runsInBrowser() && schemaObject.generated) && this._isRequired(entity, schemaObject.required) === true) {
+                                    errors.push(this._createError("isEmptyError", key + " are empty", key));
+                                }
                             }
                         }
                     }
+                } catch (e) {
+                    err = e || true;
                 }
 
                 var self = this;
 
                 flow()
+                    .seq(function() {
+                        if (err) {
+                            throw err;
+                        }
+                    })
                     .seqEach(subEntities, function (subEntity, cb) {
                         entity.validateSubEntity(subEntity.value, function (err, results) {
                             if (results) {
@@ -378,6 +395,7 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                         });
                     })
                     .exec(function (err) {
+
                         callback(err, errors);
                     });
             },
@@ -402,7 +420,7 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
             },
             _isUndefined: function (value, schemaObject) {
                 var type = schemaObject.type;
-                if (type.isCollection) {
+                if (type && type.isCollection) {
                     return false;
                 }
                 return (!(this.runsInBrowser() && schemaObject.generated)) && (value === undefined || value === null || value === "");
