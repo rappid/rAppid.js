@@ -1,4 +1,4 @@
-define(['js/core/Bindable'], function (Bindable) {
+define(['js/core/Bindable', 'js/core/Base'], function (Bindable, Base) {
 
     var defaultConditionFnc = function(){
         return true;
@@ -103,7 +103,6 @@ define(['js/core/Bindable'], function (Bindable) {
     });
 
     Validator.Error = Bindable.inherit({
-
     });
 
     return Validator;
