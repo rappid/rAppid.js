@@ -2,7 +2,8 @@ define(['js/data/validator/Validator', 'underscore'], function (Validator, _) {
 
     return Validator.inherit('js.data.validator.RegExValidator', {
         defaults: {
-            errorCode: 'regExError'
+            errorCode: 'regExError',
+            regEx: null
         },
 
         ctor: function(){
