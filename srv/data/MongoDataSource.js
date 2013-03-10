@@ -37,7 +37,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
 
         _composeEntity: function(entity, action, options){
             // give entities an ID, so the caching works correctly
-            if(!entity.$.id) {
+            if(!entity.$.id && !(entity instanceof Model)) {
                 entity.$.id = generateId();
             }
             return this.callBase(entity, action, options);
@@ -325,8 +325,8 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
             var mongoCollection = configuration.$.collection;
 
             var params = {};
-            if(collectionPage.$collection.$options.query){
-                params = MongoQueryComposer.compose(collectionPage.$collection.$options.query);
+            if(collectionPage.$collection.$.query){
+                params = MongoQueryComposer.compose(collectionPage.$collection.$.query);
             }
 
             if (!mongoCollection) {
