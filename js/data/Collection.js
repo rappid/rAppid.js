@@ -214,15 +214,16 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore"], funct
         invalidatePageCache: function(){
             this.$pageCache = {};
 
-
-            for(var key in this.$queryCollectionsCache){
-                if(this.$queryCollectionsCache.hasOwnProperty(key)){
-                    this.$queryCollectionsCache[key].invalidatePageCache();
+            for (var key in this.$filterCache) {
+                if (this.$filterCache.hasOwnProperty(key)) {
+                    this.$filterCache[key].invalidatePageCache();
                 }
             }
 
-            for(var i = 0; i < this.$sortCollections.length; i++){
-                this.$sortCollections[i].invalidatePageCache();
+            for (key in this.$sortCache) {
+                if (this.$sortCache.hasOwnProperty(key)) {
+                    this.$sortCache[key].invalidatePageCache();
+                }
             }
 
             this.reset([]);
@@ -237,21 +238,6 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore"], funct
             }
 
             return this.$queryCollectionsCache[queryKey];
-        },
-
-        remove: function(){
-            this.callBase();
-
-            for (var key in this.$queryCollectionsCache) {
-                if (this.$queryCollectionsCache.hasOwnProperty(key)) {
-                    this.remove.apply(this.$queryCollectionsCache[key], arguments);
-                }
-            }
-
-            for (var i = 0; i < this.$sortCollections.length; i++) {
-                this.remove.apply(this.$sortCollections[i],arguments);
-            }
-
         },
 
         size: function() {
