@@ -141,13 +141,17 @@ define(["js/core/EventDispatcher", "js/core/Bindable", "underscore", "js/data/Qu
          * @param options
          */
         remove: function (items, options) {
+            var removed = [];
 
             if (!_.isArray(items)) {
                 items = [items];
             }
+            var item;
             for (var i = 0; i < items.length; i++) {
-                this.removeAt(this.indexOf(items[i]), options);
+                item = this.removeAt(this.indexOf(items[i]), options);
+                item && removed.push(item);
             }
+            return removed;
         },
         /**
          * Returns the index of the item
