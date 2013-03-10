@@ -800,7 +800,7 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
                 dataItem.set('$status', STATUS_LOADED);
                 // page already fetched -> return with data
                 dataItem.set('data', this.$data.at(index));
-            } else if(index >= 0){
+            } else if(pageEntry && index >= 0){
                 dataItem.set('$status', STATUS_LOADING);
                 // add callback after fetch completes, which sets the data
                 pageEntry[index] = dataItem;
