@@ -439,7 +439,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
 
                         schemaDefinition = schema[key];
                         schemaType = schemaDefinition['type'];
-                        value = this._getValueForKey(data, key, schemaType);
+                        value = this._getValueForKey(data, key, schemaType, schemaDefinition);
 
                         factory = null;
                         var typeResolver,
@@ -591,10 +591,16 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
              * @param {Object} data The payload data
              * @param {String} key The schema key
              * @param {Function} schemaType The schema typ
+             * @param {Object} schemaDefinition
              * @return {*} Returns the correct value for a reference and schemaType
              * @private
              */
-            _getValueForKey: function (data, key, schemaType) {
+            _getValueForKey: function (data, key, schemaType, schemaDefinition) {
+
+                if (schemaDefinition && schemaDefinition.key) {
+                    key = schemaDefinition.key;
+                }
+
                 return data[key];
             },
             /***
