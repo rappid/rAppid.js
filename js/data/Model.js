@@ -220,12 +220,16 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
         },
 
         _status: function () {
-            if (this.$.id === false) {
+            if (this.identifier() === false) {
                 return STATE.DELETED;
             } else {
-                return this.$.id ? STATE.CREATED : STATE.NEW;
+                return this.identifier() ? STATE.CREATED : STATE.NEW;
             }
         }.onChange('id'),
+
+        identifier: function(){
+            return this.$[this.idKey];
+        },
 
         isNew: function () {
             return this._status() === STATE.NEW;

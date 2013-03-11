@@ -4,9 +4,10 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
 
     var RestDataProcessor = DataSource.Processor.inherit('js.data.RestDataSource.RestDataProcessor', {
         _composeSubModel: function (model, action, options) {
-            return {
-                id: model.$.id
-            };
+            var ret = {};
+
+            ret[model.idKey] = model.identifier();
+            return ret;
         }
     });
 
@@ -128,7 +129,7 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
                 var path = this.getPathComponentsForModelClass(model.factory);
                 if (path) {
                     if (!model.isNew()) {
-                        path.push(model.$.id);
+                        path.push(model.identifier());
                     }
 
                     return path;
@@ -680,7 +681,7 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
             }
 
             var configuration = this.$dataSource.getConfigurationForModelClass(this.$contextModel.factory);
-            path.push(configuration.$.path, this.$contextModel.$.id);
+            path.push(configuration.$.path, this.$contextModel.identifier());
 
             return path;
 

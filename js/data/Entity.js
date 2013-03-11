@@ -27,18 +27,13 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                 this.callBase(attributes);
             },
 
-            schema: {
-                id: {
-                    type: String,
-                    required: false,
-                    includeInIndex: true
-                }
-            },
+            schema: {},
 
             validators: [],
 
-            $context: null,
+            idKey: "id",
 
+            $context: null,
             $dependentObjectContext: null,
 
             // TODO: merge this together
@@ -69,6 +64,14 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                     _rewritten: true
                 }, schemaObject;
 
+                // add id schema
+                if(!this.schema.hasOwnProperty(this.idKey)){
+                    this.schema[this.idKey] = {
+                        type: String,
+                        required: false,
+                        includeInIndex: true
+                    };
+                }
 
                 // rewrite schema
                 for (var key in this.schema) {

@@ -78,10 +78,10 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                         }
 
                         if (!cachedItem) {
+                            var hash = {};
+                            hash[factory.prototype.idKey] = id;
                             // create new Entity
-                            cachedItem = new factory({
-                                id: id
-                            });
+                            cachedItem = new factory(hash);
 
                             this.addEntity(cachedItem, true);
                         }
@@ -207,7 +207,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                 },
 
                 generateCacheIdFromEntity: function (entity) {
-                    return Context.generateCacheIdForEntity(entity.constructor.name, entity.$.id);
+                    return Context.generateCacheIdForEntity(entity.constructor.name, entity.$[entity.idKey]);
                 },
 
                 generateCacheIdFromCollection: function (collection) {
@@ -371,7 +371,8 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                     data = entity.compose(action, options),
                     schemaDefinition,
                     schemaType,
-                    isModel = entity instanceof Model;
+                    isModel = entity instanceof Model,
+                    factory = entity.factory;
 
                 for (var key in entity.schema) {
                     if (entity.schema.hasOwnProperty(key) && (!isModel || (!options || !options.includeInIndex || _.contains(options.includeInIndex, key)))) {
@@ -381,9 +382,8 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                         var value = this._getCompositionValue(data[key], key, action, options);
                         if (value !== undefined) {
                             if (value && schemaDefinition.isReference && schemaType.classof && schemaType.classof(Entity) && !schemaType.classof(Model)) {
-                                value = {
-                                    id: value.id
-                                }
+                                value = {};
+                                value[schemaType.prototype.idKey] = value[schemaType.prototype.idKey];
                             }
                             ret[this._getReferenceKey(key, schemaType)] = value;
                         }
@@ -403,7 +403,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
             _composeSubModel: function (model, action, options) {
                 // TODO: implement compose SubModel
                 // just return id
-                return model.$.id;
+                return model.identifier();
             },
 
             /***
@@ -475,7 +475,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                                         throw "Factory for type '" + key + "' isn't an instance of Entity";
                                     }
 
-                                    entity = this.$dataSource._getContext(factory, model, value[i]).createEntity(factory, this._getIdForValue(value[i]));
+                                    entity = this.$dataSource._getContext(factory, model, value[i]).createEntity(factory, this._getIdForValue(value[i], factory));
                                     if (entity instanceof Entity && !(entity instanceof Model)) {
                                         entity.$parent = model;
                                         entity.$parentEntity = model;
@@ -525,7 +525,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                                 throw "Factory for type '" + key + "' isn't an instance of Entity";
                             }
 
-                            data[key] = entity = this.$dataSource._getContext(factory, model, value).createEntity(factory, this._getIdForValue(value));
+                            data[key] = entity = this.$dataSource._getContext(factory, model, value).createEntity(factory, this._getIdForValue(value, factory));
                             if (entity instanceof Entity && !(entity instanceof Model)) {
                                 entity.$parent = model;
                                 entity.$parentEntity = model;
@@ -539,8 +539,8 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                 return model.parse(data);
             },
 
-            _getIdForValue: function(value) {
-                return value.id;
+            _getIdForValue: function(value, factory) {
+                return value[factory.prototype.idKey];
             },
 
             /***
@@ -575,7 +575,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                     if(!(value instanceof Model)){
                         // this is needed to determine the right context for collection models that are just links inside the collection
                         context = this.$dataSource._getContext(collection.$modelFactory, collection, value);
-                        entity = context.createEntity(collection.$modelFactory, this._getIdForValue(value));
+                        entity = context.createEntity(collection.$modelFactory, this._getIdForValue(value, collection.$modelFactory));
                         entity.set(this._parseModel(entity, value, action, options));
                         data[i] = entity;
                     }
