@@ -380,7 +380,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
 
                         var value = this._getCompositionValue(data[key], key, action, options);
                         if (value !== undefined) {
-                            if (schemaDefinition.isReference && schemaType.classof && schemaType.classof(Entity) && !schemaType.classof(Model)) {
+                            if (value && schemaDefinition.isReference && schemaType.classof && schemaType.classof(Entity) && !schemaType.classof(Model)) {
                                 value = {
                                     id: value.id
                                 }
