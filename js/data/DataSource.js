@@ -488,7 +488,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
 
 
                         } else if (Collection && schemaType.classof(Collection)) {
-                                var contextForChildren = this.$dataSource._getContext(schemaType, model, data[key]);
+                                var contextForChildren = this.$dataSource._getContext(schemaType, model, value);
                                 if(contextForChildren){
                                     // model.getContextForChild(schemaType)
                                     list = data[key] = contextForChildren.createCollection(schemaType, null);
