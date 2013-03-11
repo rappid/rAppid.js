@@ -823,15 +823,15 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
                  * @return {this}
                  */
                 destroy: function () {
-
                     this.trigger('destroy', this);
 
                     if(this.$eventBindables){
-                        for (var i = 0; i < this.$eventBindables.length; i++) {
-                            this.$eventBindables[i].destroy();
+                        var list = this.$eventBindables.slice();
+                        for (var i = 0; i < list.length; i++) {
+                            list[i].destroy();
                         }
+                        this.$eventBindables = [];
                     }
-                    this.$eventBindables = null;
 
                     this.callBase();
 
