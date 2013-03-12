@@ -382,8 +382,9 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                         var value = this._getCompositionValue(data[key], key, action, options);
                         if (value !== undefined) {
                             if (value && schemaDefinition.isReference && schemaType.classof && schemaType.classof(Entity) && !schemaType.classof(Model)) {
+                                var identifier = value[schemaType.prototype.idKey];
                                 value = {};
-                                value[schemaType.prototype.idKey] = value[schemaType.prototype.idKey];
+                                value[schemaType.prototype.idKey] = identifier;
                             }
                             ret[this._getReferenceKey(key, schemaType)] = value;
                         }
