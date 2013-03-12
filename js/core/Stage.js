@@ -68,7 +68,7 @@ define(["js/html/HtmlElement", "js/core/Bus", "js/core/WindowManager", "js/core/
                         os = {
                             win: "windows",
                             mac: "mac",
-                            linux: "linux unix",
+                            linux: "linux",
                             x11: "unix"
                         }[os[0].toLowerCase()];
 
