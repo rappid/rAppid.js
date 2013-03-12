@@ -32,6 +32,7 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
         },
 
         schema: {
+            // TODO: remove this and replace with correct idKey
             id: {
                 type: String,
                 required: false,
@@ -226,10 +227,6 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
                 return this.identifier() ? STATE.CREATED : STATE.NEW;
             }
         }.onChange('id'),
-
-        identifier: function(){
-            return this.$[this.idKey];
-        },
 
         isNew: function () {
             return this._status() === STATE.NEW;

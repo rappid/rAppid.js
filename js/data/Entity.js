@@ -65,7 +65,7 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                 }, schemaObject;
 
                 // add id schema
-                if(!this.schema.hasOwnProperty(this.idKey)){
+                if(!this.schema.hasOwnProperty(this.idKey) && this.idKey){
                     this.schema[this.idKey] = {
                         type: String,
                         required: false,
@@ -334,6 +334,10 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
 
             init: function (callback) {
                 callback && callback();
+            },
+
+            identifier: function () {
+                return this.$[this.idKey];
             }
         });
 
