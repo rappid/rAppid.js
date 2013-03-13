@@ -495,11 +495,11 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
 
 
         },
-        extractListMetaData: function (list, payload, options) {
+        extractListMetaData: function (collectionPage, payload, options, xhr) {
             return payload;
         },
 
-        extractListData: function (list, payload, options) {
+        extractListData: function (collectionPage, payload, options, xhr) {
             for (var key in payload) {
                 if (payload.hasOwnProperty(key)) {
                     if (_.isArray(payload[key])) {
@@ -567,12 +567,12 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
                         var payload = formatProcessor.deserialize(xhr.responses.text);
 
                         // extract meta data
-                        var metaData = self.extractListMetaData(collectionPage, payload, options);
+                        var metaData = self.extractListMetaData(collectionPage, payload, options, xhr);
 
                         collectionPage.setMetaData(metaData);
 
                         // extract data from list result
-                        var data = self.extractListData(collectionPage, payload, options);
+                        var data = self.extractListData(collectionPage, payload, options, xhr);
 
                         var processor = self.getProcessorForCollection(collectionPage);
 
