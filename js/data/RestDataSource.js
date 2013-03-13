@@ -167,16 +167,21 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
                 throw new Error("path for resource unknown");
             }
 
-            // build uri
-            var uri = [endPoint || this.$.gateway];
-            uri = uri.concat(resource.$context.getPathComponents());
-            uri = uri.concat(pathComponents);
+            // build resourcePath
+            var resourcePath = [endPoint || this.$.gateway];
+            resourcePath = resourcePath.concat(resource.$context.getPathComponents());
+            resourcePath = resourcePath.concat(pathComponents);
 
             if (this.$.suffix) {
-                uri[uri.length - 1] = uri[uri.length - 1] + "." + this.$.suffix;
+                resourcePath[resourcePath.length - 1] = resourcePath[resourcePath.length - 1] + "." + this.$.suffix;
             }
 
-            return uri.join("/");
+            return this._resourcePathToUri(resourcePath, resource);
+
+        },
+
+        _resourcePathToUri: function(resourcePath, resource) {
+            return resourcePath.join("/");
         },
 
         /**
