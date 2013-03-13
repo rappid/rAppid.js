@@ -293,6 +293,14 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore"], funct
 
         },
 
+        setMetaData: function(metaData) {
+            this.$metaData = metaData;
+
+            if (metaData && metaData.hasOwnProperty('count')) {
+                // set itemsCount in collection for page calculation
+                this.$collection.set('$itemsCount', metaData.count);
+            }
+        },
 
         parse: function (data, type) {
             return this.getRoot().parse(data, type);

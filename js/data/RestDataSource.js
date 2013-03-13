@@ -515,7 +515,7 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
             var config = this.$dataSourceConfiguration.getConfigurationForModelClass(rootCollection.$modelFactory);
 
             if (!config) {
-                throw new Error("Couldnt find path config for " + rootCollection.$modelFactory.prototype.constructor.name);
+                throw new Error("Couldn't find path config for " + rootCollection.$modelFactory.prototype.constructor.name);
             }
             var modelPathComponents = [config.$.path];
 
@@ -569,10 +569,7 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
                         // extract meta data
                         var metaData = self.extractListMetaData(collectionPage, payload, options);
 
-                        if (metaData && metaData.hasOwnProperty('count')) {
-                            // set itemsCount in collection for page calculation
-                            collectionPage.$collection.set('$itemsCount', metaData.count);
-                        }
+                        collectionPage.setMetaData(metaData);
 
                         // extract data from list result
                         var data = self.extractListData(collectionPage, payload, options);
