@@ -491,24 +491,11 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                         } else if (Collection && schemaType.classof(Collection)) {
                                 var contextForChildren = this.$dataSource._getContext(schemaType, model, value);
                                 if(contextForChildren){
-                                    // model.getContextForChild(schemaType)
-                                    list = data[key] = contextForChildren.createCollection(schemaType, null);
+
+                                    list = data[key] = contextForChildren.createCollection(schemaType, (value instanceof Object) && !(value instanceof Array) ? value : null);
 
                                     if (value && value instanceof Array) {
-                                        for (i = 0; i < value.length; i++) {
-                                            // create new entity based on collection type
-                                            entity = list.createItem();
-                                            if (entity instanceof Entity && !(entity instanceof Model)) {
-                                                entity.$parent = model;
-                                                entity.$parentEntity = model;
-                                            }
-                                            entity.set(this._parseModel(entity, value[i], action, options));
-                                            // and add it to the collection
-                                            list.add(entity);
-                                        }
-                                    } else {
-                                        // TODO: what here
-        //                                throw 'Schema for type "' + type + '" requires to be an array';
+                                        this.parseCollection(list, value, action, options);
                                     }
                                 }
 
@@ -808,12 +795,24 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                                 }
 
                             } while (parentConfiguration.$parent);
+
+
+
+
+                        }
+
+                        var context = requestor.$context;
+                        // check if the requestor is descendant of the child
+                        while(context && context.$contextModel){
+                            if(context.$contextModel.constructor.name === configuration.$["modelClassName"]){
+                                return context.$contextModel.$context;
+                            }
+                            context = context.$contextModel.$context;
+
                         }
 
 
-
                         // childFactory isn't descendant of the requestor, so return the root context
-
                         return requestor.$context;
                     }
                 }
