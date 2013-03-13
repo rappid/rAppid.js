@@ -528,14 +528,7 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
             var params = {};
 
             _.defaults(params, (options || {}).params, this.getQueryParameters(RestDataSource.METHOD.GET, collectionPage.$collection));
-
-            if (collectionPage.$limit) {
-                params.limit = collectionPage.$limit;
-            }
-
-            if (collectionPage.$offset) {
-                params.offset = collectionPage.$offset;
-            }
+            _.extend(params,this._getPagingParameterForCollectionPage(collectionPage));
 
             if (options.noCache) {
                 params.timestamp = (new Date()).getTime();
@@ -620,6 +613,18 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
                 }
             }
             return parameters;
+        },
+
+        _getPagingParameterForCollectionPage: function(collectionPage){
+            var ret = {};
+            if (collectionPage.$offset) {
+                ret.offset = collectionPage.$offset;
+            }
+            if (collectionPage.$limit) {
+                ret.limit = collectionPage.$limit;
+            }
+            return ret;
+
         },
 
         removeModel: function (model, options, callback) {
