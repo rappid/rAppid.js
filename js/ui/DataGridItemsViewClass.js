@@ -1,4 +1,4 @@
-define(['js/ui/VirtualItemsView', 'xaml!js/ui/DataGridColumn', 'js/core/List', 'underscore', 'js/core/Binding', 'js/core/HashMap'], function (VirtualItemsView, DataGridColumn, List, _, Binding, HashMap) {
+define(['js/ui/VirtualItemsView', 'xaml!js/ui/DataGridColumn', 'js/core/List', 'underscore', 'js/core/Binding'], function (VirtualItemsView, DataGridColumn, List, _, Binding) {
 
     var INDEX_ODD = "odd",
         INDEX_EVEN = "even";
