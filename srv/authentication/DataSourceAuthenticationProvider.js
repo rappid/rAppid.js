@@ -4,7 +4,7 @@ define(['srv/core/AuthenticationProvider', 'srv/core/Authentication', 'js/data/C
     return AuthenticationProvider.inherit('srv.core.authentication.DataSourceAuthenticationProvider', {
         defaults: {
             userModelClassName: null,
-            idKey: 'userId',
+            idField: 'userId',
             dataSource: null,
 
             algorithm: 'sha1',

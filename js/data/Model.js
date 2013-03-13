@@ -32,13 +32,6 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
         },
 
         schema: {
-            // TODO: remove this and replace with correct idKey
-            id: {
-                type: String,
-                required: false,
-                generated: true,
-                includeInIndex: true
-            },
             href: {
                 type: String,
                 generated: true,

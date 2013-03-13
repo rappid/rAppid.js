@@ -31,7 +31,7 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
 
             validators: [],
 
-            idKey: "id",
+            idField: "id",
 
             $context: null,
             $dependentObjectContext: null,
@@ -65,11 +65,12 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                 }, schemaObject;
 
                 // add id schema
-                if(!this.schema.hasOwnProperty(this.idKey) && this.idKey){
-                    this.schema[this.idKey] = {
+                if(!this.schema.hasOwnProperty(this.idField) && this.idField){
+                    this.schema[this.idField] = {
                         type: String,
                         required: false,
-                        includeInIndex: true
+                        includeInIndex: true,
+                        generated: true
                     };
                 }
 
@@ -337,7 +338,7 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
             },
 
             identifier: function () {
-                return this.$[this.idKey];
+                return this.$[this.idField];
             }
         });
 

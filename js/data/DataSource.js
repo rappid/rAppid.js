@@ -79,7 +79,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
 
                         if (!cachedItem) {
                             var hash = {};
-                            hash[factory.prototype.idKey] = id;
+                            hash[factory.prototype.idField] = id;
                             // create new Entity
                             cachedItem = new factory(hash);
 
@@ -207,7 +207,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                 },
 
                 generateCacheIdFromEntity: function (entity) {
-                    return Context.generateCacheIdForEntity(entity.constructor.name, entity.$[entity.idKey]);
+                    return Context.generateCacheIdForEntity(entity.constructor.name, entity.$[entity.idField]);
                 },
 
                 generateCacheIdFromCollection: function (collection) {
@@ -382,9 +382,9 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                         var value = this._getCompositionValue(data[key], key, action, options);
                         if (value !== undefined) {
                             if (value && schemaDefinition.isReference && schemaType.classof && schemaType.classof(Entity) && !schemaType.classof(Model)) {
-                                var identifier = value[schemaType.prototype.idKey];
+                                var identifier = value[schemaType.prototype.idField];
                                 value = {};
-                                value[schemaType.prototype.idKey] = identifier;
+                                value[schemaType.prototype.idField] = identifier;
                             }
                             ret[this._getReferenceKey(key, schemaType)] = value;
                         }
@@ -541,7 +541,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
             },
 
             _getIdForValue: function(value, factory) {
-                return value[factory.prototype.idKey];
+                return value[factory.prototype.idField];
             },
 
             /***

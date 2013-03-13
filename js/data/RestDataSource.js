@@ -6,7 +6,7 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
         _composeSubModel: function (model, action, options) {
             var ret = {};
 
-            ret[model.idKey] = model.identifier();
+            ret[model.idField] = model.identifier();
             return ret;
         }
     });
