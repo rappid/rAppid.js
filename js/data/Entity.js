@@ -78,9 +78,10 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                 for (var key in this.schema) {
                     if (this.schema.hasOwnProperty(key)) {
                         schemaObject = this.schema[key];
-                        if (schemaObject instanceof Array || schemaObject instanceof Function) {
+                        var isString = _.isString(schemaObject);
+                        if (isString || schemaObject instanceof Array || schemaObject instanceof Function) {
                             schemaObject = {
-                                type: schemaObject
+                                type: isString ? require(schemaObject.replace(/\./g,"/")) : schemaObject
                             };
                             this.schema[key] = schemaObject;
                         }
