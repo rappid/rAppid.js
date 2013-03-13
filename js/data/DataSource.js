@@ -93,7 +93,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                     }
                 },
 
-                addEntity: function(entity, addToCache) {
+                addEntity: function (entity, addToCache) {
 
                     // set context
                     entity.$context = this;
@@ -192,7 +192,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                     return ret.join("&");
                 },
 
-                clear: function() {
+                clear: function () {
                     this.$contextCache = {};
                 }
 
@@ -366,7 +366,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
              * @return {JSON}
              * @private
              */
-            _composeEntity: function(entity, action, options){
+            _composeEntity: function (entity, action, options) {
                 var ret = {},
                     data = entity.compose(action, options),
                     schemaDefinition,
@@ -489,17 +489,15 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
 
 
                         } else if (Collection && schemaType.classof(Collection)) {
-                                var contextForChildren = this.$dataSource._getContext(schemaType, model, value);
-                                if(contextForChildren){
+                            var contextForChildren = this.$dataSource._getContext(schemaType, model, value);
+                            if (contextForChildren) {
 
-                                    list = data[key] = contextForChildren.createCollection(schemaType, (value instanceof Object) && !(value instanceof Array) ? value : null);
+                                list = data[key] = contextForChildren.createCollection(schemaType, (value instanceof Object) && !(value instanceof Array) ? value : null);
 
-                                    if (value && value instanceof Array) {
-                                        list.reset(this.parseCollection(list, value, action, options));
-                                    }
+                                if (value && value instanceof Array) {
+                                    list.reset(this.parseCollection(list, value, action, options));
                                 }
-
-
+                            }
                         } else if (schemaType === Date && value) {
                             data[key] = moment(value, this.$dataSource.$.dateFormat).toDate();
                         } else if (schemaType.classof(Entity) && value) {
@@ -527,7 +525,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                 return model.parse(data);
             },
 
-            _getIdForValue: function(value, factory) {
+            _getIdForValue: function (value, factory) {
                 return value[factory.prototype.idField];
             },
 
@@ -560,7 +558,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                     entity;
                 for (var i = 0; i < data.length; i++) {
                     var value = data[i];
-                    if(!(value instanceof Model)){
+                    if (!(value instanceof Model)) {
                         // this is needed to determine the right context for collection models that are just links inside the collection
                         context = this.$dataSource._getContext(collection.$modelFactory, collection, value);
                         entity = context.createEntity(collection.$modelFactory, this._getIdForValue(value, collection.$modelFactory));
@@ -716,13 +714,13 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                 }
             },
 
-            composeModel: function(model, options){
+            composeModel: function (model, options) {
                 var processor = this.getProcessorForModel(model, options);
 
                 return processor.compose(model, DataSource.ACTION.CREATE, options);
             },
 
-            parseModel: function(model, data, options){
+            parseModel: function (model, data, options) {
                 var processor = this.getProcessorForModel(model, options);
 
                 model.set(processor.parse(model, data, DataSource.ACTION.CREATE, options));
@@ -747,7 +745,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                 // hook
             },
 
-            getConfigurationForModelClass: function(modelClass){
+            getConfigurationForModelClass: function (modelClass) {
                 return this.$dataSourceConfiguration.getConfigurationForModelClass(modelClass);
             },
 
@@ -797,14 +795,12 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                             } while (parentConfiguration.$parent);
 
 
-
-
                         }
 
                         var context = requestor.$context;
                         // check if the requestor is descendant of the child
-                        while(context && context.$contextModel){
-                            if(context.$contextModel.constructor.name === configuration.$["modelClassName"]){
+                        while (context && context.$contextModel) {
+                            if (context.$contextModel.constructor.name === configuration.$["modelClassName"]) {
                                 return context.$contextModel.$context;
                             }
                             context = context.$contextModel.$context;
@@ -931,31 +927,31 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                 var self = this;
 
                 flow()
-                    .seq(function(cb){
+                    .seq(function (cb) {
                         self._beforeModelSave(model, options, cb);
                     })
-                    .seq(function(cb){
+                    .seq(function (cb) {
                         self._saveModel(model, options, cb);
                     })
-                    .seq(function(cb){
+                    .seq(function (cb) {
                         self._afterModelSave(model, options, cb);
                     })
-                    .exec(function(err) {
+                    .exec(function (err) {
                         callback && callback(err, model, options);
                     });
             },
 
-            _beforeModelSave: function(model, options, callback){
+            _beforeModelSave: function (model, options, callback) {
                 callback && callback();
             },
 
-            _saveModel: function(model, options, callback){
+            _saveModel: function (model, options, callback) {
                 if (callback) {
                     callback("Abstract method saveModel", model);
                 }
             },
 
-            _afterModelSave: function(model, options, callback){
+            _afterModelSave: function (model, options, callback) {
                 callback && callback();
             },
 
@@ -994,7 +990,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
              * @param {Object} [options]
              * @return {js.data.DataSource.Processor} processor
              */
-            getProcessorForModelClass: function(modelClass, options){
+            getProcessorForModelClass: function (modelClass, options) {
                 var config = this.getConfigurationForModelClass(modelClass);
 
                 if (config && config.$.processor) {
