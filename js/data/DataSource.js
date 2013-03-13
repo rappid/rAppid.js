@@ -495,7 +495,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                                     list = data[key] = contextForChildren.createCollection(schemaType, (value instanceof Object) && !(value instanceof Array) ? value : null);
 
                                     if (value && value instanceof Array) {
-                                        this.parseCollection(list, value, action, options);
+                                        list.reset(this.parseCollection(list, value, action, options));
                                     }
                                 }
 
