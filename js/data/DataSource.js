@@ -490,13 +490,17 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
 
                         } else if (Collection && schemaType.classof(Collection)) {
                             var contextForChildren = this.$dataSource._getContext(schemaType, model, value);
-                            if (contextForChildren && !model.has(key)) {
+                            if (contextForChildren) {
+                                if(model.$[key] instanceof Collection){
+                                    data[key] = model.$[key];
+                                } else {
+                                    list = data[key] = contextForChildren.createCollection(schemaType, (value instanceof Object) && !(value instanceof Array) ? value : null);
 
-                                list = data[key] = contextForChildren.createCollection(schemaType, (value instanceof Object) && !(value instanceof Array) ? value : null);
-
-                                if (value && value instanceof Array) {
-                                    list.reset(this.parseCollection(list, value, action, options));
+                                    if (value && value instanceof Array) {
+                                        list.reset(this.parseCollection(list, value, action, options));
+                                    }
                                 }
+
                             }
                         } else if (schemaType === Date && value) {
                             data[key] = moment(value, this.$dataSource.$.dateFormat).toDate();
