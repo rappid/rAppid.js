@@ -218,7 +218,7 @@ var build = function (args, callback) {
         var indexFilePath = path.join(buildDirPath, buildConfig.indexFile || "index.html");
         var indexFile = fs.readFileSync(indexFilePath, "utf8");
         var content = String(indexFile);
-        content = content.replace(/<script.*?require.js.*?<\/script>/,"");
+        content = content.replace(/<script.*?require\.js.*?<\/script>/,"");
         content = content.replace("js/lib/rAppid", mainModule);
         if(versionDir){
             content = content.replace(/(href|src)=(["'])(?!(http|\/\/))([^'"]+)/g,'$1=$2'+versionDir+'/$4');
