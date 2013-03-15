@@ -187,12 +187,12 @@ describe('js.core.Binding', function () {
     describe('#function binding', function () {
 
         it('foo() should call fnc and set returned value to target', function () {
-            new C.Binding({scope: extendedModel, path: "foo()", target: target, targetKey: 'val'}).trigger();
+            new C.Binding({scope: extendedModel, path: "foo()", target: target, targetKey: 'val'}).triggerBinding();
             target.get('val').should.equal(returnValue);
         });
 
         it('a.foo() should be triggered if "a" is set and has fnc', function () {
-            new C.Binding({scope: model, path: 'a.foo()', target: target, targetKey: 'val'}).trigger();
+            new C.Binding({scope: model, path: 'a.foo()', target: target, targetKey: 'val'}).triggerBinding();
             should.not.exist(target.get('val'));
 
             var m1 = new C.Bindable({b: "what"});
@@ -208,7 +208,7 @@ describe('js.core.Binding', function () {
         var fncBinding = "bar("+parameters.join(",")+")";
 
         it(fncBinding + " should call bar with parameters and return true", function () {
-            new C.Binding({scope: extendedModel, path: fncBinding, target: target, targetKey: 'val'}).trigger();
+            new C.Binding({scope: extendedModel, path: fncBinding, target: target, targetKey: 'val'}).triggerBinding();
             target.get('val').should.equal(true);
         });
 
@@ -218,7 +218,7 @@ describe('js.core.Binding', function () {
             var extendedTarget = new ExtendedClass();
             // extendedTarget.set('m1', new ExtendedClass({}));
             extendedModel.set('m1', extendedTarget);
-            new C.Binding({scope: extendedModel, path: fncBinding2, target: extendedTarget, targetKey: 'val'}).trigger();
+            new C.Binding({scope: extendedModel, path: fncBinding2, target: extendedTarget, targetKey: 'val'}).triggerBinding();
             extendedTarget.get('val').should.equal(false);
 
             extendedTarget.set({'a': parStr, 'b': parNum});
@@ -250,8 +250,6 @@ describe('js.core.Binding', function () {
             expect(binding.$).to.not.exist;
             expect(binding2.$).to.not.exist;
             expect(binding3.$).to.not.exist;
-
-
 
         });
 

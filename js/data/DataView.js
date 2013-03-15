@@ -38,7 +38,7 @@ define(["js/core/Component", "js/core/List" , "underscore"], function (Component
         _innerReset: function (items) {
             // implement
         },
-        destroy: function () {
+        _innerDestroy: function () {
             this.unbind('baseList', 'add', this._onItemAdded, this);
             this.unbind('baseList', 'remove', this._onItemRemoved, this);
             this.unbind('baseList', 'change', this._onItemChanged, this);
