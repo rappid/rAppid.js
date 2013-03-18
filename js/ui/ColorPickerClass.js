@@ -106,9 +106,13 @@ define(['js/ui/View', 'js/type/Color'], function (View, Color) {
         },
 
         _backgroundColor: function () {
-            var hsbColor = this.$.color.toHSB();
+            if (this.$.color) {
+                var hsbColor = this.$.color.toHSB();
+                return new Color.HSB(hsbColor.h, 100, 100).toRGB();
+            }
 
-            return new Color.HSB(hsbColor.h, 100, 100).toRGB();
+            return Color.RGB(0, 0, 0);
+
         }.on('hueChanged')
 
 
