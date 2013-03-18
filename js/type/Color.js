@@ -269,6 +269,10 @@ define(['js/core/Base'], function (Base) {
             return this;
         },
 
+        toString: function() {
+            return this.toRGB().toString()
+        },
+
         toHexString: function () {
             return this.toRGB().toHexString();
         },
