@@ -4,9 +4,10 @@
  *
  * @class js.data.ListView
  */
-define(["js/data/DataView"], function (DataView) {
+define(["js/data/DataView", "underscore"], function (DataView, _) {
 
     return DataView.inherit("js.data.FilterDataView", {
+
         initialize: function(){
             this.callBase();
             this.bind('change', this._onFilterChanged, this);

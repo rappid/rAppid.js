@@ -17,9 +17,11 @@ define(["js/core/Component", "js/core/List" , "underscore"], function (Component
             this.$.list = new List();
             this.bind('baseList', 'add', this._onItemAdded, this);
             this.bind('baseList', 'remove', this._onItemRemoved, this);
-            this.bind('baseList', 'change', this._onItemChanged, this);
+            this.bind('baseList', 'item:change', this._onItemChanged, this);
             this.bind('baseList', 'reset', this._onReset, this);
             this.bind('baseList', 'sort', this._onSort, this);
+
+            this.callBase();
         },
 
         _initializationComplete: function() {
@@ -27,6 +29,8 @@ define(["js/core/Component", "js/core/List" , "underscore"], function (Component
             if (this.$.baseList && this.$.baseList instanceof List) {
                 this._innerReset(this.$.baseList.$items);
             }
+
+            this.callBase();
         },
         _onItemChanged: function () {
             // TODO: implement
@@ -43,7 +47,7 @@ define(["js/core/Component", "js/core/List" , "underscore"], function (Component
         _innerDestroy: function () {
             this.unbind('baseList', 'add', this._onItemAdded, this);
             this.unbind('baseList', 'remove', this._onItemRemoved, this);
-            this.unbind('baseList', 'change', this._onItemChanged, this);
+            this.unbind('baseList', 'item:change', this._onItemChanged, this);
             this.unbind('baseList', 'reset', this._onReset, this);
             this.unbind('baseList', 'sort', this._onSort, this);
 
