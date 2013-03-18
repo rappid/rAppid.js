@@ -8,6 +8,10 @@ define(["js/core/Component", "js/core/List" , "underscore"], function (Component
 
     return Component.inherit("js.data.DataView", {
 
+        defaults: {
+            baseList: null,
+            list: null
+        },
 
         initialize: function () {
             this.$.list = new List();
@@ -16,8 +20,6 @@ define(["js/core/Component", "js/core/List" , "underscore"], function (Component
             this.bind('baseList', 'change', this._onItemChanged, this);
             this.bind('baseList', 'reset', this._onReset, this);
             this.bind('baseList', 'sort', this._onSort, this);
-
-
         },
 
         _initializationComplete: function() {
@@ -27,7 +29,7 @@ define(["js/core/Component", "js/core/List" , "underscore"], function (Component
             }
         },
         _onItemChanged: function () {
-            // implement
+            // TODO: implement
         },
         _onReset: function (e) {
             this._innerReset(e.items);
