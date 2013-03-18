@@ -269,7 +269,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
                     params.unshift(e.$);
                     this.$.fnc.apply(this.$.scope, params);
                 } else {
-                    this.$.scope.set(pathToString(this.$.path), this.transformBack(e.$, this.$originalValue));
+                    this.$.scope.set(pathToString(this.$.path), this.transformBack.call(this.$.scope, e.$, this.$originalValue));
                 }
             },
             /**
@@ -390,7 +390,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
                     } else if(this.$jsonObject) {
                         this.$originalValue = this.$.scope.get(this.$jsonObject, this.$.path.slice(1));
                     }
-                    return this.transform(this.$originalValue);
+                    return this.transform.call(this.$.scope, this.$originalValue);
                 }
 
             },
