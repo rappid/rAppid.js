@@ -19,14 +19,16 @@ define(['js/ui/View', 'js/type/Color'], function (View, Color) {
             var domEvent = e.pointerEvent,
                 pos = this.globalToLocal({x: domEvent.pageX, y: domEvent.pageY});
 
+            domEvent.preventDefault();
+
             this._updateColorAndPaletteCursor(pos);
         },
 
         _paletteMouseMove: function (e) {
             e.preventDefault();
             e.stopPropagation();
-            if (this.$mouseDown) {
 
+            if (this.$mouseDown) {
                 var domEvent = e.pointerEvent,
                     pos = e.target.globalToLocal({x: domEvent.pageX, y: domEvent.pageY});
 
