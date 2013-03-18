@@ -331,7 +331,7 @@ define(["js/core/EventDispatcher", "js/core/Bindable", "underscore", "js/data/Qu
             return this.callBase();
         },
 
-        destroy: function () {
+        _innerDestroy: function () {
             this.$itemEventMap = {};
             this.callBase();
         },

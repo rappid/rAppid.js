@@ -182,9 +182,34 @@ define(["js/core/Base"], function (Base) {
                  * Clears up the instance
                  */
                 destroy: function(){
-                    // remove all events
+                    if(this.$destroyed){
+                        // nothing to do here
+                        return;
+                    }
+
+                    this._beforeDestroy();
+
+                    this._innerDestroy();
+
+                    this._destroyCompleted();
+                },
+
+                _beforeDestroy: function(){
+
+                },
+
+                _innerDestroy: function(){
+
+                },
+
+                _destroyCompleted: function(){
+                    this.$destroyed = true;
+                    // first trigger event
+                    this.trigger('destroy');
+                    // then remove all event listeners
                     this._eventHandlers = {};
                 }
+
             });
 
         EventDispatcher.Event = Base.inherit(

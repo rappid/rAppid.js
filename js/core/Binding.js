@@ -107,7 +107,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
 
                         // TODO: remove this closure
                         var cb = function () {
-                            self.trigger();
+                            self.triggerBinding();
                         };
 
                         var para;
@@ -130,7 +130,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
                         }
                         this.$.fnc = fnc;
                         this.$.fnc.trigger = function () {
-                            self.trigger();
+                            self.triggerBinding();
                         };
                     }
 
@@ -310,13 +310,13 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
 
                 // try to create subBinding
                 this._createSubBinding();
-                this.trigger();
+                this.triggerBinding();
             },
 
             /**
              * Unbinds all events and destroys subBinding...
              */
-            destroy: function () {
+            _innerDestroy: function () {
                 // binding already destroyed?
                 if(!this.$){
                     return;
@@ -408,7 +408,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
             /**
              * This method triggers the binding and syncs the target with the scope
              */
-            trigger: function () {
+            triggerBinding: function () {
                 // get value
                 var val = this.getContextValue();
                 if (this.$.targetKey) {

@@ -485,14 +485,13 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                     this._renderAttributes(attributes);
                 }
             },
-            destroy: function () {
-                this.callBase();
-
+            _innerDestroy: function () {
                 if (this.$children) {
                     for (var i = 0; i < this.$children.length; i++) {
                         this.$children[i].destroy();
                     }
                 }
+                this.callBase();
             },
             html: function () {
                 if (!this.isRendered()) {

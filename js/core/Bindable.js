@@ -818,27 +818,17 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
                     }
                 },
 
-                /***
-                 * Destroys all event bindings and triggers a destroy event
-                 * @return {this}
-                 */
-                destroy: function () {
-                    this.trigger('destroy', this);
-
-                    if(this.$eventBindables){
+                _innerDestroy: function(){
+                    if (this.$eventBindables) {
                         var list = this.$eventBindables.slice();
                         for (var i = 0; i < list.length; i++) {
                             list[i].destroy();
                         }
                         this.$eventBindables = [];
                     }
-
                     this.callBase();
-
-                    this.$bindings = null;
-
-                    return this;
                 },
+
                 isDeepEqual : function(b){
                     if(!b){
                         return false;
@@ -873,7 +863,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
                     this._bindEvent(value);
 
                     if (this.$.binding) {
-                        this.$.binding.trigger();
+                        this.$.binding.triggerBinding();
                     }
                 }
 
@@ -888,10 +878,9 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
                     value.bind(this.$.event, this.$.callback, this.$.scope);
                 }
             },
-            destroy: function () {
+            _innerDestroy: function () {
                 this._unbindEvent(this.$.value);
                 this.$.binding.destroy();
-
                 this.callBase();
             }
         });
