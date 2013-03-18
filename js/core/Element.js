@@ -2,7 +2,8 @@ define(["js/core/Bindable", "underscore"], function (Bindable, _) {
 
         var undefined,
             prefixMap = {
-                "type:eventHandler": "eventHandler:"
+                "type:eventHandler": "eventHandler:",
+                "type:function": "function:"
             };
 
         function stringToPrimitive(str) {
@@ -54,7 +55,7 @@ define(["js/core/Bindable", "underscore"], function (Bindable, _) {
 
             },
 
-            _getAttributesFromDescriptor: function (descriptor) {
+            _getAttributesFromDescriptor: function (descriptor, rootScope) {
 
                 this.$attributesNamespace = this.$attributesNamespace || {};
 
@@ -69,13 +70,24 @@ define(["js/core/Bindable", "underscore"], function (Bindable, _) {
                         if(node.nodeName.indexOf("xmlns") !== 0){
                             localName = this._getLocalNameFromNode(node);
 
-                            var prefix = prefixMap[node.namespaceURI];
+                            var prefix = prefixMap[node.namespaceURI],
+                                handled = false;
 
-                            if (prefix) {
+                            if (prefix === "function:") {
+                                var fnc = rootScope[node.value];
+                                if (!fnc) {
+                                    throw new Error("Cannot find referenced function '" + node.value + "' in scope.")
+                                }
+
+                                attributes[localName] = fnc;
+                                handled = true;
+                            } else if (prefix) {
                                 localName = prefix + localName;
                             }
 
-                            attributes[localName] = stringToPrimitive(node.value);
+                            if (!handled) {
+                                attributes[localName] = stringToPrimitive(node.value);
+                            }
 
                             if (node.namespaceURI) {
                                 this.$attributesNamespace[localName] = node.namespaceURI;

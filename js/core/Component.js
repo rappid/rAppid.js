@@ -25,7 +25,7 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                             this._cleanUpDescriptor(current._$descriptor);
                             this.$internalDescriptors.unshift(current._$descriptor);
 
-                            _.defaults(this.$xamlDefaults, this._getAttributesFromDescriptor(current._$descriptor));
+                            _.defaults(this.$xamlDefaults, this._getAttributesFromDescriptor(current._$descriptor, rootScope));
                         }
                         current = current.base;
                     }
@@ -42,7 +42,7 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
 
                     if (descriptor) {
                         this._cleanUpDescriptor(descriptor);
-                        this.$xamlAttributes = this._getAttributesFromDescriptor(descriptor);
+                        this.$xamlAttributes = this._getAttributesFromDescriptor(descriptor, rootScope);
                     }
 
 
@@ -364,6 +364,11 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                     return attributeName.indexOf("eventHandler:") === 0;
                 },
 
+
+                _isFunctionAttribute: function (attributeName) {
+                    return attributeName.indexOf("function:") === 0;
+                },
+
                 _isXamlEventAttribute: function(attributeName){
                     return attributeName.indexOf("on") === 0;
                 },
@@ -395,6 +400,7 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                     for (var key in attributes) {
                         if (attributes.hasOwnProperty(key)) {
                             var value = attributes[key];
+
                             if (this._isXamlEventAttribute(key)) {
                                 if (rootScope[value]) {
                                     event = key.substr(2);
