@@ -277,13 +277,12 @@ define(["js/core/EventDispatcher", "js/core/Bindable", "underscore", "js/data/Qu
                 }
             }
 
+            scope['break'] = undefined;
+            scope['return'] = undefined;
+
             if (error) {
                 throw error;
             }
-
-
-            scope['break'] = undefined;
-            scope['return'] = undefined;
 
             return r;
         },
