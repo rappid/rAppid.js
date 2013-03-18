@@ -268,6 +268,11 @@ define(['js/core/Base'], function (Base) {
         toHSB: function () {
             return this;
         },
+
+        toHexString: function () {
+            return this.toRGB().toHexString();
+        },
+
         clone: function () {
             return new this.factory(this.h, this.s, this.b);
         }
