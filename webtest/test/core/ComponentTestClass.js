@@ -1,6 +1,11 @@
 define(["js/core/Application", "js/core/ExternalInterface"], function (Application, ExternalInterface) {
     return Application.inherit({
 
+        defaults: {
+            name: "application",
+            foo: "bar"
+        },
+
         inject: {
             externalInterface: ExternalInterface
         },
