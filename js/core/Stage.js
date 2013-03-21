@@ -59,6 +59,8 @@ define(["js/html/HtmlElement", "js/core/Bus", "js/core/WindowManager", "js/core/
                     var userAgent = navigator.userAgent || navigator.appVersion;
                     var mobile = /(iphone|ipad|ipod|android|blackberry|mini|windows\sce|palm)/i.exec(userAgent);
                     browser.isMobile = !!mobile;
+                    browser.isIOS = !!userAgent.match(/(iPad|iPhone|iPod)/g);
+
                     if (mobile) {
                         browser.mobileType = mobile[1];
                     }
