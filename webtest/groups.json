@@ -1,8 +1,13 @@
 {
-    "all": [
+    "core": [
         {
-            "app": "stage/StageTest.xml",
-            "test": "stage/StageTests.js",
+            "app": "core/ComponentTest.xml",
+            "test": "core/ComponentTests.js",
+            "type": "browser"
+        },
+        {
+            "app": "core/StageTest.xml",
+            "test": "core/StageTests.js",
             "type": "browser"
         }
     ],
