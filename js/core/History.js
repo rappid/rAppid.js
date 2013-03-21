@@ -77,7 +77,7 @@ define(["js/core/Bindable", "flow"], function (Bindable, flow) {
                 this.$history.push(initialHash || "");
             }
 
-            this.navigate(this._getFragment(), true, true, callback);
+            this.navigate(this._getFragment(), true, true, true, callback);
             this.$processUrl = true;
         },
 
@@ -146,7 +146,7 @@ define(["js/core/Bindable", "flow"], function (Bindable, flow) {
          * @param {Boolean} [triggerRoute] - default true
          * @param {Function} callback - navigate callback
          */
-        navigate: function (fragment, createHistoryEntry, triggerRoute, callback) {
+        navigate: function (fragment, createHistoryEntry, triggerRoute, force, callback) {
 
             var self = this;
 
@@ -158,6 +158,11 @@ define(["js/core/Bindable", "flow"], function (Bindable, flow) {
             if (!callback && triggerRoute instanceof Function) {
                 callback = triggerRoute;
                 triggerRoute = null;
+            }
+
+            if (!callback && force instanceof Function) {
+                callback = force;
+                force = null;
             }
 
             if (createHistoryEntry == undefined || createHistoryEntry == null) {
@@ -174,8 +179,15 @@ define(["js/core/Bindable", "flow"], function (Bindable, flow) {
                 triggerRoute: triggerRoute
             };
 
+            var urlChange = this._getFragment() !== fragment;
+
+            if (!urlChange && !force) {
+                callback && callback();
+                return;
+            }
+
             this.trigger(History.EVENTS.NAVIGATION_START, eventData);
-            this.$processUrl = (this._getFragment() !== fragment);
+            this.$processUrl = urlChange;
 
             if (createHistoryEntry) {
                 if (this.runsInBrowser()) {

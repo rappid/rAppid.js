@@ -191,8 +191,8 @@ define(["js/core/Component", "underscore", "js/conf/RouteConfiguration"],
              * @param createHistoryEntry
              * @param triggerRoute
              */
-            navigate: function (to, createHistoryEntry, triggerRoute, callback) {
-                return this.history.navigate(to, createHistoryEntry, triggerRoute, callback);
+            navigate: function (to, createHistoryEntry, triggerRoute, force, callback) {
+                return this.history.navigate(to, createHistoryEntry, triggerRoute, force, callback);
             }
         });
     });
