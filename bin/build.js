@@ -68,11 +68,13 @@ var build = function (args, callback) {
     var basePath = process.cwd();
 
     // read out config.json
-    var buildConfigPath = path.join(basePath, "build.json");
+    var buildFile = args[0] ||  "build.json";
+
+    var buildConfigPath = path.join(basePath, buildFile);
     var publicPath = path.join(basePath, "public");
 
     if (!fs.existsSync(buildConfigPath)) {
-        callback("Couldn't find build.json in " + buildConfigPath);
+        callback("Couldn't find build configuration in " + buildConfigPath);
         return;
     }
 
@@ -237,7 +239,7 @@ var build = function (args, callback) {
 };
 
 
-build.usage = "rappidjs build";
+build.usage = "rappidjs build [build.json]";
 
 module.exports = build;
 
