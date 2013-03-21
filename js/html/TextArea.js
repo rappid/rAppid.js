@@ -5,6 +5,8 @@ define(["js/html/HtmlElement", "js/core/TextElement", "js/core/BindingCreator"],
                 updateOnEvent: 'change'
             },
 
+            $classAttributes: ["updateOnEvent"],
+
             _renderChild: function (child) {
                 if (child instanceof TextElement) {
                     // contains two way binding ...
