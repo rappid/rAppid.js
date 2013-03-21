@@ -60,7 +60,7 @@ define(["js/html/HtmlElement", "js/core/Bus", "js/core/WindowManager", "js/core/
                     var mobile = /(iphone|ipad|ipod|android|blackberry|mini|windows\sce|palm)/i.exec(userAgent);
                     browser.isMobile = !!mobile;
                     if (mobile) {
-                        browser.mobileType = mobile[1];
+                        browser.mobileType = mobile[1].toLowerCase();
                     }
 
                     var os = /win|mac|linux|x11/i.exec(userAgent);
