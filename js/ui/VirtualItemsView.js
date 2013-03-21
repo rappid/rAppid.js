@@ -379,7 +379,7 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
 
         _reserveRenderer: function () {
             if (this.$availableRenderer.length) {
-                return this.$availableRenderer.pop();
+                return this.$availableRenderer.shift();
             }
             var renderer = this._createRenderer();
             renderer.bind('on:dblclick', this._onRendererDblClick, this);

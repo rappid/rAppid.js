@@ -1,0 +1,6 @@
+<js:Component xmlns:js="js.core" xmlns="http://www.w3.org/1999/xhtml"
+        customAttribute="true" name="customComponent">
+
+    <js:Component cid="internalComponent" value="{customAttribute}" internalName="{name}"/>
+
+</js:Component>

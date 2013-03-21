@@ -371,9 +371,106 @@ describe('js.core.Bindable', function () {
         });
     });
 
+    describe('#destroy', function(){
+
+        var bindable;
+
+        beforeEach(function () {
+            bindable = new C.Bindable({
+                street: 'Street 1',
+                city: 'City 1'
+            });
+        });
+
+        it('should trigger destroy event', function(done){
+            var destroyed = false;
+            bindable.bind('destroy', function(){
+                destroyed = true;
+                done();
+            });
+
+            bindable.destroy();
+            expect(destroyed).to.equal(true);
+        });
+
+        it('should remove all event listeners', function(){
+
+            var triggered = false;
+
+            bindable.bind('change', function(){
+                triggered = true;
+            });
+
+            bindable.destroy();
+
+            bindable.set('street','New Street');
+
+            expect(triggered).to.equal(false);
+        });
+
+        it('should destroy all event bindables', function(){
+
+            bindable.set('person', new C.Bindable({
+                name: "Max"
+            }));
+
+            var triggered = 0;
+
+            bindable.bind('person','change', function(){
+                triggered++;
+            });
+
+            bindable.$.person.set('name','Peter');
+
+            expect(triggered).to.be.equal(1);
+
+            bindable.destroy();
+
+            bindable.$.person.set('name','Max');
+
+            expect(triggered).to.be.equal(1);
+        });
+
+    });
+
+    describe('#_initialize', function(){
+
+        var bindable;
+
+        beforeEach(function () {
+
+        });
+
+        it('should initialize bindings in defaults', function(){
+            var ExtendedBindable = C.Bindable.inherit({
+                defaults: {
+                    firstName: "Peter",
+                    lastName: "Mustermann"
+                },
+                fullName: function(){
+                    return this.$.firstName + " " + this.$.lastName;
+                }.onChange('firstName','lastName')
+            });
+
+            bindable = new C.Bindable({
+                name: 'Street 1',
+                city: '{address.city}',
+                fullName: '{address.subEntity.fullName()}',
+                address: new C.Bindable({
+                    city: "Leipzig",
+                    subEntity: new ExtendedBindable()
+                })
+            });
+
+            expect(bindable.$.city).to.be.equal(bindable.$.address.$.city);
+            expect(bindable.$.fullName).to.be.equal(bindable.get('address.subEntity').fullName());
+        });
+
+    });
+
     describe('#_commit methods', function () {
 
-        it('#_commit method should be invoked once', function () {
+        it('_commit method should be invoked once', function () {
 
             var MyBindable = C.Bindable.inherit({
 
