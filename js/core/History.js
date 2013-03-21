@@ -109,7 +109,7 @@ define(["js/core/Bindable", "flow"], function (Bindable, flow) {
                     return false;
                 }
 
-                this.navigate(currentFragment, true, true, emptyCallback);
+                this.navigate(currentFragment, true, true, true, emptyCallback);
             }
 
             this.$processUrl = true;
