@@ -82,7 +82,6 @@ define(['js/core/EventDispatcher','js/lib/parser','js/core/Binding', 'underscore
                     if(!cb && !twoWay){
                         cacheId = pathToString(bindingDef.path) + scope.$cid;
                         if(bindingCache[cacheId]){
-                            console.log(cacheCounter++);
                             bindingCache[cacheId].addTarget(targetScope,attrKey);
                             return bindingCache[cacheId];
                         }
