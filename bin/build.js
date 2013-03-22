@@ -1,5 +1,6 @@
 var path = require('path'),
     requirejs = require('requirejs'),
+    _ = require('underscore'),
     rAppid = require(path.join(process.cwd(),'public','js/lib/rAppid.js')).rAppid,
     flow = require('flow.js').flow,
     fs = require('fs');
@@ -35,7 +36,7 @@ var optimizeConfig = {
         toplevel: true,
         ascii_only: true,
         beautify: false,
-        "line-len": 1000
+        "max_line_length": 1000
     },
     "paths": {
         "rAppid": "js/lib/rAppid",
@@ -95,6 +96,8 @@ var build = function (args, callback) {
 
     if (buildConfig.uglify === false) {
         optimizeConfig.optimize = 'none';
+    } else if(_.isObject(buildConfig.uglify)){
+        _.extend(optimizeConfig.uglify, buildConfig.uglify);
     }
 
     optimizeConfig.removeSpaces = buildConfig.removeSpaces || false;
@@ -207,8 +210,6 @@ var build = function (args, callback) {
 
         fs.writeFileSync(configPath, JSON.stringify(config));
     };
-
-    global.libxml = require("libxml");
 
     // start optimizing
     requirejs.optimize(optimizeConfig, function (results) {
