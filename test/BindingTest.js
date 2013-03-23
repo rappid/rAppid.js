@@ -11,50 +11,51 @@ describe('js.core.Binding', function () {
     var target,
         model,
         returnValue = "HALLO",
-        parameters = ["'abc'",123,true,false,"null"],
+        parameters = ["'abc'", 123, true, false, "null"],
         parStr = "abc",
         parNum = 123,
         extendedModel,
-        ExtendedClass;
+        ExtendedClass,
+        bindingCreator;
 
     before(function (done) {
 
         flow()
-            .seq(function(cb){
+            .seq(function (cb) {
                 testRunner.requireClasses({
                     Binding: 'js/core/Binding',
                     Bindable: 'js/core/Bindable',
-                    Parser: 'js/lib/parser'
+                    Parser: 'js/lib/parser',
+                    BindingCreator: "js/core/BindingCreator"
                 }, C, cb);
-
             })
-            .seq(function(cb){
+            .seq(function () {
                 ExtendedClass = C.Bindable.inherit('ExtendedClass', {
                     foo: function () {
                         return returnValue;
                     },
                     bar: function () {
                         var args = Array.prototype.slice.call(arguments);
-                        if(args.length !== parameters.length){
+                        if (args.length !== parameters.length) {
                             return false;
                         }
                         var parameter;
-                        for(var i = 0; i < args.length; i++){
+                        for (var i = 0; i < args.length; i++) {
                             parameter = parameters[i];
                             parameter = parameter === "null" ? null : parameter;
-                            if(parameter && parameter.replace){
-                                parameter = parameter.replace(/'/gi,"");
+                            if (parameter && parameter.replace) {
+                                parameter = parameter.replace(/'/gi, "");
                             }
-                            if(args[i] !== parameter){
+                            if (args[i] !== parameter) {
                                 return false;
                             }
                         }
                         return true;
                     },
-                    foobar: function (a,b) {
+                    foobar: function (a, b) {
                         return a === parStr && b === parNum;
                     },
-                    calculatedAttribute: function(){
+                    calculatedAttribute: function () {
                         return "test";
                     }.onChange('m1'),
 
@@ -73,10 +74,10 @@ describe('js.core.Binding', function () {
                         return null;
                     }
                 });
-                cb();
+
+                bindingCreator = new C.BindingCreator();
             })
             .exec(done);
-
 
 
     });
@@ -151,12 +152,12 @@ describe('js.core.Binding', function () {
             should.equal(target.get("val"), undefined);
         });
 
-        it('path binding a.b.c should return c if b is just a json object', function() {
+        it('path binding a.b.c should return c if b is just a json object', function () {
             var b1 = new C.Binding({scope: model, path: 'a.b.c', target: target, targetKey: "val"});
 
             var testValue = "TEST VALUE";
 
-            should.equal(target.get('val'),null);
+            should.equal(target.get('val'), null);
 
             model.set("a", {
                 b: {
@@ -164,7 +165,33 @@ describe('js.core.Binding', function () {
                 }
             });
 
-            should.equal(target.get('val'),testValue);
+            should.equal(target.get('val'), testValue);
+        });
+
+    });
+
+    describe('#BindingCreator', function () {
+
+        it("should have the correct values, even with activated caching", function() {
+
+            var m = new (C.Bindable.inherit({
+                defaults: {
+                    user: null,
+                    repository: null,
+
+                    href: "user/{user}/{repository}",
+                    name: "{user}/{repository}"
+                }
+            }))();
+
+            m.set({
+                user: "it-ony",
+                repository: "rAppid.js"
+            });
+
+            expect(m.$.name).to.eql("it-ony/rAppid.js");
+            expect(m.$.href).to.eql("user/it-ony/rAppid.js");
+
         });
 
     });
@@ -191,7 +218,7 @@ describe('js.core.Binding', function () {
 
             m1.get('b').should.equal("hello");
 
-            target.set('val','goodbye');
+            target.set('val', 'goodbye');
 
             m1.get('b').should.equal("goodbye");
         });
@@ -219,7 +246,7 @@ describe('js.core.Binding', function () {
             target.get('val').should.equal(returnValue);
         });
 
-        var fncBinding = "bar("+parameters.join(",")+")";
+        var fncBinding = "bar(" + parameters.join(",") + ")";
 
         it(fncBinding + " should call bar with parameters and return true", function () {
             new C.Binding({scope: extendedModel, path: fncBinding, target: target, targetKey: 'val'}).triggerBinding();
@@ -247,9 +274,9 @@ describe('js.core.Binding', function () {
 
     });
 
-    describe('#destroy', function(){
+    describe('#destroy', function () {
 
-        it('should be called on target.destroy', function(){
+        it('should be called on target.destroy', function () {
             var binding = new C.Binding({scope: extendedModel, path: "foo()", target: target, targetKey: 'val'}),
                 binding2 = new C.Binding({scope: extendedModel, path: "foobar(m1.a,m1.b)", target: target, targetKey: 'val2'}),
                 binding3 = new C.Binding({scope: extendedModel, path: "calculatedAttribute()", target: target, targetKey: 'val3'});

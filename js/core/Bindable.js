@@ -246,7 +246,6 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
 
                     var $ = this.$,
                         bindingCreator = this.$bindingCreator,
-                        changedAttributes = {},
                         bindingAttributes = {},
                         bindingDefinitions,
                         bindingAttribute,
