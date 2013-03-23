@@ -22,9 +22,7 @@ define(['js/core/EventDispatcher','js/lib/parser','js/core/Binding', 'underscore
     }
 
     var bindingCache = {},
-        idCounter = 0,
-        bindings = 0,
-        cacheCounter = 0;
+        idCounter = 0;
 
     function pathToString(path){
         if(path instanceof Array){
@@ -79,13 +77,11 @@ define(['js/core/EventDispatcher','js/lib/parser','js/core/Binding', 'underscore
                     }
 
                     var twoWay = (bindingDef.type == Binding.TYPE_TWOWAY),
-                        cacheId;
+                        cacheId,
+                        cacheBinding = !cb && !twoWay && context && context.length === 1 && (context[0] instanceof Object);
 
-                    bindings++;
-
-                    if(!cb && !twoWay && context && context.length === 1 && (context[0] instanceof Object)){
+                    if(cacheBinding){
                         cacheId = pathToString(bindingDef.path) + "_" + scope.$cid;
-                        cacheCounter++;
                         if(bindingCache[cacheId]){
                             bindingCache[cacheId].addTarget(targetScope,attrKey);
                             return bindingCache[cacheId];
@@ -127,11 +123,11 @@ define(['js/core/EventDispatcher','js/lib/parser','js/core/Binding', 'underscore
                     }
 
                     var binding = new Binding(options);
-                    if(!twoWay && !(cb)){
+                    if(cacheBinding){
                         binding.bind('destroy', function(){
                             delete bindingCache[cacheId];
                         });
-                        bindingCache[cacheId] = binding
+                        bindingCache[cacheId] = binding;
                     }
 
                     return binding;
