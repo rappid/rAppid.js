@@ -7,7 +7,7 @@ define(["js/core/EventDispatcher", "js/core/Bindable", "underscore", "js/data/Qu
          * @param [Object] items to add
          * @param Object attributes to set
          */
-        ctor: function (items, options, attributes) {
+        ctor: function (items, options) {
             options = options || {};
 
             _.defaults(options, {

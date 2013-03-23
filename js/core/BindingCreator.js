@@ -21,6 +21,27 @@ define(['js/core/EventDispatcher','js/lib/parser','js/core/Binding', 'underscore
         return false;
     }
 
+    var bindingCache = {},
+        idCounter = 0;
+
+    function pathToString(path){
+        if(path instanceof Array){
+            var el = [];
+            for(var i = 0; i < path.length; i++){
+                if(path[i].type === Binding.TYPE_VAR){
+                    el.push(path[i].name);
+                } else if(path[i].type === Binding.TYPE_FNC){
+                    el.push(path[i].name + "(" + (idCounter++) + ")");
+                }
+            }
+
+            return el.join(".");
+        } else {
+            return path;
+        }
+    }
+
+
     return EventDispatcher.inherit('js.core.BindingCreator',{
 
         /***
@@ -32,6 +53,7 @@ define(['js/core/EventDispatcher','js/lib/parser','js/core/Binding', 'underscore
          * @return {*}
          */
         create: function(bindingDef, targetScope, attrKey, context){
+
             var path = bindingDef.path;
             var pathElement = path[0];
 
@@ -54,7 +76,18 @@ define(['js/core/EventDispatcher','js/lib/parser','js/core/Binding', 'underscore
                         cb = attrKey;
                     }
 
-                    var twoWay = (bindingDef.type == Binding.TYPE_TWOWAY);
+                    var twoWay = (bindingDef.type == Binding.TYPE_TWOWAY),
+                        cacheId,
+                        cacheBinding = !cb && !twoWay && context && context.length === 1 && (context[0] instanceof Object);
+
+                    if(cacheBinding){
+                        cacheId = pathToString(bindingDef.path) + "_" + scope.$cid;
+                        if(bindingCache[cacheId]){
+                            bindingCache[cacheId].addTarget(targetScope,attrKey);
+                            return bindingCache[cacheId];
+                        }
+                    }
+
 
 
                     var options = {
@@ -88,7 +121,16 @@ define(['js/core/EventDispatcher','js/lib/parser','js/core/Binding', 'underscore
                     } else {
                         options['targetKey'] = attrKey;
                     }
-                    return new Binding(options);
+
+                    var binding = new Binding(options);
+                    if(cacheBinding){
+                        binding.bind('destroy', function(){
+                            delete bindingCache[cacheId];
+                        });
+                        bindingCache[cacheId] = binding;
+                    }
+
+                    return binding;
 
                 } else {
                     return scope.get(bindingDef.path);
