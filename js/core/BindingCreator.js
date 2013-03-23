@@ -23,6 +23,7 @@ define(['js/core/EventDispatcher','js/lib/parser','js/core/Binding', 'underscore
 
     var bindingCache = {},
         idCounter = 0,
+        bindings = 0,
         cacheCounter = 0;
 
     function pathToString(path){
@@ -54,6 +55,7 @@ define(['js/core/EventDispatcher','js/lib/parser','js/core/Binding', 'underscore
          * @return {*}
          */
         create: function(bindingDef, targetScope, attrKey, context){
+
             var path = bindingDef.path;
             var pathElement = path[0];
 
@@ -79,13 +81,17 @@ define(['js/core/EventDispatcher','js/lib/parser','js/core/Binding', 'underscore
                     var twoWay = (bindingDef.type == Binding.TYPE_TWOWAY),
                         cacheId;
 
-                    if(!cb && !twoWay){
-                        cacheId = pathToString(bindingDef.path) + scope.$cid;
+                    bindings++;
+
+                    if(!cb && !twoWay && context && context.length === 1 && (context[0] instanceof Object)){
+                        cacheId = pathToString(bindingDef.path) + "_" + scope.$cid;
+                        cacheCounter++;
                         if(bindingCache[cacheId]){
                             bindingCache[cacheId].addTarget(targetScope,attrKey);
                             return bindingCache[cacheId];
                         }
                     }
+
 
 
                     var options = {
