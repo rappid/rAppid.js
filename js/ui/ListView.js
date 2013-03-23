@@ -15,7 +15,7 @@ define(['js/ui/ItemsView', 'js/html/HtmlElement'], function(ItemsView, HtmlEleme
             });
 
             for (var j = 0; j < components.length; j++) {
-                components[j].$classAttributes.push(this._getItemKey(), this._getIndexKey());
+                components[j].$classAttributes && components[j].$classAttributes.push(this._getItemKey(), this._getIndexKey());
                 component.addChild(components[j]);
             }
 
