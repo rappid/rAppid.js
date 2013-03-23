@@ -100,17 +100,6 @@ describe('js.core.Binding', function () {
 
         });
 
-        it('path binding should be work on plain objects', function () {
-
-            var b1 = new C.Binding({scope: model, path: 'a.b', target: target, targetKey: "val"});
-            model.set("a", {
-                b: 'A'
-            });
-
-            expect(target.get('val')).to.be.equal('A');
-
-        });
-
         it('path binding a.b should return undefined if b is not set', function () {
             var b1 = new C.Binding({scope: model, path: 'a.b', target: target, targetKey: "val"});
 
@@ -165,7 +154,7 @@ describe('js.core.Binding', function () {
             });
 
             should.equal(target.get('val'),testValue);
-        });
+        })
 
     });
 
@@ -189,11 +178,8 @@ describe('js.core.Binding', function () {
             var m1 = new C.Bindable({b: "hello"});
             model.set("a", m1);
 
-            m1.get('b').should.equal("hello");
-
-            target.set('val','goodbye');
-
-            m1.get('b').should.equal("goodbye");
+            target.set({val: 'TargetValue'});
+            m1.get('b').should.equal("TargetValue");
         });
     });
 

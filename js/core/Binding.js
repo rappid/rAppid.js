@@ -38,7 +38,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
                     }
                 }
                 this.callBase();
-                this.$targets = [];
+
                 this.$ = attributes;
                 _.defaults(this.$,this.defaults);
 
@@ -72,9 +72,8 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
 
                 if(!this.$.parent){
                     // destroy yourself on target or scope destroy
+                    this.$.target.bind('destroy', this.destroy, this);
                     scope.bind('destroy', this.destroy, this);
-
-                    this.$.root = this;
                 }
 
 
@@ -120,7 +119,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
                                 para = {
                                     path: para,
                                     type: TYPE_NORMAL,
-                                    parent: null
+                                    parent: this
                                 };
                             }
                             if(_.isObject(para)){
@@ -147,10 +146,6 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
                     if(this.$.path.length === 1){
                         this.$.target.bind(this.$.targetEvent, this._revCallback, this);
                     }
-                }
-
-                if (!this.$.parent) {
-                    this.addTarget(this.$.target, this.$.targetKey || this.$.callback);
                 }
 
                 this._createSubBinding();
@@ -258,7 +253,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
                     // get value for first child
                     if(nScope instanceof Bindable){
                         // init new binding, which triggers this binding
-                        this.$subBinding = new Binding({scope: nScope, path: this.$.path.slice(1), target: this.$.target, targetKey: this.$.targetKey, rootScope: this.$.rootScope, callback: this.$.callback, context: this.$.context, twoWay: this.$.twoWay, transform: this.$.transform, transformBack: this.$.transformBack, bindingCreator: this.$.bindingCreator, parent: this, root: this.$.root});
+                        this.$subBinding = new Binding({scope: nScope, path: this.$.path.slice(1), target: this.$.target, targetKey: this.$.targetKey, rootScope: this.$.rootScope, callback: this.$.callback, context: this.$.context, twoWay: this.$.twoWay, transform: this.$.transform, transformBack: this.$.transformBack, bindingCreator: this.$.bindingCreator, parent: this});
                     } else if(nScope instanceof Object){
                         // we have a object which is not bindable
                         this.$jsonObject = nScope;
@@ -352,7 +347,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
                 this.$parameters = null;
                 this.$.scope = this.$.target = this.$.callback = null;
                 this.$ = null;
-                this.$targets = null;
+
                 this.callBase();
 
                 bindingsDestroyed++;
@@ -416,65 +411,16 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
             triggerBinding: function () {
                 // get value
                 var val = this.getContextValue();
-
-                var target,
-                    targets = this.$.root.getTargets();
-                if(targets){
-                    for(var i = 0; i < targets.length; i++){
-                        target = targets[i];
-                        if(target.key instanceof Function){
-                            target.key.call(target.scope, val, this);
-                        } else {
-                            target.scope.set(target.key, val);
-                        }
-                    }
+                if (this.$.targetKey) {
+                    this.$.target.set(this.$.targetKey, val);
+                } else if (this.$.callback) {
+                    this.$.callback.call(this.$.target, val, this);
                 }
 
             },
             toString: function () {
                 return this.getValue();
             },
-
-            getTargets: function(){
-                return this.$targets;
-            },
-
-            /***
-             *
-             * @param {Bindable} targetScope
-             * @param {String|Function} key
-             */
-            addTarget: function(targetScope, key){
-                targetScope.bind('destroy', function(){
-                    this.removeTarget(targetScope, key);
-                },this);
-
-                this.$targets.push({
-                    scope: targetScope,
-                    key: key
-                });
-            },
-            /***
-             *
-             * @param {Bindable} targetScope
-             * @param {String|Function} key
-             */
-            removeTarget: function(targetScope, key){
-                var target;
-                if(this.$targets){
-                    for (var i = 0; i < this.$targets.length; i++) {
-                        target = this.$targets[i];
-                        if (target.key === key && target.scope === targetScope) {
-                            this.$targets.splice(i,1);
-                            break;
-                        }
-                    }
-                    if(this.$targets.length === 0){
-                        this.destroy();
-                    }
-                }
-            },
-
             create: function(bindingDef, target, callback){
                 var options = {
                     scope: this.$.scope,
