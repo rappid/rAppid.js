@@ -1,4 +1,7 @@
 define(["js/html/HtmlElement", "js/core/TextElement", "js/core/BindingCreator"], function (HtmlElement, TextElement, BindingCreator) {
+
+        var undefined;
+
         return HtmlElement.inherit("js.html.TextArea", {
 
             defaults: {
@@ -15,6 +18,9 @@ define(["js/html/HtmlElement", "js/core/TextElement", "js/core/BindingCreator"],
                 }
             },
             _renderValue: function (value) {
+                if (value === null || value === undefined) {
+                    value = "";
+                }
                 this.$el.value = String(value);
             },
             _bindDomEvents: function () {
