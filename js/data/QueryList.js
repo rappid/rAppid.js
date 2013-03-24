@@ -21,7 +21,6 @@ define(["js/core/List" , "underscore", "js/data/Query", 'js/lib/query/ArrayExecu
         },
 
         ctor: function(options){
-
             this.callBase([],options);
         },
 
@@ -29,13 +28,6 @@ define(["js/core/List" , "underscore", "js/data/Query", 'js/lib/query/ArrayExecu
             if (list && list instanceof List) {
                 this._innerReset(list.$items);
             }
-        },
-
-        _commitQuery: function(query, oldQuery){
-            if(oldQuery && query){
-
-            }
-
         },
 
         initialize: function () {
