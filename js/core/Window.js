@@ -24,7 +24,18 @@ define(['js/ui/View'], function(View) {
 
         close: function(state) {
             this.trigger('close', state);
+        },
+
+        _renderWindowClass: function (cls, oldCls) {
+            if (oldCls) {
+                this.removeClass(oldCls);
+            }
+
+            if (cls) {
+                this.addClass(cls);
+            }
         }
+
 
     });
 
