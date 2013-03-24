@@ -1,5 +1,6 @@
 define(["js/html/HtmlElement", "underscore", "moment"], function (HtmlElement, _, moment) {
-        var radioNameCache = {};
+        var radioNameCache = {},
+            undefined;
 
         return HtmlElement.inherit("js.html.Input", {
             $classAttributes: ['updateOnEvent','checked'],
