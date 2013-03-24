@@ -5,7 +5,9 @@ define(["js/core/Window"], function (Window) {
 
         defaults: {
             title: '',
-            closable: true
+            closable: true,
+            size: "normal",
+            componentClass: "dialog {size}"
         },
 
         $keyHandlers: {
