@@ -129,18 +129,23 @@ define(["exports", "Query"], function (exports, Query) {
             var sortExpressions = query.query.sort,
                 self = this;
 
-            return items.sort(function (a, b) {
-                var sortExpression,
-                    ret = 0;
-                for (var i = 0; i < sortExpressions.length; i++) {
-                    sortExpression = sortExpressions[i];
-                    ret = self._compareExpression(a, b, sortExpression);
-                    if (ret !== 0) {
-                        return ret;
+            if(sortExpressions){
+                return items.sort(function (a, b) {
+                    var sortExpression,
+                        ret = 0;
+                    for (var i = 0; i < sortExpressions.length; i++) {
+                        sortExpression = sortExpressions[i];
+                        ret = self._compareExpression(a, b, sortExpression);
+                        if (ret !== 0) {
+                            return ret;
+                        }
                     }
-                }
-                return ret;
-            });
+                    return ret;
+                });
+            } else {
+                return items;
+            }
+
         },
 
         /***
