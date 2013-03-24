@@ -5,7 +5,8 @@
                 defaults: {
                     type: "text",
                     value: "",
-                    size: "large"
+                    size: "large",
+                    placeholder: ""
                 },
                 $defaultContentName: "additionalControls"
             }
@@ -13,7 +14,7 @@
         ]]>
     </js:Script>
     <js:Content name="controls">
-        <input type="{type}" value="{{value}}" class="input-{size}" enabled="{enabled}"/>
+        <input type="{type}" value="{{value}}" class="input-{size}" enabled="{enabled}" placeholder="{placeholder}" />
         <ui:ContentPlaceHolder name="additionalControls"/>
     </js:Content>
 </ui:Field>

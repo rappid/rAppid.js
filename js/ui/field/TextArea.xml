@@ -4,7 +4,8 @@
             return {
                 defaults: {
                     value: "",
-                    size: "large"
+                    size: "large",
+                    placeholder: ""
                 },
                 $classAttributes: ['size', 'type'],
                 $defaultContentName: "additionalControls"
@@ -13,7 +14,7 @@
         ]]>
     </js:Script>
     <js:Content name="controls">
-        <textarea class="input-{size}" enabled="{enabled}">{{value}}</textarea>
+        <textarea class="input-{size}" enabled="{enabled}" placeholder="{placeholder}">{{value}}</textarea>
         <ui:ContentPlaceHolder name="additionalControls"/>
     </js:Content>
 </ui:Field>
