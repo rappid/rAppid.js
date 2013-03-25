@@ -52,7 +52,7 @@ define(['js/html/HtmlElement', 'underscore'], function(HtmlElement, _){
 
                 child.addChild(window);
 
-                window.set('componentClass', 'modal window');
+                window.set('windowClass', 'modal window');
                 self.set("modalActive", true);
             }
 
