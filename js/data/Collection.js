@@ -37,8 +37,6 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore", "js/da
 
             this.callBase(items, options);
 
-            this.$queryCollectionsCache = {};
-            this.$sortCollections = [];
             this.$pageCache = [];
         },
 
