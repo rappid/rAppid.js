@@ -1,0 +1,28 @@
+<app:SelectionViewTestClass xmlns:app="webtest.test.ui" xmlns="http://www.w3.org/1999/xhtml" xmlns:js="js.core"
+                        xmlns:ui="js.ui">
+
+    <ui:SelectionView cid="sv1" items="{sv1_items}" tagName="ul" id="sv1">
+        <js:Template name="item">
+            <li class="{item.id}">{item.value}</li>
+        </js:Template>
+    </ui:SelectionView>
+
+    <ui:SelectionView cid="sv2" items="{sv2_items}" tagName="ul" id="sv2" needsSelection="true" allowDeselection="true">
+        <js:Template name="item">
+            <li class="{item.id}">{item.value}</li>
+        </js:Template>
+    </ui:SelectionView>
+
+    <ui:SelectionView cid="sv3" items="{sv3_items}" tagName="ul" id="sv3" needsSelection="true" selectedItem="Z">
+        <js:Template name="item">
+            <li class="{item.id}">{item.value}</li>
+        </js:Template>
+    </ui:SelectionView>
+
+    <ui:SelectionView cid="sv4" items="{sv4_items}" tagName="ul" id="sv4" needsSelection="true" selectedItem="{sv4_items.at(1)}">
+        <js:Template name="item">
+            <li class="{item.id}">{item.value}</li>
+        </js:Template>
+    </ui:SelectionView>
+
+</app:SelectionViewTestClass>

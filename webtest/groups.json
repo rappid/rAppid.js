@@ -11,7 +11,19 @@
             "type": "browser"
         }
     ],
+    "c" : [
+        {
+            "app": "ui/SelectionViewTest.xml",
+            "test": "ui/SelectionViewTests.js",
+            "type": "browser"
+        }
+    ],
     "ui": [
+        {
+            "app": "ui/SelectionViewTest.xml",
+            "test": "ui/SelectionViewTests.js",
+            "type": "browser"
+        },
         {
             "app": "ui/ItemsViewTest.xml",
             "test": "ui/ItemsViewTests.js",
