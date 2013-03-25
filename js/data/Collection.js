@@ -40,25 +40,6 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore", "js/da
             this.$pageCache = [];
         },
 
-        createQueryCacheKey: function (queryParameters) {
-            queryParameters = queryParameters || {};
-            var ret = [];
-
-            for (var key in queryParameters) {
-                if (queryParameters.hasOwnProperty(key)) {
-                    ret.push(key + "=" + JSON.stringify(queryParameters[key]));
-                }
-            }
-
-            ret.sort();
-
-            if (ret.length == 0) {
-                return "root";
-            }
-
-            return ret.join("&");
-        },
-
         /***
          *
          * @param {js.data.Query} query
