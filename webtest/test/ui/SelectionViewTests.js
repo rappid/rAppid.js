@@ -100,6 +100,19 @@ describe("#SelectionView", function () {
             $expect($("#sv2").find('li.active')).to.have.items(0);
         });
 
+        it('should be possible to select more then one item when "multiSelect=true"', function(){
+            // no items selected
+            $expect($("#sv2").find('li.active')).to.have.items(0);
+
+            $("#sv2").find('li').eq(0).click();
+
+            $expect($("#sv2").find('li.active')).to.have.items(1);
+
+            $("#sv2").find('li').eq(1).click();
+
+            $expect($("#sv2").find('li.active')).to.have.items(2);
+        });
+
     });
 
     describe('#sv3', function(){

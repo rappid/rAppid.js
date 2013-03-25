@@ -7,7 +7,7 @@
         </js:Template>
     </ui:SelectionView>
 
-    <ui:SelectionView cid="sv2" items="{sv2_items}" tagName="ul" id="sv2" needsSelection="true" allowDeselection="true">
+    <ui:SelectionView cid="sv2" items="{sv2_items}" tagName="ul" id="sv2" needsSelection="true" allowDeselection="true" multiSelect="true">
         <js:Template name="item">
             <li class="{item.id}">{item.value}</li>
         </js:Template>
