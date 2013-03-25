@@ -10,21 +10,8 @@ define(["js/core/EventDispatcher", "js/core/Bindable", "underscore", "js/data/Qu
         ctor: function (items, options) {
             options = options || {};
 
-            _.defaults(options, {
-                root: null,
-                query: null
-            });
-
             this.$items = [];
             this.$itemEventMap = {};
-
-            this.$filterCache = {};
-            this.$sortCache = {};
-
-
-            if (options.root) {
-                _.defaults(options, options.root.options);
-            }
 
             this.callBase(options);
 
@@ -387,34 +374,6 @@ define(["js/core/EventDispatcher", "js/core/Bindable", "underscore", "js/data/Qu
             return ret;
         },
 
-        /***
-         *
-         * @param {js.data.Query} query
-         * @return {*}
-         */
-        filter: function (query) {
-            if (query.query.where) {
-                var options = _.defaults({}, this.$, {
-                    query: query,
-                    root: this.getRoot()
-                });
-
-                var filterCacheId = query.whereCacheId();
-
-                if (!this.$filterCache[filterCacheId]) {
-                    this.$filterCache[filterCacheId] = this._createFilteredList(query, options);
-                }
-
-                return this.$filterCache[filterCacheId];
-            } else {
-                return this.getRoot();
-            }
-        },
-
-        _createFilteredList: function (query, options) {
-            return new this.factory(query.filterItems(this.$items), options);
-        },
-
         /**
          * Sorts the list by the given function and triggers sort event
          * @param {Function|js.data.Query} fnc
@@ -423,37 +382,8 @@ define(["js/core/EventDispatcher", "js/core/Bindable", "underscore", "js/data/Qu
             if (fnc instanceof Function) {
                 // TODO:
                 this.trigger('sort', {items: this.$items.sort(fnc), sortFnc: fnc});
-                return this;
-            } else if (fnc instanceof Query && fnc.query.sort) {
-                var query = fnc,
-
-                    options = _.defaults({},this.$,{
-                        query: query,
-                        root: this.getRoot()
-                    });
-
-                var sortCacheId = query.sortCacheId();
-
-                if (!this.$sortCache[sortCacheId]) {
-                    this.$sortCache[sortCacheId] = this._createSortedList(query, options);
-                }
-
-                return this.$sortCache[sortCacheId];
             }
-
             return this;
-        },
-
-        _createSortedList: function (query, options) {
-            return new List(query.sortItems(this.$items), options);
-        },
-
-        query: function (query) {
-            return this.filter(query).sort(query);
-        },
-
-        getRoot: function () {
-            return this.$.root || this;
         },
 
         isDeepEqual: function (list) {

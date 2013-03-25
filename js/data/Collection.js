@@ -1,4 +1,4 @@
-define(['require', "js/core/List", "js/data/Model", "flow", "underscore"], function (require, List, Model, flow, _) {
+define(['require', "js/core/List", "js/data/Model", "flow", "underscore", "js/data/Query"], function (require, List, Model, flow, _, Query) {
 
     var State = {
         CREATED: 0,
@@ -17,6 +17,8 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore"], funct
             options = options || {};
 
             _.defaults(options, {
+                root: null,
+                query: null,
                 pageSize: null,
                 queryParameters: {},
                 sortParameters: null,
@@ -24,7 +26,12 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore"], funct
                 type: null
             });
 
-            if(options.root){
+
+            this.$filterCache = {};
+            this.$sortCache = {};
+
+            if (options.root) {
+                _.defaults(options, options.root.options);
                 this.$modelFactory = options.root.$modelFactory;
             }
 
@@ -54,16 +61,40 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore"], funct
             return ret.join("&");
         },
 
-        _createFilteredList: function(query, options){
+        /***
+         *
+         * @param {js.data.Query} query
+         * @return {*}
+         */
+        filter: function (query) {
+            if (query instanceof Query && query.query.where) {
+                var options = _.defaults({}, this.$, {
+                    query: query,
+                    root: this.getRoot()
+                });
+
+                var filterCacheId = query.whereCacheId();
+
+                if (!this.$filterCache[filterCacheId]) {
+                    this.$filterCache[filterCacheId] = this._createFilteredCollection(query, options);
+                }
+
+                return this.$filterCache[filterCacheId];
+            } else {
+                return this.getRoot();
+            }
+        },
+
+        _createFilteredCollection: function (query, options) {
             options.$itemsCount = undefined;
-            // TOOD: if fully loaded -> return this.callBase();
-            var collection = new this.factory(null,options);
+
+            var collection = new this.factory(null, options);
             collection.$context = this.$context;
 
             return collection;
         },
 
-        _createSortedList: function(query, options){
+        _createSortedCollection: function (query, options) {
             // TODO: if fully loaded -> return this.callBase();
             var collection = new this.factory(null, options);
             collection.$context = this.$context;
@@ -71,23 +102,33 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore"], funct
             return collection;
         },
 
-        createQueryCollection: function (queryParameters) {
+        sort: function (query) {
+            if (query instanceof Query && query.query.sort) {
 
-            var options = {
-                queryParameters: queryParameters,
-                root: this.getRoot()
-            };
 
-            // different queryParameter, same options
-            _.defaults(options, this.$);
+                var options = _.defaults({}, this.$, {
+                    query: query,
+                    root: this.getRoot()
+                });
 
-            var cacheKey = this.createQueryCacheKey(queryParameters);
-            if(!this.$queryCollectionsCache[cacheKey]){
-                var collection = new Collection(null, options);
-                collection.$context = this.$context;
-                this.$queryCollectionsCache[cacheKey] = collection;
+                var sortCacheId = query.sortCacheId();
+
+                if (!this.$sortCache[sortCacheId]) {
+                    this.$sortCache[sortCacheId] = this._createSortedCollection(query, options);
+                }
+
+                return this.$sortCache[sortCacheId];
             }
-            return this.$queryCollectionsCache[cacheKey];
+
+            return this;
+        },
+
+        query: function (query) {
+            return this.filter(query).sort(query);
+        },
+
+        getRoot: function () {
+            return this.$.root || this;
         },
 
         // fetches the complete list
@@ -164,15 +205,15 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore"], funct
             }
         },
 
-        getContextForChild: function(childFactory) {
+        getContextForChild: function (childFactory) {
             return this.$context;
         },
 
-        parse: function(data) {
+        parse: function (data) {
             return data;
         },
 
-        createItem: function(id) {
+        createItem: function (id) {
             var item = this.getContextForChild(this.$modelFactory).createEntity(this.$modelFactory, id);
 
             item.$parent = this.$parent;
@@ -211,7 +252,7 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore"], funct
             });
         },
 
-        invalidatePageCache: function(){
+        invalidatePageCache: function () {
             this.$pageCache = {};
 
             for (var key in this.$filterCache) {
@@ -230,36 +271,25 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore"], funct
             this.reset([]);
         },
 
-        // returns a new collections
-        find: function (parameters) {
-            var queryKey = this.createQueryCacheKey(parameters);
-
-            if (!this.$queryCollectionsCache.hasOwnProperty(queryKey)) {
-                this.$queryCollectionsCache[queryKey] = this.createQueryCollection(parameters);
-            }
-
-            return this.$queryCollectionsCache[queryKey];
-        },
-
-        size: function() {
+        size: function () {
             return this.$.$itemsCount;
         }.onChange('$itemsCount'),
 
-        isEmpty: function() {
+        isEmpty: function () {
             var pageCount = this.pageCount();
-            if(!isNaN(pageCount)){
+            if (!isNaN(pageCount)) {
                 return pageCount === 0;
             }
             return false;
         }.onChange('$itemsCount'),
 
-        getQueryParameters: function(method){
+        getQueryParameters: function (method) {
             return this.$.queryParameters;
         },
         getSortParameters: function (method) {
             return this.$.sortParameters;
         },
-        destroy: function(){
+        destroy: function () {
             // TODO: remove destroyed query collections from cache
 
             this.callBase();
@@ -293,7 +323,7 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore"], funct
 
         },
 
-        setMetaData: function(metaData) {
+        setMetaData: function (metaData) {
             this.$metaData = metaData;
 
             if (metaData && metaData.hasOwnProperty('count')) {
@@ -306,7 +336,7 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore"], funct
             return this.getRoot().parse(data, type);
         },
 
-        getRoot: function(){
+        getRoot: function () {
             return this.$collection.getRoot();
         },
         /***
@@ -334,7 +364,7 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore"], funct
                     // TODO: introduce poolSize parameter for par, and parEach
 
                     flow()
-                        .parEach(page.$items, function(model, cb) {
+                        .parEach(page.$items, function (model, cb) {
                             model.fetch({
                                 fetchSubModels: options.fetchSubModels
                             }, cb);
@@ -375,13 +405,13 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore"], funct
         }
     });
 
-    Collection.of = function(modelFactory) {
+    Collection.of = function (modelFactory) {
 
         if (modelFactory instanceof Function) {
             return Collection.inherit(Collection.prototype.constructor.name + '[' + modelFactory.prototype.constructor.name + ']', {
                 $modelFactory: modelFactory
             });
-        }  else {
+        } else {
             throw "Cannot create Collection of '" + modelFactory + "'.";
         }
 
