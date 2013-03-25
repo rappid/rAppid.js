@@ -326,6 +326,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
 
             var params = {};
             if(collectionPage.$collection.$.query){
+                // TODO: add schema
                 params = MongoQueryComposer.compose(collectionPage.$collection.$.query);
             }
 
@@ -385,6 +386,56 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
                 callback(err, collectionPage, options);
             });
         },
+
+        countCollection: function(collection, options, callback){
+            var rootCollection = collection.getRoot(),
+                modelClassName = rootCollection.$modelFactory.prototype.constructor.name,
+                configuration = this.$dataSourceConfiguration.getConfigurationForModelClass(rootCollection.$modelFactory);
+
+            if (!configuration) {
+                callback("Couldn't find path config for " + rootCollection.$modelFactory.prototype.constructor.name);
+            }
+
+            var mongoCollection = configuration.$.collection;
+
+            var params = {};
+            if (collection.$.query) {
+                // TODO: add schema
+                params = MongoQueryComposer.compose(collection.$.query);
+            }
+
+            if (!mongoCollection) {
+                callback("No mongo collection defined for " + rootCollection.$modelFactory.prototype.constructor.name);
+            }
+
+            // TODO: add query, fields and options
+            var where = params.where || {};
+
+            // here we have a polymorphic type
+            if (configuration.$.modelClassName !== modelClassName) {
+                where[TYPE_KEY] = modelClassName;
+            }
+
+            if (rootCollection.$parent) {
+                where[PARENT_ID_KEY] = rootCollection.$parent.$.id;
+                where[PARENT_TYPE_KEY] = rootCollection.$parent.factory.prototype.constructor.name;
+            }
+
+            var count;
+            this.connectCollection(mongoCollection, function (collection, cb) {
+                flow()
+                    .seq("cursor", function () {
+                        cb(null, collection.find(where));
+                    })
+                    .seq("count", function (cb) {
+                        this.vars["cursor"].count(cb);
+                    })
+                    .exec(cb);
+            }, function (err) {
+                callback(err, this.vars["count"], options);
+            });
+        },
+
         getContextForChild: function(childFactory, requestor){
             if(childFactory.classof(Collection)){
                 return this.getContextByProperties(requestor, requestor.$context);

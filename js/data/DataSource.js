@@ -920,6 +920,10 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                 }
             },
 
+            countCollection: function(collection, options, callback){
+                callback && callback("Abstrat method countCollection", NaN);
+            },
+
             /***
              * Saves a model
              * @param {js.data.Model} model

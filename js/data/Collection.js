@@ -7,6 +7,12 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore", "js/da
         ERROR: -1
     };
 
+    var COUNTSTATE = {
+        UNKNOWN: 0,
+        COUNTING: 1,
+        COUNTED: -1
+    };
+
     var Collection = List.inherit("js.data.Collection", {
 
         $modelFactory: Model,
@@ -29,6 +35,10 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore", "js/da
 
             this.$filterCache = {};
             this.$sortCache = {};
+            this._count = {
+                callbacks: [],
+                state: COUNTSTATE.UNKNOWN
+            };
 
             if (options.root) {
                 _.defaults(options, options.root.options);
@@ -228,6 +238,15 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore", "js/da
                 if (callback) {
                     callback(err, page, options);
                 }
+            });
+        },
+
+        count: function(options, callback){
+            this.$context.$dataSource.countCollection(this, options, function(err, count){
+                if(!err){
+                    this.set('$itemsCount', count);
+                }
+                callback && callback(err, count);
             });
         },
 
