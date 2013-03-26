@@ -327,8 +327,7 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
 
             model.set('created', new Date());
 
-            var self = this,
-                href;
+            var self = this;
 
             flow()
                 .seq(function (cb) {
@@ -351,7 +350,7 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
                         var response = context.response;
                         response.writeHead(201, "", {
                             'Content-Type': 'application/json',
-                            'Location': context.request.urlInfo.uri + "/" + model.$.id
+                            'Location': context.request.urlInfo.uri + "/" + model.identifier()
                         });
 
                         response.write(body);
