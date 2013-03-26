@@ -242,9 +242,10 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore", "js/da
         },
 
         count: function(options, callback){
+            var self = this;
             this.$context.$dataSource.countCollection(this, options, function(err, count){
                 if(!err){
-                    this.set('$itemsCount', count);
+                    self.set('$itemsCount', count);
                 }
                 callback && callback(err, count);
             });
