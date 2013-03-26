@@ -61,14 +61,14 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
                 throw new Error("No configuration found for " + model.constructor.name);
             }
 
-            var modelPath = configuration.$.path + "/" + model.$.id;
+            var modelPath = configuration.$.path + "/" + model.identifier();
 
             if (rootResource.isResponsibleForModel(model)) {
                 dataSource = rootResource.getDataSource(context);
             }
 
 
-            model = dataSource.createEntity(model.factory, model.$.id);
+            model = dataSource.createEntity(model.factory, model.identifier());
             model.fetch(null, function (err, model) {
                 if (!err) {
                     if (model.$parent) {
@@ -267,8 +267,9 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
                 .seq(function (cb) {
                     flow()
                         .seqEach(this.vars["collection"].$items, function (item, cb) {
-                            if (item.$.id) {
-                                item.$["href"] = context.request.urlInfo.uri + "/" + item.$.id;
+                            var id = item.identifier();
+                            if (id) {
+                                item.$["href"] = context.request.urlInfo.uri + "/" + id;
 
                                 self._fetchAllHrefsForModel(item, context, cb);
                             } else {
