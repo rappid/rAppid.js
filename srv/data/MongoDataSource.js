@@ -15,7 +15,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
 
             if(entity instanceof Model){
                 if (entity.$parent) {
-                    data[PARENT_ID_KEY] = entity.$parent.$.id;
+                    data[PARENT_ID_KEY] = entity.$parent.identifier();
                     data[PARENT_TYPE_KEY] = entity.$parent.factory.prototype.constructor.name;
                 }
 
@@ -29,7 +29,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
             if (model && model.$.id) {
                 var ret = {};
                 ret[TYPE_KEY] = model.constructor.name;
-                ret[REF_ID_KEY] = this.$dataSource._createIdObject(model.$.id);
+                ret[REF_ID_KEY] = model.identifier();
                 return ret;
             }
             return null;
@@ -171,11 +171,14 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
             var processor = this.getProcessorForModel(model);
 
             var data = processor.compose(model, options);
+            var where = {};
 
+            if(model.idField === "id"){
+                where["_id"] = data._id;
+            } else {
+                where[model.idField] = model.identifier();
+            }
 
-            var where = {
-                _id: data._id
-            };
 
             // here we have a polymorph type
             if (configuration.$.modelClassName !== model.constructor.name) {
@@ -424,15 +427,20 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
             var count;
             this.connectCollection(mongoCollection, function (collection, cb) {
                 flow()
-                    .seq("cursor", function () {
+                    .seq("cursor", function (cb) {
                         cb(null, collection.find(where));
                     })
                     .seq("count", function (cb) {
                         this.vars["cursor"].count(cb);
                     })
-                    .exec(cb);
+                    .exec(function(err, results){
+                        if(!err){
+                            count = results["count"];
+                        }
+                        cb(err);
+                    });
             }, function (err) {
-                callback(err, this.vars["count"], options);
+                callback(err, count, options);
             });
         },
 
