@@ -354,7 +354,6 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                     value,
                     type, err;
 
-
                 try {
                     for (var key in schema) {
                         if (schema.hasOwnProperty(key)) {
@@ -363,7 +362,8 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
 
                             type = schemaObject.type;
 
-                            if (this._isUndefined(value, schemaObject) && this._isRequired(entity, schemaObject.required)) {
+
+                            if (this._isUndefined(value, schemaObject) && this._isRequired(entity, schemaObject)) {
                                 errors.push(this._createError("isUndefinedError", key + " is required", key));
                             } else if (value && !this._isValidType(value, schemaObject.type)) {
                                 errors.push(this._createError("wrongTypeError", key + " is from wrong type", key));
@@ -411,6 +411,7 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                         callback(err, errors);
                     });
             },
+
             _isValidType: function (value, type) {
 
                 if (type === String && !_.isString(value)) {
@@ -430,6 +431,7 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                 }
                 return true;
             },
+
             _isUndefined: function (value, schemaObject) {
                 var type = schemaObject.type;
                 if (type && type.isCollection) {
@@ -437,7 +439,15 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                 }
                 return (!(this.runsInBrowser() && schemaObject.generated)) && (value === undefined || value === null || value === "");
             },
-            _isRequired: function (entity, required) {
+
+            _isRequired: function (entity, schemaObject) {
+
+                if (schemaObject.type.prototype.isCollection) {
+                    return false;
+                }
+
+                var required = schemaObject.required;
+
                 if (required instanceof Function) {
                     return required.call(entity);
                 } else {
