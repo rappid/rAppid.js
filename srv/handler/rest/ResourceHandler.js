@@ -335,7 +335,7 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
                 })
                 // validate and save model
                 .seq(function (cb) {
-                    model.validateAndSave(null, cb);
+                    model.validateAndSave({action: DataSource.ACTION.CREATE }, cb);
                 })
                 .seq(function (cb) {
                     self._afterModelCreate(model, context, cb);
@@ -443,7 +443,7 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
                     self._beforeModelSave(model, context, cb);
                 })
                 .seq(function (cb) {
-                    model.validateAndSave(null, cb);
+                    model.validateAndSave({action: DataSource.ACTION.UPDATE }, cb);
                 })
                 .seq(function (cb) {
                     self._afterModelUpdate(model, context, cb);

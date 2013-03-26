@@ -13,7 +13,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
         compose: function (entity, action, options) {
             var data = this.callBase();
 
-            if(entity instanceof Model){
+            if (entity instanceof Model) {
                 if (entity.$parent) {
                     data[PARENT_ID_KEY] = entity.$parent.identifier();
                     data[PARENT_TYPE_KEY] = entity.$parent.factory.prototype.constructor.name;
@@ -35,9 +35,9 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
             return null;
         },
 
-        _composeEntity: function(entity, action, options){
+        _composeEntity: function (entity, action, options) {
             // give entities an ID, so the caching works correctly
-            if(!entity.$.id && !(entity instanceof Model)) {
+            if (!entity.$.id && !(entity instanceof Model)) {
                 entity.$.id = generateId();
             }
             return this.callBase(entity, action, options);
@@ -173,7 +173,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
             var data = processor.compose(model, options);
             var where = {};
 
-            if(model.idField === "id"){
+            if (model.idField === "id") {
                 where["_id"] = data._id;
             } else {
                 where[model.idField] = model.identifier();
@@ -237,11 +237,21 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
                 return;
             }
 
-            var action = DataSource.ACTION.UPDATE,
-                method = MongoDataSource.METHOD.SAVE;
+            var action,
+                method;
+            if (!options.action) {
+                action = DataSource.ACTION.UPDATE;
 
-            if (model._status() === Model.STATE.NEW) {
-                action = DataSource.ACTION.CREATE;
+                if (model._status() === Model.STATE.NEW) {
+                    action = DataSource.ACTION.CREATE;
+                }
+            } else {
+                action = options.action;
+            }
+
+            if (action === DataSource.ACTION.UPDATE) {
+                method = MongoDataSource.METHOD.SAVE;
+            } else if (action === DataSource.ACTION.CREATE) {
                 method = MongoDataSource.METHOD.INSERT;
             }
 
@@ -252,9 +262,9 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
             // if you want to set a custom ID
             if (options.id && action === DataSource.ACTION.CREATE) {
                 var id = options.id;
-                try{
+                try {
                     id = this._createIdObject(options.id);
-                } catch(e){
+                } catch(e) {
                     // TODO: warn that ID object couldn't be created
                 }
                 data[ID_KEY] = id;
@@ -328,7 +338,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
             var mongoCollection = configuration.$.collection;
 
             var params = {};
-            if(collectionPage.$collection.$.query){
+            if (collectionPage.$collection.$.query) {
                 // TODO: add schema
                 params = MongoQueryComposer.compose(collectionPage.$collection.$.query);
             }
@@ -390,7 +400,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
             });
         },
 
-        countCollection: function(collection, options, callback){
+        countCollection: function (collection, options, callback) {
             var rootCollection = collection.getRoot(),
                 modelClassName = rootCollection.$modelFactory.prototype.constructor.name,
                 configuration = this.$dataSourceConfiguration.getConfigurationForModelClass(rootCollection.$modelFactory);
@@ -433,8 +443,8 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
                     .seq("count", function (cb) {
                         this.vars["cursor"].count(cb);
                     })
-                    .exec(function(err, results){
-                        if(!err){
+                    .exec(function (err, results) {
+                        if (!err) {
                             count = results["count"];
                         }
                         cb(err);
@@ -444,8 +454,8 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
             });
         },
 
-        getContextForChild: function(childFactory, requestor){
-            if(childFactory.classof(Collection)){
+        getContextForChild: function (childFactory, requestor) {
+            if (childFactory.classof(Collection)) {
                 return this.getContextByProperties(requestor, requestor.$context);
             }
             return this.callBase();
