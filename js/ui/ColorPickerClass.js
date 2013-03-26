@@ -10,6 +10,9 @@ define(['js/ui/View', 'js/type/Color'], function (View, Color) {
             },
             _scale: 0
         },
+
+        events: ['on:selectColor'],
+
         _imageMouseDown: function (e) {
             e.preventDefault();
         },
@@ -22,6 +25,7 @@ define(['js/ui/View', 'js/type/Color'], function (View, Color) {
             domEvent.preventDefault();
 
             this._updateColorAndPaletteCursor(pos);
+            this._triggerColorChange();
         },
 
         _paletteMouseMove: function (e) {
@@ -33,6 +37,7 @@ define(['js/ui/View', 'js/type/Color'], function (View, Color) {
                     pos = e.target.globalToLocal({x: domEvent.pageX, y: domEvent.pageY});
 
                 this._updateColorAndPaletteCursor(pos);
+                this._triggerColorChange();
             }
         },
 
@@ -60,6 +65,17 @@ define(['js/ui/View', 'js/type/Color'], function (View, Color) {
 
             this.set('color', new Color.HSB(Math.round(360 * (1 - scale / this.$.paletteSize)), hsbColor.s, hsbColor.b));
         },
+
+        _triggerColorChange: function(){
+            this.$triggerColorTimeout && clearTimeout(this.$triggerColorTimeout);
+
+            var self = this;
+
+            this.$triggerColorTimeout = setTimeout(function(){
+                self.trigger('on:selectColor', self.$.color);
+            },300);
+        },
+
         _renderColor: function(color){
             if(color){
                 var hsbColor = color.toHSB();
@@ -89,6 +105,7 @@ define(['js/ui/View', 'js/type/Color'], function (View, Color) {
             e.stopPropagation();
             if (this.$hueBarDown) {
                 this._updateColorAndHueCursor(e.target.globalToLocal({x:0, y: e.pointerEvent.pageY}).y);
+                this._triggerColorChange();
             }
         },
 
@@ -99,6 +116,7 @@ define(['js/ui/View', 'js/type/Color'], function (View, Color) {
         _hueBarDown: function (e) {
             this.$hueBarDown = true;
             this._updateColorAndHueCursor(e.target.globalToLocal({x: 0, y: e.pointerEvent.pageY}).y);
+            this._triggerColorChange();
         },
 
         _hueSliderUp: function(){
