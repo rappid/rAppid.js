@@ -22,27 +22,37 @@ define(['js/ui/View', 'js/type/Color'], function (View, Color) {
             var domEvent = e.pointerEvent,
                 pos = this.globalToLocal({x: domEvent.pageX, y: domEvent.pageY});
 
-            domEvent.preventDefault();
+            e.preventDefault();
+            var self = this;
+            if(!this.$moveHandler){
+                this.$moveHandler = function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    if (self.$mouseDown) {
+                        var pos = self.$.paletteImage.globalToLocal({x: e.pageX, y: e.pageY});
+
+                        self._updateColorAndPaletteCursor(pos);
+                        self._triggerColorChange();
+                    }
+                };
+            }
+
+            if(!this.$upHandler){
+                this.$upHandler = function () {
+                    self.$mouseDown = false;
+
+                    self.dom(self.$stage.$window).unbindDomEvent('pointermove', self.$moveHandler);
+                    self.dom(self.$stage.$window).unbindDomEvent('pointerup', self.$upHandler);
+
+                };
+            }
+
+            this.dom(this.$stage.$window).bindDomEvent('pointermove', this.$moveHandler);
+            this.dom(this.$stage.$window).bindDomEvent('pointerup', this.$upHandler);
 
             this._updateColorAndPaletteCursor(pos);
             this._triggerColorChange();
-        },
-
-        _paletteMouseMove: function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-
-            if (this.$mouseDown) {
-                var domEvent = e.pointerEvent,
-                    pos = e.target.globalToLocal({x: domEvent.pageX, y: domEvent.pageY});
-
-                this._updateColorAndPaletteCursor(pos);
-                this._triggerColorChange();
-            }
-        },
-
-        _cursorUp: function () {
-            this.$mouseDown = false;
         },
 
         _updateColorAndPaletteCursor: function (pos) {
@@ -61,9 +71,12 @@ define(['js/ui/View', 'js/type/Color'], function (View, Color) {
             scale = scale < 0 ? 0 : scale;
             scale = scale > this.$.paletteSize ? this.$.paletteSize : scale;
 
-            var hsbColor = this.$.color.toHSB();
+            var hsbColor = this.$.color.toHSB(),
+                hue = Math.round(360 * (1 - scale / this.$.paletteSize));
 
-            this.set('color', new Color.HSB(Math.round(360 * (1 - scale / this.$.paletteSize)), hsbColor.s, hsbColor.b));
+            hue = hue >= 360 ? 359 : hue;
+
+            this.set('color', new Color.HSB(hue, hsbColor.s, hsbColor.b));
         },
 
         _triggerColorChange: function(){
@@ -96,31 +109,34 @@ define(['js/ui/View', 'js/type/Color'], function (View, Color) {
                 }
             }
         },
-        _paletteMouseUp: function (e) {
-            this.$mouseDown = false;
-        },
-
-        _hueBarMove: function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-            if (this.$hueBarDown) {
-                this._updateColorAndHueCursor(e.target.globalToLocal({x:0, y: e.pointerEvent.pageY}).y);
-                this._triggerColorChange();
-            }
-        },
-
-        _hueBarUp: function () {
-            this.$hueBarDown = false;
-        },
 
         _hueBarDown: function (e) {
             this.$hueBarDown = true;
+            var self = this;
+            if(!this.$hueBarMoveHandler){
+                this.$hueBarMoveHandler = function(e){
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (self.$hueBarDown) {
+                        self._updateColorAndHueCursor(self.$.hueBar.globalToLocal({x: 0, y: e.pageY}).y);
+                        self._triggerColorChange();
+                    }
+                };
+            }
+            if(!this.$hueBarUpHandler){
+                this.$hueBarUpHandler = function(e){
+                    self.$hueBarDown = false;
+                    self.dom(self.$stage.$window).unbindDomEvent('pointermove', self.$hueBarMoveHandler);
+                    self.dom(self.$stage.$window).unbindDomEvent('pointerup', self.$hueBarUpHandler);
+
+                }
+            }
+
+            this.dom(this.$stage.$window).bindDomEvent('pointermove', this.$hueBarMoveHandler);
+            this.dom(this.$stage.$window).bindDomEvent('pointerup', this.$hueBarUpHandler);
+
             this._updateColorAndHueCursor(e.target.globalToLocal({x: 0, y: e.pointerEvent.pageY}).y);
             this._triggerColorChange();
-        },
-
-        _hueSliderUp: function(){
-            this.$hueBarDown = false;
         },
 
         _backgroundColor: function () {
@@ -131,7 +147,11 @@ define(['js/ui/View', 'js/type/Color'], function (View, Color) {
 
             return Color.RGB(0, 0, 0);
 
-        }.on('hueChanged')
+        }.on('hueChanged'),
+
+        _preventDefault: function(e){
+            e.preventDefault();
+        }
 
 
     })
