@@ -26,7 +26,7 @@ define(['js/ui/View', 'js/type/Color'], function (View, Color) {
             var self = this;
             if(!this.$moveHandler){
                 this.$moveHandler = function (e) {
-                    e.preventDefault();
+                    e.preventDefault && e.preventDefault();
                     e.stopPropagation();
 
                     if (self.$mouseDown) {
@@ -35,6 +35,7 @@ define(['js/ui/View', 'js/type/Color'], function (View, Color) {
                         self._updateColorAndPaletteCursor(pos);
                         self._triggerColorChange();
                     }
+                    return false;
                 };
             }
 
@@ -115,12 +116,14 @@ define(['js/ui/View', 'js/type/Color'], function (View, Color) {
             var self = this;
             if(!this.$hueBarMoveHandler){
                 this.$hueBarMoveHandler = function(e){
-                    e.preventDefault();
+                    e.preventDefault && e.preventDefault();
+
                     e.stopPropagation();
                     if (self.$hueBarDown) {
                         self._updateColorAndHueCursor(self.$.hueBar.globalToLocal({x: 0, y: e.pageY}).y);
                         self._triggerColorChange();
                     }
+                    return false;
                 };
             }
             if(!this.$hueBarUpHandler){
