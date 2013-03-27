@@ -60,6 +60,10 @@ define(['require', 'js/core/Base', 'srv/handler/rest/ResourceHandler', 'flow'], 
                     throw new Error("Configuration for '" + pathElements.slice(0, i + 1).join('/') + "' not found.");
                 }
 
+                if(this.$restHandler.$modelClassResourceHandler[configuration.$.modelClassName]){
+                    configuration.$.resourceHandler = this.$restHandler.$modelClassResourceHandler[configuration.$.modelClassName];
+                }
+
                 if (!configuration.$.resourceHandler) {
                     // no resource handler assigned to resource, use a default resource handler
                     configuration.$.resourceHandler = new ResourceHandler();
