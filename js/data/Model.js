@@ -13,11 +13,6 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
         DELETED: -1
     };
 
-    var AUTO_GENERATE = {
-        CREATION_DATE: "CREATION_DATE",
-        UPDATED_DATE: "UPDATED_DATE"
-    };
-
     var Model = Entity.inherit("js.data.Model", {
 
         ctor: function (attributes) {
@@ -37,18 +32,11 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
                 generated: true,
                 required: false,
                 includeInIndex: true
-            },
-            created: {
-                type: Date,
-                generated: true,
-                key: AUTO_GENERATE.CREATION_DATE
-            },
-            updated: {
-                type: Date,
-                generated: true,
-                key: AUTO_GENERATE.UPDATED_DATE
             }
         },
+
+        updatedField: "updated",
+        createdField: "created",
 
         $isEntity: false,
         $isDependentObject: false,
@@ -320,7 +308,6 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
 
     Model.STATE = STATE;
     Model.FETCHSTATE = FETCHSTATE;
-    Model.AUTO_GENERATE = AUTO_GENERATE;
 
     return Model;
 });
