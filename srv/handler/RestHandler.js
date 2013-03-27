@@ -1,5 +1,5 @@
-define(['require', 'srv/core/Handler', 'js/conf/DataSourceConfiguration', 'js/conf/ResourceConfiguration', 'srv/handler/rest/ResourceRouter', 'flow', 'js/data/DataSource', 'js/data/RestDataSource', 'js/data/Model', 'srv/lib/RestQueryParser', 'js/data/Query'],
-    function (require, Handler, DataSourceConfiguration, ResourceConfiguration, ResourceRouter, flow, DataSource, RestDataSource, Model, RestQueryParser, Query) {
+define(['require', 'srv/core/Handler', 'js/conf/DataSourceConfiguration', 'js/conf/ResourceConfiguration', 'srv/handler/rest/ResourceRouter', 'flow', 'js/data/DataSource', 'js/data/RestDataSource', 'js/data/Model', 'srv/lib/RestQueryParser', 'js/data/Query', 'srv/handler/rest/ResourceHandler'],
+    function (require, Handler, DataSourceConfiguration, ResourceConfiguration, ResourceRouter, flow, DataSource, RestDataSource, Model, RestQueryParser, Query, ResourceHandler) {
 
         var RestDataProcessor = RestDataSource.RestDataProcessor.inherit('srv.handler.rest.RestDataProcessor', {
             _composeSubModel: function (model, action, options) {
@@ -32,6 +32,7 @@ define(['require', 'srv/core/Handler', 'js/conf/DataSourceConfiguration', 'js/co
             ctor: function () {
                 this.$resourceConfiguration = null;
                 this.$dataSources = [];
+                this.$modelClassResourceHandler = {};
 
                 this.callBase();
             },
@@ -47,6 +48,12 @@ define(['require', 'srv/core/Handler', 'js/conf/DataSourceConfiguration', 'js/co
 
                 if (child instanceof DataSource) {
                     this.$dataSources.push(child);
+                }
+
+                if(child instanceof ResourceHandler){
+                    if(child.$.modelClassName){
+                        this.$modelClassResourceHandler[child.$.modelClassName] = child;
+                    }
                 }
 
                 this.callBase();
