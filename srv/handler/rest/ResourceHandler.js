@@ -445,6 +445,7 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
             // TODO: add hook to add session data like user id
             if (this.$resourceConfiguration.$.upsert === true) {
                 options.upsert = true;
+                model.set(model.idField,this.$resourceId);
             }
 
             flow()
@@ -487,15 +488,6 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
         },
 
         _autoGenerateValue: function (valueKey, context, model) {
-            if (valueKey === Model.AUTO_GENERATE.CREATION_DATE) {
-                if (model.isNew() || _.isUndefined(model.get(valueKey))) {
-                    return new Date();
-                }
-            }
-
-            if (valueKey === Model.AUTO_GENERATE.UPDATED_DATE) {
-                return new Date();
-            }
 
             if (valueKey === "SESSION_USER") {
                 // TODO: return session user
@@ -536,8 +528,7 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
             var collection = this._findCollection(context);
             var model = collection.createItem(this.$resourceId);
 
-            var self = this,
-                href;
+            var self = this;
 
             flow()
                 .seq(function (cb) {
@@ -575,27 +566,27 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
                     }
                 });
         },
-        _beforeModelCreate: function (model, options, callback) {
+        _beforeModelCreate: function (model, context, callback) {
             callback && callback();
         },
 
-        _beforeModelUpdate: function (model, options, callback) {
-            callback && callback();
+        _beforeModelUpdate: function (model, context, callback) {
+            this._beforeModelSave(model, context, callback);
         },
 
-        _afterModelCreate: function (model, options, callback) {
+        _afterModelCreate: function (model, context, callback) {
+            this._beforeModelSave(model, context, callback);
+        },
+        _afterModelUpdate: function (model, context, callback) {
             callback && callback();
         },
-        _afterModelUpdate: function (model, options, callback) {
+        _afterModelSave: function (model, context, callback) {
             callback && callback();
         },
-        _afterModelSave: function (model, options, callback) {
+        _beforeModelRemove: function (model, context, callback) {
             callback && callback();
         },
-        _beforeModelRemove: function (model, options, callback) {
-            callback && callback();
-        },
-        _afterModelRemove: function (model, options, callback) {
+        _afterModelRemove: function (model, context, callback) {
             callback && callback();
         }
     });
