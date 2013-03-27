@@ -502,7 +502,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                                 }
 
                             }
-                        } else if (schemaType === Date && value) {
+                        } else if (schemaType === Date && !(value instanceof Date)) {
                             data[key] = moment(value, this.$dataSource.$.dateFormat).toDate();
                         } else if (schemaType.classof(Entity) && value) {
                             if (schemaType instanceof TypeResolver) {
