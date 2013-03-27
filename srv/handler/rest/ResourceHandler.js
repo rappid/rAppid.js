@@ -216,7 +216,7 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
                         .parEach(model.schema, function (schemaObject, cb) {
                             if (model.$[schemaObject._key] instanceof Model) {
                                 self._fetchPathForModel(model.$[schemaObject._key], context, function (err, path) {
-                                    if(err){
+                                    if (err) {
                                         model.$[schemaObject._key] = null;
                                     } else {
                                         model.$[schemaObject._key].$.href = baseUri + path;
@@ -332,7 +332,7 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
 
             flow()
                 .seq(function (cb) {
-                    self._beforeModelSave(model, context, cb);
+                    self._beforeModelCreate(model, context, cb);
                 })
                 // validate and save model
                 .seq(function (cb) {
@@ -437,14 +437,22 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
 
             model.set(processor.parse(model, payload));
 
-            var self = this;
+            var self = this,
+                options = {};
+
+            options.action = DataSource.ACTION.UPDATE;
+
             // TODO: add hook to add session data like user id
+            if (this.$resourceConfiguration.$.upsert === true) {
+                options.upsert = true;
+            }
+
             flow()
                 .seq(function (cb) {
-                    self._beforeModelSave(model, context, cb);
+                    self._beforeModelUpdate(model, context, cb);
                 })
                 .seq(function (cb) {
-                    model.validateAndSave({action: DataSource.ACTION.UPDATE }, cb);
+                    model.validateAndSave(options, cb);
                 })
                 .seq(function (cb) {
                     self._afterModelUpdate(model, context, cb);
@@ -567,6 +575,14 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
                     }
                 });
         },
+        _beforeModelCreate: function (model, options, callback) {
+            callback && callback();
+        },
+
+        _beforeModelUpdate: function (model, options, callback) {
+            callback && callback();
+        },
+
         _afterModelCreate: function (model, options, callback) {
             callback && callback();
         },
