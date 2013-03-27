@@ -1,4 +1,4 @@
-define(['js/ui/ItemsView', 'js/html/HtmlElement','js/ui/Tab','js/core/List'], function(ItemsView, HtmlElement, Tab, List) {
+define(['js/ui/ItemsView', 'js/html/HtmlElement', 'js/ui/Tab', 'js/core/List'], function (ItemsView, HtmlElement, Tab, List) {
     return ItemsView.inherit('js.ui.TabViewClass', {
         defaults: {
             selectedIndex: null,
@@ -9,9 +9,14 @@ define(['js/ui/ItemsView', 'js/html/HtmlElement','js/ui/Tab','js/core/List'], fu
             tabItems: List
         },
         $defaultTemplateName: null,
-        initialize: function(){
+
+        events: ['on:selectTab'],
+
+        initialize: function () {
+            this.bind('tabSelection', 'change:selectedItem', this._onSelectionChange, this);
             this.callBase();
         },
+
         _renderChild: function (child) {
             if (child instanceof Tab) {
                 this.$.tabItems.add(child);
@@ -20,8 +25,15 @@ define(['js/ui/ItemsView', 'js/html/HtmlElement','js/ui/Tab','js/core/List'], fu
                 this.callBase();
             }
         },
+
         _renderSelectedView: function (view) {
             this.$.tabSelection.set({selectedView: view});
+        },
+
+        _onSelectionChange: function (e) {
+            if (e.$) {
+                this.trigger('on:selectTab', {tab: e.$});
+            }
         }
 
     })
