@@ -6,30 +6,30 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
         var ContentPlaceHolder;
 
         var pointerToTouchMap = {
-            'on:pointer' : 'on:click',
-            'on:pointerdown': 'on:touchstart',
-            'on:pointermove': 'on:touchmove',
-            'on:pointerup': 'on:touchend'
+            'pointer' : 'click',
+            'pointerdown': 'touchstart',
+            'pointermove': 'touchmove',
+            'pointerup': 'touchend'
         };
 
         var pointerToMouseMap = {
-            'on:pointer': 'on:click',
-            'on:pointerdown': 'on:mousedown',
-            'on:pointermove': 'on:mousemove',
-            'on:pointerup': 'on:mouseup',
-            'on:pointerout': 'on:mouseout',
-            'on:pointerover': 'on:mouseover',
-            'on:pointerhover': 'on:mouseover'
+            'pointer': 'click',
+            'pointerdown': 'mousedown',
+            'pointermove': 'mousemove',
+            'pointerup': 'mouseup',
+            'pointerout': 'mouseout',
+            'pointerover': 'mouseover',
+            'pointerhover': 'mouseover'
 
         };
 
         var pointerToMSPointerMap = {
-            'on:pointerdown': 'on:mspointerdown',
-            'on:pointermove': 'on:mspointermove',
-            'on:pointerup': 'on:mspointerup',
-            'on:pointerout' : 'on:mspointerout',
-            'on:pointerover' : 'on:mspointerover',
-            'on:pointerhover' : 'on:mspointerhover'
+            'pointerdown': 'mspointerdown',
+            'pointermove': 'mspointermove',
+            'pointerup': 'mspointerup',
+            'pointerout' : 'mspointerout',
+            'pointerover' : 'mspointerover',
+            'pointerhover' : 'mspointerhover'
         };
 
         var DomElementFunctions = {
@@ -501,7 +501,7 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
 
             }.on('change'),
             dom: function (element) {
-                return new DomManipulation(element || this);
+                return new DomManipulation(element || this, this.$stage);
             },
             setChildIndex: function (child, index) {
                 if (index < 0) {
@@ -527,6 +527,7 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                     }
                 }
             },
+
             bringToFront: function () {
                 if (this.$parent) {
                     this.$parent.setChildIndex(this, this.$parent.$children.length - 1);
@@ -584,7 +585,7 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                 if (type.indexOf("on:") === 0 && !this.$domEventHandler[type] && !this._isComponentEvent(type)) {
                     if (this.isRendered()) {
                         var cb = this.$domEventHandler[type] = this._createDOMEventHandler(type);
-                        this.bindDomEvent(this._mapDOMEventType(type).substr(3), cb);
+                        this.bindDomEvent(type.substr(3), cb);
                         this.callBase();
                     } else {
                         this.$eventDefinitions.push({
@@ -608,18 +609,6 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                         this.unbindDomEvent(this._mapDOMEventType(type), cb);
                     }
                 }
-            },
-            _mapDOMEventType: function(type){
-                if(type.indexOf("on:pointer") === 0){
-                    if(this.$stage.$browser.msPointerEnabled){
-                        return pointerToMSPointerMap[type] || type;
-                    } else if (this.$stage.$browser.hasTouch) {
-                        return pointerToTouchMap[type] || type;
-                    } else {
-                        return pointerToMouseMap[type] || type;
-                    }
-                }
-                return type;
             }
         };
 
@@ -675,6 +664,8 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
             },
 
             bindDomEvent: function (type, cb) {
+                type = this._mapDOMEventType(type);
+
                 if (this.$el.addEventListener) {
                     this.$el.addEventListener(type, cb, false);
 
@@ -689,6 +680,8 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                 }
             },
             unbindDomEvent: function (type, cb) {
+                type = this._mapDOMEventType(type);
+
                 if (this.$el.removeEventListener) {
                     this.$el.removeEventListener(type, cb, false);
                 } else if (this.$el.detachEvent) {
@@ -699,6 +692,19 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
 
                     this.$el.detachEvent("on" + type, callback);
                 }
+            },
+
+            _mapDOMEventType: function (type) {
+                if (type.indexOf("pointer") === 0) {
+                    if (this.$stage.$browser.msPointerEnabled) {
+                        return pointerToMSPointerMap[type] || type;
+                    } else if (this.$stage.$browser.hasTouch) {
+                        return pointerToTouchMap[type] || type;
+                    } else {
+                        return pointerToMouseMap[type] || type;
+                    }
+                }
+                return type;
             },
 
             focus: function () {
@@ -760,7 +766,8 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
         };
 
         var DomManipulation = inherit.Base.inherit(_.extend({
-            ctor: function (elm) {
+            ctor: function (elm, stage) {
+                this.$stage = stage;
                 this.$el = elm;
             }
         }, DomManipulationFunctions));
