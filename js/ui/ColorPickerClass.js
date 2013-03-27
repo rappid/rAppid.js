@@ -30,6 +30,9 @@ define(['js/ui/View', 'js/type/Color'], function (View, Color) {
                     e.stopPropagation();
 
                     if (self.$mouseDown) {
+                        if(e.changedTouches){
+                            e = e.changedTouches[0];
+                        }
                         var pos = self.$.paletteImage.globalToLocal({x: e.pageX, y: e.pageY});
 
                         self._updateColorAndPaletteCursor(pos);
@@ -120,6 +123,10 @@ define(['js/ui/View', 'js/type/Color'], function (View, Color) {
 
                     e.stopPropagation();
                     if (self.$hueBarDown) {
+                        if (e.changedTouches) {
+                            e = e.changedTouches[0];
+                        }
+
                         self._updateColorAndHueCursor(self.$.hueBar.globalToLocal({x: 0, y: e.pageY}).y);
                         self._triggerColorChange();
                     }
