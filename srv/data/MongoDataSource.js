@@ -18,15 +18,16 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
                     data[PARENT_ID_KEY] = entity.$parent.identifier();
                     data[PARENT_TYPE_KEY] = entity.$parent.factory.prototype.constructor.name;
                 }
-
-                data[ID_KEY] = this.$dataSource._createIdObject(data[ID_KEY]);
+                if(entity.idField === "id"){
+                    data[ID_KEY] = this.$dataSource._createIdObject(data[ID_KEY]);
+                }
             }
 
             return data;
         },
 
         _composeSubModel: function (model, action, options) {
-            if (model && model.$.id) {
+            if (model && model.identifier()) {
                 var ret = {};
                 ret[TYPE_KEY] = model.constructor.name;
                 ret[REF_ID_KEY] = model.identifier();
@@ -85,6 +86,12 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
 
         parse: function (model, data, action, options) {
 
+            if (model.createdField) {
+                if(data[ID_KEY]){
+                    data[model.createdField] = data[ID_KEY].getTimestamp();
+                }
+            }
+
             function readId(fromField) {
                 if (data[fromField] && !data.id) {
                     var _id = data[fromField];
@@ -109,6 +116,9 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
                     parentFactory = require(data[PARENT_TYPE_KEY].replace(/\./g, "/"));
                 model.$parent = this.$dataSource.createEntity(parentFactory, parentId);
             }
+
+
+
             delete data[PARENT_ID_KEY];
             delete data[PARENT_TYPE_KEY];
             delete data[TYPE_KEY];
@@ -239,6 +249,12 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
 
             var action,
                 method;
+
+
+            if (model.updatedField) {
+                model.set(model.updatedField, new Date());
+            }
+
             if (!options.action) {
                 action = DataSource.ACTION.UPDATE;
 
@@ -258,17 +274,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
             var processor = this.getProcessorForModel(model),
                 data = processor.compose(model, action, options);
 
-            options = options || {};
-            // if you want to set a custom ID
-            if (options.id && action === DataSource.ACTION.CREATE) {
-                var id = options.id;
-                try {
-                    id = this._createIdObject(options.id);
-                } catch(e) {
-                    // TODO: warn that ID object couldn't be created
-                }
-                data[ID_KEY] = id;
-            }
+            _.defaults(options || {}, {safe: true, upsert: false});
 
             // here we have a polymorphic type
             if (configuration.$.modelClassName !== model.constructor.name) {
@@ -277,17 +283,35 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
 
             this.connectCollection(configuration.$.collection, function (collection, cb) {
                 if (method === MongoDataSource.METHOD.INSERT) {
-                    collection.insert(data, {safe: true}, function (err, objects) {
+                    collection.insert(data, options, function (err, objects) {
                         if (!err) {
                             model.set(processor.parse(model, objects[0]));
                         }
                         cb(err);
                     });
                 } else if (method === MongoDataSource.METHOD.SAVE) {
-                    collection.update({_id: data._id}, data, {safe: true}, function (err, count) {
-                        if (!err && count === 0) {
-                            // no update happened
-                            err = DataSource.ERROR.NOT_FOUND;
+                    var where = {};
+                    if(model.idField === "id"){
+                        where[ID_KEY] = data[ID_KEY];
+                    } else {
+                        where[model.idField] = data[model.idField];
+                    }
+                    collection.findAndModify(where, {}, data, options, function (err, data, info) {
+                        if (!err) {
+                            if(!options.upsert && !data){
+                                // no update happened
+                                err = DataSource.ERROR.NOT_FOUND;
+                            }
+                            var idObject;
+                            if(info.lastErrorObject && !info.lastErrorObject.updatedExisting){
+                                idObject = info.lastErrorObject.upserted;
+                            } else if(info.value) {
+                                idObject = info.value[ID_KEY];
+                            }
+
+                            if(idObject && model.createdField){
+                                model.set(model.createdField, idObject.getTimestamp());
+                            }
                         }
                         cb(err, model);
                     });
@@ -358,7 +382,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
             }
 
             if (rootCollection.$parent) {
-                where[PARENT_ID_KEY] = rootCollection.$parent.$.id;
+                where[PARENT_ID_KEY] = rootCollection.$parent.identifier();
                 where[PARENT_TYPE_KEY] = rootCollection.$parent.factory.prototype.constructor.name;
             }
 
