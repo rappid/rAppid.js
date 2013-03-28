@@ -180,26 +180,12 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
 
             var processor = this.getProcessorForModel(model);
 
-            var data = processor.compose(model, options);
-            var where = {};
-
-            if (model.idField === "id") {
-                where["_id"] = data._id;
-            } else {
-                where[model.idField] = model.identifier();
-            }
-
-            if (model.$parent) {
-                where[PARENT_ID_KEY] = model.$parent.identifier();
-                where[PARENT_TYPE_KEY] = model.$parent.factory.prototype.constructor.name;
-            }
+            var where = this._getWhereConditionForModel(model);
 
             // here we have a polymorph type
             if (configuration.$.modelClassName !== model.constructor.name) {
                 where[TYPE_KEY] = model.constructor.name;
             }
-
-            // TODO: add loading/linking of sub models
 
             this.connectCollection(configuration.$.collection, function (collection, cb) {
                 collection.findOne(where, function (err, object) {
@@ -285,17 +271,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
                 data[TYPE_KEY] = model.constructor.name;
             }
 
-            var where = {};
-            if (model.$parent) {
-                where[PARENT_ID_KEY] = model.$parent.identifier();
-                where[PARENT_TYPE_KEY] = model.$parent.factory.prototype.constructor.name;
-            }
-
-            if (model.idField === "id") {
-                where[ID_KEY] = data[ID_KEY];
-            } else {
-                where[model.idField] = data[model.idField];
-            }
+            var where = this._getWhereConditionForModel(model);
 
             this.connectCollection(configuration.$.collection, function (collection, cb) {
                 if (method === MongoDataSource.METHOD.INSERT) {
@@ -341,12 +317,10 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
                 return;
             }
 
-            var processor = this.getProcessorForModel(model);
-
-            var data = processor.compose(model, options);
+            var where = this._getWhereConditionForModel(model);
 
             this.connectCollection(configuration.$.collection, function (collection, cb) {
-                collection.remove({_id: data._id}, {safe: true}, function (err, count) {
+                collection.remove(where, {safe: true}, function (err, count) {
                     if (count === 0) {
                         err = DataSource.ERROR.NOT_FOUND;
                     }
@@ -491,6 +465,21 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
                 return this.getContextByProperties(requestor, null, requestor.$context);
             }
             return this.callBase();
+        },
+
+        _getWhereConditionForModel: function(model){
+            var where = {};
+            if (model.$parent) {
+                where[PARENT_ID_KEY] = model.$parent.identifier();
+                where[PARENT_TYPE_KEY] = model.$parent.factory.prototype.constructor.name;
+            }
+
+            if (model.idField === "id") {
+                where[ID_KEY] = this._createIdObject(model.identifier());
+            } else {
+                where[model.idField] = model.identifier();
+            }
+            return where;
         }
     });
 
