@@ -480,7 +480,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
 
         getContextForChild: function (childFactory, requestor) {
             if (childFactory.classof(Collection)) {
-                return this.getContextByProperties(requestor, requestor.$context);
+                return this.getContextByProperties(requestor, null, requestor.$context);
             }
             return this.callBase();
         }
