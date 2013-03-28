@@ -14,10 +14,8 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
             var data = this.callBase();
 
             if (entity instanceof Model) {
-                if (entity.$parent) {
-                    data[PARENT_ID_KEY] = entity.$parent.identifier();
-                    data[PARENT_TYPE_KEY] = entity.$parent.factory.prototype.constructor.name;
-                }
+                data[PARENT_ID_KEY] = this.$dataSource._getContextKey(entity);
+
                 if(entity.idField === "id"){
                     data[ID_KEY] = this.$dataSource._createIdObject(data[ID_KEY]);
                 }
@@ -111,11 +109,12 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
 
             readId(ID_KEY) || readId(REF_ID_KEY);
 
-            if (data[PARENT_ID_KEY]) {
-                var parentId = data[PARENT_ID_KEY],
-                    parentFactory = require(data[PARENT_TYPE_KEY].replace(/\./g, "/"));
-                model.$parent = this.$dataSource.createEntity(parentFactory, parentId);
-            }
+            // TODO: test if this works without this
+//            if (data[PARENT_ID_KEY]) {
+//                var parentId = data[PARENT_ID_KEY],
+//                    parentFactory = require(model.schema[PARENT_TYPE_KEY].replace(/\./g, "/"));
+//                model.$parent = this.$dataSource.createEntity(parentFactory, parentId);
+//            }
 
 
 
@@ -123,6 +122,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
             delete data[PARENT_TYPE_KEY];
             delete data[TYPE_KEY];
             delete data[REF_ID_KEY];
+
 
             return this.callBase(model, data, action, options);
         },
@@ -364,8 +364,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
             }
 
             if (rootCollection.$parent) {
-                where[PARENT_ID_KEY] = rootCollection.$parent.identifier();
-                where[PARENT_TYPE_KEY] = rootCollection.$parent.factory.prototype.constructor.name;
+                where[PARENT_ID_KEY] = this._getContextKey(rootCollection);
             }
 
             var sort;
@@ -436,8 +435,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
             }
 
             if (rootCollection.$parent) {
-                where[PARENT_ID_KEY] = rootCollection.$parent.$.id;
-                where[PARENT_TYPE_KEY] = rootCollection.$parent.factory.prototype.constructor.name;
+                where[PARENT_ID_KEY] = this._getContextKey(rootCollection);
             }
 
             var count;
@@ -469,10 +467,8 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
 
         _getWhereConditionForModel: function(model){
             var where = {};
-            if (model.$parent) {
-                where[PARENT_ID_KEY] = model.$parent.identifier();
-                where[PARENT_TYPE_KEY] = model.$parent.factory.prototype.constructor.name;
-            }
+
+            where[PARENT_ID_KEY] = this._getContextKey(model);
 
             if (model.idField === "id") {
                 where[ID_KEY] = this._createIdObject(model.identifier());
@@ -480,6 +476,16 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
                 where[model.idField] = model.identifier();
             }
             return where;
+        },
+
+        _getContextKey: function(model){
+            var parent = model.$parent,
+                context = [];
+            while (parent) {
+                context.unshift(parent.identifier());
+                parent = parent.$parent;
+            }
+            return  context.join("/");
         }
     });
 

@@ -125,12 +125,16 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
                 throw new HttpError("Method not supported", 404);
             }
         },
-
+        /**
+         * Returns a collection for this resource in the right context
+         * @param context
+         * @return {*}
+         * @private
+         */
         _findCollection: function (context) {
             if (this.$parentResource) {
-                // TODO: refactor this
-                var parentFactory = this.$parentResource._getModelFactory();
-                var parent = context.dataSource.createEntity(parentFactory, this.$parentResource.$resourceId);
+                var parentCollection = this.$parentResource._findCollection(context);
+                var parent = parentCollection.createItem(this.$parentResource.$resourceId);
 
                 return parent.getCollection(this.$resourceConfiguration.$.path);
             } else {
