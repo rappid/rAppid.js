@@ -189,6 +189,10 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
                 where[model.idField] = model.identifier();
             }
 
+            if (model.$parent) {
+                where[PARENT_ID_KEY] = model.$parent.identifier();
+                where[PARENT_TYPE_KEY] = model.$parent.factory.prototype.constructor.name;
+            }
 
             // here we have a polymorph type
             if (configuration.$.modelClassName !== model.constructor.name) {
@@ -281,6 +285,18 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
                 data[TYPE_KEY] = model.constructor.name;
             }
 
+            var where = {};
+            if (model.$parent) {
+                where[PARENT_ID_KEY] = model.$parent.identifier();
+                where[PARENT_TYPE_KEY] = model.$parent.factory.prototype.constructor.name;
+            }
+
+            if (model.idField === "id") {
+                where[ID_KEY] = data[ID_KEY];
+            } else {
+                where[model.idField] = data[model.idField];
+            }
+
             this.connectCollection(configuration.$.collection, function (collection, cb) {
                 if (method === MongoDataSource.METHOD.INSERT) {
                     collection.insert(data, options, function (err, objects) {
@@ -290,12 +306,6 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
                         cb(err);
                     });
                 } else if (method === MongoDataSource.METHOD.SAVE) {
-                    var where = {};
-                    if(model.idField === "id"){
-                        where[ID_KEY] = data[ID_KEY];
-                    } else {
-                        where[model.idField] = data[model.idField];
-                    }
                     collection.findAndModify(where, {}, data, options, function (err, data, info) {
                         if (!err) {
                             if(!options.upsert && !data){
@@ -333,9 +343,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
 
             var processor = this.getProcessorForModel(model);
 
-            var data = processor.compose(model, options),
-                self = this,
-                connection;
+            var data = processor.compose(model, options);
 
             this.connectCollection(configuration.$.collection, function (collection, cb) {
                 collection.remove({_id: data._id}, {safe: true}, function (err, count) {
