@@ -382,7 +382,9 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
                     id = parseInt(this.$resourceId);
                 }
             }
-            var model = this.getDataSource(context, this).createEntity(modelFactory, id);
+
+            var collection = this._findCollection(context);
+            var model = collection.createItem(id);
 
             if (context) {
                 // TODO: build options
