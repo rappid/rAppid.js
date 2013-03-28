@@ -462,7 +462,7 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
 
             _isRequired: function (entity, schemaObject) {
 
-                if (schemaObject.type.prototype.isCollection) {
+                if (schemaObject.type.prototype && schemaObject.type.prototype.isCollection) {
                     return false;
                 }
 
