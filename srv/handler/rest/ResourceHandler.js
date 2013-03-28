@@ -373,8 +373,16 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
         _show: function (context, callback) {
             var self = this;
 
-            var modelFactory = this._getModelFactory(),
-                model = this.getDataSource(context, this).createEntity(modelFactory, this.$resourceId);
+            var modelFactory = this._getModelFactory();
+            var id = this.$resourceId;
+            var schema = modelFactory.prototype.schema;
+            if(schema.hasOwnProperty(modelFactory.prototype.idField)){
+                var type = schema[modelFactory.prototype.idField].type;
+                if(type === Number){
+                    id = parseInt(this.$resourceId);
+                }
+            }
+            var model = this.getDataSource(context, this).createEntity(modelFactory, id);
 
             if (context) {
                 // TODO: build options
