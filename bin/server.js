@@ -21,6 +21,7 @@ var serverExport = function (args, callback) {
         .default('html', 'index.html')
         .default('serverFactoryClassName', 'xaml!web/Server')
 
+        .describe('environment', 'explicit set an environment')
         .describe('config', 'config.json file')
         .describe('serverRoot', 'the root of the server')
         .describe('documentRoot', 'the document root - public')
@@ -74,8 +75,8 @@ var serverExport = function (args, callback) {
         _.defaults(config, {
             nodeRequire: require,
             baseUrl: serverRoot,
-            documentRoot: documentRoot
-
+            documentRoot: documentRoot,
+            serverRoot: serverRoot
         }, JSON.parse(fs.readFileSync(configPath, 'utf8')));
     } catch (e) {
         console.error(e);
@@ -101,10 +102,11 @@ var serverExport = function (args, callback) {
             var requirejsContext = applicationContext.$requirejsContext;
             applicationContext.$nodeRequire = require;
 
-            requirejsContext([serverFactoryClassName, 'srv/core/Server', 'srv/core/ServerContext', 'js/core/Injection'], function (ServerFactory, Server, ServerContext, Injection) {
+            requirejsContext([serverFactoryClassName, 'srv/core/Server', 'srv/core/ServerContext', 'js/core/Injection', 'js/core/Bindable'], function (ServerFactory, Server, ServerContext, Injection, Bindable) {
 
                 try {
                     var serverContext = new ServerContext(requirejsContext, applicationContext);
+                    serverContext.$environment = new Bindable();
 
                     var injection = serverContext.$injection = new Injection(null, null, serverContext);
                     injection.addInstance(serverContext.$bus);
@@ -112,24 +114,41 @@ var serverExport = function (args, callback) {
                     var server = new ServerFactory(null, false, serverContext, null, null);
 
                     if (server instanceof Server) {
-                        serverContext.$server = server;
-                        server._initialize('auto');
-                        server.start(parameter, function(err) {
-                            if (err) {
+                        var environmentSetupComplete = function (err) {
+
+                            if (!err) {
+                                serverContext.$server = server;
+                                server._initialize('auto');
+                                server.start(parameter, function (err) {
+                                    if (err) {
+                                        console.error(err);
+                                        process.exit(3);
+                                    } else {
+                                        console.log("server started");
+                                        for (var i = 0; i < server.$endPoints.$endPoints.length; i++) {
+                                            var endPoint = server.$endPoints.$endPoints[i];
+
+                                            if (endPoint.uri instanceof Function) {
+                                                console.log("open " + endPoint.uri() + " in your browser");
+                                            }
+                                        }
+                                        serverInstance = server;
+                                    }
+                                });
+                            } else {
                                 console.error(err);
                                 process.exit(3);
-                            } else {
-                                console.log("server started");
-                                for (var i = 0; i < server.$endPoints.$endPoints.length; i++) {
-                                    var endPoint = server.$endPoints.$endPoints[i];
-
-                                    if (endPoint.uri instanceof Function) {
-                                        console.log("open " + endPoint.uri() + " in your browser");
-                                    }
-                                }
-                                serverInstance = server;
                             }
-                        });
+
+                        };
+
+                        if (argv.environment) {
+                            Server.setupEnvironment(serverContext.$environment, argv.environment, server.applicationDefaultNamespace, environmentSetupComplete);
+                        } else if (server.supportEnvironments()) {
+                            Server.setupEnvironment(serverContext.$environment, server._getEnvironment(), server.applicationDefaultNamespace, environmentSetupComplete);
+                        } else {
+                            environmentSetupComplete();
+                        }
 
                     } else {
                         //noinspection ExceptionCaughtLocallyJS

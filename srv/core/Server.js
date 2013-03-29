@@ -1,5 +1,5 @@
-define(['require', 'js/core/Component', 'srv/core/Context', 'srv/core/Handlers', 'srv/core/EndPoints', 'srv/core/Filters', 'srv/handler/ExceptionHandler', 'flow', 'domain', 'srv/core/ServerSession', 'srv/core/AuthenticationProviders', 'srv/core/AuthorisationProviders', 'js/lib/extension'],
-    function (require, Component, Context, Handlers, EndPoints, Filters, ExceptionHandler, flow, Domain, ServerSession, AuthenticationProviders, AuthorisationProviders, Extension) {
+define(['require', 'path', 'js/core/Component', 'srv/core/Context', 'srv/core/Handlers', 'srv/core/EndPoints', 'srv/core/Filters', 'srv/handler/ExceptionHandler', 'flow', 'domain', 'srv/core/ServerSession', 'srv/core/AuthenticationProviders', 'srv/core/AuthorisationProviders', 'js/lib/extension'],
+    function (require, Path, Component, Context, Handlers, EndPoints, Filters, ExceptionHandler, flow, Domain, ServerSession, AuthenticationProviders, AuthorisationProviders, Extension) {
 
         return Component.inherit('srv.core.Server', {
 
@@ -12,7 +12,7 @@ define(['require', 'js/core/Component', 'srv/core/Context', 'srv/core/Handlers',
                 this.$filters = null;
                 this.$endPoints = null;
                 this.$authenticationProviders = null;
-                this.$authorisationProviders= null;
+                this.$authorisationProviders = null;
 
                 this.callBase();
             },
@@ -31,6 +31,17 @@ define(['require', 'js/core/Component', 'srv/core/Context', 'srv/core/Handlers',
                 }
 
                 this.callBase();
+            },
+
+
+            _getEnvironment: function () {
+                return this.$stage.$environmentName;
+            },
+
+            applicationDefaultNamespace: "web",
+
+            supportEnvironments: function() {
+                return Path.existsSync(Path.join(this.$stage.$applicationContext.$config.serverRoot, this.applicationDefaultNamespace, "env"));
             },
 
             start: function (parameter, callback) {
@@ -60,9 +71,9 @@ define(['require', 'js/core/Component', 'srv/core/Context', 'srv/core/Handlers',
                 var self = this;
 
                 flow()
-                    .seq(function(cb){
+                    .seq(function (cb) {
                         if (self.serverSessionClassName) {
-                            require([self.serverSessionClassName], function(factory) {
+                            require([self.serverSessionClassName], function (factory) {
                                 if (factory.classof(ServerSession)) {
                                     self.$serverSessionFactory = factory;
                                     cb();
@@ -116,7 +127,7 @@ define(['require', 'js/core/Component', 'srv/core/Context', 'srv/core/Handlers',
                         });
                     })
                     .seq(function (cb) {
-                        self.$authenticationProviders.stop(function() {
+                        self.$authenticationProviders.stop(function () {
                             cb();
                         });
                     })
@@ -161,12 +172,12 @@ define(['require', 'js/core/Component', 'srv/core/Context', 'srv/core/Handlers',
 
                 // request.setEncoding('utf8');
 
-                request.on('data', function(chunk) {
+                request.on('data', function (chunk) {
                     buffers.push(chunk);
                     bufferLength += chunk.length;
                 });
 
-                request.on('end', function() {
+                request.on('end', function () {
 
                     request.body = new Buffer(bufferLength);
 
@@ -255,5 +266,39 @@ define(['require', 'js/core/Component', 'srv/core/Context', 'srv/core/Handlers',
 
             }
 
+        }, {
+            setupEnvironment: function (ENV, environmentName, applicationDefaultNamespace, callback) {
+
+                var defaultEnvironment,
+                    environment;
+
+                flow()
+                    .par(function (cb) {
+
+                        require(["json!" + applicationDefaultNamespace + "/env/default"], function (d) {
+                            defaultEnvironment = d;
+                            cb();
+                        }, function (err) {
+                            cb(err);
+                        });
+                    }, function (cb) {
+                        if (environmentName) {
+                            require(["json!" + applicationDefaultNamespace + "/env/" + environmentName], function (d) {
+                                environment = d;
+                                cb();
+                            }, function (err) {
+                                cb(err);
+                            })
+                        } else {
+                            cb();
+                        }
+                    })
+                    .exec(function (err) {
+                        ENV.set(_.extend({}, defaultEnvironment, environment));
+                        callback && callback(err);
+                    });
+
+
+            }
         });
     });
