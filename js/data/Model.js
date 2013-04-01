@@ -35,8 +35,9 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
             }
         },
 
-        updatedField: "updated",
-        createdField: "created",
+        hrefField: "href",          // contains the href to the resource
+        updatedField: "updated",    // saves/returns the updated date
+        createdField: "created",    // saves/returns the created date
 
         $isEntity: false,
         $isDependentObject: false,
