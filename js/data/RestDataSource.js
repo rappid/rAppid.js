@@ -3,7 +3,41 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
     var rIdExtractor = /http.+\/([^/]+)$/;
 
     var RestDataProcessor = DataSource.Processor.inherit('js.data.RestDataSource.RestDataProcessor', {
-        _composeSubModel: function (model, action, options) {
+        _composeSubModel: function (model, action, options, scope) {
+            if(scope instanceof Model){
+                var contextDistance = 0;
+                var configuration = this.$dataSource.$dataSourceConfiguration.getConfigurationForModelClass(model.factory);
+                var parent = contextDistance.$parent;
+                var subModelStack = [];
+                while(configuration && configuration.$.path){
+                    subModelStack.unshift(configuration);
+                    configuration = configuration.$parent;
+                }
+                var scopeStack = [];
+                configuration = this.$dataSource.$dataSourceConfiguration.getConfigurationForModelClass(scope.factory);
+                while (configuration && configuration.$.path) {
+                    scopeStack.unshift(configuration);
+                    configuration = configuration.$parent;
+                }
+                var i = 0;
+                while(scopeStack[i].$.path === subModelStack[i].$.path){
+                    i++;
+                }
+                contextDistance = subModelStack.length - i;
+
+                if(contextDistance > 0){
+                    var path = [];
+                    parent = model;
+                    while(contextDistance > 0){
+                        path.unshift(parent.identifier());
+                        parent = parent.$context.$contextModel;
+                        contextDistance--;
+                    }
+                    var hash = {};
+                    hash[model.idField] = path.join("/");
+                    return hash;
+                }
+            }
 
             var ret = {};
 
