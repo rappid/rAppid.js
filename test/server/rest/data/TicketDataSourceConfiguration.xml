@@ -1,0 +1,7 @@
+<DataSourceConfiguration xmlns="js.conf">
+    <ResourceConfiguration modelClassName="rest.model.Project" path="projects"/>
+    <ResourceConfiguration modelClassName="rest.model.Ticket" path="tickets">
+        <ResourceConfiguration modelClassName="rest.model.Comment" path="comments"/>
+    </ResourceConfiguration>
+    <ResourceConfiguration modelClassName="rest.model.User" path="users"/>
+</DataSourceConfiguration>

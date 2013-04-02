@@ -1,0 +1,24 @@
+<Server xmlns="srv.core"
+        xmlns:handler="srv.handler"
+        xmlns:endpoint="srv.endpoint" xmlns:data="srv.data"
+        xmlns:restHandler="rest.handler" xmlns:restData="rest.data">
+
+    <EndPoints>
+        <endpoint:HttpEndPoint port="8080"/>
+    </EndPoints>
+
+    <Filters>
+    </Filters>
+
+    <Handlers>
+        <handler:RestHandler>
+            <data:MongoDataSource database="{ENV().database}">
+                <restData:TicketDataSourceConfiguration/>
+            </data:MongoDataSource>
+            <restData:TicketDataSourceConfiguration/>
+
+            <restHandler:TicketResourceHandler modelClassName="rest.model.Ticket"/>
+        </handler:RestHandler>
+        <handler:StaticFileHandler/>
+    </Handlers>
+</Server>
