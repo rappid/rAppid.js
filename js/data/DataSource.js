@@ -324,18 +324,18 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
              * @return {Object} composed data
              * @private
              */
-            _getCompositionValue: function (value, key, action, options) {
+            _getCompositionValue: function (value, key, action, options, scope) {
                 if (value instanceof Model) {
-                    return this._composeSubModel(value, action, options);
+                    return this._composeSubModel(value, action, options, scope);
                 } else if (value instanceof Collection) {
-                    return this._composeSubCollection(value, action, options);
+                    return this._composeSubCollection(value, action, options, scope);
                 } else if (value instanceof Entity) {
                     return this._composeEntity(value, action, options);
                 } else if (value instanceof List) {
                     var ret = [];
                     var self = this;
                     value.each(function (v, index) {
-                        ret.push(self._getCompositionValue(v, index, action, options));
+                        ret.push(self._getCompositionValue(v, index, action, options, scope));
                     });
                     return ret;
                 } else if (value instanceof Date) {
@@ -348,7 +348,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                 } else if (value instanceof Array) {
                     var arr = [];
                     for (var i = 0; i < value.length; i++) {
-                        arr.push(this._getCompositionValue(value[i], i, action, options));
+                        arr.push(this._getCompositionValue(value[i], i, action, options, scope));
                     }
                     return arr;
                 } else if (value instanceof Object) {
@@ -379,7 +379,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                         schemaDefinition = entity.schema[key];
                         schemaType = schemaDefinition.type;
 
-                        var value = this._getCompositionValue(data[key], key, action, options);
+                        var value = this._getCompositionValue(data[key], key, action, options, entity);
                         if (value !== undefined) {
                             if (value && schemaDefinition.isReference && schemaType.classof && schemaType.classof(Entity) && !schemaType.classof(Model)) {
                                 var identifier = value[schemaType.prototype.idField];
@@ -504,7 +504,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                                 }
 
                             }
-                        } else if (schemaType === Date && !(value instanceof Date)) {
+                        } else if (schemaType === Date && value && !(value instanceof Date)) {
                             data[key] = moment(value, this.$dataSource.$.dateFormat).toDate();
                         } else if (schemaType.classof(Entity) && value) {
                             if (schemaType instanceof TypeResolver) {
@@ -800,26 +800,23 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
 
                             } while (parentConfiguration.$parent);
 
+                            var context = requestor.$context;
+                            // check if the requestor is descendant of the child
+                            while (context && context.$contextModel) {
+                                if (context.$contextModel.constructor.name === configuration.$["modelClassName"]) {
+                                    return context.$contextModel.$context;
+                                }
+                                context = context.$contextModel.$context;
 
-                        }
-
-                        var context = requestor.$context;
-                        // check if the requestor is descendant of the child
-                        while (context && context.$contextModel) {
-                            if (context.$contextModel.constructor.name === configuration.$["modelClassName"]) {
-                                return context.$contextModel.$context;
                             }
-                            context = context.$contextModel.$context;
-
                         }
-
-
-                        // childFactory isn't descendant of the requestor, so return the root context
-                        return requestor.$context;
                     }
                 }
-
-                return requestor.$context;
+                if(requestor){
+                    return requestor.$context;
+                }
+                // childFactory isn't descendant of the requestor, so return the root context
+                return this.root();
             },
 
             /***
