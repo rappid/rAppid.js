@@ -4,9 +4,11 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
 
     var RestDataProcessor = DataSource.Processor.inherit('js.data.RestDataSource.RestDataProcessor', {
         _composeSubModel: function (model, action, options) {
+
             var ret = {};
 
             ret[model.idField] = model.identifier();
+
             return ret;
         }
     });
@@ -352,17 +354,27 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
                 }
 
                 if (data.hasOwnProperty(this.$.determinateContextAttribute)) {
-
-                    var path = this._getContextPath(data),
-                        components = path.split("/"),
+                    var path,
+                        components,
                         configuration,
                         context = this.root(),
                         contextFactory,
                         id,
                         pathElement;
 
-                    if (components[0] === "") {
-                        components.shift();
+
+                    if(!this.$cachedEndpoint){
+                        var href = data[this.$.determinateContextAttribute];
+                        path = href.replace(/(http(s)?:\/\/.+?)\//i, "");
+                        this.$cachedEndpoint = href.substring(0,href.length - path.length);
+                        components = path.split("/");
+
+                        while(!this.$dataSourceConfiguration.getConfigurationByKeyValue("path", components[0])){
+                            this.$cachedEndpoint += components.shift() + "/";
+                        }
+                    } else {
+                        path = data[this.$.determinateContextAttribute].replace(this.$cachedEndpoint,"");
+                        components = path.split("/");
                     }
 
                     for (var i = 0; i < components.length - 2; i = i + 2) {
@@ -390,10 +402,6 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
             }
 
             return this.callBase();
-        },
-
-        _getContextPath: function(data) {
-            return data[this.$.determinateContextAttribute].substr(this.$.endPoint.length + 1);
         },
 
         /***
@@ -457,8 +465,6 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
                         self.getQueryParameters(method, model));
 
                     method = self._getHttpMethod(method);
-
-                    // TODO: create hook, which can modify url and queryParameter
 
                     var data = processor.compose(model, action, options);
 
