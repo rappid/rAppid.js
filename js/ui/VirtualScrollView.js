@@ -93,8 +93,12 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
             this.$isMouseDown = true;
         },
         _initSpeedInterval: function (axis, dt) {
-            if (this.$speedInterval[axis]) clearInterval(this.$speedInterval[axis]);
+            if (this.$speedInterval[axis]) {
+                clearInterval(this.$speedInterval[axis]);
+            }
+
             this.$speed[axis] = (this.$trackedPos[axis] - this.$newPos[axis]) / dt;
+
             if (this.$speed[axis] !== 0) {
 
                 var sub = this.$speed[axis] * 0.02;
@@ -126,8 +130,13 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
 
             var dt = this.$currentT.x - this.$t;
 
-            if (this.$.horizontal) this._initSpeedInterval("x", dt);
-            if (this.$.vertical) this._initSpeedInterval("y", dt);
+            if (this.$.horizontal) {
+                this._initSpeedInterval("x", dt);
+            }
+
+            if (this.$.vertical) {
+                this._initSpeedInterval("y", dt);
+            }
         },
         _getScrollContainer: function () {
             var scrollContainer = this.get('$scrollContainer');
@@ -166,8 +175,12 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
 
 //
             this.$keepInBounceInterval = setInterval(function () {
-                if (self.$.horizontal) keepInBounce("x");
-                if (self.$.vertical) keepInBounce("y");
+                if (self.$.horizontal) {
+                    keepInBounce("x");
+                }
+                if (self.$.vertical) {
+                    keepInBounce("y");
+                }
             }, 20);
 //
             this.$trackSpeedInterval = setInterval(function () {
@@ -240,7 +253,7 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
         },
         _setCssTranslate: function (x, y) {
             if (this.$scrollPane.isRendered()) {
-                this.$scrollPane.$el.style[this.$transformProperty] = this._posToCss(x,y);
+                this.$scrollPane.$el.style[this.$transformProperty] = this._posToCss(x, y);
             }
         },
         _bindDomEvents: function (el) {

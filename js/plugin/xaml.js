@@ -24,7 +24,9 @@ define([], function () {
      * @param domNode
      */
     var localNameFromDomNode = function (domNode) {
-        if (domNode.localName) return domNode.localName;
+        if (domNode.localName) {
+            return domNode.localName;
+        }
 
         var st = domNode.tagName.split(":");
         return st[st.length - 1];
@@ -68,7 +70,9 @@ define([], function () {
             b = "";
             for (var c = 0; c < a.childNodes.length; c++) {
                 var d = a.childNodes[c];
-                if (d.nodeType == 1 || d.nodeType == 4) b += this._getTextContentFromDescriptor(d);
+                if (d.nodeType == 1 || d.nodeType == 4) {
+                    b += this._getTextContentFromDescriptor(d);
+                }
             }
         }
         return b;
@@ -173,7 +177,7 @@ define([], function () {
                     progId = progIds[i];
                     try {
                         xhr = new ActiveXObject(progId);
-                    } catch(e) {
+                    } catch (e) {
                     }
 
                     if (xhr) {
@@ -205,12 +209,12 @@ define([], function () {
                                 callback("no responseXML found");
                             }
                         } else {
-                            callback("got status " + xhr.status  + " for " + url);
+                            callback("got status " + xhr.status + " for " + url);
                         }
                     }
                 };
                 xhr.send(null);
-            } catch(e) {
+            } catch (e) {
                 callback(e);
             }
         };
@@ -224,7 +228,7 @@ define([], function () {
                 var content = fs.readFileSync(path, 'utf8'),
                     DOMParser = require.nodeRequire('xmldom').DOMParser;
                 callback(null, (new DOMParser()).parseFromString(content));
-            } catch(e) {
+            } catch (e) {
                 callback(e);
             }
         };
@@ -249,7 +253,7 @@ define([], function () {
 
             if (config.optimizedXAML && config.optimizedXAML.indexOf(name) > -1) {
                 parentRequire([name], function () {
-                    parentRequire(["xaml!"+name], function(value){
+                    parentRequire(["xaml!" + name], function (value) {
                         load(value);
                     });
                 });
@@ -300,13 +304,13 @@ define([], function () {
                             text = text.replace('%dependencies%', '[' + depsEscaped.join(',') + ']');
 
                             var xmlContent = xml.documentElement.toString()
-                                .replace(/\\/g,"\\\\")
+                                .replace(/\\/g, "\\\\")
                                 .replace(/(\r\n|\n|\r)/gm, "\\n")
                                 .replace(/'/g, "\\'")
                                 .replace(/<js:Script[^>]*>[\s\S]*<\/js:Script[^>]*>/, "");
 
-                            if(config.removeSpaces === true){
-                                xmlContent = xmlContent.replace(/\s+/g," ").replace(/\\[nr]/g,"");
+                            if (config.removeSpaces === true) {
+                                xmlContent = xmlContent.replace(/\s+/g, " ").replace(/\\[nr]/g, "");
 
                             }
 
@@ -375,7 +379,7 @@ define([], function () {
                                         try {
                                             var scriptInstance = new Script(null, scripts[s]);
                                             scriptObjects.push(scriptInstance.evaluate(importedClasses));
-                                        } catch(e) {
+                                        } catch (e) {
                                             load.error(new Error(name + ": Script cannot be loaded" + e));
                                         }
                                     }
