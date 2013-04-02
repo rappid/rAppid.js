@@ -58,6 +58,7 @@ var optimizeConfig = {
         }
         return contents;
     },
+    removeCombined: true,
     skipModuleInsertion: true,
     namespaceMap: rAppid.defaultNamespaceMap,
     rewriteMap: rAppid.defaultRewriteMap
