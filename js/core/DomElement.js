@@ -291,7 +291,7 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                         } else {
                             var childNode = this.$el.childNodes[pos];
                             if (childNode) {
-                                this.$el.insertBefore(el, childNode)
+                                this.$el.insertBefore(el, childNode);
                             } else {
                                 this.$el.appendChild(el);
                             }
@@ -467,7 +467,7 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                     namespaceUri = namespaceUri || this.$attributesNamespace[key];
 
                     if (this.$el.setAttributeNS && namespaceUri) {
-                        this.$el.setAttributeNS(namespaceUri, key, value)
+                        this.$el.setAttributeNS(namespaceUri, key, value);
                     } else {
                         this.$el.setAttribute(key, value);
                     }
@@ -674,7 +674,7 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                     if (cb instanceof DomElement.EventHandler) {
                         callback = cb._handleEvent = function (e) {
                             return cb.handleEvent(e);
-                        }
+                        };
                     }
                     this.$el.attachEvent("on" + type, callback);
                 }
