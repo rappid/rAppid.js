@@ -46,7 +46,7 @@ define(['js/ui/View', 'xaml!js/ui/DataGridColumn', 'js/core/List', 'underscore',
                 // TODO: if sort parameters are set, use them
                 this.$.$itemsView.query(query);
             } else {
-                // CLEAN UP
+                // TODO: CLEAN UP
             }
         },
         addChild: function (child) {

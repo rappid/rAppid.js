@@ -25,7 +25,7 @@ define(["exports", "Query"], function (exports, Query) {
             }
 
             if (hash.where) {
-                ret.where = this.translateOperator(hash.where)
+                ret.where = this.translateOperator(hash.where);
             }
 
             return ret;

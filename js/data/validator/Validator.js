@@ -93,11 +93,10 @@ define(['js/core/Bindable', 'js/core/Base'], function (Bindable, Base) {
                 code: code,
                 message: message,
                 field: field
-            })
+            });
         },
         _createFieldError: function (field) {
-            return this._createError(this.$.errorCode, this._getErrorMessage(), field || this.$.field)
-
+            return this._createError(this.$.errorCode, this._getErrorMessage(), field || this.$.field);
         }
 
     });

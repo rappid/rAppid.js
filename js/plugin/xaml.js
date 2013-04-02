@@ -178,6 +178,7 @@ define([], function () {
                     try {
                         xhr = new ActiveXObject(progId);
                     } catch (e) {
+                        // nothing to do here
                     }
 
                     if (xhr) {

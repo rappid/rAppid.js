@@ -47,7 +47,7 @@ define(["inherit"], function(inherit){
                     try {
                         method.call(console, "[ " + (new Date()) + " ]: ", message);
                     } catch (e) {
-                        //
+                        // nothing to do here
                     }
                 }
             }

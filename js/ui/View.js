@@ -61,13 +61,10 @@ define(["js/html/HtmlElement", "js/core/Content", "underscore"], function (HtmlE
                     if (placeHolder) {
                         placeHolder.set({content: renderedComponent});
                         this.$renderedPlaceholders[placeholderName] = renderedComponent;
-                    } else {
-                        // throw "No placeholder '"+placeholderName+"' found";
                     }
-
                 }
-
             },
+
             _renderId: function (id) {
                 if (id) {
                     this.$el.setAttribute("id", id);

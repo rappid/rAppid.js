@@ -6,17 +6,17 @@ define(['js/data/validator/Validator', 'underscore'], function (Validator, _) {
             regEx: null
         },
 
-        ctor: function(){
+        ctor: function () {
             var b = this.callBase();
 
-            if(!this.$.regEx){
+            if (!this.$.regEx) {
                 throw new Error("No regular expression defined!");
             }
 
             return b;
         },
 
-        _generateCacheKey: function(field, regEx){
+        _generateCacheKey: function (field, regEx) {
             return null;
         },
 
@@ -25,13 +25,12 @@ define(['js/data/validator/Validator', 'underscore'], function (Validator, _) {
                 schemaDefinition = entity.schema[this.$.field],
                 required = schemaDefinition ? schemaDefinition.required : true;
 
-            if(_.isString(value) && (required && value.length || !required)){
-                if(!this.$.regEx.test(value)){
+            if (_.isString(value) && (required && value.length || !required)) {
+                if (!this.$.regEx.test(value)) {
                     return this._createFieldError();
                 }
             }
         }
 
-    })
-})
-;
+    });
+});
