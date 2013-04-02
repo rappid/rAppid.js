@@ -1,7 +1,7 @@
 define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 'js/core/List', 'require', 'js/data/Collection', 'srv/lib/MongoQueryComposer'], function (DataSource, MongoDb, Model, flow, _, List, require, Collection, MongoQueryComposer) {
 
     var ID_KEY = "_id",
-        PARENT_ID_KEY = "_parent_id",
+        CONTEXT_KEY = "_context",
         PARENT_TYPE_KEY = "_parent_type",
         TYPE_KEY = "_type",
         REF_ID_KEY = "_ref_id",
@@ -14,7 +14,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
             var data = this.callBase();
 
             if (entity instanceof Model) {
-                data[PARENT_ID_KEY] = this.$dataSource._getContextKey(entity);
+                data[CONTEXT_KEY] = this.$dataSource._composeContext(entity);
 
                 if(entity.idField === "id"){
                     data[ID_KEY] = this.$dataSource._createIdObject(data[ID_KEY]);
@@ -24,14 +24,15 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
             return data;
         },
 
-        _composeSubModel: function (model, action, options) {
-            if (model && model.identifier()) {
-                var ret = {};
-                ret[TYPE_KEY] = model.constructor.name;
-                ret[REF_ID_KEY] = model.identifier();
+        _getCompositionValue: function(value, key, action, options){
+            if(value instanceof Model){
+                var ret = this.$dataSource._composeContext(value);
+                ret[value.constructor.name.replace(/\./gi,"/")] = value.identifier();
+
                 return ret;
             }
-            return null;
+
+            return this.callBase();
         },
 
         _composeEntity: function (entity, action, options) {
@@ -52,30 +53,10 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
         },
 
         _getValueForKey: function (data, key, schemaType) {
-            if (schemaType && schemaType.classof && schemaType.classof(Model)) {
-                var referenceKey = this._getReferenceKey(key, schemaType);
-                var value = data[referenceKey];
-                delete data[referenceKey];
-                if (value) {
-                    var refId = value[REF_ID_KEY];
-                    if (refId) {
-                        if (_.isObject(refId) && refId instanceof MongoDb.ObjectID) {
-                            return {
-                                id: refId.toHexString()
-                            }
-                        } else {
-                            return {
-                                id: refId
-                            }
-                        }
-                    }
-                }
-                return null;
-            } else if (key === "id") {
+            if (key === "id") {
                 if (data[ID_KEY] instanceof MongoDb.ObjectID) {
                     return key.toHexString();
                 }
-
             }
 
             return this.callBase();
@@ -107,27 +88,20 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
                 return false;
             }
 
-            readId(ID_KEY) || readId(REF_ID_KEY);
+            readId(ID_KEY);
 
-            // TODO: test if this works without this
-//            if (data[PARENT_ID_KEY]) {
-//                var parentId = data[PARENT_ID_KEY],
-//                    parentFactory = require(model.schema[PARENT_TYPE_KEY].replace(/\./g, "/"));
-//                model.$parent = this.$dataSource.createEntity(parentFactory, parentId);
-//            }
-
-
-
-            delete data[PARENT_ID_KEY];
-            delete data[PARENT_TYPE_KEY];
+            delete data[CONTEXT_KEY];
             delete data[TYPE_KEY];
-            delete data[REF_ID_KEY];
-
 
             return this.callBase(model, data, action, options);
         },
 
-        _getIdForValue: function (value) {
+        _getIdForValue: function (value, factory) {
+
+            if (factory.classof && factory.classof(Model)) {
+                return value[factory.prototype.constructor.name.replace(/\./g,"/")];
+            }
+
             var id = this.callBase();
 
             if (id === undefined && value[ID_KEY] instanceof MongoDb.ObjectID) {
@@ -187,7 +161,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
                 where[TYPE_KEY] = model.constructor.name;
             }
 
-            this.connectCollection(configuration.$.collection, function (collection, cb) {
+            this.connectCollection(configuration.$.path, function (collection, cb) {
                 collection.findOne(where, function (err, object) {
                     if (!err) {
                         if (object) {
@@ -273,7 +247,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
 
             var where = this._getWhereConditionForModel(model);
 
-            this.connectCollection(configuration.$.collection, function (collection, cb) {
+            this.connectCollection(configuration.$.path, function (collection, cb) {
                 if (method === MongoDataSource.METHOD.INSERT) {
                     collection.insert(data, options, function (err, objects) {
                         if (!err) {
@@ -319,7 +293,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
 
             var where = this._getWhereConditionForModel(model);
 
-            this.connectCollection(configuration.$.collection, function (collection, cb) {
+            this.connectCollection(configuration.$.path, function (collection, cb) {
                 collection.remove(where, {safe: true}, function (err, count) {
                     if (count === 0) {
                         err = DataSource.ERROR.NOT_FOUND;
@@ -341,7 +315,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
                 callback("Couldn't find path config for " + rootCollection.$modelFactory.prototype.constructor.name);
             }
 
-            var mongoCollection = configuration.$.collection;
+            var mongoCollection = configuration.$.path;
 
             var params = {};
             if (collectionPage.$collection.$.query) {
@@ -354,17 +328,13 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
             }
 
             // TODO: add query, fields and options
-            var self = this, connection, where = params.where || {};
+            var self = this, connection, where = this._getWhereConditionForCollection(rootCollection);
 
             // TODO: convert query to MongoQuery
 
             // here we have a polymorphic type
             if (configuration.$.modelClassName !== modelClassName) {
                 where[TYPE_KEY] = modelClassName;
-            }
-
-            if (rootCollection.$parent) {
-                where[PARENT_ID_KEY] = this._getContextKey(rootCollection);
             }
 
             var sort;
@@ -414,7 +384,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
                 callback("Couldn't find path config for " + rootCollection.$modelFactory.prototype.constructor.name);
             }
 
-            var mongoCollection = configuration.$.collection;
+            var mongoCollection = configuration.$.path;
 
             var params = {};
             if (collection.$.query) {
@@ -435,7 +405,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
             }
 
             if (rootCollection.$parent) {
-                where[PARENT_ID_KEY] = this._getContextKey(rootCollection);
+                where[CONTEXT_KEY] = this._composeContext(rootCollection);
             }
 
             var count;
@@ -468,7 +438,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
         _getWhereConditionForModel: function(model){
             var where = {};
 
-            where[PARENT_ID_KEY] = this._getContextKey(model);
+            where[CONTEXT_KEY] = this._composeContext(model);
 
             if (model.idField === "id") {
                 where[ID_KEY] = this._createIdObject(model.identifier());
@@ -478,14 +448,55 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
             return where;
         },
 
-        _getContextKey: function(model){
+        _getWhereConditionForCollection: function(collection){
+            var where = {};
+
+            where[CONTEXT_KEY] = this._composeContext(collection);
+
+            return where;
+        },
+
+        _composeContext: function(model){
             var parent = model.$parent,
-                context = [];
+                context = {},
+                i = 0;
+
             while (parent) {
-                context.unshift(parent.identifier());
+                context[parent.constructor.name.replace(/\./gi,"/")] = parent.identifier();
                 parent = parent.$parent;
             }
-            return  context.join("/");
+
+            return  context;
+        },
+        _getContext: function(factory, model, value){
+
+            if(model instanceof Model && factory.classof(Model) && !_.isString(value) && value instanceof Object){
+                var configuration = this.getConfigurationForModelClass(factory);
+
+                var numParent = _.size(value) - 1,
+                    baseConfiguration = configuration,
+                    stack = [configuration];
+                for(var i = 0; i < numParent; i++){
+                    baseConfiguration = baseConfiguration.$parent;
+                    stack.unshift(baseConfiguration);
+                }
+                var parentFactory,
+                    parentModel,
+                    context,
+                    fullModelClassName;
+                for (i = 0; i < stack.length; i++) {
+                    fullModelClassName = stack[i].$.modelClassName.replace(/\./gi, "/");
+                    parentFactory = requirejs(fullModelClassName);
+                    context = this.getContextForChild(parentFactory, parentModel || model);
+                    parentModel = context.createEntity(parentFactory,value[fullModelClassName]);
+                    parentModel.$parent = context.$contextModel;
+                }
+
+                return parentModel.$context;
+            }
+
+            return this.callBase();
+
         }
     });
 
