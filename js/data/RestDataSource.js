@@ -114,7 +114,7 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
 
             if (this.$.useSafeHttpMethods) {
                 if (action === RestDataSource.METHOD.DELETE) {
-                    params.method = "delete"
+                    params.method = "delete";
                 } else if (action === RestDataSource.METHOD.PUT) {
                     params.method = "put";
                 }
@@ -143,7 +143,7 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
                 }
             }
 
-            return method
+            return method;
         },
 
 
@@ -488,7 +488,7 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
             // call save of the processor to save sub models
             flow()
                 .seq(function (cb) {
-                    processor.saveSubModels(model, options, cb)
+                    processor.saveSubModels(model, options, cb);
                 })
                 .seq(function (cb) {
                     // create url
@@ -523,7 +523,7 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
                         };
 
                         if (!err && action === DataSource.ACTION.CREATE && xhr.status === 201) {
-                            self.handleCreationSuccess(request, xhr, cb)
+                            self.handleCreationSuccess(request, xhr, cb);
                         } else if (!err && action === DataSource.ACTION.UPDATE && xhr.status === 200) {
                             self.handleUpdateSuccess(request, xhr, cb);
                         }
@@ -536,7 +536,7 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
                 })
                 .exec(function (err) {
                     callback && callback(err, model, options);
-                })
+                });
 
 
         },
@@ -625,7 +625,7 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
 
                         collectionPage.add(data);
 
-                        callback(null, collectionPage, options)
+                        callback(null, collectionPage, options);
 
                     } catch(e) {
                         self.log(e, 'error');
@@ -652,7 +652,7 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
             if(sortFields.length > 0){
                 parameters = {
                     sort: "("+sortFields.join(",")+")"
-                }
+                };
             }
             return parameters;
         },

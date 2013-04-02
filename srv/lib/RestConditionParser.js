@@ -235,11 +235,11 @@ exports.parser = (function () {
                             var result0 = result1;
                         } else {
                             var result0 = null;
-                            ;
+                            
                         }
-                        ;
+                        
                     }
-                    ;
+                    
                 }
 
 
@@ -303,7 +303,7 @@ exports.parser = (function () {
                             }
                             var result14 = result13 !== null
                                 ? (function (a) {
-                                return a
+                                return a;
                             })(result13[1])
                                 : null;
                             if (result14 !== null) {
@@ -339,7 +339,7 @@ exports.parser = (function () {
                                 }
                                 var result14 = result13 !== null
                                     ? (function (a) {
-                                    return a
+                                    return a;
                                 })(result13[1])
                                     : null;
                                 if (result14 !== null) {
@@ -361,7 +361,7 @@ exports.parser = (function () {
                         }
                         var result9 = result8 !== null
                             ? (function (a, rp) {
-                            return [a].concat(rp)
+                            return [a].concat(rp);
                         })(result8[0], result8[1])
                             : null;
                         if (result9 !== null) {
@@ -437,9 +437,9 @@ exports.parser = (function () {
                         var result0 = result1;
                     } else {
                         var result0 = null;
-                        ;
+                        
                     }
-                    ;
+                    
                 }
 
 
@@ -493,11 +493,11 @@ exports.parser = (function () {
                             var result0 = result1;
                         } else {
                             var result0 = null;
-                            ;
+                            
                         }
-                        ;
+                        
                     }
-                    ;
+                    
                 }
 
 
@@ -566,7 +566,7 @@ exports.parser = (function () {
                 }
                 var result2 = result1 !== null
                     ? (function (c, v) {
-                    return { type: c.join(""), value: v.join("") }
+                    return { type: c.join(""), value: v.join("") };
                 })(result1[0], result1[2])
                     : null;
                 if (result2 !== null) {
@@ -836,7 +836,7 @@ exports.parser = (function () {
                         }
                         var result9 = result8 !== null
                             ? (function () {
-                            return "lte"
+                            return "lte";
                         })()
                             : null;
                         if (result9 !== null) {
@@ -860,7 +860,7 @@ exports.parser = (function () {
                             }
                             var result6 = result5 !== null
                                 ? (function () {
-                                return "gt"
+                                return "gt";
                             })()
                                 : null;
                             if (result6 !== null) {
@@ -884,7 +884,7 @@ exports.parser = (function () {
                                 }
                                 var result3 = result2 !== null
                                     ? (function () {
-                                    return "lt"
+                                    return "lt";
                                 })()
                                     : null;
                                 if (result3 !== null) {
@@ -897,15 +897,15 @@ exports.parser = (function () {
                                     var result0 = result1;
                                 } else {
                                     var result0 = null;
-                                    ;
+                                    
                                 }
-                                ;
+                                
                             }
-                            ;
+                            
                         }
-                        ;
+                        
                     }
-                    ;
+                    
                 }
 
 
@@ -996,9 +996,9 @@ exports.parser = (function () {
                             var result4 = result6;
                         } else {
                             var result4 = null;
-                            ;
+                            
                         }
-                        ;
+                        
                     }
                     if (result4 !== null) {
                         if (input.substr(pos, 1) === ")") {
@@ -1201,11 +1201,11 @@ exports.parser = (function () {
                             var result0 = result1;
                         } else {
                             var result0 = null;
-                            ;
+                            
                         }
-                        ;
+                        
                     }
-                    ;
+                    
                 }
 
 
@@ -1371,17 +1371,17 @@ exports.parser = (function () {
                                         var result0 = result1;
                                     } else {
                                         var result0 = null;
-                                        ;
+                                        
                                     }
-                                    ;
+                                    
                                 }
-                                ;
+                                
                             }
-                            ;
+                            
                         }
-                        ;
+                        
                     }
-                    ;
+                    
                 }
 
 

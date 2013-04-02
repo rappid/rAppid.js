@@ -16,7 +16,7 @@ define([], function () {
                 }
             }
             return -1;
-        }
+        };
     }
 
     /**
@@ -31,7 +31,7 @@ define([], function () {
     };
 
     function hasContent(string) {
-        return /\S/.test(string);
+        return (/\S/).test(string);
     }
 
     function getDependency(namespace, localName, namespaceMap, xamlClasses, rewriteMap) {
@@ -333,7 +333,7 @@ define([], function () {
                                     }
 
                                     if (hasContent(result[3])) {
-                                        classDefinition = result[3] + ','
+                                        classDefinition = result[3] + ',';
                                     }
 
                                 } else {
@@ -398,7 +398,7 @@ define([], function () {
                 });
             }
         }
-    }
+    };
 });
 
 

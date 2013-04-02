@@ -87,7 +87,7 @@ define(['js/core/EventDispatcher', 'url', 'querystring', 'underscore', 'flow', '
                     urlInfo.parameter = QueryString.parse(urlInfo.query);
                     request.get = urlInfo;
 
-                    var host = request.headers["host"];
+                    var host = request.headers.host;
                     var baseUri = endpoint.protocol + "://" + host;
 
                     request.urlInfo.baseUri = baseUri;
@@ -113,7 +113,7 @@ define(['js/core/EventDispatcher', 'url', 'querystring', 'underscore', 'flow', '
 
                 _extractCookies: function (request) {
 
-                    var cookies = request.headers["cookie"];
+                    var cookies = request.headers.cookie;
                     request.cookie = {};
 
                     if (!cookies) {
@@ -221,7 +221,7 @@ define(['js/core/EventDispatcher', 'url', 'querystring', 'underscore', 'flow', '
             },
 
             set: function (name, value, options) {
-                this.cookie[name] = new Context.CookieManager.Cookie(name, value, options)
+                this.cookie[name] = new Context.CookieManager.Cookie(name, value, options);
             },
 
             remove: function (name) {
@@ -234,7 +234,7 @@ define(['js/core/EventDispatcher', 'url', 'querystring', 'underscore', 'flow', '
 
                 for (var key in this.cookie) {
                     if (this.cookie.hasOwnProperty(key)) {
-                        headers.push(this.cookie[key].toHeader())
+                        headers.push(this.cookie[key].toHeader());
                     }
                 }
 
@@ -264,14 +264,14 @@ define(['js/core/EventDispatcher', 'url', 'querystring', 'underscore', 'flow', '
             },
 
             toString: function () {
-                return this.$.name + "=" + this.$.value
+                return this.$.name + "=" + this.$.value;
             },
 
             toHeader: function () {
                 var header = this.toString();
 
                 if (this.$.path) {
-                    header += "; path=" + this.$.path
+                    header += "; path=" + this.$.path;
                 }
 
                 if (this.$.value === undefined) {
@@ -295,7 +295,7 @@ define(['js/core/EventDispatcher', 'url', 'querystring', 'underscore', 'flow', '
                     header += "; httponly";
                 }
 
-                return header
+                return header;
             }
 
         });
