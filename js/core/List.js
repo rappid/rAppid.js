@@ -4,8 +4,8 @@ define(["js/core/EventDispatcher", "js/core/Bindable", "underscore", "js/data/Qu
     var List = Bindable.inherit("js.core.List", {
         /**
          * List constructor
-         * @param [Object] items to add
-         * @param Object attributes to set
+         * @param {Array} items to add
+         * @param {Object} options - attributes to set
          */
         ctor: function (items, options) {
             options = options || {};
@@ -34,7 +34,7 @@ define(["js/core/EventDispatcher", "js/core/Bindable", "underscore", "js/data/Qu
         },
         /**
          *
-         * @return {Boolean} true if list has items
+         * @return {bool} true if list has items
          */
         isEmpty: function () {
             return this.$items.length === 0;
@@ -71,8 +71,8 @@ define(["js/core/EventDispatcher", "js/core/Bindable", "underscore", "js/data/Qu
         },
         /**
          * This method adds one ore items to the array.
-         * @param items
-         * @param options
+         * @param {Array|Object} items
+         * @param {Object} options
          */
         add: function (items, options) {
 
@@ -105,8 +105,8 @@ define(["js/core/EventDispatcher", "js/core/Bindable", "underscore", "js/data/Qu
         },
         /**
          *
-         * @param e
-         * @param item
+         * @param {Event} e
+         * @param {Object} item
          * @private
          */
         _onItemChange: function (e, item) {
@@ -124,8 +124,8 @@ define(["js/core/EventDispatcher", "js/core/Bindable", "underscore", "js/data/Qu
         },
         /**
          * Removes an Array or just one item from the list. Triggers remove events.
-         * @param Object | [Object] items
-         * @param options
+         * @param {Object|Array} items
+         * @param {Object} options
          */
         remove: function (items, options) {
             var removed = [];
@@ -142,17 +142,17 @@ define(["js/core/EventDispatcher", "js/core/Bindable", "underscore", "js/data/Qu
         },
         /**
          * Returns the index of the item
-         * @param item
-         * @return {*}
+         * @param {Object} item
+         * @return {Number} index
          */
         indexOf: function (item) {
             return this.$items.indexOf(item);
         },
         /**
          * Removes one item a specific index and triggers remove event
-         * @param index
-         * @param options
-         * @return {*}
+         * @param {Number} index
+         * @param {Object} options
+         * @return {Object} removed item
          */
         removeAt: function (index, options) {
             options = options || {};
@@ -172,7 +172,8 @@ define(["js/core/EventDispatcher", "js/core/Bindable", "underscore", "js/data/Qu
         },
         /**
          * Resets the list with the given items and triggers reset event
-         * @param items
+         * @param {Array} items
+         * @param {Object} options
          */
         reset: function (items, options) {
             items = items || [];
@@ -200,6 +201,7 @@ define(["js/core/EventDispatcher", "js/core/Bindable", "underscore", "js/data/Qu
 
         /**
          * Clears all items and triggers reset event
+         * @param {Object} options
          */
         clear: function (options) {
             this.reset([], options);
@@ -224,8 +226,8 @@ define(["js/core/EventDispatcher", "js/core/Bindable", "underscore", "js/data/Qu
         }.on('*'),
         /**
          * Iterates over all items with given callback
-         * @param Function callback with signature function(item, index)
-         * @param Object The call scope of the callback
+         * @param {Function} fnc callback with signature function(item, index)
+         * @param {Object} scope The call scope of the callback
          */
         each: function (fnc, scope) {
             scope = scope || this;
@@ -275,7 +277,7 @@ define(["js/core/EventDispatcher", "js/core/Bindable", "underscore", "js/data/Qu
         },
         /**
          * Checks if item is included in List
-         * @return Boolean
+         * @return {Boolean}
          */
         includes: function (item) {
             var ret = this.each(function (innerItem) {
@@ -292,7 +294,7 @@ define(["js/core/EventDispatcher", "js/core/Bindable", "underscore", "js/data/Qu
 
         /**
          * Returns a fresh copy of the List
-         * @return List a fresh copy of the list
+         * @return {List} a fresh copy of the list
          */
         clone: function () {
             var attributes = this._cloneAttribute(this.$);
@@ -301,7 +303,10 @@ define(["js/core/EventDispatcher", "js/core/Bindable", "underscore", "js/data/Qu
             ret._$source = this;
             return ret;
         },
-
+        /**
+         * Syncs the items back to the source
+         * @return {*}
+         */
         sync: function () {
             if (this._$source) {
                 var item, items = [];
@@ -385,7 +390,11 @@ define(["js/core/EventDispatcher", "js/core/Bindable", "underscore", "js/data/Qu
             }
             return this;
         },
-
+        /**
+         * Checks if items are deep equal
+         * @param {js.core.List} list
+         * @return {boolean}
+         */
         isDeepEqual: function (list) {
             if (list.size() !== this.size()) {
                 return false;
