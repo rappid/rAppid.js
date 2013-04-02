@@ -47,12 +47,12 @@ define(["require", "js/core/Component", "underscore", "moment", "flow"], functio
                         }, function (err) {
                             self.log(err, 'error');
                             cb();
-                        })
+                        });
                     } else {
                         cb();
                     }
                 })
-                .exec(callback)
+                .exec(callback);
 
 
         },
@@ -119,5 +119,5 @@ define(["require", "js/core/Component", "underscore", "moment", "flow"], functio
 
             return value;
         }.on("localeChanged")
-    })
+    });
 });

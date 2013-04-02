@@ -95,5 +95,5 @@ define(['srv/core/Filter', 'require', 'flow', 'js/data/DataSource', 'srv/core/Se
         }
 
 
-    })
+    });
 });

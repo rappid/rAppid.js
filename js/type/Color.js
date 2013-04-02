@@ -3,7 +3,7 @@ define(['js/core/Base'], function (Base) {
     if (!String.prototype.right) {
         String.prototype.right = function(length) {
             return this.substr(this.length - length);
-        }
+        };
     }
 
     var Color = Base.inherit('js.type.Color', {
@@ -133,7 +133,7 @@ define(['js/core/Base'], function (Base) {
                 }
             }
 
-            return new Color.HSB(h, s * 100, v * 100)
+            return new Color.HSB(h, s * 100, v * 100);
         },
 
         toXYZ: function () {
@@ -270,7 +270,7 @@ define(['js/core/Base'], function (Base) {
         },
 
         toString: function() {
-            return this.toRGB().toString()
+            return this.toRGB().toString();
         },
 
         toHexString: function () {

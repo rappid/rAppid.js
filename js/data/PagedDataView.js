@@ -125,7 +125,7 @@ define(["js/data/DataView", "js/core/List", "js/data/Collection", "flow", "under
 
                     flow()
                         .seq("execId", function () {
-                            return ++self.$execId
+                            return ++self.$execId;
                         })
                         .parEach(pageIndices, function (pageIndex, cb) {
                             baseList.fetchPage(pageIndex, null, cb);
@@ -188,7 +188,7 @@ define(["js/data/DataView", "js/core/List", "js/data/Collection", "flow", "under
         }.onChange('page'),
 
         currentPageIndex: function() {
-            return (this.$.page || 0)
+            return (this.$.page || 0);
         }.onChange('page'),
 
         previousPage: function (callback) {

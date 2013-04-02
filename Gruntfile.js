@@ -106,7 +106,7 @@ module.exports = function (grunt) {
                     port: 80,
                     username: username,
                     password: password
-                })
+                });
             }
 
             done(err);
@@ -124,7 +124,7 @@ module.exports = function (grunt) {
     grunt.registerTask('webtest-local', ["connect", "runWebTests"]);
 
 
-    grunt.registerTask("default")
+    grunt.registerTask("default");
 
 }
 ;

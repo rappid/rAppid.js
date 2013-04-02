@@ -29,5 +29,5 @@ define(['srv/filter/SessionAuthenticationFilter', 'srv/core/AuthenticationReques
 
             return authentication;
         }
-    })
+    });
 });

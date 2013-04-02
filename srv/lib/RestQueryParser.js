@@ -34,7 +34,7 @@ define(["exports", "Query", "RestConditionParser"], function (exports, Query, pa
 
             var undefined;
             if (params.limit !== undefined) {
-                var limit = parseInt(params.limit);
+                var limit = parseInt(params.limit, 10);
                 if (!isNaN(limit)) {
                     q.limit(limit);
                 }
@@ -42,7 +42,7 @@ define(["exports", "Query", "RestConditionParser"], function (exports, Query, pa
             }
 
             if (params.offset !== undefined) {
-                var offset = parseInt(params.offset);
+                var offset = parseInt(params.offset, 10);
                 if (!isNaN(offset)) {
                     q.offset(offset);
                 }

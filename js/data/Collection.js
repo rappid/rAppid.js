@@ -179,7 +179,7 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore", "js/da
                                 callback(err, self);
                             }
                         }
-                    })
+                    });
                 }
             }
 
@@ -353,7 +353,7 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore", "js/da
             function pageFetchedComplete(err, page, originalCallback) {
                 var callback = function (err, page) {
                     if (originalCallback) {
-                        originalCallback(err, page, options)
+                        originalCallback(err, page, options);
                     }
                 };
 

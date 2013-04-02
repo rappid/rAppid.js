@@ -51,7 +51,7 @@ define(['srv/core/EndPoint', 'spdy', 'fs'], function(EndPoint, Spdy, Fs) {
                     if(index > -1){
                         self.$connections.splice(index,1);
                     }
-                })
+                });
             });
 
             this.$endPoint.listen(this.$.port, this.$.hostname);

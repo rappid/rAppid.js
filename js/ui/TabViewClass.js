@@ -36,5 +36,5 @@ define(['js/ui/ItemsView', 'js/html/HtmlElement', 'js/ui/Tab', 'js/core/List'], 
             }
         }
 
-    })
+    });
 });

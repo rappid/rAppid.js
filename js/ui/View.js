@@ -45,7 +45,7 @@ define(["js/html/HtmlElement", "js/core/Content", "underscore"], function (HtmlE
                         child.removeClass(oldLayoutClass);
                     }
                     if (layoutClass) {
-                        child.addClass(layoutClass)
+                        child.addClass(layoutClass);
                     }
                 });
             },

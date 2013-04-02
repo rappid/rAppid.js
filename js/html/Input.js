@@ -67,7 +67,7 @@ define(["js/html/HtmlElement", "underscore", "moment"], function (HtmlElement, _
                     if(value === ""){
                         return null;
                     }
-                    value = parseInt(value);
+                    value = parseInt(value, 10);
                     if (isNaN(value)) {
                         value = this.$.value;
                     }

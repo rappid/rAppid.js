@@ -280,7 +280,7 @@ define(['js/ui/View'], function (View) {
                 }
 
                 if (this.$stage.$document.attachEvent || "onmousewheel" in el) {
-                    this.bindDomEvent(MOUSEWHEEL, this)
+                    this.bindDomEvent(MOUSEWHEEL, this);
                 } else {
                     this.bindDomEvent(DOM_MOUSE_SCROLL, this);
                 }
@@ -292,7 +292,7 @@ define(['js/ui/View'], function (View) {
                 }
 
                 if (this.$stage.$document.attachEvent || "onmousewheel" in el) {
-                    this.unbindDomEvent(MOUSEWHEEL, this)
+                    this.unbindDomEvent(MOUSEWHEEL, this);
                 } else {
                     this.unbindDomEvent(DOM_MOUSE_SCROLL, this);
                 }

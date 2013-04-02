@@ -91,7 +91,7 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
                 })
                 .seq(function (cb) {
                     if (self.isValid()) {
-                        self.save(options, cb)
+                        self.save(options, cb);
                     } else {
                         cb("Model is not valid!");
                     }
@@ -247,7 +247,7 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
 
         var callback = function (err, model) {
             if (originalCallback) {
-                originalCallback(err, model, options)
+                originalCallback(err, model, options);
             }
         };
 

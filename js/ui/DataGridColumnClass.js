@@ -16,10 +16,10 @@ define(['js/core/Component'], function (Component) {
             return null;
         },
         createCellRenderer: function (attributes, parentScope) {
-            return this.$templates['cell'].createInstance(attributes, parentScope);
+            return this.$templates.cell.createInstance(attributes, parentScope);
         },
         createCellContainer: function (parentScope) {
-            return this.$templates['cellContainer'].createInstance(null, parentScope);
+            return this.$templates.cellContainer.createInstance(null, parentScope);
         },
         isDefined: function (value) {
             return value !== null && value !== undefined;

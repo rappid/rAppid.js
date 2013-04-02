@@ -51,7 +51,7 @@ define(["js/core/Component", "underscore", "js/conf/RouteConfiguration"],
                     route = {
                         route: arguments[0],
                         fn: arguments[1]
-                    }
+                    };
                 } else {
                     route = arguments[0];
                 }
@@ -72,7 +72,7 @@ define(["js/core/Component", "underscore", "js/conf/RouteConfiguration"],
                 }
 
                 if (!(route.fn && route.route)) {
-                    throw "fn and route required"
+                    throw "fn and route required";
                 }
 
                 this.$routes.push(route);

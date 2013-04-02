@@ -58,5 +58,5 @@ define(['js/core/Component', 'srv/core/Filter', 'flow'],
                     })
                     .exec(callback);
             }
-        })
+        });
     });

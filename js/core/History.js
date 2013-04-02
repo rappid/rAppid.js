@@ -136,7 +136,7 @@ define(["js/core/Bindable", "flow"], function (Bindable, flow) {
                     .seqEach(routeExecutionStack, function(routingFunction, cb){
                         routingFunction(cb);
                     })
-                    .exec(callback)
+                    .exec(callback);
             }
         },
         /***

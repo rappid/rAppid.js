@@ -69,5 +69,5 @@ define(['js/core/Component'], function(Component) {
         handleRequest: function(context, callback) {
             throw new Error("Abstract method processRequest");
         }
-    })
+    });
 });

@@ -111,7 +111,7 @@ define(['JSON'], function (JSON) {
             });
         }
 
-    }
+    };
 });
 
 

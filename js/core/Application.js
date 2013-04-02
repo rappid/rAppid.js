@@ -94,7 +94,7 @@ define(["js/core/Window", "js/html/HtmlElement", "js/lib/extension", "underscore
                                 cb();
                             }, function (err) {
                                 cb(err);
-                            })
+                            });
                         } else {
                             cb();
                         }

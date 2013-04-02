@@ -15,7 +15,7 @@ define(['js/ui/VirtualItemsView', 'xaml!js/ui/DataGridColumn', 'js/core/List', '
         },
         _createRenderer: function (attributes) {
             if(attributes){
-                delete attributes['width'];
+                delete attributes.width;
             }
             return this.callBase(attributes);
         },

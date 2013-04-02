@@ -53,5 +53,5 @@ define(["js/core/Component", "js/core/List" , "underscore"], function (Component
 
             this.callBase();
         }
-    })
+    });
 });

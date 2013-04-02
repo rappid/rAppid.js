@@ -81,7 +81,7 @@ define(['require', 'path', 'js/core/Component', 'srv/core/Context', 'srv/core/Ha
                                     cb("Factory for session not a ServerSession");
                                 }
 
-                            }, cb)
+                            }, cb);
                         } else {
                             self.$serverSessionFactory = ServerSession;
                             cb();
@@ -288,7 +288,7 @@ define(['require', 'path', 'js/core/Component', 'srv/core/Context', 'srv/core/Ha
                                 cb();
                             }, function (err) {
                                 cb(err);
-                            })
+                            });
                         } else {
                             cb();
                         }

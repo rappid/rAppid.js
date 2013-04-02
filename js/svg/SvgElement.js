@@ -215,7 +215,7 @@ define(['js/core/DomElement', 'js/core/List', 'js/core/Bindable'], function (Dom
                 return {
                     x: point.x * factor.x,
                     y: point.y * factor.y
-                }
+                };
             },
 
             globalPointToLocal: function (point) {
@@ -225,7 +225,7 @@ define(['js/core/DomElement', 'js/core/List', 'js/core/Bindable'], function (Dom
                 return {
                     x: point.x * factor.x,
                     y: point.y * factor.y
-                }
+                };
 
             }
         });

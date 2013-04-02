@@ -57,5 +57,5 @@ define(['srv/core/Filter', 'require', 'flow', 'js/data/DataSource', 'srv/core/Se
         _createAuthenticationRequest: function(context){
             throw new Error("Not implemented");
         }
-    })
+    });
 });

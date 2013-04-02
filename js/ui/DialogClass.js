@@ -30,7 +30,7 @@ define(["js/core/Window"], function (Window) {
                         e.stopPropagation();
                         return false;
                     }
-                }
+                };
             }
             this.$stage.$window && this.dom(this.$stage.$window).bindDomEvent('keydown', this._keyDownHandler);
 
@@ -49,7 +49,7 @@ define(["js/core/Window"], function (Window) {
          * @param e
          */
         closeDialog: function (e) {
-            this.close()
+            this.close();
         },
 
         /***

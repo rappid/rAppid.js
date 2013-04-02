@@ -9,7 +9,7 @@ define(['js/ui/ItemsView', 'js/html/HtmlElement'], function(ItemsView, HtmlEleme
             attr[this._getItemKey()] = item;
             attr[this._getIndexKey()] = i;
 
-            var components = this.$templates['item'].createComponents(attr);
+            var components = this.$templates.item.createComponents(attr);
             var component = this.createComponent(HtmlElement, {
                 tagName: 'li'
             });
@@ -22,5 +22,5 @@ define(['js/ui/ItemsView', 'js/html/HtmlElement'], function(ItemsView, HtmlEleme
             return component;
         }
 
-    })
+    });
 });

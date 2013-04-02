@@ -46,7 +46,7 @@ define(['js/core/Component', 'srv/core/AuthorisationProvider', 'flow'],
                         provider.isAuthorized(authenticationRequest, function(err, isAuthorized){
                             if(!err && isAuthorized){
                                 authorized = isAuthorized;
-                                cb.end()
+                                cb.end();
                             }else{
                                 cb(err);
                             }
@@ -56,5 +56,5 @@ define(['js/core/Component', 'srv/core/AuthorisationProvider', 'flow'],
                         callback(err, authorized);
                     });
             }
-        })
+        });
     });

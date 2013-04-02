@@ -113,7 +113,7 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
             _syncScrollPosition: function () {
 
                 if (!this.isRendered()) {
-                    return
+                    return;
                 }
 
                 this.$el.scrollTop = this.$.scrollTop;
@@ -705,7 +705,7 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
         ctor: function (data, virtualItemsView) {
 
             if (data && !(data instanceof Array || data instanceof List)) {
-                throw "data needs to be either an Array or a List"
+                throw new Error("data needs to be either an Array or a List");
             }
 
             this.$data = data;
@@ -879,7 +879,7 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
                             }
 
                         }, self.$virtualItemsView.$.fetchPageDelay);
-                    })(pageIndex)
+                    })(pageIndex);
 
 
                 }

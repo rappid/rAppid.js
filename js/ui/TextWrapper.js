@@ -1,5 +1,4 @@
-define(
-    ["js/ui/View"], function (View) {
+define(["js/ui/View"], function (View) {
 
         var findPlaceholders = function (str) {
             var placeholders = [], p;
@@ -9,14 +8,14 @@ define(
 
                 if (c == "[" && stack.length === 0) {
                     p = {};
-                    p["start"] = i;
+                    p.start = i;
                     stack.push(i);
                 } else if (c == "|") {
                     indexPos = i;
                 } else if (c == "]" && stack.length > 0 && indexPos > 0) {
-                    p["index"] = parseInt(str.substring(indexPos + 1, i));
-                    p["end"] = i;
-                    p["text"] = str.substring(p.start + 1, indexPos);
+                    p.index = parseInt(str.substring(indexPos + 1, i));
+                    p.end = i;
+                    p.text = str.substring(p.start + 1, indexPos);
                     placeholders.push(p);
                     stack.pop();
                 }

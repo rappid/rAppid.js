@@ -117,9 +117,9 @@ define(['js/core/EventDispatcher','js/lib/parser','js/core/Binding', 'underscore
                     }
 
                     if (cb) {
-                        options['callback'] = cb;
+                        options.callback = cb;
                     } else {
-                        options['targetKey'] = attrKey;
+                        options.targetKey = attrKey;
                     }
 
                     var binding = new Binding(options);

@@ -61,7 +61,7 @@ define(["js/core/Component", "underscore"], function (Component, _) {
 
                         if (instance instanceof type) {
                             if (factory.singleton) {
-                                this.addInstance(instance)
+                                this.addInstance(instance);
                             }
 
                             return instance;
@@ -85,7 +85,7 @@ define(["js/core/Component", "underscore"], function (Component, _) {
             if (factory instanceof Function) {
                 factory = {
                     factory: factory
-                }
+                };
             }
 
             _.defaults(factory, {

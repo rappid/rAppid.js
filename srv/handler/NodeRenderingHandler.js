@@ -50,7 +50,7 @@ define(['srv/core/Handler', 'path', 'flow', 'fs', 'xmldom', 'underscore'], funct
                                 data.applicationUrl = self.$.applicationUrl;
                             }
                             cb(err, data);
-                        })
+                        });
                     } else {
                         cb(null, self.$.config);
                     }
@@ -127,7 +127,7 @@ define(['srv/core/Handler', 'path', 'flow', 'fs', 'xmldom', 'underscore'], funct
                     var document = (new xmldom.DOMParser()).parseFromString(self.$html);
                     return {
                         document: document
-                    }
+                    };
 
                 })
                 .seq("app", function (cb) {

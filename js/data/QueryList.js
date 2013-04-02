@@ -120,5 +120,5 @@ define(["js/core/List" , "underscore", "js/data/Query", 'js/lib/query/ArrayExecu
             }
             return true;
         }
-    })
+    });
 });

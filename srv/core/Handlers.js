@@ -68,5 +68,5 @@ define(['js/core/Component', 'srv/core/Handler', 'srv/handler/ExceptionHandler',
 
                 return new ExceptionHandler(e);
             }
-        })
+        });
     });

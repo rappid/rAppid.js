@@ -99,7 +99,7 @@ define(["js/core/EventDispatcher", "js/core/Bindable", "underscore", "js/data/Qu
                     this.$items.splice(itemIndex,0,item);
                 }
                 if (options.silent !== true) {
-                    this.trigger('add', {item: item, index: itemIndex})
+                    this.trigger('add', {item: item, index: itemIndex});
                 }
             }
         },
@@ -373,7 +373,7 @@ define(["js/core/EventDispatcher", "js/core/Bindable", "underscore", "js/data/Qu
 
 
             this.each(function (item, index) {
-                ret.push(transformFnc(item, index))
+                ret.push(transformFnc(item, index));
             });
 
             return ret;

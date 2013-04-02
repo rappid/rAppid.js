@@ -260,7 +260,7 @@
                             });
 
                         }
-                    })
+                    });
                 }
             });
 
@@ -343,7 +343,7 @@
                     }
 
                     if (callback) {
-                        callback(isAbort, wrappedXhr)
+                        callback(isAbort, wrappedXhr);
                     }
                 }
             };
@@ -351,7 +351,7 @@
             if (!s.async || xhr.readyState === 4) {
                 xhrCallback();
             } else {
-                xhr.onreadystatechange = xhrCallback
+                xhr.onreadystatechange = xhrCallback;
             }
 
             return xhr;
@@ -417,8 +417,7 @@
     ApplicationContext.prototype.createApplicationInstance = function (window, callback) {
 
         var document,
-            time = (new Date()).getTime(),
-            self = this;
+            time = (new Date()).getTime();
 
         // create instance
         var applicationFactory = this.$applicationFactory;

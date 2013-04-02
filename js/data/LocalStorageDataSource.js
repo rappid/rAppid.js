@@ -7,7 +7,7 @@ define(["js/data/DataSource", "js/data/Model", "flow", "js/data/LocalStorage"],
             _composeSubModel: function (model, action, options) {
                 return {
                     id: model.$.id
-                }
+                };
             }
         });
 
@@ -156,7 +156,7 @@ define(["js/data/DataSource", "js/data/Model", "flow", "js/data/LocalStorage"],
                     })
                     .exec(function (err) {
                         callback(err, model, options);
-                    })
+                    });
 
 
             },

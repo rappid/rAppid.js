@@ -439,7 +439,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                     if (schema.hasOwnProperty(key)) {
 
                         schemaDefinition = schema[key];
-                        schemaType = schemaDefinition['type'];
+                        schemaType = schemaDefinition.type;
                         value = this._getValueForKey(data, key, schemaType, schemaDefinition);
 
                         factory = null;
@@ -792,7 +792,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                                     break;
                                 }
 
-                                if (parentConfiguration.$["modelClassName"] === requestor.constructor.name) {
+                                if (parentConfiguration.$.modelClassName === requestor.constructor.name) {
                                     // childFactory is configured as descendant of the requestor
                                     // so the childFactory will be created in the context of the requestor
                                     return this.getContextByProperties(requestor, null, requestor.$context);
@@ -803,7 +803,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                             var context = requestor.$context;
                             // check if the requestor is descendant of the child
                             while (context && context.$contextModel) {
-                                if (context.$contextModel.constructor.name === configuration.$["modelClassName"]) {
+                                if (context.$contextModel.constructor.name === configuration.$.modelClassName) {
                                     return context.$contextModel.$context;
                                 }
                                 context = context.$contextModel.$context;
@@ -853,7 +853,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
              * @return {js.data.DataSource.Context}
              */
             createContext: function (contextModel, properties, parentContext) {
-                return new Context(this, contextModel, properties, parentContext)
+                return new Context(this, contextModel, properties, parentContext);
             },
 
             /***
@@ -1005,7 +1005,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                     if (this.$processors[processorName]) {
                         return this.$processors[processorName];
                     } else {
-                        throw "Processor for '" + processorName + "' not an instance of js.data.DataSource.Processor."
+                        throw "Processor for '" + processorName + "' not an instance of js.data.DataSource.Processor.";
                     }
                 }
             },

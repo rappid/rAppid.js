@@ -49,14 +49,14 @@ define(["require", "js/html/HtmlElement", "js/ui/ContentPlaceHolder", "js/core/M
                 }
 
                 if (this.$modules.hasOwnProperty(module.name)) {
-                    throw "module with name '" + module.name + "' already registered"
+                    throw "module with name '" + module.name + "' already registered";
                 }
 
                 this.$modules[module.name] = module;
 
                 if (module.route) {
                     if (!this.$.router) {
-                        throw "defining modules with routes requires a router instance to be set"
+                        throw "defining modules with routes requires a router instance to be set";
                     }
 
                     var self = this;

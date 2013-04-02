@@ -28,7 +28,7 @@ define(['srv/core/EndPoint', 'http'], function(EndPoint, Http) {
                     if(index > -1){
                         self.$connections.splice(index,1);
                     }
-                })
+                });
             });
             this.$endPoint.listen(this.$.port, this.$.hostname, this.$.backlog);
 

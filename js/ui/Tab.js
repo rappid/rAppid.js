@@ -3,5 +3,5 @@ define(['js/ui/View'], function (View) {
         defaults: {
             title: ""
         }
-    })
+    });
 });

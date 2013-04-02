@@ -14,7 +14,7 @@ define(['require', 'srv/core/Handler', 'js/conf/DataSourceConfiguration', 'js/co
             _composeSubCollection: function (collection, action, options) {
                 return {
                     href: collection.$.href
-                }
+                };
             },
             compose: function(model, action, options){
                 var ret = this.callBase();

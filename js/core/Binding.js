@@ -217,7 +217,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
                 }
 
                 if (!this.$.scope) {
-                    throw "No scope defined!"
+                    throw "No scope defined!";
                 }
 
                 if (this.$.twoWay) {

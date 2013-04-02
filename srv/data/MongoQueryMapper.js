@@ -116,7 +116,7 @@ define(["js/data/QueryMapper","underscore"], function(QueryMapper, _){
 
             return translateOperator(query);
         }
-    })
+    });
 
 
 });

@@ -139,7 +139,7 @@ define(['js/ui/View', 'js/type/Color'], function (View, Color) {
                     self.dom(self.$stage.$window).unbindDomEvent('pointermove', self.$hueBarMoveHandler);
                     self.dom(self.$stage.$window).unbindDomEvent('pointerup', self.$hueBarUpHandler);
 
-                }
+                };
             }
 
             this.dom(this.$stage.$window).bindDomEvent('pointermove', this.$hueBarMoveHandler);
@@ -164,5 +164,5 @@ define(['js/ui/View', 'js/type/Color'], function (View, Color) {
         }
 
 
-    })
+    });
 });

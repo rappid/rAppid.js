@@ -13,7 +13,7 @@ define(['js/html/HtmlElement'], function(HtmlElement) {
             !multiSelect && this.$el.removeAttribute(multiple);
 
             if (multiSelect) {
-                this.$el.setAttribute(multiple, multiple)
+                this.$el.setAttribute(multiple, multiple);
             }
         }
 

@@ -16,7 +16,7 @@ define(['js/core/Base', 'flow'], function (Base, flow) {
 
             var self = this;
             this._initAuthentications(function(err){
-                callback(err, self.authentications)
+                callback(err, self.authentications);
             });
 
         },
@@ -46,7 +46,7 @@ define(['js/core/Base', 'flow'], function (Base, flow) {
                         }
 
                     })
-                    .exec(callback)
+                    .exec(callback);
             } else {
                 callback();
             }

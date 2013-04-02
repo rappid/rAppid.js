@@ -43,7 +43,7 @@ define(['srv/core/AuthenticationProvider', 'srv/core/Authentication', 'js/data/C
         _cryptPassword: function(password) {
             var algorithm = Crypto.createHash(this.$.algorithm);
             algorithm.update(password);
-            return algorithm.digest('hex')
+            return algorithm.digest('hex');
         },
 
         _authenticateByData: function (authenticationRequest, callback) {

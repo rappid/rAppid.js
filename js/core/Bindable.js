@@ -29,7 +29,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
                         id = setTimeout(work, 1000 / 60);
                     }
                 }
-            }
+            };
         })();
 
         var isDeepEqual = function(a, b){
@@ -858,7 +858,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
                     this.set('value', attributes.binding.getValue());
                 } else if (attributes.hasOwnProperty('value')) {
                     var value = attributes.value;
-                    this._unbindEvent(this.$previousAttributes['value']);
+                    this._unbindEvent(this.$previousAttributes.value);
                     this._bindEvent(value);
 
                     if (this.$.binding) {

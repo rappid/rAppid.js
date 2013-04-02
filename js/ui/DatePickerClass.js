@@ -12,7 +12,7 @@ define(['js/ui/View', 'js/core/Bindable','moment'], function(View, Bindable, mom
             if(this.$.date){
                 this.set({
                     _viewDate: this.$.date
-                })
+                });
             }
             this.callBase();
         },
@@ -100,5 +100,5 @@ define(['js/ui/View', 'js/core/Bindable','moment'], function(View, Bindable, mom
         _isCurrentDate: function(date){
             return this.$.date && date && date.getTime() === this.$.date.getTime();
         }.onChange('date')
-    })
+    });
 });

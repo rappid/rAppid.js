@@ -76,7 +76,7 @@ define(["js/core/Bindable", "underscore"], function (Bindable, _) {
                             if (prefix === "function:") {
                                 var fnc = rootScope[node.value];
                                 if (!fnc) {
-                                    throw new Error("Cannot find referenced function '" + node.value + "' in scope.")
+                                    throw new Error("Cannot find referenced function '" + node.value + "' in scope.");
                                 }
 
                                 attributes[localName] = fnc;

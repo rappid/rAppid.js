@@ -1,4 +1,4 @@
-define(['srv/core/EndPoint', 'https'], function(EndPoint, Https) {
+define(['srv/core/EndPoint', 'https', 'fs'], function(EndPoint, Https, fs) {
 
     return EndPoint.inherit('srv.endpoint.HttpsEndPoint', {
 
@@ -23,7 +23,7 @@ define(['srv/core/EndPoint', 'https'], function(EndPoint, Https) {
             return {
                 key: fs.readFileSync(this.$.keyFile),
                 cert: fs.readFileSync(this.$.certFile)
-            }
+            };
         },
 
         _stop: function(callback) {

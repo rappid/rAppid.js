@@ -79,11 +79,11 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
             return false;
         },
         _startTracking: function (x, y) {
-            if (this.$speedInterval["x"]) {
-                clearInterval(this.$speedInterval["x"]);
+            if (this.$speedInterval.x) {
+                clearInterval(this.$speedInterval.x);
             }
-            if (this.$speedInterval["y"]) {
-                clearInterval(this.$speedInterval["y"]);
+            if (this.$speedInterval.y) {
+                clearInterval(this.$speedInterval.y);
             }
 
             this.$t = new Date().getTime();

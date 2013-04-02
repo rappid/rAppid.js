@@ -38,5 +38,5 @@ define(['js/core/Component', 'srv/core/EndPoint', 'flow'], function (Component, 
                 .exec(callback);
         }
 
-    })
+    });
 });
