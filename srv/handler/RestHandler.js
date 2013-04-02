@@ -3,7 +3,7 @@ define(['require', 'srv/core/Handler', 'js/conf/DataSourceConfiguration', 'js/co
 
         var RestDataProcessor = RestDataSource.RestDataProcessor.inherit('srv.handler.rest.RestDataProcessor', {
             _composeSubModel: function (model, action, options) {
-                if(model instanceof Model){
+                if (model instanceof Model) {
                     var ret = {};
                     ret[model.idField] = model.identifier();
                     ret["href"] = model.$.href;
@@ -16,24 +16,24 @@ define(['require', 'srv/core/Handler', 'js/conf/DataSourceConfiguration', 'js/co
                     href: collection.$.href
                 };
             },
-            compose: function(model, action, options){
+            compose: function (model, action, options) {
                 var ret = this.callBase();
                 ret.href = model.$.href;
                 return ret;
             }
         });
 
-        var ServerRestDataSource = RestDataSource.inherit('srv.handler.rest.RestDataSource',{
-            $defaultProcessorFactory : RestDataProcessor,
-            _getContext: function(factory, parent, data){
+        var ServerRestDataSource = RestDataSource.inherit('srv.handler.rest.RestDataSource', {
+            $defaultProcessorFactory: RestDataProcessor,
+            _getContext: function (factory, parent, data) {
                 // here we have a combined id
-                if(factory.classof && factory.classof(Model) && data[factory.prototype.idField].indexOf("/") > -1){
+                if (factory.classof && factory.classof(Model) && data[factory.prototype.idField].indexOf("/") > -1) {
                     var ids = data[factory.prototype.idField].split("/");
-                    data[factory.prototype.idField] = ids[ids.length-1];
+                    data[factory.prototype.idField] = ids[ids.length - 1];
                     var config = this.getConfigurationForModelClass(factory),
                         baseConfig = config,
                         stack = [config];
-                    for(var i = 0; i < ids.length - 1; i++){
+                    for (var i = 0; i < ids.length - 1; i++) {
                         baseConfig = config.$parent;
                         stack.unshift(baseConfig);
                     }
@@ -46,7 +46,7 @@ define(['require', 'srv/core/Handler', 'js/conf/DataSourceConfiguration', 'js/co
                         parentModel = context.createEntity(parentFactory, ids[i]);
                         parentModel.$parent = context.$contextModel;
                     }
-                    if(parentModel){
+                    if (parentModel) {
                         return parentModel.$context;
                     }
                 }
@@ -77,8 +77,8 @@ define(['require', 'srv/core/Handler', 'js/conf/DataSourceConfiguration', 'js/co
                     this.$dataSources.push(child);
                 }
 
-                if(child instanceof ResourceHandler){
-                    if(child.$.modelClassName){
+                if (child instanceof ResourceHandler) {
+                    if (child.$.modelClassName) {
                         this.$modelClassResourceHandler[child.$.modelClassName] = child;
                     }
                 }
@@ -164,7 +164,7 @@ define(['require', 'srv/core/Handler', 'js/conf/DataSourceConfiguration', 'js/co
 
             },
 
-            _getQueryParser: function(){
+            _getQueryParser: function () {
                 return RestQueryParser.RestQueryParser;
             },
             /**
@@ -173,7 +173,7 @@ define(['require', 'srv/core/Handler', 'js/conf/DataSourceConfiguration', 'js/co
              * @param {srv.handler.rest.ResourceHandler} resource
              * @return {*}
              */
-            parseQueryForResource: function(parameters, resource){
+            parseQueryForResource: function (parameters, resource) {
                 // TODO: add is query allowed
                 return this._getQueryParser().parse(parameters, Query.query());
             }

@@ -97,5 +97,5 @@ define(['require', 'js/core/Base', 'srv/handler/rest/ResourceHandler', 'flow'], 
             return parentResourceHandler;
 
         }
-    })
+    });
 });
