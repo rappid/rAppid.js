@@ -1,4 +1,4 @@
-define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'js/data/Collection', 'js/data/DataSource', 'js/data/Model', 'underscore'], function (Component, HttpError, flow, require, JSON, Collection, DataSource, Model, _) {
+define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'js/data/Collection', 'js/data/DataSource', 'js/data/Model', 'underscore', 'js/core/List'], function (Component, HttpError, flow, require, JSON, Collection, DataSource, Model, _, List) {
 
     return Component.inherit('srv.handler.rest.ResourceHandler', {
         defaults: {
@@ -46,44 +46,25 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
             return model.constructor.name === this.$resourceConfiguration.$.modelClassName;
         },
 
-        _fetchPathForModel: function (model, context, callback) {
-            var self = this,
-                rootResource = this.getRootResource(),
-                dataSource = this.getDataSource(context, this);
+        _getPathForModel: function (model, context) {
+            var dataSource = this.getDataSource(context, this);
 
-            var configuration = rootResource.$resourceConfiguration.$parent.getConfigurationForModelClassName(model.constructor.name);
-
-            if (!configuration && rootResource.$resourceConfiguration.$.modelClassName === model.constructor.name) {
-                configuration = rootResource.$resourceConfiguration;
-            }
+            var configuration = dataSource.getConfigurationForModelClass(model.factory);
 
             if (!configuration) {
                 throw new Error("No configuration found for " + model.constructor.name);
             }
 
-            var modelPath = configuration.$.path + "/" + model.identifier();
-
-            if (rootResource.isResponsibleForModel(model)) {
-                dataSource = rootResource.getDataSource(context);
+            var path = [configuration.$.path,model.identifier()];
+            var parentModel = model.$parent,
+                parentConfiguration = configuration.$parent;
+            while(parentModel){
+                path.unshift(parentConfiguration.$.path, parentModel.identifier());
+                parentModel = parentModel.$parent;
+                parentConfiguration = parentConfiguration.$parent;
             }
 
-
-            model = dataSource.createEntity(model.factory, model.identifier());
-            model.fetch(null, function (err, model) {
-                if (!err) {
-                    if (model.$parent) {
-                        self._fetchPathForModel(model.$parent, context, function (err, path) {
-                            callback(err, path + "/" + modelPath);
-                        });
-                    } else {
-                        callback(err, modelPath);
-                    }
-                } else {
-                    callback(err);
-                }
-            });
-
-
+            return path.join("/");
         },
 
 
@@ -134,7 +115,17 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
         _findCollection: function (context) {
             if (this.$parentResource) {
                 var parentCollection = this.$parentResource._findCollection(context);
-                var parent = parentCollection.createItem(this.$parentResource.$resourceId);
+
+                var id = this.$parentResource.$resourceId;
+                var modelSchema = parentCollection.$modelFactory.prototype.schema;
+                if(modelSchema.hasOwnProperty(parentCollection.$modelFactory.prototype.idField)){
+                    var type = modelSchema[parentCollection.$modelFactory.prototype.idField].type;
+                    if(type === Number){
+                        id = parseInt(id);
+                    }
+                }
+
+                var parent = parentCollection.createItem(id);
 
                 return parent.getCollection(this.$resourceConfiguration.$.path);
             } else {
@@ -199,44 +190,30 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
         _createWhereStatement: function (context, parameters) {
             return null;
         },
-        _fetchAllHrefsForModel: function (model, context, callback) {
+        _fetchAllHrefsForModel: function (model, context) {
             var self = this,
                 baseUri = context.request.urlInfo.baseUri + this.$restHandler.$.path + "/";
-            flow()
-                .seq(function (cb) {
-                    if (!model.$.href) {
-                        self._fetchPathForModel(model, context, function (err, path) {
-                            if (!err) {
-                                model.$.href = baseUri + path;
+
+            if(!model.$.href){
+                model.$.href = baseUri + this._getPathForModel(model);
+            }
+
+            for(var key in model.schema){
+                if(model.schema.hasOwnProperty(key)){
+                    var value = model.$[key];
+                    if (value instanceof Model) {
+                        value.$.href = baseUri + this._getPathForModel(value);
+                    } else if (value instanceof Collection) {
+                        value.$.href = model.$.href + "/" + key;
+                    } else if (value instanceof List) {
+                        value.each(function(item){
+                            if(item instanceof Model){
+                                item.$.href = baseUri + self._getPathForModel(item);
                             }
-                            cb(err);
-                        })
-                    } else {
-                        cb();
+                        });
                     }
-                })
-                .seq(function (cb) {
-                    flow()
-                        .parEach(model.schema, function (schemaObject, cb) {
-                            if (model.$[schemaObject._key] instanceof Model) {
-                                self._fetchPathForModel(model.$[schemaObject._key], context, function (err, path) {
-                                    if (err) {
-                                        model.$[schemaObject._key] = null;
-                                    } else {
-                                        model.$[schemaObject._key].$.href = baseUri + path;
-                                    }
-                                    cb();
-                                });
-                            } else if (model.$[schemaObject._key] instanceof Collection) {
-                                model.$[schemaObject._key].$.href = model.$.href + "/" + schemaObject._key;
-                                cb();
-                            } else {
-                                cb();
-                            }
-                        })
-                        .exec(cb);
-                })
-                .exec(callback);
+                }
+            }
         },
         /***
          *
@@ -275,10 +252,9 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
                             if (id) {
                                 item.$["href"] = context.request.urlInfo.uri + "/" + id;
 
-                                self._fetchAllHrefsForModel(item, context, cb);
-                            } else {
-                                cb();
+                                self._fetchAllHrefsForModel(item, context);
                             }
+                            cb();
                         })
                         .exec(cb);
                 })
@@ -398,9 +374,9 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
                 .seq(function (cb) {
                     model.fetch(null, cb);
                 })
-                .seq(function (cb) {
+                .seq(function () {
                     // fetch hrefs for all sub models and sub collections
-                    self._fetchAllHrefsForModel(model, context, cb);
+                    self._fetchAllHrefsForModel(model, context);
                 })
                 .exec(function (err) {
                     if (!err) {
