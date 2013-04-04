@@ -350,7 +350,9 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
 
                     if (id || id === 0) {
                         model.set('id', id);
-
+                        if(model.hrefField){
+                            model.set(model.hrefField, location);
+                        }
                         var schema = model.schema, schemaType;
                         for (var schemaKey in schema) {
                             if (schema.hasOwnProperty(schemaKey)) {
