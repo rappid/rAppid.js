@@ -1,4 +1,31 @@
 {
+    "all": [
+        {
+            "app": "core/ComponentTest.xml",
+            "test": "core/ComponentTests.js",
+            "type": "browser"
+        },
+        {
+            "app": "core/StageTest.xml",
+            "test": "core/StageTests.js",
+            "type": "browser"
+        },
+        {
+            "app": "ui/SelectionViewTest.xml",
+            "test": "ui/SelectionViewTests.js",
+            "type": "browser"
+        },
+        {
+            "app": "ui/SelectionViewTest.xml",
+            "test": "ui/SelectionViewTests.js",
+            "type": "browser"
+        },
+        {
+            "app": "ui/ItemsViewTest.xml",
+            "test": "ui/ItemsViewTests.js",
+            "type": "browser"
+        }
+    ],
     "core": [
         {
             "app": "core/ComponentTest.xml",
@@ -11,7 +38,7 @@
             "type": "browser"
         }
     ],
-    "c" : [
+    "c": [
         {
             "app": "ui/SelectionViewTest.xml",
             "test": "ui/SelectionViewTests.js",
