@@ -251,14 +251,14 @@ describe('parser test', function () {
             C.Parser.parse(string,RULE).length.should.equal(4);
         });
 
-        it("should not parse a , separated parameter list with spaces", function (done) {
+        it("should parse a , separated parameter list with spaces", function (done) {
             var string = "'abc'   ,   123213  , binding";
 
             try {
                 C.Parser.parse(string, RULE);
-                done("should not parse a , separated list with spaces")
-            } catch(e) {
                 done();
+            } catch(e) {
+                done("should parse a , separated list with spaces");
             }
         });
 
