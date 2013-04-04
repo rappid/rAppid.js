@@ -4,7 +4,7 @@ node_js:
 before_script:
   - "npm install -g grunt-cli"
 script:
-  - "mocha -R spec --ignore-leaks"
+  - "mocha -R spec"
   - "grunt webtest-saucelabs --force"
 env:
   global:
