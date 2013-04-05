@@ -11,7 +11,7 @@ define(['js/ui/View', 'js/type/Color'], function (View, Color) {
             _scale: 0
         },
 
-        events: ['on:selectColor'],
+        events: ['on:colorSelect'],
 
         _imageMouseDown: function (e) {
             e.preventDefault();
@@ -24,13 +24,13 @@ define(['js/ui/View', 'js/type/Color'], function (View, Color) {
 
             e.preventDefault();
             var self = this;
-            if(!this.$moveHandler){
+            if (!this.$moveHandler) {
                 this.$moveHandler = function (e) {
                     e.preventDefault && e.preventDefault();
                     e.stopPropagation();
 
                     if (self.$mouseDown) {
-                        if(e.changedTouches){
+                        if (e.changedTouches) {
                             e = e.changedTouches[0];
                         }
                         var pos = self.$.paletteImage.globalToLocal({x: e.pageX, y: e.pageY});
@@ -42,7 +42,7 @@ define(['js/ui/View', 'js/type/Color'], function (View, Color) {
                 };
             }
 
-            if(!this.$upHandler){
+            if (!this.$upHandler) {
                 this.$upHandler = function () {
                     self.$mouseDown = false;
 
@@ -83,18 +83,18 @@ define(['js/ui/View', 'js/type/Color'], function (View, Color) {
             this.set('color', new Color.HSB(hue, hsbColor.s, hsbColor.b));
         },
 
-        _triggerColorChange: function(){
+        _triggerColorChange: function () {
             this.$triggerColorTimeout && clearTimeout(this.$triggerColorTimeout);
 
             var self = this;
 
-            this.$triggerColorTimeout = setTimeout(function(){
-                self.trigger('on:selectColor', self.$.color);
-            },300);
+            this.$triggerColorTimeout = setTimeout(function () {
+                self.trigger('on:colorSelect', self.$.color);
+            }, 300);
         },
 
-        _renderColor: function(color){
-            if(color){
+        _renderColor: function (color) {
+            if (color) {
                 var hsbColor = color.toHSB();
                 var pos = {
                     x: Math.round(this.$.paletteSize * hsbColor.s * 0.01),
@@ -106,9 +106,9 @@ define(['js/ui/View', 'js/type/Color'], function (View, Color) {
                 });
             }
         },
-        _commitColor: function(color, oldColor){
-            if(color){
-                if(!oldColor || color.toHSB().h !== oldColor.toHSB().h){
+        _commitColor: function (color, oldColor) {
+            if (color) {
+                if (!oldColor || color.toHSB().h !== oldColor.toHSB().h) {
                     this.trigger('hueChanged');
                 }
             }
@@ -117,8 +117,8 @@ define(['js/ui/View', 'js/type/Color'], function (View, Color) {
         _hueBarDown: function (e) {
             this.$hueBarDown = true;
             var self = this;
-            if(!this.$hueBarMoveHandler){
-                this.$hueBarMoveHandler = function(e){
+            if (!this.$hueBarMoveHandler) {
+                this.$hueBarMoveHandler = function (e) {
                     e.preventDefault && e.preventDefault();
 
                     e.stopPropagation();
@@ -133,8 +133,8 @@ define(['js/ui/View', 'js/type/Color'], function (View, Color) {
                     return false;
                 };
             }
-            if(!this.$hueBarUpHandler){
-                this.$hueBarUpHandler = function(e){
+            if (!this.$hueBarUpHandler) {
+                this.$hueBarUpHandler = function (e) {
                     self.$hueBarDown = false;
                     self.dom(self.$stage.$window).unbindDomEvent('pointermove', self.$hueBarMoveHandler);
                     self.dom(self.$stage.$window).unbindDomEvent('pointerup', self.$hueBarUpHandler);
@@ -159,7 +159,7 @@ define(['js/ui/View', 'js/type/Color'], function (View, Color) {
 
         }.on('hueChanged'),
 
-        _preventDefault: function(e){
+        _preventDefault: function (e) {
             e.preventDefault();
         }
 
