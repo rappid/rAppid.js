@@ -360,6 +360,9 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
 
             identifier: function () {
                 return this.$[this.idField];
+            },
+            contextModel: function(){
+                return this.$context ? this.$context.$contextModel : null;
             }
         });
 
@@ -382,7 +385,7 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
 
                             type = schemaObject.type;
 
-
+                            // TODO: add idField validator with this reg ex ^(?:[\w\-](?<!_))+$
                             if (this._isUndefined(value, schemaObject) && this._isRequired(entity, schemaObject)) {
                                 errors.push(this._createError("isUndefinedError", key + " is required", key));
                             } else if (value && !this._isValidType(value, schemaObject.type)) {
