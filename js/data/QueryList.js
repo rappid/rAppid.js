@@ -46,6 +46,10 @@ define(["js/core/List" , "underscore", "js/data/Query", 'js/lib/query/ArrayExecu
             this._innerReset(this.$.list.$items);
         },
 
+        _onReset: function(){
+            this._innerReset(this.$.list.$items);
+        },
+
         _onItemAdded: function (e) {
             var ret = this._filterItem(e.$.item, e.index);
             if (ret === true) {

@@ -143,6 +143,34 @@ describe('js.data.QueryList', function () {
         });
     });
 
+    describe('#on list reset', function(){
+
+        it('should reset query list', function(){
+            var list = new C.List();
+            var query = new C.Query();
+            query.eql("name", "Adam");
+
+            var queryList = new C.QueryList({query: query, list: list});
+            expect(queryList.size()).to.be.equal(0);
+
+            list.reset([
+                {
+                    name: "Adam"
+                },
+                {
+                    name: "Bob"
+                },
+                {
+                    name: "Charlie"
+                }
+            ]);
+            expect(queryList.size()).to.be.equal(1);
+
+            list.reset();
+            expect(queryList.size()).to.be.equal(0);
+        })
+    });
+
     describe('#query with sort', function () {
 
         var list,
