@@ -56,11 +56,11 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
             }
 
             var path = [configuration.$.path, model.identifier()];
-            var parentModel = model.$parent,
+            var parentModel = model.$context.$contextModel,
                 parentConfiguration = configuration.$parent;
             while (parentModel) {
                 path.unshift(parentConfiguration.$.path, parentModel.identifier());
-                parentModel = parentModel.$parent;
+                parentModel = parentModel.$context.$contextModel;
                 parentConfiguration = parentConfiguration.$parent;
             }
 
@@ -257,8 +257,6 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
                         .seqEach(this.vars["collection"].$items, function (item, cb) {
                             var id = item.identifier();
                             if (id) {
-                                item.$["href"] = context.request.urlInfo.uri + "/" + id;
-
                                 self._fetchAllHrefsForModel(item, context);
                             }
                             cb();
