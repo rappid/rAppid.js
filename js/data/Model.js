@@ -216,8 +216,23 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
 
         isCreated: function() {
             return this._status() === STATE.CREATED;
-        }.onChange('id')
+        }.onChange('id'),
 
+        /**
+         * Converts the identifier to the given type in the schema
+         * @param identifier
+         * @return {*}
+         */
+        convertIdentifier: function (identifier) {
+            var idField = this.idField;
+            if (this.schema.hasOwnProperty(idField)) {
+                var schemaObject = this.schema[idField];
+                if (schemaObject.type && schemaObject.type === Number) {
+                    return parseInt(identifier);
+                }
+            }
+            return identifier;
+        }
     });
 
     function fetchSubModels(attributes, subModelTypes, delegates) {
