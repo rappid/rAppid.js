@@ -55,10 +55,10 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
                 throw new Error("No configuration found for " + model.constructor.name);
             }
 
-            var path = [configuration.$.path,model.identifier()];
+            var path = [configuration.$.path, model.identifier()];
             var parentModel = model.$parent,
                 parentConfiguration = configuration.$parent;
-            while(parentModel){
+            while (parentModel) {
                 path.unshift(parentConfiguration.$.path, parentModel.identifier());
                 parentModel = parentModel.$parent;
                 parentConfiguration = parentConfiguration.$parent;
@@ -112,24 +112,35 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
          * @return {*}
          * @private
          */
-        _findCollection: function (context) {
+        _findCollection: function (context, callback) {
             if (this.$parentResource) {
-                var parentCollection = this.$parentResource._findCollection(context);
-
-                var id = this.$parentResource.$resourceId;
-                var modelSchema = parentCollection.$modelFactory.prototype.schema;
-                if(modelSchema.hasOwnProperty(parentCollection.$modelFactory.prototype.idField)){
-                    var type = modelSchema[parentCollection.$modelFactory.prototype.idField].type;
-                    if(type === Number){
-                        id = parseInt(id);
-                    }
-                }
-
-                var parent = parentCollection.createItem(id);
-
-                return parent.getCollection(this.$resourceConfiguration.$.path);
+                var self = this;
+                flow()
+                    .seq("parentCollection", function (cb) {
+                        self.$parentResource._findCollection(context, cb);
+                    })
+                    .seq("parent", function (cb) {
+                        var id = self.$parentResource.$resourceId;
+                        var parentCollection = this.vars.parentCollection;
+                        var modelSchema = parentCollection.$modelFactory.prototype.schema;
+                        if (modelSchema.hasOwnProperty(parentCollection.$modelFactory.prototype.idField)) {
+                            var type = modelSchema[parentCollection.$modelFactory.prototype.idField].type;
+                            if (type === Number) {
+                                id = parseInt(id);
+                            }
+                        }
+                        var parent = parentCollection.createItem(id);
+                        parent.fetch(null, cb);
+                    })
+                    .exec(function (err, results) {
+                        if (!err) {
+                            callback && callback(null, results.parent.getCollection(self.$resourceConfiguration.$.path));
+                        } else {
+                            callback && callback(err);
+                        }
+                    });
             } else {
-                return context.dataSource.createCollection(Collection.of(this._getModelFactory()));
+                callback && callback(null, context.dataSource.createCollection(Collection.of(this._getModelFactory())));
             }
         },
 
@@ -194,20 +205,20 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
             var self = this,
                 baseUri = context.request.urlInfo.baseUri + this.$restHandler.$.path + "/";
 
-            if(!model.$.href){
+            if (!model.$.href) {
                 model.$.href = baseUri + this._getPathForModel(model);
             }
 
-            for(var key in model.schema){
-                if(model.schema.hasOwnProperty(key)){
+            for (var key in model.schema) {
+                if (model.schema.hasOwnProperty(key)) {
                     var value = model.$[key];
                     if (value instanceof Model) {
                         value.$.href = baseUri + this._getPathForModel(value);
                     } else if (value instanceof Collection) {
                         value.$.href = model.$.href + "/" + key;
                     } else if (value instanceof List) {
-                        value.each(function(item){
-                            if(item instanceof Model){
+                        value.each(function (item) {
+                            if (item instanceof Model) {
                                 item.$.href = baseUri + self._getPathForModel(item);
                             }
                         });
@@ -222,28 +233,24 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
          * @private
          */
         _index: function (context, callback) {
-            var collection = this._findCollection(context);
-
-            var parameters = context.request.urlInfo.parameter;
-
-            var query = this.$restHandler.parseQueryForResource(parameters, this);
-
-            collection = collection.query(query);
-
-            // TODO: refactor this
-//            var options = {
-//                limit: query.query.limit,
-//                offset: query.query.offset
-//            };
-            var options = this._createOptionsForCollectionFetch(context, parameters);
-
-            var self = this;
+            var self = this,
+                options;
 
             flow()
                 .seq("collection", function (cb) {
-                    collection.fetch(options, function (err, collection) {
-                        cb(err, collection);
-                    });
+                    self._findCollection(context, cb);
+                })
+                .seq(function () {
+                    var parameters = context.request.urlInfo.parameter;
+
+                    var query = self.$restHandler.parseQueryForResource(parameters, self);
+
+                    this.vars.collection = this.vars.collection.query(query);
+
+                    options = self._createOptionsForCollectionFetch(context, parameters);
+                })
+                .seq("collection", function (cb) {
+                    this.vars.collection.fetch(options, cb);
                 })
                 .seq(function (cb) {
                     flow()
@@ -263,11 +270,11 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
                     var body = "", results = [];
 
                     // switch context of collection to RestDataSource
-
+                    var collection = this.vars["collection"];
                     // call compose
                     var processor = self.$restHandler.$restDataSource.getProcessorForCollection(collection);
 
-                    results = processor.composeCollection(this.vars["collection"], null);
+                    results = processor.composeCollection(collection, null);
 
                     var res = {
                         count: this.vars["collection"].$itemsCount,
@@ -297,20 +304,26 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
          * @private
          */
         _create: function (context, callback) {
-            var collection = this._findCollection(context);
-            var model = collection.createItem();
 
-            var payload = context.request.params;
-
-            var processor = this.$restHandler.$restDataSource.getProcessorForModel(model);
-
-            model.set(processor.parse(model, payload));
-
-            model.set('created', new Date());
-
-            var self = this;
+            var self = this,
+                model,
+                processor;
 
             flow()
+                .seq("collection", function(cb){
+                    self._findCollection(context, cb);
+                })
+                .seq(function(){
+                    model = this.vars.collection.createItem();
+
+                    var payload = context.request.params;
+
+                    processor = self.$restHandler.$restDataSource.getProcessorForModel(model);
+
+                    model.set(processor.parse(model, payload));
+
+                    model.set('created', new Date());
+                })
                 .seq(function (cb) {
                     self._beforeModelCreate(model, context, cb);
                 })
@@ -324,7 +337,7 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
                 exec(function (err) {
                     if (!err) {
                         // TODO: do correct invalidation
-                        collection.invalidatePageCache();
+                        this.vars.collection.invalidatePageCache();
 
                         var body = JSON.stringify(processor.compose(model, null));
 
@@ -351,27 +364,28 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
          * @private
          */
         _show: function (context, callback) {
-            var self = this;
-
-            var modelFactory = this._getModelFactory();
-            var id = this.$resourceId;
-            var schema = modelFactory.prototype.schema;
-            if(schema.hasOwnProperty(modelFactory.prototype.idField)){
-                var type = schema[modelFactory.prototype.idField].type;
-                if(type === Number){
-                    id = parseInt(this.$resourceId);
-                }
-            }
-
-            var collection = this._findCollection(context);
-            var model = collection.createItem(id);
-
-            if (context) {
-                // TODO: build options
-            }
+            var self = this,
+                model;
 
             flow()
+                .seq("collection", function (cb) {
+                    self._findCollection(context, cb);
+                })
                 .seq(function (cb) {
+                    var modelFactory = self._getModelFactory();
+                    var id = self.$resourceId;
+                    var schema = modelFactory.prototype.schema;
+                    if (schema.hasOwnProperty(modelFactory.prototype.idField)) {
+                        var type = schema[modelFactory.prototype.idField].type;
+                        if (type === Number) {
+                            id = parseInt(id);
+                        }
+                    }
+                    model = this.vars.collection.createItem(id);
+
+                    if (context) {
+                        // TODO: build options
+                    }
                     model.fetch(null, cb);
                 })
                 .seq(function () {
@@ -418,27 +432,34 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
          * @private
          */
         _update: function (context, callback) {
-            var collection = this._findCollection(context);
-            var model = collection.createItem(this.$resourceId);
-
-            var payload = context.request.params;
-
-            var processor = this.$restHandler.$restDataSource.getProcessorForModel(model);
-
-            model.set(processor.parse(model, payload));
 
             var self = this,
-                options = {};
+                options = {},
+                model,
+                processor;
 
-            options.action = DataSource.ACTION.UPDATE;
-
-            // TODO: add hook to add session data like user id
-            if (this.$resourceConfiguration.$.upsert === true) {
-                options.upsert = true;
-                model.set(model.idField,this.$resourceId);
-            }
 
             flow()
+                .seq("collection", function (cb) {
+                    self._findCollection(context, cb);
+                })
+                .seq(function () {
+                    model = this.vars.collection.createItem(self.$resourceId);
+
+                    var payload = context.request.params;
+
+                    processor = self.$restHandler.$restDataSource.getProcessorForModel(model);
+
+                    model.set(processor.parse(model, payload || {}));
+
+                    options.action = DataSource.ACTION.UPDATE;
+
+                    // TODO: add hook to add session data like user id
+                    if (self.$resourceConfiguration.$.upsert === true) {
+                        options.upsert = true;
+                        model.set(model.idField, self.$resourceId);
+                    }
+                })
                 .seq(function (cb) {
                     self._beforeModelUpdate(model, context, cb);
                 })
@@ -448,10 +469,10 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
                 .seq(function (cb) {
                     self._afterModelUpdate(model, context, cb);
                 })
-                .exec(function (err) {
+                .exec(function (err, results) {
                     if (!err) {
                         // TODO: do correct invalidation
-                        collection.invalidatePageCache();
+                        results.collection.invalidatePageCache();
 
                         // TODO: generate the location header
                         var body = JSON.stringify(processor.compose(model, null));
@@ -515,12 +536,16 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
          * @private
          */
         _delete: function (context, callback) {
-            var collection = this._findCollection(context);
-            var model = collection.createItem(this.$resourceId);
-
-            var self = this;
+            var model,
+                self = this;
 
             flow()
+                .seq("collection", function(cb){
+                    self._findCollection(context, cb);
+                })
+                .seq(function(){
+                    model = this.vars.collection.createItem(self.$resourceId);
+                })
                 .seq(function (cb) {
                     self._beforeModelRemove(model, context, cb);
                 })
