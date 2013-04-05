@@ -122,13 +122,7 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
                     .seq("parent", function (cb) {
                         var id = self.$parentResource.$resourceId;
                         var parentCollection = this.vars.parentCollection;
-                        var modelSchema = parentCollection.$modelFactory.prototype.schema;
-                        if (modelSchema.hasOwnProperty(parentCollection.$modelFactory.prototype.idField)) {
-                            var type = modelSchema[parentCollection.$modelFactory.prototype.idField].type;
-                            if (type === Number) {
-                                id = parseInt(id);
-                            }
-                        }
+                        id = parentCollection.$modelFactory.prototype.convertIdentifier(self.$parentResource.$resourceId);
                         var parent = parentCollection.createItem(id);
                         parent.fetch(null, cb);
                     })
@@ -372,13 +366,7 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
                 .seq(function (cb) {
                     var modelFactory = self._getModelFactory();
                     var id = self.$resourceId;
-                    var schema = modelFactory.prototype.schema;
-                    if (schema.hasOwnProperty(modelFactory.prototype.idField)) {
-                        var type = schema[modelFactory.prototype.idField].type;
-                        if (type === Number) {
-                            id = parseInt(id);
-                        }
-                    }
+                    id = modelFactory.prototype.convertIdentifier(id);
                     model = this.vars.collection.createItem(id);
 
                     if (context) {
@@ -455,7 +443,7 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
                     // TODO: add hook to add session data like user id
                     if (self.$resourceConfiguration.$.upsert === true) {
                         options.upsert = true;
-                        model.set(model.idField, self.$resourceId);
+                        model.set(model.idField, model.factory.prototype.convertIdentifier(self.$resourceId));
                     }
                 })
                 .seq(function (cb) {
