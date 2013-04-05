@@ -17,7 +17,8 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
         return str.join(".");
     };
 
-    var bindingsDestroyed = 0;
+    var bindingsDestroyed = 0,
+        undefined;
 
     var Bindable;
     var Binding = EventDispatcher.inherit("js.core.Binding",
@@ -387,6 +388,9 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
                 if (this.$subBinding) {
                     return this.$subBinding.getValue();
                 } else {
+                    if(this.$cachedValue !== undefined){
+                        return this.$cachedValue;
+                    }
                     this.$originalValue = null;
                     if (this.$.fnc && !this.$jsonObject) {
                         this.$originalValue = this.$.fnc.apply(this.$.scope, this._getFncParameters());
@@ -395,7 +399,8 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
                     } else if(this.$jsonObject) {
                         this.$originalValue = this.$.scope.get(this.$jsonObject, this.$.path.slice(1));
                     }
-                    return this.transform.call(this.$.scope, this.$originalValue);
+                    this.$cachedValue = this.transform.call(this.$.scope, this.$originalValue);
+                    return this.$cachedValue;
                 }
 
             },
@@ -414,6 +419,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
              * This method triggers the binding and syncs the target with the scope
              */
             triggerBinding: function () {
+                this.$cachedValue = undefined;
                 // get value
                 var val = this.getContextValue();
 
