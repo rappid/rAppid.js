@@ -6,6 +6,7 @@ define(["inherit"], function(inherit){
     var Base = inherit.Base.inherit("js.core.Base",{
 
         ctor: function () {
+            this.$functionTimeoutMap = {};
             // generate unique id
             this.$cid = ++cid;
 
@@ -51,7 +52,21 @@ define(["inherit"], function(inherit){
                     }
                 }
             }
+        },
+        /***
+         *
+         * @param {Function} fnc - the function to call
+         * @param {Number} delay - delay in ms
+         * @private
+         */
+        _callFunctionDelayed: function(fnc, delay){
+            delay = delay || 300;
+            var key = fnc.toString();
+            this.$functionTimeoutMap[key] && clearTimeout(this.$functionTimeoutMap[key]);
+
+            this.$functionTimeoutMap[key] = setTimeout(fnc,delay);
         }
+
     });
 
     Base.logger = [];
