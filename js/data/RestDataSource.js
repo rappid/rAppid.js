@@ -349,7 +349,7 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
                     var id = this.extractIdFromLocation(location, request);
 
                     if (id || id === 0) {
-                        model.set('id', id);
+                        model.set(model.idField, id);
                         if(model.hrefField){
                             model.set(model.hrefField, location);
                         }
