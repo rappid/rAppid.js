@@ -308,6 +308,8 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
                     return;
                 }
 
+                this.invalidateValueCache();
+
                 // remove subBindings!
                 if (this.$subBinding) {
                     this.$subBinding.destroy();
@@ -425,7 +427,6 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
              * This method triggers the binding and syncs the target with the scope
              */
             triggerBinding: function () {
-                this.invalidateValueCache();
                 // get value
                 var val = this.getContextValue();
 
