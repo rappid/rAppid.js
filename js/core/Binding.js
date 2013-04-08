@@ -109,7 +109,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
 
                         // TODO: remove this closure
                         var cb = function () {
-                            self.triggerBinding();
+                            self._callback();
                         };
 
                         var para;
@@ -386,6 +386,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
              */
             getValue: function () {
                 if (this.$subBinding) {
+                    this.$subBinding.invalidateValueCache();
                     return this.$subBinding.getValue();
                 } else {
                     if(this.$cachedValue !== undefined){
@@ -404,6 +405,11 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
                 }
 
             },
+
+            invalidateValueCache: function(){
+                this.$cachedValue = undefined;
+            },
+
             /**
              * Returns the value in the context of the surrounding bindings
              * @return {*}
@@ -419,7 +425,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
              * This method triggers the binding and syncs the target with the scope
              */
             triggerBinding: function () {
-                this.$cachedValue = undefined;
+                this.invalidateValueCache();
                 // get value
                 var val = this.getContextValue();
 
