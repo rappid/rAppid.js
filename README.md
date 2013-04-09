@@ -1,17 +1,38 @@
 [![Build Status](https://travis-ci.org/it-ony/rAppid.js.png?branch=dev)](https://travis-ci.org/it-ony/rAppid.js)
 [![Selenium Test Status](https://saucelabs.com/buildstatus/rappidjs)](https://saucelabs.com/u/rappidjs)
 
-# rAppid.js - the way you want to do it.
+# rAppid.js - the declarative Rich Internet Application Javascript MVC Framework
 ## Introduction
 
-rAppid.js is a declarative javascript web application framework for rapid web application development. It allows you to use XML to define the structure of the application UI and to configure components like datasources or routes. The XML (XAML) gets translated to javascript components during runtime which will render itself as HTML5 DOM elements. This enables a rapid development of application.
+rAppid.js is a declarative javascript web application framework for rapid web application development. It allows you to use XML to define the structure of the application and to configure components like datasources or routes. The XML (XAML) gets translated to javascript components during runtime which will render itself as HTML5 DOM elements. This enables a rapid development of application.
+
+Designed first as a pure client side javascript library rAppid.js now includes an expendable web server with a request pipeline and different request handlers.
 
 Visit http://www.rappidjs.com for quick start and documentation.
 
-## Development
+## Start using it in 3 steps
 
-rAppid.js is currently under rapid development. The core features and life cycles are defined, but might be modified.
-For more information and documentation of <rAppid.js /> lookup our project home http://www.rappidjs.com.
+Install it using [npm](https://npmjs.org/).
+
+```
+sudo npm install -g rAppid.js
+```
+
+Create a new project with the new `rappidjs` command
+
+```
+rappidjs create app MyProject /my/project/directory
+```
+
+Start the build in web server
+```
+cd /my/project/directory
+rappidjs server .
+```
+
+Then open http://localhost in your web browser.
+Stop the server by pressing `Ctrl + C` in your terminal and start reading our (documentation)[http://wiki.rappidjs.com].
+
 
 ## Features 
 * Dependency loading (via requirejs)
@@ -29,44 +50,8 @@ For more information and documentation of <rAppid.js /> lookup our project home 
 * Server side rendering with rAppid.js-server for SEO
 * optimize build
 
-## Installation
-The installation of rAppid.js is simply done via [npm](http://npmjs.org/).
+## Need help?
 
-```
-npm install rAppid.js -d -g
-```
+If you have any problems with the framework feel free to contact us (support@rappidjs.com).
+Follow [@rappidjs](https://twitter.com/rappidjs) on twitter to keep up with the latest news.
 
-*Note*: If you want to use rAppid.js direct from github, you have to link the rAppid.js file in the js/lib directory.
-
-
-
-## Command-line interface
-rAppid.js comes with a command-line interface to setup projects, install packages and updated modules.
-Open a terminal and type 
-
-```
-rappidjs
-```
-
-to see the available commands. Type 
-
-```
-rappidjs help <command> 
-```
-
-to see the usage of the command.
-
-
-For a guided creation of an application or library project execute
-```
-rappidjs interactive
-```
-
-## Setup an rAppid.js application project 
-```
-rappidjs create app <ApplicationName> [<TargetDirectory>]
-```
-
-The ```create``` command will setup the directory structure and install the required modules, so that you can concentrate on developing application. Under the target directory there will be an directory named ```public```. Open the ```index.html``` file in your Browser or even better configurate the public directory as website root in your preferred web-server.
-
-*Note: If you want to test your application without configuring a web-server in a Google Chrome Browser, you have to start Chrome with the follwing parameters ```--disable-web-security```*
