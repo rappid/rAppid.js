@@ -31,7 +31,7 @@ rappidjs server .
 ```
 
 Then open http://localhost in your web browser.
-Stop the server by pressing `Ctrl + C` in your terminal and start reading our (documentation)[http://wiki.rappidjs.com].
+Stop the server by pressing `Ctrl + C` in your terminal and start reading our [documentation](http://wiki.rappidjs.com).
 
 
 ## Features 
