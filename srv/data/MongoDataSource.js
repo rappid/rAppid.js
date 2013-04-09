@@ -123,7 +123,8 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
             port: 27017,
             poolSize: 2,
             database: null,
-            autoReconnect: true
+            autoReconnect: true,
+            w: 1
         },
 
         $defaultProcessorFactory: MongoDataProcessor,
@@ -132,7 +133,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
 
             var server = new MongoDb.Server(this.$.host, this.$.port, {});
 
-            var db = new MongoDb.Db(this.$.database, server, {});
+            var db = new MongoDb.Db(this.$.database, server, {w: this.$.w});
             db.open(callback);
             return db;
         },
