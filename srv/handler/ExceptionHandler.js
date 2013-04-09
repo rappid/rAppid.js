@@ -15,7 +15,7 @@ define(['srv/core/Handler', 'srv/core/HttpError', 'underscore'], function(Handle
             return false;
         },
 
-        handleRequest: function(context) {
+        handleRequest: function(context, callback) {
 
             // TODO: display error details only for special user or in special mode
             // check authorisation
@@ -55,6 +55,8 @@ define(['srv/core/Handler', 'srv/core/HttpError', 'underscore'], function(Handle
 
             response.write(body);
             response.end();
+
+            callback && callback();
 
         }
     });
