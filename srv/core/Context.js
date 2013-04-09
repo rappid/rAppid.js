@@ -11,7 +11,6 @@ define(['js/core/EventDispatcher', 'url', 'querystring', 'underscore', 'flow', '
                     this.$processingHooks = {};
 
                     this.server = server;
-                    this.session = new server.$serverSessionFactory();
                     this.identity = new Identity(this, server);
 
                     this.endPoint = endPoint;

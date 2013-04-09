@@ -30,22 +30,20 @@ define(['srv/core/Filter', 'require', 'flow', 'js/data/DataSource', 'srv/core/Se
         },
 
         beginRequest: function (context, callback) {
+            if(context.request.url === "/favicon.ico"){
+                callback && callback();
+                return;
+            }
             var sessionName = this.$.sessionName,
                 sessionId = context.request.cookie[sessionName],
-                session = context.session,
-                dataSourceContext;
+                session;
 
-            // set session id if available
-            sessionId && session.set("id", sessionId);
+            session = this.$dataSource.createEntity(ServerSession, sessionId);
+            context.session = session;
             session.$sessionFilter = this;
-
-            // TODO: determinate correct context from data source
-            dataSourceContext = this.$dataSource.getContextByProperties();
-            dataSourceContext.addEntity(session);
 
             // start session
             session.start(callback);
-
         },
 
         generateSessionId: function () {
@@ -63,9 +61,9 @@ define(['srv/core/Filter', 'require', 'flow', 'js/data/DataSource', 'srv/core/Se
                 sessionName = this.$.sessionName,
                 sessionId = session.sessionId;
 
-            if (session.$started && context.request.cookie[sessionName] !== sessionId) {
+            if (session && session.$started && context.request.cookie[sessionName] !== sessionId) {
                 // store session id in cookie
-                context.response.cookie.set(sessionName, sessionId);
+                context.response.cookies.set(sessionName, sessionId);
             }
 
             callback();
@@ -76,21 +74,26 @@ define(['srv/core/Filter', 'require', 'flow', 'js/data/DataSource', 'srv/core/Se
             // on end, save the session yeah!
             var session = context.session, self = this;
 
-            session.set('expires', this._getExpiresDate());
-            session.save({
-                id: session.sessionId
-            }, function (err) {
-                if(err){
-                    self.log("Couldn't save session.", "warn");
-                }
-                callback();
-            });
+            if(session){
+                session.set({
+                    'expires': this._getExpiresDate(),
+                    'sessionId' : session.sessionId
+                });
+                session.save(null, function (err) {
+                    if(err){
+                        self.log("Couldn't save session.", "warn");
+                    }
+                    callback();
+                });
+            } else {
+                callback && callback();
+            }
 
         },
 
         _getExpiresDate: function () {
             var date = new Date();
-            date.setTime(date.getTime() + this.$.timeout * 1000);
+            date.setTime(date.getTime() + this.$.timeout * 1000 * 60 );
             return date;
         }
 

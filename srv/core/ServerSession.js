@@ -2,9 +2,18 @@ define(['js/data/Model'], function (Model) {
     return Model.inherit('srv.core.ServerSession', {
 
         schema: {
-            id: String,
-            expires: Date
+            expires: Date,
+            data: {
+                type: Object,
+                required: false
+            }
         },
+
+        defaults: {
+            data: Object
+        },
+
+        idField: "sessionId",
 
         start: function (callback) {
             var self = this;
@@ -12,21 +21,16 @@ define(['js/data/Model'], function (Model) {
             if (this.$started) {
                 internalCallBack();
             } else {
-                if (this.$.id) {
-                    this.sessionId = this.$.id;
+                if (this.$.sessionId) {
+                    this.sessionId = this.$.sessionId;
                     // fetch session with session id
                     this.fetch(null, function (err) {
                         if (err) {
-                            // if session couldn't be fetched
                             self.log("Couldn't fetch session.", "warn");
-                            // set session as new
-                            self.set('id', undefined);
                         } else if (self.$.expires.getTime() < (new Date()).getTime()) {
                             // if session is expired
                             // clear session data
                             self.clear();
-                            // and set old session id
-                            self.set('id', self.sessionId);
                         }
 
                         internalCallBack();
@@ -37,10 +41,34 @@ define(['js/data/Model'], function (Model) {
                 }
             }
 
-            function internalCallBack(err){
+            function internalCallBack(err) {
                 self.$started = true;
                 callback(err);
             }
+        },
+        /***
+         *
+         * @param {String} key
+         * @param data
+         */
+        setItem: function(key, data){
+            this.$.data[key] = data;
+        },
+
+        /**
+         *
+         * @param {String} key
+         * @return {*|Object|*|*}
+         */
+        getItem: function(key){
+            return this.$.data[key];
+        },
+
+        /**
+         * clears all items
+         */
+        clearItems: function(){
+            this.set('data', {});
         }
     });
 });
