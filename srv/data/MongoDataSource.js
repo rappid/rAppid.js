@@ -117,6 +117,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
         defaults: {
             username: null,
             password: null,
+            collectionPageSize: 500,
 
             host: 'localhost',
             port: 27017,
@@ -238,7 +239,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
             var processor = this.getProcessorForModel(model),
                 data = processor.compose(model, action, options);
 
-            _.defaults(options || {}, {safe: true, upsert: false});
+            _.defaults(options || {}, {safe: true, upsert: !!configuration.$.upsert});
 
             // here we have a polymorphic type
             if (configuration.$.modelClassName !== model.constructor.name) {
@@ -328,9 +329,14 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
             }
 
             // TODO: add query, fields and options
-            var self = this, connection, where = this._getWhereConditionForCollection(rootCollection);
+            var self = this,
+                where = this._getWhereConditionForCollection(rootCollection);
 
+
+            var offset = collectionPage.$offset;
+            var limit = collectionPage.$limit;
             // TODO: convert query to MongoQuery
+
 
             // here we have a polymorphic type
             if (configuration.$.modelClassName !== modelClassName) {
@@ -349,9 +355,11 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
                         if (sort) {
                             cursor = cursor.sort(sort);
                         }
-                        if (options.limit) {
-                            cursor = cursor.limit(options.limit);
-                        }
+
+                        cursor = cursor.limit(limit);
+                        cursor = cursor.skip(offset);
+
+
                         cursor.toArray(function (err, results) {
                             if (!err) {
                                 var processor = self.getProcessorForCollection(rootCollection),
@@ -365,7 +373,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
                     })
                     .seq(function (cb) {
                         this.vars["cursor"].count(function (err, count) {
-                            collectionPage.$itemsCount = count;
+                            collectionPage.$collection.$itemsCount = count;
                             cb(err);
                         });
                     })
@@ -496,7 +504,13 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
             }
 
             return this.callBase();
+        },
+        createCollection: function (factory, options, context) {
+            options = options || {};
 
+            options.pageSize = options.pageSize || this.$.collectionPageSize;
+
+            return this.callBase(factory, options, context);
         }
     });
 
