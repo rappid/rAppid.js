@@ -8,8 +8,8 @@ define(['srv/core/AuthenticationFilter'], function(AuthenticationFilter) {
         },
 
         _saveAuthentication: function(context, authentication) {
-            if (authentication && authentication.token) {
-                context.session.setItem(this.$.sessionKey, authentication.token);
+            if (authentication && authentication.data) {
+                context.session.setItem(this.$.sessionKey, authentication.data);
             } else {
                 throw new Error("Authentication token not found");
             }
