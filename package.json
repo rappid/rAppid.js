@@ -47,8 +47,7 @@
     "xmlhttprequest": "latest",
     "xmldom": "latest"
   },
-  "optionalDependencies": {
-  },
+  "optionalDependencies": {},
   "devDependencies": {
     "saucelabs-tunnel": "*",
     "saucelabs": "*",
@@ -59,7 +58,8 @@
     "grunt": "~0.4.0",
     "grunt-contrib-connect": "*",
     "wd": "*",
-    "supertest": "~0.5.1"
+    "supertest": "~0.5.1",
+    "mongodb": "*"
   },
   "license": "MIT",
   "engine": {
