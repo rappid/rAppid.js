@@ -3,7 +3,7 @@ define(['srv/core/Handler', 'srv/core/AuthenticationFilter', 'srv/core/HttpError
     return Handler.inherit('srv.handler.SessionHandler', {
 
         defaults: {
-            path: "/api/authentication"
+            path: "/api/authentications"
         },
 
         isResponsibleForRequest: function (context) {
@@ -47,6 +47,23 @@ define(['srv/core/Handler', 'srv/core/AuthenticationFilter', 'srv/core/HttpError
                 // current authentication
 
                 if (method === "GET") {
+                    var authenticationFilters = this._getAuthenticationFilters();
+                    for(var i = 0; i < authenticationFilters.length; i++){
+                        var filter = authenticationFilters[i];
+                        var authenticationData = context.session.getItem(filter.$.sessionKey);
+                        if(authenticationData){
+                            var response = context.response;
+
+                            response.writeHead(200, "", {
+                                'Content-Type': 'application/json; charset=utf-8'
+                            });
+
+                            response.write(JSON.stringify(authenticationData), 'utf8');
+                            response.end();
+                            return;
+                        }
+                    }
+                    throw new HttpError("Resource not found.", 404);
                     // TODO: retrieve authentications
                 } else if (method === "DELETE") {
                     // TODO: logout
@@ -86,6 +103,20 @@ define(['srv/core/Handler', 'srv/core/AuthenticationFilter', 'srv/core/HttpError
                     return filter;
                 }
             }
+
+            return null;
+        },
+
+        _getAuthenticationFilters: function(){
+            var filters = this.$server.$filters.$filters;
+            var ret = [];
+            for (var i = 0; i < filters.length; i++) {
+                var filter = filters[i];
+                if (filter instanceof AuthenticationFilter) {
+                    ret.push(filter);
+                }
+            }
+            return ret;
         }
 
     });
