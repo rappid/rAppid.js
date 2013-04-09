@@ -1,7 +1,8 @@
 module.exports = function (grunt) {
     var flow = require("flow.js").flow,
         tunnel,
-        afterWebTestCallback;
+        afterWebTestCallback,
+        dbName = "ticketTest";
 
     grunt.loadNpmTasks('grunt-contrib-connect');
 
@@ -67,7 +68,6 @@ module.exports = function (grunt) {
 
     });
 
-
     grunt.registerTask('connectToSauceLabs', 'Establish a tunnel between this machine an saucelabs.com', function (username, password) {
 
         var done = this.async(),
@@ -123,6 +123,123 @@ module.exports = function (grunt) {
 
     grunt.registerTask('webtest-local', ["connect", "runWebTests"]);
 
+    grunt.registerTask('test', ['unit-tests', 'server-tests']);
+
+    grunt.registerTask('unit-tests', 'Runs unit-tests for rAppid.js', function () {
+        var done = this.async();
+        require('child_process').exec('mocha -R spec', function (err, stdOut) {
+            grunt.log.write(stdOut);
+            done(err);
+        });
+    });
+
+    grunt.registerTask('server-tests', 'Runs tests for rAppid.js server side', function() {
+        var done = this.async(),
+            childProcess = require('child_process'),
+            Path = require("path"),
+            Fs = require("fs"),
+            mochaError,
+            serverProcess,
+            callbackCalled;
+
+        flow()
+            .seq(function(cb) {
+                flow()
+                    .seq(function() {
+                        var basePath = Path.join(__dirname, "test", "server", "rest"),
+                            paths = {};
+
+                        paths[Path.join(basePath, "js")] = __dirname + "/js";
+                        paths[Path.join(basePath, "srv")] = __dirname + "/srv";
+
+                        for (var base in paths) {
+                            if (paths.hasOwnProperty(base) && !Fs.existsSync(base)) {
+                                // sym link missing -> create it
+                                Fs.symlinkSync(paths[base], base);
+                            }
+                        }
+                    })
+                    .seq(function (cb) {
+                        childProcess.exec('mongo ' + dbName + ' test/server/setup/setup_mongo.js', function (err, stdOut) {
+                            grunt.log.write(stdOut);
+                            cb(err);
+                        });
+                    })
+                    .seq(function (cb) {
+
+                        // start server
+                        serverProcess = childProcess.spawn(__dirname + "/bin/rappidjs", ["server", __dirname + "/test/server/rest", "--environment=test"]);
+
+                        serverProcess.stdout.setEncoding("utf8");
+                        serverProcess.stderr.setEncoding("utf8");
+
+                        serverProcess.stdout.on('data', function (data) {
+
+                            if (/server\sstarted/.test(data) && !callbackCalled) {
+                                !callbackCalled && cb();
+                                callbackCalled = true;
+                            }
+
+                            grunt.log.write(data);
+                        });
+
+                        serverProcess.stderr.on('data', function (data) {
+                            grunt.log.error(data);
+                        });
+
+                        serverProcess.on('close', function (code) {
+                            grunt.log.write('rappidjs server process exited with code ' + code);
+                            !callbackCalled && cb(code || true);
+                            callbackCalled = true;
+                        });
+
+                    })
+                    .exec(cb);
+            })
+            .seq(function(cb) {
+
+                require('child_process').exec('mocha -R spec test/server/test/RestApiTest.js', function (err, stdOut, stdErr) {
+                    grunt.log.write(stdOut);
+                    grunt.log.write(stdErr);
+                    mochaError = err;
+                    cb();
+                });
+            })
+            .seq(function(cb) {
+                // clean up
+
+                flow()
+                    .seq(function (cb) {
+                        // shutdown server
+
+                        if (serverProcess) {
+                            serverProcess.on('close', function (code, signal) {
+                                cb();
+                            });
+
+                            serverProcess.kill("SIGINT");
+                        } else {
+                            cb();
+                        }
+                    })
+                    .seq(function(cb) {
+                        // cleanup database
+                        childProcess.exec('mongo ' + dbName + ' --eval "db.dropDatabase()"', function () {
+                            cb();
+                        });
+                    })
+                    .exec(cb);
+            })
+            .seq(function() {
+                if (mochaError) {
+                    throw new Error("Some tests has errors");
+                }
+            })
+            .exec(function(err) {
+                done(err ? false : null);
+            });
+
+    });
 
     grunt.registerTask("default");
 

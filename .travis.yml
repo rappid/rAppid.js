@@ -6,6 +6,8 @@ before_script:
 script:
   - "mocha -R spec"
   - "grunt webtest-saucelabs --force"
+  - "grunt server-tests"
+services: mongodb
 env:
   global:
    - secure: "PXKszsSMkq3W6JrQmRZwHJ3BJTxAQ6m4Ac/QXCnTbWzXPLn95otw5II0DSX+\nfdbDKwPfvaAd+j8X6LJkBlkwpzpTUf9s9V3gccvraq14E7UG8Sz1rHqQOlY4\nSrirb0DUQVeVKikFz0LZkYBetAspNr6M+Z136kvDqgi6/4FGbVM="

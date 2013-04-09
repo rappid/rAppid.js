@@ -47,10 +47,7 @@
     "xmlhttprequest": "latest",
     "xmldom": "latest"
   },
-  "optionalDependencies": {
-    "xmlhttprequest": "latest",
-    "xmldom": "latest"
-  },
+  "optionalDependencies": {},
   "devDependencies": {
     "saucelabs-tunnel": "*",
     "saucelabs": "*",
@@ -60,7 +57,9 @@
     "pegjs": "*",
     "grunt": "~0.4.0",
     "grunt-contrib-connect": "*",
-    "wd": "*"
+    "wd": "*",
+    "supertest": "~0.5.1",
+    "mongodb": "*"
   },
   "license": "MIT",
   "engine": {
