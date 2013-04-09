@@ -55,7 +55,8 @@ define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "fl
             determinateContextAttribute: "href",
             parsePayloadOnCreate: true,
             parsePayloadOnUpdate: true,
-            useSafeHttpMethods: false
+            useSafeHttpMethods: false,
+            collectionPageSize: 100
         },
 
         ctor: function () {
