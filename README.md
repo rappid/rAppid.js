@@ -34,21 +34,43 @@ Then open http://localhost in your web browser.
 Stop the server by pressing `Ctrl + C` in your terminal and start reading our [documentation](http://wiki.rappidjs.com).
 
 
-## Features 
+## Features
+
+### Client side
+
 * Dependency loading (via requirejs)
-* Combination of XAML-Components and HTML5
-* Code behind + XML
+* XAML - Use custom components and HTML5 side-by-side
+* Code-Behind - keep your application logic in a separate javascript file
 * Model-View Binding, Two-Way Binding, Function Binding
 * Dependency Injection
-* Inline JavaScript usage in XAML
 * Virtual / Computed Attributes
 * Active Record Pattern for Models
 * Single Instance Model Stores
 * Abstract data access layer
-* Datasources with Processors and Format Processors (RestDataSource, LocalStorageDataSource, ...)
+* customizable Data sources with Processors and Format Processors
+    * RestDataSource
+    * LocalStorageDataSource
+    * MongoDataSource *available on the server*
 * i18n
-* Server side rendering with rAppid.js-server for SEO
-* optimize build
+* Router, History, ModuleLoader
+* MessageBus
+* WindowManager, Windows & Dialogs
+* expandable Validation System
+* supports optimizing & minifying
+* Command-Line Interface
+
+### Server side
+
+The rAppid.js server is a modular architecture web server based on nodejs.
+
+* Multiple `EndPoint`s (http, https, spdy)
+* Request Pipeline
+* RequestHandler
+    * StaticFile - delivers static files
+    * REST - simply provide an REST API
+    * NodeRendering - makes your RIA readable for search engines
+* Authentication & Authorization System
+* Session support
 
 ## Need help?
 
