@@ -63,7 +63,7 @@ Stop the server by pressing `Ctrl + C` in your terminal and start reading our [d
 
 The rAppid.js server is a modular architecture web server based on nodejs.
 
-* Multiple `EndPoint`s (http, https, spdy)
+* Multiple EndPoints (http, https, spdy)
 * Request Pipeline
 * RequestHandler
     * StaticFile - delivers static files
