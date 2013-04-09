@@ -120,8 +120,9 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
                         self.$parentResource._findCollection(context, cb);
                     })
                     .seq("parent", function (cb) {
-                        var id = self.$parentResource.$resourceId;
-                        var parentCollection = this.vars.parentCollection;
+                        var id = self.$parentResource.$resourceId,
+                            parentCollection = this.vars.parentCollection;
+
                         id = parentCollection.$modelFactory.prototype.convertIdentifier(self.$parentResource.$resourceId);
                         var parent = parentCollection.createItem(id);
                         parent.fetch(null, cb);
@@ -134,7 +135,7 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
                         }
                     });
             } else {
-                callback && callback(null, context.dataSource.createCollection(Collection.of(this._getModelFactory())));
+                callback && callback(null, context.dataSource.createCollection(Collection.of(this._getModelFactory()), {pageSize: 100}));
             }
         },
 
@@ -162,9 +163,6 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
         _createOptionsForCollectionFetch: function (context, parameters) {
 
             var options = {};
-            if (parameters["limit"]) {
-                options["limit"] = parseInt(parameters["limit"]);
-            }
 
             var sort = this._createSortStatement(context, parameters);
             if (sort) {
@@ -228,60 +226,95 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
          */
         _index: function (context, callback) {
             var self = this,
-                options;
+                options,
+                startIndex = 0,
+                endIndex = 0,
+                offset = 0,
+                limit = 0,
+                pages = [],
+                items;
 
             flow()
                 .seq("collection", function (cb) {
                     self._findCollection(context, cb);
                 })
-                .seq(function () {
+                .seq(function (cb) {
                     var parameters = context.request.urlInfo.parameter;
 
                     var query = self.$restHandler.parseQueryForResource(parameters, self);
 
                     this.vars.collection = this.vars.collection.query(query);
-
+                    var pageSize = context.dataSource.$.collectionPageSize;
                     options = self._createOptionsForCollectionFetch(context, parameters);
+
+                    if (parameters["limit"]) {
+                        limit = parseInt(parameters["limit"]);
+                    }
+
+                    if (!limit || isNaN(limit)) {
+                        limit = 100;
+                    }
+
+                    if (parameters["offset"]) {
+                        offset = parseInt(parameters["offset"]);
+                    }
+
+                    // calculate page
+                    limit = limit > pageSize ? pageSize : limit;
+                    startIndex = offset || 0;
+                    endIndex = offset + limit;
+
+                    var firstPage = Math.floor(offset / pageSize),
+                        lastPage = Math.floor((offset + limit) / pageSize);
+
+                    for(var i = firstPage; i <= lastPage; i++){
+                        pages.push(i);
+                    }
+
+                    cb();
                 })
-                .seq("collection", function (cb) {
-                    this.vars.collection.fetch(options, cb);
-                })
-                .seq(function (cb) {
+                .seq(function(cb){
+                    var collection = this.vars.collection;
                     flow()
-                        .seqEach(this.vars["collection"].$items, function (item, cb) {
-                            var id = item.identifier();
-                            if (id) {
-                                self._fetchAllHrefsForModel(item, context);
-                            }
-                            cb();
+                        .seqEach(pages, function(page, cb){
+                            collection.fetchPage(page, options, cb);
                         })
                         .exec(cb);
                 })
                 .seq(function (cb) {
+                    items = this.vars["collection"].$items.slice(startIndex, endIndex);
+
+                    cb();
+                })
+                .seq(function (cb) {
                     var response = context.response;
-                    var body = "", results = [];
 
                     // switch context of collection to RestDataSource
                     var collection = this.vars["collection"];
                     // call compose
                     var processor = self.$restHandler.$restDataSource.getProcessorForCollection(collection);
 
-                    results = processor.composeCollection(collection, null);
+                    var results = [];
 
+                    items.forEach(function(item){
+                        var id = item.identifier();
+                        if (id) {
+                            self._fetchAllHrefsForModel(item, context);
+                        }
+                        results.push(processor.compose(item));
+                    });
                     var res = {
                         count: this.vars["collection"].$itemsCount,
-                        limit: options["limit"],
-                        offset: 0,
+                        limit: limit,
+                        offset: offset,
                         results: results
                     };
-
-                    body = JSON.stringify(res);
 
                     response.writeHead(200, "", {
                         'Content-Type': 'application/json; charset=utf-8'
                     });
 
-                    response.write(body, 'utf8');
+                    response.write(JSON.stringify(res), 'utf8');
                     response.end();
 
                     cb();
