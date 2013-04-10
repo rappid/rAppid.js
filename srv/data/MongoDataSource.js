@@ -506,12 +506,21 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
 
             return this.callBase();
         },
-        createCollection: function (factory, options, context) {
+
+        createContext: function(contextModel, properties, parentContext){
+            return new MongoDataSource.Context(this, contextModel, properties, parentContext);
+        }
+    });
+
+    MongoDataSource.Context = DataSource.Context.inherit("js.data.RestDataSource.Context", {
+
+        createCollection: function (factory, options, type) {
             options = options || {};
+            _.defaults(options, {
+                pageSize: this.$dataSource.$.collectionPageSize || 100
+            });
 
-            options.pageSize = options.pageSize || this.$.collectionPageSize;
-
-            return this.callBase(factory, options, context);
+            return this.callBase(factory, options, type);
         }
     });
 
