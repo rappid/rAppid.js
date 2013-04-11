@@ -45,7 +45,7 @@
     "optimist": ">=0.3.4",
     "colors": "*",
     "xmlhttprequest": "latest",
-    "xmldom": "latest"
+    "xmldom": "0.1.15"
   },
   "optionalDependencies": {},
   "devDependencies": {
