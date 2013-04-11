@@ -86,9 +86,18 @@ define(['srv/core/Handler', 'path', 'flow', 'fs', 'xmldom', 'underscore'], funct
                     if (!doc.innerHTML) {
                         Object.defineProperty(doc.constructor.prototype, 'innerHTML', {
                             get: function () {
-                                return ""; // TODO
+
+                                var ret = "";
+
+                                for (var i = 0; i < this.childNodes.length; i++) {
+                                    ret += this.childNodes[i].toString() || "";
+                                }
+
+                                return ret;
                             },
                             set: function (data) {
+                                data = "<root>" + data + "</root>";
+
                                 var doc = (new xmldom.DOMParser()).parseFromString(data);
                                 if (!doc.documentElement) {
                                     this.data = data;
@@ -96,7 +105,12 @@ define(['srv/core/Handler', 'path', 'flow', 'fs', 'xmldom', 'underscore'], funct
                                     while (this.firstChild) {
                                         this.removeChild(this.firstChild);
                                     }
-                                    this.appendChild(doc.documentElement);
+
+                                    while (doc.documentElement.firstChild) {
+                                        var child = doc.documentElement.firstChild;
+                                        doc.documentElement.removeChild(child);
+                                        this.appendChild(child);
+                                    }
                                 }
                             }
                         });
