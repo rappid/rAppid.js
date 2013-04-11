@@ -1,4 +1,4 @@
-define(['srv/core/Handler', 'path', 'flow', 'fs', 'xmldom', 'underscore'], function(Handler, Path, flow, Fs, xmldom, _) {
+define(['srv/core/Handler', 'path', 'flow', 'fs', 'xmldom', 'underscore'], function (Handler, Path, flow, Fs, xmldom, _) {
 
     return Handler.inherit('srv.handler.NodeRenderingHandler', {
 
@@ -16,10 +16,12 @@ define(['srv/core/Handler', 'path', 'flow', 'fs', 'xmldom', 'underscore'], funct
 
             config: 'config.json',
 
+            usePackageVersion: false,
+
             defaultStartParameter: {}
         },
 
-        start: function(server, callback) {
+        start: function (server, callback) {
 
             var self = this;
 
@@ -40,9 +42,9 @@ define(['srv/core/Handler', 'path', 'flow', 'fs', 'xmldom', 'underscore'], funct
             }
 
             flow()
-                .seq("config", function(cb) {
+                .seq("config", function (cb) {
                     if (_.isString(self.$.config)) {
-                        Fs.readFile(Path.join(self.$.applicationDirectory, self.$.config), function(err, data) {
+                        Fs.readFile(Path.join(self.$.applicationDirectory, self.$.config), function (err, data) {
                             if (!err) {
                                 data = JSON.parse(data);
                                 data.nodeRequire = require;
@@ -63,21 +65,35 @@ define(['srv/core/Handler', 'path', 'flow', 'fs', 'xmldom', 'underscore'], funct
                     rAppid.createApplicationContext(self.$.application, cb.vars['config'], cb);
                 })
                 .seq("html", function () {
-                    var indexContent = Fs.readFileSync(Path.join(self.$.applicationDirectory, self.$.indexFile));
-                    // clean up html
-                    var doc = (new xmldom.DOMParser()).parseFromString(indexContent.toString()).documentElement;
+                    var indexContent = Fs.readFileSync(Path.join(self.$.applicationDirectory, self.$.indexFile)).toString();
+
+                    if (self.$.usePackageVersion) {
+                        var packageContent = JSON.parse(Fs.readFileSync(Path.join(self.$.applicationDirectory, "..", "package.json")));
+                        var version = packageContent.version;
+
+                        if (version) {
+                            indexContent = indexContent.replace(/(href|src)=(["'])(?!(http|\/\/))([^'"]+)/g, '$1=$2' + version + '/$4');
+                            indexContent = indexContent.replace(/\$\{VERSION\}/g, version);
+                        }
+
+                    }
+
+                    indexContent = indexContent.replace(/<meta\sname=["']fragment["']\scontent=["']!["']>/, "");
+
+                    // TODO: clean up html
+                    var doc = (new xmldom.DOMParser()).parseFromString(indexContent).documentElement;
                     doc.constructor.prototype.style = {};
-                    if(!doc.innerHTML){
+                    if (!doc.innerHTML) {
                         Object.defineProperty(doc.constructor.prototype, 'innerHTML', {
                             get: function () {
                                 return ""; // TODO
                             },
-                            set: function(data){
+                            set: function (data) {
                                 var doc = (new xmldom.DOMParser()).parseFromString(data);
-                                if(!doc.documentElement){
+                                if (!doc.documentElement) {
                                     this.data = data;
-                                } else{
-                                    while(this.firstChild){
+                                } else {
+                                    while (this.firstChild) {
                                         this.removeChild(this.firstChild);
                                     }
                                     this.appendChild(doc.documentElement);
@@ -86,7 +102,7 @@ define(['srv/core/Handler', 'path', 'flow', 'fs', 'xmldom', 'underscore'], funct
                         });
                     }
                     var scripts = doc.getElementsByTagName('script');
-                    for(var i = scripts.length-1; i >= 0; i--){
+                    for (var i = scripts.length - 1; i >= 0; i--) {
                         var usage = scripts[i].getAttribute("data-usage");
                         if (usage == "bootstrap" || usage == "lib") {
                             scripts[i].parentNode.removeChild(scripts[i]);
@@ -95,7 +111,7 @@ define(['srv/core/Handler', 'path', 'flow', 'fs', 'xmldom', 'underscore'], funct
 
                     return (new xmldom.XMLSerializer()).serializeToString(doc);
                 })
-                .exec(function(err, results) {
+                .exec(function (err, results) {
 
                     if (!err) {
                         self.$applicationContext = results["applicationContext"];
@@ -115,20 +131,22 @@ define(['srv/core/Handler', 'path', 'flow', 'fs', 'xmldom', 'underscore'], funct
                 context.request.urlInfo.pathname === this.$.path;
         },
 
-        handleRequest: function(context, callback) {
+        handleRequest: function (context, callback) {
 
             var self = this,
-                stage,
-                now = new Date();
+                stage;
 
             flow()
                 .seq("window", function () {
                     // generate document
                     var document = (new xmldom.DOMParser()).parseFromString(self.$html);
+
+                    document.head = document.head || document.getElementsByTagName("head")[0];
+                    document.body = document.body || document.getElementsByTagName("body")[0];
+
                     return {
                         document: document
                     };
-
                 })
                 .seq("app", function (cb) {
                     self.$applicationContext.createApplicationInstance(cb.vars.window, function (err, s, application) {
@@ -163,7 +181,6 @@ define(['srv/core/Handler', 'path', 'flow', 'fs', 'xmldom', 'underscore'], funct
 
                     callback(err);
                 });
-
         }
     });
 
