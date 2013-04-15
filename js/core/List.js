@@ -1,4 +1,4 @@
-define(["js/core/EventDispatcher", "js/core/Bindable", "underscore", "js/data/Query"], function (EventDispatcher, Bindable, _, Query) {
+define(["js/core/EventDispatcher", "js/core/Bindable", "underscore"], function (EventDispatcher, Bindable, _) {
 
 
     var List = Bindable.inherit("js.core.List", {
@@ -381,7 +381,7 @@ define(["js/core/EventDispatcher", "js/core/Bindable", "underscore", "js/data/Qu
 
         /**
          * Sorts the list by the given function and triggers sort event
-         * @param {Function|js.data.Query} fnc
+         * @param {Function} fnc
          */
         sort: function (fnc) {
             if (fnc instanceof Function) {
