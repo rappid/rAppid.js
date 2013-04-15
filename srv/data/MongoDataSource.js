@@ -467,8 +467,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
 
         _composeContext: function(model){
             var parent = model.$parent,
-                context = {},
-                i = 0;
+                context = {};
 
             while (parent) {
                 context[parent.constructor.name.replace(/\./gi,"/")] = parent.identifier();
@@ -523,13 +522,6 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
             return this.callBase(factory, options, type);
         }
     });
-
-    var operatorMap = {
-        ge: "gte",
-        le: "lte"
-    };
-
-    var knownOperators = [];
 
     var generateId = function () {
         var d = new Date().getTime();
