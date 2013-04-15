@@ -431,20 +431,27 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                     rootScope = rootScope || this.$rootScope;
                     // only instantiation and construction but no initialization
 
+                    if(node._factory){
+                        return new node._factory(attributes, node, this.$stage, this, rootScope);
+                    }
+
+                    var instance = null;
+
                     if (node.nodeType == 1) { // Elements
 
                         var fqClassName = this.$stage.$applicationContext.getFqClassName(node.namespaceURI, this._localNameFromDomNode(node), true);
                         var className = this.$stage.$applicationContext.getFqClassName(node.namespaceURI, this._localNameFromDomNode(node), false);
 
-
-                        return this.$stage.$applicationContext.createInstance(fqClassName, [attributes, node, this.$stage, this, rootScope], className);
-
+                        instance = this.$stage.$applicationContext.createInstance(fqClassName, [attributes, node, this.$stage, this, rootScope], className);
                     } else if (node.nodeType == 3 || node.nodeType == 4) { // Text nodes
                         // only instantiation and construction but no initialization
-                        return this._createTextElement(node, rootScope);
+                        instance = this._createTextElement(node, rootScope);
+                    }
+                    if(instance){
+                        node._factory = instance.factory;
                     }
 
-                    return null;
+                    return instance;
                 },
 
                 /***
@@ -541,12 +548,14 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                 // foreach child Descriptor
 
                 var components = this._getChildrenFromDescriptor(this.$descriptor, null, rootScope);
+//                var now = new Date();
 
                 for (var c = 0; c < components.length; c++) {
                     components[c].$createdByTemplate = true;
                     components[c].$parentScope = parentScope;
                     components[c].set(attributes);
                 }
+//                console.log((new Date()).getTime() - now.getTime());
 
                 return components;
             },
