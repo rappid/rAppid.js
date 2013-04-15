@@ -1,5 +1,5 @@
-define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Content", "js/core/Binding", "inherit", "underscore", 'js/core/Base'],
-    function (require, EventDispatcher, Component, Content, Binding, inherit, _, Base) {
+define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Content", "inherit", "underscore", 'js/core/Base'],
+    function (require, EventDispatcher, Component, Content, inherit, _, Base) {
 
         var rspace = /\s+/;
         var undefined;

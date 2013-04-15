@@ -1,5 +1,5 @@
-define(['require', 'srv/core/Handler', 'js/conf/DataSourceConfiguration', 'js/conf/ResourceConfiguration', 'srv/handler/rest/ResourceRouter', 'flow', 'js/data/DataSource', 'js/data/RestDataSource', 'js/data/Model', 'srv/lib/RestQueryParser', 'js/data/Query', 'srv/handler/rest/ResourceHandler', 'underscore'],
-    function (require, Handler, DataSourceConfiguration, ResourceConfiguration, ResourceRouter, flow, DataSource, RestDataSource, Model, RestQueryParser, Query, ResourceHandler, _) {
+define(['require', 'srv/core/Handler', 'js/conf/DataSourceConfiguration', 'js/conf/ResourceConfiguration', 'srv/handler/rest/ResourceRouter', 'flow', 'js/data/DataSource', 'js/data/RestDataSource', 'js/data/Model', 'srv/lib/RestQueryParser', 'js/data/Query', 'srv/handler/rest/ResourceHandler'],
+    function (require, Handler, DataSourceConfiguration, ResourceConfiguration, ResourceRouter, flow, DataSource, RestDataSource, Model, RestQueryParser, Query, ResourceHandler) {
 
         var RestDataProcessor = RestDataSource.RestDataProcessor.inherit('srv.handler.rest.RestDataProcessor', {
             _composeSubModel: function (model, action, options) {
