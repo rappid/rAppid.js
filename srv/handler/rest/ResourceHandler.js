@@ -359,10 +359,10 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
                 .seq(function (cb) {
                     self._afterModelCreate(model, context, cb);
                 }).
-                exec(function (err) {
+                exec(function (err, results) {
                     if (!err) {
                         // TODO: do correct invalidation
-                        this.vars.collection.invalidatePageCache();
+                        results.collection.invalidatePageCache();
 
                         var body = JSON.stringify(processor.compose(model, null));
 
