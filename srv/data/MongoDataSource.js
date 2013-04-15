@@ -1,4 +1,4 @@
-define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 'js/core/List', 'js/data/Collection', 'srv/lib/MongoQueryComposer'], function (DataSource, MongoDb, Model, flow, _, List, Collection, MongoQueryComposer) {
+define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 'js/data/Collection', 'srv/lib/MongoQueryComposer'], function (DataSource, MongoDb, Model, flow, _, Collection, MongoQueryComposer) {
 
     var ID_KEY = "_id",
         CONTEXT_KEY = "_context",

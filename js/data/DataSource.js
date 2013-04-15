@@ -1,5 +1,5 @@
-define(["require", "js/core/Component", "js/core/Base", "js/data/Collection", "underscore", "js/data/Model", "js/data/Entity", "js/core/List", "flow", "JSON", "moment", "js/conf/DataSourceConfiguration", "js/conf/ResourceConfiguration", 'js/data/TypeResolver'],
-    function (require, Component, Base, Collection, _, Model, Entity, List, flow, JSON, moment, DataSourceConfiguration, ResourceConfiguration, TypeResolver) {
+define(["js/core/Component", "js/core/Base", "js/data/Collection", "underscore", "js/data/Model", "js/data/Entity", "js/core/List", "flow", "JSON", "moment", "js/conf/DataSourceConfiguration", "js/conf/ResourceConfiguration", 'js/data/TypeResolver'],
+    function (Component, Base, Collection, _, Model, Entity, List, flow, JSON, moment, DataSourceConfiguration, ResourceConfiguration, TypeResolver) {
 
         var undefined,
             Context = Base.inherit("js.data.DataSource.Context", {
