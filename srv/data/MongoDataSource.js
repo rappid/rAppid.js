@@ -1,4 +1,4 @@
-define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 'js/core/List', 'require', 'js/data/Collection', 'srv/lib/MongoQueryComposer'], function (DataSource, MongoDb, Model, flow, _, List, require, Collection, MongoQueryComposer) {
+define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 'js/data/Collection', 'srv/lib/MongoQueryComposer'], function (DataSource, MongoDb, Model, flow, _, Collection, MongoQueryComposer) {
 
     var ID_KEY = "_id",
         CONTEXT_KEY = "_context",
@@ -467,8 +467,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
 
         _composeContext: function(model){
             var parent = model.$parent,
-                context = {},
-                i = 0;
+                context = {};
 
             while (parent) {
                 context[parent.constructor.name.replace(/\./gi,"/")] = parent.identifier();
@@ -523,13 +522,6 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
             return this.callBase(factory, options, type);
         }
     });
-
-    var operatorMap = {
-        ge: "gte",
-        le: "lte"
-    };
-
-    var knownOperators = [];
 
     var generateId = function () {
         var d = new Date().getTime();

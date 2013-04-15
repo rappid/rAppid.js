@@ -142,17 +142,18 @@ define(["js/core/Component", "underscore", "js/conf/RouteConfiguration"],
             },
 
             executeRoute: function (fragment, callback) {
+
+                var cb = function (err, data) {
+                    if (callback) {
+                        callback(err, data);
+                    }
+                };
+
                 // Test routes and call callback
                 for (var i = 0; i < this.$routes.length; i++) {
                     var route = this.$routes[i];
                     var params = route.route.exec(fragment);
                     if (params) {
-
-                        var cb = function (err, data) {
-                            if (callback) {
-                                callback(err, data);
-                            }
-                        };
 
                         params.shift();
 

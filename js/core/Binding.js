@@ -100,7 +100,8 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
                             events = [];
                         }
 
-                        var event, path;
+                        var event;
+
                         for (var i = 0; i < events.length; i++) {
                             event = events[i];
                             scope.bind(event, this._callback, this);

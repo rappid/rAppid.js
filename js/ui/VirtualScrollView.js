@@ -60,7 +60,7 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
             this.$blockMouseWheelTimeout = null;
             this.$blockMouseWheel = false;
         },
-        _getTransformProperty: function getTransformProperty(element) {
+        _getTransformProperty: function (element) {
             // Note that in some versions of IE9 it is critical that
             // msTransform appear in this list before MozTransform
             var properties = [
@@ -162,8 +162,13 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
                     self.$isOutOfBounce[axis] = true;
                     self.$mult[axis] = (self.$newPos[axis] > 0 ? -1 : 1);
                     self.$newPos[axis] = self.$newPos[axis] + 0.03 * self.$el[spanMap[axis]] * self.$mult[axis];
-                    if (self.$newPos[axis] < 0 && self.$mult[axis] < 0) self.$newPos[axis] = 0;
-                    if (self.$newPos[axis] > delta && self.$mult[axis] > 0) self.$newPos[axis] = delta;
+                    if (self.$newPos[axis] < 0 && self.$mult[axis] < 0) {
+                        self.$newPos[axis] = 0;
+                    }
+
+                    if (self.$newPos[axis] > delta && self.$mult[axis] > 0) {
+                        self.$newPos[axis] = delta;
+                    }
 
                     self.updatePosition(self.$newPos.x, self.$newPos.y);
 //                    self._setCssTranslate(self.$newPos.x, self.$newPos.y);

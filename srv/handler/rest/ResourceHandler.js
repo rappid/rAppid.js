@@ -570,7 +570,7 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
                 })
                 // remove model
                 .seq(function (cb) {
-                    model.remove(null, cb)
+                    model.remove(null, cb);
                 })
                 .seq(function (cb) {
                     self._afterModelRemove(model, context, cb);

@@ -1,7 +1,9 @@
 define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "underscore", "js/core/BindingCreator"],
     function (EventDispatcher, Parser, Binding, _, BindingCreator) {
 
-        var bindingCreator = new BindingCreator();
+        var bindingCreator = new BindingCreator(),
+            Bindable,
+            EventBindable;
 
         // global invalidation timer
         var globalInvalidationQueue = (function () {
@@ -32,7 +34,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
             };
         })();
 
-        var isDeepEqual = function(a, b){
+        var isDeepEqual = function (a, b) {
             if (a === b) {
                 return true;
             }
@@ -51,14 +53,14 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
                     }
                 }
                 return true;
-            } else if(a instanceof Date && b instanceof Date){
+            } else if (a instanceof Date && b instanceof Date) {
                 return a.getTime() === b.getTime();
-            } else if(_.isObject(a) && _.isObject(b)){
+            } else if (_.isObject(a) && _.isObject(b)) {
                 if (_.size(a) !== _.size(b)) {
                     return false;
                 }
                 for (var objectKey in a) {
-                    if(a.hasOwnProperty(objectKey) && b.hasOwnProperty(objectKey)){
+                    if (a.hasOwnProperty(objectKey) && b.hasOwnProperty(objectKey)) {
                         if (!isDeepEqual(a[objectKey], b[objectKey])) {
                             return false;
                         }
@@ -77,7 +79,8 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
             return _.isEqual(a, b);
         };
 
-        var Bindable = EventDispatcher.inherit("js.core.Bindable",
+
+        Bindable = EventDispatcher.inherit("js.core.Bindable",
             {
                 /***
                  * creates a new instance of Bindable, which can be bound to components
@@ -137,12 +140,12 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
                  */
                 inject: {},
 
-                _initializeFromCtor: function() {
+                _initializeFromCtor: function () {
                     // hook
                     this._initialize();
                 },
 
-                _initialize: function() {
+                _initialize: function () {
                     if (this.$initialized) {
                         return;
                     }
@@ -162,12 +165,12 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
                     return this._generateDefaultsChain("inject");
                 },
 
-                _setUp: function() {
+                _setUp: function () {
                     this._inject();
                     this._bindBus();
                 },
 
-                _tearDown: function() {
+                _tearDown: function () {
                     this._extract();
                     this._unbindBus();
                 },
@@ -201,10 +204,12 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
 
                 _bindBus: function () {
                     for (var f in this) {
-                        var fn = this[f];
-                        if (fn instanceof Function && fn._busEvents) {
-                            for (var i = 0; i < fn._busEvents.length; i++) {
-                                this.$stage.$bus.bind(fn._busEvents[i], fn, this);
+                        if (this.hasOwnProperty(f)) {
+                            var fn = this[f];
+                            if (fn instanceof Function && fn._busEvents) {
+                                for (var i = 0; i < fn._busEvents.length; i++) {
+                                    this.$stage.$bus.bind(fn._busEvents[i], fn, this);
+                                }
                             }
                         }
                     }
@@ -212,16 +217,18 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
 
                 _unbindBus: function () {
                     for (var f in this) {
-                        var fn = this[f];
-                        if (fn instanceof Function && fn._busEvents) {
-                            for (var i = 0; i < fn._busEvents.length; i++) {
-                                this.$stage.$bus.unbind(fn._busEvents[i], fn, this);
+                        if (this.hasOwnProperty(f)) {
+                            var fn = this[f];
+                            if (fn instanceof Function && fn._busEvents) {
+                                for (var i = 0; i < fn._busEvents.length; i++) {
+                                    this.$stage.$bus.unbind(fn._busEvents[i], fn, this);
+                                }
                             }
                         }
                     }
                 },
 
-                _extract: function() {
+                _extract: function () {
                     this._preDestroy();
 
                     var inject = this._injectChain();
@@ -312,7 +319,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
                     this._initializationComplete();
                 },
 
-                _initializeBindingsBeforeComplete: function() {
+                _initializeBindingsBeforeComplete: function () {
                     // hook
                 },
 
@@ -329,11 +336,11 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
                     this.$initializing = false;
                 },
 
-                _postConstruct: function() {
+                _postConstruct: function () {
                     // hook: after the injection is completed
                 },
 
-                _preDestroy: function() {
+                _preDestroy: function () {
                     // hook: before the object is teared down
                 },
 
@@ -430,11 +437,11 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
                  * @private
                  */
                 _cloneAttribute: function (attribute, key) {
-                    if(this.inject && this.inject.hasOwnProperty(key)){
+                    if (this.inject && this.inject.hasOwnProperty(key)) {
                         return attribute;
                     } else if (attribute instanceof Bindable) {
                         return attribute.clone();
-                    } else if(attribute && (attribute.clone instanceof Function)){
+                    } else if (attribute && (attribute.clone instanceof Function)) {
                         return attribute.clone();
                     } else if (_.isArray(attribute)) {
                         var retArray = [];
@@ -716,7 +723,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
                     // override
                 },
 
-                _hasAll: function(attributes, search) {
+                _hasAll: function (attributes, search) {
 
                     for (var i = 0; i < search.length; i++) {
                         if (!attributes.hasOwnProperty(search[i])) {
@@ -727,7 +734,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
                     return true;
                 },
 
-                _hasSome: function(attributes, search) {
+                _hasSome: function (attributes, search) {
 
                     for (var i = 0; i < search.length; i++) {
                         if (attributes.hasOwnProperty(search[i])) {
@@ -817,7 +824,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
                     }
                 },
 
-                _innerDestroy: function(){
+                _innerDestroy: function () {
                     if (this.$eventBindables) {
                         var list = this.$eventBindables.slice();
                         for (var i = 0; i < list.length; i++) {
@@ -828,8 +835,8 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
                     this.callBase();
                 },
 
-                isDeepEqual : function(b){
-                    if(!b){
+                isDeepEqual: function (b) {
+                    if (!b) {
                         return false;
                     }
                     if (_.size(this.$) !== _.size(b.$)) {
@@ -851,7 +858,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
                 }
             });
 
-        var EventBindable = Bindable.inherit({
+        EventBindable = Bindable.inherit({
             _commitChangedAttributes: function (attributes) {
                 this.callBase();
                 if (attributes.binding) {

@@ -1,5 +1,5 @@
-define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base", "js/data/Collection", "underscore", "js/data/Model", "js/data/Entity", "js/core/List", "flow", "JSON", "moment", "js/conf/DataSourceConfiguration", "js/conf/ResourceConfiguration", 'js/data/TypeResolver'],
-    function (require, Component, Configuration, Base, Collection, _, Model, Entity, List, flow, JSON, moment, DataSourceConfiguration, ResourceConfiguration, TypeResolver) {
+define(["js/core/Component", "js/core/Base", "js/data/Collection", "underscore", "js/data/Model", "js/data/Entity", "js/core/List", "flow", "JSON", "moment", "js/conf/DataSourceConfiguration", "js/conf/ResourceConfiguration", 'js/data/TypeResolver'],
+    function (Component, Base, Collection, _, Model, Entity, List, flow, JSON, moment, DataSourceConfiguration, ResourceConfiguration, TypeResolver) {
 
         var undefined,
             Context = Base.inherit("js.data.DataSource.Context", {
@@ -491,7 +491,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                         } else if (Collection && schemaType.classof(Collection)) {
                             var contextForChildren = this.$dataSource._getContext(schemaType, model, value);
                             if (contextForChildren) {
-                                if(model.$[key] instanceof Collection){
+                                if (model.$[key] instanceof Collection) {
                                     data[key] = model.$[key];
                                 } else {
                                     list = data[key] = contextForChildren.createCollection(schemaType, (value instanceof Object) && !(value instanceof Array) ? value : null);
@@ -599,7 +599,15 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
              * saves sub models
              */
             saveSubModels: function (model, options, callback) {
-                var schema = model.schema, subModels = [], type, subCollection, subModel;
+                var schema = model.schema,
+                    subModels = [],
+                    type,
+                    subCollection,
+                    subModel,
+                    addSubModel = function (model) {
+                        subModels.push(model);
+                    };
+
                 for (var reference in schema) {
                     if (schema.hasOwnProperty(reference)) {
                         type = schema[reference];
@@ -615,9 +623,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                             } else if (type.classof(Collection)) {
                                 subCollection = model.$[reference];
                                 if (subCollection) {
-                                    subCollection.each(function (model) {
-                                        subModels.push(model);
-                                    });
+                                    subCollection.each(addSubModel);
                                 }
                             }
                         }
@@ -665,9 +671,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                                     getSubModel(value[i]);
                                 }
                             } else if (value instanceof List) {
-                                value.each(function (v) {
-                                    getSubModel(v);
-                                });
+                                value.each(getSubModel);
                             } else if (value instanceof Object) {
                                 getSubModel(value);
                             }
@@ -812,7 +816,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                         }
                     }
                 }
-                if(requestor){
+                if (requestor) {
                     return requestor.$context;
                 }
                 // childFactory isn't descendant of the requestor, so return the root context
@@ -919,7 +923,7 @@ define(["require", "js/core/Component", "js/conf/Configuration", "js/core/Base",
                 }
             },
 
-            countCollection: function(collection, options, callback){
+            countCollection: function (collection, options, callback) {
                 callback && callback("Abstrat method countCollection", NaN);
             },
 

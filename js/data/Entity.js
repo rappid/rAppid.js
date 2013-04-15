@@ -67,7 +67,7 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                 }, schemaObject;
 
                 // add id schema
-                if(this.idField && !this.schema.hasOwnProperty(this.idField)){
+                if (this.idField && !this.schema.hasOwnProperty(this.idField)) {
                     this.schema[this.idField] = {
                         type: String,
                         required: false,
@@ -101,7 +101,7 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                         var isString = _.isString(schemaObject);
                         if (isString || schemaObject instanceof Array || schemaObject instanceof Function) {
                             schemaObject = {
-                                type: isString ? require(schemaObject.replace(/\./g,"/")) : schemaObject
+                                type: isString ? require(schemaObject.replace(/\./g, "/")) : schemaObject
                             };
                             this.schema[key] = schemaObject;
                         }
@@ -346,7 +346,7 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                             return list;
                         }
                     }
-                } else if(value instanceof Entity && !value.$isEntity){
+                } else if (value instanceof Entity && !value.$isEntity) {
                     // dont clone linked models
                     return value;
                 }
@@ -361,7 +361,7 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
             identifier: function () {
                 return this.$[this.idField];
             },
-            contextModel: function(){
+            contextModel: function () {
                 return this.$context ? this.$context.$contextModel : null;
             }
         });
@@ -397,12 +397,12 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                                 });
                             } else if (value instanceof List && value.isCollection) {
                                 if (value.size() > 0 && value.at(0) instanceof Entity) {
-                                    value.each(function (item) {
+                                    for (var i = 0; i < value.$items.length; i++) {
                                         subEntities.push({
                                             key: key,
-                                            value: item
+                                            value: value.$items[i]
                                         });
-                                    });
+                                    }
                                 } else if (value.size() === 0 && !(this.runsInBrowser() && schemaObject.generated) && this._isRequired(entity, schemaObject.required) === true) {
                                     errors.push(this._createError("isEmptyError", key + " are empty", key));
                                 }
@@ -416,7 +416,7 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                 var self = this;
 
                 flow()
-                    .seq(function() {
+                    .seq(function () {
                         if (err) {
                             throw err;
                         }

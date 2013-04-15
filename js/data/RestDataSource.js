@@ -1,4 +1,4 @@
-define(["js/data/DataSource", "js/core/Base", "js/data/Model", "underscore", "flow", "JSON", "js/data/Collection", "require", "js/lib/query/composer/RestQueryComposer"], function (DataSource, Base, Model, _, flow, JSON, Collection, requirejs, RestQueryComposer) {
+define(["js/data/DataSource", "js/data/Model", "underscore", "flow", "JSON", "js/data/Collection", "require", "js/lib/query/composer/RestQueryComposer"], function (DataSource, Model, _, flow, JSON, Collection, requirejs, RestQueryComposer) {
 
     var rIdExtractor = /http.+\/([^/]+)$/;
 
