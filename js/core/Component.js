@@ -2,8 +2,9 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
 
     function (require, Element, TextElement, Bindable, EventDispatcher, _) {
 
-        var Component = Element.inherit("js.core.Component",
-            {
+        var Template,
+            Content,
+            Component = Element.inherit("js.core.Component", {
                 /***
                  * What up??
                  * @param attributes The attributes of the component
@@ -82,11 +83,11 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                  * Returns the ENVIRONMENT object
                  * @constructor
                  */
-                ENV: function(){
+                ENV: function () {
                     return this.$stage.$environment;
                 },
 
-                bus: function() {
+                bus: function () {
                     return this.$stage.$bus;
                 },
 
@@ -95,7 +96,7 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                     this._setUp();
                 },
 
-                _initializeBindingsBeforeComplete: function() {
+                _initializeBindingsBeforeComplete: function () {
                     for (var c = 0; c < this.$elements.length; c++) {
                         this.$elements[c]._initializeBindings();
                     }
@@ -112,7 +113,7 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                         throw "only children of type js.core.Component can be added";
                     }
 
-                    if(this.$initializing || this.$initialized){
+                    if (this.$initializing || this.$initialized) {
                         // initialize auto
                         child.$parent = this;
 
@@ -134,7 +135,7 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                         } else if (child instanceof Component.Configuration) {
                             this._addConfiguration(child);
                         }
-                    }else {
+                    } else {
                         this.$unitializedChildren = this.$unitializedChildren || [];
                         this.$unitializedChildren.push(child);
                     }
@@ -241,7 +242,7 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
 
                             if (child.$createdByTemplate || _.indexOf(addedDescriptors, child.$descriptor) === -1) {
                                 children.push(child);
-                                if(child.$descriptor){
+                                if (child.$descriptor) {
                                     addedDescriptors.push(child.$descriptor);
                                 }
                             }
@@ -334,9 +335,9 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                 },
 
                 createChildren: function () {
-                    if(this.$unitializedChildren){
+                    if (this.$unitializedChildren) {
                         var ret = [];
-                        while(this.$unitializedChildren.length){
+                        while (this.$unitializedChildren.length) {
                             ret.push(this.$unitializedChildren.shift());
                         }
                         return ret;
@@ -371,11 +372,11 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                     return attributeName.indexOf("function:") === 0;
                 },
 
-                _isXamlEventAttribute: function(attributeName){
+                _isXamlEventAttribute: function (attributeName) {
                     return attributeName.indexOf("on") === 0;
                 },
 
-                _getEventName: function(eventDefinition){
+                _getEventName: function (eventDefinition) {
                     return eventDefinition.substr(3);
                 },
 
@@ -407,7 +408,7 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                                 if (rootScope[value]) {
                                     event = key.substr(2);
                                     callback = rootScope[value];
-                                    this.bind("on:"+event, rootScope[value], rootScope);
+                                    this.bind("on:" + event, rootScope[value], rootScope);
                                 } else {
                                     throw "Couldn't find callback " + value + " for " + key + " event";
                                 }
@@ -425,7 +426,7 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                  * @param [attributes] for new Component
                  */
                 _createComponentForNode: function (node, attributes, rootScope) {
-                    if (!node){
+                    if (!node) {
                         return null;
                     }
 
@@ -433,7 +434,7 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                     rootScope = rootScope || this.$rootScope;
                     // only instantiation and construction but no initialization
 
-                    if(node._factory){
+                    if (node._factory) {
                         return new node._factory(attributes, node, this.$stage, this, rootScope);
                     }
 
@@ -444,7 +445,7 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                         var fqClassName = this.$stage.$applicationContext.getFqClassName(node.namespaceURI, this._localNameFromDomNode(node), true);
                         var className = this.$stage.$applicationContext.getFqClassName(node.namespaceURI, this._localNameFromDomNode(node), false);
 
-                        if(this.$factoryCache[fqClassName]){
+                        if (this.$factoryCache[fqClassName]) {
                             instance = new this.$factoryCache[fqClassName](attributes, node, this.$stage, this, rootScope);
                         } else {
                             instance = this.$stage.$applicationContext.createInstance(fqClassName, [attributes, node, this.$stage, this, rootScope], className);
@@ -455,7 +456,7 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                         // only instantiation and construction but no initialization
                         instance = this._createTextElement(node, rootScope);
                     }
-                    if(instance){
+                    if (instance) {
                         node._factory = instance.factory;
                     }
 
@@ -543,7 +544,7 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                 }
             });
 
-        var Template = Component.Template = Component.inherit("js.core.Template", {
+        Template = Component.Template = Component.inherit("js.core.Template", {
 
             _initializeDescriptors: function () {
                 this._cleanUpDescriptor(this.$descriptor);
@@ -615,7 +616,7 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
             }
         });
 
-        var Content = Component.Content = Component.inherit("js.core.Content", {
+        Content = Component.Content = Component.inherit("js.core.Content", {
             getChildren: function () {
                 var el, children = [];
                 for (var i = 0; i < this.$elements.length; i++) {
