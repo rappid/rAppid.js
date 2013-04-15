@@ -19,6 +19,8 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                     this.$internalDescriptors = [];
                     this.$xamlDefaults = {};
                     this.$xamlAttributes = {};
+                    this.$factoryCache = {};
+
                     var current = this, last;
                     while (current) {
                         if (current._$descriptor && last != current) {
@@ -442,7 +444,13 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                         var fqClassName = this.$stage.$applicationContext.getFqClassName(node.namespaceURI, this._localNameFromDomNode(node), true);
                         var className = this.$stage.$applicationContext.getFqClassName(node.namespaceURI, this._localNameFromDomNode(node), false);
 
-                        instance = this.$stage.$applicationContext.createInstance(fqClassName, [attributes, node, this.$stage, this, rootScope], className);
+                        if(this.$factoryCache[fqClassName]){
+                            instance = new this.$factoryCache[fqClassName](attributes, node, this.$stage, this, rootScope);
+                        } else {
+                            instance = this.$stage.$applicationContext.createInstance(fqClassName, [attributes, node, this.$stage, this, rootScope], className);
+                            this.$factoryCache[fqClassName] = instance.factory;
+                        }
+
                     } else if (node.nodeType == 3 || node.nodeType == 4) { // Text nodes
                         // only instantiation and construction but no initialization
                         instance = this._createTextElement(node, rootScope);
