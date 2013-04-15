@@ -6,7 +6,8 @@ var request = require("supertest"),
 describe("API", function () {
 
     var applicationJson = /application\/json/,
-        ContentType = "Content-Type";
+        ContentType = "Content-Type",
+        LocationHeader = "Location-Header";
 
     describe("initial test", function () {
 
@@ -18,10 +19,10 @@ describe("API", function () {
 //                .end(done);
 //        });
 
-        it ("Check correct test setup", function(done) {
+        it("Check correct test setup", function (done) {
 
             flow()
-                .parEach(["projects", "tickets", "users"], function(resource, cb) {
+                .parEach(["projects", "tickets", "users"], function (resource, cb) {
 
                     request(url)
                         .get("/" + resource)
@@ -33,6 +34,35 @@ describe("API", function () {
 
 
         })
+    });
+
+    describe("projects test", function () {
+
+        var location;
+
+        it("POST should create project and return location header", function (done) {
+
+            flow()
+                .seq("result", function(cb){
+                    request(url)
+                        .post("/projects")
+                        .send({})
+                        .expect(201)
+                        .expect(ContentType, applicationJson)
+                        .expect("Location", new RegExp(["^", url, "/","projects","/", "[0-9a-zA-Z]+", "$"].join("")))
+                        .end(cb)
+                })
+                .seq(function(cb){
+                    var result = this.vars.result;
+                    request(result.header.location)
+                        .get('')
+                        .expect(ContentType, applicationJson)
+                        .end(cb);
+                })
+                .exec(done);
+        });
+
+
     });
 
     describe("/containers", function () {
