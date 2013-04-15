@@ -12,6 +12,7 @@ define(['js/data/validator/Validator', 'underscore'], function (Validator, _) {
             if(!this.$.enumeration){
                 throw new Error("No enumeration defined!");
             }
+
             if(!(this.$.enumeration instanceof Array)){
                 throw new Error("Enumeration must be an array");
             }
@@ -35,6 +36,5 @@ define(['js/data/validator/Validator', 'underscore'], function (Validator, _) {
             }
         }
 
-    })
-})
-;
+    });
+});
