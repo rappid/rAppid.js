@@ -9,7 +9,7 @@ describe("API", function () {
         ContentType = "Content-Type",
         LocationHeader = "Location-Header";
 
-    describe("initial test", function () {
+    describe("#Initial test", function () {
 
 //        it("GET / should show available resources", function (done) {
 //            request(url)
@@ -36,20 +36,73 @@ describe("API", function () {
         })
     });
 
-    describe("projects test", function () {
+    describe('#PUT', function(){
+
+        it('should create non existing resource if "upsert=true"', function(done){
+            flow()
+                .seq(function(cb){
+                    request(url)
+                        .get("/projects/test")
+                        .expect(404)
+                        .end(cb);
+                })
+                .seq("result", function (cb) {
+                    request(url)
+                        .put("/projects/test")
+                        .send({})
+                        .expect(200)
+                        .expect(ContentType, applicationJson)
+                        .end(cb)
+                })
+                .seq(function (cb) {
+                    request(url)
+                        .get("/projects/test")
+                        .expect(ContentType, applicationJson)
+                        .end(cb);
+                })
+                .exec(done);
+        });
+
+        it.skip('should not create non existing resource if "upsert=false"', function(done){
+
+            flow()
+                .seq(function(){
+                    // TODO
+                })
+                .exec(done);
+
+        });
+
+        it.skip('should update resource with valid data', function(){
+
+        });
+
+        it.skip('should not update resource if data is not valid', function(){
+
+        });
+
+    });
+
+    describe("#POST", function () {
 
         var location;
 
-        it("POST should create project and return location header", function (done) {
+        it("should create new resource and return location header", function (done) {
 
             flow()
                 .seq("result", function(cb){
                     request(url)
-                        .post("/projects")
-                        .send({})
+                        .post("/tickets")
+                        .send({
+                            summary: "Test Ticket",
+                            project: {
+                                name: "test"
+                            },
+                            watchers: []
+                        })
                         .expect(201)
                         .expect(ContentType, applicationJson)
-                        .expect("Location", new RegExp(["^", url, "/","projects","/", "[0-9a-zA-Z]+", "$"].join("")))
+                        .expect("Location", new RegExp(["^", url, "/","tickets","/", "test\-[0-9]+", "$"].join("")))
                         .end(cb)
                 })
                 .seq(function(cb){
@@ -60,6 +113,22 @@ describe("API", function () {
                         .end(cb);
                 })
                 .exec(done);
+        });
+
+        it("with invalid payload should return 500", function(done){
+
+            flow()
+                .seq("result", function (cb) {
+                    request(url)
+                        .post("/tickets")
+                        .send({
+                            summary: "Test Ticket"
+                        })
+                        .expect(500)
+                        .end(cb)
+                })
+                .exec(done);
+
         });
 
 
