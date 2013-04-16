@@ -493,6 +493,8 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
                         // TODO: do correct invalidation
                         results.collection.invalidatePageCache();
 
+                        self._fetchAllHrefsForModel(model, context);
+
                         // TODO: generate the location header
                         var body = JSON.stringify(processor.compose(model, null));
 
@@ -500,6 +502,7 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
                         response.writeHead(200, "", {
                             'Content-Type': 'application/json'
                             // TODO : add updated date in head ???
+//                            'Location': context.request.urlInfo.uri
                         });
 
                         response.write(body);
