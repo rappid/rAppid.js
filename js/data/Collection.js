@@ -338,6 +338,11 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore", "js/da
         getRoot: function () {
             return this.$collection.getRoot();
         },
+
+        getCollection: function(){
+            return this.$collection;
+        },
+
         /***
          *
          * @param options
