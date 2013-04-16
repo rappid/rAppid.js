@@ -204,12 +204,10 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
 
                 _bindBus: function () {
                     for (var f in this) {
-                        if (this.hasOwnProperty(f)) {
-                            var fn = this[f];
-                            if (fn instanceof Function && fn._busEvents) {
-                                for (var i = 0; i < fn._busEvents.length; i++) {
-                                    this.$stage.$bus.bind(fn._busEvents[i], fn, this);
-                                }
+                        var fn = this[f];
+                        if (fn instanceof Function && fn._busEvents) {
+                            for (var i = 0; i < fn._busEvents.length; i++) {
+                                this.$stage.$bus.bind(fn._busEvents[i], fn, this);
                             }
                         }
                     }
@@ -217,12 +215,10 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
 
                 _unbindBus: function () {
                     for (var f in this) {
-                        if (this.hasOwnProperty(f)) {
-                            var fn = this[f];
-                            if (fn instanceof Function && fn._busEvents) {
-                                for (var i = 0; i < fn._busEvents.length; i++) {
-                                    this.$stage.$bus.unbind(fn._busEvents[i], fn, this);
-                                }
+                        var fn = this[f];
+                        if (fn instanceof Function && fn._busEvents) {
+                            for (var i = 0; i < fn._busEvents.length; i++) {
+                                this.$stage.$bus.unbind(fn._busEvents[i], fn, this);
                             }
                         }
                     }
