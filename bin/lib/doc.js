@@ -373,11 +373,31 @@ var esprima = require('esprima'),
                                         declaration.id.type === CONST.Identifier && declaration.id.name === varName) {
                                         // found the variable declaration
 
-                                        classDocumentation = this.getDocumentationFromInheritCall(declaration.init, varToRequireMap);
-                                        if (classDocumentation) {
-                                            classDocumentation.start = declaration.range[0];
+                                        var value = declaration.init;
+
+                                        if (!value) {
+                                            // assignment happens later -> search for assignment
+                                            for (var l = 0; l < functionBody.body.length; l++) {
+                                                statement = functionBody.body[l];
+
+                                                if (statement.type === CONST.ExpressionStatement &&
+                                                    statement.expression.type === CONST.AssignmentExpression &&
+                                                    statement.expression.operator === "=" &&
+                                                    statement.expression.left.type === CONST.Identifier &&
+                                                    statement.expression.left.name === varName) {
+
+                                                    // found the variable assignment
+                                                    value = statement.expression.right;
+                                                    break;
+                                                }
+                                            }
                                         }
 
+                                        classDocumentation = this.getDocumentationFromInheritCall(value, varToRequireMap);
+                                        if (classDocumentation) {
+                                            classDocumentation.start = declaration.range[0];
+                                            return classDocumentation;
+                                        }
                                     }
 
                                 }
