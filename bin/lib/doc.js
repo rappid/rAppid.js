@@ -396,6 +396,8 @@ var esprima = require('esprima'),
                             delete classDocumentation.start;
 
                             classDocumentation.fqClassName = classDocumentation.fqClassName || fqClassName;
+                            classDocumentation.type = "js";
+
                             if (!classDocumentation.hasOwnProperty(('ignore'))) {
                                 ret.push(new ClassDocumentation(classDocumentation));
                             }
@@ -726,11 +728,14 @@ var esprima = require('esprima'),
                 definition = {
                     fqClassName: fqClassName,
                     // TODO: load xaml plugin and reuse find dependencies method
-                    dependencies: []
+                    dependencies: [],
+                    type: "xml"
                 };
 
             // TODO: keep track of rewrite map
             definition.inherit = xml.namespaceURI + "." + xml.localName;
+
+            definition.dependencies.push(definition.inherit);
 
             return [
                 new ClassDocumentation(definition)
