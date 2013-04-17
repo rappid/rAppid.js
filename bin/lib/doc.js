@@ -137,8 +137,6 @@ var esprima = require('esprima'),
                         method.name = methodName;
                         method.visibility = (methodName.substr(0, 1) === '_' || method.hasOwnProperty('private')) && !method.hasOwnProperty('public') ? 'protected' : 'public';
 
-
-
                         methodArray.push(method);
                     }
 
@@ -146,7 +144,6 @@ var esprima = require('esprima'),
 
                 }
             }
-
 
 
             return this.documentations;
@@ -166,7 +163,7 @@ var esprima = require('esprima'),
             }
         },
 
-        getParameterByNameForMethod: function(parameterName, methodName) {
+        getParameterByNameForMethod: function (parameterName, methodName) {
             if (this.methods.hasOwnProperty(methodName)) {
                 for (var i = 0; i < this.methods[methodName].parameter.length; i++) {
                     var parameter = this.methods[methodName].parameter[i];
@@ -200,7 +197,7 @@ var esprima = require('esprima'),
             return ret;
         },
 
-        addInheritMethods: function(documentations) {
+        addInheritMethods: function (documentations) {
 
             var nativeMethods = [],
                 methodName;
@@ -426,7 +423,7 @@ var esprima = require('esprima'),
 
         },
 
-        getDocumentationFromInheritCall: function(argument, varToRequireMap) {
+        getDocumentationFromInheritCall: function (argument, varToRequireMap) {
             if (argument.callee.property.type === CONST.Identifier &&
                 argument.callee.property.name === 'inherit') {
                 // we found the inherit
@@ -523,7 +520,6 @@ var esprima = require('esprima'),
                 } else {
                     // TODO:
                 }
-
 
 
             }
@@ -643,7 +639,7 @@ Documentation.Processors.General = Documentation.AnnotationProcessor.inherit({
         }
     },
 
-    appendToResult: function(result, description) {
+    appendToResult: function (result, description) {
         result.value += description;
     },
 
