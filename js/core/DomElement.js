@@ -24,6 +24,7 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
         };
 
         var pointerToMSPointerMap = {
+            'pointer': 'click',
             'pointerdown': 'mspointerdown',
             'pointermove': 'mspointermove',
             'pointerup': 'mspointerup',
