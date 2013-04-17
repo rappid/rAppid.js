@@ -48,15 +48,29 @@ var help = function(args, callback) {
                     var shortPath = path.relative(path.join(startFile, '..'), p),
                         code = fs.readFileSync(p, 'UTF-8');
 
-                    console.warn(shortPath);
+                    console.log(shortPath);
 
-                    var defaultFqClassName = shortPath.replace(/\//g, '.').replace(/\.js$/, '');
-                    documentation.generateDocumentationsForFile('js', code, defaultFqClassName, true);
+                    var defaultFqClassName = shortPath.replace(/\//g, '.').replace(/\.js$/, '').replace(/\.xml$/, '');
+                    var extension = /\.([a-z]+)$/.exec(shortPath);
+
+                    if (extension) {
+                        documentation.generateDocumentationsForFile(extension[1], code, defaultFqClassName, true);
+                    } else {
+                        console.warn("Cannot generate documentation for " + shortPath);
+                    }
 
 
                 });
             } else if (stat.isFile()) {
-                documentation.generateDocumentationsForFile('js', fs.readFileSync(startFile, 'UTF-8'), startFile, true);
+
+                var extension = /\.([a-z]+)$/.exec(startFile);
+
+                if (extension) {
+                    documentation.generateDocumentationsForFile(extension[1], fs.readFileSync(startFile, 'UTF-8'), startFile, true);
+                } else {
+                    console.warn("Cannot generate documentation for " + startFile);
+                }
+
             }
         }
 
@@ -91,6 +105,7 @@ var help = function(args, callback) {
     function findFiles(dir) {
 
         var ret = [],
+            extension = [".js", ".xml"],
             files = fs.readdirSync(dir);
 
         for (var i = 0; i < files.length; i++) {
@@ -99,8 +114,8 @@ var help = function(args, callback) {
 
             if (stat.isDirectory() && !isExcluded(file)) {
                 ret = ret.concat(findFiles(file));
-            } else if (stat.isFile() && path.extname(file) === '.js' && !isExcluded(file)) {
-                // javascript file
+            } else if (stat.isFile() && extension.indexOf(path.extname(file)) !== -1 && !isExcluded(file)) {
+                // javascript file or xaml
                 ret.push(file);
             }
         }

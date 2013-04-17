@@ -1,6 +1,7 @@
 var esprima = require('esprima'),
     inherit = require('inherit.js').inherit,
     undefined,
+    DomParser = require('xmldom').DOMParser,
     _ = require('underscore'),
     CONST = {
         AssignmentExpression: 'AssignmentExpression',
@@ -56,7 +57,8 @@ var esprima = require('esprima'),
 
             this.documentations = {};
             this.documentationProcessors = {
-                js: new ClassDocumentationProcessor()
+                js: new ClassDocumentationProcessor(),
+                xml: new XamlClassDocumentationProcessor()
             };
 
         },
@@ -164,6 +166,11 @@ var esprima = require('esprima'),
                     this[key] = definition[key];
                 }
             }
+
+            _.defaults(this, {
+                methods: {},
+                defaults: {}
+            });
         },
 
         getParameterByNameForMethod: function (parameterName, methodName) {
@@ -222,7 +229,7 @@ var esprima = require('esprima'),
                         for (methodName in baseClass.methods) {
                             if (baseClass.methods.hasOwnProperty(methodName)) {
 
-                                var currentMethod;
+                                var currentMethod = null;
 
                                 if (_.indexOf(nativeMethods, methodName) !== -1) {
                                     currentMethod = this.methods[methodName];
@@ -709,7 +716,29 @@ var esprima = require('esprima'),
             // stripe plugin and change / to .
             return name.replace(/^[a-z/]+!]/, '').replace(/\//g, '.');
         }
+    }),
+
+    XamlClassDocumentationProcessor = inherit({
+
+        generate: function (code, fqClassName) {
+
+            var xml = this.xml = new DomParser().parseFromString(code, "text/xml").documentElement,
+                definition = {
+                    fqClassName: fqClassName,
+                    // TODO: load xaml plugin and reuse find dependencies method
+                    dependencies: []
+                };
+
+            // TODO: keep track of rewrite map
+            definition.inherit = xml.namespaceURI + "." + xml.localName;
+
+            return [
+                new ClassDocumentation(definition)
+            ];
+
+        }
     });
+
 
 
 Documentation.AnnotationProcessor = inherit.Base.inherit({
