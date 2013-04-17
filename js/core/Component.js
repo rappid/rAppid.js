@@ -2,6 +2,9 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
 
     function (require, Element, TextElement, Bindable, EventDispatcher, _) {
 
+        var FactoryCache = {},
+            TextElementFactory,
+            LocalNameCache = {};
         var Template,
             Content,
             Component = Element.inherit("js.core.Component", {
@@ -20,7 +23,6 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                     this.$internalDescriptors = [];
                     this.$xamlDefaults = {};
                     this.$xamlAttributes = {};
-                    this.$factoryCache = {};
 
                     var current = this, last;
                     while (current) {
@@ -434,30 +436,26 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                     rootScope = rootScope || this.$rootScope;
                     // only instantiation and construction but no initialization
 
-                    if (node._factory) {
-                        return new node._factory(attributes, node, this.$stage, this, rootScope);
-                    }
 
                     var instance = null;
 
                     if (node.nodeType == 1) { // Elements
+                        var namespaceURI = node.namespaceURI,
+                            localName = this._localNameFromDomNode(node),
+                            cacheKey = namespaceURI + ":" + localName,
+                            factory = FactoryCache[cacheKey];
 
-                        var fqClassName = this.$stage.$applicationContext.getFqClassName(node.namespaceURI, this._localNameFromDomNode(node), true);
-                        var className = this.$stage.$applicationContext.getFqClassName(node.namespaceURI, this._localNameFromDomNode(node), false);
-
-                        if (this.$factoryCache[fqClassName]) {
-                            instance = new this.$factoryCache[fqClassName](attributes, node, this.$stage, this, rootScope);
+                        if (factory) {
+                            instance = new factory(attributes, node, this.$stage, this, rootScope);
                         } else {
+                            var fqClassName = this.$stage.$applicationContext.getFqClassName(namespaceURI, localName, true);
+                            var className = this.$stage.$applicationContext.getFqClassName(namespaceURI, localName, false);
                             instance = this.$stage.$applicationContext.createInstance(fqClassName, [attributes, node, this.$stage, this, rootScope], className);
-                            this.$factoryCache[fqClassName] = instance.factory;
+                            FactoryCache[cacheKey] = instance.factory;
                         }
 
                     } else if (node.nodeType == 3 || node.nodeType == 4) { // Text nodes
-                        // only instantiation and construction but no initialization
                         instance = this._createTextElement(node, rootScope);
-                    }
-                    if (instance) {
-                        node._factory = instance.factory;
                     }
 
                     return instance;
@@ -473,7 +471,9 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                 createComponent: function (factory, attributes, descriptor) {
                     descriptor = descriptor || false;
                     attributes = attributes || [];
-
+                    if (factory instanceof Function) {
+                        return new factory(attributes, descriptor, this.$stage, this, this.$rootScope);
+                    }
                     return this.$stage.$applicationContext.createInstance(factory, [attributes, descriptor, this.$stage, this, this.$rootScope]);
                 },
 
@@ -485,7 +485,13 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                 },
 
                 _createTextElement: function (node, rootScope) {
-                    return this.$stage.$applicationContext.createInstance('js/core/TextElement', [null, node, this.$stage, this, rootScope]);
+                    if (TextElementFactory) {
+                        return new TextElementFactory(null, node, this.$stage, this, rootScope);
+                    }
+                    var instance = this.$stage.$applicationContext.createInstance('js/core/TextElement', [null, node, this.$stage, this, rootScope]);
+                    TextElementFactory = instance.factory;
+                    return instance;
+
                 },
 
                 /***
@@ -529,8 +535,16 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                         return domNode.localName;
                     }
 
+                    var localName = LocalNameCache[domNode.tagName];
+                    if (localName) {
+                        return localName;
+                    }
                     var st = domNode.tagName.split(":");
-                    return st[st.length - 1];
+
+                    LocalNameCache[domNode.tagName] = st[st.length - 1];
+
+
+                    return LocalNameCache[domNode.tagName];
                 },
 
                 baseUrl: function (path) {
