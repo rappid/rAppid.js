@@ -222,7 +222,11 @@ var esprima = require('esprima'),
                         for (methodName in baseClass.methods) {
                             if (baseClass.methods.hasOwnProperty(methodName)) {
 
-                                var currentMethod = this.methods[methodName];
+                                var currentMethod;
+
+                                if (_.indexOf(nativeMethods, methodName) !== -1) {
+                                    currentMethod = this.methods[methodName];
+                                }
 
                                 if (!currentMethod) {
                                     // inherit method
