@@ -1,5 +1,6 @@
 var esprima = require('esprima'),
     inherit = require('inherit.js').inherit,
+    undefined,
     _ = require('underscore'),
     CONST = {
         AssignmentExpression: 'AssignmentExpression',
@@ -116,6 +117,8 @@ var esprima = require('esprima'),
                     if (classDocumentation.inheritancePath) {
                         // find inherit methods
                         classDocumentation.addInheritMethods(this.documentations);
+
+                        classDocumentation.extendInheritDefaults(this.documentations);
                     }
                 }
             }
@@ -257,6 +260,53 @@ var esprima = require('esprima'),
                 }
             }
 
+        },
+
+        extendInheritDefaults: function (documentations) {
+
+            var ownDefaults = [],
+                defaultProperty;
+
+            for (defaultProperty in this.defaults) {
+                if (this.defaults.hasOwnProperty(defaultProperty)) {
+                    ownDefaults.push(defaultProperty);
+                }
+            }
+
+            if (this.inheritancePath instanceof Array) {
+                for (var i = 0; i < this.inheritancePath.length; i++) {
+                    var baseClassFqClassName = this.inheritancePath[i];
+
+                    if (documentations.hasOwnProperty(baseClassFqClassName)) {
+
+                        var baseClass = documentations[baseClassFqClassName];
+
+                        for (defaultProperty in baseClass.defaults) {
+                            if (baseClass.defaults.hasOwnProperty(defaultProperty)) {
+
+                                var currentDefault = null;
+
+                                if (_.indexOf(ownDefaults, defaultProperty) !== -1) {
+                                    currentDefault = this.defaults[defaultProperty];
+                                }
+
+                                if (!currentDefault) {
+                                    // inherit method
+                                    currentDefault = this.defaults[defaultProperty] = _.clone(baseClass.defaults[defaultProperty]);
+                                }
+
+                                currentDefault.definedBy = baseClassFqClassName;
+
+                                if (ownDefaults.indexOf(defaultProperty) !== -1) {
+                                    // overwrite defaultProperty
+                                    currentDefault.overwritesDefault = true;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
         }
     }),
 
@@ -280,6 +330,13 @@ var esprima = require('esprima'),
                 new Documentation.Processors.General('abstract'),
                 new Documentation.Processors.General('ignore'),
                 new Documentation.Processors.General('see', true),
+                new Documentation.Processors.Description()
+            ];
+
+            this.defaultAnnotationProcessors = [
+                new Documentation.Processors.General('see', true),
+                new Documentation.Processors.General('ignore'),
+                new Documentation.Processors.General('deprecated'),
                 new Documentation.Processors.Description()
             ];
         },
@@ -408,7 +465,6 @@ var esprima = require('esprima'),
 
                                 }
                             } else {
-                                // TODO: support later assignment
                                 // TODO: PROCESS static type assignments
                             }
 
@@ -447,7 +503,7 @@ var esprima = require('esprima'),
 
             var fqClassName,
                 argument,
-                methods;
+                documentation;
 
             if (!(fnArguments && fnArguments.length)) {
                 // no fnArguments passed
@@ -464,13 +520,11 @@ var esprima = require('esprima'),
 
             if (argument && argument.type === CONST.ObjectExpression) {
                 // we found the prototype definition
-                methods = this.getDocumentationFromObject(argument);
+                documentation = this.getDocumentationFromObject(argument);
 
-                if (methods) {
-                    return {
-                        fqClassName: fqClassName,
-                        methods: methods
-                    }
+                if (documentation) {
+                    documentation.fqClassName = fqClassName;
+                    return documentation;
                 }
 
             }
@@ -478,7 +532,10 @@ var esprima = require('esprima'),
 
         getDocumentationFromObject: function (object) {
 
-            var prototype = {},
+            var documentation = {
+                    methods: {},
+                    defaults: {}
+                },
                 properties = object.properties,
                 lastProperty,
                 property,
@@ -513,71 +570,121 @@ var esprima = require('esprima'),
                     }
 
                     if (!item.hasOwnProperty('ignore')) {
-                        prototype[property.key.name] = item;
+                        documentation.methods[property.key.name] = item;
                     }
 
+                } else if (property.key.type === CONST.Identifier && property.key.name === "defaults" && property.value.type === CONST.ObjectExpression) {
+                    // found the defaults block
+
+                    documentation.defaults = this.getDefaultValues(property.value);
 
                 } else {
-                    // TODO:
+                    // TODO: read events
+
                 }
 
 
             }
 
-            return prototype;
+            return documentation;
+
+        },
+
+        getDefaultValues: function (defaultsObject) {
+
+            var defaults = defaultsObject.properties,
+                ret = {},
+                lastDefaultEntry;
+
+            for (var i = 0; i < defaults.length; i++) {
+                var defaultEntry = defaults[i],
+                    defaultName = defaultEntry.key.name,
+                    isValueDefault = defaultEntry.value.type === CONST.Literal;
+
+                lastDefaultEntry = defaults[i - 1];
+
+                var item = {
+                    name: defaultName,
+                    type: isValueDefault ? "value" : "factory",
+                    visibility: /^[$_]/.test(defaultName) ? "private" : "public",
+                    value: isValueDefault ? defaultEntry.value.value : undefined
+                };
+
+                var annotations = this.getAnnotationInRange(lastDefaultEntry ? lastDefaultEntry.range[1] : defaultsObject.range[0], defaultEntry.range[0], this.defaultAnnotationProcessors);
+
+                for (var a = 0; a < annotations.length; a++) {
+                    var annotation = annotations[a];
+                    annotation.processor.mapAnnotationToItem(annotation, item, annotations);
+                }
+
+                if (!item.hasOwnProperty('ignore')) {
+                    ret[defaultName] = item;
+                }
+
+            }
+
+            return ret;
 
         },
 
         getAnnotationInRange: function (from, to, processors) {
             var comments = this.getCommentsInRange(from, to),
-                ret = [];
+                ret = [],
+                lines = [];
 
             for (var i = 0; i < comments.length; i++) {
                 var comment = comments[i];
+
                 if (comment.type === 'Block') {
-                    var lines = comment.value.split(/\n/g),
-                        lastAnnotationProcessor = null,
-                        lastResult = null;
+                    lines = comment.value.split(/\n/g);
                     lines.shift();
                     lines.pop();
+                } else {
+                    lines.push(comment.value);
 
-                    for (var j = 0; j < lines.length; j++) {
-                        var line = lines[j],
-                            lineProcessed = false;
-
-
-                        if (lastAnnotationProcessor && !hasAnnotationDefinition.test(line)) {
-                            // no @ found -> use last annotation type
-                            lastAnnotationProcessor.appendToResult(lastResult, line.replace(stripLineStart, ''));
-                            lineProcessed = true;
-                        } else {
-                            for (var k = 0; k < processors.length; k++) {
-
-                                var annotationProcessor = processors[k];
-                                var result = annotationProcessor.parse(line);
-
-                                if (result) {
-                                    lastResult = result;
-                                    lastAnnotationProcessor = annotationProcessor;
-                                    lineProcessed = true;
-                                    ret.push(result);
-
-                                    // do not process with other processors
-                                    break;
-                                }
-                            }
-                        }
-
-                        if (!lineProcessed) {
-                            console.warn("Did not processed line '" + line + "'.");
-                        }
-
-
+                    if (comments[i + 1] && comments[i + 1].type === 'Line') {
+                        // add next lines
+                        continue;
                     }
-
                 }
 
-                // TODO: parse line comments
+                var lastAnnotationProcessor = null,
+                    lastResult = null;
+
+                for (var j = 0; j < lines.length; j++) {
+                    var line = lines[j],
+                        lineProcessed = false;
+
+
+                    if (lastAnnotationProcessor && !hasAnnotationDefinition.test(line)) {
+                        // no @ found -> use last annotation type
+                        lastAnnotationProcessor.appendToResult(lastResult, line.replace(stripLineStart, ''));
+                        lineProcessed = true;
+                    } else {
+                        for (var k = 0; k < processors.length; k++) {
+
+                            var annotationProcessor = processors[k];
+                            var result = annotationProcessor.parse(line);
+
+                            if (result) {
+                                lastResult = result;
+                                lastAnnotationProcessor = annotationProcessor;
+                                lineProcessed = true;
+                                ret.push(result);
+
+                                // do not process with other processors
+                                break;
+                            }
+                        }
+                    }
+
+                    if (!lineProcessed) {
+                        console.warn("Did not processed line '" + line + "'.");
+                    }
+                }
+
+                lines = [];
+
             }
 
             return ret;
