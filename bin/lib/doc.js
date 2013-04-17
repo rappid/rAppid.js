@@ -306,14 +306,19 @@ var esprima = require('esprima'),
                         expression.arguments[1].type === CONST.FunctionExpression) {
                         // that's how a amd works -> extract the class definition
 
-                        var varToRequireMap = {};
+                        var varToRequireMap = {},
+                            dependencies = [];
 
                         for (var j = 0; j < expression.arguments[1].params.length; j++) {
                             varToRequireMap[expression.arguments[1].params[j].name] = expression.arguments[0].elements[j].value;
+                            dependencies.push((expression.arguments[0].elements[j].value || "").replace(/\//g, "."));
                         }
 
                         var classDocumentation = this.getClassDocumentation(expression.arguments[1].body, varToRequireMap);
                         if (classDocumentation) {
+
+                            dependencies.sort();
+                            classDocumentation.dependencies = dependencies;
 
                             // get annotations for class from body begin until class definition begin
                             var annotations = this.getAnnotationInRange(body.range[0], classDocumentation.start, this.classAnnotationProcessors);
