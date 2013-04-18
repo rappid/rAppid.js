@@ -1,6 +1,16 @@
 define(['js/core/EventDispatcher'], function(EventDispatcher) {
-    // no extra functionality needed, but we need a separate factory for injection
 
+    /***
+     * @summery A bus is an EventDispatcher used for application wide event based communication.
+     *
+     * @description The application wide message bus can be bound to event handler functions by annotation the
+     * handler functions with the `.bus('My.Bus.Event')` annotation. The bus is automatically bound and
+     * unbound for Components added to the stage.
+     *
+     * The automatically event handler registration can also be used for `Bindable`s after setting them up using the
+     * `setUp` function of the bus.
+     *
+     */
     var Bus = EventDispatcher.inherit('js.core.Bus', {
 
         ctor: function(stage) {

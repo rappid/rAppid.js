@@ -1,7 +1,7 @@
 define(["js/core/Window", "js/html/HtmlElement", "js/lib/extension", "underscore", "require", "flow", "js/core/Bindable"], function (Window, HtmlElement, Extension, _, require, flow, Bindable) {
 
         /***
-         * An application is a Window, which gets bootstrapped and started by rAppid.js and is attached to the WindowManager.
+         * @summery An application is a Window, which gets bootstrapped and started by rAppid.js and is attached to the WindowManager.
          *
          * @see js.core.WindowManager
          */
