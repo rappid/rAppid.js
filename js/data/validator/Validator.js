@@ -9,9 +9,25 @@ define(['js/core/Bindable', 'js/core/Base'], function (Bindable, Base) {
         $validatorCache: {},
 
         defaults: {
+            /***
+             * the field of the entity to validate
+             * @type String
+             */
             field: null,
+            /***
+             * the error code for this validation error
+             * @type String
+             */
             errorCode: 'isInvalid',
+            /***
+             * the error message displayed for the user
+             * @type String
+             */
             errorMessage: null,
+            /***
+             * a compare function used for validation
+             * @type Function
+             */
             condition: null
         },
 
