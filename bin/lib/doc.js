@@ -322,6 +322,7 @@ var esprima = require('esprima'),
         ctor: function () {
             this.classAnnotationProcessors = [
                 new Documentation.Processors.Class(),
+                new Documentation.Processors.General('summery'),
                 new Documentation.Processors.General('inherit'),
                 new Documentation.Processors.General('see', true),
                 new Documentation.Processors.General('ignore'),
@@ -344,6 +345,7 @@ var esprima = require('esprima'),
                 new Documentation.Processors.General('see', true),
                 new Documentation.Processors.General('ignore'),
                 new Documentation.Processors.General('deprecated'),
+                new Documentation.Processors.Type(),
                 new Documentation.Processors.Description()
             ];
         },
@@ -614,7 +616,7 @@ var esprima = require('esprima'),
 
                 var item = {
                     name: defaultName,
-                    type: isValueDefault ? "value" : "factory",
+                    defaultType: isValueDefault ? "value" : "factory",
                     visibility: /^[$_]/.test(defaultName) ? "private" : "public",
                     value: isValueDefault ? defaultEntry.value.value : undefined
                 };
@@ -869,6 +871,43 @@ Documentation.Processors.Parameter = Documentation.AnnotationProcessor.inherit({
     }
 }, {
     Parser: /\*\s{0,4}@param\s+?(?:\{(.+)?\})?\s*(?:([^[ ]+)|(?:\[([^=]+)(?:=(.*)?)?\]))\s*-?\s*(.+)?$/
+});
+
+Documentation.Processors.Type = Documentation.AnnotationProcessor.inherit({
+    parse: function (line) {
+
+        var result = Documentation.Processors.Type.Parser.exec(line);
+
+        if (result) {
+
+            result.shift();
+
+            return {
+                type: 'type',
+                processor: this,
+                value: {
+                    types: result[0] ? result[0].split('|') : null
+                }
+            }
+        }
+    },
+
+    appendToResult: function () {
+    },
+
+    mapAnnotationToItem: function (annotation, item, annotations) {
+        item.types = item.types || [];
+
+        for (var i = 0; i < annotation.value.types.length; i++) {
+            var type = annotation.value.types[i];
+            if (_.indexOf(item.types, type) === -1) {
+                item.types.push(type);
+            }
+        }
+
+    }
+}, {
+    Parser: /\*\s{0,4}@type\s+?\{?([^}]+)?\}?\s*?$/
 });
 
 Documentation.Processors.Return = Documentation.AnnotationProcessor.inherit({
