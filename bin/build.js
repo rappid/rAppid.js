@@ -58,7 +58,7 @@ var optimizeConfig = {
         }
         return contents;
     },
-    removeCombined: true,
+    removeCombined: false,
     skipModuleInsertion: true,
     namespaceMap: rAppid.defaultNamespaceMap,
     rewriteMap: rAppid.defaultRewriteMap
@@ -202,6 +202,7 @@ var build = function (args, callback) {
     if (versionDir) {
         config.baseUrl = path.join(config.baseUrl || ".",versionDir);
     }
+
     fs.writeFileSync(configPath, JSON.stringify(config));
 
     var writeBackConfig = function(){
