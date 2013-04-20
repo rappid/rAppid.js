@@ -1,6 +1,7 @@
 language: node_js
 node_js:
   - 0.8
+  - 0.10
 before_script:
   - "npm install -g grunt-cli"
 script:
@@ -10,8 +11,8 @@ script:
 services: mongodb
 env:
   global:
-   - secure: "PXKszsSMkq3W6JrQmRZwHJ3BJTxAQ6m4Ac/QXCnTbWzXPLn95otw5II0DSX+\nfdbDKwPfvaAd+j8X6LJkBlkwpzpTUf9s9V3gccvraq14E7UG8Sz1rHqQOlY4\nSrirb0DUQVeVKikFz0LZkYBetAspNr6M+Z136kvDqgi6/4FGbVM="
-   - secure: "dON8SsNoETgtSQnIJXuD29J58qyWR6I7u2cVuFvOPG7C0mzpJoQ3sPKFZ/MG\n0QNxzyVFV3UDy6sFhFbRsXJcgmq4+8rtawkuINk9fMW9i8jvHBbL5lpUJIDV\nwrkv0BMrc9vedaB4dzDaGi+DlLekuhhHB5MvN180WxAmlDHbx2o="
+   - secure: "NfuhyUNYfNB4dwxZTaETt8Vy8UvfRhBXFS2M7Yp+QSRsvOgC7RYTpOWJXta1\neEraR+yWpk7ZyITftTwJo2Uep+Ej5tfBMCMn8Ug7hzqBMTTuvICaxT9OEk0q\nzRnuqXDJzq66AtbUnP49pmVdhoh64GnqgnJJnQJoiohSMUSW3D8="
+   - secure: "KhIUbYJl6SRw20/6gsYBGWmk4a5UmFj1jUtELowlL03AC5N5gQVpuewL9q1G\n4UYGljh3hWidhI28m5GwgytouW9lQvlQw172kRf57WLxmXVXXLK48daCK7H5\ndO7cX8bH3o1Tiv+45u0UTPZE5rnGdVcqJ3qchtwn8+5qytOtjQw="
 branches:
  only:
    - dev
