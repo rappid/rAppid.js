@@ -22,6 +22,21 @@
  THE SOFTWARE.
 
  */
+
+/***
+ * Define needs to be overridden to prevent overriding module definitions
+ */
+if (typeof requirejs !== "undefined") {
+    var __define = define;
+    define = function () {
+        var args = Array.prototype.slice.call(arguments, 0);
+        // only call define when it is not already defined
+        if (!(typeof args[0] === "string" && requirejs.defined(args[0]))) {
+            __define.apply(null,args);
+        }
+    };
+}
+
 (function (exports, requirejs, define, window, XMLHttpRequest) {
     /** ECMA SCRIPT COMPLIANT**/
     if (!String.prototype.trim) {
@@ -408,6 +423,7 @@
     };
 
     var ApplicationContext = function (requirejsContext, config) {
+        this.$requirejsCache = {};
         this.$requirejsContext = requirejsContext;
         this.$config = config;
     };
@@ -430,6 +446,7 @@
         }
 
         var stage = new Stage(this.$requirejsContext, this, document, window);
+
 
         this.$requirejsContext(["js/core/Application", "js/core/HeadManager", "js/core/History", "js/core/Injection", "js/core/InterCommunicationBus", "js/core/Bindable"], function (Application, HeadManager, History, Injection, InterCommunicationBus, Bindable) {
 
@@ -531,7 +548,12 @@
             fqClassName = classDefinition.prototype.constructor.name;
         } else {
             fqClassName = fqClassName.replace(/\./g, "/");
-            classDefinition = this.$requirejsContext(fqClassName);
+            if(this.$requirejsCache[fqClassName]){
+                classDefinition = this.$requirejsCache[fqClassName];
+            } else {
+                classDefinition = this.$requirejsContext(fqClassName);
+                this.$requirejsCache[fqClassName] = classDefinition;
+            }
         }
 
         className = className || fqClassName;
