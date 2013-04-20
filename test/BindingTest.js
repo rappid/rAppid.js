@@ -55,9 +55,12 @@ describe('js.core.Binding', function () {
                     foobar: function (a, b) {
                         return a === parStr && b === parNum;
                     },
+
                     calculatedAttribute: function () {
                         return "test";
                     }.onChange('m1'),
+
+
 
                     // MOCK FUNCTION
                     getScopeForFncName: function (name) {
@@ -270,6 +273,44 @@ describe('js.core.Binding', function () {
                 b: 'b'
             }));
             extendedTarget.get('val').should.equal(false);
+        });
+
+        it("address().toString() should return value of toString()", function(){
+            var Person = ExtendedClass.inherit({
+                defaults: {
+                    address: null
+                },
+                address: function(){
+                    return this.$.address;
+                }.onChange('address')
+            });
+
+            var Address = ExtendedClass.inherit({
+                defaults: {
+                    city: "",
+                    street: ""
+                },
+                toString: function(){
+
+                    return this.$.city + " " + this.$.street;
+                }
+            });
+
+            var person = new Person();
+            var address = new Address({
+                city: "City1",
+                street: "Street1"
+            });
+            var target = new ExtendedClass();
+
+            new C.Binding({scope: person, path: "address().toString()", target: target, targetKey: 'val'}).triggerBinding();
+
+            should.not.exist(target.get('val'));
+
+            person.set('address',address);
+
+            should.exist(target.get('val'));
+            target.get('val').should.equal("City1 Street1");
         });
 
     });
