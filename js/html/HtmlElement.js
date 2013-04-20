@@ -9,7 +9,7 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
             width: 'offsetWidth'
         };
 
-    /**
+    /***
      * Sets the size of an element, if the policy requires it
      * @param element
      * @param policy
@@ -21,7 +21,7 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
         }
     };
 
-    /**
+    /***
      * Binds the window resize event and sets the size on resize if the policy requires it
      * @param element
      * @param policy
@@ -46,6 +46,9 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
 
     };
 
+    /**
+     * Represents a HTML Element in the DOM
+     */
     var HtmlElement = DomElement.inherit("js.html.HtmlElement", {
 
         defaults: {
