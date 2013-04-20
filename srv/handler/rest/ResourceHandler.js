@@ -129,13 +129,16 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
                     })
                     .exec(function (err, results) {
                         if (!err) {
-                            callback && callback(null, results.parent.getCollection(self.$resourceConfiguration.$.path));
+                            var collection = results.parent.getCollection(self.$resourceConfiguration.$.path);
+                            collection.$context.$dataSource = self.$restHandler.getDataSource(context, self);
+                            callback && callback(null, collection);
                         } else {
                             callback && callback(err);
                         }
                     });
             } else {
-                callback && callback(null, context.dataSource.createCollection(Collection.of(this._getModelFactory()), {pageSize: 100}));
+                var dataSource = this.$restHandler.getDataSource(context, this);
+                callback && callback(null, dataSource.createCollection(Collection.of(this._getModelFactory()), {pageSize: 100}));
             }
         },
 
