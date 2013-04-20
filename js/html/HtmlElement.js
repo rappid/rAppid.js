@@ -49,14 +49,55 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
     var HtmlElement = DomElement.inherit("js.html.HtmlElement", {
 
         defaults: {
+            /**
+             * If not null, false or undefined the "active" CSS class is added
+             *
+             * @type Boolean
+             */
             selected: undefined,
+            /**
+             * If not null, false or undefined a click will set the element to selected
+             * @type Boolean
+             */
             selectable: undefined,
             namespace: HTML_Namespace,
+            /**
+             * @type Boolean
+             */
             enabled: true,
+            /**
+             * Possible values: "absolute", "relative"
+             * @type String
+             */
             position: null,
 
-            heightUpdatePolicy: POLICY_OUT,
-            widthUpdatePolicy: POLICY_OUT
+            /**
+             *
+             * The heightUpdatePolicy configures whether the height of the component is
+             * updated when the DOM node height changes or if the DOM node height is updated
+             * when the component height changes.
+             *
+             *  Possible values:
+             *  - in - "height" attribute is determined by DOM nodes offsetHeight
+             *  - out - DOM node height is determined by the "height" attribute
+             *  - both - both directions
+             * @type String
+             */
+            heightUpdatePolicy: "out",
+
+            /**
+             *
+             * The widthUpdatePolicy configures whether the width of the component is
+             * updated when the DOM node width changes or if the DOM node width is updated
+             * when the component width changes.
+             *
+             *  Possible values:
+             *  - in - "width" attribute is determined by DOM nodes offsetWidth
+             *  - out - DOM node width is determined by the "width" attribute
+             *  - both - both directions
+             * @type String
+             */
+            widthUpdatePolicy: "out"
         },
 
         $classAttributes: ['heightUpdatePolicy', 'widthUpdatePolicy', 'content'],
