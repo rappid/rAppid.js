@@ -8,14 +8,14 @@ define(["srv/handler/rest/ResourceHandler", "flow", "js/data/Collection"], funct
             flow()
                 .seq(function () {
                     if (model.identifier()) {
-                        throw new Error("Can't set version number manually");
+                        throw new Error("Can't set key manually");
                     }
                     if(!model.$.project){
                         throw new Error("Project is required");
                     }
                 })
                 .seq(function (cb) {
-                    model.$context.createCollection(Collection.of(model.factory)).fetchPage(0, {limit: 1}, function (err, page) {
+                    model.$context.createCollection(Collection.of(model.factory)).query(new Query().sort("-number")).fetchPage(0, {limit: 1}, function (err, page) {
                         if (!err) {
                             model.set('key', model.$.project.identifier()+"-"+(page.getCollection().$itemsCount + 1));
                         }
