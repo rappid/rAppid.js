@@ -380,7 +380,7 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
 
                         callback(null);
                     } else {
-                        callback(new HttpError(err, 500));
+                        callback(new HttpError(err, 400));
                     }
                 });
         },
@@ -513,7 +513,7 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
 
                         callback(null);
                     } else {
-                        var statusCode = 500;
+                        var statusCode = 400;
                         if (err === DataSource.ERROR.NOT_FOUND) {
                             statusCode = 404;
                         }
