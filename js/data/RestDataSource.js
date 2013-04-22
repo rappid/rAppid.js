@@ -50,12 +50,42 @@ define(["js/data/DataSource", "js/data/Model", "underscore", "flow", "JSON", "js
     var RestDataSource = DataSource.inherit("js.data.RestDataSource", {
 
         defaults: {
+            /**
+             * The endPoint of the REST API
+             * @type String
+             */
             endPoint: null,
+            /**
+             *
+             * If needed, the gateway of the REST API
+             * @type String
+             */
             gateway: null,
+            /***
+             * Tells the RestDataSource which attribute field to use for context determination of the fetched resources
+             * @type Boolean
+             */
             determinateContextAttribute: "href",
+            /**
+             * If true the returned payload of a POST get's parsed and written back in the Model
+             * @type Boolean
+             */
             parsePayloadOnCreate: true,
+            /***
+             * If true the returned payload of a PUT get's parsed and written back in the Model
+             * @type Boolean
+             */
             parsePayloadOnUpdate: true,
+            /***
+             * Sends the used HTTP method as a query parameter and uses the POST method
+             * @type Boolean
+             */
             useSafeHttpMethods: false,
+            /**
+             *
+             * Set's the default collection page size for fetching collection
+             * @type Number
+             */
             collectionPageSize: 100
         },
 
