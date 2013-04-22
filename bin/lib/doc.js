@@ -271,7 +271,7 @@ var esprima = require('esprima'),
 
         },
 
-        extendInherit: function(documentations, field) {
+        extendInherit: function (documentations, field) {
             var own = [],
                 property,
                 scope = this[field] || {};
@@ -438,7 +438,7 @@ var esprima = require('esprima'),
                     if (argument.type === CONST.CallExpression) {
                         // class definition should use inherit.js
 
-                        classDocumentation = this.getDocumentationFromInheritCall(argument, varToRequireMap);
+                        classDocumentation = this.getDocumentationFromInheritCall(argument, varToRequireMap, functionBody);
                         classDocumentation.start = argument.range[0];
                         return classDocumentation;
 
@@ -479,7 +479,7 @@ var esprima = require('esprima'),
                                             }
                                         }
 
-                                        classDocumentation = this.getDocumentationFromInheritCall(value, varToRequireMap);
+                                        classDocumentation = this.getDocumentationFromInheritCall(value, varToRequireMap, functionBody);
                                         if (classDocumentation) {
                                             classDocumentation.start = declaration.range[0];
                                             return classDocumentation;
@@ -502,12 +502,12 @@ var esprima = require('esprima'),
 
         },
 
-        getDocumentationFromInheritCall: function (argument, varToRequireMap) {
+        getDocumentationFromInheritCall: function (argument, varToRequireMap, scope) {
             if (argument.callee.property.type === CONST.Identifier &&
                 argument.callee.property.name === 'inherit') {
                 // we found the inherit
 
-                var classDocumentation = this.getClassDocumentationFromInherit(argument.arguments);
+                var classDocumentation = this.getClassDocumentationFromInherit(argument.arguments, scope);
 
                 if (classDocumentation) {
                     var inheritFromName = argument.callee.object.name;
@@ -522,7 +522,7 @@ var esprima = require('esprima'),
             return null;
         },
 
-        getClassDocumentationFromInherit: function (fnArguments) {
+        getClassDocumentationFromInherit: function (fnArguments, scope) {
 
             var fqClassName,
                 argument,
@@ -544,12 +544,74 @@ var esprima = require('esprima'),
             if (argument && argument.type === CONST.ObjectExpression) {
                 // we found the prototype definition
                 documentation = this.getDocumentationFromObject(argument);
+            } else if (argument && argument.type === CONST.CallExpression &&
+                argument.callee.object.name === "_" && argument.callee.property.name === "extend") {
 
-                if (documentation) {
-                    documentation.fqClassName = fqClassName;
-                    return documentation;
+                // inherit from extended objections
+                var extendedProperties = {},
+                    object = {
+                        type: CONST.ObjectExpression,
+                        properties: [],
+                        range: [
+                            0, 0
+                        ]
+                    },
+                    firstExtend = true;
+
+                for (var i = 0; i < argument.arguments.length; i++) {
+                    var extendObject = argument.arguments[i];
+
+                    if (extendObject.type === CONST.Identifier) {
+
+                        var varName = extendObject.name;
+
+                        // search for the Object
+                        for (var j = 0; j < scope.body.length; j++) {
+                            var statement = scope.body[j];
+
+                            if (statement.type === CONST.VariableDeclaration) {
+
+                                for (var k = 0; k < statement.declarations.length; k++) {
+                                    var declaration = statement.declarations[k];
+
+                                    if (declaration.type === CONST.VariableDeclarator && declaration.id.name === varName
+                                        && declaration.init.type === CONST.ObjectExpression) {
+                                        // found the var -> go through the properties
+
+                                        if (firstExtend) {
+                                            object.range = declaration.init.range;
+                                            firstExtend = false;
+                                        } else {
+                                            object.range[1] = declaration.init.range[1];
+                                        }
+
+                                        for (var l = 0; l < declaration.init.properties.length; l++) {
+                                            var property = declaration.init.properties[l];
+
+                                            extendedProperties[property.key.name] = property;
+                                        }
+                                    }
+                                }
+
+                            }
+                        }
+                    }
                 }
 
+
+                for (var key in extendedProperties) {
+                    if (extendedProperties.hasOwnProperty(key)) {
+                        object.properties.push(extendedProperties[key]);
+                    }
+                }
+
+                documentation = this.getDocumentationFromObject(object);
+
+            }
+
+            if (documentation) {
+                documentation.fqClassName = fqClassName;
+                return documentation;
             }
         },
 
@@ -572,7 +634,7 @@ var esprima = require('esprima'),
                 lastProperty = properties[i - 1];
                 property = properties[i];
                 item = null;
-                paramMap = {},
+                paramMap = {};
                 annotations = null;
 
                 annotationFrom = lastProperty ? lastProperty.range[1] : object.range[0];
@@ -613,9 +675,9 @@ var esprima = require('esprima'),
                     // TODO: read events
                 } else if (property.key.type === CONST.Identifier && property.key.name === "schema" && property.value.type === CONST.ObjectExpression) {
                     // TODO: read schema
-
+                } else if (property.key.type === CONST.Identifier && property.key.name === "inject" && property.value.type === CONST.ObjectExpression) {
+                    // TODO: read injection
                 } else if (property.key.type === CONST.Identifier) {
-
                     annotations = this.getAnnotationInRange(annotationFrom, annotationTo, this.propertyAnnotationProcessors);
                     documentation.properties[property.key.name] = this.getPropertyDocumentation(property, annotations);
                 }
