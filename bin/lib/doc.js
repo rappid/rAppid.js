@@ -120,7 +120,9 @@ var esprima = require('esprima'),
                         // find inherit methods
                         classDocumentation.addInheritMethods(this.documentations);
 
-                        classDocumentation.extendInheritDefaults(this.documentations);
+                        classDocumentation.extendInherit(this.documentations, "defaults");
+                        classDocumentation.extendInherit(this.documentations, "properties");
+
                     }
                 }
             }
@@ -269,14 +271,14 @@ var esprima = require('esprima'),
 
         },
 
-        extendInheritDefaults: function (documentations) {
+        extendInherit: function(documentations, field) {
+            var own = [],
+                property,
+                scope = this[field] || {};
 
-            var ownDefaults = [],
-                defaultProperty;
-
-            for (defaultProperty in this.defaults) {
-                if (this.defaults.hasOwnProperty(defaultProperty)) {
-                    ownDefaults.push(defaultProperty);
+            for (property in scope) {
+                if (scope.hasOwnProperty(property)) {
+                    own.push(property);
                 }
             }
 
@@ -288,32 +290,32 @@ var esprima = require('esprima'),
 
                         var baseClass = documentations[baseClassFqClassName];
 
-                        for (defaultProperty in baseClass.defaults) {
-                            if (baseClass.defaults.hasOwnProperty(defaultProperty)) {
+                        var baseScope = baseClass[field];
+                        for (property in baseScope) {
+                            if (baseScope.hasOwnProperty(property)) {
 
                                 var currentDefault = null;
 
-                                if (_.indexOf(ownDefaults, defaultProperty) !== -1) {
-                                    currentDefault = this.defaults[defaultProperty];
+                                if (_.indexOf(own, property) !== -1) {
+                                    currentDefault = scope[property];
                                 }
 
                                 if (!currentDefault) {
                                     // inherit method
-                                    currentDefault = this.defaults[defaultProperty] = _.clone(baseClass.defaults[defaultProperty]);
+                                    currentDefault = scope[property] = _.clone(baseScope[property]);
                                 }
 
                                 currentDefault.definedBy = baseClassFqClassName;
 
-                                if (ownDefaults.indexOf(defaultProperty) !== -1) {
-                                    // overwrite defaultProperty
-                                    currentDefault.overwritesDefault = true;
+                                if (own.indexOf(property) !== -1) {
+                                    // overwrite property
+                                    currentDefault.overwrites = true;
                                 }
                             }
                         }
                     }
                 }
             }
-
         }
     }),
 
@@ -341,6 +343,14 @@ var esprima = require('esprima'),
                 new Documentation.Processors.Description()
             ];
 
+            this.propertyAnnotationProcessors = [
+                new Documentation.Processors.General('policy'),
+                new Documentation.Processors.General('ignore'),
+                new Documentation.Processors.General('deprecated'),
+                new Documentation.Processors.Type(),
+                new Documentation.Processors.Description()
+            ];
+
             this.defaultAnnotationProcessors = [
                 new Documentation.Processors.General('see', true),
                 new Documentation.Processors.General('ignore'),
@@ -357,6 +367,8 @@ var esprima = require('esprima'),
                     range: true
                 }),
                 ret = [];
+
+            this.code = code;
 
             // search for all define statements in file
             for (var i = 0; i < ast.body.length; i++) {
@@ -545,18 +557,26 @@ var esprima = require('esprima'),
 
             var documentation = {
                     methods: {},
-                    defaults: {}
+                    defaults: {},
+                    properties: {}
                 },
                 properties = object.properties,
                 lastProperty,
                 property,
-                item, paramMap;
+                item, paramMap,
+                annotationFrom,
+                annotationTo,
+                annotations;
 
             for (var i = 0; i < properties.length; i++) {
                 lastProperty = properties[i - 1];
                 property = properties[i];
                 item = null;
-                paramMap = {};
+                paramMap = {},
+                annotations = null;
+
+                annotationFrom = lastProperty ? lastProperty.range[1] : object.range[0];
+                annotationTo = property.range[0];
 
                 if (property.value.type === CONST.FunctionExpression) {
                     item = {
@@ -573,7 +593,7 @@ var esprima = require('esprima'),
                         item.parameter.push(param)
                     }
 
-                    var annotations = this.getAnnotationInRange(lastProperty ? lastProperty.range[1] : object.range[0], property.range[0], this.prototypeAnnotationProcessors);
+                    annotations = this.getAnnotationInRange(annotationFrom, annotationTo, this.prototypeAnnotationProcessors);
 
                     for (var a = 0; a < annotations.length; a++) {
                         var annotation = annotations[a];
@@ -589,16 +609,49 @@ var esprima = require('esprima'),
 
                     documentation.defaults = this.getDefaultValues(property.value);
 
-                } else {
+                } else if (property.key.type === CONST.Identifier && property.key.name === "events" && property.value.type === CONST.ObjectExpression) {
                     // TODO: read events
+                } else if (property.key.type === CONST.Identifier && property.key.name === "schema" && property.value.type === CONST.ObjectExpression) {
+                    // TODO: read schema
 
+                } else if (property.key.type === CONST.Identifier) {
+
+                    annotations = this.getAnnotationInRange(annotationFrom, annotationTo, this.propertyAnnotationProcessors);
+                    documentation.properties[property.key.name] = this.getPropertyDocumentation(property, annotations);
                 }
-
 
             }
 
             return documentation;
 
+        },
+
+        getVisibility: function (name) {
+            return /^[$_]/.test(name) ? "private" : "public";
+        },
+
+        getPropertyDocumentation: function (property, annotations) {
+
+            var name = property.key.name,
+                ret = {
+                    name: name,
+                    visibility: this.getVisibility(name)
+                };
+
+            if (property.value.type === CONST.Literal) {
+                ret.value = property.value.raw;
+                ret.propertyType = "value";
+            } else {
+                ret.propertyType = "complex";
+                ret.value = this.code.substring(property.range[0] + name.length + 1, property.range[1]);
+            }
+
+            for (var a = 0; a < annotations.length; a++) {
+                var annotation = annotations[a];
+                annotation.processor.mapAnnotationToItem(annotation, ret, annotations);
+            }
+
+            return ret;
         },
 
         getDefaultValues: function (defaultsObject) {
@@ -617,7 +670,7 @@ var esprima = require('esprima'),
                 var item = {
                     name: defaultName,
                     defaultType: isValueDefault ? "value" : "factory",
-                    visibility: /^[$_]/.test(defaultName) ? "private" : "public",
+                    visibility: this.getVisibility(defaultName),
                     value: isValueDefault ? defaultEntry.value.value : undefined
                 };
 
@@ -745,7 +798,6 @@ var esprima = require('esprima'),
 
         }
     });
-
 
 
 Documentation.AnnotationProcessor = inherit.Base.inherit({
