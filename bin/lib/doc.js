@@ -965,7 +965,7 @@ Documentation.Processors.Parameter = Documentation.AnnotationProcessor.inherit({
     },
 
     appendToResult: function (result, description) {
-        result.value.description += description;
+        result.value.description += "\n " + description;
     },
 
     mapAnnotationToItem: function (annotation, item, annotations) {
@@ -1083,7 +1083,7 @@ Documentation.Processors.Description = Documentation.AnnotationProcessor.inherit
     },
 
     appendToResult: function (result, description) {
-        result.value.description += description;
+        result.value.description += "\n" + description;
     },
 
     mapAnnotationToItem: function (annotation, item) {
