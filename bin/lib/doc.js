@@ -358,6 +358,12 @@ var esprima = require('esprima'),
                 new Documentation.Processors.Type(),
                 new Documentation.Processors.Description()
             ];
+
+            this.methodAnnotationProcessors = {
+                onChange: new Documentation.Processors.ArrayMethodAnnotationProcessor("onChange"),
+                on: new Documentation.Processors.OnMethodAnnotationProcessor(),
+                bus: new Documentation.Processors.ArrayMethodAnnotationProcessor("bus")
+            };
         },
 
         generate: function (code, fqClassName) {
@@ -628,7 +634,9 @@ var esprima = require('esprima'),
                 item, paramMap,
                 annotationFrom,
                 annotationTo,
-                annotations;
+                annotations,
+                annotationMethods,
+                self = this;
 
             for (var i = 0; i < properties.length; i++) {
                 lastProperty = properties[i - 1];
@@ -636,36 +644,19 @@ var esprima = require('esprima'),
                 item = null;
                 paramMap = {};
                 annotations = null;
+                annotationMethods = [];
 
                 annotationFrom = lastProperty ? lastProperty.range[1] : object.range[0];
                 annotationTo = property.range[0];
 
-                if (property.value.type === CONST.FunctionExpression) {
-                    item = {
-                        type: 'Method',
-                        parameter: []
-                    };
+                if (property.value.type === CONST.CallExpression) {
 
-                    for (var j = 0; j < property.value.params.length; j++) {
-                        var param = {
-                            name: property.value.params[j].name
-                        };
+                    var result = getMethodDefinitionWithAnnotations(property.value);
 
-                        paramMap[property.value.params[j].name] = param;
-                        item.parameter.push(param)
-                    }
+                    parseMethodDocumentation(property.key.name, result.method, result.annotations);
 
-                    annotations = this.getAnnotationInRange(annotationFrom, annotationTo, this.prototypeAnnotationProcessors);
-
-                    for (var a = 0; a < annotations.length; a++) {
-                        var annotation = annotations[a];
-                        annotation.processor.mapAnnotationToItem(annotation, item, annotations);
-                    }
-
-                    if (!item.hasOwnProperty('ignore')) {
-                        documentation.methods[property.key.name] = item;
-                    }
-
+                } else if (property.value.type === CONST.FunctionExpression) {
+                    parseMethodDocumentation(property.key.name, property.value);
                 } else if (property.key.type === CONST.Identifier && property.key.name === "defaults" && property.value.type === CONST.ObjectExpression) {
                     // found the defaults block
 
@@ -685,6 +676,82 @@ var esprima = require('esprima'),
             }
 
             return documentation;
+
+            function parseMethodDocumentation(name, value, methodAnnotations) {
+
+                item = {
+                    type: 'Method',
+                    parameter: [],
+                    annotations: {}
+                };
+
+                for (var j = 0; j < value.params.length; j++) {
+                    var param = {
+                        name: value.params[j].name
+                    };
+
+                    paramMap[value.params[j].name] = param;
+                    item.parameter.push(param)
+                }
+
+                annotations = self.getAnnotationInRange(annotationFrom, annotationTo, self.prototypeAnnotationProcessors);
+
+                for (var a = 0; a < annotations.length; a++) {
+                    var annotation = annotations[a];
+                    annotation.processor.mapAnnotationToItem(annotation, item, annotations);
+                }
+
+                if (methodAnnotations) {
+                    for (var i = 0; i < methodAnnotations.length; i++) {
+                        var methodAnnotation = methodAnnotations[i],
+                            annotationName = methodAnnotation.name,
+                            methodAnnotationProcessor = self.methodAnnotationProcessors[annotationName];
+
+                        if (methodAnnotationProcessor) {
+
+                            var annotationItem = item.annotations[annotationName] = item.annotations[annotationName] || [];
+                            methodAnnotationProcessor.parse(methodAnnotation, annotationItem);
+
+                        } else {
+                            console.warn("No MethodAnnotationProcessor for " + annotationName + " found.");
+                        }
+                    }
+                }
+
+                if (!item.hasOwnProperty('ignore')) {
+                    documentation.methods[name] = item;
+                }
+
+            }
+
+            function getMethodDefinitionWithAnnotations(object) {
+
+                var annotations = [
+                        {
+                            name: object.callee.property.name,
+                            arguments: object.arguments
+                        }
+                    ],
+                    method;
+
+                if (object.callee.object.type === CONST.CallExpression) {
+                    // another method annotation
+                    var sub = getMethodDefinitionWithAnnotations(object.callee.object);
+
+                    method = sub.method;
+                    annotations = annotations.concat(sub.annotations);
+
+                } else if (object.callee.object.type === CONST.FunctionExpression) {
+                    // we found the method
+                    method = object.callee.object;
+                }
+
+                return {
+                    annotations: annotations,
+                    method: method
+                }
+
+            }
 
         },
 
@@ -870,6 +937,11 @@ Documentation.AnnotationProcessor = inherit.Base.inherit({
     mapAnnotationToItem: function (annotation, item, annotations) {
     }
 
+});
+
+Documentation.MethodAnnotionProcessor = inherit.Base.inherit({
+    parse: function(annotation, methodAnnotionObject) {
+    }
 });
 
 Documentation.Processors = {};
@@ -1092,6 +1164,38 @@ Documentation.Processors.Description = Documentation.AnnotationProcessor.inherit
 }, {
     Parser: /\*\s*@description\s*(.+)$/
 });
+
+Documentation.Processors.ArrayMethodAnnotationProcessor = Documentation.MethodAnnotionProcessor.inherit({
+
+    ctor: function(name) {
+        this.name = name;
+    },
+
+    parse: function (annotation, methodAnnotationObject) {
+
+        for (var i = 0; i < annotation.arguments.length; i++) {
+            methodAnnotationObject.push(annotation.arguments[i].value);
+        }
+
+    }
+});
+
+Documentation.Processors.OnMethodAnnotationProcessor = Documentation.MethodAnnotionProcessor.inherit({
+    parse: function (annotation, methodAnnotationObject) {
+
+        for (var i = 0; i < annotation.arguments.length; i++) {
+            var arg = annotation.arguments[i];
+
+            if (arg.type === CONST.Literal) {
+                methodAnnotationObject.push(["this", arg.value]);
+            } else if (arg.type === CONST.ArrayExpression) {
+                methodAnnotationObject.push([arg.elements[0].value, arg.elements[1].value]);
+            }
+        }
+
+    }
+});
+
 
 exports.version = '0.1.0';
 exports.Documentation = Documentation;
