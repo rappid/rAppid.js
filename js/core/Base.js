@@ -7,6 +7,8 @@ define(["inherit"], function(inherit){
 
         ctor: function () {
             this.$functionTimeoutMap = {};
+            this.$debounceTimeoutMap = {};
+
             // generate unique id
             this.$cid = ++cid;
 
@@ -65,6 +67,26 @@ define(["inherit"], function(inherit){
             this.$functionTimeoutMap[key] && clearTimeout(this.$functionTimeoutMap[key]);
 
             this.$functionTimeoutMap[key] = setTimeout(fnc,delay);
+        },
+
+        _debounceFunction: function(fnc, cacheId, delay, scope, parameters) {
+
+            if (!fnc) {
+                return;
+            }
+
+            cacheId = cacheId || fnc.toString();
+            delay = delay || 300;
+            scope = scope || this;
+            parameters = parameters || [];
+
+            if (this.$debounceTimeoutMap[cacheId]) {
+                clearTimeout(this.$debounceTimeoutMap[cacheId]);
+            }
+
+            this.$debounceTimeoutMap[cacheId] = setTimeout(function() {
+                fnc.apply(scope, parameters);
+            }, delay);
         }
 
     });
