@@ -6,7 +6,6 @@ define(["inherit"], function(inherit){
     var Base = inherit.Base.inherit("js.core.Base",{
 
         ctor: function () {
-            this.$functionTimeoutMap = {};
             this.$debounceTimeoutMap = {};
 
             // generate unique id
@@ -55,21 +54,17 @@ define(["inherit"], function(inherit){
                 }
             }
         },
+
         /***
          *
-         * @param {Function} fnc - the function to call
-         * @param {Number} delay - delay in ms
+         * @param {Function} fnc
+         * @param {String} [cacheId]
+         * @param {Number} [delay]
+         * @param {Object} [scope]
+         * @param {Array} [parameters]
          * @private
          */
-        _callFunctionDelayed: function(fnc, delay){
-            delay = delay || 300;
-            var key = fnc.toString();
-            this.$functionTimeoutMap[key] && clearTimeout(this.$functionTimeoutMap[key]);
-
-            this.$functionTimeoutMap[key] = setTimeout(fnc,delay);
-        },
-
-        _debounceFunction: function(fnc, cacheId, delay, scope, parameters) {
+        _debounceFunctionCall: function(fnc, cacheId, delay, scope, parameters) {
 
             if (!fnc) {
                 return;
