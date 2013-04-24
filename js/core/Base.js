@@ -62,24 +62,41 @@ define(["inherit"], function(inherit){
          * @param {Number} [delay]
          * @param {Object} [scope]
          * @param {Array} [parameters]
+         * @param {String} [strategy=loop] - loop will trigger the function at least every delay, wait will clear the timeout
          * @private
          */
-        _debounceFunctionCall: function(fnc, cacheId, delay, scope, parameters) {
+        _debounceFunctionCall: function(fnc, cacheId, delay, scope, parameters, strategy) {
+            var self = this,
+                LOOP = "loop";
 
             if (!fnc) {
                 return;
             }
 
             cacheId = cacheId || fnc.toString();
-            delay = delay || 300;
             scope = scope || this;
             parameters = parameters || [];
+            strategy = strategy || LOOP;
 
+            if (delay === 0) {
+                // immediately invoke function
+                fnc.apply(scope, parameters);
+                return;
+            }
+
+            delay = delay || 300;
             if (this.$debounceTimeoutMap[cacheId]) {
+                // timer registered
+
+                if (strategy === LOOP) {
+                    return;
+                }
+
                 clearTimeout(this.$debounceTimeoutMap[cacheId]);
             }
 
             this.$debounceTimeoutMap[cacheId] = setTimeout(function() {
+                delete self.$debounceTimeoutMap[cacheId];
                 fnc.apply(scope, parameters);
             }, delay);
         }
