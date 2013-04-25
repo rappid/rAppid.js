@@ -42,7 +42,13 @@ define([], function () {
         rewriteMap = rewriteMap || {};
         xamlClasses = xamlClasses || [];
 
-        namespace = (namespaceMap[namespace] || namespace).replace(/\./g, '/');
+        namespace = (namespaceMap[namespace] || namespace);
+
+        if (!namespace) {
+            console.warn("It seems that you forgot to add a namespace. Try using xmlns='http://www.w3.org/1999/xhtml' in your xaml");
+        }
+
+        namespace = namespace.replace(/\./g, '/');
         var fqClassName = [namespace, localName].join("/");
 
 
