@@ -4,7 +4,8 @@ define(["require", "js/html/HtmlElement", "js/ui/ContentPlaceHolder", "js/core/M
 
             $classAttributes: ['router', 'currentModuleName', 'state'],
             defaults: {
-                currentModuleName:  null,
+                currentModuleName: null,
+                $currentModule: null,
                 tagName: 'div',
                 componentClass: "module-loader",
                 state: null
@@ -86,9 +87,11 @@ define(["require", "js/html/HtmlElement", "js/ui/ContentPlaceHolder", "js/core/M
                     contentPlaceHolder.set("content", moduleInstance.findContent(contentPlaceHolder.$.name));
                 }
 
-                var internalCallback = function(err) {
-
-                    self.set('state', err ? 'error' : null);
+                var internalCallback = function (err) {
+                    self.set({
+                        state: err ? 'error' : null,
+                        $currentModule: moduleInstance
+                    });
 
                     if (callback) {
                         callback(err, moduleInstance);
@@ -110,7 +113,7 @@ define(["require", "js/html/HtmlElement", "js/ui/ContentPlaceHolder", "js/core/M
                             }
 
                             flow()
-                                .seqEach(routeExecutionStack, function(routingFunction, cb) {
+                                .seqEach(routeExecutionStack, function (routingFunction, cb) {
                                     routingFunction(cb);
                                 })
                                 .exec(internalCallback);
@@ -133,7 +136,9 @@ define(["require", "js/html/HtmlElement", "js/ui/ContentPlaceHolder", "js/core/M
              */
             loadModule: function (module, callback, routeContext) {
 
-                callback = callback || function() {};
+                var self = this;
+                callback = callback || function () {
+                };
 
                 if (!module.hasOwnProperty("name")) {
                     // load by name
@@ -151,49 +156,69 @@ define(["require", "js/html/HtmlElement", "js/ui/ContentPlaceHolder", "js/core/M
                     }
                 } else {
 
-                    this._clearContentPlaceHolders();
-                    this.$lastModuleName = this.$.currentModuleName;
-                    this.set('currentModuleName', null);
-                    this.set('state', 'loading');
 
-                    if (this.$moduleCache.hasOwnProperty(module.name)) {
-                        this._startModule(module.name, this.$moduleCache[module.name], callback, routeContext, true);
-                    } else {
+                    flow()
+                        .seq(function() {
+                            self.set('currentModuleName', null);
+                            self.set('state', 'unloading loading');
+                        })
+                        .seq(function (cb) {
 
-                        var self = this;
-                        // load module
-
-                        require([this.$stage.$applicationContext.getFqClassName(module.moduleClass)], function (moduleBaseClass) {
-                            var moduleInstance = new moduleBaseClass(null, false, self.$stage, null, null);
-
-                            if (moduleInstance instanceof Module) {
-                                if (typeof(CollectGarbage) == "function"){
-                                    CollectGarbage();
-                                }
-
-                                moduleInstance._initialize("auto");
-
-                                // cache instance
-                                self.$moduleCache[module.name] = moduleInstance;
-
-                                self._startModule(module.name, moduleInstance, callback, routeContext, false);
-
+                            var currentModule = self.$.$currentModule;
+                            if (currentModule) {
+                                currentModule._unload(cb);
                             } else {
-                                if (callback) {
-                                    callback("Module '" + module.moduleClass + "' isn't an instance of js.core.Module");
-                                }
+                                cb();
+                            }
+                        })
+                        .seq(function (cb) {
+
+                            self.set('state', 'loading');
+
+                            self._clearContentPlaceHolders();
+                            self.$lastModuleName = self.$.currentModuleName;
+
+                            if (self.$moduleCache.hasOwnProperty(module.name)) {
+                                self._startModule(module.name, self.$moduleCache[module.name], cb, routeContext, true);
+                            } else {
+
+                                // load module
+
+                                require([self.$stage.$applicationContext.getFqClassName(module.moduleClass)], function (moduleBaseClass) {
+                                    var moduleInstance = new moduleBaseClass(null, false, self.$stage, null, null);
+
+                                    if (moduleInstance instanceof Module) {
+                                        if (typeof(CollectGarbage) == "function") {
+                                            CollectGarbage();
+                                        }
+
+                                        moduleInstance._initialize("auto");
+
+                                        // cache instance
+                                        self.$moduleCache[module.name] = moduleInstance;
+
+                                        self._startModule(module.name, moduleInstance, cb, routeContext, false);
+
+                                    } else {
+                                        cb(new Error("Module '" + module.moduleClass + "' isn't an instance of js.core.Module"));
+                                    }
+
+                                }, function (err) {
+                                    cb(err);
+                                });
                             }
 
-                        }, function(err) {
+                        })
+                        .exec(function (err) {
 
-                            self.set('state', 'error');
-                            self.log(err, "warn");
-
-                            if (callback) {
-                                callback(err);
+                            if (err) {
+                                self.set('state', 'error');
+                                self.log(err, "warn");
                             }
+
+                            callback(err);
                         });
-                    }
+
                 }
 
             },
@@ -201,7 +226,7 @@ define(["require", "js/html/HtmlElement", "js/ui/ContentPlaceHolder", "js/core/M
                 return this.$.currentModuleName == moduleName;
             }.onChange('currentModuleName'),
 
-            _clearContentPlaceHolders: function() {
+            _clearContentPlaceHolders: function () {
 
                 var contentPlaceHolders = this.getContentPlaceHolders();
 
@@ -219,18 +244,18 @@ define(["require", "js/html/HtmlElement", "js/ui/ContentPlaceHolder", "js/core/M
              * @deprecated will be removed soon
              * @return {Array}
              */
-            moduleNames: function(){
+            moduleNames: function () {
                 var modules = [], conf;
-                for(var i = 0; i < this.$configurations.length; i++){
+                for (var i = 0; i < this.$configurations.length; i++) {
                     conf = this.$configurations[i];
-                    if(conf instanceof ModuleConfiguration){
+                    if (conf instanceof ModuleConfiguration) {
                         modules.push(conf.$.name);
                     }
                 }
                 return modules;
             },
 
-            _renderState: function(state, oldState) {
+            _renderState: function (state, oldState) {
                 oldState && this.removeClass(oldState);
                 state && this.addClass(state);
             }
