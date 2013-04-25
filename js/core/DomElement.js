@@ -42,9 +42,16 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                 "cid",
                 /^_/ // private attributes
             ],
+
             defaults: {
+                /***
+                 * @type {Boolean}
+                 *
+                 * sets the visibility of an component. If the value is false the component is removed from the DOM.
+                 */
                 visible: true
             },
+
             ctor: function (attributes, descriptor, systemManager, parentScope, rootScope) {
                 this.$addedToDom = false;
                 this.$renderMap = {};
