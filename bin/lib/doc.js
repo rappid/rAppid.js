@@ -906,7 +906,7 @@ var esprima = require('esprima'),
         getFqClassNameFromPath: function (name) {
             // TODO: check if some paths are mapped
             // stripe plugin and change / to .
-            return name.replace(/^[a-z/]+!]/, '').replace(/\//g, '.');
+            return name.replace(/^[a-z/]+!]/, '').replace(/\//g, '.').replace("xaml!", "");
         }
     }),
 
