@@ -80,7 +80,7 @@ var esprima = require('esprima'),
             this.documentations[className] = classDocumentation;
         },
 
-        generateDocumentationsForFile: function (type, code, defaultFqClassName, add) {
+        generateDocumentationsForFile: function (type, code, defaultFqClassName, add, path) {
 
             var processor = this.documentationProcessors[type];
 
@@ -89,6 +89,12 @@ var esprima = require('esprima'),
             }
 
             var docs = processor.generate(code, defaultFqClassName);
+
+            docs.forEach(function (doc) {
+                doc.file = path;
+                doc.package = path.replace(/\/[^/]+$/, "").replace(/\//g, ".");
+            });
+
             if (add) {
                 docs.forEach(function (doc) {
                     this.addClassDocumentation(doc.fqClassName, doc);
@@ -662,7 +668,7 @@ var esprima = require('esprima'),
 
                     documentation.defaults = this.getDefaultValues(property.value);
 
-                } else if (property.key.type === CONST.Identifier && property.key.name === "events" && property.value.type === CONST.ObjectExpression) {
+                } else if (property.key.type === CONST.Identifier && property.key.name === "events" && property.value.type === CONST.ArrayExpression) {
                     // TODO: read events
                 } else if (property.key.type === CONST.Identifier && property.key.name === "schema" && property.value.type === CONST.ObjectExpression) {
                     // TODO: read schema
@@ -1037,7 +1043,12 @@ Documentation.Processors.Parameter = Documentation.AnnotationProcessor.inherit({
     },
 
     appendToResult: function (result, description) {
-        result.value.description += "\n " + description;
+        result.value.description += description;
+
+        if (!/\\\s*$/.test(description)) {
+            result.value.description += "\n";
+        }
+
     },
 
     mapAnnotationToItem: function (annotation, item, annotations) {
