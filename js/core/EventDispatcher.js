@@ -281,7 +281,7 @@ define(["js/core/Base"], function (Base) {
                 },
                 /**
                  *
-                 * @param {EventDispatcher.Event} event
+                 * @param {js.core.EventDispatcher.Event} event
                  * @param {Object} caller
                  */
                 trigger: function (event, caller) {
