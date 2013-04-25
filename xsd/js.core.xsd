@@ -1,25 +1,326 @@
-<schema xmlns="http://www.w3.org/2001/XMLSchema"
-        xmlns:js="js.core"
-        targetNamespace="js.core">
+<schema targetNamespace="js.core" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns1="js.html" xmlns:ns2="js.ui" xmlns:ns="js.core">
+    <import namespace="js.html"/>
+    <import namespace="js.ui"/>
+    <element name="Application" type="ns:Application"/>
+    <element name="Component" type="ns:Component"/>
+    <element name="DomElement" type="ns:DomElement"/>
+    <element name="Head" type="ns:Head"/>
+    <element name="I18n" type="ns:I18n"/>
+    <element name="Injection" type="ns:Injection"/>
+    <element name="Module" type="ns:Module"/>
+    <element name="ModuleLoader" type="ns:ModuleLoader"/>
+    <element name="Router" type="ns:Router"/>
+    <element name="Stage" type="ns:Stage"/>
+    <element name="Window" type="ns:Window"/>
+    <element name="WindowManager" type="ns:WindowManager"/>
+    <complexType name="Application">
+        <complexContent>
+            <extension base="ns:Window">
+                <annotation>
+                    <documentation source="http://www.rappidjs.com/#/api/js.core.Application">
+                        An application is a Window, which gets bootstrapped and started by
+                        rAppid.js and is attached to the WindowManager.
 
-    <complexType name="Component">
-        <attribute name="cid" type="string" use="optional"/>
+
+                    </documentation>
+                </annotation>
+                <sequence>
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+                <attribute name="ENV">
+                    <annotation>
+                        <documentation>
+
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
     </complexType>
+    <complexType name="Component">
+        <complexContent>
+            <extension base="anyType">
+                <annotation>
+                    <documentation source="http://www.rappidjs.com/#/api/js.core.Component">
 
+                    </documentation>
+                </annotation>
+                <sequence>
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+                <attribute name="cid">
+                    <annotation>
+                        <documentation>
+                            the cid is a unique identifier for the component within a xaml
+                            class. \
+                            The corresponding component will be automatically added to the
+                            $ of the instance of the xaml class.
+
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="creationPolicy" default="auto">
+                    <annotation>
+                        <documentation>
+                            Decides if the initialization of the component is started
+                            automatically or manually by the application
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+    <complexType name="DomElement">
+        <complexContent>
+            <extension base="ns:Component">
+                <annotation>
+                    <documentation source="http://www.rappidjs.com/#/api/js.core.DomElement">
+                        first set empty -> needed for Chrome
+                        then remove -> needed for firefox
+                    </documentation>
+                </annotation>
+                <sequence>
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+                <attribute name="visible" default="true">
+                    <annotation>
+                        <documentation>
+
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+    <complexType name="Head">
+        <complexContent>
+            <extension base="ns:Component">
+                <annotation>
+                    <documentation source="http://www.rappidjs.com/#/api/js.core.Head">
+
+                    </documentation>
+                </annotation>
+                <sequence>
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+    <complexType name="I18n">
+        <complexContent>
+            <extension base="ns:Component">
+                <annotation>
+                    <documentation source="http://www.rappidjs.com/#/api/js.core.I18n">
+
+                    </documentation>
+                </annotation>
+                <sequence>
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+                <attribute name="path" default="app/locale">
+                    <annotation>
+                        <documentation>
+
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="locale">
+                    <annotation>
+                        <documentation>
+
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="suffix" default=".json">
+                    <annotation>
+                        <documentation>
+
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="translations">
+                    <annotation>
+                        <documentation>
+
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="loadMomentJs" default="true">
+                    <annotation>
+                        <documentation>
+
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+    <complexType name="Injection">
+        <complexContent>
+            <extension base="ns:Component">
+                <annotation>
+                    <documentation source="http://www.rappidjs.com/#/api/js.core.Injection">
+
+                    </documentation>
+                </annotation>
+                <sequence>
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+    <complexType name="Module">
+        <complexContent>
+            <extension base="ns1:HtmlElement">
+                <annotation>
+                    <documentation source="http://www.rappidjs.com/#/api/js.core.Module">
+
+                    </documentation>
+                </annotation>
+                <sequence>
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+    <complexType name="ModuleLoader">
+        <complexContent>
+            <extension base="ns1:HtmlElement">
+                <annotation>
+                    <documentation source="http://www.rappidjs.com/#/api/js.core.ModuleLoader">
+
+                    </documentation>
+                </annotation>
+                <sequence>
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+                <attribute name="currentModuleName">
+                    <annotation>
+                        <documentation>
+
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="tagName" default="div">
+                    <annotation>
+                        <documentation>
+
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="componentClass" default="module-loader">
+                    <annotation>
+                        <documentation>
+
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="state">
+                    <annotation>
+                        <documentation>
+
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
     <complexType name="Router">
         <complexContent>
-            <extension base="js:Component">
-                <sequence>
-                    <element name="Route" minOccurs="0" maxOccurs="unbounded">
-                        <complexType>
-                            <attribute name="name" use="optional" type="string"/>
-                            <attribute name="route" use="required" type="string"/>
-                            <attribute name="foo" use="required" type="string"/>
+            <extension base="ns:Component">
+                <annotation>
+                    <documentation source="http://www.rappidjs.com/#/api/js.core.Router">
 
-                            <attribute name="onexec" use="optional" type="string"/>
-                        </complexType>
-                    </element>
+                    </documentation>
+                </annotation>
+                <sequence>
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
                 </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+    <complexType name="Stage">
+        <complexContent>
+            <extension base="ns1:HtmlElement">
+                <annotation>
+                    <documentation source="http://www.rappidjs.com/#/api/js.core.Stage">
+
+                    </documentation>
+                </annotation>
+                <sequence>
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+                <attribute name="tagName" default="div">
+                    <annotation>
+                        <documentation>
+
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="componentClass" default="stage">
+                    <annotation>
+                        <documentation>
+
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+    <complexType name="Window">
+        <complexContent>
+            <extension base="ns2:View">
+                <annotation>
+                    <documentation source="http://www.rappidjs.com/#/api/js.core.Window">
+
+                    </documentation>
+                </annotation>
+                <sequence>
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+                <attribute name="componentClass" default="window">
+                    <annotation>
+                        <documentation>
+
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+    <complexType name="WindowManager">
+        <complexContent>
+            <extension base="ns1:HtmlElement">
+                <annotation>
+                    <documentation source="http://www.rappidjs.com/#/api/js.core.WindowManager">
+                        The WindowManager manages Windows on the Stage.
+
+                    </documentation>
+                </annotation>
+                <sequence>
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+                <attribute name="tagName" default="div">
+                    <annotation>
+                        <documentation>
+
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="modalActive">
+                    <annotation>
+                        <documentation>
+
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="class" default="window-manager {modalActiveClass()}">
+                    <annotation>
+                        <documentation>
+
+                        </documentation>
+                    </annotation>
+                </attribute>
             </extension>
         </complexContent>
     </complexType>
