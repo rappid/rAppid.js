@@ -94,17 +94,20 @@ define(["js/core/Application"], function (Application) {
                         var attribute = classDocumentation.defaults[key];
 
                         if (attribute.visibility === "public" &&
-                                (isComponent || attribute.definedBy === classDocumentation.fqClassName || attribute.definedBy === classDocumentation.fqClassName + "Class")) {
+                                (isComponent || attribute.definedBy === classDocumentation.fqClassName ||
+                                    attribute.definedBy === classDocumentation.fqClassName + "Class" || !attribute.hasOwnProperty("definedBy"))) {
 
                             var attributeComponent = schema.$templates["attribute"].createComponents({
-                                $attribute: attribute
+                                name: attribute.name,
+                                description: ""
                             })[0];
+
+                            extension.addChild(attributeComponent);
 
                             if (attribute.defaultType === "value" && attribute.value) {
                                 attributeComponent.set("default", attribute.value);
                             }
 
-                            extension.addChild(attributeComponent);
                         }
                     }
                 }

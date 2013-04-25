@@ -797,8 +797,16 @@ var esprima = require('esprima'),
 
             for (var i = 0; i < defaults.length; i++) {
                 var defaultEntry = defaults[i],
-                    defaultName = defaultEntry.key.name,
+                    defaultName,
                     isValueDefault = defaultEntry.value.type === CONST.Literal;
+
+                if (defaultEntry.key.type === CONST.Identifier) {
+                    defaultName = defaultEntry.key.name
+                } else if (defaultEntry.key.type === CONST.Literal) {
+                    defaultName = defaultEntry.key.value;
+                } else {
+                    console.warn("couldn't determinate the name for the default");
+                }
 
                 lastDefaultEntry = defaults[i - 1];
 
