@@ -98,8 +98,8 @@ define(["js/core/Application"], function (Application) {
                                     attribute.definedBy === classDocumentation.fqClassName + "Class" || !attribute.hasOwnProperty("definedBy"))) {
 
                             var attributeComponent = schema.$templates["attribute"].createComponents({
-                                name: attribute.name,
-                                description: ""
+                                $name: null,
+                                $description: null
                             })[0];
 
                             extension.addChild(attributeComponent);
@@ -107,6 +107,11 @@ define(["js/core/Application"], function (Application) {
                             if (attribute.defaultType === "value" && attribute.value) {
                                 attributeComponent.set("default", attribute.value);
                             }
+
+                            attributeComponent.set({
+                                $name: attribute.name,
+                                $description: attribute.description
+                            });
 
                         }
                     }

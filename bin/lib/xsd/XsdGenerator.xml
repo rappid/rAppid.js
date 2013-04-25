@@ -20,8 +20,8 @@
                                 {$type.documentation}
                             </documentation>
                         </annotation>
-                        <sequence visible="{$type.isComponent}">
-                            <any processContents="strict" minOccurs="0" maxOccurs="unbounded"/>
+                        <sequence>
+                            <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
                         </sequence>
                     </extension>
                 </complexContent>
@@ -29,10 +29,10 @@
         </js:Template>
 
         <js:Template name="attribute">
-            <attribute name="{name}">
+            <attribute name="{$name}">
                 <annotation>
                     <documentation>
-                        {description}
+                        {$description}
                     </documentation>
                 </annotation>
             </attribute>
