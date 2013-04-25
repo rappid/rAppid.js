@@ -120,9 +120,10 @@ var help = function (args, callback) {
                     if (doc.package) {
                         doc.inheritancePath = doc.inheritancePath || [];
 
-                        var inheritFromComponent = false;
+                        var componentFqClassName = "js.core.Component";
+                        var inheritFromComponent = fqClassName === componentFqClassName;
                         for (i = 0; i < doc.inheritancePath.length; i++) {
-                            if (doc.inheritancePath[i] === "js.core.Component") {
+                            if (doc.inheritancePath[i] === componentFqClassName) {
                                 inheritFromComponent = true;
                                 break;
                             }
