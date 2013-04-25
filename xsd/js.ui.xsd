@@ -27,6 +27,7 @@
     <element name="Link" type="ns:Link"/>
     <element name="ListView" type="ns:ListView"/>
     <element name="MenuButton" type="ns:MenuButton"/>
+    <element name="MenuButtonClass" type="ns:MenuButtonClass"/>
     <element name="PlaceHolder" type="ns:PlaceHolder"/>
     <element name="ProgressBar" type="ns:ProgressBar"/>
     <element name="Radio" type="ns:Radio"/>
@@ -827,7 +828,7 @@
     </complexType>
     <complexType name="MenuButton">
         <complexContent>
-            <extension base="ns:View">
+            <extension base="ns:MenuButtonClass">
                 <annotation>
                     <documentation source="http://www.rappidjs.com/#/api/js.ui.MenuButton">
 
@@ -836,6 +837,62 @@
                 <sequence>
                     <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
                 </sequence>
+                <attribute name="componentClass" default="btn-group menu-button">
+                    <annotation>
+                        <documentation>
+
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="menuClassName" default="dropdown-menu">
+                    <annotation>
+                        <documentation>
+
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="menuVisible">
+                    <annotation>
+                        <documentation>
+
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+    <complexType name="MenuButtonClass">
+        <complexContent>
+            <extension base="ns:View">
+                <annotation>
+                    <documentation source="http://www.rappidjs.com/#/api/js.ui.MenuButtonClass">
+
+                    </documentation>
+                </annotation>
+                <sequence>
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+                <attribute name="componentClass" default="btn-group menu-button">
+                    <annotation>
+                        <documentation>
+
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="menuClassName" default="dropdown-menu">
+                    <annotation>
+                        <documentation>
+
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="menuVisible">
+                    <annotation>
+                        <documentation>
+
+                        </documentation>
+                    </annotation>
+                </attribute>
             </extension>
         </complexContent>
     </complexType>

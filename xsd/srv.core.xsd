@@ -1,0 +1,218 @@
+<schema targetNamespace="srv.core" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns1="js.core" xmlns:ns="srv.core">
+    <import namespace="js.core"/>
+    <element name="AuthenticationFilter" type="ns:AuthenticationFilter"/>
+    <element name="AuthenticationProvider" type="ns:AuthenticationProvider"/>
+    <element name="AuthenticationProviders" type="ns:AuthenticationProviders"/>
+    <element name="AuthorisationProvider" type="ns:AuthorisationProvider"/>
+    <element name="AuthorisationProviders" type="ns:AuthorisationProviders"/>
+    <element name="EndPoint" type="ns:EndPoint"/>
+    <element name="EndPoints" type="ns:EndPoints"/>
+    <element name="Filter" type="ns:Filter"/>
+    <element name="Filters" type="ns:Filters"/>
+    <element name="Handler" type="ns:Handler"/>
+    <element name="Handlers" type="ns:Handlers"/>
+    <element name="Server" type="ns:Server"/>
+    <complexType name="AuthenticationFilter">
+        <complexContent>
+            <extension base="ns:Filter">
+                <annotation>
+                    <documentation source="http://www.rappidjs.com/#/api/srv.core.AuthenticationFilter">
+
+                    </documentation>
+                </annotation>
+                <sequence>
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+                <attribute name="authenticationProvider">
+                    <annotation>
+                        <documentation>
+
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+    <complexType name="AuthenticationProvider">
+        <complexContent>
+            <extension base="ns1:Component">
+                <annotation>
+                    <documentation source="http://www.rappidjs.com/#/api/srv.core.AuthenticationProvider">
+
+                    </documentation>
+                </annotation>
+                <sequence>
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+    <complexType name="AuthenticationProviders">
+        <complexContent>
+            <extension base="ns1:Component">
+                <annotation>
+                    <documentation source="http://www.rappidjs.com/#/api/srv.core.AuthenticationProviders">
+
+                    </documentation>
+                </annotation>
+                <sequence>
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+    <complexType name="AuthorisationProvider">
+        <complexContent>
+            <extension base="ns1:Component">
+                <annotation>
+                    <documentation source="http://www.rappidjs.com/#/api/srv.core.AuthorisationProvider">
+
+                    </documentation>
+                </annotation>
+                <sequence>
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+    <complexType name="AuthorisationProviders">
+        <complexContent>
+            <extension base="ns1:Component">
+                <annotation>
+                    <documentation source="http://www.rappidjs.com/#/api/srv.core.AuthorisationProviders">
+
+                    </documentation>
+                </annotation>
+                <sequence>
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+    <complexType name="EndPoint">
+        <complexContent>
+            <extension base="ns1:Component">
+                <annotation>
+                    <documentation source="http://www.rappidjs.com/#/api/srv.core.EndPoint">
+
+                    </documentation>
+                </annotation>
+                <sequence>
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+    <complexType name="EndPoints">
+        <complexContent>
+            <extension base="ns1:Component">
+                <annotation>
+                    <documentation source="http://www.rappidjs.com/#/api/srv.core.EndPoints">
+
+                    </documentation>
+                </annotation>
+                <sequence>
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+    <complexType name="Filter">
+        <complexContent>
+            <extension base="ns1:Component">
+                <annotation>
+                    <documentation source="http://www.rappidjs.com/#/api/srv.core.Filter">
+
+                    </documentation>
+                </annotation>
+                <sequence>
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+    <complexType name="Filters">
+        <complexContent>
+            <extension base="ns1:Component">
+                <annotation>
+                    <documentation source="http://www.rappidjs.com/#/api/srv.core.Filters">
+
+                    </documentation>
+                </annotation>
+                <sequence>
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+    <complexType name="Handler">
+        <complexContent>
+            <extension base="ns1:Component">
+                <annotation>
+                    <documentation source="http://www.rappidjs.com/#/api/srv.core.Handler">
+
+                    </documentation>
+                </annotation>
+                <sequence>
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+                <attribute name="autoStartSession">
+                    <annotation>
+                        <documentation>
+
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="path" default="/">
+                    <annotation>
+                        <documentation>
+
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="route">
+                    <annotation>
+                        <documentation>
+
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+    <complexType name="Handlers">
+        <complexContent>
+            <extension base="ns1:Component">
+                <annotation>
+                    <documentation source="http://www.rappidjs.com/#/api/srv.core.Handlers">
+
+                    </documentation>
+                </annotation>
+                <sequence>
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+    <complexType name="Server">
+        <complexContent>
+            <extension base="ns1:Component">
+                <annotation>
+                    <documentation source="http://www.rappidjs.com/#/api/srv.core.Server">
+
+                    </documentation>
+                </annotation>
+                <sequence>
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+                <attribute name="serverSessionClassName">
+                    <annotation>
+                        <documentation>
+
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+</schema>

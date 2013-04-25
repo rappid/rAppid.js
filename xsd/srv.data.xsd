@@ -1,0 +1,82 @@
+<schema targetNamespace="srv.data" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns1="js.data" xmlns:ns="srv.data">
+    <import namespace="js.data"/>
+    <element name="MongoDataSource" type="ns:MongoDataSource"/>
+    <complexType name="MongoDataSource">
+        <complexContent>
+            <extension base="ns1:DataSource">
+                <annotation>
+                    <documentation source="http://www.rappidjs.com/#/api/srv.data.MongoDataSource">
+                        give entities an ID, so the caching works correctly
+                        correct key of id object
+                    </documentation>
+                </annotation>
+                <sequence>
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+                <attribute name="username">
+                    <annotation>
+                        <documentation>
+
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="password">
+                    <annotation>
+                        <documentation>
+
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="collectionPageSize" default="500">
+                    <annotation>
+                        <documentation>
+
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="host" default="localhost">
+                    <annotation>
+                        <documentation>
+
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="port" default="27017">
+                    <annotation>
+                        <documentation>
+
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="poolSize" default="2">
+                    <annotation>
+                        <documentation>
+
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="database">
+                    <annotation>
+                        <documentation>
+
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="autoReconnect" default="true">
+                    <annotation>
+                        <documentation>
+
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="w" default="1">
+                    <annotation>
+                        <documentation>
+
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+</schema>
