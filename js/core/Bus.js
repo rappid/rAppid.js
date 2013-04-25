@@ -1,7 +1,7 @@
 define(['js/core/EventDispatcher'], function(EventDispatcher) {
 
     /***
-     * @summery A bus is an EventDispatcher used for application wide event based communication.
+     * @summary A bus is an EventDispatcher used for application wide event based communication.
      *
      * @description The application wide message bus can be bound to event handler functions by annotation the
      * handler functions with the `.bus('My.Bus.Event')` annotation. The bus is automatically bound and
