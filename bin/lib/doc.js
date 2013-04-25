@@ -330,7 +330,7 @@ var esprima = require('esprima'),
         ctor: function () {
             this.classAnnotationProcessors = [
                 new Documentation.Processors.Class(),
-                new Documentation.Processors.General('summery'),
+                new Documentation.Processors.General('summary'),
                 new Documentation.Processors.General('inherit'),
                 new Documentation.Processors.General('see', true),
                 new Documentation.Processors.General('ignore'),
