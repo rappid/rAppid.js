@@ -21,19 +21,15 @@
                         An application is a Window, which gets bootstrapped and started by
                         rAppid.js and is attached to the WindowManager.
 
+                        Setting up and application can be easily done via the `rappidjs
+                        create app` command. For more information about projects \
+                        have a look at http://rappidjs.com/#/wiki/Project
 
                     </documentation>
                 </annotation>
                 <sequence>
                     <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
                 </sequence>
-                <attribute name="ENV">
-                    <annotation>
-                        <documentation>
-
-                        </documentation>
-                    </annotation>
-                </attribute>
             </extension>
         </complexContent>
     </complexType>
