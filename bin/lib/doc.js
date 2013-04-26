@@ -139,21 +139,37 @@ var esprima = require('esprima'),
 
                     classDocumentation = this.documentations[fqClassName];
 
-                    var methodArray = [],
-                        methodNames = _.keys(classDocumentation.methods);
+                    var i,
+                        methodArray = [],
+                        staticMethodArray = [],
+                        methodNames = _.keys(classDocumentation.methods),
+                        staticMethodNames = _.keys(classDocumentation.staticMethods || {}),
+                        methodName, method;
 
                     methodNames.sort();
+                    staticMethodNames.sort();
 
-                    for (var i = 0; i < methodNames.length; i++) {
-                        var methodName = methodNames[i];
-                        var method = classDocumentation.methods[methodName];
+                    for (i = 0; i < methodNames.length; i++) {
+
+                        methodName = methodNames[i];
+                        method = classDocumentation.methods[methodName];
                         method.name = methodName;
                         method.visibility = (methodName.substr(0, 1) === '_' || method.hasOwnProperty('private')) && !method.hasOwnProperty('public') ? 'protected' : 'public';
 
                         methodArray.push(method);
                     }
 
+                    for (i = 0; i < staticMethodNames.length; i++) {
+                        methodName = staticMethodNames[i];
+                        method = classDocumentation.staticMethods[methodName];
+                        method.name = methodName;
+                        method.visibility = (methodName.substr(0, 1) === '_' || method.hasOwnProperty('private')) && !method.hasOwnProperty('public') ? 'protected' : 'public';
+
+                        staticMethodArray.push(method);
+                    }
+
                     classDocumentation.methods = methodArray;
+                    classDocumentation.staticMethods = staticMethodArray;
 
                 }
             }
@@ -538,7 +554,8 @@ var esprima = require('esprima'),
 
             var fqClassName,
                 argument,
-                documentation;
+                documentation,
+                staticArgument;
 
             if (!(fnArguments && fnArguments.length)) {
                 // no fnArguments passed
@@ -553,9 +570,12 @@ var esprima = require('esprima'),
                 argument = fnArguments.shift();
             }
 
+            staticArgument = fnArguments.shift();
+
+
             if (argument && argument.type === CONST.ObjectExpression) {
                 // we found the prototype definition
-                documentation = this.getDocumentationFromObject(argument);
+                documentation = this.getDocumentationFromObject(argument, staticArgument);
             } else if (argument && argument.type === CONST.CallExpression &&
                 argument.callee.object.name === "_" && argument.callee.property.name === "extend") {
 
@@ -627,10 +647,11 @@ var esprima = require('esprima'),
             }
         },
 
-        getDocumentationFromObject: function (object) {
+        getDocumentationFromObject: function (object, staticObject) {
 
             var documentation = {
                     methods: {},
+                    staticMethods: {},
                     defaults: {},
                     properties: {}
                 },
@@ -642,9 +663,12 @@ var esprima = require('esprima'),
                 annotationTo,
                 annotations,
                 annotationMethods,
-                self = this;
+                self = this,
+                i, result,
+                methods = "methods",
+                staticMethods = "staticMethods";
 
-            for (var i = 0; i < properties.length; i++) {
+            for (i = 0; i < properties.length; i++) {
                 lastProperty = properties[i - 1];
                 property = properties[i];
                 item = null;
@@ -657,12 +681,11 @@ var esprima = require('esprima'),
 
                 if (property.value.type === CONST.CallExpression) {
 
-                    var result = getMethodDefinitionWithAnnotations(property.value);
-
-                    parseMethodDocumentation(property.key.name, result.method, result.annotations);
+                    result = getMethodDefinitionWithAnnotations(property.value);
+                    parseMethodDocumentation(property.key.name, result.method, result.annotations, methods);
 
                 } else if (property.value.type === CONST.FunctionExpression) {
-                    parseMethodDocumentation(property.key.name, property.value);
+                    parseMethodDocumentation(property.key.name, property.value, null, methods);
                 } else if (property.key.type === CONST.Identifier && property.key.name === "defaults" && property.value.type === CONST.ObjectExpression) {
                     // found the defaults block
 
@@ -681,9 +704,33 @@ var esprima = require('esprima'),
 
             }
 
+            if (staticObject) {
+                properties = staticObject.properties;
+
+                for (i = 0; i < properties.length; i++) {
+                    lastProperty = properties[i - 1];
+                    property = properties[i];
+                    item = null;
+                    paramMap = {};
+                    annotations = null;
+                    annotationMethods = [];
+
+                    annotationFrom = lastProperty ? lastProperty.range[1] : staticObject.range[0];
+                    annotationTo = property.range[0];
+
+
+                    if (property.value.type === CONST.CallExpression) {
+                        result = getMethodDefinitionWithAnnotations(property.value);
+                        parseMethodDocumentation(property.key.name, result.method, result.annotations, staticMethods);
+                    } else if (property.value.type === CONST.FunctionExpression) {
+                        parseMethodDocumentation(property.key.name, property.value, null, staticMethods);
+                    }
+                }
+            }
+
             return documentation;
 
-            function parseMethodDocumentation(name, value, methodAnnotations) {
+            function parseMethodDocumentation(name, value, methodAnnotations, target) {
 
                 item = {
                     type: 'Method',
@@ -725,7 +772,7 @@ var esprima = require('esprima'),
                 }
 
                 if (!item.hasOwnProperty('ignore')) {
-                    documentation.methods[name] = item;
+                    documentation[target][name] = item;
                 }
 
             }
