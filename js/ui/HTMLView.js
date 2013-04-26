@@ -8,7 +8,7 @@ define(
             render: function () {
                 var el = this.callBase();
                 while(this.$descriptor.childNodes.length){
-                    el.appendChild(this.$descriptor.childNodes[0]);
+                    el.appendChild(this.$descriptor.unshift());
                 }
                 return el;
             },
@@ -18,7 +18,7 @@ define(
             _renderContentChildren: function () {
 
             },
-            _renderHTML: function (html) {
+            _renderHtml: function (html) {
                 this.$el.innerHTML = html;
             }
         });
