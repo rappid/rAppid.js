@@ -22,6 +22,18 @@ define(["inherit"], function(inherit){
             return typeof window !== "undefined";
         },
 
+        /***
+         * this is an empty function doing nothing. It can be used as fallback if a method requires a
+         * callback function, which hasn't been passed.
+         *
+         * ```
+         *  function myFunction(callback) {
+         *      callback = callback || this.emptyCallback;
+         *  }
+         * ```
+         *
+         * @returns {Function} a function doing nothing
+         */
         emptyCallback: function() {
             return emptyCallback;
         },

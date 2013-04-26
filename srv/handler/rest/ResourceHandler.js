@@ -289,40 +289,49 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
 
                     cb();
                 })
-                .seq(function (cb) {
-                    var response = context.response;
+                .exec(function(err, results){
+                    if(!err){
+                        var response = context.response;
 
-                    // switch context of collection to RestDataSource
-                    var collection = this.vars["collection"];
-                    // call compose
-                    var processor = self.$restHandler.$restDataSource.getProcessorForCollection(collection);
+                        // switch context of collection to RestDataSource
+                        var collection = results["collection"];
+                        // call compose
+                        var processor = self.$restHandler.$restDataSource.getProcessorForCollection(collection);
 
-                    var results = [];
+                        var itemArray = [];
 
-                    items.forEach(function(item){
-                        var id = item.identifier();
-                        if (id) {
-                            self._fetchAllHrefsForModel(item, context);
+                        items.forEach(function (item) {
+                            var id = item.identifier();
+                            if (id) {
+                                self._fetchAllHrefsForModel(item, context);
+                            }
+                            itemArray.push(processor.compose(item));
+                        });
+                        var res = {
+                            count: results["collection"].$itemsCount,
+                            limit: limit,
+                            offset: offset,
+                            results: itemArray
+                        };
+
+                        response.writeHead(200, "", {
+                            'Content-Type': 'application/json; charset=utf-8'
+                        });
+
+                        response.write(JSON.stringify(res), 'utf8');
+                        response.end();
+
+                         callback(null);
+                    } else {
+                        var statusCode = 404;
+                        if (err === DataSource.ERROR.NOT_FOUND) {
+                            statusCode = 404;
                         }
-                        results.push(processor.compose(item));
-                    });
-                    var res = {
-                        count: this.vars["collection"].$itemsCount,
-                        limit: limit,
-                        offset: offset,
-                        results: results
-                    };
+                        callback(new HttpError(err, statusCode));
+                    }
 
-                    response.writeHead(200, "", {
-                        'Content-Type': 'application/json; charset=utf-8'
-                    });
 
-                    response.write(JSON.stringify(res), 'utf8');
-                    response.end();
-
-                    cb();
-                })
-                .exec(callback);
+                });
         },
 
         /***

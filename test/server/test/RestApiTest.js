@@ -262,45 +262,126 @@ describe("API", function () {
 
     });
 
-    describe("#DELETE", function(){
+    describe("#DELETE", function () {
 
-        it.skip("should delete resource if exists", function(){
-
-        });
-
-        it.skip("should return 404 if resource wasn't found", function(){
+        it.skip("should delete resource if exists", function () {
 
         });
 
-    });
-
-    describe("#GET", function(){
-
-        it.skip("should return 404 if resource does not exist", function(){
-
-        });
-
-        it.skip("should return data for existing resource", function(){
-
-        });
-
-        it.skip("should return collection page with meta data", function(){
+        it.skip("should return 404 if resource wasn't found", function () {
 
         });
 
     });
 
-    describe("#PATCH", function(){
+    describe("#GET on Model Resource", function () {
 
-        it.skip("should allow 'set' on specific attribute", function(){
+        it("should return 404 if resource does not exist", function (done) {
+
+            flow()
+                .seq(function (cb) {
+                    request(url)
+                        .get("/projects/non-existing")
+                        .expect(404)
+                        .end(cb);
+                })
+                .exec(done);
+        });
+
+        it("should return data with correct href for existing resource", function (done) {
+
+            flow()
+                .seq("result", function (cb) {
+                    request(url)
+                        .put("/projects/my-new-project")
+                        .send({})
+                        .expect(200)
+                        .expect(ContentType, applicationJson)
+                        .end(cb)
+                })
+                .seq("getResult", function (cb) {
+                    request(url)
+                        .get("/projects/my-new-project")
+                        .expect(ContentType, applicationJson)
+                        .expect(200)
+                        .end(cb);
+                })
+                .seq(function () {
+                    var result = this.vars.getResult;
+                    expect(result.body).to.be.an.instanceof(Object);
+                    expect(result.body.name).to.equal("my-new-project");
+                    expect(result.body.href).to.equal(url + "/projects/my-new-project");
+                })
+                .exec(done);
+        });
+
+        it.skip("should return href of linked models", function () {
+
 
         });
 
-        it.skip("should allow 'unset' on specific attribute", function(){
+        it.skip("should return href of linked collections", function () {
+
 
         });
 
-        it.skip("should return 400 if operation is not allowed", function(){
+        it.skip("should return href of linked model from other context", function () {
+
+
+        });
+    });
+
+    describe("#GET on Collection Resource", function () {
+
+
+        before(function () {
+            // TODO: create collection of tickets or projects
+        });
+
+        it.skip("should return 404 of resource was not found", function (done) {
+            flow()
+                .seq(function (cb) {
+                    request(url)
+                        .get("/non-existing-resource")
+                        .expect(404)
+                        .end(cb);
+                })
+                .exec(done);
+        });
+
+        it.skip("should return collection page with meta data", function () {
+
+        });
+
+        it.skip("should return empty page when offset is out of bounce", function () {
+
+        });
+
+        it.skip("should return page in given offset and limit", function () {
+
+        });
+
+        it.skip("should return all fields that are 'includeInIndex=true'", function () {
+
+        });
+
+        it.skip("should return sorted collection when sort parameter is given", function () {
+
+        });
+
+    });
+
+    describe("#PATCH", function () {
+
+        it.skip("should allow 'set' on specific attribute", function () {
+
+        });
+
+        it.skip("should allow 'unset' on specific attribute", function () {
+
+        });
+
+        it.skip("should return 400 if operation is not allowed", function () {
 
         });
 
