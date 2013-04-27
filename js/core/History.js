@@ -6,6 +6,11 @@ define(["js/core/Bindable", "flow"], function (Bindable, flow) {
         emptyCallback = function () {
         };
 
+    /***
+     * @summary The History listens to the browsers history and calls the routers when the fragment has changed
+     * It also allows to navigate to a given fragment.
+     *
+     */
     var History = Bindable.inherit("js.core.History", {
 
         ctor: function () {
@@ -17,6 +22,10 @@ define(["js/core/Bindable", "flow"], function (Bindable, flow) {
         },
 
         defaults: {
+            /**
+             * The polling interval for the URL hash if onhashchange is not supported
+             * @type Number
+             */
             interval: 50
         },
 
@@ -80,7 +89,9 @@ define(["js/core/Bindable", "flow"], function (Bindable, flow) {
             this.navigate(this._getFragment(), true, true, true, callback);
             this.$processUrl = true;
         },
-
+        /***
+         * Removes all onhaschange listeners or clears polling interval for hash check
+         */
         stop: function () {
             if (typeof window !== "undefined") {
                 if ("onhashchange" in window) {
@@ -96,12 +107,19 @@ define(["js/core/Bindable", "flow"], function (Bindable, flow) {
                 }
             }
         },
-
+        /**
+         * Adds a router to the history instance
+         *
+         * @param router
+         */
         addRouter: function (router) {
             this.$routers.push(router);
         },
-
-        checkUrl: function (e) {
+        /**
+         * Checks if the current fragment has changed and calls navigate in case it did
+         *
+         */
+        checkUrl: function () {
 
             if (this.$processUrl) {
                 var currentFragment = this._getFragment();
@@ -115,7 +133,12 @@ define(["js/core/Bindable", "flow"], function (Bindable, flow) {
             this.$processUrl = true;
 
         },
-
+        /**
+         * Triggers a route
+         *
+         * @param {String} fragment - the fragment which should be triggered
+         * @param {Function} callback - gets called after the route execution stack is done
+         */
         triggerRoute: function (fragment, callback) {
 
             var routeExecutionStack = [];

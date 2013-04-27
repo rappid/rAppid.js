@@ -1,24 +1,51 @@
 define(["require", "js/core/Component", "underscore", "moment", "flow"], function (require, Component, _, moment, flow) {
     return Component.inherit("js.core.I18n", {
         defaults: {
+            /***
+             * @type String
+             */
             path: 'app/locale',
+            /**
+             * The default locale
+             *
+             * @type String
+             */
             locale: null,
+            /***
+             * The suffix of the locale file
+             *
+             * @type String
+             */
             suffix: '.json',
+            /**
+             * An object with all translations read from the locale file
+             * @type Object
+             */
             translations: {},
+            /***
+             * Decides wether to load momentjs for date formatting and parsing
+             * @type Boolean
+             */
             loadMomentJs: true
         },
-
+        /***
+         * Inside the initialize method loadLocale is called
+         */
         initialize: function () {
             this.callBase();
             this.loadLocale(this.$.locale);
         },
-
         _commitChangedAttributes: function (attributes) {
             if (attributes.locale) {
                 this.loadLocale(attributes.locale);
             }
         },
-
+        /***
+         * Loads the given locale and calls the callback
+         *
+         * @param {String} locale
+         * @param {Function} callback
+         */
         loadLocale: function (locale, callback) {
 
             var self = this;
@@ -84,7 +111,10 @@ define(["require", "js/core/Component", "underscore", "moment", "flow"], functio
 
             return value;
         }.onChange("translations"),
-
+        /***
+         *
+         *
+         */
         ts: function() {
             var args = Array.prototype.slice.call(arguments),
                 newArgs = [],
@@ -107,6 +137,12 @@ define(["require", "js/core/Component", "underscore", "moment", "flow"], functio
 
         }.onChange("translations"),
 
+        /***
+         * Formats a date value to the given format
+         *
+         * @attr {Date|Number} value - the value to format
+         * @attr {String} [value] -  the format
+         */
         f: function (value, format) {
 
             if (value instanceof Date) {
