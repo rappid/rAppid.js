@@ -60,7 +60,13 @@ define(["js/html/HtmlElement", "underscore", "moment"], function (HtmlElement, _
                 }
             },
             _renderChecked: function (checked) {
-                this.$el.checked = checked;
+
+                if (checked) {
+                    this.$el.setAttribute("checked", "checked");
+                } else {
+                    this.$el.removeAttribute("checked");
+                }
+
             },
             _transformValue: function(value){
                 if(this.$.type === "number"){
