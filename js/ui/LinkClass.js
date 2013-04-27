@@ -1,4 +1,4 @@
-define(["js/ui/view"], function(View) {
+define(["js/ui/View"], function(View) {
 
     var externalLink = /^(([^:]+:\/\/)|(javascript:))/i,
         stripHashSlash = /^#?\/?/,
