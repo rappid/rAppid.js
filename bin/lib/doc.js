@@ -384,7 +384,8 @@ var esprima = require('esprima'),
             this.methodAnnotationProcessors = {
                 onChange: new Documentation.Processors.ArrayMethodAnnotationProcessor("onChange"),
                 on: new Documentation.Processors.OnMethodAnnotationProcessor(),
-                bus: new Documentation.Processors.ArrayMethodAnnotationProcessor("bus")
+                bus: new Documentation.Processors.ArrayMethodAnnotationProcessor("bus"),
+                async: new Documentation.Processors.ArrayMethodAnnotationProcessor("async}")
             };
         },
 
@@ -1007,7 +1008,7 @@ Documentation.MethodAnnotionProcessor = inherit.Base.inherit({
 
 Documentation.Processors = {};
 
-Documentation.Processors.General = Documentation.AnnotationProcessor.inherit({
+Documentation.Processors.General = Documentation.AnnotationProcessor.inherit("Documentation.Processor.General", {
 
     ctor: function (type, many) {
         this.type = type;
@@ -1046,7 +1047,7 @@ Documentation.Processors.General = Documentation.AnnotationProcessor.inherit({
 });
 
 
-Documentation.Processors.Class = Documentation.AnnotationProcessor.inherit({
+Documentation.Processors.Class = Documentation.AnnotationProcessor.inherit("Documentation.Processors.Class", {
     parse: function (line) {
 
         var result = Documentation.Processors.Class.Parser.exec(line);
@@ -1074,7 +1075,7 @@ Documentation.Processors.Class = Documentation.AnnotationProcessor.inherit({
     Parser: /^\s*\*\s*@class\s*(\S+)\s*$/
 });
 
-Documentation.Processors.Parameter = Documentation.AnnotationProcessor.inherit({
+Documentation.Processors.Parameter = Documentation.AnnotationProcessor.inherit("Documentation.Processors.Parameter", {
     parse: function (line) {
 
         var result = Documentation.Processors.Parameter.Parser.exec(line);
@@ -1125,7 +1126,7 @@ Documentation.Processors.Parameter = Documentation.AnnotationProcessor.inherit({
     Parser: /\*\s{0,4}@param\s+?(?:\{(.+)?\})?\s*(?:([^[ ]+)|(?:\[([^=]+)(?:=(.*)?)?\]))\s*-?\s*(.+)?$/
 });
 
-Documentation.Processors.Type = Documentation.AnnotationProcessor.inherit({
+Documentation.Processors.Type = Documentation.AnnotationProcessor.inherit("Documentation.Processors.Type", {
     parse: function (line) {
 
         var result = Documentation.Processors.Type.Parser.exec(line);
@@ -1162,7 +1163,7 @@ Documentation.Processors.Type = Documentation.AnnotationProcessor.inherit({
     Parser: /\*\s{0,4}@type\s+?\{?([^}]+)?\}?\s*?$/
 });
 
-Documentation.Processors.Return = Documentation.AnnotationProcessor.inherit({
+Documentation.Processors.Return = Documentation.AnnotationProcessor.inherit("Documentation.Processors.Return", {
     parse: function (line) {
         var result = Documentation.Processors.Return.Parser.exec(line);
 
@@ -1192,7 +1193,7 @@ Documentation.Processors.Return = Documentation.AnnotationProcessor.inherit({
     Parser: /\*\s{0,4}@return[s]?\s+?(?:\{(.+)?\})?\s*-?\s*(.+)?$/
 });
 
-Documentation.Processors.Description = Documentation.AnnotationProcessor.inherit({
+Documentation.Processors.Description = Documentation.AnnotationProcessor.inherit("Documentation.Processors.Description", {
     parse: function (line) {
 
         var result = Documentation.Processors.Description.Parser.exec(line);
@@ -1231,7 +1232,7 @@ Documentation.Processors.Description = Documentation.AnnotationProcessor.inherit
     Parser: /\*\s*@description\s*(.+)$/
 });
 
-Documentation.Processors.ArrayMethodAnnotationProcessor = Documentation.MethodAnnotionProcessor.inherit({
+Documentation.Processors.ArrayMethodAnnotationProcessor = Documentation.MethodAnnotionProcessor.inherit("Documentation.Processors.ArrayMethodAnnotationProcessor", {
 
     ctor: function(name) {
         this.name = name;
@@ -1246,7 +1247,7 @@ Documentation.Processors.ArrayMethodAnnotationProcessor = Documentation.MethodAn
     }
 });
 
-Documentation.Processors.OnMethodAnnotationProcessor = Documentation.MethodAnnotionProcessor.inherit({
+Documentation.Processors.OnMethodAnnotationProcessor = Documentation.MethodAnnotionProcessor.inherit("Documentation.Processors.OnMethodAnnotationProcessor", {
     parse: function (annotation, methodAnnotationObject) {
 
         for (var i = 0; i < annotation.arguments.length; i++) {
