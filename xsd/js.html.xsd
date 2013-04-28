@@ -150,21 +150,21 @@
                 <attribute name="type" default="text">
                     <annotation>
                         <documentation>
-
+                            the type of the input element
                         </documentation>
                     </annotation>
                 </attribute>
                 <attribute name="checked">
                     <annotation>
                         <documentation>
-
+                            the checked state for radio buttons and checkboxes
                         </documentation>
                     </annotation>
                 </attribute>
                 <attribute name="updateOnEvent" default="input">
                     <annotation>
                         <documentation>
-
+                            the event on which the bound value will be updated
                         </documentation>
                     </annotation>
                 </attribute>

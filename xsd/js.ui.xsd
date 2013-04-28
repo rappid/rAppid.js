@@ -25,6 +25,7 @@
     <element name="HTMLView" type="ns:HTMLView"/>
     <element name="ItemsView" type="ns:ItemsView"/>
     <element name="Link" type="ns:Link"/>
+    <element name="LinkClass" type="ns:LinkClass"/>
     <element name="ListView" type="ns:ListView"/>
     <element name="MenuButton" type="ns:MenuButton"/>
     <element name="MenuButtonClass" type="ns:MenuButtonClass"/>
@@ -800,7 +801,7 @@
     </complexType>
     <complexType name="Link">
         <complexContent>
-            <extension base="ns:View">
+            <extension base="ns:LinkClass">
                 <annotation>
                     <documentation source="http://www.rappidjs.com/#/api/js.ui.Link">
 
@@ -809,6 +810,84 @@
                 <sequence>
                     <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
                 </sequence>
+                <attribute name="href">
+                    <annotation>
+                        <documentation>
+                            the href of the link element.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="label">
+                    <annotation>
+                        <documentation>
+                            the label of the Link rendered as text
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="target" default="intern">
+                    <annotation>
+                        <documentation>
+                            the target of the link element identifying how to open the
+                            link. If no target \
+                            is specified but a protocol for the href (e.g. http://) if
+                            will use external by default.
+
+                            **Possible values**
+
+                            + **intern** - opens the link intern without refreshing the
+                            page (e.g. #/myLink)
+                            + **external** - the link will open external
+                            + **_blank** - opens in a new window
+
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+    <complexType name="LinkClass">
+        <complexContent>
+            <extension base="ns:View">
+                <annotation>
+                    <documentation source="http://www.rappidjs.com/#/api/js.ui.LinkClass">
+
+                    </documentation>
+                </annotation>
+                <sequence>
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+                <attribute name="href">
+                    <annotation>
+                        <documentation>
+                            the href of the link element.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="label">
+                    <annotation>
+                        <documentation>
+                            the label of the Link rendered as text
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="target" default="intern">
+                    <annotation>
+                        <documentation>
+                            the target of the link element identifying how to open the
+                            link. If no target \
+                            is specified but a protocol for the href (e.g. http://) if
+                            will use external by default.
+
+                            **Possible values**
+
+                            + **intern** - opens the link intern without refreshing the
+                            page (e.g. #/myLink)
+                            + **external** - the link will open external
+                            + **_blank** - opens in a new window
+
+                        </documentation>
+                    </annotation>
+                </attribute>
             </extension>
         </complexContent>
     </complexType>
@@ -907,6 +986,15 @@
                 <sequence>
                     <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
                 </sequence>
+                <attribute name="name" use="required">
+                    <annotation>
+                        <documentation>
+                            the unique identifier for the placeholder within this
+                            component
+
+                        </documentation>
+                    </annotation>
+                </attribute>
             </extension>
         </complexContent>
     </complexType>
