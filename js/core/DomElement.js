@@ -6,7 +6,7 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
         var ContentPlaceHolder;
 
         var pointerToTouchMap = {
-            'pointer' : 'click',
+            'pointer': 'click',
             'pointerdown': 'touchstart',
             'pointermove': 'touchmove',
             'pointerup': 'touchend'
@@ -28,9 +28,9 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
             'pointerdown': 'mspointerdown',
             'pointermove': 'mspointermove',
             'pointerup': 'mspointerup',
-            'pointerout' : 'mspointerout',
-            'pointerover' : 'mspointerover',
-            'pointerhover' : 'mspointerhover'
+            'pointerout': 'mspointerout',
+            'pointerover': 'mspointerover',
+            'pointerhover': 'mspointerhover'
         };
 
         var DomElementFunctions = {
@@ -42,9 +42,16 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                 "cid",
                 /^_/ // private attributes
             ],
+
             defaults: {
+                /***
+                 * @type {Boolean}
+                 *
+                 * sets the visibility of an component. If the value is false the component is removed from the DOM.
+                 */
                 visible: true
             },
+
             ctor: function (attributes, descriptor, systemManager, parentScope, rootScope) {
                 this.$addedToDom = false;
                 this.$renderMap = {};
@@ -577,7 +584,7 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                 return null;
             },
             _createDOMEventHandler: function (type) {
-                if(type.indexOf("on:pointer") === 0){
+                if (type.indexOf("on:pointer") === 0) {
                     return new DomElement.PointerEventHandler(this, type);
                 }
                 return new DomElement.EventHandler(this, type);
@@ -773,7 +780,7 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
             }
         }, DomManipulationFunctions));
 
-        var DomElement = Component.inherit("js.html.DomElement",
+        var DomElement = Component.inherit("js.core.DomElement",
             _.extend(DomElementFunctions, DomManipulationFunctions));
 
         DomElement.Event = EventDispatcher.Event.inherit('js.core.DomElement.Event', {
@@ -850,11 +857,10 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
         });
 
         DomElement.PointerEventHandler = DomElement.EventHandler.inherit('js.core.DomEvent.PointerEventHandler', {
-            _createEvent: function(domEvent){
+            _createEvent: function (domEvent) {
                 return new DomElement.PointerEvent(domEvent);
             }
         });
 
         return DomElement;
-    }
-);
+    });

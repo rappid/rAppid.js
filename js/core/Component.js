@@ -61,6 +61,16 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                     this.callBase(attributes, descriptor, stage, parentScope, rootScope);
                 },
 
+                defaults: {
+                    /***
+                     * the cid is a unique identifier for the component within a xaml class. \
+                     * The corresponding component will be automatically added to the $ of the instance of the xaml class.
+                     *
+                     * @type String
+                     */
+                    cid: undefined
+                },
+
                 $errorAttribute: null,
                 /**
                  * if set all children from the descriptor will be placed into a

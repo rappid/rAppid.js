@@ -455,7 +455,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
 
             /***
              *
-             * @param {Bindable} targetScope
+             * @param {js.core.Bindable} targetScope
              * @param {String|Function} key
              */
             addTarget: function(targetScope, key){
@@ -470,7 +470,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
             },
             /***
              *
-             * @param {Bindable} targetScope
+             * @param {js.core.Bindable} targetScope
              * @param {String|Function} key
              */
             removeTarget: function(targetScope, key){

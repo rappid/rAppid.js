@@ -1,0 +1,41 @@
+<xsd:XsdGeneratorClass xmlns:xsd="xsd" xmlns:js="js.core">
+    <schema cid="schema" xmlns="http://www.w3.org/2001/XMLSchema"
+            xmlns:ns="{targetNamespace}"
+            targetNamespace="{targetNamespace}">
+
+        <js:Template name="import">
+            <import namespace="{namespace}"/>
+        </js:Template>
+
+        <js:Template name="element">
+            <element name="{$element}" type="ns:{$element}" />
+        </js:Template>
+
+        <js:Template name="type">
+            <complexType name="{$type.name}">
+                <complexContent>
+                    <extension base="{$type.baseType}">
+                        <annotation>
+                            <documentation source="{$type.documentationSource}">
+                                {$type.documentation}
+                            </documentation>
+                        </annotation>
+                        <sequence>
+                            <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                        </sequence>
+                    </extension>
+                </complexContent>
+            </complexType>
+        </js:Template>
+
+        <js:Template name="attribute">
+            <attribute name="{$name}">
+                <annotation>
+                    <documentation>
+                        {$description}
+                    </documentation>
+                </annotation>
+            </attribute>
+        </js:Template>
+    </schema>
+</xsd:XsdGeneratorClass>

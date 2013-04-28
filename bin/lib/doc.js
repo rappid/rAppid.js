@@ -80,7 +80,7 @@ var esprima = require('esprima'),
             this.documentations[className] = classDocumentation;
         },
 
-        generateDocumentationsForFile: function (type, code, defaultFqClassName, add) {
+        generateDocumentationsForFile: function (type, code, defaultFqClassName, add, path) {
 
             var processor = this.documentationProcessors[type];
 
@@ -89,6 +89,12 @@ var esprima = require('esprima'),
             }
 
             var docs = processor.generate(code, defaultFqClassName);
+
+            docs.forEach(function (doc) {
+                doc.file = path;
+                doc.package = path.replace(/\/[^/]+$/, "").replace(/\//g, ".");
+            });
+
             if (add) {
                 docs.forEach(function (doc) {
                     this.addClassDocumentation(doc.fqClassName, doc);
@@ -120,7 +126,9 @@ var esprima = require('esprima'),
                         // find inherit methods
                         classDocumentation.addInheritMethods(this.documentations);
 
-                        classDocumentation.extendInheritDefaults(this.documentations);
+                        classDocumentation.extendInherit(this.documentations, "defaults");
+                        classDocumentation.extendInherit(this.documentations, "properties");
+
                     }
                 }
             }
@@ -131,21 +139,37 @@ var esprima = require('esprima'),
 
                     classDocumentation = this.documentations[fqClassName];
 
-                    var methodArray = [],
-                        methodNames = _.keys(classDocumentation.methods);
+                    var i,
+                        methodArray = [],
+                        staticMethodArray = [],
+                        methodNames = _.keys(classDocumentation.methods),
+                        staticMethodNames = _.keys(classDocumentation.staticMethods || {}),
+                        methodName, method;
 
                     methodNames.sort();
+                    staticMethodNames.sort();
 
-                    for (var i = 0; i < methodNames.length; i++) {
-                        var methodName = methodNames[i];
-                        var method = classDocumentation.methods[methodName];
+                    for (i = 0; i < methodNames.length; i++) {
+
+                        methodName = methodNames[i];
+                        method = classDocumentation.methods[methodName];
                         method.name = methodName;
                         method.visibility = (methodName.substr(0, 1) === '_' || method.hasOwnProperty('private')) && !method.hasOwnProperty('public') ? 'protected' : 'public';
 
                         methodArray.push(method);
                     }
 
+                    for (i = 0; i < staticMethodNames.length; i++) {
+                        methodName = staticMethodNames[i];
+                        method = classDocumentation.staticMethods[methodName];
+                        method.name = methodName;
+                        method.visibility = (methodName.substr(0, 1) === '_' || method.hasOwnProperty('private')) && !method.hasOwnProperty('public') ? 'protected' : 'public';
+
+                        staticMethodArray.push(method);
+                    }
+
                     classDocumentation.methods = methodArray;
+                    classDocumentation.staticMethods = staticMethodArray;
 
                 }
             }
@@ -269,14 +293,14 @@ var esprima = require('esprima'),
 
         },
 
-        extendInheritDefaults: function (documentations) {
+        extendInherit: function (documentations, field) {
+            var own = [],
+                property,
+                scope = this[field] || {};
 
-            var ownDefaults = [],
-                defaultProperty;
-
-            for (defaultProperty in this.defaults) {
-                if (this.defaults.hasOwnProperty(defaultProperty)) {
-                    ownDefaults.push(defaultProperty);
+            for (property in scope) {
+                if (scope.hasOwnProperty(property)) {
+                    own.push(property);
                 }
             }
 
@@ -288,32 +312,32 @@ var esprima = require('esprima'),
 
                         var baseClass = documentations[baseClassFqClassName];
 
-                        for (defaultProperty in baseClass.defaults) {
-                            if (baseClass.defaults.hasOwnProperty(defaultProperty)) {
+                        var baseScope = baseClass[field];
+                        for (property in baseScope) {
+                            if (baseScope.hasOwnProperty(property)) {
 
                                 var currentDefault = null;
 
-                                if (_.indexOf(ownDefaults, defaultProperty) !== -1) {
-                                    currentDefault = this.defaults[defaultProperty];
+                                if (_.indexOf(own, property) !== -1) {
+                                    currentDefault = scope[property];
                                 }
 
                                 if (!currentDefault) {
                                     // inherit method
-                                    currentDefault = this.defaults[defaultProperty] = _.clone(baseClass.defaults[defaultProperty]);
+                                    currentDefault = scope[property] = _.clone(baseScope[property]);
                                 }
 
                                 currentDefault.definedBy = baseClassFqClassName;
 
-                                if (ownDefaults.indexOf(defaultProperty) !== -1) {
-                                    // overwrite defaultProperty
-                                    currentDefault.overwritesDefault = true;
+                                if (own.indexOf(property) !== -1) {
+                                    // overwrite property
+                                    currentDefault.overwrites = true;
                                 }
                             }
                         }
                     }
                 }
             }
-
         }
     }),
 
@@ -322,7 +346,7 @@ var esprima = require('esprima'),
         ctor: function () {
             this.classAnnotationProcessors = [
                 new Documentation.Processors.Class(),
-                new Documentation.Processors.General('summery'),
+                new Documentation.Processors.General('summary'),
                 new Documentation.Processors.General('inherit'),
                 new Documentation.Processors.General('see', true),
                 new Documentation.Processors.General('ignore'),
@@ -341,13 +365,29 @@ var esprima = require('esprima'),
                 new Documentation.Processors.Description()
             ];
 
-            this.defaultAnnotationProcessors = [
-                new Documentation.Processors.General('see', true),
+            this.propertyAnnotationProcessors = [
+                new Documentation.Processors.General('policy'),
                 new Documentation.Processors.General('ignore'),
                 new Documentation.Processors.General('deprecated'),
                 new Documentation.Processors.Type(),
                 new Documentation.Processors.Description()
             ];
+
+            this.defaultAnnotationProcessors = [
+                new Documentation.Processors.General('see', true),
+                new Documentation.Processors.General('ignore'),
+                new Documentation.Processors.General('deprecated'),
+                new Documentation.Processors.General('required'),
+                new Documentation.Processors.Type(),
+                new Documentation.Processors.Description()
+            ];
+
+            this.methodAnnotationProcessors = {
+                onChange: new Documentation.Processors.ArrayMethodAnnotationProcessor("onChange"),
+                on: new Documentation.Processors.OnMethodAnnotationProcessor(),
+                bus: new Documentation.Processors.ArrayMethodAnnotationProcessor("bus"),
+                async: new Documentation.Processors.ArrayMethodAnnotationProcessor("async}")
+            };
         },
 
         generate: function (code, fqClassName) {
@@ -357,6 +397,8 @@ var esprima = require('esprima'),
                     range: true
                 }),
                 ret = [];
+
+            this.code = code;
 
             // search for all define statements in file
             for (var i = 0; i < ast.body.length; i++) {
@@ -426,7 +468,7 @@ var esprima = require('esprima'),
                     if (argument.type === CONST.CallExpression) {
                         // class definition should use inherit.js
 
-                        classDocumentation = this.getDocumentationFromInheritCall(argument, varToRequireMap);
+                        classDocumentation = this.getDocumentationFromInheritCall(argument, varToRequireMap, functionBody);
                         classDocumentation.start = argument.range[0];
                         return classDocumentation;
 
@@ -467,7 +509,7 @@ var esprima = require('esprima'),
                                             }
                                         }
 
-                                        classDocumentation = this.getDocumentationFromInheritCall(value, varToRequireMap);
+                                        classDocumentation = this.getDocumentationFromInheritCall(value, varToRequireMap, functionBody);
                                         if (classDocumentation) {
                                             classDocumentation.start = declaration.range[0];
                                             return classDocumentation;
@@ -490,12 +532,12 @@ var esprima = require('esprima'),
 
         },
 
-        getDocumentationFromInheritCall: function (argument, varToRequireMap) {
+        getDocumentationFromInheritCall: function (argument, varToRequireMap, scope) {
             if (argument.callee.property.type === CONST.Identifier &&
                 argument.callee.property.name === 'inherit') {
                 // we found the inherit
 
-                var classDocumentation = this.getClassDocumentationFromInherit(argument.arguments);
+                var classDocumentation = this.getClassDocumentationFromInherit(argument.arguments, scope);
 
                 if (classDocumentation) {
                     var inheritFromName = argument.callee.object.name;
@@ -510,11 +552,12 @@ var esprima = require('esprima'),
             return null;
         },
 
-        getClassDocumentationFromInherit: function (fnArguments) {
+        getClassDocumentationFromInherit: function (fnArguments, scope) {
 
             var fqClassName,
                 argument,
-                documentation;
+                documentation,
+                staticArgument;
 
             if (!(fnArguments && fnArguments.length)) {
                 // no fnArguments passed
@@ -529,76 +572,270 @@ var esprima = require('esprima'),
                 argument = fnArguments.shift();
             }
 
+            staticArgument = fnArguments.shift();
+
+
             if (argument && argument.type === CONST.ObjectExpression) {
                 // we found the prototype definition
-                documentation = this.getDocumentationFromObject(argument);
+                documentation = this.getDocumentationFromObject(argument, staticArgument);
+            } else if (argument && argument.type === CONST.CallExpression &&
+                argument.callee.object.name === "_" && argument.callee.property.name === "extend") {
 
-                if (documentation) {
-                    documentation.fqClassName = fqClassName;
-                    return documentation;
+                // inherit from extended objections
+                var extendedProperties = {},
+                    object = {
+                        type: CONST.ObjectExpression,
+                        properties: [],
+                        range: [
+                            0, 0
+                        ]
+                    },
+                    firstExtend = true;
+
+                for (var i = 0; i < argument.arguments.length; i++) {
+                    var extendObject = argument.arguments[i];
+
+                    if (extendObject.type === CONST.Identifier) {
+
+                        var varName = extendObject.name;
+
+                        // search for the Object
+                        for (var j = 0; j < scope.body.length; j++) {
+                            var statement = scope.body[j];
+
+                            if (statement.type === CONST.VariableDeclaration) {
+
+                                for (var k = 0; k < statement.declarations.length; k++) {
+                                    var declaration = statement.declarations[k];
+
+                                    if (declaration.type === CONST.VariableDeclarator && declaration.id.name === varName
+                                        && declaration.init.type === CONST.ObjectExpression) {
+                                        // found the var -> go through the properties
+
+                                        if (firstExtend) {
+                                            object.range = declaration.init.range;
+                                            firstExtend = false;
+                                        } else {
+                                            object.range[1] = declaration.init.range[1];
+                                        }
+
+                                        for (var l = 0; l < declaration.init.properties.length; l++) {
+                                            var property = declaration.init.properties[l];
+
+                                            extendedProperties[property.key.name] = property;
+                                        }
+                                    }
+                                }
+
+                            }
+                        }
+                    }
                 }
 
+
+                for (var key in extendedProperties) {
+                    if (extendedProperties.hasOwnProperty(key)) {
+                        object.properties.push(extendedProperties[key]);
+                    }
+                }
+
+                documentation = this.getDocumentationFromObject(object);
+
+            }
+
+            if (documentation) {
+                documentation.fqClassName = fqClassName;
+                return documentation;
             }
         },
 
-        getDocumentationFromObject: function (object) {
+        getDocumentationFromObject: function (object, staticObject) {
 
             var documentation = {
                     methods: {},
-                    defaults: {}
+                    staticMethods: {},
+                    defaults: {},
+                    properties: {}
                 },
                 properties = object.properties,
                 lastProperty,
                 property,
-                item, paramMap;
+                item, paramMap,
+                annotationFrom,
+                annotationTo,
+                annotations,
+                annotationMethods,
+                self = this,
+                i, result,
+                methods = "methods",
+                staticMethods = "staticMethods";
 
-            for (var i = 0; i < properties.length; i++) {
+            for (i = 0; i < properties.length; i++) {
                 lastProperty = properties[i - 1];
                 property = properties[i];
                 item = null;
                 paramMap = {};
+                annotations = null;
+                annotationMethods = [];
 
-                if (property.value.type === CONST.FunctionExpression) {
-                    item = {
-                        type: 'Method',
-                        parameter: []
-                    };
+                annotationFrom = lastProperty ? lastProperty.range[1] : object.range[0];
+                annotationTo = property.range[0];
 
-                    for (var j = 0; j < property.value.params.length; j++) {
-                        var param = {
-                            name: property.value.params[j].name
-                        };
+                if (property.value.type === CONST.CallExpression) {
 
-                        paramMap[property.value.params[j].name] = param;
-                        item.parameter.push(param)
-                    }
+                    result = getMethodDefinitionWithAnnotations(property.value);
+                    parseMethodDocumentation(property.key.name, result.method, result.annotations, methods);
 
-                    var annotations = this.getAnnotationInRange(lastProperty ? lastProperty.range[1] : object.range[0], property.range[0], this.prototypeAnnotationProcessors);
-
-                    for (var a = 0; a < annotations.length; a++) {
-                        var annotation = annotations[a];
-                        annotation.processor.mapAnnotationToItem(annotation, item, annotations);
-                    }
-
-                    if (!item.hasOwnProperty('ignore')) {
-                        documentation.methods[property.key.name] = item;
-                    }
-
+                } else if (property.value.type === CONST.FunctionExpression) {
+                    parseMethodDocumentation(property.key.name, property.value, null, methods);
                 } else if (property.key.type === CONST.Identifier && property.key.name === "defaults" && property.value.type === CONST.ObjectExpression) {
                     // found the defaults block
 
                     documentation.defaults = this.getDefaultValues(property.value);
 
-                } else {
+                } else if (property.key.type === CONST.Identifier && property.key.name === "events" && property.value.type === CONST.ArrayExpression) {
                     // TODO: read events
-
+                } else if (property.key.type === CONST.Identifier && property.key.name === "schema" && property.value.type === CONST.ObjectExpression) {
+                    // TODO: read schema
+                } else if (property.key.type === CONST.Identifier && property.key.name === "inject" && property.value.type === CONST.ObjectExpression) {
+                    // TODO: read injection
+                } else if (property.key.type === CONST.Identifier) {
+                    annotations = this.getAnnotationInRange(annotationFrom, annotationTo, this.propertyAnnotationProcessors);
+                    documentation.properties[property.key.name] = this.getPropertyDocumentation(property, annotations);
                 }
 
+            }
 
+            if (staticObject) {
+                properties = staticObject.properties;
+
+                for (i = 0; i < properties.length; i++) {
+                    lastProperty = properties[i - 1];
+                    property = properties[i];
+                    item = null;
+                    paramMap = {};
+                    annotations = null;
+                    annotationMethods = [];
+
+                    annotationFrom = lastProperty ? lastProperty.range[1] : staticObject.range[0];
+                    annotationTo = property.range[0];
+
+
+                    if (property.value.type === CONST.CallExpression) {
+                        result = getMethodDefinitionWithAnnotations(property.value);
+                        parseMethodDocumentation(property.key.name, result.method, result.annotations, staticMethods);
+                    } else if (property.value.type === CONST.FunctionExpression) {
+                        parseMethodDocumentation(property.key.name, property.value, null, staticMethods);
+                    }
+                }
             }
 
             return documentation;
 
+            function parseMethodDocumentation(name, value, methodAnnotations, target) {
+
+                item = {
+                    type: 'Method',
+                    parameter: [],
+                    annotations: {}
+                };
+
+                for (var j = 0; j < value.params.length; j++) {
+                    var param = {
+                        name: value.params[j].name
+                    };
+
+                    paramMap[value.params[j].name] = param;
+                    item.parameter.push(param)
+                }
+
+                annotations = self.getAnnotationInRange(annotationFrom, annotationTo, self.prototypeAnnotationProcessors);
+
+                for (var a = 0; a < annotations.length; a++) {
+                    var annotation = annotations[a];
+                    annotation.processor.mapAnnotationToItem(annotation, item, annotations);
+                }
+
+                if (methodAnnotations) {
+                    for (var i = 0; i < methodAnnotations.length; i++) {
+                        var methodAnnotation = methodAnnotations[i],
+                            annotationName = methodAnnotation.name,
+                            methodAnnotationProcessor = self.methodAnnotationProcessors[annotationName];
+
+                        if (methodAnnotationProcessor) {
+
+                            var annotationItem = item.annotations[annotationName] = item.annotations[annotationName] || [];
+                            methodAnnotationProcessor.parse(methodAnnotation, annotationItem);
+
+                        } else {
+                            console.warn("No MethodAnnotationProcessor for " + annotationName + " found.");
+                        }
+                    }
+                }
+
+                if (!item.hasOwnProperty('ignore')) {
+                    documentation[target][name] = item;
+                }
+
+            }
+
+            function getMethodDefinitionWithAnnotations(object) {
+
+                var annotations = [
+                        {
+                            name: object.callee.property.name,
+                            arguments: object.arguments
+                        }
+                    ],
+                    method;
+
+                if (object.callee.object.type === CONST.CallExpression) {
+                    // another method annotation
+                    var sub = getMethodDefinitionWithAnnotations(object.callee.object);
+
+                    method = sub.method;
+                    annotations = annotations.concat(sub.annotations);
+
+                } else if (object.callee.object.type === CONST.FunctionExpression) {
+                    // we found the method
+                    method = object.callee.object;
+                }
+
+                return {
+                    annotations: annotations,
+                    method: method
+                }
+
+            }
+
+        },
+
+        getVisibility: function (name) {
+            return /^[$_]/.test(name) ? "private" : "public";
+        },
+
+        getPropertyDocumentation: function (property, annotations) {
+
+            var name = property.key.name,
+                ret = {
+                    name: name,
+                    visibility: this.getVisibility(name)
+                };
+
+            if (property.value.type === CONST.Literal) {
+                ret.value = property.value.raw;
+                ret.propertyType = "value";
+            } else {
+                ret.propertyType = "complex";
+                ret.value = this.code.substring(property.range[0] + name.length + 1, property.range[1]);
+            }
+
+            for (var a = 0; a < annotations.length; a++) {
+                var annotation = annotations[a];
+                annotation.processor.mapAnnotationToItem(annotation, ret, annotations);
+            }
+
+            return ret;
         },
 
         getDefaultValues: function (defaultsObject) {
@@ -609,15 +846,23 @@ var esprima = require('esprima'),
 
             for (var i = 0; i < defaults.length; i++) {
                 var defaultEntry = defaults[i],
-                    defaultName = defaultEntry.key.name,
+                    defaultName,
                     isValueDefault = defaultEntry.value.type === CONST.Literal;
+
+                if (defaultEntry.key.type === CONST.Identifier) {
+                    defaultName = defaultEntry.key.name
+                } else if (defaultEntry.key.type === CONST.Literal) {
+                    defaultName = defaultEntry.key.value;
+                } else {
+                    console.warn("couldn't determinate the name for the default");
+                }
 
                 lastDefaultEntry = defaults[i - 1];
 
                 var item = {
                     name: defaultName,
                     defaultType: isValueDefault ? "value" : "factory",
-                    visibility: /^[$_]/.test(defaultName) ? "private" : "public",
+                    visibility: this.getVisibility(defaultName),
                     value: isValueDefault ? defaultEntry.value.value : undefined
                 };
 
@@ -718,7 +963,7 @@ var esprima = require('esprima'),
         getFqClassNameFromPath: function (name) {
             // TODO: check if some paths are mapped
             // stripe plugin and change / to .
-            return name.replace(/^[a-z/]+!]/, '').replace(/\//g, '.');
+            return name.replace(/^[a-z/]+!]/, '').replace(/\//g, '.').replace("xaml!", "");
         }
     }),
 
@@ -747,7 +992,6 @@ var esprima = require('esprima'),
     });
 
 
-
 Documentation.AnnotationProcessor = inherit.Base.inherit({
 
     parse: function (line) {
@@ -758,9 +1002,14 @@ Documentation.AnnotationProcessor = inherit.Base.inherit({
 
 });
 
+Documentation.MethodAnnotionProcessor = inherit.Base.inherit({
+    parse: function(annotation, methodAnnotionObject) {
+    }
+});
+
 Documentation.Processors = {};
 
-Documentation.Processors.General = Documentation.AnnotationProcessor.inherit({
+Documentation.Processors.General = Documentation.AnnotationProcessor.inherit("Documentation.Processor.General", {
 
     ctor: function (type, many) {
         this.type = type;
@@ -799,7 +1048,7 @@ Documentation.Processors.General = Documentation.AnnotationProcessor.inherit({
 });
 
 
-Documentation.Processors.Class = Documentation.AnnotationProcessor.inherit({
+Documentation.Processors.Class = Documentation.AnnotationProcessor.inherit("Documentation.Processors.Class", {
     parse: function (line) {
 
         var result = Documentation.Processors.Class.Parser.exec(line);
@@ -827,7 +1076,7 @@ Documentation.Processors.Class = Documentation.AnnotationProcessor.inherit({
     Parser: /^\s*\*\s*@class\s*(\S+)\s*$/
 });
 
-Documentation.Processors.Parameter = Documentation.AnnotationProcessor.inherit({
+Documentation.Processors.Parameter = Documentation.AnnotationProcessor.inherit("Documentation.Processors.Parameter", {
     parse: function (line) {
 
         var result = Documentation.Processors.Parameter.Parser.exec(line);
@@ -852,6 +1101,11 @@ Documentation.Processors.Parameter = Documentation.AnnotationProcessor.inherit({
 
     appendToResult: function (result, description) {
         result.value.description += description;
+
+        if (!/\\\s*$/.test(description)) {
+            result.value.description += "\n";
+        }
+
     },
 
     mapAnnotationToItem: function (annotation, item, annotations) {
@@ -873,7 +1127,7 @@ Documentation.Processors.Parameter = Documentation.AnnotationProcessor.inherit({
     Parser: /\*\s{0,4}@param\s+?(?:\{(.+)?\})?\s*(?:([^[ ]+)|(?:\[([^=]+)(?:=(.*)?)?\]))\s*-?\s*(.+)?$/
 });
 
-Documentation.Processors.Type = Documentation.AnnotationProcessor.inherit({
+Documentation.Processors.Type = Documentation.AnnotationProcessor.inherit("Documentation.Processors.Type", {
     parse: function (line) {
 
         var result = Documentation.Processors.Type.Parser.exec(line);
@@ -910,7 +1164,7 @@ Documentation.Processors.Type = Documentation.AnnotationProcessor.inherit({
     Parser: /\*\s{0,4}@type\s+?\{?([^}]+)?\}?\s*?$/
 });
 
-Documentation.Processors.Return = Documentation.AnnotationProcessor.inherit({
+Documentation.Processors.Return = Documentation.AnnotationProcessor.inherit("Documentation.Processors.Return", {
     parse: function (line) {
         var result = Documentation.Processors.Return.Parser.exec(line);
 
@@ -940,7 +1194,7 @@ Documentation.Processors.Return = Documentation.AnnotationProcessor.inherit({
     Parser: /\*\s{0,4}@return[s]?\s+?(?:\{(.+)?\})?\s*-?\s*(.+)?$/
 });
 
-Documentation.Processors.Description = Documentation.AnnotationProcessor.inherit({
+Documentation.Processors.Description = Documentation.AnnotationProcessor.inherit("Documentation.Processors.Description", {
     parse: function (line) {
 
         var result = Documentation.Processors.Description.Parser.exec(line);
@@ -969,7 +1223,7 @@ Documentation.Processors.Description = Documentation.AnnotationProcessor.inherit
     },
 
     appendToResult: function (result, description) {
-        result.value.description += description;
+        result.value.description += "\n" + description;
     },
 
     mapAnnotationToItem: function (annotation, item) {
@@ -978,6 +1232,38 @@ Documentation.Processors.Description = Documentation.AnnotationProcessor.inherit
 }, {
     Parser: /\*\s*@description\s*(.+)$/
 });
+
+Documentation.Processors.ArrayMethodAnnotationProcessor = Documentation.MethodAnnotionProcessor.inherit("Documentation.Processors.ArrayMethodAnnotationProcessor", {
+
+    ctor: function(name) {
+        this.name = name;
+    },
+
+    parse: function (annotation, methodAnnotationObject) {
+
+        for (var i = 0; i < annotation.arguments.length; i++) {
+            methodAnnotationObject.push(annotation.arguments[i].value);
+        }
+
+    }
+});
+
+Documentation.Processors.OnMethodAnnotationProcessor = Documentation.MethodAnnotionProcessor.inherit("Documentation.Processors.OnMethodAnnotationProcessor", {
+    parse: function (annotation, methodAnnotationObject) {
+
+        for (var i = 0; i < annotation.arguments.length; i++) {
+            var arg = annotation.arguments[i];
+
+            if (arg.type === CONST.Literal) {
+                methodAnnotationObject.push(["this", arg.value]);
+            } else if (arg.type === CONST.ArrayExpression) {
+                methodAnnotationObject.push([arg.elements[0].value, arg.elements[1].value]);
+            }
+        }
+
+    }
+});
+
 
 exports.version = '0.1.0';
 exports.Documentation = Documentation;

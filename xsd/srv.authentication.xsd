@@ -1,0 +1,96 @@
+<schema targetNamespace="srv.authentication" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns1="srv.core" xmlns:ns="srv.authentication">
+    <import namespace="srv.core"/>
+    <element name="DataSourceAuthenticationProvider" type="ns:DataSourceAuthenticationProvider"/>
+    <element name="LDAPAuthenticationProvider" type="ns:LDAPAuthenticationProvider"/>
+    <complexType name="DataSourceAuthenticationProvider">
+        <complexContent>
+            <extension base="ns1:AuthenticationProvider">
+                <annotation>
+                    <documentation source="http://www.rappidjs.com/#/api/srv.core.authentication.DataSourceAuthenticationProvider">
+
+                    </documentation>
+                </annotation>
+                <sequence>
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+                <attribute name="userModelClassName">
+                    <annotation>
+                        <documentation>
+
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="idField" default="userId">
+                    <annotation>
+                        <documentation>
+
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="dataSource">
+                    <annotation>
+                        <documentation>
+
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="algorithm" default="sha1">
+                    <annotation>
+                        <documentation>
+
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="salt" default="rAppid:js">
+                    <annotation>
+                        <documentation>
+
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="usernameParameter" default="username">
+                    <annotation>
+                        <documentation>
+
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="passwordParameter" default="password">
+                    <annotation>
+                        <documentation>
+
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+    <complexType name="LDAPAuthenticationProvider">
+        <complexContent>
+            <extension base="ns1:AuthenticationProvider">
+                <annotation>
+                    <documentation source="http://www.rappidjs.com/#/api/srv.core.authentication.LDAPAuthenticationProvider">
+
+                    </documentation>
+                </annotation>
+                <sequence>
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+                <attribute name="host">
+                    <annotation>
+                        <documentation>
+
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="dnTemplate" default="uid=%username%">
+                    <annotation>
+                        <documentation>
+
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+</schema>

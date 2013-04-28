@@ -80,10 +80,12 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
              * updated when the DOM node height changes or if the DOM node height is updated
              * when the component height changes.
              *
-             *  Possible values:
-             *  - in - "height" attribute is determined by DOM nodes offsetHeight
-             *  - out - DOM node height is determined by the "height" attribute
-             *  - both - both directions
+             *  **Possible values:**
+             *
+             *   +  **in** - "height" attribute is determined by DOM nodes offsetHeight
+             *   +  **out** - DOM node height is determined by the "height" attribute
+             *   +  **both** - both directions
+             *
              * @type String
              */
             heightUpdatePolicy: "out",
@@ -94,19 +96,29 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
              * updated when the DOM node width changes or if the DOM node width is updated
              * when the component width changes.
              *
-             *  Possible values:
-             *  - in - "width" attribute is determined by DOM nodes offsetWidth
-             *  - out - DOM node width is determined by the "width" attribute
-             *  - both - both directions
+             *  **Possible values:**
+             *
+             *   +  **in** - "width" attribute is determined by DOM nodes offsetWidth
+             *   +  **out** - DOM node width is determined by the "width" attribute
+             *   +  **both** - both directions
+             *
              * @type String
              */
             widthUpdatePolicy: "out"
         },
-
+        /**
+         * @type Array
+         */
         $classAttributes: ['heightUpdatePolicy', 'widthUpdatePolicy', 'content'],
 
+        /**
+         * @type Array
+         */
         $excludedStyleAttributes: ['src','content'],
 
+        /***
+         * @type Array
+         */
         $renderAsStyleWithPx: ['left', 'top'],
         /**
          *

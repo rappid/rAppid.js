@@ -1,5 +1,5 @@
 define(["js/data/FilterView", "js/data/Query"], function(FilterView, Query) {
-    return FilterView.inherit("ja.data.QueryDataView", {
+    return FilterView.inherit("js.data.QueryDataView", {
 
         defaults: {
             query: null

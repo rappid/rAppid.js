@@ -1,4 +1,4 @@
-define(['require', 'js/core/Base', 'srv/handler/rest/ResourceHandler', 'flow'], function (require, Base, ResourceHandler, flow) {
+define(['require', 'js/core/Base', 'srv/handler/rest/ResourceHandler', 'flow', 'srv/core/HttpError'], function (require, Base, ResourceHandler, flow, HttpError) {
 
     return Base.inherit('srv.handler.rest.ResourceRouter', {
 
@@ -57,7 +57,7 @@ define(['require', 'js/core/Base', 'srv/handler/rest/ResourceHandler', 'flow'], 
                 configuration = configuration.getConfigurationForPath(path);
 
                 if (!configuration) {
-                    throw new Error("Configuration for '" + pathElements.slice(0, i + 1).join('/') + "' not found.");
+                    throw new HttpError("Configuration for '" + pathElements.slice(0, i + 1).join('/') + "' not found.", 404);
                 }
 
                 if(this.$restHandler.$modelClassResourceHandler[configuration.$.modelClassName]){

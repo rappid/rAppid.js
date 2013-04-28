@@ -6,7 +6,8 @@ define(["inherit"], function(inherit){
     var Base = inherit.Base.inherit("js.core.Base",{
 
         ctor: function () {
-            this.$functionTimeoutMap = {};
+            this.$debounceTimeoutMap = {};
+
             // generate unique id
             this.$cid = ++cid;
 
@@ -21,6 +22,18 @@ define(["inherit"], function(inherit){
             return typeof window !== "undefined";
         },
 
+        /***
+         * this is an empty function doing nothing. It can be used as fallback if a method requires a
+         * callback function, which hasn't been passed.
+         *
+         * ```
+         *  function myFunction(callback) {
+         *      callback = callback || this.emptyCallback;
+         *  }
+         * ```
+         *
+         * @returns {Function} a function doing nothing
+         */
         emptyCallback: function() {
             return emptyCallback;
         },
@@ -53,18 +66,51 @@ define(["inherit"], function(inherit){
                 }
             }
         },
+
         /***
          *
-         * @param {Function} fnc - the function to call
-         * @param {Number} delay - delay in ms
+         * @param {Function} fnc
+         * @param {String} [cacheId]
+         * @param {Number} [delay]
+         * @param {Object} [scope]
+         * @param {Array} [parameters]
+         * @param {String} [strategy=loop] - loop will trigger the function at least every delay, wait will clear the timeout
          * @private
          */
-        _callFunctionDelayed: function(fnc, delay){
-            delay = delay || 300;
-            var key = fnc.toString();
-            this.$functionTimeoutMap[key] && clearTimeout(this.$functionTimeoutMap[key]);
+        _debounceFunctionCall: function(fnc, cacheId, delay, scope, parameters, strategy) {
+            var self = this,
+                LOOP = "loop";
 
-            this.$functionTimeoutMap[key] = setTimeout(fnc,delay);
+            if (!fnc) {
+                return;
+            }
+
+            cacheId = cacheId || fnc.toString();
+            scope = scope || this;
+            parameters = parameters || [];
+            strategy = strategy || LOOP;
+
+            if (delay === 0) {
+                // immediately invoke function
+                fnc.apply(scope, parameters);
+                return;
+            }
+
+            delay = delay || 300;
+            if (this.$debounceTimeoutMap[cacheId]) {
+                // timer registered
+
+                if (strategy === LOOP) {
+                    return;
+                }
+
+                clearTimeout(this.$debounceTimeoutMap[cacheId]);
+            }
+
+            this.$debounceTimeoutMap[cacheId] = setTimeout(function() {
+                delete self.$debounceTimeoutMap[cacheId];
+                fnc.apply(scope, parameters);
+            }, delay);
         }
 
     });

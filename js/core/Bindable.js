@@ -135,16 +135,32 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
 
                 /**
                  * values to be injected
-                 * @key {String} name of the variable for this.$key
-                 * @value {Required Class}
+                 * @key {String} name of the variable added to the $ of the instance
+                 * @value {Function|String}
                  */
                 inject: {},
 
+                /***
+                 *
+                 * invokes the `_initialize` method. This method is a hook function and is overwritten by js.core.Component
+                 *
+                 * @private
+                 */
                 _initializeFromCtor: function () {
                     // hook
                     this._initialize();
                 },
 
+                /***
+                 * starts the initialization of the `Bindable` if it hasn't initialized yet.
+                 *
+                 * It calls the following methods:
+                 *
+                 *  * initialize();
+                 *  * _initializeBindings();
+                 *
+                 * @private
+                 */
                 _initialize: function () {
                     if (this.$initialized) {
                         return;
@@ -157,19 +173,49 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
                     this._initializeBindings();
                 },
 
+                /***
+                 * the initialize method is a hook function to add a custom logic during the initiation process.
+                 */
                 initialize: function () {
-
                 },
 
+                /***
+                 *
+                 * returns the chained object defining the required injections
+                 *
+                 * @returns {Object}
+                 * @private
+                 */
                 _injectChain: function () {
                     return this._generateDefaultsChain("inject");
                 },
 
+                /***
+                 * sets up the Bindable or Component. It will inject the required injections and
+                 * also will bind the application wide `MessageBus` to all methods annotated with the
+                 * `.bus()` method annotation
+                 *
+                 * For `Components` the setUp method is invoked automatically during the add of the Component.
+                 * For non `Components`
+                 *
+                 *
+                 * @private
+                 * @see {js.core.MessageBus}
+                 * @wiki // TODO: write an wiki article or link an existing one
+                 */
                 _setUp: function () {
                     this._inject();
                     this._bindBus();
                 },
 
+                /***
+                 * tears down the Bindable or Component. It will remove the injected variables and
+                 * also will unbind the annotated event handlers from the application wide `MessageBus`
+                 *
+                 * @private
+                 * @see {js.core.MessageBus}
+                 * @wiki // TODO:
+                 */
                 _tearDown: function () {
                     this._extract();
                     this._unbindBus();

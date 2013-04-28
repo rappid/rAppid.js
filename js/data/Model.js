@@ -35,11 +35,31 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
             }
         },
 
-        hrefField: "href",          // contains the href to the resource
-        updatedField: "updated",    // saves/returns the updated date
-        createdField: "created",    // saves/returns the created date
+        /**
+         *  The field which will contain the href
+         *  @type String
+         */
+        hrefField: "href",
 
+        /***
+         *  The field in which the updated date will be saved
+         *  @type String
+         */
+        updatedField: "updated",
+        /****
+         * The field in which the created date will be saved
+         * @type String
+         */
+        createdField: "created",
+        /***
+         * Private field to determinate if the class is Entity or Model
+         * @type Boolean
+         */
         $isEntity: false,
+        /***
+         * Private field to determinate if the class is Entity or Model
+         * @type Boolean
+         */
         $isDependentObject: false,
 
         /***

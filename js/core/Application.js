@@ -1,113 +1,142 @@
 define(["js/core/Window", "js/html/HtmlElement", "js/lib/extension", "underscore", "require", "flow", "js/core/Bindable"], function (Window, HtmlElement, Extension, _, require, flow, Bindable) {
 
-        /***
-         * @summery An application is a Window, which gets bootstrapped and started by rAppid.js and is attached to the WindowManager.
+    /***
+     * @summary An application is a Window, which gets bootstrapped and started by rAppid.js and is attached to the WindowManager.
+     *
+     * @description Setting up and application can be easily done via the `rappidjs create app` command. For more information about projects \
+     * have a look at http://rappidjs.com/#/wiki/Project
+     *
+     * @see js.core.WindowManager
+     */
+    return Window.inherit("js.core.Application", {
+        $classAttributes: [/.+/],
+
+        _inject: function () {
+            // overwrite and call inside start
+        },
+
+        _initializeDescriptors: function () {
+            this.callBase();
+            HtmlElement.prototype._inject.call(this);
+        },
+
+        /**
+         * Starts the application after the application is bootstrapped
          *
-         * @see js.core.WindowManager
+         * @param {Object} [parameter] - parameter configuring the application
+         * @param {Function} callback
          */
-        return Window.inherit("js.core.Application", {
-            $classAttributes: [/.+/],
-            ctor: function () {
-                this.callBase();
-            },
+        start: function (parameter, callback) {
+            parameter = parameter || {};
+            this.$stage.$parameter = parameter;
+            this.$stage.$environmentName = parameter.environment;
+            this.show();
 
-            defaults: {
-                ENV: null
-            },
+            this._startHistory(callback, parameter.initialHash);
+        },
 
-            _inject: function () {
-                // overwrite and call inside start
-            },
+        /***
+         *
+         * @return {String} the name of the current environment
+         * @private
+         */
+        _getEnvironment: function () {
+            return this.$stage.$environmentName;
+        },
 
-            _initializeDescriptors: function () {
-                this.callBase();
-                HtmlElement.prototype._inject.call(this);
-            },
+        /***
+         * the default namespace of the application.
+         *
+         * Within the application default namespace are several default directories located.
+         *
+         * **E.g.:**
+         *
+         *   +  **env** - contains for each environment an json file
+         *   +  **locale** - contains for each locale a json file for translations
+         *
+         * the `env` directory for environments and the locale directory
+         *
+         * @type String
+         */
+        applicationDefaultNamespace: "app",
 
-            /**
-             * Starts the application after the application is bootstrapped
-             *
-             * @param {Object} parameter - parameter configuring the application
-             * @param {Function} callback
-             */
-            start: function (parameter, callback) {
-                parameter = parameter || {};
-                this.$stage.$parameter = parameter;
-                this.$stage.$environmentName = parameter.environment;
-                this.show();
+        /***
+         * the `supportEnvironments` property determinate if the application has build in support for environments.
+         *
+         * The environment is determinated with the `_getEnvironment` method of the application and
+         * returns by default the value of `environment` passed as start parameter of the application
+         *
+         * @wiki Environments
+         */
+        supportEnvironments: false,
 
-                this._startHistory(callback, parameter.initialHash);
-            },
+        /***
+         * Starts the history, which is responsible for navigation
+         *
+         * @param {Function} [callback] callback function, which is invoked after the history has started
+         * @param {String} [initialHash=null] starts the history with this fragment
+         * @private
+         */
+        _startHistory: function (callback, initialHash) {
+            this.$stage.$history.start(callback, initialHash);
+        },
 
-            _getEnvironment: function() {
-                return this.$stage.$environmentName;
-            },
+        /***
+         *
+         * renders the application in the `target` Element.
+         *
+         * @param {Element} [target] the native Element where the rendered element will be appended
+         * @return {Element} the rendered Element
+         */
+        render: function (target) {
+            var dom = this.callBase(target);
 
-            applicationDefaultNamespace: "app",
+            this.$stage.$bus.trigger('Application.Rendered');
 
-            supportEnvironments: false,
+            return dom;
+        }
 
-            /***
-             * Starts the history, which is responsible for navigation
-             *
-             * @param {Function} [callback] callback function, which is invoked after the history has started
-             * @param {String} [initialHash=null] starts the history with this fragment
-             * @private
-             */
-            _startHistory: function(callback, initialHash) {
-                this.$stage.$history.start(callback, initialHash);
-            },
+    }, {
 
-            /***
-             *
-             * @param {Element} [target] the native Element where the rendered element will be appended
-             * @return {Element} the rendered Element
-             */
-            render: function (target) {
-                var dom = this.callBase(target);
+        /***
+         *
+         * @param {js.core.Bindable} ENV - the bindable to set the environment values
+         * @param {String} environmentName - the name of the environment to load
+         * @param {String} applicationDefaultNamespace - the root namespace directory where to search for the env directory
+         * @param {Function} callback
+         */
+        setupEnvironment: function (ENV, environmentName, applicationDefaultNamespace, callback) {
 
-                this.$stage.$bus.trigger('Application.Rendered');
+            var defaultEnvironment,
+                environment;
 
-                return dom;
-            }
+            flow()
+                .par(function (cb) {
 
-        }, {
-
-            setupEnvironment: function(ENV, environmentName, applicationDefaultNamespace, callback) {
-
-                var defaultEnvironment,
-                    environment;
-
-                flow()
-                    .par(function (cb) {
-
-                        require(["json!" + applicationDefaultNamespace + "/env/default"], function (d) {
-                            defaultEnvironment = d;
+                    require(["json!" + applicationDefaultNamespace + "/env/default"], function (d) {
+                        defaultEnvironment = d;
+                        cb();
+                    }, function (err) {
+                        cb(err);
+                    });
+                }, function (cb) {
+                    if (environmentName) {
+                        require(["json!" + applicationDefaultNamespace + "/env/" + environmentName], function (d) {
+                            environment = d;
                             cb();
                         }, function (err) {
                             cb(err);
                         });
-                    }, function (cb) {
-                        if (environmentName) {
-                            require(["json!" + applicationDefaultNamespace + "/env/" + environmentName], function (d) {
-                                environment = d;
-                                cb();
-                            }, function (err) {
-                                cb(err);
-                            });
-                        } else {
-                            cb();
-                        }
-                    })
-                    .exec(function (err) {
-                        ENV.set(_.extend({}, defaultEnvironment, environment));
-                        callback && callback(err);
-                    });
+                    } else {
+                        cb();
+                    }
+                })
+                .exec(function (err) {
+                    ENV.set(_.extend({}, defaultEnvironment, environment));
+                    callback && callback(err);
+                });
 
+        }
 
-
-            }
-
-        });
-    }
-);
+    });
+});

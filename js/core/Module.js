@@ -20,6 +20,16 @@ define(["js/html/HtmlElement", "js/core/Router", "js/core/Head"], function (Html
             }
         },
 
+        /***
+         * notifies the module that it will be removed from the current module loader
+         *
+         * @param {Function} callback - callback function after the unload has be completed
+         * @private
+         */
+        _unload: function(callback) {
+            callback && callback();
+        },
+
         render: function (target) {
             // module won't render anything, but delivers content via js:Content
             // content is rendered inside ContentPlaceHolders

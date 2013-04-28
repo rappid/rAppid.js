@@ -1,0 +1,63 @@
+<schema targetNamespace="js.ui.field" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns1="js.ui" xmlns:ns="js.ui.field">
+    <import namespace="js.ui"/>
+    <element name="Password" type="ns:Password"/>
+    <element name="RadioGroup" type="ns:RadioGroup"/>
+    <element name="Text" type="ns:Text"/>
+    <element name="TextArea" type="ns:TextArea"/>
+    <complexType name="Password">
+        <complexContent>
+            <extension base="ns:Text">
+                <annotation>
+                    <documentation source="http://www.rappidjs.com/#/api/js.ui.field.Password">
+
+                    </documentation>
+                </annotation>
+                <sequence>
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+    <complexType name="RadioGroup">
+        <complexContent>
+            <extension base="ns1:Field">
+                <annotation>
+                    <documentation source="http://www.rappidjs.com/#/api/js.ui.field.RadioGroup">
+
+                    </documentation>
+                </annotation>
+                <sequence>
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+    <complexType name="Text">
+        <complexContent>
+            <extension base="ns1:Field">
+                <annotation>
+                    <documentation source="http://www.rappidjs.com/#/api/js.ui.field.Text">
+
+                    </documentation>
+                </annotation>
+                <sequence>
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+    <complexType name="TextArea">
+        <complexContent>
+            <extension base="ns1:Field">
+                <annotation>
+                    <documentation source="http://www.rappidjs.com/#/api/js.ui.field.TextArea">
+
+                    </documentation>
+                </annotation>
+                <sequence>
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+</schema>
