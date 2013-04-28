@@ -377,6 +377,7 @@ var esprima = require('esprima'),
                 new Documentation.Processors.General('see', true),
                 new Documentation.Processors.General('ignore'),
                 new Documentation.Processors.General('deprecated'),
+                new Documentation.Processors.General('required'),
                 new Documentation.Processors.Type(),
                 new Documentation.Processors.Description()
             ];

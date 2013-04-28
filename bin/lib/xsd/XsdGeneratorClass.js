@@ -108,6 +108,10 @@ define(["js/core/Application"], function (Application) {
                                 attributeComponent.set("default", attribute.value);
                             }
 
+                            if (attribute.hasOwnProperty("required")) {
+                                attributeComponent.set("use", "required");
+                            }
+
                             attributeComponent.set({
                                 $name: attribute.name,
                                 $description: attribute.description
