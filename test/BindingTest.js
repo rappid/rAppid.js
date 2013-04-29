@@ -214,7 +214,7 @@ describe('js.core.Binding', function () {
             var binding = new C.Binding({scope: model, path: 'a.b', target: target, targetKey: "val", twoWay: true});
 
             target.set({val: 'TargetValue'});
-            should.equal(binding.getValue(), null);
+            should.equal(binding.getValue(), undefined);
 
             var m1 = new C.Bindable({b: "hello"});
             model.set("a", m1);
@@ -311,6 +311,42 @@ describe('js.core.Binding', function () {
 
             should.exist(target.get('val'));
             target.get('val').should.equal("City1 Street1");
+        });
+
+        it("function binding on non bindables should return correct value", function(){
+
+
+            var jsClass = function(name){
+                this.init(name);
+            };
+
+            jsClass.prototype = {
+                init: function(name){
+                    this.name = name;
+                },
+                toString: function(){
+                    return this.name;
+                }
+            };
+
+            var name = "Peter";
+            var jsInstance = new jsClass(name);
+
+
+            var target = new ExtendedClass();
+            var scope = new ExtendedClass();
+
+            scope.set('person', jsInstance);
+
+            new C.Binding({scope: scope, path: "person.toString()", target: target, targetKey: 'val'}).triggerBinding();
+
+            expect(target.get('val')).to.exist;
+            expect(target.get('val')).to.be.equal(name);
+
+            scope.set('person', null);
+
+            expect(target.get('val')).to.be.equal(undefined);
+
         });
 
     });
