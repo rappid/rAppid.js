@@ -255,29 +255,26 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
                     }
                 }
 
-                value = value == null ? null : value;
 
-                if (key in this.$el.style) {
-                    this.$el.style[key] = value;
-                } else {
+                var transformedKey = HtmlElement.transformCache[key];
 
-                    var transformedKey = HtmlElement.transformCache[key];
-
-                    if (!transformedKey) {
-                        // transform key
-                        var split = key.split("-");
-                        transformedKey = split[0];
-                        for (var i = 1; i < split.length; i++) {
-                            transformedKey += split[i].charAt(0).toUpperCase() + split[1].substr(1);
-                        }
-
-                        HtmlElement.transformCache[key] = transformedKey;
+                if (!transformedKey) {
+                    // transform key
+                    var split = key.split(/(?=[A-Z])/);
+                    transformedKey = split[0];
+                    for (var i = 1; i < split.length; i++) {
+                        transformedKey += "-" + split[i].charAt(0).toLowerCase() + split[i].substr(1);
                     }
 
-                    if (transformedKey in this.$el.style) {
-                        this.$el.style[transformedKey] = value;
+                    HtmlElement.transformCache[key] = transformedKey;
+                }
+//
+                if (transformedKey in this.$el.style) {
+                    if (value != null) {
+                        this.$el.style.setProperty(transformedKey, value, null);
+                    } else {
+                        this.$el.style.removeProperty(transformedKey);
                     }
-
                 }
 
             } else {
