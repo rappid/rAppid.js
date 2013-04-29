@@ -255,6 +255,8 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
                     }
                 }
 
+                value = value == null ? null : value;
+
                 if (key in this.$el.style) {
                     this.$el.style[key] = value;
                 } else {
