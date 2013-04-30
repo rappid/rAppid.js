@@ -9,6 +9,7 @@ define(
                 selectedItem: null,
                 needsSelection: false,
                 items: [],
+                keyPath: null,
                 forceSelectable: true,
                 allowDeselection: false
             },

@@ -15,7 +15,7 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
      * @param policy
      * @param attribute
      */
-    var checkSizePolicy = function(element, policy, attribute){
+    var checkSizePolicy = function (element, policy, attribute) {
         if (policy === POLICY_IN || policy === POLICY_BOTH) {
             element.set(attribute, element.$el[attributeMap[attribute]]);
         }
@@ -30,7 +30,7 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
     var bindSizePolicy = function (element, policy, attribute) {
 
         if (policy === POLICY_IN || policy === POLICY_BOTH) {
-            if (!element["__update"+attribute]) {
+            if (!element["__update" + attribute]) {
                 var self = element;
                 element["__update" + attribute] = function () {
                     self.set(attribute, self.$el[attributeMap[attribute]]);
@@ -114,7 +114,7 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
         /**
          * @type Array
          */
-        $excludedStyleAttributes: ['src','content'],
+        $excludedStyleAttributes: ['src', 'content'],
 
         /***
          * @type Array
@@ -124,11 +124,11 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
          *
          * @private
          */
-        _onDomAdded: function(){
+        _onDomAdded: function () {
             this.callBase();
 
-            checkSizePolicy(this,this.$.widthUpdatePolicy,'width');
-            checkSizePolicy(this,this.$.heightUpdatePolicy,'height');
+            checkSizePolicy(this, this.$.widthUpdatePolicy, 'width');
+            checkSizePolicy(this, this.$.heightUpdatePolicy, 'height');
         },
         /**
          *
@@ -173,7 +173,7 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
                 if (!this._onSelect) {
                     var self = this;
                     this._onSelect = function () {
-                        if(self.$.enabled){
+                        if (self.$.enabled) {
                             self.set({selected: !self.$.selected});
                         }
                     };
@@ -240,14 +240,14 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
             var policy = this.$[name + 'UpdatePolicy'];
 
             if (policy === POLICY_OUT || policy === POLICY_BOTH) {
-                if(value != null && value !== undefined){
+                if (value != null && value !== undefined) {
                     this.$el.style[name] = value;
                 }
             }
 
         },
 
-        _renderAttributeInternal: function(key, value) {
+        _renderAttributeInternal: function (key, value) {
             if (this._isStyleAttribute(key)) {
                 if (_.indexOf(this.$renderAsStyleWithPx, key) !== -1) {
                     if (!_.isString(value)) {
@@ -255,27 +255,25 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
                     }
                 }
 
-                if(value){
-                    if (key in this.$el.style) {
-                        this.$el.style[key] = value;
+
+                var transformedKey = HtmlElement.transformCache[key];
+
+                if (!transformedKey) {
+                    // transform key
+                    var split = key.split(/(?=[A-Z])/);
+                    transformedKey = split[0];
+                    for (var i = 1; i < split.length; i++) {
+                        transformedKey += "-" + split[i].charAt(0).toLowerCase() + split[i].substr(1);
+                    }
+
+                    HtmlElement.transformCache[key] = transformedKey;
+                }
+//
+                if (transformedKey in this.$el.style) {
+                    if (value != null) {
+                        this.$el.style.setProperty(transformedKey, value, null);
                     } else {
-
-                        var transformedKey = HtmlElement.transformCache[key];
-
-                        if (!transformedKey) {
-                            // transform key
-                            var split = key.split("-");
-                            transformedKey = split[0];
-                            for (var i = 1; i < split.length; i++) {
-                                transformedKey += split[i].charAt(0).toUpperCase() + split[1].substr(1);
-                            }
-
-                            HtmlElement.transformCache[key] = transformedKey;
-                        }
-
-                        if (transformedKey in this.$el.style) {
-                            this.$el.style[transformedKey] = value;
-                        }
+                        this.$el.style.removeProperty(transformedKey);
                     }
                 }
 
@@ -284,7 +282,7 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
             }
         },
 
-        _isStyleAttribute: function(key) {
+        _isStyleAttribute: function (key) {
 
             var supportedCssProperties = this.$stage.$supportedCssProperties;
 
