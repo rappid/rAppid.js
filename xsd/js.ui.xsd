@@ -219,6 +219,13 @@
                         </documentation>
                     </annotation>
                 </attribute>
+                <attribute name="oncolorSelect" default="_onColorSelectHandler" type="string">
+                    <annotation>
+                        <documentation>
+
+                        </documentation>
+                    </annotation>
+                </attribute>
             </extension>
         </complexContent>
     </complexType>
@@ -336,6 +343,22 @@
                     <annotation>
                         <documentation>
 
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="onrowClick" default="_onRowClickHandler" type="string">
+                    <annotation>
+                        <documentation>
+                            The rowClick event is dispatched if a row is clicked in the
+                            DataGrid.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="onrowDblClick" default="_onRowDblClickHandler" type="string">
+                    <annotation>
+                        <documentation>
+                            The rowDblClick event is dispatched if a row is double clicked
+                            in the DataGrid.
                         </documentation>
                     </annotation>
                 </attribute>
@@ -1728,6 +1751,13 @@
                         </documentation>
                     </annotation>
                 </attribute>
+                <attribute name="onselectTab" default="_onSelectTabHandler" type="string">
+                    <annotation>
+                        <documentation>
+
+                        </documentation>
+                    </annotation>
+                </attribute>
             </extension>
         </complexContent>
     </complexType>
@@ -2020,6 +2050,34 @@
                     </annotation>
                 </attribute>
                 <attribute name="hoverItem">
+                    <annotation>
+                        <documentation>
+
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="onitemClick" default="_onItemClickHandler" type="string">
+                    <annotation>
+                        <documentation>
+
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="onitemDblClick" default="_onItemDblClickHandler" type="string">
+                    <annotation>
+                        <documentation>
+
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="onitemMouseOver" default="_onItemMouseOverHandler" type="string">
+                    <annotation>
+                        <documentation>
+
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="onitemMouseOut" default="_onItemMouseOutHandler" type="string">
                     <annotation>
                         <documentation>
 
