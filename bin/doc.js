@@ -243,6 +243,7 @@ var help = function (args, callback) {
                             }, cb);
                         })
                         .seq(function () {
+                            //noinspection JSPotentiallyInvalidUsageOfThis
                             var dom = this.vars.app.render(this.vars.window.document);
                             fs.writeFileSync(xsdDir + "/" + namespace + ".xsd", (new xmlDom.XMLSerializer()).serializeToString(dom.childNodes[0]), "utf8");
                         })

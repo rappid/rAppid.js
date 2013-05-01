@@ -13,7 +13,7 @@ define(["js/core/Application"], function (Application) {
                 documentations = parameter.documentations,
                 paket = parameter.package,
                 schema = this.$.schema,
-                i;
+                i, key, attribute, attributeComponent;
 
             if (!(targetNamespace && paket)) {
                 callback && callback("namespace or package missing");
@@ -89,15 +89,15 @@ define(["js/core/Application"], function (Application) {
 
                 var extension = typeComponent.$children[0].$children[0];
 
-                for (var key in classDocumentation.defaults) {
+                for (key in classDocumentation.defaults) {
                     if (classDocumentation.defaults.hasOwnProperty(key)) {
-                        var attribute = classDocumentation.defaults[key];
+                        attribute = classDocumentation.defaults[key];
 
                         if (attribute.visibility === "public" &&
                                 (isComponent || attribute.definedBy === classDocumentation.fqClassName ||
                                     attribute.definedBy === classDocumentation.fqClassName + "Class" || !attribute.hasOwnProperty("definedBy"))) {
 
-                            var attributeComponent = schema.$templates["attribute"].createComponents({
+                            attributeComponent = schema.$templates["attribute"].createComponents({
                                 $name: null,
                                 $description: null
                             })[0];
@@ -115,6 +115,32 @@ define(["js/core/Application"], function (Application) {
                             attributeComponent.set({
                                 $name: attribute.name,
                                 $description: attribute.description
+                            });
+
+                        }
+                    }
+                }
+
+                for (key in classDocumentation.events) {
+                    if (classDocumentation.events.hasOwnProperty(key)) {
+                        attribute = classDocumentation.events[key];
+
+                        if (attribute.visibility === "public" &&
+                            (isComponent || attribute.definedBy === classDocumentation.fqClassName ||
+                                attribute.definedBy === classDocumentation.fqClassName + "Class" || !attribute.hasOwnProperty("definedBy"))) {
+
+                            attributeComponent = schema.$templates["attribute"].createComponents({
+                                $name: null,
+                                $description: null
+                            })[0];
+
+                            extension.addChild(attributeComponent);
+
+                            attributeComponent.set({
+                                $name: "on" + attribute.name,
+                                $description: attribute.description,
+                                "default": "_on" + attribute.name.charAt(0).toUpperCase() + attribute.name.substr(1) + "Handler",
+                                type: "string"
                             });
 
                         }

@@ -128,6 +128,7 @@ var esprima = require('esprima'),
 
                         classDocumentation.extendInherit(this.documentations, "defaults");
                         classDocumentation.extendInherit(this.documentations, "properties");
+                        classDocumentation.extendInherit(this.documentations, "events");
 
                     }
                 }
@@ -373,11 +374,20 @@ var esprima = require('esprima'),
                 new Documentation.Processors.Description()
             ];
 
+
             this.defaultAnnotationProcessors = [
                 new Documentation.Processors.General('see', true),
                 new Documentation.Processors.General('ignore'),
                 new Documentation.Processors.General('deprecated'),
                 new Documentation.Processors.General('required'),
+                new Documentation.Processors.Type(),
+                new Documentation.Processors.Description()
+            ];
+
+            this.eventAnnotationProcessors = [
+                new Documentation.Processors.General('see', true),
+                new Documentation.Processors.General('ignore'),
+                new Documentation.Processors.General('deprecated'),
                 new Documentation.Processors.Type(),
                 new Documentation.Processors.Description()
             ];
@@ -694,7 +704,9 @@ var esprima = require('esprima'),
                     documentation.defaults = this.getDefaultValues(property.value);
 
                 } else if (property.key.type === CONST.Identifier && property.key.name === "events" && property.value.type === CONST.ArrayExpression) {
-                    // TODO: read events
+
+                    documentation.events = this.getEvents(property.value);
+
                 } else if (property.key.type === CONST.Identifier && property.key.name === "schema" && property.value.type === CONST.ObjectExpression) {
                     // TODO: read schema
                 } else if (property.key.type === CONST.Identifier && property.key.name === "inject" && property.value.type === CONST.ObjectExpression) {
@@ -875,6 +887,43 @@ var esprima = require('esprima'),
 
                 if (!item.hasOwnProperty('ignore')) {
                     ret[defaultName] = item;
+                }
+
+            }
+
+            return ret;
+
+        },
+
+        getEvents: function (eventsObject) {
+
+            var events = eventsObject.elements,
+                ret = {},
+                lastEventName;
+
+            for (var i = 0; i < events.length; i++) {
+                var eventEntry = events[i],
+                    eventName = eventEntry.value;
+
+                eventName = eventName.replace(/^on:/, "");
+
+                lastEventName = events[i - 1];
+
+                var item = {
+                    type: "Event",
+                    name: eventName,
+                    visibility: this.getVisibility(eventName)
+                };
+
+                var annotations = this.getAnnotationInRange(lastEventName ? lastEventName.range[1] : eventsObject.range[0], eventEntry.range[0], this.eventAnnotationProcessors);
+
+                for (var a = 0; a < annotations.length; a++) {
+                    var annotation = annotations[a];
+                    annotation.processor.mapAnnotationToItem(annotation, item, annotations);
+                }
+
+                if (!item.hasOwnProperty('ignore')) {
+                    ret[eventName] = item;
                 }
 
             }
