@@ -10,7 +10,18 @@ define(['js/ui/View', 'xaml!js/ui/DataGridColumn', 'js/core/List', 'underscore',
             selectedItems: List,
             selectionMode: "multi"
         },
-        events: ["on:rowClick", "on:rowDblClick"],
+
+        events: [
+        /***
+         * The rowClick event is dispatched if a row is clicked in the DataGrid.
+         */
+            "on:rowClick",
+        /***
+         * The rowDblClick event is dispatched if a row is double clicked in the DataGrid.
+         */
+            "on:rowDblClick"
+        ],
+
         ctor: function () {
             this.callBase();
             this.bind('$itemsView', 'on:itemClick', this._onRowClick, this);
