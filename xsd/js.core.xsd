@@ -78,9 +78,31 @@
                 <sequence>
                     <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
                 </sequence>
+                <attribute name="class">
+                    <annotation>
+                        <documentation>
+                            sets the class for the Component.
+                            The resulting class attributes is the union from class and
+                            componentClass of the Element.
+
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="componentClass">
+                    <annotation>
+                        <documentation>
+                            sets the componentClass for the Component.
+                            The resulting class attributes is the union from class and
+                            componentClass of the Element.
+
+                        </documentation>
+                    </annotation>
+                </attribute>
                 <attribute name="visible" default="true">
                     <annotation>
                         <documentation>
+                            sets the visibility of an component. If the value is false the
+                            component is removed from the DOM.
 
                         </documentation>
                     </annotation>
@@ -123,6 +145,7 @@
                 <attribute name="locale">
                     <annotation>
                         <documentation>
+                            The default locale
 
                         </documentation>
                     </annotation>
@@ -130,6 +153,7 @@
                 <attribute name="suffix" default=".json">
                     <annotation>
                         <documentation>
+                            The suffix of the locale file
 
                         </documentation>
                     </annotation>
@@ -137,14 +161,15 @@
                 <attribute name="translations">
                     <annotation>
                         <documentation>
-
+                            An object with all translations read from the locale file
                         </documentation>
                     </annotation>
                 </attribute>
                 <attribute name="loadMomentJs" default="true">
                     <annotation>
                         <documentation>
-
+                            Decides wether to load momentjs for date formatting and
+                            parsing
                         </documentation>
                     </annotation>
                 </attribute>
@@ -204,13 +229,6 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="componentClass" default="module-loader">
-                    <annotation>
-                        <documentation>
-
-                        </documentation>
-                    </annotation>
-                </attribute>
                 <attribute name="state">
                     <annotation>
                         <documentation>
@@ -240,6 +258,10 @@
             <extension base="ns1:HtmlElement">
                 <annotation>
                     <documentation source="http://www.rappidjs.com/#/api/js.core.Stage">
+                        The stage is the main container for each application.It contains
+                        all root HTML elements like windows, tooltips or popups.Usually an
+                        application is one window on the stage.
+
 
                     </documentation>
                 </annotation>
@@ -247,13 +269,6 @@
                     <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
                 </sequence>
                 <attribute name="tagName" default="div">
-                    <annotation>
-                        <documentation>
-
-                        </documentation>
-                    </annotation>
-                </attribute>
-                <attribute name="componentClass" default="stage">
                     <annotation>
                         <documentation>
 
@@ -274,13 +289,6 @@
                 <sequence>
                     <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
                 </sequence>
-                <attribute name="componentClass" default="window">
-                    <annotation>
-                        <documentation>
-
-                        </documentation>
-                    </annotation>
-                </attribute>
             </extension>
         </complexContent>
     </complexType>
@@ -304,13 +312,6 @@
                     </annotation>
                 </attribute>
                 <attribute name="modalActive">
-                    <annotation>
-                        <documentation>
-
-                        </documentation>
-                    </annotation>
-                </attribute>
-                <attribute name="class" default="window-manager {modalActiveClass()}">
                     <annotation>
                         <documentation>
 

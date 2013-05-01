@@ -13,7 +13,8 @@
     <element name="DataGridColumn" type="ns:DataGridColumn"/>
     <element name="DataGridColumnClass" type="ns:DataGridColumnClass"/>
     <element name="DataGridDateColumn" type="ns:DataGridDateColumn"/>
-    <element name="DataGridClassViewClass" type="ns:DataGridClassViewClass"/>
+    <element name="DataGridItemsView" type="ns:DataGridItemsView"/>
+    <element name="DataGridItemsViewClass" type="ns:DataGridItemsViewClass"/>
     <element name="DataGridRow" type="ns:DataGridRow"/>
     <element name="DataItemRenderer" type="ns:DataItemRenderer"/>
     <element name="DatePicker" type="ns:DatePicker"/>
@@ -21,6 +22,7 @@
     <element name="Dialog" type="ns:Dialog"/>
     <element name="DialogClass" type="ns:DialogClass"/>
     <element name="Field" type="ns:Field"/>
+    <element name="FieldClass" type="ns:FieldClass"/>
     <element name="FileUpload" type="ns:FileUpload"/>
     <element name="HTMLView" type="ns:HTMLView"/>
     <element name="ItemsView" type="ns:ItemsView"/>
@@ -31,6 +33,7 @@
     <element name="MenuButtonClass" type="ns:MenuButtonClass"/>
     <element name="PlaceHolder" type="ns:PlaceHolder"/>
     <element name="ProgressBar" type="ns:ProgressBar"/>
+    <element name="ProgressBarClass" type="ns:ProgressBarClass"/>
     <element name="Radio" type="ns:Radio"/>
     <element name="RadioGroup" type="ns:RadioGroup"/>
     <element name="Scrollable" type="ns:Scrollable"/>
@@ -41,6 +44,7 @@
     <element name="SelectClass" type="ns:SelectClass"/>
     <element name="SelectionView" type="ns:SelectionView"/>
     <element name="SplitButton" type="ns:SplitButton"/>
+    <element name="SplitButtonClass" type="ns:SplitButtonClass"/>
     <element name="Tab" type="ns:Tab"/>
     <element name="TabView" type="ns:TabView"/>
     <element name="TabViewClass" type="ns:TabViewClass"/>
@@ -61,13 +65,6 @@
                 <sequence>
                     <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
                 </sequence>
-                <attribute name="componentClass" default="btn">
-                    <annotation>
-                        <documentation>
-
-                        </documentation>
-                    </annotation>
-                </attribute>
             </extension>
         </complexContent>
     </complexType>
@@ -96,13 +93,6 @@
                 <sequence>
                     <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
                 </sequence>
-                <attribute name="componentClass" default="checkbox">
-                    <annotation>
-                        <documentation>
-
-                        </documentation>
-                    </annotation>
-                </attribute>
                 <attribute name="checked">
                     <annotation>
                         <documentation>
@@ -145,13 +135,6 @@
                 <sequence>
                     <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
                 </sequence>
-                <attribute name="componentClass" default="checkbox">
-                    <annotation>
-                        <documentation>
-
-                        </documentation>
-                    </annotation>
-                </attribute>
                 <attribute name="checked">
                     <annotation>
                         <documentation>
@@ -250,6 +233,14 @@
                 <sequence>
                     <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
                 </sequence>
+                <attribute name="name" use="required">
+                    <annotation>
+                        <documentation>
+                            the unique name to identify the ContentPlaceHolder
+
+                        </documentation>
+                    </annotation>
+                </attribute>
             </extension>
         </complexContent>
     </complexType>
@@ -491,11 +482,32 @@
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="DataGridClassViewClass">
+    <complexType name="DataGridItemsView">
+        <complexContent>
+            <extension base="ns:DataGridItemsViewClass">
+                <annotation>
+                    <documentation source="http://www.rappidjs.com/#/api/js.ui.DataGridItemsView">
+
+                    </documentation>
+                </annotation>
+                <sequence>
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+                <attribute name="columns">
+                    <annotation>
+                        <documentation>
+
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+    <complexType name="DataGridItemsViewClass">
         <complexContent>
             <extension base="ns:VirtualItemsView">
                 <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.ui.DataGridClassViewClass">
+                    <documentation source="http://www.rappidjs.com/#/api/js.ui.DataGridItemsViewClass">
 
                     </documentation>
                 </annotation>
@@ -696,7 +708,7 @@
     </complexType>
     <complexType name="Field">
         <complexContent>
-            <extension base="ns:View">
+            <extension base="ns:FieldClass">
                 <annotation>
                     <documentation source="http://www.rappidjs.com/#/api/js.ui.Field">
 
@@ -705,6 +717,62 @@
                 <sequence>
                     <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
                 </sequence>
+                <attribute name="label">
+                    <annotation>
+                        <documentation>
+
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="inputId">
+                    <annotation>
+                        <documentation>
+
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="error">
+                    <annotation>
+                        <documentation>
+
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+    <complexType name="FieldClass">
+        <complexContent>
+            <extension base="ns:View">
+                <annotation>
+                    <documentation source="http://www.rappidjs.com/#/api/js.ui.FieldClass">
+
+                    </documentation>
+                </annotation>
+                <sequence>
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+                <attribute name="label">
+                    <annotation>
+                        <documentation>
+
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="inputId">
+                    <annotation>
+                        <documentation>
+
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="error">
+                    <annotation>
+                        <documentation>
+
+                        </documentation>
+                    </annotation>
+                </attribute>
             </extension>
         </complexContent>
     </complexType>
@@ -916,13 +984,6 @@
                 <sequence>
                     <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
                 </sequence>
-                <attribute name="componentClass" default="btn-group menu-button">
-                    <annotation>
-                        <documentation>
-
-                        </documentation>
-                    </annotation>
-                </attribute>
                 <attribute name="menuClassName" default="dropdown-menu">
                     <annotation>
                         <documentation>
@@ -951,13 +1012,6 @@
                 <sequence>
                     <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
                 </sequence>
-                <attribute name="componentClass" default="btn-group menu-button">
-                    <annotation>
-                        <documentation>
-
-                        </documentation>
-                    </annotation>
-                </attribute>
                 <attribute name="menuClassName" default="dropdown-menu">
                     <annotation>
                         <documentation>
@@ -1000,7 +1054,7 @@
     </complexType>
     <complexType name="ProgressBar">
         <complexContent>
-            <extension base="ns:View">
+            <extension base="ns:ProgressBarClass">
                 <annotation>
                     <documentation source="http://www.rappidjs.com/#/api/js.ui.ProgressBar">
 
@@ -1009,6 +1063,62 @@
                 <sequence>
                     <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
                 </sequence>
+                <attribute name="min">
+                    <annotation>
+                        <documentation>
+
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="max" default="100">
+                    <annotation>
+                        <documentation>
+
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="value">
+                    <annotation>
+                        <documentation>
+
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+    <complexType name="ProgressBarClass">
+        <complexContent>
+            <extension base="ns:View">
+                <annotation>
+                    <documentation source="http://www.rappidjs.com/#/api/js.ui.ProgressBarClass">
+
+                    </documentation>
+                </annotation>
+                <sequence>
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+                <attribute name="min">
+                    <annotation>
+                        <documentation>
+
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="max" default="100">
+                    <annotation>
+                        <documentation>
+
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="value">
+                    <annotation>
+                        <documentation>
+
+                        </documentation>
+                    </annotation>
+                </attribute>
             </extension>
         </complexContent>
     </complexType>
@@ -1038,13 +1148,6 @@
                     <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
                 </sequence>
                 <attribute name="value">
-                    <annotation>
-                        <documentation>
-
-                        </documentation>
-                    </annotation>
-                </attribute>
-                <attribute name="componentClass" default="radio-group">
                     <annotation>
                         <documentation>
 
@@ -1268,13 +1371,6 @@
                 <sequence>
                     <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
                 </sequence>
-                <attribute name="componentClass" default="select">
-                    <annotation>
-                        <documentation>
-
-                        </documentation>
-                    </annotation>
-                </attribute>
                 <attribute name="open">
                     <annotation>
                         <documentation>
@@ -1338,13 +1434,6 @@
                 <sequence>
                     <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
                 </sequence>
-                <attribute name="componentClass" default="select">
-                    <annotation>
-                        <documentation>
-
-                        </documentation>
-                    </annotation>
-                </attribute>
                 <attribute name="open">
                     <annotation>
                         <documentation>
@@ -1436,6 +1525,13 @@
                         </documentation>
                     </annotation>
                 </attribute>
+                <attribute name="selectedIndex">
+                    <annotation>
+                        <documentation>
+
+                        </documentation>
+                    </annotation>
+                </attribute>
                 <attribute name="needsSelection">
                     <annotation>
                         <documentation>
@@ -1462,9 +1558,23 @@
     </complexType>
     <complexType name="SplitButton">
         <complexContent>
-            <extension base="ns:MenuButton">
+            <extension base="ns:SplitButtonClass">
                 <annotation>
                     <documentation source="http://www.rappidjs.com/#/api/js.ui.SplitButton">
+
+                    </documentation>
+                </annotation>
+                <sequence>
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+    <complexType name="SplitButtonClass">
+        <complexContent>
+            <extension base="ns:MenuButton">
+                <annotation>
+                    <documentation source="http://www.rappidjs.com/#/api/js.ui.SplitButtonClass">
 
                     </documentation>
                 </annotation>
@@ -1514,6 +1624,13 @@
                     </annotation>
                 </attribute>
                 <attribute name="selectedView">
+                    <annotation>
+                        <documentation>
+
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="selectedTab">
                     <annotation>
                         <documentation>
 
@@ -1570,6 +1687,13 @@
                     </annotation>
                 </attribute>
                 <attribute name="selectedView">
+                    <annotation>
+                        <documentation>
+
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="selectedTab">
                     <annotation>
                         <documentation>
 
@@ -1938,13 +2062,6 @@
                     </annotation>
                 </attribute>
                 <attribute name="updateWidthPolicy" default="in">
-                    <annotation>
-                        <documentation>
-
-                        </documentation>
-                    </annotation>
-                </attribute>
-                <attribute name="componentClass" default="scroll-container">
                     <annotation>
                         <documentation>
 
