@@ -9,7 +9,7 @@
         </span>
         <abbr visible="{selectedItem}" onclick="_clearSelection"/>
         <div class="select-icon">
-            <b></b>
+            <b/>
         </div>
     </a>
     <div class="select-drop" onclick="_onContainerSelect">
