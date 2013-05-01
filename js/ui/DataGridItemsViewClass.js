@@ -4,7 +4,7 @@ define(['js/ui/VirtualItemsView', 'xaml!js/ui/DataGridColumn', 'js/core/List', '
         INDEX_EVEN = "even";
 
 
-    return VirtualItemsView.inherit('js.ui.DataGridClassViewClass', {
+    return VirtualItemsView.inherit('js.ui.DataGridItemsViewClass', {
 
         defaults: {
             columns: List,
