@@ -44,10 +44,27 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
             ],
 
             defaults: {
+
                 /***
-                 * @type {Boolean}
+                 * sets the class for the Component.
+                 * The resulting class attributes is the union from class and componentClass of the Element.
                  *
+                 * @type String
+                 */
+                "class": null,
+
+                /***
+                 * sets the componentClass for the Component.
+                 * The resulting class attributes is the union from class and componentClass of the Element.
+                 *
+                 * @type String
+                 */
+                componentClass: null,
+
+                /***
                  * sets the visibility of an component. If the value is false the component is removed from the DOM.
+                 *
+                 * @type {Boolean}
                  */
                 visible: true
             },
