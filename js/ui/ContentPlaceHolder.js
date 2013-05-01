@@ -1,5 +1,16 @@
 define(["js/ui/View"], function (View) {
-    return View.inherit(({
+    return View.inherit({
+
+        defaults: {
+            /***
+             * the unique name to identify the ContentPlaceHolder
+             *
+             * @type String
+             * @required
+             */
+            name: null
+        },
+
         _renderContent: function (content) {
             this._clearRenderedChildren();
             this.$children = [];
@@ -9,5 +20,5 @@ define(["js/ui/View"], function (View) {
                 this._renderChildren(this.$children);
             }
         }
-    }));
+    });
 });
