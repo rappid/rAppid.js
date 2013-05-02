@@ -72,7 +72,7 @@ The rAppid.js server is a modular architecture web server based on nodejs.
 * Authentication & Authorization System
 * Session support
 
-## Need help or wanna contribute?
+## Need help or want to contribute?
 
 If you have any problems with the framework or want to contribute feel free to contact us (support@rappidjs.com).
 Follow [@rappidjs](https://twitter.com/rappidjs) on twitter to keep up with the latest news.
