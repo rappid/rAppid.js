@@ -1,35 +1,5 @@
 <?xml version="1.0"?>
-<ui:MenuButton xmlns="http://www.w3.org/1999/xhtml" xmlns:js="js.core" xmlns:ui="js.ui">
-    <js:Imports>
-        js.ui.Button
-    </js:Imports>
-    <js:Script type="text/javascript">
-        <![CDATA[
-        (function (Button) {
-            return {
-                $defaultContentName: 'menu',
-                defaults: {
-                    'menuClassName': "dropdown-menu right"
-                },
-                _renderType: function (type) {
-                    this.$toggleButton.set({type: type});
-                    this.$button.set({type: type});
-                },
-                _renderHref: function(href) {
-                    this.$button.set({href: href});
-                },
-                _collectButton: function (child) {
-                    if (child.$['class'].indexOf("dropdown-toggle") > -1) {
-                        this.$toggleButton = child;
-                    } else {
-                        this.$button = child;
-                    }
-
-                }
-            }
-        })
-        ]]>
-    </js:Script>
+<ui:SplitButtonClass xmlns="http://www.w3.org/1999/xhtml" xmlns:js="js.core" xmlns:ui="js.ui">
     <js:Template name="layout">
         <ui:Button class="btn"/>
         <ui:Button class="btn dropdown-toggle">
@@ -40,4 +10,4 @@
         <ui:ContentPlaceHolder tagName="div" name="menu" class="{menuClassName}"/>
     </js:Template>
 
-</ui:MenuButton>
+</ui:SplitButtonClass>

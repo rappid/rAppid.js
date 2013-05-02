@@ -158,7 +158,9 @@ define(["js/core/EventDispatcher", "js/core/Bindable", "underscore"], function (
             options = options || {};
 
             if (index > -1 && index < this.$items.length) {
-                var items = this.$items.splice(index, 1), item = items[0];
+                var items = this.$items.splice(index, 1),
+                    item = items[0];
+
                 if (options.silent !== true) {
                     this.trigger('remove', {item: item, index: index});
                 }

@@ -6,6 +6,12 @@ define(["js/html/HtmlElement", "js/core/Bus", "js/core/WindowManager", "js/core/
         "isMobile" : ["mobile","desktop"]
     };
 
+    /***
+     * @summary The stage is the main container for each application.
+     * It contains all root HTML elements like windows, tooltips or popups.
+     * Usually an application is one window on the stage.
+     *
+     */
     return HtmlElement.inherit("js.core.Stage", {
         $containerOrder: {
             'windows' : 0,
@@ -37,7 +43,23 @@ define(["js/html/HtmlElement", "js/core/Bus", "js/core/WindowManager", "js/core/
 
             this._annotateBrowserInformation(this.$browser);
         },
-
+        /**
+         * Creates the browser object with the following information
+         *
+         * * isBrowser - false if runs on node
+         * * hasTouch - true if touchend in window
+         * * has3D - true if  'WebKitCSSMatrix' in window && 'm11' in new WebKitCSSMatrix()
+         * * msPointerEnabled - true if  "msPointerEnabled" in window.navigator
+         * * isMobile - true if userAgent is iphone, ipad, ipod blackberry, palm etc..
+         * * isIOS - true if iPad, iPhone or iPod
+         * * mobileType - the name of the mobile device
+         * * os - the name of the operating system (windows, mac, linux, unix)
+         * * name -  the name of the browser (safari, firefox, ie, chrome)
+         * * supportsTransition
+         *
+         * @returns {Object}
+         * @private
+         */
         _createBrowserObject: function() {
 
             var browser = {};
@@ -103,7 +125,13 @@ define(["js/html/HtmlElement", "js/core/Bus", "js/core/WindowManager", "js/core/
             return browser;
 
         },
-
+        /***
+         * Goes through the browser object and adds classes for each entry to
+         * the rendered stage element
+         *
+         * @param {Object} browser
+         * @private
+         */
         _annotateBrowserInformation: function(browser){
             var classes = ["stage"], value;
             for(var key in browser){
@@ -121,13 +149,23 @@ define(["js/html/HtmlElement", "js/core/Bus", "js/core/WindowManager", "js/core/
             this.set('componentClass', classes.join(" "));
         },
 
+        /**
+         * Creates one WindowManager as additional child
+         *
+         * @returns {Array}
+         */
         createChildren: function() {
 
             this.$windowManager = this.createComponent(WindowManager);
             return [this.$windowManager];
 
         },
-
+        /***
+         * Renders into the given target
+         *
+         * @param {HTMLElement} target - the render target
+         * @returns {HTMLElement}
+         */
         render: function(target){
             var dom = this.callBase(null);
 
@@ -143,12 +181,32 @@ define(["js/html/HtmlElement", "js/core/Bus", "js/core/WindowManager", "js/core/
             }
             return dom;
         },
+        /***
+         * Creates a window with an ID
+         *
+         * @param elementId
+         * @returns {*}
+         */
         createWindow: function(elementId){
             return this.createHtmlElement(elementId,"windows");
         },
+        /**
+         * Creates a tooltip window for the stage with an ID
+         *
+         * @param tooltipId
+         * @returns {*}
+         */
         createTooltip: function(tooltipId){
             return this.createHtmlElement(tooltipId, "tooltips");
         },
+        /***
+         * Creates an HTML element with inside a container with class {container-id}-container and
+         * caches it with element and container id
+         *
+         * @param {String} elementId
+         * @param {String} containerId
+         * @returns {HTMLElement}
+         */
         createHtmlElement: function(elementId, containerId){
             var container = this.$containers[containerId];
             if(!container){
@@ -169,6 +227,12 @@ define(["js/html/HtmlElement", "js/core/Bus", "js/core/WindowManager", "js/core/
 
             return element.$el;
         },
+        /***
+         * Creates a container with a set of attributes
+         *
+         * @param {Object} attributes - the attribute set
+         * @returns {js.core.HtmlElement}
+         */
         createContainer: function(attributes){
             attributes = attributes || {};
             return this.$stage.$applicationContext.createInstance(HtmlElement, [attributes, null, this.$stage, this, this]);

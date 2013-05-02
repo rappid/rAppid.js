@@ -256,6 +256,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
                     } else {
                         nScope = this.$.scope.$[this.$.key.name];
                     }
+                    this.$jsonObject = undefined;
                     // if keys are left and has value && is bindable
                     // get value for first child
                     if(nScope instanceof Bindable){
@@ -395,7 +396,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
                     if(this.$cachedValue !== undefined){
                         return this.$cachedValue;
                     }
-                    this.$originalValue = null;
+                    this.$originalValue = undefined;
                     if (this.$.fnc && !this.$jsonObject) {
                         this.$originalValue = this.$.fnc.apply(this.$.scope, this._getFncParameters());
                     } else if (this.$.path.length === 1) {

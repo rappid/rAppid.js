@@ -180,8 +180,12 @@ define(['js/core/DomElement', 'js/core/List', 'js/core/Bindable'], function (Dom
             },
 
             // render each href Element in xlink namespace
-            _renderHref: function (href, oldHref) {
+            _renderHref: function (href) {
                 this._setAttribute("href", href, SvgElement.XLINK_NAMESPACE);
+            },
+
+            _renderId: function(id) {
+                this._setAttribute("id", id);
             },
 
             localToGlobalFactor: function () {

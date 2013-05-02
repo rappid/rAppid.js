@@ -1,8 +1,10 @@
 define(['js/ui/ItemsView', 'js/html/HtmlElement', 'js/ui/Tab', 'js/core/List'], function (ItemsView, HtmlElement, Tab, List) {
     return ItemsView.inherit('js.ui.TabViewClass', {
+
         defaults: {
             selectedIndex: null,
             selectedView: null,
+            selectedTab: null,
             tabClassName: 'nav nav-tabs',
             menuClassName: null,
             contentClassName: null,
