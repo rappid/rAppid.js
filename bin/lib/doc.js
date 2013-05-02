@@ -1018,6 +1018,10 @@ var esprima = require('esprima'),
 
     XamlClassDocumentationProcessor = inherit({
 
+        getVisibility: function (name) {
+            return /^[$_]/.test(name) ? "private" : "public";
+        },
+
         generate: function (code, fqClassName) {
 
             var xml = this.xml = new DomParser().parseFromString(code, "text/xml").documentElement,
@@ -1032,6 +1036,28 @@ var esprima = require('esprima'),
             definition.inherit = xml.namespaceURI + "." + xml.localName;
 
             definition.dependencies.push(definition.inherit);
+
+            var defaults = {};
+
+            for (var i = 0; i < xml.attributes.length; i++) {
+                var attribute = xml.attributes[i],
+                    defaultName = attribute.localName;
+
+                if (!attribute.namespaceURI && !/^xml/.test(attribute.localName)) {
+
+                    defaults[defaultName] = {
+                        name: defaultName,
+                        defaultType: "value",
+                        visibility: this.getVisibility(defaultName),
+                        value: attribute.value
+                    };
+
+                }
+
+            }
+
+            definition.defaults = defaults;
+
 
             return [
                 new ClassDocumentation(definition)
