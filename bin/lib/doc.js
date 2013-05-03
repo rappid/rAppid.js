@@ -433,27 +433,33 @@ var esprima = require('esprima'),
                             dependencies.push((expression.arguments[0].elements[j].value || "").replace(/\//g, "."));
                         }
 
-                        var classDocumentation = this.getClassDocumentation(expression.arguments[1].body, varToRequireMap);
-                        if (classDocumentation) {
+                        var classDocumentations = this.getClassDocumentations(expression.arguments[1].body, varToRequireMap);
+                        for (var c = 0; c < classDocumentations.length; c++) {
 
-                            dependencies.sort();
-                            classDocumentation.dependencies = dependencies;
+                            var classDocumentation = classDocumentations[c];
 
-                            // get annotations for class from body begin until class definition begin
-                            var annotations = this.getAnnotationInRange(body.range[0], classDocumentation.start, this.classAnnotationProcessors);
+                            if (classDocumentation) {
 
-                            for (var a = 0; a < annotations.length; a++) {
-                                var annotation = annotations[a];
-                                annotation.processor.mapAnnotationToItem(annotation, classDocumentation, annotations);
-                            }
+                                dependencies.sort();
+                                classDocumentation.dependencies = dependencies;
 
-                            delete classDocumentation.start;
+                                // get annotations for class from body begin until class definition begin
+                                var annotations = this.getAnnotationInRange(body.range[0], classDocumentation.start, this.classAnnotationProcessors);
 
-                            classDocumentation.fqClassName = classDocumentation.fqClassName || fqClassName;
-                            classDocumentation.type = "js";
+                                for (var a = 0; a < annotations.length; a++) {
+                                    var annotation = annotations[a];
+                                    annotation.processor.mapAnnotationToItem(annotation, classDocumentation, annotations);
+                                }
 
-                            if (!classDocumentation.hasOwnProperty(('ignore'))) {
-                                ret.push(new ClassDocumentation(classDocumentation));
+                                delete classDocumentation.start;
+                                delete classDocumentation.end;
+
+                                classDocumentation.fqClassName = classDocumentation.fqClassName || fqClassName;
+                                classDocumentation.type = "js";
+
+                                if (!classDocumentation.hasOwnProperty(('ignore'))) {
+                                    ret.push(new ClassDocumentation(classDocumentation));
+                                }
                             }
                         }
 
@@ -465,12 +471,15 @@ var esprima = require('esprima'),
 
         },
 
-        getClassDocumentation: function (functionBody, varToRequireMap) {
+        getClassDocumentations: function (functionBody, varToRequireMap) {
+
+            var ret = [],
+                mainClassDocumentation = null;
 
             for (var i = 0; i < functionBody.body.length; i++) {
                 var statement = functionBody.body[i],
                     argument = statement.argument,
-                    classDocumentation;
+                    classDocumentation = null;
 
                 if (statement.type === CONST.ReturnStatement) {
 
@@ -480,7 +489,8 @@ var esprima = require('esprima'),
 
                         classDocumentation = this.getDocumentationFromInheritCall(argument, varToRequireMap, functionBody);
                         classDocumentation.start = argument.range[0];
-                        return classDocumentation;
+
+                        ret.push(classDocumentation);
 
                     } else if (argument.type === CONST.Identifier) {
 
@@ -504,54 +514,86 @@ var esprima = require('esprima'),
                                         if (!value) {
                                             // assignment happens later -> search for assignment
                                             for (var l = 0; l < functionBody.body.length; l++) {
-                                                statement = functionBody.body[l];
+                                                var innerStatement = functionBody.body[l];
 
-                                                if (statement.type === CONST.ExpressionStatement &&
-                                                    statement.expression.type === CONST.AssignmentExpression &&
-                                                    statement.expression.operator === "=" &&
-                                                    statement.expression.left.type === CONST.Identifier &&
-                                                    statement.expression.left.name === varName) {
+                                                if (innerStatement.type === CONST.ExpressionStatement &&
+                                                    innerStatement.expression.type === CONST.AssignmentExpression &&
+                                                    innerStatement.expression.operator === "=" &&
+                                                    innerStatement.expression.left.type === CONST.Identifier &&
+                                                    innerStatement.expression.left.name === varName) {
 
                                                     // found the variable assignment
-                                                    value = statement.expression.right;
+                                                    value = innerStatement.expression.right;
                                                     break;
                                                 }
                                             }
                                         }
 
-                                        classDocumentation = this.getDocumentationFromInheritCall(value, varToRequireMap, functionBody);
+                                        mainClassDocumentation = classDocumentation = this.getDocumentationFromInheritCall(value, varToRequireMap, functionBody);
+
                                         if (classDocumentation) {
                                             classDocumentation.start = declaration.range[0];
-                                            return classDocumentation;
+                                            classDocumentation.end = functionBody.range[1];
+
+                                            ret.push(classDocumentation);
                                         }
                                     }
 
                                 }
-                            } else {
-                                // TODO: PROCESS static type assignments
+                            } else if (mainClassDocumentation &&
+                                statement.type === CONST.ExpressionStatement &&
+                                statement.expression.type === CONST.AssignmentExpression &&
+                                statement.expression.operator === "=" && statement.expression.left.type === CONST.MemberExpression &&
+                                statement.expression.left.object.name === varName) {
+
+                                if (statement.expression.right.type === CONST.CallExpression) {
+
+                                    classDocumentation = this.getDocumentationFromInheritCall(statement.expression.right, varToRequireMap, functionBody);
+
+                                    if (classDocumentation) {
+                                        classDocumentation.start = argument.range[0];
+                                        classDocumentation.end = functionBody.range[1];
+
+                                        classDocumentation.fqClassName = classDocumentation.fqClassName || mainClassDocumentation.fqClassName ? mainClassDocumentation.fqClassName + "." + statement.expression.left.property.name : null
+
+                                        mainClassDocumentation.exports = mainClassDocumentation.exports || {};
+
+                                        mainClassDocumentation.exports[statement.expression.left.property.name] = {
+                                            type: "InnerClass",
+                                            fqClassName: classDocumentation.fqClassName
+                                        };
+
+                                        ret.push(classDocumentation);
+
+                                    }
+
+                                }
+
+
                             }
 
                         }
-
-                        return classDocumentation;
 
                     }
 
                 }
             }
 
+            return ret;
+
         },
 
         getDocumentationFromInheritCall: function (argument, varToRequireMap, scope) {
-            if (argument.callee.property.type === CONST.Identifier &&
-                argument.callee.property.name === 'inherit') {
+            if ((argument.callee.type === CONST.MemberExpression && argument.callee.property.type === CONST.Identifier && argument.callee.property.name === 'inherit') ||
+            (argument.callee.type === CONST.Identifier && argument.callee.name === "inherit")) {
                 // we found the inherit
 
                 var classDocumentation = this.getClassDocumentationFromInherit(argument.arguments, scope);
 
                 if (classDocumentation) {
-                    var inheritFromName = argument.callee.object.name;
-                    if (varToRequireMap.hasOwnProperty(inheritFromName)) {
+                    var inheritFromName = argument.callee.object ? argument.callee.object.name : null;
+
+                    if (inheritFromName && varToRequireMap.hasOwnProperty(inheritFromName)) {
                         classDocumentation.inherit = classDocumentation.inherit || this.getFqClassNameFromPath(varToRequireMap[inheritFromName]);
                     }
                 }
