@@ -433,7 +433,8 @@ var esprima = require('esprima'),
                             dependencies.push((expression.arguments[0].elements[j].value || "").replace(/\//g, "."));
                         }
 
-                        var classDocumentations = this.getClassDocumentations(expression.arguments[1].body, varToRequireMap);
+                        var classDocumentations = this.getClassDocumentations(expression.arguments[1].body, varToRequireMap),
+                            start = body.range[0];
                         for (var c = 0; c < classDocumentations.length; c++) {
 
                             var classDocumentation = classDocumentations[c];
@@ -444,7 +445,8 @@ var esprima = require('esprima'),
                                 classDocumentation.dependencies = dependencies;
 
                                 // get annotations for class from body begin until class definition begin
-                                var annotations = this.getAnnotationInRange(body.range[0], classDocumentation.start, this.classAnnotationProcessors);
+                                var annotations = this.getAnnotationInRange(start, classDocumentation.start, this.classAnnotationProcessors);
+                                start = classDocumentation.start;
 
                                 for (var a = 0; a < annotations.length; a++) {
                                     var annotation = annotations[a];
@@ -452,7 +454,6 @@ var esprima = require('esprima'),
                                 }
 
                                 delete classDocumentation.start;
-                                delete classDocumentation.end;
 
                                 classDocumentation.fqClassName = classDocumentation.fqClassName || fqClassName;
                                 classDocumentation.type = "js";
@@ -533,7 +534,6 @@ var esprima = require('esprima'),
 
                                         if (classDocumentation) {
                                             classDocumentation.start = declaration.range[0];
-                                            classDocumentation.end = functionBody.range[1];
 
                                             ret.push(classDocumentation);
                                         }
@@ -551,8 +551,8 @@ var esprima = require('esprima'),
                                     classDocumentation = this.getDocumentationFromInheritCall(statement.expression.right, varToRequireMap, functionBody);
 
                                     if (classDocumentation) {
-                                        classDocumentation.start = argument.range[0];
-                                        classDocumentation.end = functionBody.range[1];
+                                        classDocumentation.start = statement.expression.right.range[0];
+
 
                                         classDocumentation.fqClassName = classDocumentation.fqClassName || mainClassDocumentation.fqClassName ? mainClassDocumentation.fqClassName + "." + statement.expression.left.property.name : null
 
