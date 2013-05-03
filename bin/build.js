@@ -93,26 +93,25 @@ var build = function (args, callback) {
     var config = JSON.parse(fs.readFileSync(configPath));
     var buildConfig = JSON.parse(fs.readFileSync(buildConfigPath));
 
-    optimizeConfig.onBuildWrite = createOnBuildWriteFnc(config.shim);
+    for(var configKey in optimizeConfig){
+        if(optimizeConfig.hasOwnProperty(configKey) && buildConfig.hasOwnProperty(configKey)){
+            optimizeConfig[configKey] = buildConfig[configKey];
+        }
+    }
 
     if (buildConfig.uglify === false) {
         optimizeConfig.optimize = 'none';
-    } else if(_.isObject(buildConfig.uglify)){
-        _.extend(optimizeConfig.uglify, buildConfig.uglify);
     }
 
-    if (buildConfig.hasOwnProperty("removeCombined")) {
-        optimizeConfig.removeCombined = buildConfig.removeCombined;
-    }
-
-    optimizeConfig.removeSpaces = buildConfig.removeSpaces || false;
+    optimizeConfig.onBuildWrite = createOnBuildWriteFnc(config.shim);
 
     var xamlClasses = config.xamlClasses;
-
     // find modules
     var isXamlClass, moduleConfig, mainModule;
 
     config.optimizedXAML = [];
+
+    optimizeConfig.modules = [];
 
     buildConfig.modules.forEach(function (module, index) {
 
@@ -164,6 +163,7 @@ var build = function (args, callback) {
 
         optimizeConfig.modules.push(moduleConfig);
     });
+
     optimizeConfig.xamlClasses = config.xamlClasses;
 
     for (var key in config.paths){
