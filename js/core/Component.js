@@ -535,8 +535,10 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
              */
             initialize: function (scope) {
             },
+
             /**
-             * IE8 FIXES
+             * determinate the local-name of a DomNode
+             *
              * @param domNode
              */
             _localNameFromDomNode: function (domNode) {
@@ -567,7 +569,25 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
             }
         });
 
+        /***
+         * @summary A template a xaml descriptor components are created from during runtime
+         *
+         * @description Templates are used to define repeatable elements, like the view of a renderer
+         * in a list. The name of the template is unique and is required.
+         *
+         * Components with defined $defaultTemplateName are creating template descriptors dynamically based on the
+         * children.
+         *
+         */
         Component.Template = Component.inherit("js.core.Template", {
+
+            defaults: {
+                /***
+                 * the name of the template
+                 * @required
+                 */
+                name: null
+            },
 
             _initializeDescriptors: function () {
                 this._cleanUpDescriptor(this.$descriptor);
@@ -577,17 +597,14 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
             createComponents: function (attributes, parentScope, rootScope) {
                 rootScope = rootScope || this.$rootScope;
                 parentScope = parentScope || this.$parentScope;
-                // foreach child Descriptor
 
                 var components = this._getChildrenFromDescriptor(this.$descriptor, null, rootScope);
-//                var now = new Date();
 
                 for (var c = 0; c < components.length; c++) {
                     components[c].$createdByTemplate = true;
                     components[c].$parentScope = parentScope;
                     components[c].set(attributes);
                 }
-//                console.log((new Date()).getTime() - now.getTime());
 
                 return components;
             },
@@ -640,6 +657,16 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
         });
 
         Component.Content = Component.inherit("js.core.Content", {
+
+            defaults: {
+                /***
+                 * the name of the content matching the name of the target ContentPlaceHolder
+                 * @required
+                 * @see js.ui.ContentPlaceHolder
+                 */
+                name: null
+            },
+
             getChildren: function () {
                 var el, children = [];
                 for (var i = 0; i < this.$elements.length; i++) {
