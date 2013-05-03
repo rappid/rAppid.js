@@ -1205,6 +1205,13 @@
                 <sequence>
                     <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
                 </sequence>
+                <attribute name="overflow" default="hidden">
+                    <annotation>
+                        <documentation>
+
+                        </documentation>
+                    </annotation>
+                </attribute>
                 <attribute name="verticalScroll" default="true">
                     <annotation>
                         <documentation>
@@ -1639,7 +1646,14 @@
                 <sequence>
                     <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
                 </sequence>
-                <attribute name="selectedIndex">
+                <attribute name="selectedIndex" default="null">
+                    <annotation>
+                        <documentation>
+
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="selectedTab" default="null">
                     <annotation>
                         <documentation>
 
@@ -1647,13 +1661,6 @@
                     </annotation>
                 </attribute>
                 <attribute name="selectedView">
-                    <annotation>
-                        <documentation>
-
-                        </documentation>
-                    </annotation>
-                </attribute>
-                <attribute name="selectedTab">
                     <annotation>
                         <documentation>
 
@@ -1786,6 +1793,13 @@
                 <sequence>
                     <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
                 </sequence>
+                <attribute name="onkeydown" default="_onKeyDown">
+                    <annotation>
+                        <documentation>
+
+                        </documentation>
+                    </annotation>
+                </attribute>
                 <attribute name="scrollContainerClass">
                     <annotation>
                         <documentation>
