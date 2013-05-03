@@ -454,6 +454,7 @@ var esprima = require('esprima'),
                                 }
 
                                 delete classDocumentation.start;
+                                delete classDocumentation.end;
 
                                 classDocumentation.fqClassName = classDocumentation.fqClassName || fqClassName;
                                 classDocumentation.type = "js";
