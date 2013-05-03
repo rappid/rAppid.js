@@ -552,9 +552,14 @@ var esprima = require('esprima'),
 
                                     if (classDocumentation) {
                                         classDocumentation.start = statement.expression.right.range[0];
+                                        classDocumentation.fqClassName = classDocumentation.fqClassName || (mainClassDocumentation.fqClassName ? mainClassDocumentation.fqClassName + "." + statement.expression.left.property.name : null);
 
+                                        if (!classDocumentation.inherit && statement.expression.right.callee.type === CONST.MemberExpression &&
+                                            statement.expression.right.callee.object.name === varName) {
 
-                                        classDocumentation.fqClassName = classDocumentation.fqClassName || mainClassDocumentation.fqClassName ? mainClassDocumentation.fqClassName + "." + statement.expression.left.property.name : null
+                                            classDocumentation.inherit = mainClassDocumentation.fqClassName;
+
+                                        }
 
                                         mainClassDocumentation.exports = mainClassDocumentation.exports || {};
 
