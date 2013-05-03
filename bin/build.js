@@ -101,6 +101,10 @@ var build = function (args, callback) {
         _.extend(optimizeConfig.uglify, buildConfig.uglify);
     }
 
+    if (buildConfig.hasOwnProperty("removeCombined")) {
+        optimizeConfig.removeCombined = buildConfig.removeCombined;
+    }
+
     optimizeConfig.removeSpaces = buildConfig.removeSpaces || false;
 
     var xamlClasses = config.xamlClasses;
