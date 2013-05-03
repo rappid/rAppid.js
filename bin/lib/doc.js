@@ -446,7 +446,7 @@ var esprima = require('esprima'),
 
                                 // get annotations for class from body begin until class definition begin
                                 var annotations = this.getAnnotationInRange(start, classDocumentation.start, this.classAnnotationProcessors);
-                                start = classDocumentation.start;
+                                start = classDocumentation.end;
 
                                 for (var a = 0; a < annotations.length; a++) {
                                     var annotation = annotations[a];
@@ -490,6 +490,7 @@ var esprima = require('esprima'),
 
                         classDocumentation = this.getDocumentationFromInheritCall(argument, varToRequireMap, functionBody);
                         classDocumentation.start = argument.range[0];
+                        classDocumentation.end = argument.range[1];
 
                         ret.push(classDocumentation);
 
@@ -534,6 +535,7 @@ var esprima = require('esprima'),
 
                                         if (classDocumentation) {
                                             classDocumentation.start = declaration.range[0];
+                                            classDocumentation.end = declaration.range[1];
 
                                             ret.push(classDocumentation);
                                         }
@@ -551,7 +553,9 @@ var esprima = require('esprima'),
                                     classDocumentation = this.getDocumentationFromInheritCall(statement.expression.right, varToRequireMap, functionBody);
 
                                     if (classDocumentation) {
-                                        classDocumentation.start = statement.expression.right.range[0];
+                                        classDocumentation.start = statement.range[0];
+                                        classDocumentation.end = statement.range[1];
+
                                         classDocumentation.fqClassName = classDocumentation.fqClassName || (mainClassDocumentation.fqClassName ? mainClassDocumentation.fqClassName + "." + statement.expression.left.property.name : null);
 
                                         if (!classDocumentation.inherit && statement.expression.right.callee.type === CONST.MemberExpression &&

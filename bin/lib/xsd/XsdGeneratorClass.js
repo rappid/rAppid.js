@@ -53,7 +53,9 @@ define(["js/core/Application"], function (Application) {
                 var inheritFrom = classDocumentation.inherit,
                     baseType,
                     documentationSource = "http://www.rappidjs.com/#/api/" + classDocumentation.fqClassName,
-                    documentation = (classDocumentation.summary ? classDocumentation.summary + "\n\n" : "") + (classDocumentation.description || "");
+                    documentation = null;
+
+                documentation = (classDocumentation.summary ? classDocumentation.summary + "\n\n" : "") + (classDocumentation.description || "");
 
                 if (documentations.hasOwnProperty(inheritFrom)) {
                     baseType = documentations[inheritFrom];
