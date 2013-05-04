@@ -88,7 +88,7 @@ var esprima = require('esprima'),
                 throw 'Processor for type "' + type + '" not found.';
             }
 
-            var docs = processor.generate(code, defaultFqClassName);
+            var docs = processor.generate(code, defaultFqClassName, path);
 
             docs.forEach(function (doc) {
                 doc.file = path;
@@ -400,7 +400,7 @@ var esprima = require('esprima'),
             };
         },
 
-        generate: function (code, fqClassName) {
+        generate: function (code, fqClassName, path) {
 
             var ast = this.ast = esprima.parse(code, {
                     comment: true,
@@ -409,6 +409,7 @@ var esprima = require('esprima'),
                 ret = [];
 
             this.code = code;
+            this.filePath = path;
 
             // search for all define statements in file
             for (var i = 0; i < ast.body.length; i++) {
@@ -719,6 +720,7 @@ var esprima = require('esprima'),
                     defaults: {},
                     properties: {}
                 },
+                file = this.filePath,
                 properties = object.properties,
                 lastProperty,
                 property,
@@ -801,7 +803,9 @@ var esprima = require('esprima'),
                 item = {
                     type: 'Method',
                     parameter: [],
-                    annotations: {}
+                    annotations: {},
+                    definedInFile: file,
+                    lineNumbers: [self.getLineNumber(value.range[0]), self.getLineNumber(value.range[1])]
                 };
 
                 for (var j = 0; j < value.params.length; j++) {
@@ -883,7 +887,9 @@ var esprima = require('esprima'),
             var name = property.key.name,
                 ret = {
                     name: name,
-                    visibility: this.getVisibility(name)
+                    visibility: this.getVisibility(name),
+                    definedInFile: this.filePath,
+                    lineNumbers: [this.getLineNumber(property.range[0]), this.getLineNumber(property.range[1])]
                 };
 
             if (property.value.type === CONST.Literal) {
@@ -906,7 +912,8 @@ var esprima = require('esprima'),
 
             var defaults = defaultsObject.properties,
                 ret = {},
-                lastDefaultEntry;
+                lastDefaultEntry,
+                file = this.file;
 
             for (var i = 0; i < defaults.length; i++) {
                 var defaultEntry = defaults[i],
@@ -927,7 +934,9 @@ var esprima = require('esprima'),
                     name: defaultName,
                     defaultType: isValueDefault ? "value" : "factory",
                     visibility: this.getVisibility(defaultName),
-                    value: isValueDefault ? defaultEntry.value.value : undefined
+                    value: isValueDefault ? defaultEntry.value.value : undefined,
+                    definedInFile: file,
+                    lineNumbers: [this.getLineNumber(defaultEntry.range[0]), this.getLineNumber(defaultEntry.range[1])]
                 };
 
                 var annotations = this.getAnnotationInRange(lastDefaultEntry ? lastDefaultEntry.range[1] : defaultsObject.range[0], defaultEntry.range[0], this.defaultAnnotationProcessors);
@@ -964,7 +973,9 @@ var esprima = require('esprima'),
                 var item = {
                     type: "Event",
                     name: eventName,
-                    visibility: this.getVisibility(eventName)
+                    visibility: this.getVisibility(eventName),
+                    definedInFile: this.file,
+                    lineNumbers: [this.getLineNumber(eventEntry.range[0]), this.getLineNumber(eventEntry.range[1])]
                 };
 
                 var annotations = this.getAnnotationInRange(lastEventName ? lastEventName.range[1] : eventsObject.range[0], eventEntry.range[0], this.eventAnnotationProcessors);
@@ -982,6 +993,10 @@ var esprima = require('esprima'),
 
             return ret;
 
+        },
+
+        getLineNumber: function(position) {
+            return this.code.substring(0, position).split("\n").length;
         },
 
         getAnnotationInRange: function (from, to, processors) {
@@ -1074,7 +1089,7 @@ var esprima = require('esprima'),
             return /^[$_]/.test(name) ? "private" : "public";
         },
 
-        generate: function (code, fqClassName) {
+        generate: function (code, fqClassName, path) {
 
             var xml = this.xml = new DomParser().parseFromString(code, "text/xml").documentElement,
                 definition = {
