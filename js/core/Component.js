@@ -307,7 +307,7 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                     for (i = 0; i < internAndExternalChildren.length; i++) {
                         child = internAndExternalChildren[i];
 
-                        if (child instanceof Content && child.$.name === this.$defaultContentName) {
+                        if (child instanceof Component.Content && child.$.name === this.$defaultContentName) {
                             // content block already defined
                             contentBlock = child;
                             break;
