@@ -258,7 +258,10 @@ define(['js/core/DomElement', 'js/core/List', 'js/core/Bindable'], function (Dom
     SvgElement.TransformBase = Bindable.inherit('js.svg.SvgElement.TransformBase', {
     });
 
-    SvgElement.Transform = SvgElement.TransformBase.inherit('js.svg.SvgElement.TransformBase', {
+    /***
+     * @inherit js.svg.SvgElement.TransformBase
+     */
+    SvgElement.Transform = SvgElement.TransformBase.inherit('js.svg.SvgElement.Transform', {
         defaults: {
             transform: null
         },
@@ -268,12 +271,18 @@ define(['js/core/DomElement', 'js/core/List', 'js/core/Bindable'], function (Dom
         }
     });
 
+    /***
+     * @inherit js.svg.SvgElement.TransformBase
+     */
     SvgElement.Translate = SvgElement.TransformBase.inherit("js.svg.SvgElement.Translate", {
         toString: function () {
             return "translate(" + (this.$.x || 0) + "," + (this.$.y || 0) + ")";
         }
     });
 
+    /***
+     * @inherit js.svg.SvgElement.TransformBase
+     */
     SvgElement.Scale = SvgElement.TransformBase.inherit("js.svg.SvgElement.Scale", {
 
         defaults: {
@@ -287,6 +296,9 @@ define(['js/core/DomElement', 'js/core/List', 'js/core/Bindable'], function (Dom
     });
 
 
+    /***
+     * @inherit js.svg.SvgElement.TransformBase
+     */
     SvgElement.Rotate = SvgElement.TransformBase.inherit("js.svg.SvgElement.Rotate", {
 
         defaults: {

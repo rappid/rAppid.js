@@ -3,6 +3,9 @@
     <import namespace="js.ui"/>
     <element name="Application" type="ns:Application"/>
     <element name="Component" type="ns:Component"/>
+    <element name="Template" type="ns:Template"/>
+    <element name="Configuration" type="ns:Configuration"/>
+    <element name="Content" type="ns:Content"/>
     <element name="DomElement" type="ns:DomElement"/>
     <element name="Head" type="ns:Head"/>
     <element name="I18n" type="ns:I18n"/>
@@ -60,6 +63,73 @@
                         <documentation>
                             Decides if the initialization of the component is started
                             automatically or manually by the application
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+    <complexType name="Template">
+        <complexContent>
+            <extension base="ns:Component">
+                <annotation>
+                    <documentation source="http://www.rappidjs.com/#/api/js.core.Template">
+                        A template a xaml descriptor components are created from during
+                        runtime
+
+                        Templates are used to define repeatable elements, like the view of
+                        a renderer
+                        in a list. The name of the template is unique and is required.
+
+                        Components with defined $defaultTemplateName are creating template
+                        descriptors dynamically based on the
+                        children.
+
+                    </documentation>
+                </annotation>
+                <sequence>
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+                <attribute name="name" use="required">
+                    <annotation>
+                        <documentation>
+                            the name of the template
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+    <complexType name="Configuration">
+        <complexContent>
+            <extension base="ns:Component">
+                <annotation>
+                    <documentation source="http://www.rappidjs.com/#/api/js.core.Configuration">
+
+                    </documentation>
+                </annotation>
+                <sequence>
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+    <complexType name="Content">
+        <complexContent>
+            <extension base="ns:Component">
+                <annotation>
+                    <documentation source="http://www.rappidjs.com/#/api/js.core.Content">
+
+                    </documentation>
+                </annotation>
+                <sequence>
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+                <attribute name="name" use="required">
+                    <annotation>
+                        <documentation>
+                            the name of the content matching the name of the target
+                            ContentPlaceHolder
                         </documentation>
                     </annotation>
                 </attribute>

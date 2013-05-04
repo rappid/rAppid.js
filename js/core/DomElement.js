@@ -802,6 +802,10 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
         var DomElement = Component.inherit("js.core.DomElement",
             _.extend(DomElementFunctions, DomManipulationFunctions));
 
+        /***
+         *
+         * @inherit js.core.EventDispatcher.Event
+         */
         DomElement.Event = EventDispatcher.Event.inherit('js.core.DomElement.Event', {
             ctor: function (domEvent) {
                 this.domEvent = domEvent;
@@ -833,6 +837,9 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
             }
         });
 
+        /***
+         * @inherit js.core.DomElement.Event
+         */
         DomElement.PointerEvent = DomElement.Event.inherit('js.core.DomElement.PointerEvent', {
             ctor: function (domEvent) {
                 if (domEvent.changedTouches || domEvent.touches) {
@@ -875,6 +882,9 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
             }
         });
 
+        /***
+         * @inherit js.core.DomElement.EventHandler
+         */
         DomElement.PointerEventHandler = DomElement.EventHandler.inherit('js.core.DomEvent.PointerEventHandler', {
             _createEvent: function (domEvent) {
                 return new DomElement.PointerEvent(domEvent);

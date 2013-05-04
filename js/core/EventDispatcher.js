@@ -12,7 +12,7 @@ define(["js/core/Base"], function (Base) {
                 this._events.push(event);
             }
 
-            if(!this.trigger){
+            if (!this.trigger) {
                 this.trigger = function () {
                 };
             }
@@ -41,7 +41,7 @@ define(["js/core/Base"], function (Base) {
             return this;
         };
 
-        Function.prototype.bus = function() {
+        Function.prototype.bus = function () {
 
             var events = Array.prototype.slice.call(arguments);
             this._busEvents = this._busEvents || [];
@@ -181,8 +181,8 @@ define(["js/core/Base"], function (Base) {
                 /***
                  * Clears up the instance
                  */
-                destroy: function(){
-                    if(this.$destroyed){
+                destroy: function () {
+                    if (this.$destroyed) {
                         // nothing to do here
                         return;
                     }
@@ -194,15 +194,15 @@ define(["js/core/Base"], function (Base) {
                     this._destroyCompleted();
                 },
 
-                _beforeDestroy: function(){
+                _beforeDestroy: function () {
 
                 },
 
-                _innerDestroy: function(){
+                _innerDestroy: function () {
 
                 },
 
-                _destroyCompleted: function(){
+                _destroyCompleted: function () {
                     this.$destroyed = true;
                     // first trigger event
                     this.trigger('destroy');
@@ -265,30 +265,28 @@ define(["js/core/Base"], function (Base) {
             });
 
 
-        EventDispatcher.EventHandler = Base.inherit(
-            /** @lends EventDispatcher.EventHandler.prototype */
-            {
-                /**
-                 * Simple EventHandler
-                 * @class
-                 * @constructs
-                 * @params {Function} callback The callback function
-                 * @params {Object} scope The callback scope
-                 */
-                ctor: function (callback, scope) {
-                    this.scope = scope;
-                    this.$callback = callback;
-                },
-                /**
-                 *
-                 * @param {js.core.EventDispatcher.Event} event
-                 * @param {Object} caller
-                 */
-                trigger: function (event, caller) {
-                    this.$callback.call(this.scope, event, caller);
-                    return !event.isPropagationStopped;
-                }
-            });
+        EventDispatcher.EventHandler = Base.inherit("js.core.EventDispatcher.EventHandler", {
+            /**
+             * Simple EventHandler
+             * @class
+             * @constructs
+             * @params {Function} callback The callback function
+             * @params {Object} scope The callback scope
+             */
+            ctor: function (callback, scope) {
+                this.scope = scope;
+                this.$callback = callback;
+            },
+            /**
+             *
+             * @param {js.core.EventDispatcher.Event} event
+             * @param {Object} caller
+             */
+            trigger: function (event, caller) {
+                this.$callback.call(this.scope, event, caller);
+                return !event.isPropagationStopped;
+            }
+        });
 
         return EventDispatcher;
     }
