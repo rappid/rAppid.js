@@ -375,7 +375,7 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                     for (var i = this.$renderedChildren.length - 1; i >= 0; i--) {
                         rc = this.$renderedChildren[i];
                         if (child === rc) {
-                            if(child.$.visible){
+                            if (child.$.visible) {
                                 this.$el.removeChild(rc.$el);
                             }
                             this.$renderedChildren.splice(i, 1);
