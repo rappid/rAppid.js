@@ -8,7 +8,15 @@ define(["require", "js/html/HtmlElement", "js/ui/ContentPlaceHolder", "js/core/M
                 $currentModule: null,
                 tagName: 'div',
                 componentClass: "module-loader",
-                state: null
+                state: null,
+
+                /***
+                 * the router used for automatically registering routes from {@link js.conf.ModuleConfiguration}
+                 *
+                 * @type js.core.Router
+                 * @required
+                 */
+                router: null
             },
 
             ctor: function (attributes) {
@@ -158,7 +166,7 @@ define(["require", "js/html/HtmlElement", "js/ui/ContentPlaceHolder", "js/core/M
 
 
                     flow()
-                        .seq(function() {
+                        .seq(function () {
                             self.set('currentModuleName', null);
                             self.set('state', 'unloading loading');
                         })
