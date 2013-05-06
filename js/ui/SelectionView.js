@@ -139,7 +139,7 @@ define(["js/ui/ItemsView", "js/html/HtmlElement", "underscore", "js/core/List"],
                     }
                 }
             } else {
-                if (oldItem && !this.$.multiSelect) {
+                if (oldItem != null && !this.$.multiSelect) {
                     comp = this.getComponentForItem(oldItem);
                     comp && comp.set({selected: false}, {silent: true});
                 }
@@ -183,7 +183,7 @@ define(["js/ui/ItemsView", "js/html/HtmlElement", "underscore", "js/core/List"],
                     selectedIndex = i;
                     selectedChildren.push(c);
                     var item = c.get(this._getItemKey());
-                    if (item) {
+                    if (item != null) {
                         selectedItems.push(item);
                         selectedItem = item;
                     }
