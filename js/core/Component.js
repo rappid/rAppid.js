@@ -615,7 +615,7 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
             }
         });
 
-        Component.Configuration = Component.inherit("js.core.Configuration", {
+        Component.Configuration = Component.inherit("js.conf.Configuration", {
 
             /***
              *
