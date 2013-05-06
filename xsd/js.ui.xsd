@@ -51,6 +51,8 @@
     <element name="TextWrapper" type="ns:TextWrapper"/>
     <element name="TileList" type="ns:TileList"/>
     <element name="TileListClass" type="ns:TileListClass"/>
+    <element name="TreeView" type="ns:TreeView"/>
+    <element name="TreeViewClass" type="ns:TreeViewClass"/>
     <element name="View" type="ns:View"/>
     <element name="VirtualItemsView" type="ns:VirtualItemsView"/>
     <element name="VirtualScrollView" type="ns:VirtualScrollView"/>
@@ -1925,6 +1927,48 @@
                         <documentation>
                             calculates itemHeight, itemWidth if set to AUTO depending on
                             the scrollDirection
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+    <complexType name="TreeView">
+        <complexContent>
+            <extension base="ns:TreeViewClass">
+                <annotation>
+                    <documentation source="http://www.rappidjs.com/#/api/js.ui.TreeView">
+
+                    </documentation>
+                </annotation>
+                <sequence>
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+                <attribute name="childrenKey" default="children">
+                    <annotation>
+                        <documentation>
+
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+    <complexType name="TreeViewClass">
+        <complexContent>
+            <extension base="ns:SelectionView">
+                <annotation>
+                    <documentation source="http://www.rappidjs.com/#/api/js.ui.TreeViewClass">
+
+                    </documentation>
+                </annotation>
+                <sequence>
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+                <attribute name="childrenKey" default="children">
+                    <annotation>
+                        <documentation>
+
                         </documentation>
                     </annotation>
                 </attribute>
