@@ -1,0 +1,97 @@
+<schema targetNamespace="js.conf" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns1="js.core" xmlns:ns="js.conf">
+    <import namespace="js.core"/>
+    <element name="DataSourceConfiguration" type="ns:DataSourceConfiguration"/>
+    <element name="ModuleConfiguration" type="ns:ModuleConfiguration"/>
+    <element name="ResourceConfiguration" type="ns:ResourceConfiguration"/>
+    <element name="RouteConfiguration" type="ns:RouteConfiguration"/>
+    <complexType name="DataSourceConfiguration">
+        <complexContent>
+            <extension base="ns:ResourceConfiguration">
+                <annotation>
+                    <documentation source="http://www.rappidjs.com/#/api/js.conf.DataSourceConfiguration">
+
+                    </documentation>
+                </annotation>
+                <sequence>
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+    <complexType name="ModuleConfiguration">
+        <complexContent>
+            <extension base="ns1:Configuration">
+                <annotation>
+                    <documentation source="http://www.rappidjs.com/#/api/js.conf.ModuleConfiguration">
+
+                    </documentation>
+                </annotation>
+                <sequence>
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+                <attribute name="route">
+                    <annotation>
+                        <documentation>
+                            a regular expression that will activate the module if the
+                            route matches
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="name" use="required">
+                    <annotation>
+                        <documentation>
+                            a unique name of the module so the ModuleLoader can
+                            determinate if a Module has been already loaded
+                            or is currently active
+
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="moduleClass" use="required">
+                    <annotation>
+                        <documentation>
+                            the full qualified name (e.g. app.module.MyModule) of the
+                            module to be loaded if the route is executed
+                            or the ModuleLoader.loadModule method is invoked manually.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+    <complexType name="ResourceConfiguration">
+        <complexContent>
+            <extension base="ns1:Configuration">
+                <annotation>
+                    <documentation source="http://www.rappidjs.com/#/api/js.conf.ResourceConfiguration">
+
+                    </documentation>
+                </annotation>
+                <sequence>
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+                <attribute name="resourceHandler">
+                    <annotation>
+                        <documentation>
+
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+    <complexType name="RouteConfiguration">
+        <complexContent>
+            <extension base="ns1:Configuration">
+                <annotation>
+                    <documentation source="http://www.rappidjs.com/#/api/js.conf.RouteConfiguration">
+
+                    </documentation>
+                </annotation>
+                <sequence>
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+</schema>

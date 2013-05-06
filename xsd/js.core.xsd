@@ -104,7 +104,7 @@
         <complexContent>
             <extension base="ns:Component">
                 <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.core.Configuration">
+                    <documentation source="http://www.rappidjs.com/#/api/js.conf.Configuration">
 
                     </documentation>
                 </annotation>
