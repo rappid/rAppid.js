@@ -306,6 +306,15 @@
                         </documentation>
                     </annotation>
                 </attribute>
+                <attribute name="router" use="required">
+                    <annotation>
+                        <documentation>
+                            the router used for automatically registering routes from
+                            {@link js.conf.ModuleConfiguration}
+
+                        </documentation>
+                    </annotation>
+                </attribute>
             </extension>
         </complexContent>
     </complexType>
