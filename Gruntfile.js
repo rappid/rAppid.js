@@ -31,10 +31,10 @@ module.exports = function (grunt) {
             ,chrome: {
                 browserName: "chrome"
             }
-            ,ie: {
-                browserName: "internet explorer",
-                version: "9"
-            }
+//            ,ie: {
+//                browserName: "internet explorer",
+//                version: "9"
+//            }
         }
 
     });
