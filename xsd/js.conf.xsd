@@ -73,6 +73,42 @@
                 <attribute name="resourceHandler">
                     <annotation>
                         <documentation>
+                            a custom resource handler to handle this request
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="modelClassName" use="required">
+                    <annotation>
+                        <documentation>
+                            the full qualified class name of the model used for operating
+                            on this resource
+
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="path" use="required">
+                    <annotation>
+                        <documentation>
+                            the rest path used for access and save the model data. Keep in
+                            mind that
+                            ResourceConfiguration can be nested to have a context save
+                            environment.
+
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="collectionClassName">
+                    <annotation>
+                        <documentation>
+
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="processor">
+                    <annotation>
+                        <documentation>
+                            the name of the optional processor mapped with the $processors
+                            property of the RestDataSource
 
                         </documentation>
                     </annotation>
