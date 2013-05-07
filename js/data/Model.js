@@ -157,8 +157,8 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
         compose: function (action, options) {
             var ret = this.callBase();
 
-            if (action === "create" && ret.hasOwnProperty(this.idField)) {
-                delete  ret[this.idField];
+            if (action === "create" && ret.hasOwnProperty(this.idField) && [this.idField] === null) {
+                delete ret[this.idField];
             }
 
             return ret;
