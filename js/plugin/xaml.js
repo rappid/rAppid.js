@@ -84,7 +84,7 @@ define([], function () {
         return b;
     }
 
-    function findDependencies(xaml, namespaceMap, xamlClasses, rewriteMap, imports) {
+    function findDependencies(xaml, namespaceMap, xamlClasses, rewriteMap, imports, requestor) {
 
         var ret = [];
 
@@ -118,7 +118,7 @@ define([], function () {
                 }
             }
 
-            if (ret.indexOf(dep) == -1) {
+            if (ret.indexOf(dep) == -1 && dep !== requestor) {
                 ret.push(dep);
             }
 
@@ -274,7 +274,7 @@ define([], function () {
                             importStartIndex = 1;
 
                         var dependencies = findDependencies(xml.documentElement,
-                            config.namespaceMap, config.xamlClasses, config.rewriteMap, imports);
+                            config.namespaceMap, config.xamlClasses, config.rewriteMap, imports, "xaml!" + name);
 
                         var scripts = findScripts(xml.documentElement,
                             config.namespaceMap, config.xamlClasses, config.rewriteMap);
