@@ -15,19 +15,23 @@ define(["js/ui/View"], function (View) {
 
         $classAttributes: ["item", "templateName"],
 
-        _commitTemplateName: function(templateName){
+        _renderTemplateName: function(templateName){
             if (templateName) {
                 if (!this.$template) {
                     this.$template = this.getTemplate(templateName);
                 }
 
-                this.$templateInstance = this.$template.createInstance({
-                    item: this.$.item
-                }, this.$parentScope, this.$rootScope);
+                if(!this.$templateInstance){
+                    this.$templateInstance = this.$template.createInstance({
+                        item: this.$.item
+                    }, this.$parentScope, this.$rootScope);
 
-                this.$templateInstance.$classAttributes.push("item");
+                    if(this.$templateInstance.$classAttributes){
+                        this.$templateInstance.$classAttributes.push("item");
+                    }
 
-                this.addChild(this.$templateInstance);
+                    this.addChild(this.$templateInstance);
+                }
             } else {
                 this.$template = null;
                 // TODO: remove child
