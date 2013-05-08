@@ -54,8 +54,9 @@ var esprima = require('esprima'),
 
         ctor: function () {
 
-
             this.documentations = {};
+            this.excludeDocumentations = [];
+
             this.documentationProcessors = {
                 js: new ClassDocumentationProcessor(),
                 xml: new XamlClassDocumentationProcessor()
@@ -80,7 +81,11 @@ var esprima = require('esprima'),
             this.documentations[className] = classDocumentation;
         },
 
-        generateDocumentationsForFile: function (type, code, defaultFqClassName, add, path) {
+        excludeClassDocumentation: function(className) {
+            this.excludeDocumentations.push(className);
+        },
+
+        generateDocumentationsForFile: function (type, code, defaultFqClassName, path, excludeFromOutput) {
 
             var processor = this.documentationProcessors[type];
 
@@ -95,11 +100,14 @@ var esprima = require('esprima'),
                 doc.package = path.replace(/\/[^/]+$/, "").replace(/\//g, ".");
             });
 
-            if (add) {
-                docs.forEach(function (doc) {
-                    this.addClassDocumentation(doc.fqClassName, doc);
-                }, this);
-            }
+            docs.forEach(function (doc) {
+                this.addClassDocumentation(doc.fqClassName, doc);
+
+                if (excludeFromOutput) {
+                    this.excludeClassDocumentation(doc.fqClassName);
+                }
+
+            }, this);
 
             return docs;
         },
