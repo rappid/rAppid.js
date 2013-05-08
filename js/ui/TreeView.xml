@@ -3,7 +3,7 @@
 
     <ui:TemplatePlaceHolder item="{node.data}" templateName="label" class="tree-view-label" onclick="_handleClick"/>
 
-    <ui:ItemsView items="{node}"
+    <ui:ItemsView items="{node.childNodes}"
                       visible="{node.expanded}"
                       class="tree-view-list"
                       tagName="ul">

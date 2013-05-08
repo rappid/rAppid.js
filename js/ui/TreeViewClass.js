@@ -15,16 +15,31 @@ define(["js/ui/View"], function (View) {
 
         $classAttributes: ["root", "node"],
 
-        _initialize: function () {
-            this.callBase();
+        _initializationComplete: function () {
             this.bind('root', 'change:selectedNode', this._onSelectedNodeChange, this);
+            this.callBase();
+            if(this.$.root && this.$.root.$.selectedNode){
+                if(this.$.node === this.$.root.$.selectedNode){
+                    this._expandParents();
+                }
+            }
         },
 
         _onSelectedNodeChange: function (e) {
-
             var node = e.$;
 
             this.set('selected', node === this.$.node);
+            if(this.$.selected){
+                this._expandParents();
+            }
+        },
+
+        _expandParents: function(){
+            var parentNode = this.$.node.$.parentNode;
+            while(parentNode){
+                parentNode.set('expanded', true);
+                parentNode = parentNode.$.parentNode;
+            }
         },
 
         _renderNode: function (node) {
