@@ -75,6 +75,10 @@ var help = function (args, callback) {
                 var directory = directories[i],
                     isLibrary = libraryPaths.indexOf(directory) !== -1;
 
+                if (!directory) {
+                    continue;
+                }
+
                 directory = directory.replace(/^~\//, process.env.HOME + '/');
 
                 stat = fs.statSync(directory);
