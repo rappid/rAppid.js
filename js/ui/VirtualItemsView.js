@@ -918,10 +918,6 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
         STATUS_LOADING = "loading",
         STATUS_LOADED = "loaded";
 
-    /***
-     *
-     * @class
-     */
     VirtualItemsView.DataItem = Bindable.inherit('js.ui.VirtualItemsView.DataItem', {
         defaults: {
             // holds the index of the datasource, and is set by VirtualItemsView
