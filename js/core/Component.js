@@ -88,10 +88,18 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
 
             /**
              * Returns the ENVIRONMENT object
-             * @constructor
+             * @return {js.core.Bindable}
              */
             ENV: function () {
                 return this.$stage.$environment;
+            },
+
+            /***
+             * Returns the start parameter of the application
+             * @return {Object}
+             */
+            PARAMETER: function() {
+                return this.$stage.$parameter;
             },
 
             /***
