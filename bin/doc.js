@@ -7,6 +7,7 @@ var help = function (args, callback) {
         path = require('path'),
         flow = require('flow.js').flow,
         rAppid = require(__dirname + "/../rAppid.js").rAppid,
+        vkbeautify = require(__dirname + "/lib/vkbeautify").vkbeautify,
         argv = require('optimist')(args)
             .usage("rappidjs doc <dir> [<dir2>]")
             .demand(1)
@@ -285,7 +286,12 @@ var help = function (args, callback) {
                         .seq(function () {
                             //noinspection JSPotentiallyInvalidUsageOfThis
                             var dom = this.vars.app.render(this.vars.window.document);
-                            fs.writeFileSync(xsdDir + "/" + namespace + ".xsd", (new xmlDom.XMLSerializer()).serializeToString(dom.childNodes[0]), "utf8");
+                            var xsd = (new xmlDom.XMLSerializer()).serializeToString(dom.childNodes[0]);
+
+                            // pretty print xml
+                            xsd = vkbeautify.xml(xsd);
+
+                            fs.writeFileSync(xsdDir + "/" + namespace + ".xsd", xsd, "utf8");
                         })
                         .exec(function (err) {
                             cb(err);
