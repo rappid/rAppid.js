@@ -1194,7 +1194,7 @@ Documentation.Processors.General = Documentation.AnnotationProcessor.inherit("Do
         }
     }
 }, {
-    Parser: /^\s*\*\s*@(\S+)\s*([\s\S]*)\s*$/
+    Parser: /^\s*\*\s*@(\S+):?\s*([\s\S]*)\s*$/
 });
 
 
@@ -1223,7 +1223,7 @@ Documentation.Processors.Class = Documentation.AnnotationProcessor.inherit("Docu
         item.fqClassName = annotation.value;
     }
 }, {
-    Parser: /^\s*\*\s*@class\s*(\S+)\s*$/
+    Parser: /^\s*\*\s*@class:?\s*(\S+)\s*$/
 });
 
 Documentation.Processors.Parameter = Documentation.AnnotationProcessor.inherit("Documentation.Processors.Parameter", {
@@ -1274,7 +1274,7 @@ Documentation.Processors.Parameter = Documentation.AnnotationProcessor.inherit("
 
     }
 }, {
-    Parser: /\*\s{0,4}@param\s+?(?:\{(.+)?\})?\s*(?:([^[ ]+)|(?:\[([^=]+)(?:=(.*)?)?\]))\s*-?\s*(.+)?$/
+    Parser: /\*\s{0,4}@param:?\s+?(?:\{(.+)?\})?\s*(?:([^[ ]+)|(?:\[([^=]+)(?:=(.*)?)?\]))\s*-?\s*(.+)?$/
 });
 
 Documentation.Processors.Type = Documentation.AnnotationProcessor.inherit("Documentation.Processors.Type", {
@@ -1311,7 +1311,7 @@ Documentation.Processors.Type = Documentation.AnnotationProcessor.inherit("Docum
 
     }
 }, {
-    Parser: /\*\s{0,4}@type\s+?\{?([^}]+)?\}?\s*?$/
+    Parser: /\*\s{0,4}@type:?\s+?\{?([^}]+)?\}?\s*?$/
 });
 
 Documentation.Processors.Return = Documentation.AnnotationProcessor.inherit("Documentation.Processors.Return", {
@@ -1341,7 +1341,7 @@ Documentation.Processors.Return = Documentation.AnnotationProcessor.inherit("Doc
         item.returns = annotation.value;
     }
 }, {
-    Parser: /\*\s{0,4}@return[s]?\s+?(?:\{(.+)?\})?\s*-?\s*(.+)?$/
+    Parser: /\*\s{0,4}@return[s]?:?\s+?(?:\{(.+)?\})?\s*-?\s*(.+)?$/
 });
 
 Documentation.Processors.Description = Documentation.AnnotationProcessor.inherit("Documentation.Processors.Description", {
