@@ -103,6 +103,7 @@ define(["js/core/Bindable", "underscore"], function (Bindable, _) {
             _getLocalNameFromNode: function(node){
                 return node.localName ? node.localName : node.nodeName.split(":").pop();
             },
+
             defaults: {
                 /**
                  * Decides if the initialization of the component is started automatically or manually by the application
