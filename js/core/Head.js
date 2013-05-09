@@ -1,10 +1,10 @@
-define(["js/core/Component"], function(Component) {
+define(["js/core/Component"], function (Component) {
 
     return Component.inherit('js.core.Head', {
-        ctor: function() {
+        ctor: function () {
             this.callBase();
             this.$headManager = this.$stage.$headManager;
-            this.bind('change',this.render, this);
+            this.bind('change', this.render, this);
         },
 
         defaults: {
@@ -24,7 +24,7 @@ define(["js/core/Component"], function(Component) {
             author: null
         },
 
-        render: function(){
+        render: function () {
             this.$headManager.set(this.$);
         }
     });
