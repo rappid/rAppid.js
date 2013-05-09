@@ -175,6 +175,9 @@ The resulting class attributes is the union from class and componentClass of the
                 <sequence>
                     <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
                 </sequence>
+                <attribute name="title"/>
+                <attribute name="head"/>
+                <attribute name="author"/>
             </extension>
         </complexContent>
     </complexType>

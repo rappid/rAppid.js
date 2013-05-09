@@ -153,6 +153,13 @@ Set's the default collection page size for fetching collection
                     </documentation>
                     </annotation>
                 </attribute>
+                <attribute name="suffix">
+                    <annotation>
+                        <documentation>
+                        a suffix like `.json` to add to each request
+                    </documentation>
+                    </annotation>
+                </attribute>
             </extension>
         </complexContent>
     </complexType>

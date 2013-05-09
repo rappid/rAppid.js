@@ -52,7 +52,13 @@
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="namespace"/>
+                <attribute name="namespace">
+                    <annotation>
+                        <documentation>
+                        the target namespace for the HTMLElement
+                    </documentation>
+                    </annotation>
+                </attribute>
                 <attribute name="enabled" default="true"/>
                 <attribute name="position">
                     <annotation>
