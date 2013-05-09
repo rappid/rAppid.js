@@ -1,73 +1,26 @@
-<schema targetNamespace="js.svg" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns1="js.core" xmlns:ns="js.svg">
+<schema targetNamespace="js.svg"
+    xmlns="http://www.w3.org/2001/XMLSchema"
+    xmlns:ns1="js.core"
+    xmlns:ns="js.svg">
     <import namespace="js.core"/>
     <element name="SvgElement" type="ns:SvgElement"/>
     <complexType name="SvgElement">
         <complexContent>
             <extension base="ns1:DomElement">
                 <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.svg.SvgElement">
-
-                    </documentation>
+                    <documentation source="http://www.rappidjs.com/#/api/js.svg.SvgElement"></documentation>
                 </annotation>
                 <sequence>
                     <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
                 </sequence>
-                <attribute name="transformations">
-                    <annotation>
-                        <documentation>
-
-                        </documentation>
-                    </annotation>
-                </attribute>
-                <attribute name="translateX">
-                    <annotation>
-                        <documentation>
-
-                        </documentation>
-                    </annotation>
-                </attribute>
-                <attribute name="translateY">
-                    <annotation>
-                        <documentation>
-
-                        </documentation>
-                    </annotation>
-                </attribute>
-                <attribute name="scaleX">
-                    <annotation>
-                        <documentation>
-
-                        </documentation>
-                    </annotation>
-                </attribute>
-                <attribute name="scaleY">
-                    <annotation>
-                        <documentation>
-
-                        </documentation>
-                    </annotation>
-                </attribute>
-                <attribute name="rotation">
-                    <annotation>
-                        <documentation>
-
-                        </documentation>
-                    </annotation>
-                </attribute>
-                <attribute name="rotationX">
-                    <annotation>
-                        <documentation>
-
-                        </documentation>
-                    </annotation>
-                </attribute>
-                <attribute name="rotationY">
-                    <annotation>
-                        <documentation>
-
-                        </documentation>
-                    </annotation>
-                </attribute>
+                <attribute name="transformations"/>
+                <attribute name="translateX"/>
+                <attribute name="translateY"/>
+                <attribute name="scaleX"/>
+                <attribute name="scaleY"/>
+                <attribute name="rotation"/>
+                <attribute name="rotationX"/>
+                <attribute name="rotationY"/>
             </extension>
         </complexContent>
     </complexType>

@@ -1,4 +1,7 @@
-<schema targetNamespace="srv.handler.rest" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns1="js.core" xmlns:ns="srv.handler.rest">
+<schema targetNamespace="srv.handler.rest"
+    xmlns="http://www.w3.org/2001/XMLSchema"
+    xmlns:ns1="js.core"
+    xmlns:ns="srv.handler.rest">
     <import namespace="js.core"/>
     <element name="DataSourceSwitchResourceHandler" type="ns:DataSourceSwitchResourceHandler"/>
     <element name="ResourceHandler" type="ns:ResourceHandler"/>
@@ -6,27 +9,13 @@
         <complexContent>
             <extension base="ns:ResourceHandler">
                 <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/srv.handler.rest.DataSourceSwitchResourceHandler">
-
-                    </documentation>
+                    <documentation source="http://www.rappidjs.com/#/api/srv.handler.rest.DataSourceSwitchResourceHandler"></documentation>
                 </annotation>
                 <sequence>
                     <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
                 </sequence>
-                <attribute name="prefix">
-                    <annotation>
-                        <documentation>
-
-                        </documentation>
-                    </annotation>
-                </attribute>
-                <attribute name="suffix">
-                    <annotation>
-                        <documentation>
-
-                        </documentation>
-                    </annotation>
-                </attribute>
+                <attribute name="prefix"/>
+                <attribute name="suffix"/>
             </extension>
         </complexContent>
     </complexType>
@@ -34,34 +23,14 @@
         <complexContent>
             <extension base="ns1:Component">
                 <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/srv.handler.rest.ResourceHandler">
-
-                    </documentation>
+                    <documentation source="http://www.rappidjs.com/#/api/srv.handler.rest.ResourceHandler"></documentation>
                 </annotation>
                 <sequence>
                     <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
                 </sequence>
-                <attribute name="autoStartSession" default="true">
-                    <annotation>
-                        <documentation>
-
-                        </documentation>
-                    </annotation>
-                </attribute>
-                <attribute name="defaultSortField">
-                    <annotation>
-                        <documentation>
-
-                        </documentation>
-                    </annotation>
-                </attribute>
-                <attribute name="defaultSortOrder">
-                    <annotation>
-                        <documentation>
-
-                        </documentation>
-                    </annotation>
-                </attribute>
+                <attribute name="autoStartSession" default="true"/>
+                <attribute name="defaultSortField"/>
+                <attribute name="defaultSortOrder"/>
             </extension>
         </complexContent>
     </complexType>

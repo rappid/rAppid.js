@@ -1,4 +1,7 @@
-<schema targetNamespace="srv.handler" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns1="srv.core" xmlns:ns="srv.handler">
+<schema targetNamespace="srv.handler"
+    xmlns="http://www.w3.org/2001/XMLSchema"
+    xmlns:ns1="srv.core"
+    xmlns:ns="srv.handler">
     <import namespace="srv.core"/>
     <element name="SessionHandler" type="ns:SessionHandler"/>
     <element name="ExceptionHandler" type="ns:ExceptionHandler"/>
@@ -9,9 +12,7 @@
         <complexContent>
             <extension base="ns1:Handler">
                 <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/srv.handler.SessionHandler">
-
-                    </documentation>
+                    <documentation source="http://www.rappidjs.com/#/api/srv.handler.SessionHandler"></documentation>
                 </annotation>
                 <sequence>
                     <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
@@ -23,9 +24,7 @@
         <complexContent>
             <extension base="ns1:Handler">
                 <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/srv.handler.ExceptionHandler">
-
-                    </documentation>
+                    <documentation source="http://www.rappidjs.com/#/api/srv.handler.ExceptionHandler"></documentation>
                 </annotation>
                 <sequence>
                     <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
@@ -37,9 +36,7 @@
         <complexContent>
             <extension base="ns1:Handler">
                 <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/srv.handler.NodeRenderingHandler">
-
-                    </documentation>
+                    <documentation source="http://www.rappidjs.com/#/api/srv.handler.NodeRenderingHandler"></documentation>
                 </annotation>
                 <sequence>
                     <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
@@ -47,60 +44,23 @@
                 <attribute name="applicationUrl">
                     <annotation>
                         <documentation>
-                            used for making ajax relative ajax requests - null indicates
-                            that it is hosted on this server
-                        </documentation>
+                         used for making ajax relative ajax requests - null indicates that it is hosted on this server
+                    </documentation>
                     </annotation>
                 </attribute>
                 <attribute name="applicationDirectory">
                     <annotation>
                         <documentation>
-                            the document root will be used by default
-                        </documentation>
+                         the document root will be used by default
+                    </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="options">
-                    <annotation>
-                        <documentation>
-
-                        </documentation>
-                    </annotation>
-                </attribute>
-                <attribute name="application" default="app/App.xml">
-                    <annotation>
-                        <documentation>
-
-                        </documentation>
-                    </annotation>
-                </attribute>
-                <attribute name="indexFile" default="index.html">
-                    <annotation>
-                        <documentation>
-
-                        </documentation>
-                    </annotation>
-                </attribute>
-                <attribute name="config" default="config.json">
-                    <annotation>
-                        <documentation>
-
-                        </documentation>
-                    </annotation>
-                </attribute>
-                <attribute name="usePackageVersion">
-                    <annotation>
-                        <documentation>
-
-                        </documentation>
-                    </annotation>
-                </attribute>
-                <attribute name="defaultStartParameter">
-                    <annotation>
-                        <documentation>
-
-                        </documentation>
-                    </annotation>
-                </attribute>
+                <attribute name="options"/>
+                <attribute name="application" default="app/App.xml"/>
+                <attribute name="indexFile" default="index.html"/>
+                <attribute name="config" default="config.json"/>
+                <attribute name="usePackageVersion"/>
+                <attribute name="defaultStartParameter"/>
             </extension>
         </complexContent>
     </complexType>
@@ -109,8 +69,8 @@
             <extension base="ns1:Handler">
                 <annotation>
                     <documentation source="http://www.rappidjs.com/#/api/srv.core.RestHandler">
-                        here we have a combined id
-                    </documentation>
+                                 here we have a combined id
+                            </documentation>
                 </annotation>
                 <sequence>
                     <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
@@ -122,34 +82,14 @@
         <complexContent>
             <extension base="ns1:Handler">
                 <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/srv.core.StaticFileHandler">
-
-                    </documentation>
+                    <documentation source="http://www.rappidjs.com/#/api/srv.core.StaticFileHandler"></documentation>
                 </annotation>
                 <sequence>
                     <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
                 </sequence>
-                <attribute name="documentRoot">
-                    <annotation>
-                        <documentation>
-
-                        </documentation>
-                    </annotation>
-                </attribute>
-                <attribute name="indexFile" default="index.html">
-                    <annotation>
-                        <documentation>
-
-                        </documentation>
-                    </annotation>
-                </attribute>
-                <attribute name="defaultContentType" default="text/plain">
-                    <annotation>
-                        <documentation>
-
-                        </documentation>
-                    </annotation>
-                </attribute>
+                <attribute name="documentRoot"/>
+                <attribute name="indexFile" default="index.html"/>
+                <attribute name="defaultContentType" default="text/plain"/>
             </extension>
         </complexContent>
     </complexType>

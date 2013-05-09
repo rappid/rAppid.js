@@ -1,4 +1,7 @@
-<schema targetNamespace="js.ui.field" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns1="js.ui" xmlns:ns="js.ui.field">
+<schema targetNamespace="js.ui.field"
+    xmlns="http://www.w3.org/2001/XMLSchema"
+    xmlns:ns1="js.ui"
+    xmlns:ns="js.ui.field">
     <import namespace="js.ui"/>
     <element name="Password" type="ns:Password"/>
     <element name="RadioGroup" type="ns:RadioGroup"/>
@@ -8,20 +11,12 @@
         <complexContent>
             <extension base="ns:Text">
                 <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.ui.field.Password">
-
-                    </documentation>
+                    <documentation source="http://www.rappidjs.com/#/api/js.ui.field.Password"></documentation>
                 </annotation>
                 <sequence>
                     <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
                 </sequence>
-                <attribute name="type" default="password">
-                    <annotation>
-                        <documentation>
-
-                        </documentation>
-                    </annotation>
-                </attribute>
+                <attribute name="type" default="password"/>
             </extension>
         </complexContent>
     </complexType>
@@ -29,9 +24,7 @@
         <complexContent>
             <extension base="ns1:Field">
                 <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.ui.field.RadioGroup">
-
-                    </documentation>
+                    <documentation source="http://www.rappidjs.com/#/api/js.ui.field.RadioGroup"></documentation>
                 </annotation>
                 <sequence>
                     <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
@@ -43,9 +36,7 @@
         <complexContent>
             <extension base="ns1:Field">
                 <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.ui.field.Text">
-
-                    </documentation>
+                    <documentation source="http://www.rappidjs.com/#/api/js.ui.field.Text"></documentation>
                 </annotation>
                 <sequence>
                     <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
@@ -57,9 +48,7 @@
         <complexContent>
             <extension base="ns1:Field">
                 <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.ui.field.TextArea">
-
-                    </documentation>
+                    <documentation source="http://www.rappidjs.com/#/api/js.ui.field.TextArea"></documentation>
                 </annotation>
                 <sequence>
                     <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>

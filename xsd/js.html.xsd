@@ -1,4 +1,8 @@
-<schema targetNamespace="js.html" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns1="js.core" xmlns:ns2="js.ui" xmlns:ns="js.html">
+<schema targetNamespace="js.html"
+    xmlns="http://www.w3.org/2001/XMLSchema"
+    xmlns:ns1="js.core"
+    xmlns:ns2="js.ui"
+    xmlns:ns="js.html">
     <import namespace="js.core"/>
     <import namespace="js.ui"/>
     <element name="a" type="ns:a"/>
@@ -11,34 +15,14 @@
         <complexContent>
             <extension base="ns:HtmlElement">
                 <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.html.a">
-
-                    </documentation>
+                    <documentation source="http://www.rappidjs.com/#/api/js.html.a"></documentation>
                 </annotation>
                 <sequence>
                     <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
                 </sequence>
-                <attribute name="tagName" default="a">
-                    <annotation>
-                        <documentation>
-
-                        </documentation>
-                    </annotation>
-                </attribute>
-                <attribute name="target">
-                    <annotation>
-                        <documentation>
-
-                        </documentation>
-                    </annotation>
-                </attribute>
-                <attribute name="href">
-                    <annotation>
-                        <documentation>
-
-                        </documentation>
-                    </annotation>
-                </attribute>
+                <attribute name="tagName" default="a"/>
+                <attribute name="target"/>
+                <attribute name="href"/>
             </extension>
         </complexContent>
     </complexType>
@@ -47,8 +31,8 @@
             <extension base="ns1:DomElement">
                 <annotation>
                     <documentation source="http://www.rappidjs.com/#/api/js.html.HtmlElement">
-                        Represents a HTML Element in the DOM
-                    </documentation>
+                                Represents a HTML Element in the DOM
+                            </documentation>
                 </annotation>
                 <sequence>
                     <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
@@ -56,81 +40,59 @@
                 <attribute name="selected">
                     <annotation>
                         <documentation>
-                            If not null, false or undefined the "active" CSS class is
-                            added
+                        If not null, false or undefined the "active" CSS class is added
 
-                        </documentation>
+                    </documentation>
                     </annotation>
                 </attribute>
                 <attribute name="selectable">
                     <annotation>
                         <documentation>
-                            If not null, false or undefined a click will set the element
-                            to selected
-                        </documentation>
+                        If not null, false or undefined a click will set the element to selected
+                    </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="namespace">
-                    <annotation>
-                        <documentation>
-
-                        </documentation>
-                    </annotation>
-                </attribute>
-                <attribute name="enabled" default="true">
-                    <annotation>
-                        <documentation>
-
-                        </documentation>
-                    </annotation>
-                </attribute>
+                <attribute name="namespace"/>
+                <attribute name="enabled" default="true"/>
                 <attribute name="position">
                     <annotation>
                         <documentation>
-                            Possible values: "absolute", "relative"
-                        </documentation>
+                        Possible values: "absolute", "relative"
+                    </documentation>
                     </annotation>
                 </attribute>
                 <attribute name="heightUpdatePolicy" default="out">
                     <annotation>
                         <documentation>
+                        
+The heightUpdatePolicy configures whether the height of the component is
+updated when the DOM node height changes or if the DOM node height is updated
+when the component height changes.
 
-                            The heightUpdatePolicy configures whether the height of the
-                            component is
-                            updated when the DOM node height changes or if the DOM node
-                            height is updated
-                            when the component height changes.
+**Possible values:**
 
-                            **Possible values:**
++  **in** - "height" attribute is determined by DOM nodes offsetHeight
++  **out** - DOM node height is determined by the "height" attribute
++  **both** - both directions
 
-                            + **in** - "height" attribute is determined by DOM nodes
-                            offsetHeight
-                            + **out** - DOM node height is determined by the "height"
-                            attribute
-                            + **both** - both directions
-
-                        </documentation>
+                    </documentation>
                     </annotation>
                 </attribute>
                 <attribute name="widthUpdatePolicy" default="out">
                     <annotation>
                         <documentation>
+                        
+The widthUpdatePolicy configures whether the width of the component is
+updated when the DOM node width changes or if the DOM node width is updated
+when the component width changes.
 
-                            The widthUpdatePolicy configures whether the width of the
-                            component is
-                            updated when the DOM node width changes or if the DOM node
-                            width is updated
-                            when the component width changes.
+**Possible values:**
 
-                            **Possible values:**
++  **in** - "width" attribute is determined by DOM nodes offsetWidth
++  **out** - DOM node width is determined by the "width" attribute
++  **both** - both directions
 
-                            + **in** - "width" attribute is determined by DOM nodes
-                            offsetWidth
-                            + **out** - DOM node width is determined by the "width"
-                            attribute
-                            + **both** - both directions
-
-                        </documentation>
+                    </documentation>
                     </annotation>
                 </attribute>
             </extension>
@@ -140,9 +102,7 @@
         <complexContent>
             <extension base="ns:HtmlElement">
                 <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.html.Input">
-
-                    </documentation>
+                    <documentation source="http://www.rappidjs.com/#/api/js.html.Input"></documentation>
                 </annotation>
                 <sequence>
                     <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
@@ -150,22 +110,22 @@
                 <attribute name="type" default="text">
                     <annotation>
                         <documentation>
-                            the type of the input element
-                        </documentation>
+                        the type of the input element
+                    </documentation>
                     </annotation>
                 </attribute>
                 <attribute name="checked">
                     <annotation>
                         <documentation>
-                            the checked state for radio buttons and checkboxes
-                        </documentation>
+                        the checked state for radio buttons and checkboxes
+                    </documentation>
                     </annotation>
                 </attribute>
                 <attribute name="updateOnEvent" default="input">
                     <annotation>
                         <documentation>
-                            the event on which the bound value will be updated
-                        </documentation>
+                        the event on which the bound value will be updated
+                    </documentation>
                     </annotation>
                 </attribute>
             </extension>
@@ -175,9 +135,7 @@
         <complexContent>
             <extension base="ns:HtmlElement">
                 <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.html.Option">
-
-                    </documentation>
+                    <documentation source="http://www.rappidjs.com/#/api/js.html.Option"></documentation>
                 </annotation>
                 <sequence>
                     <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
@@ -189,9 +147,7 @@
         <complexContent>
             <extension base="ns2:SelectionView">
                 <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.html.Select">
-
-                    </documentation>
+                    <documentation source="http://www.rappidjs.com/#/api/js.html.Select"></documentation>
                 </annotation>
                 <sequence>
                     <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
@@ -203,20 +159,12 @@
         <complexContent>
             <extension base="ns:HtmlElement">
                 <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.html.TextArea">
-
-                    </documentation>
+                    <documentation source="http://www.rappidjs.com/#/api/js.html.TextArea"></documentation>
                 </annotation>
                 <sequence>
                     <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
                 </sequence>
-                <attribute name="updateOnEvent" default="change">
-                    <annotation>
-                        <documentation>
-
-                        </documentation>
-                    </annotation>
-                </attribute>
+                <attribute name="updateOnEvent" default="change"/>
             </extension>
         </complexContent>
     </complexType>

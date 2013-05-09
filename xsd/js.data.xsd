@@ -1,4 +1,7 @@
-<schema targetNamespace="js.data" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns1="js.core" xmlns:ns="js.data">
+<schema targetNamespace="js.data"
+    xmlns="http://www.w3.org/2001/XMLSchema"
+    xmlns:ns1="js.core"
+    xmlns:ns="js.data">
     <import namespace="js.core"/>
     <element name="DataSource" type="ns:DataSource"/>
     <element name="DataView" type="ns:DataView"/>
@@ -12,19 +15,13 @@
             <extension base="ns1:Component">
                 <annotation>
                     <documentation source="http://www.rappidjs.com/#/api/js.data.DataSource">
-                        already in list
-                    </documentation>
+                                 already in list
+                            </documentation>
                 </annotation>
                 <sequence>
                     <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
                 </sequence>
-                <attribute name="dateFormat" default="YYYY-MM-DDTHH:mm:ssZ">
-                    <annotation>
-                        <documentation>
-
-                        </documentation>
-                    </annotation>
-                </attribute>
+                <attribute name="dateFormat" default="YYYY-MM-DDTHH:mm:ssZ"/>
             </extension>
         </complexContent>
     </complexType>
@@ -32,27 +29,13 @@
         <complexContent>
             <extension base="ns1:Component">
                 <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.data.DataView">
-
-                    </documentation>
+                    <documentation source="http://www.rappidjs.com/#/api/js.data.DataView"></documentation>
                 </annotation>
                 <sequence>
                     <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
                 </sequence>
-                <attribute name="baseList">
-                    <annotation>
-                        <documentation>
-
-                        </documentation>
-                    </annotation>
-                </attribute>
-                <attribute name="list">
-                    <annotation>
-                        <documentation>
-
-                        </documentation>
-                    </annotation>
-                </attribute>
+                <attribute name="baseList"/>
+                <attribute name="list"/>
             </extension>
         </complexContent>
     </complexType>
@@ -60,9 +43,7 @@
         <complexContent>
             <extension base="ns:DataView">
                 <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.data.FilterDataView">
-
-                    </documentation>
+                    <documentation source="http://www.rappidjs.com/#/api/js.data.FilterDataView"></documentation>
                 </annotation>
                 <sequence>
                     <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
@@ -75,8 +56,8 @@
             <extension base="ns1:Component">
                 <annotation>
                     <documentation source="http://www.rappidjs.com/#/api/js.data.LocalStorage">
-                        Local Storage implementation
-                    </documentation>
+                                Local Storage implementation
+                            </documentation>
                 </annotation>
                 <sequence>
                     <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
@@ -88,20 +69,12 @@
         <complexContent>
             <extension base="ns:DataSource">
                 <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.data.LocalStorageDataSource">
-
-                    </documentation>
+                    <documentation source="http://www.rappidjs.com/#/api/js.data.LocalStorageDataSource"></documentation>
                 </annotation>
                 <sequence>
                     <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
                 </sequence>
-                <attribute name="name" default="default">
-                    <annotation>
-                        <documentation>
-
-                        </documentation>
-                    </annotation>
-                </attribute>
+                <attribute name="name" default="default"/>
             </extension>
         </complexContent>
     </complexType>
@@ -109,34 +82,14 @@
         <complexContent>
             <extension base="ns:DataView">
                 <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.data.PagedDataView">
-
-                    </documentation>
+                    <documentation source="http://www.rappidjs.com/#/api/js.data.PagedDataView"></documentation>
                 </annotation>
                 <sequence>
                     <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
                 </sequence>
-                <attribute name="page">
-                    <annotation>
-                        <documentation>
-
-                        </documentation>
-                    </annotation>
-                </attribute>
-                <attribute name="pageCount">
-                    <annotation>
-                        <documentation>
-
-                        </documentation>
-                    </annotation>
-                </attribute>
-                <attribute name="pageSize" default="20">
-                    <annotation>
-                        <documentation>
-
-                        </documentation>
-                    </annotation>
-                </attribute>
+                <attribute name="page"/>
+                <attribute name="pageCount"/>
+                <attribute name="pageSize" default="20"/>
             </extension>
         </complexContent>
     </complexType>
@@ -144,9 +97,7 @@
         <complexContent>
             <extension base="ns:DataSource">
                 <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.data.RestDataSource">
-
-                    </documentation>
+                    <documentation source="http://www.rappidjs.com/#/api/js.data.RestDataSource"></documentation>
                 </annotation>
                 <sequence>
                     <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
@@ -154,56 +105,52 @@
                 <attribute name="endPoint">
                     <annotation>
                         <documentation>
-                            The endPoint of the REST API
-                        </documentation>
+                        The endPoint of the REST API
+                    </documentation>
                     </annotation>
                 </attribute>
                 <attribute name="gateway">
                     <annotation>
                         <documentation>
-
-                            If needed, the gateway of the REST API
-                        </documentation>
+                        
+If needed, the gateway of the REST API
+                    </documentation>
                     </annotation>
                 </attribute>
                 <attribute name="determinateContextAttribute" default="href">
                     <annotation>
                         <documentation>
-                            Tells the RestDataSource which attribute field to use for
-                            context determination of the fetched resources
-                        </documentation>
+                        Tells the RestDataSource which attribute field to use for context determination of the fetched resources
+                    </documentation>
                     </annotation>
                 </attribute>
                 <attribute name="parsePayloadOnCreate" default="true">
                     <annotation>
                         <documentation>
-                            If true the returned payload of a POST get's parsed and
-                            written back in the Model
-                        </documentation>
+                        If true the returned payload of a POST get's parsed and written back in the Model
+                    </documentation>
                     </annotation>
                 </attribute>
                 <attribute name="parsePayloadOnUpdate" default="true">
                     <annotation>
                         <documentation>
-                            If true the returned payload of a PUT get's parsed and written
-                            back in the Model
-                        </documentation>
+                        If true the returned payload of a PUT get's parsed and written back in the Model
+                    </documentation>
                     </annotation>
                 </attribute>
                 <attribute name="useSafeHttpMethods">
                     <annotation>
                         <documentation>
-                            Sends the used HTTP method as a query parameter and uses the
-                            POST method
-                        </documentation>
+                        Sends the used HTTP method as a query parameter and uses the POST method
+                    </documentation>
                     </annotation>
                 </attribute>
                 <attribute name="collectionPageSize" default="100">
                     <annotation>
                         <documentation>
-
-                            Set's the default collection page size for fetching collection
-                        </documentation>
+                        
+Set's the default collection page size for fetching collection
+                    </documentation>
                     </annotation>
                 </attribute>
             </extension>
