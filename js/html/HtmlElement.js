@@ -57,17 +57,25 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
              *
              * @type Boolean
              */
-            selected: undefined,
+            selected: null,
+
             /**
              * If not null, false or undefined a click will set the element to selected
              * @type Boolean
              */
-            selectable: undefined,
+            selectable: null,
+
+            /***
+             * the target namespace for the HTMLElement
+             * @type String
+             */
             namespace: HTML_Namespace,
+
             /**
              * @type Boolean
              */
             enabled: true,
+
             /**
              * Possible values: "absolute", "relative"
              * @type String
@@ -106,6 +114,7 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
              */
             widthUpdatePolicy: "out"
         },
+
         /**
          * @type Array
          */
@@ -120,6 +129,7 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
          * @type Array
          */
         $renderAsStyleWithPx: ['left', 'top'],
+
         /**
          *
          * @private
@@ -130,6 +140,7 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
             checkSizePolicy(this, this.$.widthUpdatePolicy, 'width');
             checkSizePolicy(this, this.$.heightUpdatePolicy, 'height');
         },
+
         /**
          *
          * @param policy
@@ -138,6 +149,7 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
         _renderHeightUpdatePolicy: function (policy) {
             bindSizePolicy(this, policy, "height");
         },
+
         /**
          *
          * @param policy
@@ -146,6 +158,7 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
         _renderWidthUpdatePolicy: function (policy) {
             bindSizePolicy(this, policy, "width");
         },
+
         /**
          *
          * @param key
@@ -161,8 +174,8 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
             }
 
             this.callBase(key, value);
-
         },
+
         /**
          *
          * @param selectable
@@ -185,6 +198,7 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
                 }
             }
         },
+
         _renderEnabled: function (enabled) {
             if ("disabled" in this.$el) {
                 if (!enabled) {
@@ -268,7 +282,7 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
 
                     HtmlElement.transformCache[key] = transformedKey;
                 }
-//
+
                 if (transformedKey in this.$el.style) {
                     if (value != null) {
                         this.$el.style.setProperty(transformedKey, value, null);
