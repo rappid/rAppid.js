@@ -74,8 +74,13 @@ var esprima = require('esprima'),
                 throw "not a ClassDocumentation";
             }
 
-            if (this.documentations[className]) {
-                throw "overwrite documentation for class: " + className;
+            var documentation = this.documentations[className];
+            if (documentation) {
+                var message = "overwrite documentation for class: " + className + ". FqClassname already used in " + documentation.file + "\n";
+
+                console.error(message);
+
+                throw new Error(message);
             }
 
             this.documentations[className] = classDocumentation;
