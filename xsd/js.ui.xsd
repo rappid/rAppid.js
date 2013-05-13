@@ -487,6 +487,13 @@ is specified but a protocol for the href (e.g. http://) if will use external by 
                     </documentation>
                     </annotation>
                 </attribute>
+                <attribute name="iconClass">
+                    <annotation>
+                        <documentation>
+                        the class name for the icon
+                    </documentation>
+                    </annotation>
+                </attribute>
             </extension>
         </complexContent>
     </complexType>
@@ -525,6 +532,13 @@ is specified but a protocol for the href (e.g. http://) if will use external by 
 + **external** - the link will open external
 + **_blank** - opens in a new window
 
+                    </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="iconClass">
+                    <annotation>
+                        <documentation>
+                        the class name for the icon
                     </documentation>
                     </annotation>
                 </attribute>

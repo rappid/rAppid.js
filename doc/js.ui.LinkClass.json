@@ -1332,8 +1332,8 @@
             "annotations": {},
             "definedInFile": "js/ui/LinkClass.js",
             "lineNumbers": [
-                62,
-                78
+                68,
+                84
             ],
             "name": "_renderHref",
             "visibility": "protected"
@@ -1348,8 +1348,8 @@
             "annotations": {},
             "definedInFile": "js/ui/LinkClass.js",
             "lineNumbers": [
-                40,
-                46
+                46,
+                52
             ],
             "name": "_renderIconClass",
             "visibility": "protected"
@@ -1381,8 +1381,8 @@
             "annotations": {},
             "definedInFile": "js/ui/LinkClass.js",
             "lineNumbers": [
-                48,
-                52
+                54,
+                58
             ],
             "name": "_renderLabel",
             "visibility": "protected"
@@ -1508,8 +1508,8 @@
             "annotations": {},
             "definedInFile": "js/ui/LinkClass.js",
             "lineNumbers": [
-                54,
-                60
+                60,
+                66
             ],
             "name": "_renderTitle",
             "visibility": "protected"
@@ -2817,6 +2817,20 @@
                 37
             ],
             "description": "the target of the link element identifying how to open the link. If no target \\\nis specified but a protocol for the href (e.g. http://) if will use external by default.\n\n**Possible values**\n\n+ **intern** - opens the link intern without refreshing the page (e.g. #/myLink)\n+ **external** - the link will open external\n+ **_blank** - opens in a new window\n",
+            "types": [
+                "String"
+            ]
+        },
+        "iconClass": {
+            "name": "iconClass",
+            "defaultType": "value",
+            "visibility": "public",
+            "value": null,
+            "lineNumbers": [
+                43,
+                43
+            ],
+            "description": "the class name for the icon",
             "types": [
                 "String"
             ]
