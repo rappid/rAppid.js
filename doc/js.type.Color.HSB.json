@@ -1,0 +1,277 @@
+{
+    "methods": [
+        {
+            "type": "Method",
+            "parameter": [
+                {
+                    "types": [
+                        "Function"
+                    ],
+                    "name": "fnc",
+                    "optional": false
+                },
+                {
+                    "types": [
+                        "String"
+                    ],
+                    "name": "cacheId",
+                    "optional": true
+                },
+                {
+                    "types": [
+                        "Number"
+                    ],
+                    "name": "delay",
+                    "optional": true
+                },
+                {
+                    "types": [
+                        "Object"
+                    ],
+                    "name": "scope",
+                    "optional": true
+                },
+                {
+                    "types": [
+                        "Array"
+                    ],
+                    "name": "parameters",
+                    "optional": true
+                },
+                {
+                    "types": [
+                        "String"
+                    ],
+                    "name": "strategy",
+                    "optional": true,
+                    "defaultValue": "loop",
+                    "description": "loop will trigger the function at least every delay, wait will clear the timeout"
+                }
+            ],
+            "annotations": {},
+            "definedInFile": "js/core/Base.js",
+            "lineNumbers": [
+                80,
+                114
+            ],
+            "description": "",
+            "private": "",
+            "definedBy": "js.core.Base",
+            "name": "_debounceFunctionCall",
+            "visibility": "protected"
+        },
+        {
+            "type": "Method",
+            "parameter": [],
+            "annotations": {},
+            "definedInFile": "js/type/Color.js",
+            "lineNumbers": [
+                280,
+                282
+            ],
+            "name": "clone",
+            "visibility": "public"
+        },
+        {
+            "type": "Method",
+            "parameter": [
+                {
+                    "name": "h"
+                },
+                {
+                    "name": "s"
+                },
+                {
+                    "name": "b"
+                }
+            ],
+            "annotations": {},
+            "definedInFile": "js/type/Color.js",
+            "lineNumbers": [
+                205,
+                209
+            ],
+            "definedBy": "js.core.Base",
+            "overwritesMethod": true,
+            "name": "ctor",
+            "visibility": "public"
+        },
+        {
+            "type": "Method",
+            "parameter": [
+                {
+                    "name": "color"
+                }
+            ],
+            "annotations": {},
+            "definedInFile": "js/type/Color.js",
+            "lineNumbers": [
+                11,
+                13
+            ],
+            "definedBy": "js.type.Color",
+            "name": "distanceTo",
+            "visibility": "public"
+        },
+        {
+            "type": "Method",
+            "parameter": [],
+            "annotations": {},
+            "definedInFile": "js/core/Base.js",
+            "lineNumbers": [
+                37,
+                39
+            ],
+            "description": "this is an empty function doing nothing. It can be used as fallback if a method requires a\ncallback function, which hasn't been passed.\n\n```\nfunction myFunction(callback) {\ncallback = callback || this.emptyCallback;\n}\n```\n",
+            "returns": {
+                "types": [
+                    "Function"
+                ],
+                "description": "a function doing nothing"
+            },
+            "definedBy": "js.core.Base",
+            "name": "emptyCallback",
+            "visibility": "public"
+        },
+        {
+            "type": "Method",
+            "parameter": [
+                {
+                    "types": [
+                        "String",
+                        "Array"
+                    ],
+                    "name": "message",
+                    "optional": false,
+                    "description": "the message to log"
+                },
+                {
+                    "types": [
+                        "String"
+                    ],
+                    "name": "level",
+                    "optional": true,
+                    "defaultValue": "\"info\"",
+                    "description": "the service level of (debug, info, warn, error)"
+                }
+            ],
+            "annotations": {},
+            "definedInFile": "js/core/Base.js",
+            "lineNumbers": [
+                47,
+                68
+            ],
+            "description": "logs messages to configured logging functions\n",
+            "definedBy": "js.core.Base",
+            "name": "log",
+            "visibility": "public"
+        },
+        {
+            "type": "Method",
+            "parameter": [],
+            "annotations": {},
+            "definedInFile": "js/core/Base.js",
+            "lineNumbers": [
+                21,
+                23
+            ],
+            "description": "determinate if the application runs in the browser or on node\n",
+            "returns": {
+                "types": [
+                    "Boolean"
+                ],
+                "description": "true if the application runs in a browser"
+            },
+            "definedBy": "js.core.Base",
+            "name": "runsInBrowser",
+            "visibility": "public"
+        },
+        {
+            "type": "Method",
+            "parameter": [],
+            "annotations": {},
+            "definedInFile": "js/type/Color.js",
+            "lineNumbers": [
+                268,
+                270
+            ],
+            "name": "toHSB",
+            "visibility": "public"
+        },
+        {
+            "type": "Method",
+            "parameter": [],
+            "annotations": {},
+            "definedInFile": "js/type/Color.js",
+            "lineNumbers": [
+                276,
+                278
+            ],
+            "name": "toHexString",
+            "visibility": "public"
+        },
+        {
+            "type": "Method",
+            "parameter": [],
+            "annotations": {},
+            "definedInFile": "js/type/Color.js",
+            "lineNumbers": [
+                265,
+                267
+            ],
+            "name": "toLAB",
+            "visibility": "public"
+        },
+        {
+            "type": "Method",
+            "parameter": [],
+            "annotations": {},
+            "definedInFile": "js/type/Color.js",
+            "lineNumbers": [
+                211,
+                259
+            ],
+            "name": "toRGB",
+            "visibility": "public"
+        },
+        {
+            "type": "Method",
+            "parameter": [],
+            "annotations": {},
+            "definedInFile": "js/type/Color.js",
+            "lineNumbers": [
+                272,
+                274
+            ],
+            "name": "toString",
+            "visibility": "public"
+        },
+        {
+            "type": "Method",
+            "parameter": [],
+            "annotations": {},
+            "definedInFile": "js/type/Color.js",
+            "lineNumbers": [
+                261,
+                263
+            ],
+            "name": "toXZY",
+            "visibility": "public"
+        }
+    ],
+    "staticMethods": [],
+    "defaults": {},
+    "properties": {},
+    "fqClassName": "js.type.Color.HSB",
+    "inherit": "js.type.Color",
+    "dependencies": [
+        "js.core.Base"
+    ],
+    "type": "js",
+    "file": "js/type/Color.js",
+    "package": "js.type",
+    "inheritancePath": [
+        "js.type.Color",
+        "js.core.Base"
+    ]
+}

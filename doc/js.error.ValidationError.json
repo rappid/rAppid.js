@@ -1,0 +1,46 @@
+{
+    "methods": [
+        {
+            "type": "Method",
+            "parameter": [
+                {
+                    "name": "message"
+                },
+                {
+                    "name": "statusCode"
+                },
+                {
+                    "name": "statusText"
+                }
+            ],
+            "annotations": {},
+            "definedInFile": "js/error/ValidationError.js",
+            "lineNumbers": [
+                4,
+                11
+            ],
+            "name": "ctor",
+            "visibility": "public"
+        },
+        {
+            "type": "Method",
+            "parameter": [],
+            "annotations": {},
+            "definedInFile": "js/error/ValidationError.js",
+            "lineNumbers": [
+                13,
+                22
+            ],
+            "name": "toString",
+            "visibility": "public"
+        }
+    ],
+    "staticMethods": [],
+    "defaults": {},
+    "properties": {},
+    "fqClassName": "js.error.ValidationError",
+    "dependencies": [],
+    "type": "js",
+    "file": "js/error/ValidationError.js",
+    "package": "js.error"
+}

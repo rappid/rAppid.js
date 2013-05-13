@@ -1,0 +1,150 @@
+{
+    "methods": [
+        {
+            "type": "Method",
+            "parameter": [],
+            "annotations": {},
+            "definedInFile": "js/svg/Svg.js",
+            "lineNumbers": [
+                14,
+                20
+            ],
+            "name": "ctor",
+            "visibility": "public"
+        },
+        {
+            "type": "Method",
+            "parameter": [],
+            "annotations": {},
+            "definedInFile": "js/svg/Svg.js",
+            "lineNumbers": [
+                39,
+                44
+            ],
+            "name": "globalToLocalFactor",
+            "visibility": "public"
+        },
+        {
+            "type": "Method",
+            "parameter": [],
+            "annotations": {},
+            "definedInFile": "js/svg/Svg.js",
+            "lineNumbers": [
+                32,
+                37
+            ],
+            "name": "localToGlobalFactor",
+            "visibility": "public"
+        },
+        {
+            "type": "Method",
+            "parameter": [],
+            "annotations": {},
+            "definedInFile": "js/svg/Svg.js",
+            "lineNumbers": [
+                46,
+                64
+            ],
+            "name": "save",
+            "visibility": "public"
+        },
+        {
+            "type": "Method",
+            "parameter": [
+                {
+                    "name": "x"
+                },
+                {
+                    "name": "y"
+                },
+                {
+                    "name": "width"
+                },
+                {
+                    "name": "height"
+                }
+            ],
+            "annotations": {},
+            "definedInFile": "js/svg/Svg.js",
+            "lineNumbers": [
+                22,
+                30
+            ],
+            "name": "setViewBox",
+            "visibility": "public"
+        }
+    ],
+    "staticMethods": [],
+    "defaults": {
+        "tagName": {
+            "name": "tagName",
+            "defaultType": "value",
+            "visibility": "public",
+            "value": "svg",
+            "lineNumbers": [
+                6,
+                6
+            ]
+        },
+        "viewBox": {
+            "name": "viewBox",
+            "defaultType": "value",
+            "visibility": "public",
+            "value": "0 0 100 100",
+            "lineNumbers": [
+                7,
+                7
+            ]
+        },
+        "hidden": {
+            "name": "hidden",
+            "defaultType": "value",
+            "visibility": "public",
+            "value": null,
+            "lineNumbers": [
+                9,
+                9
+            ]
+        },
+        "version": {
+            "name": "version",
+            "defaultType": "value",
+            "visibility": "public",
+            "value": "1.2",
+            "definedBy": "js.svg.SvgDescriptor"
+        }
+    },
+    "properties": {
+        "$classAttributes": {
+            "name": "$classAttributes",
+            "visibility": "private",
+            "definedInFile": "js/svg/Svg.js",
+            "lineNumbers": [
+                12,
+                12
+            ],
+            "propertyType": "complex",
+            "value": " [\"defs\", \"hidden\"]"
+        }
+    },
+    "fqClassName": "js.svg.Svg",
+    "inherit": "js.svg.SvgDescriptor",
+    "exports": {
+        "FontManager": {
+            "type": "InnerClass",
+            "fqClassName": "js.svg.Svg.FontManager"
+        }
+    },
+    "dependencies": [
+        "js.core.Base",
+        "js.svg.SvgElement",
+        "xaml!js.svg.SvgDescriptor"
+    ],
+    "type": "js",
+    "file": "js/svg/Svg.js",
+    "package": "js.svg",
+    "inheritancePath": [
+        "js.svg.SvgDescriptor",
+        "js.svg.SvgClass"
+    ]
+}

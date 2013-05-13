@@ -1,0 +1,62 @@
+{
+    "methods": [
+        {
+            "type": "Method",
+            "parameter": [
+                {
+                    "name": "context"
+                }
+            ],
+            "annotations": {},
+            "definedInFile": "srv/core/HttpError.js",
+            "lineNumbers": [
+                14,
+                16
+            ],
+            "name": "_beforeSend",
+            "visibility": "protected"
+        },
+        {
+            "type": "Method",
+            "parameter": [
+                {
+                    "name": "message"
+                },
+                {
+                    "name": "statusCode"
+                },
+                {
+                    "name": "statusText"
+                }
+            ],
+            "annotations": {},
+            "definedInFile": "srv/core/HttpError.js",
+            "lineNumbers": [
+                4,
+                12
+            ],
+            "name": "ctor",
+            "visibility": "public"
+        },
+        {
+            "type": "Method",
+            "parameter": [],
+            "annotations": {},
+            "definedInFile": "srv/core/HttpError.js",
+            "lineNumbers": [
+                18,
+                27
+            ],
+            "name": "toString",
+            "visibility": "public"
+        }
+    ],
+    "staticMethods": [],
+    "defaults": {},
+    "properties": {},
+    "fqClassName": "srv.core.HttpError",
+    "dependencies": [],
+    "type": "js",
+    "file": "srv/core/HttpError.js",
+    "package": "srv.core"
+}

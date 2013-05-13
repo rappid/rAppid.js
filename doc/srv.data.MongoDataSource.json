@@ -1,0 +1,425 @@
+{
+    "methods": [
+        {
+            "type": "Method",
+            "parameter": [
+                {
+                    "name": "model"
+                }
+            ],
+            "annotations": {},
+            "definedInFile": "srv/data/MongoDataSource.js",
+            "lineNumbers": [
+                471,
+                481
+            ],
+            "name": "_composeContext",
+            "visibility": "protected"
+        },
+        {
+            "type": "Method",
+            "parameter": [
+                {
+                    "name": "id"
+                }
+            ],
+            "annotations": {},
+            "definedInFile": "srv/data/MongoDataSource.js",
+            "lineNumbers": [
+                148,
+                150
+            ],
+            "name": "_createIdObject",
+            "visibility": "protected"
+        },
+        {
+            "type": "Method",
+            "parameter": [
+                {
+                    "name": "model"
+                }
+            ],
+            "annotations": {},
+            "definedInFile": "srv/data/MongoDataSource.js",
+            "lineNumbers": [
+                144,
+                146
+            ],
+            "name": "_getConfigurationForModel",
+            "visibility": "protected"
+        },
+        {
+            "type": "Method",
+            "parameter": [
+                {
+                    "name": "factory"
+                },
+                {
+                    "name": "model"
+                },
+                {
+                    "name": "value"
+                }
+            ],
+            "annotations": {},
+            "definedInFile": "srv/data/MongoDataSource.js",
+            "lineNumbers": [
+                482,
+                510
+            ],
+            "name": "_getContext",
+            "visibility": "protected"
+        },
+        {
+            "type": "Method",
+            "parameter": [
+                {
+                    "name": "collection"
+                }
+            ],
+            "annotations": {},
+            "definedInFile": "srv/data/MongoDataSource.js",
+            "lineNumbers": [
+                463,
+                469
+            ],
+            "name": "_getWhereConditionForCollection",
+            "visibility": "protected"
+        },
+        {
+            "type": "Method",
+            "parameter": [
+                {
+                    "name": "model"
+                }
+            ],
+            "annotations": {},
+            "definedInFile": "srv/data/MongoDataSource.js",
+            "lineNumbers": [
+                450,
+                461
+            ],
+            "name": "_getWhereConditionForModel",
+            "visibility": "protected"
+        },
+        {
+            "type": "Method",
+            "parameter": [
+                {
+                    "name": "model"
+                },
+                {
+                    "name": "options"
+                },
+                {
+                    "name": "callback"
+                }
+            ],
+            "annotations": {},
+            "definedInFile": "srv/data/MongoDataSource.js",
+            "lineNumbers": [
+                211,
+                289
+            ],
+            "name": "_saveModel",
+            "visibility": "protected"
+        },
+        {
+            "type": "Method",
+            "parameter": [
+                {
+                    "name": "callback"
+                }
+            ],
+            "annotations": {},
+            "definedInFile": "srv/data/MongoDataSource.js",
+            "lineNumbers": [
+                135,
+                142
+            ],
+            "name": "connect",
+            "visibility": "public"
+        },
+        {
+            "type": "Method",
+            "parameter": [
+                {
+                    "name": "collectionName"
+                },
+                {
+                    "name": "hook"
+                },
+                {
+                    "name": "callback"
+                }
+            ],
+            "annotations": {},
+            "definedInFile": "srv/data/MongoDataSource.js",
+            "lineNumbers": [
+                187,
+                209
+            ],
+            "name": "connectCollection",
+            "visibility": "public"
+        },
+        {
+            "type": "Method",
+            "parameter": [
+                {
+                    "name": "collection"
+                },
+                {
+                    "name": "options"
+                },
+                {
+                    "name": "callback"
+                }
+            ],
+            "annotations": {},
+            "definedInFile": "srv/data/MongoDataSource.js",
+            "lineNumbers": [
+                390,
+                441
+            ],
+            "name": "countCollection",
+            "visibility": "public"
+        },
+        {
+            "type": "Method",
+            "parameter": [
+                {
+                    "name": "contextModel"
+                },
+                {
+                    "name": "properties"
+                },
+                {
+                    "name": "parentContext"
+                }
+            ],
+            "annotations": {},
+            "definedInFile": "srv/data/MongoDataSource.js",
+            "lineNumbers": [
+                512,
+                514
+            ],
+            "name": "createContext",
+            "visibility": "public"
+        },
+        {
+            "type": "Method",
+            "parameter": [
+                {
+                    "name": "childFactory"
+                },
+                {
+                    "name": "requestor"
+                }
+            ],
+            "annotations": {},
+            "definedInFile": "srv/data/MongoDataSource.js",
+            "lineNumbers": [
+                443,
+                448
+            ],
+            "name": "getContextForChild",
+            "visibility": "public"
+        },
+        {
+            "type": "Method",
+            "parameter": [
+                {
+                    "name": "collectionPage"
+                },
+                {
+                    "name": "options"
+                },
+                {
+                    "name": "callback"
+                }
+            ],
+            "annotations": {},
+            "definedInFile": "srv/data/MongoDataSource.js",
+            "lineNumbers": [
+                314,
+                388
+            ],
+            "name": "loadCollectionPage",
+            "visibility": "public"
+        },
+        {
+            "type": "Method",
+            "parameter": [
+                {
+                    "name": "model"
+                },
+                {
+                    "name": "options"
+                },
+                {
+                    "name": "callback"
+                }
+            ],
+            "annotations": {},
+            "definedInFile": "srv/data/MongoDataSource.js",
+            "lineNumbers": [
+                152,
+                185
+            ],
+            "name": "loadModel",
+            "visibility": "public"
+        },
+        {
+            "type": "Method",
+            "parameter": [
+                {
+                    "name": "model"
+                },
+                {
+                    "name": "options"
+                },
+                {
+                    "name": "callback"
+                }
+            ],
+            "annotations": {},
+            "definedInFile": "srv/data/MongoDataSource.js",
+            "lineNumbers": [
+                291,
+                312
+            ],
+            "name": "removeModel",
+            "visibility": "public"
+        }
+    ],
+    "staticMethods": [],
+    "defaults": {
+        "username": {
+            "name": "username",
+            "defaultType": "value",
+            "visibility": "public",
+            "value": null,
+            "lineNumbers": [
+                121,
+                121
+            ]
+        },
+        "password": {
+            "name": "password",
+            "defaultType": "value",
+            "visibility": "public",
+            "value": null,
+            "lineNumbers": [
+                122,
+                122
+            ]
+        },
+        "collectionPageSize": {
+            "name": "collectionPageSize",
+            "defaultType": "value",
+            "visibility": "public",
+            "value": 500,
+            "lineNumbers": [
+                123,
+                123
+            ]
+        },
+        "host": {
+            "name": "host",
+            "defaultType": "value",
+            "visibility": "public",
+            "value": "localhost",
+            "lineNumbers": [
+                125,
+                125
+            ]
+        },
+        "port": {
+            "name": "port",
+            "defaultType": "value",
+            "visibility": "public",
+            "value": 27017,
+            "lineNumbers": [
+                126,
+                126
+            ]
+        },
+        "poolSize": {
+            "name": "poolSize",
+            "defaultType": "value",
+            "visibility": "public",
+            "value": 2,
+            "lineNumbers": [
+                127,
+                127
+            ]
+        },
+        "database": {
+            "name": "database",
+            "defaultType": "value",
+            "visibility": "public",
+            "value": null,
+            "lineNumbers": [
+                128,
+                128
+            ]
+        },
+        "autoReconnect": {
+            "name": "autoReconnect",
+            "defaultType": "value",
+            "visibility": "public",
+            "value": true,
+            "lineNumbers": [
+                129,
+                129
+            ]
+        },
+        "w": {
+            "name": "w",
+            "defaultType": "value",
+            "visibility": "public",
+            "value": 1,
+            "lineNumbers": [
+                130,
+                130
+            ]
+        }
+    },
+    "properties": {
+        "$defaultProcessorFactory": {
+            "name": "$defaultProcessorFactory",
+            "visibility": "private",
+            "definedInFile": "srv/data/MongoDataSource.js",
+            "lineNumbers": [
+                133,
+                133
+            ],
+            "propertyType": "complex",
+            "value": " MongoDataProcessor"
+        }
+    },
+    "fqClassName": "srv.data.MongoDataSource",
+    "inherit": "js.data.DataSource.Processor",
+    "exports": {
+        "Context": {
+            "type": "InnerClass",
+            "fqClassName": "js.data.MongoDataSource.Context"
+        }
+    },
+    "dependencies": [
+        "flow",
+        "js.data.Collection",
+        "js.data.DataSource",
+        "js.data.Model",
+        "mongodb",
+        "srv.lib.MongoQueryComposer",
+        "underscore"
+    ],
+    "description": " give entities an ID, so the caching works correctly\n correct key of id object",
+    "type": "js",
+    "file": "srv/data/MongoDataSource.js",
+    "package": "srv.data",
+    "inheritancePath": [
+        "js.data.DataSource.Processor"
+    ]
+}

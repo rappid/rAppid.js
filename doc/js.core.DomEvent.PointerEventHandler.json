@@ -1,0 +1,40 @@
+{
+    "methods": [
+        {
+            "type": "Method",
+            "parameter": [
+                {
+                    "name": "domEvent"
+                }
+            ],
+            "annotations": {},
+            "definedInFile": "js/core/DomElement.js",
+            "lineNumbers": [
+                889,
+                891
+            ],
+            "name": "_createEvent",
+            "visibility": "protected"
+        }
+    ],
+    "staticMethods": [],
+    "defaults": {},
+    "properties": {},
+    "fqClassName": "js.core.DomEvent.PointerEventHandler",
+    "dependencies": [
+        "inherit",
+        "js.core.Base",
+        "js.core.Component",
+        "js.core.Content",
+        "js.core.EventDispatcher",
+        "require",
+        "underscore"
+    ],
+    "inherit": "js.core.DomElement.EventHandler",
+    "type": "js",
+    "file": "js/core/DomElement.js",
+    "package": "js.core",
+    "inheritancePath": [
+        "js.core.DomElement.EventHandler"
+    ]
+}

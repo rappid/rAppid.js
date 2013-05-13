@@ -1,0 +1,73 @@
+{
+    "methods": [
+        {
+            "type": "Method",
+            "parameter": [
+                {
+                    "name": "context"
+                }
+            ],
+            "annotations": {},
+            "definedInFile": "srv/error/MethodNotAllowedError.js",
+            "lineNumbers": [
+                8,
+                10
+            ],
+            "definedBy": "srv.core.HttpError",
+            "overwritesMethod": true,
+            "name": "_beforeSend",
+            "visibility": "protected"
+        },
+        {
+            "type": "Method",
+            "parameter": [
+                {
+                    "name": "message"
+                },
+                {
+                    "name": "allowedMethods"
+                },
+                {
+                    "name": "statusText"
+                }
+            ],
+            "annotations": {},
+            "definedInFile": "srv/error/MethodNotAllowedError.js",
+            "lineNumbers": [
+                3,
+                6
+            ],
+            "definedBy": "srv.core.HttpError",
+            "overwritesMethod": true,
+            "name": "ctor",
+            "visibility": "public"
+        },
+        {
+            "type": "Method",
+            "parameter": [],
+            "annotations": {},
+            "definedInFile": "srv/core/HttpError.js",
+            "lineNumbers": [
+                18,
+                27
+            ],
+            "definedBy": "srv.core.HttpError",
+            "name": "toString",
+            "visibility": "public"
+        }
+    ],
+    "staticMethods": [],
+    "defaults": {},
+    "properties": {},
+    "fqClassName": "srv.error.MethodNotAllowedError",
+    "inherit": "srv.core.HttpError",
+    "dependencies": [
+        "srv.core.HttpError"
+    ],
+    "type": "js",
+    "file": "srv/error/MethodNotAllowedError.js",
+    "package": "srv.error",
+    "inheritancePath": [
+        "srv.core.HttpError"
+    ]
+}

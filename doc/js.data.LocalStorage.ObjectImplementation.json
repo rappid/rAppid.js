@@ -1,0 +1,91 @@
+{
+    "methods": [
+        {
+            "type": "Method",
+            "parameter": [],
+            "annotations": {},
+            "definedInFile": "js/data/LocalStorage.js",
+            "lineNumbers": [
+                108,
+                110
+            ],
+            "name": "clear",
+            "visibility": "public"
+        },
+        {
+            "type": "Method",
+            "parameter": [],
+            "annotations": {},
+            "definedInFile": "js/data/LocalStorage.js",
+            "lineNumbers": [
+                92,
+                94
+            ],
+            "name": "ctor",
+            "visibility": "public"
+        },
+        {
+            "type": "Method",
+            "parameter": [
+                {
+                    "name": "key"
+                }
+            ],
+            "annotations": {},
+            "definedInFile": "js/data/LocalStorage.js",
+            "lineNumbers": [
+                96,
+                98
+            ],
+            "name": "getItem",
+            "visibility": "public"
+        },
+        {
+            "type": "Method",
+            "parameter": [
+                {
+                    "name": "key"
+                }
+            ],
+            "annotations": {},
+            "definedInFile": "js/data/LocalStorage.js",
+            "lineNumbers": [
+                104,
+                106
+            ],
+            "name": "removeItem",
+            "visibility": "public"
+        },
+        {
+            "type": "Method",
+            "parameter": [
+                {
+                    "name": "key"
+                },
+                {
+                    "name": "value"
+                }
+            ],
+            "annotations": {},
+            "definedInFile": "js/data/LocalStorage.js",
+            "lineNumbers": [
+                100,
+                102
+            ],
+            "name": "setItem",
+            "visibility": "public"
+        }
+    ],
+    "staticMethods": [],
+    "defaults": {},
+    "properties": {},
+    "fqClassName": "js.data.LocalStorage.ObjectImplementation",
+    "dependencies": [
+        "inherit",
+        "js.core.Component"
+    ],
+    "description": " TODO: implement length as getter",
+    "type": "js",
+    "file": "js/data/LocalStorage.js",
+    "package": "js.data"
+}
