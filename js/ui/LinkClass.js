@@ -34,7 +34,13 @@ define(["js/ui/View"], function(View) {
              *
              * @type String
              */
-            target: "intern"
+            target: "intern",
+
+            /***
+             * the class name for the icon
+             * @type String
+             */
+            iconClass: null
         },
 
         _renderIconClass: function (iconClass) {
