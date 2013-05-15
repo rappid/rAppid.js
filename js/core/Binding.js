@@ -393,9 +393,11 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
                     this.$subBinding.invalidateValueCache();
                     return this.$subBinding.getValue();
                 } else {
-                    if(this.$cachedValue !== undefined){
+
+                    if(this.$cachedValue !== undefined && !this.$jsonObject){
                         return this.$cachedValue;
                     }
+
                     this.$originalValue = undefined;
                     if (this.$.fnc && !this.$jsonObject) {
                         this.$originalValue = this.$.fnc.apply(this.$.scope, this._getFncParameters());

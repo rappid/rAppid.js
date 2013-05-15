@@ -61,7 +61,6 @@ describe('js.core.Binding', function () {
                     }.onChange('m1'),
 
 
-
                     // MOCK FUNCTION
                     getScopeForFncName: function (name) {
                         if (this[name]) {
@@ -95,7 +94,7 @@ describe('js.core.Binding', function () {
 
     describe('#one-way-binding', function () {
 
-        it('simple value set should set value on binded target', function () {
+        it('simple value set should set value on bound target', function () {
 
             var b1 = new C.Binding({scope: model, path: 'a', target: target, targetKey: "val"});
             model.set("a", "A");
@@ -175,7 +174,7 @@ describe('js.core.Binding', function () {
 
     describe('#BindingCreator', function () {
 
-        it("should have the correct values, even with activated caching", function() {
+        it("should have the correct values, even with activated caching", function () {
 
             var m = new (C.Bindable.inherit({
                 defaults: {
@@ -275,12 +274,12 @@ describe('js.core.Binding', function () {
             extendedTarget.get('val').should.equal(false);
         });
 
-        it("address().toString() should return value of toString()", function(){
+        it("address().toString() should return value of toString()", function () {
             var Person = ExtendedClass.inherit({
                 defaults: {
                     address: null
                 },
-                address: function(){
+                address: function () {
                     return this.$.address;
                 }.onChange('address')
             });
@@ -290,7 +289,7 @@ describe('js.core.Binding', function () {
                     city: "",
                     street: ""
                 },
-                toString: function(){
+                toString: function () {
 
                     return this.$.city + " " + this.$.street;
                 }
@@ -307,24 +306,24 @@ describe('js.core.Binding', function () {
 
             should.not.exist(target.get('val'));
 
-            person.set('address',address);
+            person.set('address', address);
 
             should.exist(target.get('val'));
             target.get('val').should.equal("City1 Street1");
         });
 
-        it("function binding on non bindables should return correct value", function(){
+        it("function binding on non bindables should return correct value", function () {
 
 
-            var jsClass = function(name){
+            var jsClass = function (name) {
                 this.init(name);
             };
 
             jsClass.prototype = {
-                init: function(name){
+                init: function (name) {
                     this.name = name;
                 },
-                toString: function(){
+                toString: function () {
                     return this.name;
                 }
             };
@@ -346,6 +345,26 @@ describe('js.core.Binding', function () {
             scope.set('person', null);
 
             expect(target.get('val')).to.be.equal(undefined);
+
+        });
+
+        it("function bindings returning json object should return correct value", function () {
+
+            var obj = {
+                foo: "bar"
+            };
+
+            var target = new ExtendedClass();
+            var scope = new ExtendedClass();
+
+            scope.PARAMETER = function () {
+                return obj;
+            };
+
+            new C.Binding({scope: scope, path: "PARAMETER().foo", target: target, targetKey: 'val'}).triggerBinding();
+
+            expect(target.get('val')).to.exist;
+            expect(target.get('val')).to.be.equal(obj.foo);
 
         });
 
