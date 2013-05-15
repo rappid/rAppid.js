@@ -2,12 +2,42 @@ define(["js/ui/View", "js/core/Content", "js/ui/Button", "underscore"], function
 
     return View.inherit("js.ui.MenuButtonClass", {
         defaults: {
-            'tagName': 'div',
-            'componentClass': 'btn-group menu-button',
-            'menuClassName': "dropdown-menu",
-            'menuVisible': false
+            /***
+             * The label of the button.
+             *
+             * @type String
+             */
+            label: "",
+            componentClass: 'btn-group menu-button',
+            /**
+             * The class name of the menu.
+             *
+             * @type String
+             */
+            menuClassName: "dropdown-menu",
+            /**
+             * Set's the menu visible.
+             *
+             * @type Boolean
+             */
+            menuVisible: false,
+            /**
+             * The class of the inner span in the link element
+             *
+             * @type String
+             */
+            labelClass: "",
+
+            /**
+             * The class of the inner link element
+             *
+             * @type String
+             */
+            buttonClass: ""
+
         },
         $defaultContentName: 'menu',
+
         $instances: [],
 
         addChild: function (child) {
