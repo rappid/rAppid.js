@@ -274,7 +274,7 @@ if (typeof requirejs !== "undefined") {
                             });
 
                         }
-                    });
+                    }, parameter);
                 }
             });
 
@@ -429,7 +429,7 @@ if (typeof requirejs !== "undefined") {
 
     var interCommunicationBus;
 
-    ApplicationContext.prototype.createApplicationInstance = function (window, callback) {
+    ApplicationContext.prototype.createApplicationInstance = function (window, callback, parameter) {
 
         var document,
             time = (new Date()).getTime();
@@ -456,6 +456,7 @@ if (typeof requirejs !== "undefined") {
             var injection = stage.$injection = new Injection(null, null, stage);
 
             stage.$environment = new Bindable();
+            stage.$parameter = parameter;
 
             injection.addInstance(stage.$bus);
             injection.addInstance(stage.$history);
