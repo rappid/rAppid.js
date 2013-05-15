@@ -269,25 +269,57 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
                     }
                 }
 
+                var dashKey,
+                    camelCaseKey,
+                    transformedKey,
+                    i;
 
-                var transformedKey = HtmlElement.transformCache[key];
+                if (/-/.test(key)) {
+                    // has dash
+                    dashKey = key;
 
-                if (!transformedKey) {
-                    // transform key
-                    var split = key.split(/(?=[A-Z])/);
-                    transformedKey = split[0];
-                    for (var i = 1; i < split.length; i++) {
-                        transformedKey += "-" + split[i].charAt(0).toLowerCase() + split[i].substr(1);
+                    transformedKey = HtmlElement.dashFormatTransformCache[key];
+
+                    if (!transformedKey) {
+
+                        var parts = key.split("-");
+                        // transform key
+                        transformedKey = parts[0];
+                        for (i = 1; i < parts.length; i++) {
+                            transformedKey += parts[i].charAt(0).toUpperCase() + parts[i].substr(1);
+                        }
+
+                        HtmlElement.dashFormatTransformCache[key] = transformedKey;
                     }
 
-                    HtmlElement.transformCache[key] = transformedKey;
+                    camelCaseKey = transformedKey;
+
+                } else {
+
+                    camelCaseKey = key;
+
+                    transformedKey = HtmlElement.camelCaseFormatTransformCache[key];
+
+                    if (!transformedKey) {
+                        // transform key
+                        var split = key.split(/(?=[A-Z])/);
+                        transformedKey = split[0];
+                        for (i = 1; i < split.length; i++) {
+                            transformedKey += "-" + split[i].charAt(0).toLowerCase() + split[i].substr(1);
+                        }
+
+                        HtmlElement.camelCaseFormatTransformCache[key] = transformedKey;
+                    }
+
+                    dashKey = transformedKey;
                 }
 
-                if (transformedKey in this.$el.style) {
+
+                if (camelCaseKey in this.$el.style) {
                     if (value != null) {
-                        this.$el.style.setProperty(transformedKey, value, null);
+                        this.$el.style.setProperty(dashKey, value, null);
                     } else {
-                        this.$el.style.removeProperty(transformedKey);
+                        this.$el.style.removeProperty(dashKey);
                     }
                 }
 
@@ -323,7 +355,8 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
         }
     });
 
-    HtmlElement.transformCache = {};
+    HtmlElement.camelCaseFormatTransformCache = {};
+    HtmlElement.dashFormatTransformCache = {};
 
     HtmlElement.HTML_Namespace = HTML_Namespace;
 
