@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <ui:MenuButtonClass xmlns="http://www.w3.org/1999/xhtml" xmlns:js="js.core" xmlns:ui="js.ui">
     <js:Template name="layout">
-        <ui:Button class="dropdown-toggle">
+        <ui:Button class="dropdown-toggle {buttonClass}">
             <js:Template name="layout">
-                <ui:PlaceHolder name="icon"/><span>{label} </span>
+                <ui:PlaceHolder name="icon"/><span class="{labelClass}">{label} </span>
                 <span class="caret"/>
             </js:Template>
         </ui:Button>
