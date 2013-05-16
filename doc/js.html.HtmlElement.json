@@ -962,8 +962,8 @@
             "annotations": {},
             "definedInFile": "js/html/HtmlElement.js",
             "lineNumbers": [
-                299,
-                323
+                331,
+                355
             ],
             "name": "_isStyleAttribute",
             "visibility": "protected"
@@ -1128,7 +1128,7 @@
             "definedInFile": "js/html/HtmlElement.js",
             "lineNumbers": [
                 264,
-                297
+                329
             ],
             "definedBy": "js.core.DomElement",
             "overwritesMethod": true,

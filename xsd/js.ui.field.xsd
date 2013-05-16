@@ -7,6 +7,7 @@
     <element name="RadioGroup" type="ns:RadioGroup"/>
     <element name="Text" type="ns:Text"/>
     <element name="TextArea" type="ns:TextArea"/>
+    <element name="TextClass" type="ns:TextClass"/>
     <complexType name="Password">
         <complexContent>
             <extension base="ns:Text">
@@ -16,7 +17,6 @@
                 <sequence>
                     <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
                 </sequence>
-                <attribute name="type" default="password"/>
             </extension>
         </complexContent>
     </complexType>
@@ -34,13 +34,17 @@
     </complexType>
     <complexType name="Text">
         <complexContent>
-            <extension base="ns1:Field">
+            <extension base="ns:TextClass">
                 <annotation>
                     <documentation source="http://www.rappidjs.com/#/api/js.ui.field.Text"></documentation>
                 </annotation>
                 <sequence>
                     <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
                 </sequence>
+                <attribute name="type" default="text"/>
+                <attribute name="value"/>
+                <attribute name="size" default="large"/>
+                <attribute name="placeholder"/>
             </extension>
         </complexContent>
     </complexType>
@@ -53,6 +57,22 @@
                 <sequence>
                     <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
                 </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+    <complexType name="TextClass">
+        <complexContent>
+            <extension base="ns1:Field">
+                <annotation>
+                    <documentation source="http://www.rappidjs.com/#/api/js.ui.field.TextClass"></documentation>
+                </annotation>
+                <sequence>
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+                <attribute name="type" default="text"/>
+                <attribute name="value"/>
+                <attribute name="size" default="large"/>
+                <attribute name="placeholder"/>
             </extension>
         </complexContent>
     </complexType>

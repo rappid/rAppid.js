@@ -566,8 +566,46 @@ is specified but a protocol for the href (e.g. http://) if will use external by 
                 <sequence>
                     <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
                 </sequence>
-                <attribute name="menuClassName" default="dropdown-menu"/>
-                <attribute name="menuVisible"/>
+                <attribute name="label">
+                    <annotation>
+                        <documentation>
+                        The label of the button.
+
+                    </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="menuClassName" default="dropdown-menu">
+                    <annotation>
+                        <documentation>
+                        The class name of the menu.
+
+                    </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="menuVisible">
+                    <annotation>
+                        <documentation>
+                        Set's the menu visible.
+
+                    </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="labelClass">
+                    <annotation>
+                        <documentation>
+                        The class of the inner span in the link element
+
+                    </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="buttonClass">
+                    <annotation>
+                        <documentation>
+                        The class of the inner link element
+
+                    </documentation>
+                    </annotation>
+                </attribute>
             </extension>
         </complexContent>
     </complexType>
@@ -580,8 +618,46 @@ is specified but a protocol for the href (e.g. http://) if will use external by 
                 <sequence>
                     <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
                 </sequence>
-                <attribute name="menuClassName" default="dropdown-menu"/>
-                <attribute name="menuVisible"/>
+                <attribute name="label">
+                    <annotation>
+                        <documentation>
+                        The label of the button.
+
+                    </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="menuClassName" default="dropdown-menu">
+                    <annotation>
+                        <documentation>
+                        The class name of the menu.
+
+                    </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="menuVisible">
+                    <annotation>
+                        <documentation>
+                        Set's the menu visible.
+
+                    </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="labelClass">
+                    <annotation>
+                        <documentation>
+                        The class of the inner span in the link element
+
+                    </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="buttonClass">
+                    <annotation>
+                        <documentation>
+                        The class of the inner link element
+
+                    </documentation>
+                    </annotation>
+                </attribute>
             </extension>
         </complexContent>
     </complexType>

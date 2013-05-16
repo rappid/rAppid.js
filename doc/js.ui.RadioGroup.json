@@ -995,8 +995,8 @@
             "annotations": {},
             "definedInFile": "js/html/HtmlElement.js",
             "lineNumbers": [
-                299,
-                323
+                331,
+                355
             ],
             "definedBy": "js.html.HtmlElement",
             "name": "_isStyleAttribute",

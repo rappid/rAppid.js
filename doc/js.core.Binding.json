@@ -254,8 +254,8 @@
             "annotations": {},
             "definedInFile": "js/core/Binding.js",
             "lineNumbers": [
-                462,
-                471
+                464,
+                473
             ],
             "description": "",
             "name": "addTarget",
@@ -311,8 +311,8 @@
             "annotations": {},
             "definedInFile": "js/core/Binding.js",
             "lineNumbers": [
-                493,
-                519
+                495,
+                521
             ],
             "name": "create",
             "visibility": "public"
@@ -375,8 +375,8 @@
             "annotations": {},
             "definedInFile": "js/core/Binding.js",
             "lineNumbers": [
-                421,
-                427
+                423,
+                429
             ],
             "description": "Returns the value in the context of the surrounding bindings",
             "returns": {
@@ -393,8 +393,8 @@
             "annotations": {},
             "definedInFile": "js/core/Binding.js",
             "lineNumbers": [
-                453,
-                455
+                455,
+                457
             ],
             "name": "getTargets",
             "visibility": "public"
@@ -406,7 +406,7 @@
             "definedInFile": "js/core/Binding.js",
             "lineNumbers": [
                 391,
-                411
+                413
             ],
             "description": "Returns the transformed value of the binding or null, if the binding path is not present",
             "returns": {
@@ -435,8 +435,8 @@
             "annotations": {},
             "definedInFile": "js/core/Binding.js",
             "lineNumbers": [
-                413,
-                415
+                415,
+                417
             ],
             "name": "invalidateValueCache",
             "visibility": "public"
@@ -496,8 +496,8 @@
             "annotations": {},
             "definedInFile": "js/core/Binding.js",
             "lineNumbers": [
-                477,
-                491
+                479,
+                493
             ],
             "description": "",
             "name": "removeTarget",
@@ -529,8 +529,8 @@
             "annotations": {},
             "definedInFile": "js/core/Binding.js",
             "lineNumbers": [
-                449,
-                451
+                451,
+                453
             ],
             "name": "toString",
             "visibility": "public"
@@ -609,8 +609,8 @@
             "annotations": {},
             "definedInFile": "js/core/Binding.js",
             "lineNumbers": [
-                431,
-                448
+                433,
+                450
             ],
             "description": "This method triggers the binding and syncs the target with the scope",
             "name": "triggerBinding",

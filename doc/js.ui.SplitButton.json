@@ -12,21 +12,29 @@
             "visibility": "public",
             "value": "dropdown-menu",
             "lineNumbers": [
-                7,
-                7
+                17,
+                17
+            ],
+            "description": "The class name of the menu.\n",
+            "types": [
+                "String"
             ],
             "definedBy": "js.ui.MenuButtonClass"
         },
-        "tagName": {
-            "name": "tagName",
+        "label": {
+            "name": "label",
             "defaultType": "value",
             "visibility": "public",
-            "value": "div",
+            "value": "",
             "lineNumbers": [
-                4,
-                4
+                10,
+                10
             ],
-            "definedBy": "js.ui.View"
+            "description": "The label of the button.\n",
+            "types": [
+                "String"
+            ],
+            "definedBy": "js.ui.MenuButtonClass"
         },
         "componentClass": {
             "name": "componentClass",
@@ -49,10 +57,55 @@
             "visibility": "public",
             "value": false,
             "lineNumbers": [
-                8,
-                8
+                23,
+                23
+            ],
+            "description": "Set's the menu visible.\n",
+            "types": [
+                "Boolean"
             ],
             "definedBy": "js.ui.MenuButtonClass"
+        },
+        "labelClass": {
+            "name": "labelClass",
+            "defaultType": "value",
+            "visibility": "public",
+            "value": "",
+            "lineNumbers": [
+                29,
+                29
+            ],
+            "description": "The class of the inner span in the link element\n",
+            "types": [
+                "String"
+            ],
+            "definedBy": "js.ui.MenuButtonClass"
+        },
+        "buttonClass": {
+            "name": "buttonClass",
+            "defaultType": "value",
+            "visibility": "public",
+            "value": "",
+            "lineNumbers": [
+                36,
+                36
+            ],
+            "description": "The class of the inner link element\n",
+            "types": [
+                "String"
+            ],
+            "definedBy": "js.ui.MenuButtonClass"
+        },
+        "tagName": {
+            "name": "tagName",
+            "defaultType": "value",
+            "visibility": "public",
+            "value": "div",
+            "lineNumbers": [
+                4,
+                4
+            ],
+            "definedBy": "js.ui.View"
         },
         "selected": {
             "name": "selected",
@@ -413,8 +466,8 @@
             "annotations": {},
             "definedInFile": "js/ui/MenuButtonClass.js",
             "lineNumbers": [
-                20,
-                23
+                50,
+                53
             ],
             "definedBy": "js.ui.MenuButtonClass",
             "name": "_collectButton",
@@ -1214,8 +1267,8 @@
             "annotations": {},
             "definedInFile": "js/html/HtmlElement.js",
             "lineNumbers": [
-                299,
-                323
+                331,
+                355
             ],
             "definedBy": "js.html.HtmlElement",
             "name": "_isStyleAttribute",
@@ -1339,8 +1392,8 @@
             "annotations": {},
             "definedInFile": "js/ui/MenuButtonClass.js",
             "lineNumbers": [
-                82,
-                84
+                112,
+                114
             ],
             "definedBy": "js.ui.MenuButtonClass",
             "name": "_preventDefault",
@@ -1601,8 +1654,8 @@
             "annotations": {},
             "definedInFile": "js/ui/MenuButtonClass.js",
             "lineNumbers": [
-                29,
-                31
+                59,
+                61
             ],
             "definedBy": "js.ui.MenuButtonClass",
             "name": "_renderIconClass",
@@ -1635,8 +1688,8 @@
             "annotations": {},
             "definedInFile": "js/ui/MenuButtonClass.js",
             "lineNumbers": [
-                33,
-                38
+                63,
+                68
             ],
             "definedBy": "js.ui.MenuButtonClass",
             "name": "_renderLabel",
@@ -1672,8 +1725,8 @@
             "annotations": {},
             "definedInFile": "js/ui/MenuButtonClass.js",
             "lineNumbers": [
-                40,
-                52
+                70,
+                82
             ],
             "definedBy": "js.ui.MenuButtonClass",
             "name": "_renderMenuVisible",
@@ -1780,8 +1833,8 @@
             "annotations": {},
             "definedInFile": "js/ui/MenuButtonClass.js",
             "lineNumbers": [
-                25,
-                27
+                55,
+                57
             ],
             "definedBy": "js.ui.MenuButtonClass",
             "name": "_renderType",
@@ -2130,8 +2183,8 @@
             "annotations": {},
             "definedInFile": "js/ui/MenuButtonClass.js",
             "lineNumbers": [
-                86,
-                88
+                116,
+                118
             ],
             "definedBy": "js.ui.MenuButtonClass",
             "name": "closeMenu",

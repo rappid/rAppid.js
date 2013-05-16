@@ -152,8 +152,8 @@
             "annotations": {},
             "definedInFile": "js/core/ModuleLoader.js",
             "lineNumbers": [
-                237,
-                247
+                245,
+                255
             ],
             "name": "_clearContentPlaceHolders",
             "visibility": "protected"
@@ -975,8 +975,8 @@
             "annotations": {},
             "definedInFile": "js/html/HtmlElement.js",
             "lineNumbers": [
-                299,
-                323
+                331,
+                355
             ],
             "definedBy": "js.html.HtmlElement",
             "name": "_isStyleAttribute",
@@ -1399,8 +1399,8 @@
             "annotations": {},
             "definedInFile": "js/core/ModuleLoader.js",
             "lineNumbers": [
-                266,
-                269
+                274,
+                277
             ],
             "name": "_renderState",
             "visibility": "protected"
@@ -1546,7 +1546,7 @@
             "definedInFile": "js/core/ModuleLoader.js",
             "lineNumbers": [
                 85,
-                136
+                153
             ],
             "name": "_startModule",
             "visibility": "protected"
@@ -2275,8 +2275,8 @@
             },
             "definedInFile": "js/core/ModuleLoader.js",
             "lineNumbers": [
-                233,
-                235
+                241,
+                243
             ],
             "name": "isModuleActive",
             "visibility": "public"
@@ -2324,8 +2324,8 @@
             "annotations": {},
             "definedInFile": "js/core/ModuleLoader.js",
             "lineNumbers": [
-                145,
-                232
+                162,
+                240
             ],
             "description": "loads an module instance into the module loader and starts the module\n",
             "name": "loadModule",
@@ -2387,8 +2387,8 @@
             "annotations": {},
             "definedInFile": "js/core/ModuleLoader.js",
             "lineNumbers": [
-                255,
-                264
+                263,
+                272
             ],
             "description": " TODO: remove this method and make the modules bindable",
             "deprecated": "will be removed soon",

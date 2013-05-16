@@ -1,11 +1,55 @@
 {
     "fqClassName": "js.ui.field.Text",
     "dependencies": [
-        "js.ui.Field"
+        "js.ui.field.TextClass"
     ],
     "type": "xml",
-    "inherit": "js.ui.Field",
+    "inherit": "js.ui.field.TextClass",
     "defaults": {
+        "type": {
+            "name": "type",
+            "defaultType": "value",
+            "visibility": "public",
+            "value": "text",
+            "lineNumbers": [
+                5,
+                5
+            ],
+            "definedBy": "js.ui.field.TextClass"
+        },
+        "value": {
+            "name": "value",
+            "defaultType": "value",
+            "visibility": "public",
+            "value": "",
+            "lineNumbers": [
+                6,
+                6
+            ],
+            "definedBy": "js.ui.field.TextClass"
+        },
+        "size": {
+            "name": "size",
+            "defaultType": "value",
+            "visibility": "public",
+            "value": "large",
+            "lineNumbers": [
+                7,
+                7
+            ],
+            "definedBy": "js.ui.field.TextClass"
+        },
+        "placeholder": {
+            "name": "placeholder",
+            "defaultType": "value",
+            "visibility": "public",
+            "value": "",
+            "lineNumbers": [
+                8,
+                8
+            ],
+            "definedBy": "js.ui.field.TextClass"
+        },
         "componentClass": {
             "name": "componentClass",
             "defaultType": "value",
@@ -1208,8 +1252,8 @@
             "annotations": {},
             "definedInFile": "js/html/HtmlElement.js",
             "lineNumbers": [
-                299,
-                323
+                331,
+                355
             ],
             "definedBy": "js.html.HtmlElement",
             "name": "_isStyleAttribute",
@@ -2970,6 +3014,7 @@
     "file": "js/ui/field/Text.xml",
     "package": "js.ui.field",
     "inheritancePath": [
+        "js.ui.field.TextClass",
         "js.ui.Field",
         "js.ui.FieldClass",
         "js.ui.View",
