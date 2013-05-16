@@ -1,11 +1,22 @@
 {
     "fqClassName": "js.ui.field.RadioGroup",
     "dependencies": [
-        "js.ui.Field"
+        "js.ui.field.RadioGroupClass"
     ],
     "type": "xml",
-    "inherit": "js.ui.Field",
+    "inherit": "js.ui.field.RadioGroupClass",
     "defaults": {
+        "$radioGroup": {
+            "name": "$radioGroup",
+            "defaultType": "value",
+            "visibility": "private",
+            "value": null,
+            "lineNumbers": [
+                6,
+                6
+            ],
+            "definedBy": "js.ui.field.RadioGroupClass"
+        },
         "componentClass": {
             "name": "componentClass",
             "defaultType": "value",
@@ -2970,6 +2981,7 @@
     "file": "js/ui/field/RadioGroup.xml",
     "package": "js.ui.field",
     "inheritancePath": [
+        "js.ui.field.RadioGroupClass",
         "js.ui.Field",
         "js.ui.FieldClass",
         "js.ui.View",

@@ -1,12 +1,13 @@
 define(["xaml!js/ui/Field"], function (Field) {
 
-    return Field.inherit("js.ui.field.TextClass", {
+    return Field.inherit("js.ui.field.TextAreaClass", {
         defaults: {
-            type: "text",
             value: "",
             size: "large",
             placeholder: ""
         },
+
+        $classAttributes: ['size', 'type'],
 
         $defaultContentName: "additionalControls"
     });

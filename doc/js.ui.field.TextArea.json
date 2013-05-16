@@ -1,11 +1,44 @@
 {
     "fqClassName": "js.ui.field.TextArea",
     "dependencies": [
-        "js.ui.Field"
+        "js.ui.field.TextAreaClass"
     ],
     "type": "xml",
-    "inherit": "js.ui.Field",
+    "inherit": "js.ui.field.TextAreaClass",
     "defaults": {
+        "value": {
+            "name": "value",
+            "defaultType": "value",
+            "visibility": "public",
+            "value": "",
+            "lineNumbers": [
+                5,
+                5
+            ],
+            "definedBy": "js.ui.field.TextAreaClass"
+        },
+        "size": {
+            "name": "size",
+            "defaultType": "value",
+            "visibility": "public",
+            "value": "large",
+            "lineNumbers": [
+                6,
+                6
+            ],
+            "definedBy": "js.ui.field.TextAreaClass"
+        },
+        "placeholder": {
+            "name": "placeholder",
+            "defaultType": "value",
+            "visibility": "public",
+            "value": "",
+            "lineNumbers": [
+                7,
+                7
+            ],
+            "definedBy": "js.ui.field.TextAreaClass"
+        },
         "componentClass": {
             "name": "componentClass",
             "defaultType": "value",
@@ -2970,6 +3003,7 @@
     "file": "js/ui/field/TextArea.xml",
     "package": "js.ui.field",
     "inheritancePath": [
+        "js.ui.field.TextAreaClass",
         "js.ui.Field",
         "js.ui.FieldClass",
         "js.ui.View",

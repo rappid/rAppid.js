@@ -1,20 +1,6 @@
-<ui:Field xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="js.ui" xmlns:js="js.core">
-    <js:Script><![CDATA[
-        (function () {
-            return {
-                defaults: {
-                    value: "",
-                    size: "large",
-                    placeholder: ""
-                },
-                $classAttributes: ['size', 'type'],
-                $defaultContentName: "additionalControls"
-            }
-        })
-        ]]>
-    </js:Script>
+<field:TextAreaClass xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="js.ui" xmlns:js="js.core" xmlns:field="js.ui.field">
     <js:Content name="controls">
         <textarea class="input-{size}" enabled="{enabled}" placeholder="{placeholder}">{{value}}</textarea>
         <ui:ContentPlaceHolder name="additionalControls"/>
     </js:Content>
-</ui:Field>
+</field:TextAreaClass>

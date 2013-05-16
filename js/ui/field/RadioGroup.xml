@@ -1,22 +1,5 @@
-<ui:Field xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="js.ui" xmlns:js="js.core">
-    <js:Script><![CDATA[
-        (function () {
-            return {
-
-                $defaultContentName: null,
-
-                addChild: function (child) {
-                    if (this.$.$radioGroup) {
-                        this.$.$radioGroup.addChild(child);
-                    } else {
-                        this.callBase();
-                    }
-                }
-            }
-        })
-        ]]>
-    </js:Script>
+<field:RadioGroupClass xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="js.ui" xmlns:js="js.core" xmlns:field="js.ui.field">
     <js:Content name="controls">
         <ui:RadioGroup cid="$radioGroup" value="{{value}}" />
     </js:Content>
-</ui:Field>
+</field:RadioGroupClass>

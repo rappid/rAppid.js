@@ -5,8 +5,10 @@
     <import namespace="js.ui"/>
     <element name="Password" type="ns:Password"/>
     <element name="RadioGroup" type="ns:RadioGroup"/>
+    <element name="RadioGroupClass" type="ns:RadioGroupClass"/>
     <element name="Text" type="ns:Text"/>
     <element name="TextArea" type="ns:TextArea"/>
+    <element name="TextAreaClass" type="ns:TextAreaClass"/>
     <element name="TextClass" type="ns:TextClass"/>
     <complexType name="Password">
         <complexContent>
@@ -22,9 +24,21 @@
     </complexType>
     <complexType name="RadioGroup">
         <complexContent>
-            <extension base="ns1:Field">
+            <extension base="ns:RadioGroupClass">
                 <annotation>
                     <documentation source="http://www.rappidjs.com/#/api/js.ui.field.RadioGroup"></documentation>
+                </annotation>
+                <sequence>
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+    <complexType name="RadioGroupClass">
+        <complexContent>
+            <extension base="ns1:Field">
+                <annotation>
+                    <documentation source="http://www.rappidjs.com/#/api/js.ui.field.RadioGroupClass"></documentation>
                 </annotation>
                 <sequence>
                     <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
@@ -50,13 +64,31 @@
     </complexType>
     <complexType name="TextArea">
         <complexContent>
-            <extension base="ns1:Field">
+            <extension base="ns:TextAreaClass">
                 <annotation>
                     <documentation source="http://www.rappidjs.com/#/api/js.ui.field.TextArea"></documentation>
                 </annotation>
                 <sequence>
                     <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
                 </sequence>
+                <attribute name="value"/>
+                <attribute name="size" default="large"/>
+                <attribute name="placeholder"/>
+            </extension>
+        </complexContent>
+    </complexType>
+    <complexType name="TextAreaClass">
+        <complexContent>
+            <extension base="ns1:Field">
+                <annotation>
+                    <documentation source="http://www.rappidjs.com/#/api/js.ui.field.TextAreaClass"></documentation>
+                </annotation>
+                <sequence>
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+                <attribute name="value"/>
+                <attribute name="size" default="large"/>
+                <attribute name="placeholder"/>
             </extension>
         </complexContent>
     </complexType>
