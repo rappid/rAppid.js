@@ -7,6 +7,7 @@ script:
   - "mocha -R spec"
   - "grunt webtest-saucelabs --force"
   - "grunt server-tests"
+  - "npm install -g rAppid.js"
 services: mongodb
 env:
   global:
