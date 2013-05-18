@@ -51,7 +51,7 @@ define(["js/html/HtmlElement", "js/core/Content", "underscore"], function (HtmlE
                             return;
                         }
                     }
-                } else {
+                } else if (this.$textNode !== this.$el) {
                     parentNode.replaceChild(this.$textNode, this.$el);
                     this.$el = this.$textNode;
                 }
