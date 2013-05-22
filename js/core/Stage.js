@@ -236,6 +236,25 @@ define(["js/html/HtmlElement", "js/core/Bus", "js/core/WindowManager", "js/core/
         createContainer: function(attributes){
             attributes = attributes || {};
             return this.$stage.$applicationContext.createInstance(HtmlElement, [attributes, null, this.$stage, this, this]);
+        },
+
+        destroy: function(){
+            this.callBase();
+
+            this.$requirejsContext = null;
+            this.$applicationContext = null;
+            this.$applicationFactory = null;
+            this.$document = null;
+            this.$window = null;
+            this.$bus = null;
+            this.$externalInterface = null;
+
+            this.$containers = null;
+            this.$elements = null;
+
+            this.$browser = null;
+
+            this.$application.destroy();
         }
 
     });
