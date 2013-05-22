@@ -94,6 +94,7 @@ define(["js/core/Component", "underscore", "js/conf/RouteConfiguration"],
                             router: self,
                             params: _.clone(params),
                             fragment: fragment,
+                            route: route,
                             // breaks the routeStack execution
                             end: function() {
                                 cb.end();
@@ -161,7 +162,8 @@ define(["js/core/Component", "underscore", "js/conf/RouteConfiguration"],
                             callback: cb,
                             router: this,
                             params: _.clone(params),
-                            fragment: fragment
+                            fragment: fragment,
+                            route: route
                         };
 
                         params.unshift(routeContext);
