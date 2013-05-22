@@ -40,7 +40,7 @@ define(['require', 'path', 'js/core/Component', 'srv/core/Context', 'srv/core/Ha
 
             applicationDefaultNamespace: "web",
 
-            supportEnvironments: function() {
+            supportEnvironments: function () {
                 return Path.existsSync(Path.join(this.$stage.$applicationContext.$config.serverRoot, this.applicationDefaultNamespace, "env"));
             },
 
@@ -177,6 +177,13 @@ define(['require', 'path', 'js/core/Component', 'srv/core/Context', 'srv/core/Ha
                     bufferLength += chunk.length;
                 });
 
+                response.on('close', function () {
+                    domain.dispose();
+                });
+
+                domain.on('error', handleError);
+
+
                 request.on('end', function () {
 
                     request.body = new Buffer(bufferLength);
@@ -223,12 +230,6 @@ define(['require', 'path', 'js/core/Component', 'srv/core/Context', 'srv/core/Ha
                             });
                     });
                 });
-
-                response.on('end', function () {
-                    domain.dispose();
-                });
-
-                domain.on('error', handleError);
 
                 function handleError(err) {
 
