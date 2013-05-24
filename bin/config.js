@@ -59,7 +59,7 @@ var config = function(args, callback) {
                 }
             });
 
-            fs.writeFileSync(configFile, JSON.stringify(config));
+            fs.writeFileSync(configFile, JSON.stringify(config, null, 4));
 
 
 
