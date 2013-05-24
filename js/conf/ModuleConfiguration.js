@@ -22,7 +22,12 @@ define(["js/conf/Configuration"], function (Configuration) {
              * @type String
              * @required
              */
-            moduleClass: null
+            moduleClass: null,
+
+            /***
+             *
+             */
+            attributes: null
         }
     });
 });
