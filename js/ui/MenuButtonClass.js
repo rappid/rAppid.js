@@ -112,9 +112,25 @@ define(["js/ui/View", "js/core/Content", "js/ui/Button", "underscore"], function
         _preventDefault: function (e) {
             e.$.stopPropagation();
         },
-
+        /***
+         * Closes the menu
+         */
         closeMenu: function () {
             this.set('menuVisible', false);
+        },
+
+        /**
+         * Opens the menu
+         */
+        openMenu: function(){
+            this.set('menuVisible', true);
+        },
+
+        /***
+         * Toggles the menu
+         */
+        toggleMenu: function(){
+            this.set('menuVisible', !this.$.menuVisible);
         }
     });
 
