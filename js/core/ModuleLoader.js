@@ -46,7 +46,8 @@ define(["require", "js/html/HtmlElement", "js/ui/ContentPlaceHolder", "js/core/M
                 _.defaults(module, {
                     name: null,
                     moduleClass: null,
-                    route: null
+                    route: null,
+                    attributes: null
                 });
 
                 if (!module.name) {
@@ -201,7 +202,7 @@ define(["require", "js/html/HtmlElement", "js/ui/ContentPlaceHolder", "js/core/M
                                 // load module
 
                                 require([self.$stage.$applicationContext.getFqClassName(module.moduleClass)], function (moduleBaseClass) {
-                                    var moduleInstance = new moduleBaseClass(null, false, self.$stage, null, null);
+                                    var moduleInstance = new moduleBaseClass(module.attributes, false, self.$stage, null, null);
 
                                     if (moduleInstance instanceof Module) {
                                         if (typeof(CollectGarbage) == "function") {
@@ -238,6 +239,7 @@ define(["require", "js/html/HtmlElement", "js/ui/ContentPlaceHolder", "js/core/M
                 }
 
             },
+
             isModuleActive: function (moduleName) {
                 return this.$.currentModuleName == moduleName;
             }.onChange('currentModuleName'),

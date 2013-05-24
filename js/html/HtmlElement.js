@@ -128,7 +128,7 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
         /***
          * @type Array
          */
-        $renderAsStyleWithPx: ['left', 'top'],
+        $renderAsStyleWithPx: ['left', 'top', 'maxWidth', 'maxHeight'],
 
         /**
          *
