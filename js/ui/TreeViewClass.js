@@ -76,9 +76,11 @@ define(["js/ui/View"], function (View) {
                 if (!this.$.node.$.isLeaf) {
                     this.$.node.toggle();
                 }
+                var root = this.$.root;
                 if (this.$.node.$.expanded || this.$.node.$.isLeaf) {
-                    var root = this.$.root;
                     root.set('selectedNode', this.$.node);
+                } else {
+                    root.set('selectedNode', null);
                 }
             }
         },
