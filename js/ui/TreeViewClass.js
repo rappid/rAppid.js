@@ -35,10 +35,12 @@ define(["js/ui/View"], function (View) {
         },
 
         _expandParents: function(){
-            var parentNode = this.$.node.$.parentNode;
-            while(parentNode){
-                parentNode.set('expanded', true);
-                parentNode = parentNode.$.parentNode;
+            if(this.$.node){
+                var parentNode = this.$.node.$.parentNode;
+                while(parentNode){
+                    parentNode.set('expanded', true);
+                    parentNode = parentNode.$.parentNode;
+                }
             }
         },
 
