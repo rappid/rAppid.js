@@ -93,10 +93,10 @@ define(["js/core/EventDispatcher", "js/core/Bindable", "underscore"], function (
                     item.bind('*', this._onItemEvent, this);
                 }
                 itemIndex = index + i;
-                if(_.isUndefined(this.$items[itemIndex]) || itemIndex >= this.$items.length){
+                if (_.isUndefined(this.$items[itemIndex]) || itemIndex >= this.$items.length) {
                     this.$items[itemIndex] = item;
                 } else {
-                    this.$items.splice(itemIndex,0,item);
+                    this.$items.splice(itemIndex, 0, item);
                 }
                 if (options.silent !== true) {
                     this.trigger('add', {item: item, index: itemIndex});
@@ -188,6 +188,7 @@ define(["js/core/EventDispatcher", "js/core/Bindable", "underscore"], function (
             });
 
             this.$items = items || [];
+
             this.each(function (item) {
                 if (item instanceof EventDispatcher) {
                     item.bind('*', self._onItemEvent, self);
@@ -258,7 +259,7 @@ define(["js/core/EventDispatcher", "js/core/Bindable", "underscore"], function (
             for (var i = 0; i < this.$items.length; i++) {
                 try {
                     fnc.call(scope, this.$items[i], i, this.$items);
-                } catch(e) {
+                } catch (e) {
                     error = e;
                     b = true;
                 }
