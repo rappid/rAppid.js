@@ -124,6 +124,10 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore", "js/da
         fetch: function (options, callback) {
             options = options || {};
 
+            // TODO: if limit and offset are set in the request
+            // look if page exists
+            // otherwise fetch page of this size but don't cache it
+
             var self = this;
 
             function fetchPages(pageCount) {
