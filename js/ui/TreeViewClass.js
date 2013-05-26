@@ -21,6 +21,7 @@ define(["js/ui/View"], function (View) {
             if(this.$.root && this.$.root.$.selectedNode){
                 if(this.$.node === this.$.root.$.selectedNode){
                     this._expandParents();
+                    this.set('selected', true);
                 }
             }
         },
