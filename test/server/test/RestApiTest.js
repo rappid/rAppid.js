@@ -315,13 +315,87 @@ describe("API", function () {
                 .exec(done);
         });
 
-        it.skip("should return href of linked models", function () {
+        it("should return href of linked models", function (done) {
+            var projectId = "project-random";
 
+            flow()
+                .seq("result", function (cb) {
+                    request(url)
+                        .put("/projects/" + projectId)
+                        .send({})
+                        .expect(200)
+                        .expect(ContentType, applicationJson)
+                        .end(cb)
+                })
+                .seq(function (cb) {
+                    request(url)
+                        .get("/projects/" + projectId)
+                        .expect(ContentType, applicationJson)
+                        .expect(200)
+                        .end(cb);
+                })
+                .seq("ticket", function (cb) {
+                    request(url)
+                        .post("/tickets")
+                        .send({
+                            summary: "Test Ticket",
+                            project: {
+                                name: projectId
+                            },
+                            watchers: []
+                        })
+                        .expect(201)
+                        .expect(ContentType, applicationJson)
+                        .expect("Location", new RegExp(["^", url, "/", "tickets", "/", projectId + "\-[0-9]+", "$"].join("")))
+                        .end(cb)
+                })
+                .seq("getResult", function (cb) {
+                    var result = this.vars.ticket;
+                    request(result.header.location)
+                        .get('')
+                        .expect(200)
+                        .end(cb)
+                })
+                .seq(function () {
+                    var result = this.vars.getResult;
+                    expect(result.body).to.be.an.instanceof(Object);
+                    expect(result.body.project).to.eql({
+                        name: projectId,
+                        href: url + "/projects/" + projectId
+                    });
+                })
+                .exec(done);
 
         });
 
-        it.skip("should return href of linked collections", function () {
+        it("should return href of linked collections", function (done) {
+            var projectId = "project-2";
 
+            flow()
+                .seq("result", function (cb) {
+                    request(url)
+                        .put("/projects/" + projectId)
+                        .send({})
+                        .expect(200)
+                        .expect(ContentType, applicationJson)
+                        .end(cb)
+                })
+                .seq("getResult", function (cb) {
+                    request(url)
+                        .get("/projects/" + projectId)
+                        .expect(ContentType, applicationJson)
+                        .expect(200)
+                        .end(cb);
+                })
+                .seq(function () {
+                    var result = this.vars.getResult;
+                    expect(result.body).to.be.an.instanceof(Object);
+                    expect(result.body.name).to.equal(projectId);
+                    expect(result.body.issueTypes).to.eql({
+                        href: url + "/projects/" + projectId + "/issueTypes"
+                    });
+                })
+                .exec(done);
 
         });
 
@@ -334,8 +408,39 @@ describe("API", function () {
     describe("#GET on Collection Resource", function () {
 
 
-        before(function () {
-            // TODO: create collection of tickets or projects
+        var count = 100,
+            initialCount = 0,
+            items = [];
+        for (var i = 0; i < count; i++) {
+            items.push("random-project-" + (i + 1));
+        }
+
+        before(function (done) {
+            flow()
+                .seq("getResult", function (cb) {
+                    request(url)
+                        .get("/projects")
+                        .expect(200)
+                        .expect(ContentType, applicationJson)
+                        .end(cb)
+                })
+                .seq(function () {
+                    var result = this.vars.getResult;
+                    expect(result.body).to.be.an.instanceof(Object);
+                    expect(result.body.offset).to.equal(0);
+                    expect(result.body.limit).to.exist;
+                    expect(result.body.count).to.exist;
+                    initialCount = result.body.count;
+                })
+                .parEach(items, function (item, cb) {
+                    request(url)
+                        .put("/projects/" + item)
+                        .send({})
+                        .expect(200)
+                        .expect(ContentType, applicationJson)
+                        .end(cb)
+                })
+                .exec(done);
         });
 
         it.skip("should return 404 of resource was not found", function (done) {
@@ -349,12 +454,48 @@ describe("API", function () {
                 .exec(done);
         });
 
-        it.skip("should return collection page with meta data", function () {
-
+        it("should return collection page with meta data", function (done) {
+            flow()
+                .seq("getResult", function (cb) {
+                    request(url)
+                        .get("/projects")
+                        .expect(200)
+                        .expect(ContentType, applicationJson)
+                        .end(cb)
+                })
+                .seq(function () {
+                    var result = this.vars.getResult;
+                    expect(result.body).to.be.an.instanceof(Object);
+                    expect(result.body.offset).to.equal(0);
+                    expect(result.body.limit).to.exist;
+                    expect(result.body.count).to.equal(count + initialCount);
+                    expect(result.body.results).to.exist;
+                    expect(result.body.results).to.be.an.instanceof(Array);
+                })
+                .exec(done)
         });
 
-        it.skip("should return empty page when offset is out of bounce", function () {
-
+        it("should return empty page when offset is out of bounce", function (done) {
+            var offset = ((initialCount + count) + 1);
+            flow()
+                .seq("getResult", function (cb) {
+                    request(url)
+                        .get("/projects?offset=" + offset)
+                        .expect(200)
+                        .expect(ContentType, applicationJson)
+                        .end(cb)
+                })
+                .seq(function () {
+                    var result = this.vars.getResult;
+                    expect(result.body).to.be.an.instanceof(Object);
+                    expect(result.body.offset).to.equal(offset);
+                    expect(result.body.limit).to.exist;
+                    expect(result.body.count).to.equal(count + initialCount);
+                    expect(result.body.results).to.exist;
+                    expect(result.body.results).to.be.an.instanceof(Array);
+                    expect(result.body.results.length).to.equal(0);
+                })
+                .exec(done)
         });
 
         it.skip("should return page in given offset and limit", function () {
