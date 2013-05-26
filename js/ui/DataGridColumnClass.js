@@ -4,12 +4,56 @@ define(['js/core/Component'], function (Component) {
 
     return Component.inherit('js.ui.DataGridColumnClass', {
         defaults: {
+            /**
+             * The sort path
+             * @type String
+             */
             sortPath: null,
+
+            /**
+             * The path to the data to display
+             * @type String
+             */
+            path: null,
+
+            /**
+             * Set's column to sortable
+             *
+             * @type Boolean
+             */
             sortable: true,
+
+            /**
+             * Set's the default sort direction
+             * @type Number
+             *
+             */
             sortDirection: 0,
+
+            /**
+             * The name of the column
+             * @type String
+             */
             name: "column",
+
+            /**
+             * The dataItem for the colum
+             * @private
+             * @type Object
+             */
+
             $dataItem: null,
+
+            /**
+             * The path to the item
+             * @type String
+             */
             item: '$dataItem.data',
+
+            /**
+             * The title of the column
+             * @type String
+             */
             title: ""
         },
         getFormatFnc: function () {
