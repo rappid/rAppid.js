@@ -1,6 +1,8 @@
 [![Build Status](https://travis-ci.org/rappid/rAppid.js.png?branch=dev)](https://travis-ci.org/rappid/rAppid.js)
 [![Selenium Test Status](https://saucelabs.com/buildstatus/rappidjs)](https://saucelabs.com/u/rappidjs)
 [![NPM version](https://badge.fury.io/js/rAppid.js.png)](http://badge.fury.io/js/rAppid.js)
+[![devDependency Status](https://david-dm.org/rappid/rAppid.js/dev-status.png)](https://david-dm.org/rappid/rAppid.js#info=devDependencies)
+
 
 # rAppid.js - the declarative Rich Internet Application Javascript MVC Framework
 ## Introduction
