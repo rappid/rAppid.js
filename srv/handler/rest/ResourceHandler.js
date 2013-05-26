@@ -286,6 +286,7 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
                 .seq(function(cb){
                     var collection = this.vars.collection;
                     flow()
+                        // TODO: don't use fetchPage
                         .seqEach(pages, function(page, cb){
                             collection.fetchPage(page, options, cb);
                         })
