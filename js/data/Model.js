@@ -7,6 +7,11 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
         ERROR: -1
     };
 
+    var SAVESTATE = {
+        CREATED: 0,
+        SAVING: 1
+    };
+
     var STATE = {
         NEW: 0,
         CREATED: 1,
@@ -21,6 +26,11 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
             this._fetch = {
                 callbacks: [],
                 state: FETCHSTATE.CREATED
+            };
+
+            this._save = {
+                callbacks: [],
+                state: SAVESTATE.CREATED
             };
 
             this.callBase(attributes);
@@ -76,23 +86,37 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
                 invalidatePageCache: false
             });
 
-            // TODO: handle multiple access
-            try {
-                var status = this._status();
-                var self = this;
-                if (status === STATE.NEW || status === STATE.CREATED) {
-                    this.$context.$dataSource.saveModel(this, options, function(err){
-                        if(!err && self.$collection && options.invalidatePageCache) {
-                            self.$collection.invalidatePageCache();
-                        }
-                        callback && callback(err, self, options);
-                    });
-                } else {
-                    throw new Error("status '" + status + "' doesn't allow save");
-                }
-            } catch(e) {
+            if (this._save.state === SAVESTATE.SAVING) {
                 if (callback) {
-                    callback(e);
+                    // currently fetching -> register callback
+                    this._save.callbacks.push(callback);
+                }
+            } else {
+                this._save.state = SAVESTATE.SAVING;
+
+                try {
+                    var status = this._status();
+                    var self = this;
+                    if (status === STATE.NEW || status === STATE.CREATED) {
+                        this.$context.$dataSource.saveModel(this, options, function (err) {
+                            if (!err && self.$collection && options.invalidatePageCache) {
+                                self.$collection.invalidatePageCache();
+                            }
+                            callback && callback(err, self, options);
+
+                            _.each(self._save.callbacks, function (cb) {
+                                cb.call(self, err, self);
+                            });
+                            self._save.state = SAVESTATE.CREATED;
+                            self._save.callbacks = [];
+                        });
+                    } else {
+                        throw new Error("status '" + status + "' doesn't allow save");
+                    }
+                } catch (e) {
+                    if (callback) {
+                        callback(e);
+                    }
                 }
             }
 
@@ -209,7 +233,7 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
                     this.$context.$dataSource.removeModel(this, options, function (err) {
                         if (!err) {
                             self.set('id', false);
-                            if(self.$collection){
+                            if (self.$collection) {
                                 self.$collection.remove(self);
                             }
                         }
@@ -218,7 +242,7 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
                 } else {
                     throw new Error("status '" + status + "' doesn't allow delete");
                 }
-            } catch(e) {
+            } catch (e) {
                 callback && callback(e);
             }
         },
@@ -244,7 +268,7 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
             return this._status() === STATE.NEW;
         }.onChange('id'),
 
-        isCreated: function() {
+        isCreated: function () {
             return this._status() === STATE.CREATED;
         }.onChange('id'),
 
