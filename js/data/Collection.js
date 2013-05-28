@@ -120,72 +120,96 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore", "js/da
             return this.$.root || this;
         },
 
-        // fetches the complete list
+        /**
+         *
+         * With no options it fetches all pages of the collection. So be careful.
+         *
+         * If you want to fetch a specific page, provide limit and/or offset in the options object.
+         * The callback will then return the err object and a page with the size of the provided limit and offset
+         *
+         * @param {Object} options
+         * @param {Function} callback
+         */
         fetch: function (options, callback) {
             options = options || {};
 
-            // TODO: if limit and offset are set in the request
-            // look if page exists
-            // otherwise fetch page of this size but don't cache it
-
             var self = this;
 
-            function fetchPages(pageCount) {
-                var delegates = [];
+            if (options.limit || options.offset) {
 
-                function addFetchPageDelegate(pageIndex) {
-                    delegates.push(function (cb) {
-                        self.fetchPage(pageIndex, options, cb);
-                    });
-                }
+                var page = new Page(null, this, 0);
+                page.fetch(options, function (err) {
+                    // insert data into items if not already inserted
+                    if (!err && !page.itemsInsertedIntoCollection) {
+                        page.itemsInsertedIntoCollection = true;
+                    }
 
-                for (var i = 0; i < pageCount; i++) {
-                    addFetchPageDelegate(i);
-                }
+                    if (callback) {
+                        callback(err, page, options);
+                    }
 
-                // execute loading parallel
-                flow()
-                    .par(delegates)
-                    .exec(function (err) {
-                        if (callback) {
-                            callback(err, self);
-                        }
-                    });
-            }
+                });
 
-            if (!this.$.pageSize) {
-                // unlimited pageSize -> create one and only page and fetch
-                this.fetchPage(0, options, callback);
             } else {
-                // determinate pages
-                var pageCount = this.pageCount();
 
-                if (!isNaN(pageCount)) {
-                    // we know how many page are there
-                    fetchPages(pageCount);
-                } else {
-                    // load first page in order to get the available itemCount
-                    // to calculate the pageCount
-                    this.fetchPage(0, options, function (err) {
-                        if (!err) {
-                            // we now should calculate a page count
-                            pageCount = self.pageCount();
+                function fetchPages(pageCount) {
+                    var delegates = [];
 
-                            if (isNaN(pageCount)) {
-                                if (callback) {
-                                    callback("Count for collection couldn't be fetched.", self);
-                                }
-                            } else {
-                                fetchPages(pageCount);
-                            }
-                        } else {
+                    function addFetchPageDelegate(pageIndex) {
+                        delegates.push(function (cb) {
+                            self.fetchPage(pageIndex, options, cb);
+                        });
+                    }
+
+                    for (var i = 0; i < pageCount; i++) {
+                        addFetchPageDelegate(i);
+                    }
+
+                    // execute loading parallel
+                    flow()
+                        .par(delegates)
+                        .exec(function (err) {
                             if (callback) {
                                 callback(err, self);
                             }
-                        }
-                    });
+                        });
+                }
+
+                if (!this.$.pageSize) {
+                    // unlimited pageSize -> create one and only page and fetch
+                    this.fetchPage(0, options, callback);
+                } else {
+                    // determinate pages
+                    var pageCount = this.pageCount();
+
+                    if (!isNaN(pageCount)) {
+                        // we know how many page are there
+                        fetchPages(pageCount);
+                    } else {
+                        // load first page in order to get the available itemCount
+                        // to calculate the pageCount
+                        this.fetchPage(0, options, function (err) {
+                            if (!err) {
+                                // we now should calculate a page count
+                                pageCount = self.pageCount();
+
+                                if (isNaN(pageCount)) {
+                                    if (callback) {
+                                        callback("Count for collection couldn't be fetched.", self);
+                                    }
+                                } else {
+                                    fetchPages(pageCount);
+                                }
+                            } else {
+                                if (callback) {
+                                    callback(err, self);
+                                }
+                            }
+                        });
+                    }
                 }
             }
+
 
         },
 
@@ -245,10 +269,10 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore", "js/da
             });
         },
 
-        count: function(options, callback){
+        count: function (options, callback) {
             var self = this;
-            this.$context.$dataSource.countCollection(this, options, function(err, count){
-                if(!err){
+            this.$context.$dataSource.countCollection(this, options, function (err, count) {
+                if (!err) {
                     self.set('$itemsCount', count);
                 }
                 callback && callback(err, count);
@@ -343,7 +367,7 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore", "js/da
             return this.$collection.getRoot();
         },
 
-        getCollection: function(){
+        getCollection: function () {
             return this.$collection;
         },
 
@@ -356,6 +380,11 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore", "js/da
          */
         fetch: function (options, callback) {
             options = options || {};
+
+            if (options.limit || options.offset) {
+                this.$offset = options.offset || 0;
+                this.$limit = options.limit || this.$limit;
+            }
 
             var self = this;
 
