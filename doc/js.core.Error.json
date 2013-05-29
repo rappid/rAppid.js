@@ -1,0 +1,38 @@
+{
+    "methods": [
+        {
+            "type": "Method",
+            "parameter": [
+                {
+                    "name": "message"
+                },
+                {
+                    "name": "statusCode"
+                },
+                {
+                    "name": "baseError"
+                }
+            ],
+            "annotations": {},
+            "definedInFile": "js/core/Error.js",
+            "lineNumbers": [
+                7,
+                13
+            ],
+            "name": "ctor",
+            "visibility": "public"
+        }
+    ],
+    "staticMethods": [],
+    "defaults": {},
+    "properties": {},
+    "fqClassName": "js.core.Error",
+    "dependencies": [],
+    "inherit": "Error",
+    "type": "js",
+    "file": "js/core/Error.js",
+    "package": "js.core",
+    "inheritancePath": [
+        "Error"
+    ]
+}

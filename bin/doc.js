@@ -7,6 +7,7 @@ var help = function (args, callback) {
         path = require('path'),
         flow = require('flow.js').flow,
         rAppid = require(__dirname + "/../rAppid.js").rAppid,
+        vkbeautify = require(__dirname + "/lib/vkbeautify").vkbeautify,
         argv = require('optimist')(args)
             .usage("rappidjs doc <dir> [<dir2>]")
             .demand(1)
@@ -17,67 +18,94 @@ var help = function (args, callback) {
                 alias: 'suffix',
                 default: '.json'
             })
+            .option('c', {
+                alias: 'config'
+            })
+            .option('l', {
+                alias: 'library-path'
+            })
             .options('x', {
                 alias: 'exclude'
             })
             .describe({
                 o: 'output directory where the my.class.suffix files will be saved',
                 x: 'excludes files or folders from getting parsed',
+                c: 'loads the defined config file',
+                l: 'the path for libraries. No files will generated for libraries',
                 xsd: 'output directory for xsd schema files'
             })
             .argv,
 
         outputDir,
-        xsdDir;
+        xsdDir,
+        libraryPaths;
 
     outputDir = argv.o ? argv.o.replace(/^~\//, process.env.HOME + '/') : null;
     xsdDir = argv.xsd ? argv.xsd.replace(/^~\//, process.env.HOME + '/') : null;
 
-    generateDocumentation(argv._);
+    libraryPaths = argv.l instanceof Array ? argv.l : [argv.l];
+
+    generateDocumentation(argv._, libraryPaths);
 
 
-    function generateDocumentation(startFiles) {
+    function generateDocumentation(startFiles, libraryPaths) {
 
         var documentation = new amdDoc.Documentation(),
             paths,
             stat, i;
 
-        for (i = 0; i < startFiles.length; i++) {
-            var startFile = startFiles[i];
-            startFile = startFile.replace(/^~\//, process.env.HOME + '/');
-
-            stat = fs.statSync(startFile);
-
-            if (stat.isDirectory()) {
-                paths = findFiles(startFile);
-                paths.forEach(function (p) {
-                    var shortPath = path.relative(path.join(startFile, '..'), p),
-                        code = fs.readFileSync(p, 'UTF-8');
-
-                    console.log(shortPath);
-
-                    var defaultFqClassName = shortPath.replace(/\//g, '.').replace(/\.js$/, '').replace(/\.xml$/, '');
-                    var extension = /\.([a-z]+)$/.exec(shortPath);
-
-                    if (extension) {
-                        documentation.generateDocumentationsForFile(extension[1], code, defaultFqClassName, true, shortPath);
-                    } else {
-                        console.warn("Cannot generate documentation for " + shortPath);
-                    }
+        libraryPaths = libraryPaths || [];
 
 
-                });
-            } else if (stat.isFile()) {
+        if (startFiles.length === 1 && fs.statSync(startFiles[0].replace(/^~\//, process.env.HOME + '/')).isFile()) {
+            var extension = /\.([a-z]+)$/.exec(startFiles[0]);
 
-                var extension = /\.([a-z]+)$/.exec(startFile);
+            if (extension) {
+                documentation.generateDocumentationsForFile(extension[1], fs.readFileSync(startFiles[0], 'UTF-8'), startFiles[0], startFiles[0]);
+            } else {
+                console.warn("Cannot generate documentation for " + startFiles[0]);
+            }
 
-                if (extension) {
-                    documentation.generateDocumentationsForFile(extension[1], fs.readFileSync(startFile, 'UTF-8'), startFile, true, startFile);
-                } else {
-                    console.warn("Cannot generate documentation for " + startFile);
+        } else {
+
+            var directories = startFiles.concat(libraryPaths);
+
+            for (i = 0; i < directories.length; i++) {
+
+                var directory = directories[i],
+                    isLibrary = libraryPaths.indexOf(directory) !== -1;
+
+                if (!directory) {
+                    continue;
                 }
 
+                directory = directory.replace(/^~\//, process.env.HOME + '/');
+
+                stat = fs.statSync(directory);
+
+                if (stat.isDirectory()) {
+                    paths = findFiles(directory);
+                    paths.forEach(function (p) {
+                        var shortPath = path.relative(path.join(directory, '..'), p),
+                            code = fs.readFileSync(p, 'UTF-8');
+
+                        console.log(shortPath);
+
+                        var defaultFqClassName = shortPath.replace(/\//g, '.').replace(/\.js$/, '').replace(/\.xml$/, '');
+                        var extension = /\.([a-z]+)$/.exec(shortPath);
+
+                        if (extension) {
+                            documentation.generateDocumentationsForFile(extension[1], code, defaultFqClassName, shortPath, isLibrary);
+                        } else {
+                            console.warn("Cannot generate documentation for " + shortPath);
+                        }
+
+
+                    });
+                }
             }
+
+
         }
 
         var output = documentation.process(),
@@ -94,13 +122,30 @@ var help = function (args, callback) {
             // output directory specified
 
             // generate index.json
-            var index = Object.keys(output);
-            index.sort();
+            var documentedClasses = Object.keys(output);
+            var classes = [];
 
-            writeFile(path.join(outputDir, 'index.json'), index);
+            documentedClasses.forEach(function(className) {
+                if (documentation.excludeDocumentations.indexOf(className) === -1) {
+                    classes.push(className);
+                }
+            });
+
+            classes.sort();
+
+            var index;
+            var indexJsonPath = path.join(outputDir, "index.json");
+            if (fs.existsSync(indexJsonPath)) {
+                index = JSON.parse(fs.readFileSync(indexJsonPath, "utf8"));
+            }
+
+            index = index || {};
+            index.classes = classes;
+
+            writeFile(indexJsonPath, index);
 
             for (fqClassName in output) {
-                if (output.hasOwnProperty(fqClassName)) {
+                if (output.hasOwnProperty(fqClassName) && documentation.excludeDocumentations.indexOf(fqClassName) === -1) {
                     writeFile(path.join(outputDir, fqClassName + '.json'), output[fqClassName]);
                 }
             }
@@ -114,7 +159,7 @@ var help = function (args, callback) {
                 packages = {};
 
             for (fqClassName in output) {
-                if (output.hasOwnProperty(fqClassName)) {
+                if (output.hasOwnProperty(fqClassName) && documentation.excludeDocumentations.indexOf(fqClassName) === -1) {
                     var doc = output[fqClassName];
 
                     if (doc.package) {
@@ -209,9 +254,9 @@ var help = function (args, callback) {
                 .seq("applicationContext", function (cb) {
                     rAppid.createApplicationContext("xsd/XsdGenerator", config, cb);
                 })
-                .parEach(packages, function(package, namespace, cb) {
+                .parEach(packages, function(p, namespace, cb) {
 
-                    if (package.classes.length === 0) {
+                    if (p.classes.length === 0) {
                         cb();
                         return;
                     }
@@ -237,7 +282,7 @@ var help = function (args, callback) {
                         })
                         .seq(function (cb) {
                             cb.vars["app"].start({
-                                "package": package,
+                                "package": p,
                                 "namespace": namespace,
                                 documentations: output
                             }, cb);
@@ -245,7 +290,12 @@ var help = function (args, callback) {
                         .seq(function () {
                             //noinspection JSPotentiallyInvalidUsageOfThis
                             var dom = this.vars.app.render(this.vars.window.document);
-                            fs.writeFileSync(xsdDir + "/" + namespace + ".xsd", (new xmlDom.XMLSerializer()).serializeToString(dom.childNodes[0]), "utf8");
+                            var xsd = (new xmlDom.XMLSerializer()).serializeToString(dom.childNodes[0]);
+
+                            // pretty print xml
+                            xsd = vkbeautify.xml(xsd);
+
+                            fs.writeFileSync(xsdDir + "/" + namespace + ".xsd", xsd, "utf8");
                         })
                         .exec(function (err) {
                             cb(err);

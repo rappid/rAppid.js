@@ -5,7 +5,9 @@ define(['js/html/HtmlElement'], function(HtmlElement) {
         defaults: {
             tagName: "input",
             multiSelect: false,
-            type: "file"
+            type: "file",
+
+            accept: null
         },
 
         _renderMultiSelect: function(multiSelect) {

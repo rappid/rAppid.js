@@ -1,0 +1,23 @@
+{
+    "fqClassName": "js.svg.SvgDescriptor",
+    "dependencies": [
+        "js.svg.SvgClass"
+    ],
+    "type": "xml",
+    "inherit": "js.svg.SvgClass",
+    "defaults": {
+        "version": {
+            "name": "version",
+            "defaultType": "value",
+            "visibility": "public",
+            "value": "1.2"
+        }
+    },
+    "methods": [],
+    "file": "js/svg/SvgDescriptor.xml",
+    "package": "js.svg",
+    "inheritancePath": [
+        "js.svg.SvgClass"
+    ],
+    "staticMethods": []
+}

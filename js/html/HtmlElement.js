@@ -57,17 +57,25 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
              *
              * @type Boolean
              */
-            selected: undefined,
+            selected: null,
+
             /**
              * If not null, false or undefined a click will set the element to selected
              * @type Boolean
              */
-            selectable: undefined,
+            selectable: null,
+
+            /***
+             * the target namespace for the HTMLElement
+             * @type String
+             */
             namespace: HTML_Namespace,
+
             /**
              * @type Boolean
              */
             enabled: true,
+
             /**
              * Possible values: "absolute", "relative"
              * @type String
@@ -106,6 +114,7 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
              */
             widthUpdatePolicy: "out"
         },
+
         /**
          * @type Array
          */
@@ -119,7 +128,8 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
         /***
          * @type Array
          */
-        $renderAsStyleWithPx: ['left', 'top'],
+        $renderAsStyleWithPx: ['left', 'top', 'maxWidth', 'maxHeight'],
+
         /**
          *
          * @private
@@ -130,6 +140,7 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
             checkSizePolicy(this, this.$.widthUpdatePolicy, 'width');
             checkSizePolicy(this, this.$.heightUpdatePolicy, 'height');
         },
+
         /**
          *
          * @param policy
@@ -138,6 +149,7 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
         _renderHeightUpdatePolicy: function (policy) {
             bindSizePolicy(this, policy, "height");
         },
+
         /**
          *
          * @param policy
@@ -146,6 +158,7 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
         _renderWidthUpdatePolicy: function (policy) {
             bindSizePolicy(this, policy, "width");
         },
+
         /**
          *
          * @param key
@@ -161,8 +174,8 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
             }
 
             this.callBase(key, value);
-
         },
+
         /**
          *
          * @param selectable
@@ -185,6 +198,7 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
                 }
             }
         },
+
         _renderEnabled: function (enabled) {
             if ("disabled" in this.$el) {
                 if (!enabled) {
@@ -255,25 +269,57 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
                     }
                 }
 
+                var dashKey,
+                    camelCaseKey,
+                    transformedKey,
+                    i;
 
-                var transformedKey = HtmlElement.transformCache[key];
+                if (/-/.test(key)) {
+                    // has dash
+                    dashKey = key;
 
-                if (!transformedKey) {
-                    // transform key
-                    var split = key.split(/(?=[A-Z])/);
-                    transformedKey = split[0];
-                    for (var i = 1; i < split.length; i++) {
-                        transformedKey += "-" + split[i].charAt(0).toLowerCase() + split[i].substr(1);
+                    transformedKey = HtmlElement.dashFormatTransformCache[key];
+
+                    if (!transformedKey) {
+
+                        var parts = key.split("-");
+                        // transform key
+                        transformedKey = parts[0];
+                        for (i = 1; i < parts.length; i++) {
+                            transformedKey += parts[i].charAt(0).toUpperCase() + parts[i].substr(1);
+                        }
+
+                        HtmlElement.dashFormatTransformCache[key] = transformedKey;
                     }
 
-                    HtmlElement.transformCache[key] = transformedKey;
+                    camelCaseKey = transformedKey;
+
+                } else {
+
+                    camelCaseKey = key;
+
+                    transformedKey = HtmlElement.camelCaseFormatTransformCache[key];
+
+                    if (!transformedKey) {
+                        // transform key
+                        var split = key.split(/(?=[A-Z])/);
+                        transformedKey = split[0];
+                        for (i = 1; i < split.length; i++) {
+                            transformedKey += "-" + split[i].charAt(0).toLowerCase() + split[i].substr(1);
+                        }
+
+                        HtmlElement.camelCaseFormatTransformCache[key] = transformedKey;
+                    }
+
+                    dashKey = transformedKey;
                 }
-//
-                if (transformedKey in this.$el.style) {
+
+
+                if (camelCaseKey in this.$el.style) {
                     if (value != null) {
-                        this.$el.style.setProperty(transformedKey, value, null);
+                        this.$el.style.setProperty(dashKey, value, null);
                     } else {
-                        this.$el.style.removeProperty(transformedKey);
+                        this.$el.style.removeProperty(dashKey);
                     }
                 }
 
@@ -309,7 +355,8 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
         }
     });
 
-    HtmlElement.transformCache = {};
+    HtmlElement.camelCaseFormatTransformCache = {};
+    HtmlElement.dashFormatTransformCache = {};
 
     HtmlElement.HTML_Namespace = HTML_Namespace;
 

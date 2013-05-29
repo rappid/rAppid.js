@@ -1,0 +1,145 @@
+<schema targetNamespace="js.conf"
+    xmlns="http://www.w3.org/2001/XMLSchema"
+    xmlns:ns1="js.core"
+    xmlns:ns="js.conf">
+    <import namespace="js.core"/>
+    <element name="DataSourceConfiguration" type="ns:DataSourceConfiguration"/>
+    <element name="ModuleConfiguration" type="ns:ModuleConfiguration"/>
+    <element name="ResourceConfiguration" type="ns:ResourceConfiguration"/>
+    <element name="RouteConfiguration" type="ns:RouteConfiguration"/>
+    <complexType name="DataSourceConfiguration">
+        <complexContent>
+            <extension base="ns:ResourceConfiguration">
+                <annotation>
+                    <documentation source="http://www.rappidjs.com/#/api/js.conf.DataSourceConfiguration"></documentation>
+                </annotation>
+                <sequence>
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+    <complexType name="ModuleConfiguration">
+        <complexContent>
+            <extension base="ns1:Configuration">
+                <annotation>
+                    <documentation source="http://www.rappidjs.com/#/api/js.conf.ModuleConfiguration"></documentation>
+                </annotation>
+                <sequence>
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+                <attribute name="route">
+                    <annotation>
+                        <documentation>
+                        a regular expression that will activate the module if the route matches
+                    </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="name" use="required">
+                    <annotation>
+                        <documentation>
+                        a unique name of the module so the ModuleLoader can determinate if a Module has been already loaded
+or is currently active
+
+                    </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="moduleClass" use="required">
+                    <annotation>
+                        <documentation>
+                        the full qualified name (e.g. app.module.MyModule) of the module to be loaded if the route is executed
+or the ModuleLoader.loadModule method is invoked manually.
+                    </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+    <complexType name="ResourceConfiguration">
+        <complexContent>
+            <extension base="ns1:Configuration">
+                <annotation>
+                    <documentation source="http://www.rappidjs.com/#/api/js.conf.ResourceConfiguration"></documentation>
+                </annotation>
+                <sequence>
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+                <attribute name="resourceHandler">
+                    <annotation>
+                        <documentation>
+                        a custom resource handler to handle this request
+                    </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="modelClassName" use="required">
+                    <annotation>
+                        <documentation>
+                        the full qualified class name of the model used for operating on this resource
+
+                    </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="path" use="required">
+                    <annotation>
+                        <documentation>
+                        the rest path used for access and save the model data. Keep in mind that
+ResourceConfiguration can be nested to have a context save environment.
+
+                    </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="collectionClassName"/>
+                <attribute name="processor">
+                    <annotation>
+                        <documentation>
+                        the name of the optional processor mapped with the $processors property of the RestDataSource
+
+                    </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+    <complexType name="RouteConfiguration">
+        <complexContent>
+            <extension base="ns1:Configuration">
+                <annotation>
+                    <documentation source="http://www.rappidjs.com/#/api/js.conf.RouteConfiguration"></documentation>
+                </annotation>
+                <sequence>
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+                <attribute name="name">
+                    <annotation>
+                        <documentation>
+                        the name of the route. The name is just used for easier debugging reasons.
+                    </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="route" use="required">
+                    <annotation>
+                        <documentation>
+                        a regular expression defining the route for matching the fragment. The starting #/ fragment is stripped from
+the fragment.
+
+Each matching group is provided in the `onexec` event handler as parameter. The first matching group will become the
+second parameter as the first parameter of the event handler is always the routeContext.
+
+                    </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="onexec" default="_onExecHandler" type="string">
+                    <annotation>
+                        <documentation>
+                        the exec event is dispatched if the route matches the fragment. The event handler is invoked with the routeContext as
+first parameter followed by parameters for each matched group of the regular expression.
+
+Keep in mind to annotate the event handler function with the `async()` method annotation if you need to do asynchronous
+code executing.
+                    </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+</schema>

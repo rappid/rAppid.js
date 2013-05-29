@@ -5,7 +5,7 @@ var args = process.argv.splice(2),
     aliases = {
         "inst": "help",
         "up": "update",
-        "c" : "create"
+        "c": "create"
     },
     cmdList = [
         "help",
@@ -36,7 +36,7 @@ if (allCmds.indexOf(cmd) !== -1) {
     // execute the command
     var command = require(require('path').join(__dirname, cmd + ".js"));
     // execute command
-    command(args, function(err) {
+    command(args, function (err) {
 
         if (err && err !== true) {
             console.log("Error executing command '" + cmd + "'");
@@ -59,13 +59,13 @@ if (allCmds.indexOf(cmd) !== -1) {
     var bin = process.argv[1].split("/").pop();
 
     var fs = require("fs");
-    var package = JSON.parse(fs.readFileSync(require('path').join(__dirname, "..", "package.json")));
+    var package = JSON.parse(fs.readFileSync(require('path').join(__dirname, "..", "package.json"), "utf8"));
 
     // print usage
     console.log(bin + " <command>");
-    console.log("Version: "+ package.version);
+    console.log("Version: " + package.version);
     console.log("Commands:");
-    cmdList.sort().forEach(function(cmd) {
+    cmdList.sort().forEach(function (cmd) {
         console.log("   " + cmd);
     });
     console.log("\nFor command usage: " + bin + " help <command>\n");

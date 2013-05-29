@@ -56,7 +56,7 @@ define(['js/core/Base'], function (Base) {
         }
     });
 
-    Color.RGB = Color.inherit("sprd.type.Color.RGB", {
+    Color.RGB = Color.inherit("js.type.Color.RGB", {
 
         ctor: function (r, g, b) {
             this.r = r || 0;
@@ -200,7 +200,7 @@ define(['js/core/Base'], function (Base) {
 
     });
 
-    Color.HSB = Color.inherit("sprd.type.Color.HSB", {
+    Color.HSB = Color.inherit("js.type.Color.HSB", {
 
         ctor: function (h, s, b) {
             this.h = h || 0;
@@ -283,7 +283,7 @@ define(['js/core/Base'], function (Base) {
 
     });
 
-    Color.XYZ = Color.inherit("sprd.type.Color.XYZ", {
+    Color.XYZ = Color.inherit("js.type.Color.XYZ", {
 
         ctor: function (x, y, z) {
             this.x = x;
@@ -328,7 +328,7 @@ define(['js/core/Base'], function (Base) {
         }
     });
 
-    Color.LAB = Color.inherit("sprd.type.Color.LAB", {
+    Color.LAB = Color.inherit("js.type.Color.LAB", {
         ctor: function (l, a, b) {
             this.l = l;
             this.a = a;

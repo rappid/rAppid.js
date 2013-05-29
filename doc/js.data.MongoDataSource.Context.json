@@ -1,0 +1,42 @@
+{
+    "methods": [
+        {
+            "type": "Method",
+            "parameter": [
+                {
+                    "name": "factory"
+                },
+                {
+                    "name": "options"
+                },
+                {
+                    "name": "type"
+                }
+            ],
+            "annotations": {},
+            "definedInFile": "srv/data/MongoDataSource.js",
+            "lineNumbers": [
+                519,
+                526
+            ],
+            "name": "createCollection",
+            "visibility": "public"
+        }
+    ],
+    "staticMethods": [],
+    "defaults": {},
+    "properties": {},
+    "fqClassName": "js.data.MongoDataSource.Context",
+    "dependencies": [
+        "flow",
+        "js.data.Collection",
+        "js.data.DataSource",
+        "js.data.Model",
+        "mongodb",
+        "srv.lib.MongoQueryComposer",
+        "underscore"
+    ],
+    "type": "js",
+    "file": "srv/data/MongoDataSource.js",
+    "package": "srv.data"
+}

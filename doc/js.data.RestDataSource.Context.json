@@ -1,0 +1,67 @@
+{
+    "methods": [
+        {
+            "type": "Method",
+            "parameter": [
+                {
+                    "name": "factory"
+                },
+                {
+                    "name": "options"
+                },
+                {
+                    "name": "type"
+                }
+            ],
+            "annotations": {},
+            "definedInFile": "js/data/RestDataSource.js",
+            "lineNumbers": [
+                776,
+                783
+            ],
+            "name": "createCollection",
+            "visibility": "public"
+        },
+        {
+            "type": "Method",
+            "parameter": [],
+            "annotations": {},
+            "definedInFile": "js/data/RestDataSource.js",
+            "lineNumbers": [
+                755,
+                774
+            ],
+            "name": "getPathComponents",
+            "visibility": "public"
+        },
+        {
+            "type": "Method",
+            "parameter": [],
+            "annotations": {},
+            "definedInFile": "js/data/RestDataSource.js",
+            "lineNumbers": [
+                785,
+                787
+            ],
+            "name": "getQueryParameters",
+            "visibility": "public"
+        }
+    ],
+    "staticMethods": [],
+    "defaults": {},
+    "properties": {},
+    "fqClassName": "js.data.RestDataSource.Context",
+    "dependencies": [
+        "JSON",
+        "flow",
+        "js.data.Collection",
+        "js.data.DataSource",
+        "js.data.Model",
+        "js.lib.query.composer.RestQueryComposer",
+        "require",
+        "underscore"
+    ],
+    "type": "js",
+    "file": "js/data/RestDataSource.js",
+    "package": "js.data"
+}

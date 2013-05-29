@@ -7,6 +7,7 @@ define(["js/core/Window"], function (Window) {
             title: '',
             closable: true,
             size: "normal",
+            tabindex: -1,
             componentClass: "dialog {size}"
         },
 
@@ -24,6 +25,10 @@ define(["js/core/Window"], function (Window) {
                         return;
                     }
 
+                    if(e.target !== self.$el){
+                        return;
+                    }
+
                     var keyHandlerName = self.$keyHandlers[e.keyCode];
                     if (keyHandlerName && self[keyHandlerName]) {
                         self[keyHandlerName].call(self, e);
@@ -32,14 +37,17 @@ define(["js/core/Window"], function (Window) {
                     }
                 };
             }
-            this.$stage.$window && this.dom(this.$stage.$window).bindDomEvent('keydown', this._keyDownHandler);
 
             this.callBase();
+
+            if(this.isRendered()){
+                this.bindDomEvent('keydown', this._keyDownHandler);
+            }
         },
 
         close: function () {
-            if (this._keyDownHandler) {
-                this.$stage.$window && this.dom(this.$stage.$window).unbindDomEvent('keydown', this._keyDownHandler);
+            if (this._keyDownHandler && this.isRendered()) {
+                this.unbindDomEvent('keydown', this._keyDownHandler);
             }
             this.callBase();
         },

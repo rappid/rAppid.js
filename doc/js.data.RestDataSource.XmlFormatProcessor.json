@@ -1,0 +1,54 @@
+{
+    "methods": [
+        {
+            "type": "Method",
+            "parameter": [
+                {
+                    "name": "responses"
+                }
+            ],
+            "annotations": {},
+            "definedInFile": "js/data/RestDataSource.js",
+            "lineNumbers": [
+                803,
+                805
+            ],
+            "name": "deserialize",
+            "visibility": "public"
+        },
+        {
+            "type": "Method",
+            "parameter": [
+                {
+                    "name": "data"
+                }
+            ],
+            "annotations": {},
+            "definedInFile": "js/data/RestDataSource.js",
+            "lineNumbers": [
+                800,
+                802
+            ],
+            "name": "serialize",
+            "visibility": "public"
+        }
+    ],
+    "staticMethods": [],
+    "defaults": {},
+    "properties": {},
+    "fqClassName": "js.data.RestDataSource.XmlFormatProcessor",
+    "dependencies": [
+        "JSON",
+        "flow",
+        "js.data.Collection",
+        "js.data.DataSource",
+        "js.data.Model",
+        "js.lib.query.composer.RestQueryComposer",
+        "require",
+        "underscore"
+    ],
+    "description": " TODO: implement XmlProcessor",
+    "type": "js",
+    "file": "js/data/RestDataSource.js",
+    "package": "js.data"
+}

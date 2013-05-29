@@ -1,4 +1,7 @@
-<schema targetNamespace="srv.endpoint" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns1="srv.core" xmlns:ns="srv.endpoint">
+<schema targetNamespace="srv.endpoint"
+    xmlns="http://www.w3.org/2001/XMLSchema"
+    xmlns:ns1="srv.core"
+    xmlns:ns="srv.endpoint">
     <import namespace="srv.core"/>
     <element name="HttpEndPoint" type="ns:HttpEndPoint"/>
     <element name="HttpsEndPoint" type="ns:HttpsEndPoint"/>
@@ -7,34 +10,14 @@
         <complexContent>
             <extension base="ns1:EndPoint">
                 <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/srv.endpoint.HttpEndPoint">
-
-                    </documentation>
+                    <documentation source="http://www.rappidjs.com/#/api/srv.endpoint.HttpEndPoint"></documentation>
                 </annotation>
                 <sequence>
                     <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
                 </sequence>
-                <attribute name="port" default="80">
-                    <annotation>
-                        <documentation>
-
-                        </documentation>
-                    </annotation>
-                </attribute>
-                <attribute name="hostname">
-                    <annotation>
-                        <documentation>
-
-                        </documentation>
-                    </annotation>
-                </attribute>
-                <attribute name="backlog">
-                    <annotation>
-                        <documentation>
-
-                        </documentation>
-                    </annotation>
-                </attribute>
+                <attribute name="port" default="80"/>
+                <attribute name="hostname"/>
+                <attribute name="backlog"/>
             </extension>
         </complexContent>
     </complexType>
@@ -42,34 +25,14 @@
         <complexContent>
             <extension base="ns1:EndPoint">
                 <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/srv.endpoint.HttpsEndPoint">
-
-                    </documentation>
+                    <documentation source="http://www.rappidjs.com/#/api/srv.endpoint.HttpsEndPoint"></documentation>
                 </annotation>
                 <sequence>
                     <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
                 </sequence>
-                <attribute name="port" default="443">
-                    <annotation>
-                        <documentation>
-
-                        </documentation>
-                    </annotation>
-                </attribute>
-                <attribute name="keyFile">
-                    <annotation>
-                        <documentation>
-
-                        </documentation>
-                    </annotation>
-                </attribute>
-                <attribute name="certFile">
-                    <annotation>
-                        <documentation>
-
-                        </documentation>
-                    </annotation>
-                </attribute>
+                <attribute name="port" default="443"/>
+                <attribute name="keyFile"/>
+                <attribute name="certFile"/>
             </extension>
         </complexContent>
     </complexType>
@@ -77,55 +40,17 @@
         <complexContent>
             <extension base="ns1:EndPoint">
                 <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/srv.endpoint.SpdyEndPoint">
-
-                    </documentation>
+                    <documentation source="http://www.rappidjs.com/#/api/srv.endpoint.SpdyEndPoint"></documentation>
                 </annotation>
                 <sequence>
                     <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
                 </sequence>
-                <attribute name="port" default="80">
-                    <annotation>
-                        <documentation>
-
-                        </documentation>
-                    </annotation>
-                </attribute>
-                <attribute name="hostname">
-                    <annotation>
-                        <documentation>
-
-                        </documentation>
-                    </annotation>
-                </attribute>
-                <attribute name="backlog">
-                    <annotation>
-                        <documentation>
-
-                        </documentation>
-                    </annotation>
-                </attribute>
-                <attribute name="key">
-                    <annotation>
-                        <documentation>
-
-                        </documentation>
-                    </annotation>
-                </attribute>
-                <attribute name="cert">
-                    <annotation>
-                        <documentation>
-
-                        </documentation>
-                    </annotation>
-                </attribute>
-                <attribute name="ca">
-                    <annotation>
-                        <documentation>
-
-                        </documentation>
-                    </annotation>
-                </attribute>
+                <attribute name="port" default="80"/>
+                <attribute name="hostname"/>
+                <attribute name="backlog"/>
+                <attribute name="key"/>
+                <attribute name="cert"/>
+                <attribute name="ca"/>
             </extension>
         </complexContent>
     </complexType>

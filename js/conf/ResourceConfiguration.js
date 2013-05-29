@@ -3,7 +3,40 @@ define(["js/conf/Configuration", "js/data/Model"], function (Configuration, Mode
     return Configuration.inherit('js.conf.ResourceConfiguration', {
 
         defaults: {
-            resourceHandler: null
+            /***
+             * a custom resource handler to handle this request
+             * @type srv.handler.rest.ResourceHandler
+             */
+            resourceHandler: null,
+
+            /***
+             * the full qualified class name of the model used for operating on this resource
+             *
+             * @type String
+             * @required
+             */
+            modelClassName: null,
+
+            /***
+             * the rest path used for access and save the model data. Keep in mind that
+             * ResourceConfiguration can be nested to have a context save environment.
+             *
+             * @type String
+             * @required
+             */
+            path: null,
+
+            /***
+             * @type String
+             */
+            collectionClassName: null,
+
+            /***
+             * the name of the optional processor mapped with the $processors property of the RestDataSource
+             *
+             * @type String
+             */
+            processor: null
         },
 
         _initializationComplete: function () {

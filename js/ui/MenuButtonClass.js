@@ -2,12 +2,42 @@ define(["js/ui/View", "js/core/Content", "js/ui/Button", "underscore"], function
 
     return View.inherit("js.ui.MenuButtonClass", {
         defaults: {
-            'tagName': 'div',
-            'componentClass': 'btn-group menu-button',
-            'menuClassName': "dropdown-menu",
-            'menuVisible': false
+            /***
+             * The label of the button.
+             *
+             * @type String
+             */
+            label: "",
+            componentClass: 'btn-group menu-button',
+            /**
+             * The class name of the menu.
+             *
+             * @type String
+             */
+            menuClassName: "dropdown-menu",
+            /**
+             * Set's the menu visible.
+             *
+             * @type Boolean
+             */
+            menuVisible: false,
+            /**
+             * The class of the inner span in the link element
+             *
+             * @type String
+             */
+            labelClass: "",
+
+            /**
+             * The class of the inner link element
+             *
+             * @type String
+             */
+            buttonClass: ""
+
         },
         $defaultContentName: 'menu',
+
         $instances: [],
 
         addChild: function (child) {
@@ -82,9 +112,25 @@ define(["js/ui/View", "js/core/Content", "js/ui/Button", "underscore"], function
         _preventDefault: function (e) {
             e.$.stopPropagation();
         },
-
+        /***
+         * Closes the menu
+         */
         closeMenu: function () {
             this.set('menuVisible', false);
+        },
+
+        /**
+         * Opens the menu
+         */
+        openMenu: function(){
+            this.set('menuVisible', true);
+        },
+
+        /***
+         * Toggles the menu
+         */
+        toggleMenu: function(){
+            this.set('menuVisible', !this.$.menuVisible);
         }
     });
 

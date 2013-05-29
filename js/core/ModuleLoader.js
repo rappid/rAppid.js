@@ -8,7 +8,15 @@ define(["require", "js/html/HtmlElement", "js/ui/ContentPlaceHolder", "js/core/M
                 $currentModule: null,
                 tagName: 'div',
                 componentClass: "module-loader",
-                state: null
+                state: null,
+
+                /***
+                 * the router used for automatically registering routes from {@link js.conf.ModuleConfiguration}
+                 *
+                 * @type js.core.Router
+                 * @required
+                 */
+                router: null
             },
 
             ctor: function (attributes) {
@@ -38,7 +46,8 @@ define(["require", "js/html/HtmlElement", "js/ui/ContentPlaceHolder", "js/core/M
                 _.defaults(module, {
                     name: null,
                     moduleClass: null,
-                    route: null
+                    route: null,
+                    attributes: null
                 });
 
                 if (!module.name) {
@@ -77,53 +86,70 @@ define(["require", "js/html/HtmlElement", "js/ui/ContentPlaceHolder", "js/core/M
             _startModule: function (moduleName, moduleInstance, callback, routeContext, cachedInstance) {
 
                 var self = this;
-                this.set('currentModuleName', moduleName);
 
-                var contentPlaceHolders = this.getContentPlaceHolders();
+                flow()
+                    .seq(function (cb) {
 
-                // set content
-                for (var i = 0; i < contentPlaceHolders.length; i++) {
-                    var contentPlaceHolder = contentPlaceHolders[i];
-                    contentPlaceHolder.set("content", moduleInstance.findContent(contentPlaceHolder.$.name));
-                }
-
-                var internalCallback = function (err) {
-                    self.set({
-                        state: err ? 'error' : null,
-                        $currentModule: moduleInstance
-                    });
-
-                    if (callback) {
-                        callback(err, moduleInstance);
-                    }
-                };
-
-                // start module
-                moduleInstance.start(function (err) {
-
-                    if (err || cachedInstance) {
-                        internalCallback(err);
-                    } else {
-                        if (routeContext) {
-                            // fresh instance with maybe new routers -> exec routes for new router
-                            var routeExecutionStack = [];
-
-                            for (var i = 0; i < moduleInstance.$routers.length; i++) {
-                                routeExecutionStack = routeExecutionStack.concat(moduleInstance.$routers[i].generateRoutingStack(routeContext.fragment));
-                            }
-
-                            flow()
-                                .seqEach(routeExecutionStack, function (routingFunction, cb) {
-                                    routingFunction(cb);
-                                })
-                                .exec(internalCallback);
-
+                        var currentModule = self.$.$currentModule;
+                        if (currentModule) {
+                            currentModule._unload(cb);
                         } else {
-                            internalCallback();
+                            cb();
+                        }
+                    })
+                    .seq(function(cb) {
+
+                        // start module
+                        moduleInstance.start(function (err) {
+
+                            if (err || cachedInstance) {
+                                cb(err);
+                            } else {
+                                if (routeContext) {
+                                    // fresh instance with maybe new routers -> exec routes for new router
+                                    var routeExecutionStack = [];
+
+                                    for (var i = 0; i < moduleInstance.$routers.length; i++) {
+                                        routeExecutionStack = routeExecutionStack.concat(moduleInstance.$routers[i].generateRoutingStack(routeContext.fragment));
+                                    }
+
+                                    flow()
+                                        .seqEach(routeExecutionStack, function (routingFunction, cb) {
+                                            routingFunction(cb);
+                                        })
+                                        .exec(cb);
+
+                                } else {
+                                    cb();
+                                }
+
+                            }
+                        }, routeContext);
+                    })
+                    .seq(function () {
+                        self._clearContentPlaceHolders();
+
+                        self.set('currentModuleName', moduleName);
+                        var contentPlaceHolders = self.getContentPlaceHolders();
+
+                        // set content
+                        for (var i = 0; i < contentPlaceHolders.length; i++) {
+                            var contentPlaceHolder = contentPlaceHolders[i];
+                            contentPlaceHolder.set("content", moduleInstance.findContent(contentPlaceHolder.$.name));
                         }
 
-                    }
-                }, routeContext);
+                    })
+                    .exec(function (err) {
+                        self.set({
+                            state: err ? 'error' : null,
+                            $currentModule: moduleInstance
+                        });
+
+                        if (callback) {
+                            callback(err, moduleInstance);
+                        }
+                    });
+
 
             },
 
@@ -158,18 +184,9 @@ define(["require", "js/html/HtmlElement", "js/ui/ContentPlaceHolder", "js/core/M
 
 
                     flow()
-                        .seq(function() {
+                        .seq(function () {
                             self.set('currentModuleName', null);
                             self.set('state', 'unloading loading');
-                        })
-                        .seq(function (cb) {
-
-                            var currentModule = self.$.$currentModule;
-                            if (currentModule) {
-                                currentModule._unload(cb);
-                            } else {
-                                cb();
-                            }
                         })
                         .seq(function (cb) {
 
@@ -185,7 +202,7 @@ define(["require", "js/html/HtmlElement", "js/ui/ContentPlaceHolder", "js/core/M
                                 // load module
 
                                 require([self.$stage.$applicationContext.getFqClassName(module.moduleClass)], function (moduleBaseClass) {
-                                    var moduleInstance = new moduleBaseClass(null, false, self.$stage, null, null);
+                                    var moduleInstance = new moduleBaseClass(module.attributes, false, self.$stage, null, null);
 
                                     if (moduleInstance instanceof Module) {
                                         if (typeof(CollectGarbage) == "function") {
@@ -222,6 +239,7 @@ define(["require", "js/html/HtmlElement", "js/ui/ContentPlaceHolder", "js/core/M
                 }
 
             },
+
             isModuleActive: function (moduleName) {
                 return this.$.currentModuleName == moduleName;
             }.onChange('currentModuleName'),

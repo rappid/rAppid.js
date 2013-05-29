@@ -361,6 +361,7 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
             identifier: function () {
                 return this.$[this.idField];
             },
+
             contextModel: function () {
                 return this.$context ? this.$context.$contextModel : null;
             }

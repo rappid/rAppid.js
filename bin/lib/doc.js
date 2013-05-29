@@ -54,8 +54,9 @@ var esprima = require('esprima'),
 
         ctor: function () {
 
-
             this.documentations = {};
+            this.excludeDocumentations = [];
+
             this.documentationProcessors = {
                 js: new ClassDocumentationProcessor(),
                 xml: new XamlClassDocumentationProcessor()
@@ -73,14 +74,23 @@ var esprima = require('esprima'),
                 throw "not a ClassDocumentation";
             }
 
-            if (this.documentations[className]) {
-                throw "overwrite documentation for class: " + className;
+            var documentation = this.documentations[className];
+            if (documentation) {
+                var message = "overwrite documentation for class: " + className + ". FqClassname already used in " + documentation.file + "\n";
+
+                console.error(message);
+
+                throw new Error(message);
             }
 
             this.documentations[className] = classDocumentation;
         },
 
-        generateDocumentationsForFile: function (type, code, defaultFqClassName, add, path) {
+        excludeClassDocumentation: function(className) {
+            this.excludeDocumentations.push(className);
+        },
+
+        generateDocumentationsForFile: function (type, code, defaultFqClassName, path, excludeFromOutput) {
 
             var processor = this.documentationProcessors[type];
 
@@ -88,18 +98,21 @@ var esprima = require('esprima'),
                 throw 'Processor for type "' + type + '" not found.';
             }
 
-            var docs = processor.generate(code, defaultFqClassName);
+            var docs = processor.generate(code, defaultFqClassName, path);
 
             docs.forEach(function (doc) {
                 doc.file = path;
                 doc.package = path.replace(/\/[^/]+$/, "").replace(/\//g, ".");
             });
 
-            if (add) {
-                docs.forEach(function (doc) {
-                    this.addClassDocumentation(doc.fqClassName, doc);
-                }, this);
-            }
+            docs.forEach(function (doc) {
+                this.addClassDocumentation(doc.fqClassName, doc);
+
+                if (excludeFromOutput) {
+                    this.excludeClassDocumentation(doc.fqClassName);
+                }
+
+            }, this);
 
             return docs;
         },
@@ -400,7 +413,7 @@ var esprima = require('esprima'),
             };
         },
 
-        generate: function (code, fqClassName) {
+        generate: function (code, fqClassName, path) {
 
             var ast = this.ast = esprima.parse(code, {
                     comment: true,
@@ -409,6 +422,7 @@ var esprima = require('esprima'),
                 ret = [];
 
             this.code = code;
+            this.filePath = path;
 
             // search for all define statements in file
             for (var i = 0; i < ast.body.length; i++) {
@@ -433,27 +447,35 @@ var esprima = require('esprima'),
                             dependencies.push((expression.arguments[0].elements[j].value || "").replace(/\//g, "."));
                         }
 
-                        var classDocumentation = this.getClassDocumentation(expression.arguments[1].body, varToRequireMap);
-                        if (classDocumentation) {
+                        var classDocumentations = this.getClassDocumentations(expression.arguments[1].body, varToRequireMap),
+                            start = body.range[0];
+                        for (var c = 0; c < classDocumentations.length; c++) {
 
-                            dependencies.sort();
-                            classDocumentation.dependencies = dependencies;
+                            var classDocumentation = classDocumentations[c];
 
-                            // get annotations for class from body begin until class definition begin
-                            var annotations = this.getAnnotationInRange(body.range[0], classDocumentation.start, this.classAnnotationProcessors);
+                            if (classDocumentation) {
 
-                            for (var a = 0; a < annotations.length; a++) {
-                                var annotation = annotations[a];
-                                annotation.processor.mapAnnotationToItem(annotation, classDocumentation, annotations);
-                            }
+                                dependencies.sort();
+                                classDocumentation.dependencies = dependencies;
 
-                            delete classDocumentation.start;
+                                // get annotations for class from body begin until class definition begin
+                                var annotations = this.getAnnotationInRange(start, classDocumentation.start, this.classAnnotationProcessors);
+                                start = classDocumentation.end;
 
-                            classDocumentation.fqClassName = classDocumentation.fqClassName || fqClassName;
-                            classDocumentation.type = "js";
+                                for (var a = 0; a < annotations.length; a++) {
+                                    var annotation = annotations[a];
+                                    annotation.processor.mapAnnotationToItem(annotation, classDocumentation, annotations);
+                                }
 
-                            if (!classDocumentation.hasOwnProperty(('ignore'))) {
-                                ret.push(new ClassDocumentation(classDocumentation));
+                                delete classDocumentation.start;
+                                delete classDocumentation.end;
+
+                                classDocumentation.fqClassName = classDocumentation.fqClassName || fqClassName;
+                                classDocumentation.type = "js";
+
+                                if (!classDocumentation.hasOwnProperty(('ignore'))) {
+                                    ret.push(new ClassDocumentation(classDocumentation));
+                                }
                             }
                         }
 
@@ -465,12 +487,15 @@ var esprima = require('esprima'),
 
         },
 
-        getClassDocumentation: function (functionBody, varToRequireMap) {
+        getClassDocumentations: function (functionBody, varToRequireMap) {
+
+            var ret = [],
+                mainClassDocumentation = null;
 
             for (var i = 0; i < functionBody.body.length; i++) {
                 var statement = functionBody.body[i],
                     argument = statement.argument,
-                    classDocumentation;
+                    classDocumentation = null;
 
                 if (statement.type === CONST.ReturnStatement) {
 
@@ -480,7 +505,9 @@ var esprima = require('esprima'),
 
                         classDocumentation = this.getDocumentationFromInheritCall(argument, varToRequireMap, functionBody);
                         classDocumentation.start = argument.range[0];
-                        return classDocumentation;
+                        classDocumentation.end = argument.range[1];
+
+                        ret.push(classDocumentation);
 
                     } else if (argument.type === CONST.Identifier) {
 
@@ -504,54 +531,93 @@ var esprima = require('esprima'),
                                         if (!value) {
                                             // assignment happens later -> search for assignment
                                             for (var l = 0; l < functionBody.body.length; l++) {
-                                                statement = functionBody.body[l];
+                                                var innerStatement = functionBody.body[l];
 
-                                                if (statement.type === CONST.ExpressionStatement &&
-                                                    statement.expression.type === CONST.AssignmentExpression &&
-                                                    statement.expression.operator === "=" &&
-                                                    statement.expression.left.type === CONST.Identifier &&
-                                                    statement.expression.left.name === varName) {
+                                                if (innerStatement.type === CONST.ExpressionStatement &&
+                                                    innerStatement.expression.type === CONST.AssignmentExpression &&
+                                                    innerStatement.expression.operator === "=" &&
+                                                    innerStatement.expression.left.type === CONST.Identifier &&
+                                                    innerStatement.expression.left.name === varName) {
 
                                                     // found the variable assignment
-                                                    value = statement.expression.right;
+                                                    value = innerStatement.expression.right;
                                                     break;
                                                 }
                                             }
                                         }
 
-                                        classDocumentation = this.getDocumentationFromInheritCall(value, varToRequireMap, functionBody);
+                                        mainClassDocumentation = classDocumentation = this.getDocumentationFromInheritCall(value, varToRequireMap, functionBody);
+
                                         if (classDocumentation) {
                                             classDocumentation.start = declaration.range[0];
-                                            return classDocumentation;
+                                            classDocumentation.end = declaration.range[1];
+
+                                            ret.push(classDocumentation);
                                         }
                                     }
 
                                 }
-                            } else {
-                                // TODO: PROCESS static type assignments
+                            } else if (mainClassDocumentation &&
+                                statement.type === CONST.ExpressionStatement &&
+                                statement.expression.type === CONST.AssignmentExpression &&
+                                statement.expression.operator === "=" && statement.expression.left.type === CONST.MemberExpression &&
+                                statement.expression.left.object.name === varName) {
+
+                                if (statement.expression.right.type === CONST.CallExpression) {
+
+                                    classDocumentation = this.getDocumentationFromInheritCall(statement.expression.right, varToRequireMap, functionBody);
+
+                                    if (classDocumentation) {
+                                        classDocumentation.start = statement.range[0];
+                                        classDocumentation.end = statement.range[1];
+
+                                        classDocumentation.fqClassName = classDocumentation.fqClassName || (mainClassDocumentation.fqClassName ? mainClassDocumentation.fqClassName + "." + statement.expression.left.property.name : null);
+
+                                        if (!classDocumentation.inherit && statement.expression.right.callee.type === CONST.MemberExpression &&
+                                            statement.expression.right.callee.object.name === varName) {
+
+                                            classDocumentation.inherit = mainClassDocumentation.fqClassName;
+
+                                        }
+
+                                        mainClassDocumentation.exports = mainClassDocumentation.exports || {};
+
+                                        mainClassDocumentation.exports[statement.expression.left.property.name] = {
+                                            type: "InnerClass",
+                                            fqClassName: classDocumentation.fqClassName
+                                        };
+
+                                        ret.push(classDocumentation);
+
+                                    }
+
+                                }
+
+
                             }
 
                         }
-
-                        return classDocumentation;
 
                     }
 
                 }
             }
 
+            return ret;
+
         },
 
         getDocumentationFromInheritCall: function (argument, varToRequireMap, scope) {
-            if (argument.callee.property.type === CONST.Identifier &&
-                argument.callee.property.name === 'inherit') {
+            if ((argument.callee.type === CONST.MemberExpression && argument.callee.property.type === CONST.Identifier && argument.callee.property.name === 'inherit') ||
+            (argument.callee.type === CONST.Identifier && argument.callee.name === "inherit")) {
                 // we found the inherit
 
                 var classDocumentation = this.getClassDocumentationFromInherit(argument.arguments, scope);
 
                 if (classDocumentation) {
-                    var inheritFromName = argument.callee.object.name;
-                    if (varToRequireMap.hasOwnProperty(inheritFromName)) {
+                    var inheritFromName = argument.callee.object ? argument.callee.object.name : null;
+
+                    if (inheritFromName && varToRequireMap.hasOwnProperty(inheritFromName)) {
                         classDocumentation.inherit = classDocumentation.inherit || this.getFqClassNameFromPath(varToRequireMap[inheritFromName]);
                     }
                 }
@@ -667,6 +733,7 @@ var esprima = require('esprima'),
                     defaults: {},
                     properties: {}
                 },
+                file = this.filePath,
                 properties = object.properties,
                 lastProperty,
                 property,
@@ -749,7 +816,9 @@ var esprima = require('esprima'),
                 item = {
                     type: 'Method',
                     parameter: [],
-                    annotations: {}
+                    annotations: {},
+                    definedInFile: file,
+                    lineNumbers: [self.getLineNumber(value.range[0]), self.getLineNumber(value.range[1])]
                 };
 
                 for (var j = 0; j < value.params.length; j++) {
@@ -831,7 +900,9 @@ var esprima = require('esprima'),
             var name = property.key.name,
                 ret = {
                     name: name,
-                    visibility: this.getVisibility(name)
+                    visibility: this.getVisibility(name),
+                    definedInFile: this.filePath,
+                    lineNumbers: [this.getLineNumber(property.range[0]), this.getLineNumber(property.range[1])]
                 };
 
             if (property.value.type === CONST.Literal) {
@@ -854,7 +925,8 @@ var esprima = require('esprima'),
 
             var defaults = defaultsObject.properties,
                 ret = {},
-                lastDefaultEntry;
+                lastDefaultEntry,
+                file = this.file;
 
             for (var i = 0; i < defaults.length; i++) {
                 var defaultEntry = defaults[i],
@@ -875,7 +947,9 @@ var esprima = require('esprima'),
                     name: defaultName,
                     defaultType: isValueDefault ? "value" : "factory",
                     visibility: this.getVisibility(defaultName),
-                    value: isValueDefault ? defaultEntry.value.value : undefined
+                    value: isValueDefault ? defaultEntry.value.value : undefined,
+                    definedInFile: file,
+                    lineNumbers: [this.getLineNumber(defaultEntry.range[0]), this.getLineNumber(defaultEntry.range[1])]
                 };
 
                 var annotations = this.getAnnotationInRange(lastDefaultEntry ? lastDefaultEntry.range[1] : defaultsObject.range[0], defaultEntry.range[0], this.defaultAnnotationProcessors);
@@ -912,7 +986,9 @@ var esprima = require('esprima'),
                 var item = {
                     type: "Event",
                     name: eventName,
-                    visibility: this.getVisibility(eventName)
+                    visibility: this.getVisibility(eventName),
+                    definedInFile: this.file,
+                    lineNumbers: [this.getLineNumber(eventEntry.range[0]), this.getLineNumber(eventEntry.range[1])]
                 };
 
                 var annotations = this.getAnnotationInRange(lastEventName ? lastEventName.range[1] : eventsObject.range[0], eventEntry.range[0], this.eventAnnotationProcessors);
@@ -930,6 +1006,10 @@ var esprima = require('esprima'),
 
             return ret;
 
+        },
+
+        getLineNumber: function(position) {
+            return this.code.substring(0, position).split("\n").length;
         },
 
         getAnnotationInRange: function (from, to, processors) {
@@ -1018,7 +1098,11 @@ var esprima = require('esprima'),
 
     XamlClassDocumentationProcessor = inherit({
 
-        generate: function (code, fqClassName) {
+        getVisibility: function (name) {
+            return /^[$_]/.test(name) ? "private" : "public";
+        },
+
+        generate: function (code, fqClassName, path) {
 
             var xml = this.xml = new DomParser().parseFromString(code, "text/xml").documentElement,
                 definition = {
@@ -1032,6 +1116,28 @@ var esprima = require('esprima'),
             definition.inherit = xml.namespaceURI + "." + xml.localName;
 
             definition.dependencies.push(definition.inherit);
+
+            var defaults = {};
+
+            for (var i = 0; i < xml.attributes.length; i++) {
+                var attribute = xml.attributes[i],
+                    defaultName = attribute.localName;
+
+                if (!attribute.namespaceURI && !/^xml/.test(attribute.localName)) {
+
+                    defaults[defaultName] = {
+                        name: defaultName,
+                        defaultType: "value",
+                        visibility: this.getVisibility(defaultName),
+                        value: attribute.value
+                    };
+
+                }
+
+            }
+
+            definition.defaults = defaults;
+
 
             return [
                 new ClassDocumentation(definition)
@@ -1093,7 +1199,7 @@ Documentation.Processors.General = Documentation.AnnotationProcessor.inherit("Do
         }
     }
 }, {
-    Parser: /^\s*\*\s*@(\S+)\s*([\s\S]*)\s*$/
+    Parser: /^\s*\*\s*@(\S+):?\s*([\s\S]*)\s*$/
 });
 
 
@@ -1122,7 +1228,7 @@ Documentation.Processors.Class = Documentation.AnnotationProcessor.inherit("Docu
         item.fqClassName = annotation.value;
     }
 }, {
-    Parser: /^\s*\*\s*@class\s*(\S+)\s*$/
+    Parser: /^\s*\*\s*@class:?\s*(\S+)\s*$/
 });
 
 Documentation.Processors.Parameter = Documentation.AnnotationProcessor.inherit("Documentation.Processors.Parameter", {
@@ -1173,7 +1279,7 @@ Documentation.Processors.Parameter = Documentation.AnnotationProcessor.inherit("
 
     }
 }, {
-    Parser: /\*\s{0,4}@param\s+?(?:\{(.+)?\})?\s*(?:([^[ ]+)|(?:\[([^=]+)(?:=(.*)?)?\]))\s*-?\s*(.+)?$/
+    Parser: /\*\s{0,4}@param:?\s+?(?:\{(.+)?\})?\s*(?:([^[ ]+)|(?:\[([^=]+)(?:=(.*)?)?\]))\s*-?\s*(.+)?$/
 });
 
 Documentation.Processors.Type = Documentation.AnnotationProcessor.inherit("Documentation.Processors.Type", {
@@ -1210,7 +1316,7 @@ Documentation.Processors.Type = Documentation.AnnotationProcessor.inherit("Docum
 
     }
 }, {
-    Parser: /\*\s{0,4}@type\s+?\{?([^}]+)?\}?\s*?$/
+    Parser: /\*\s{0,4}@type:?\s+?\{?([^}]+)?\}?\s*?$/
 });
 
 Documentation.Processors.Return = Documentation.AnnotationProcessor.inherit("Documentation.Processors.Return", {
@@ -1240,7 +1346,7 @@ Documentation.Processors.Return = Documentation.AnnotationProcessor.inherit("Doc
         item.returns = annotation.value;
     }
 }, {
-    Parser: /\*\s{0,4}@return[s]?\s+?(?:\{(.+)?\})?\s*-?\s*(.+)?$/
+    Parser: /\*\s{0,4}@return[s]?:?\s+?(?:\{(.+)?\})?\s*-?\s*(.+)?$/
 });
 
 Documentation.Processors.Description = Documentation.AnnotationProcessor.inherit("Documentation.Processors.Description", {

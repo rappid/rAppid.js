@@ -20,11 +20,11 @@ define(["js/core/List" , "underscore", "js/data/Query", 'js/lib/query/ArrayExecu
             filterFnc: null
         },
 
-        ctor: function(options){
-            this.callBase([],options);
+        ctor: function (options) {
+            this.callBase([], options);
         },
 
-        _commitList: function(list){
+        _commitList: function (list) {
             if (list && list instanceof List) {
                 this._innerReset(list.$items);
             }
@@ -42,24 +42,24 @@ define(["js/core/List" , "underscore", "js/data/Query", 'js/lib/query/ArrayExecu
             this.bind('change:query', this._onQueryChanged, this);
         },
 
-        _onQueryChanged: function(){
-            this._innerReset(this.$.list.$items);
+        _onQueryChanged: function () {
+            this._innerReset(this.$.list ? this.$.list.$items : []);
         },
 
-        _onReset: function(){
-            this._innerReset(this.$.list.$items);
+        _onReset: function () {
+            this._innerReset(this.$.list ? this.$.list.$items : []);
         },
 
         _onItemAdded: function (e) {
             var ret = this._filterItem(e.$.item, e.index);
             if (ret === true) {
                 var index = e.$.index;
-                if(this._queryHasSort()){
+                if (this._queryHasSort()) {
                     var items = Executor.sortItems(this.$.query, this.$items.concat([e.$.item]));
                     index = items.indexOf(e.$.item);
                 }
                 var size = this.size();
-                if(index >= size){
+                if (index >= size) {
                     index = size - 1;
                 }
                 this.add(e.$.item, {index: index});
@@ -84,14 +84,14 @@ define(["js/core/List" , "underscore", "js/data/Query", 'js/lib/query/ArrayExecu
                     index = items.indexOf(e.$.item);
                 }
                 this.add(e.$.item, {index: index});
-            } else if(included && keep === true && this._queryHasSort()){
+            } else if (included && keep === true && this._queryHasSort()) {
                 items = Executor.sortItems(this.$.query, this.$items);
                 index = items.indexOf(e.$.item);
                 var oldIndex = this.indexOf(e.$.item);
 
-                if(oldIndex !== index){
+                if (oldIndex !== index) {
                     this.removeAt(oldIndex);
-                    this.add(e.$.item,{index: index});
+                    this.add(e.$.item, {index: index});
                 }
             }
         },
@@ -105,21 +105,21 @@ define(["js/core/List" , "underscore", "js/data/Query", 'js/lib/query/ArrayExecu
                 }
             }
 
-            if(this._queryHasSort()){
+            if (this._queryHasSort()) {
                 filtered = Executor.sortItems(this.$.query, filtered);
             }
 
             this.reset(filtered);
         },
 
-        _queryHasSort: function(){
+        _queryHasSort: function () {
             return this.$.query && this.$.query.hasSortExpressions();
         },
 
         _filterItem: function (item, index) {
             if (this.$.filterFnc) {
                 return this.$.filterFnc.call(this, item, index, this);
-            } else if(this.$.query) {
+            } else if (this.$.query) {
                 return !!Executor._filterItem(item, this.$.query.where());
             }
             return true;

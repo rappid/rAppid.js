@@ -30,7 +30,7 @@
 
         <js:Template name="attribute">
             <attribute name="{$name}">
-                <annotation>
+                <annotation visible="{$description}">
                     <documentation>
                         {$description}
                     </documentation>

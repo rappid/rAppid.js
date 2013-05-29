@@ -32,7 +32,7 @@ if (typeof requirejs !== "undefined") {
         var args = Array.prototype.slice.call(arguments, 0);
         // only call define when it is not already defined
         if (!(typeof args[0] === "string" && requirejs.defined(args[0]))) {
-            __define.apply(null,args);
+            __define.apply(null, args);
         }
     };
 }
@@ -48,11 +48,10 @@ if (typeof requirejs !== "undefined") {
     var undefined,
         underscore,
         Stage,
-        document = window.document; // TODO: create workaround for node
-
+        document = window.document;
 
     /***
-     * marks a function to be executed asycn
+     * marks a function to be executed asynchronously
      * @return {*}
      */
     Function.prototype.async = function () {
@@ -275,7 +274,7 @@ if (typeof requirejs !== "undefined") {
                             });
 
                         }
-                    });
+                    }, parameter);
                 }
             });
 
@@ -430,7 +429,7 @@ if (typeof requirejs !== "undefined") {
 
     var interCommunicationBus;
 
-    ApplicationContext.prototype.createApplicationInstance = function (window, callback) {
+    ApplicationContext.prototype.createApplicationInstance = function (window, callback, parameter) {
 
         var document,
             time = (new Date()).getTime();
@@ -457,6 +456,7 @@ if (typeof requirejs !== "undefined") {
             var injection = stage.$injection = new Injection(null, null, stage);
 
             stage.$environment = new Bindable();
+            stage.$parameter = parameter;
 
             injection.addInstance(stage.$bus);
             injection.addInstance(stage.$history);
@@ -548,7 +548,7 @@ if (typeof requirejs !== "undefined") {
             fqClassName = classDefinition.prototype.constructor.name;
         } else {
             fqClassName = fqClassName.replace(/\./g, "/");
-            if(this.$requirejsCache[fqClassName]){
+            if (this.$requirejsCache[fqClassName]) {
                 classDefinition = this.$requirejsCache[fqClassName];
             } else {
                 classDefinition = this.$requirejsContext(fqClassName);

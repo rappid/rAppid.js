@@ -1,0 +1,49 @@
+{
+    "methods": [
+        {
+            "type": "Method",
+            "parameter": [
+                {
+                    "name": "item"
+                },
+                {
+                    "name": "index"
+                }
+            ],
+            "annotations": {},
+            "definedInFile": "js/data/QueryFilterDataView.js",
+            "lineNumbers": [
+                8,
+                17
+            ],
+            "name": "_filterItem",
+            "visibility": "protected"
+        }
+    ],
+    "staticMethods": [],
+    "defaults": {
+        "query": {
+            "name": "query",
+            "defaultType": "value",
+            "visibility": "public",
+            "value": null,
+            "lineNumbers": [
+                5,
+                5
+            ]
+        }
+    },
+    "properties": {},
+    "fqClassName": "js.data.QueryDataView",
+    "inherit": "js.data.FilterView",
+    "dependencies": [
+        "js.data.FilterView",
+        "js.data.Query"
+    ],
+    "type": "js",
+    "file": "js/data/QueryFilterDataView.js",
+    "package": "js.data",
+    "inheritancePath": [
+        "js.data.FilterView"
+    ]
+}

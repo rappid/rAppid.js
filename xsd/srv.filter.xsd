@@ -1,4 +1,7 @@
-<schema targetNamespace="srv.filter" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ns1="srv.core" xmlns:ns="srv.filter">
+<schema targetNamespace="srv.filter"
+    xmlns="http://www.w3.org/2001/XMLSchema"
+    xmlns:ns1="srv.core"
+    xmlns:ns="srv.filter">
     <import namespace="srv.core"/>
     <element name="CredentialAuthenticationFilter" type="ns:CredentialAuthenticationFilter"/>
     <element name="SessionAuthenticationFilter" type="ns:SessionAuthenticationFilter"/>
@@ -7,27 +10,13 @@
         <complexContent>
             <extension base="ns:SessionAuthenticationFilter">
                 <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/srv.filter.CredentialAuthenticationFilter">
-
-                    </documentation>
+                    <documentation source="http://www.rappidjs.com/#/api/srv.filter.CredentialAuthenticationFilter"></documentation>
                 </annotation>
                 <sequence>
                     <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
                 </sequence>
-                <attribute name="usernameParameter" default="username">
-                    <annotation>
-                        <documentation>
-
-                        </documentation>
-                    </annotation>
-                </attribute>
-                <attribute name="passwordParameter" default="password">
-                    <annotation>
-                        <documentation>
-
-                        </documentation>
-                    </annotation>
-                </attribute>
+                <attribute name="usernameParameter" default="username"/>
+                <attribute name="passwordParameter" default="password"/>
             </extension>
         </complexContent>
     </complexType>
@@ -35,20 +24,12 @@
         <complexContent>
             <extension base="ns1:AuthenticationFilter">
                 <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/srv.filter.SessionAuthenticationFilter">
-
-                    </documentation>
+                    <documentation source="http://www.rappidjs.com/#/api/srv.filter.SessionAuthenticationFilter"></documentation>
                 </annotation>
                 <sequence>
                     <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
                 </sequence>
-                <attribute name="sessionKey" default="authenticationToken">
-                    <annotation>
-                        <documentation>
-
-                        </documentation>
-                    </annotation>
-                </attribute>
+                <attribute name="sessionKey" default="authenticationToken"/>
             </extension>
         </complexContent>
     </complexType>
@@ -56,34 +37,14 @@
         <complexContent>
             <extension base="ns1:Filter">
                 <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/srv.filter.SessionFilter">
-
-                    </documentation>
+                    <documentation source="http://www.rappidjs.com/#/api/srv.filter.SessionFilter"></documentation>
                 </annotation>
                 <sequence>
                     <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
                 </sequence>
-                <attribute name="sessionName" default="sessionId">
-                    <annotation>
-                        <documentation>
-
-                        </documentation>
-                    </annotation>
-                </attribute>
-                <attribute name="sessionId">
-                    <annotation>
-                        <documentation>
-
-                        </documentation>
-                    </annotation>
-                </attribute>
-                <attribute name="timeout" default="120">
-                    <annotation>
-                        <documentation>
-
-                        </documentation>
-                    </annotation>
-                </attribute>
+                <attribute name="sessionName" default="sessionId"/>
+                <attribute name="sessionId"/>
+                <attribute name="timeout" default="120"/>
             </extension>
         </complexContent>
     </complexType>

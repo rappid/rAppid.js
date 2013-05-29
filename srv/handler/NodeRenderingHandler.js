@@ -147,8 +147,7 @@ define(['srv/core/Handler', 'path', 'flow', 'fs', 'xmldom', 'underscore'], funct
 
         handleRequest: function (context, callback) {
 
-            var self = this,
-                stage;
+            var self = this;
 
             flow()
                 .seq("window", function () {
@@ -164,7 +163,6 @@ define(['srv/core/Handler', 'path', 'flow', 'fs', 'xmldom', 'underscore'], funct
                 })
                 .seq("app", function (cb) {
                     self.$applicationContext.createApplicationInstance(cb.vars.window, function (err, s, application) {
-                        stage = s;
                         cb(err, application);
                     });
                 })
@@ -183,7 +181,7 @@ define(['srv/core/Handler', 'path', 'flow', 'fs', 'xmldom', 'underscore'], funct
                 })
                 .seq("html", function () {
 
-                    stage.render(this.vars.window.document.getElementsByTagName("body")[0]);
+                    this.vars["app"].$stage.render(this.vars.window.document.getElementsByTagName("body")[0]);
                     return '<!DOCTYPE html>\n' + (new xmldom.XMLSerializer()).serializeToString(this.vars.window.document.documentElement);
                 })
                 .exec(function (err, results) {
@@ -191,7 +189,12 @@ define(['srv/core/Handler', 'path', 'flow', 'fs', 'xmldom', 'underscore'], funct
                         context.response.writeHead(200, {'Content-Type': 'text/html; charset=utf-8'});
                         context.response.write(results.html);
                         context.response.end();
+
                     }
+                    results.app.$stage.destroy();
+
+                    results = null;
+                    self = null;
 
                     callback(err);
                 });

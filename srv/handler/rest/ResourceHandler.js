@@ -108,11 +108,13 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
         },
         /**
          * Returns a collection for this resource in the right context
-         * @param context
+         * @param {srv.core.Context} context
+         * @param {Function} callback
+         * @param {Boolean} [checkParents] - default true
          * @return {*}
          * @private
          */
-        _findCollection: function (context, callback) {
+        _findCollection: function (context, callback, checkParents) {
             if (this.$parentResource) {
                 var self = this;
                 flow()
@@ -125,7 +127,12 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
 
                         id = parentCollection.$modelFactory.prototype.convertIdentifier(self.$parentResource.$resourceId);
                         var parent = parentCollection.createItem(id);
-                        parent.fetch(null, cb);
+
+                        if(checkParents){
+                            parent.fetch(null, cb);
+                        } else {
+                            cb();
+                        }
                     })
                     .exec(function (err, results) {
                         if (!err) {
@@ -239,7 +246,7 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
 
             flow()
                 .seq("collection", function (cb) {
-                    self._findCollection(context, cb);
+                    self._findCollection(context, cb, false);
                 })
                 .seq(function (cb) {
                     var parameters = context.request.urlInfo.parameter;
@@ -279,6 +286,7 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
                 .seq(function(cb){
                     var collection = this.vars.collection;
                     flow()
+                        // TODO: don't use fetchPage
                         .seqEach(pages, function(page, cb){
                             collection.fetchPage(page, options, cb);
                         })
@@ -406,7 +414,7 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
 
             flow()
                 .seq("collection", function (cb) {
-                    self._findCollection(context, cb);
+                    self._findCollection(context, cb, false);
                 })
                 .seq(function (cb) {
                     var modelFactory = self._getModelFactory();

@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<ui:TreeViewClass xmlns="http://www.w3.org/1999/xhtml" xmlns:js="js.core" xmlns:ui="js.ui">
+
+    <ui:TemplatePlaceHolder item="{node}" templateName="label" class="tree-view-label" onclick="_handleClick"/>
+
+    <ui:ItemsView items="{node.childNodes}"
+                      visible="{node.expanded}"
+                      class="tree-view-list"
+                      tagName="ul">
+        <js:Template name="item">
+            <li>
+                <ui:TreeView node="{item}" root="{root}" />
+            </li>
+        </js:Template>
+    </ui:ItemsView>
+
+</ui:TreeViewClass>

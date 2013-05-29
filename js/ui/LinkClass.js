@@ -1,4 +1,4 @@
-define(["js/ui/View"], function(View) {
+define(["js/ui/View"], function (View) {
 
     var externalLink = /^(([^:]+:\/\/)|(javascript:))/i,
         stripHashSlash = /^#?\/?/,
@@ -34,14 +34,23 @@ define(["js/ui/View"], function(View) {
              *
              * @type String
              */
-            target: "intern"
+            target: "intern",
+
+            /***
+             * the class name for the icon
+             * @type String
+             */
+            iconClass: null
         },
 
         _renderIconClass: function (iconClass) {
             if (iconClass) {
                 this._renderTemplateToPlaceHolder('iconTemplate', 'icon', {$iconClass: iconClass});
             } else {
-                this.getPlaceHolder("icon").clear();
+                var placeHolder = this.getPlaceHolder("icon");
+                if (placeHolder) {
+                    placeHolder.clear();
+                }
             }
         },
 

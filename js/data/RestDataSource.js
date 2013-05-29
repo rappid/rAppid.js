@@ -86,7 +86,13 @@ define(["js/data/DataSource", "js/data/Model", "underscore", "flow", "JSON", "js
              * Set's the default collection page size for fetching collection
              * @type Number
              */
-            collectionPageSize: 100
+            collectionPageSize: 100,
+
+            /***
+             * a suffix like `.json` to add to each request
+             * @type String
+             */
+            suffix: null
         },
 
         ctor: function () {

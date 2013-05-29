@@ -393,15 +393,17 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
                     this.$subBinding.invalidateValueCache();
                     return this.$subBinding.getValue();
                 } else {
-                    if(this.$cachedValue !== undefined){
+
+                    if(this.$cachedValue !== undefined && !this.$jsonObject){
                         return this.$cachedValue;
                     }
+
                     this.$originalValue = undefined;
                     if (this.$.fnc && !this.$jsonObject) {
                         this.$originalValue = this.$.fnc.apply(this.$.scope, this._getFncParameters());
                     } else if (this.$.path.length === 1) {
                         this.$originalValue = this.$.scope.get(this.$.key.name);
-                    } else if(this.$jsonObject) {
+                    } else if(this.$jsonObject && !_.isString(this.$jsonObject)) {
                         this.$originalValue = this.$.scope.get(this.$jsonObject, this.$.path.slice(1));
                     }
                     this.$cachedValue = this.transform.call(this.$.scope, this.$originalValue);

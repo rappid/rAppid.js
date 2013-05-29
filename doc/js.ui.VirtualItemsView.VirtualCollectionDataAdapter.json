@@ -1,0 +1,119 @@
+{
+    "methods": [
+        {
+            "type": "Method",
+            "parameter": [],
+            "annotations": {},
+            "definedInFile": "js/ui/VirtualItemsView.js",
+            "lineNumbers": [
+                790,
+                797
+            ],
+            "name": "_onReset",
+            "visibility": "protected"
+        },
+        {
+            "type": "Method",
+            "parameter": [
+                {
+                    "name": "data"
+                }
+            ],
+            "annotations": {},
+            "definedInFile": "js/ui/VirtualItemsView.js",
+            "lineNumbers": [
+                772,
+                789
+            ],
+            "name": "ctor",
+            "visibility": "public"
+        },
+        {
+            "type": "Method",
+            "parameter": [
+                {
+                    "name": "index"
+                }
+            ],
+            "annotations": {},
+            "definedInFile": "js/ui/VirtualItemsView.js",
+            "lineNumbers": [
+                798,
+                890
+            ],
+            "name": "getItemAt",
+            "visibility": "public"
+        },
+        {
+            "type": "Method",
+            "parameter": [
+                {
+                    "name": "query"
+                }
+            ],
+            "annotations": {},
+            "definedInFile": "js/ui/VirtualItemsView.js",
+            "lineNumbers": [
+                901,
+                907
+            ],
+            "name": "query",
+            "visibility": "public"
+        },
+        {
+            "type": "Method",
+            "parameter": [],
+            "annotations": {
+                "on": [
+                    [
+                        "$data",
+                        "change:$itemsCount"
+                    ]
+                ]
+            },
+            "definedInFile": "js/ui/VirtualItemsView.js",
+            "lineNumbers": [
+                912,
+                914
+            ],
+            "returns": {
+                "types": [
+                    "Number"
+                ],
+                "description": "the size of the list, or NaN if size currently unknown"
+            },
+            "name": "size",
+            "visibility": "public"
+        },
+        {
+            "type": "Method",
+            "parameter": [
+                {
+                    "name": "query"
+                }
+            ],
+            "annotations": {},
+            "definedInFile": "js/ui/VirtualItemsView.js",
+            "lineNumbers": [
+                892,
+                899
+            ],
+            "name": "sort",
+            "visibility": "public"
+        }
+    ],
+    "staticMethods": [],
+    "defaults": {},
+    "properties": {},
+    "fqClassName": "js.ui.VirtualItemsView.VirtualCollectionDataAdapter",
+    "dependencies": [
+        "js.core.Bindable",
+        "js.core.List",
+        "js.data.Collection",
+        "js.ui.View",
+        "underscore"
+    ],
+    "type": "js",
+    "file": "js/ui/VirtualItemsView.js",
+    "package": "js.ui"
+}
