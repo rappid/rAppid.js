@@ -308,9 +308,11 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
             _renderChild: function (child, pos) {
                 if (_.isFunction(child.render)) {
                     child.$renderParent = this;
-                    var el = child.render();
-                    this.$renderedChildren.push(child);
-                    if (el && child.$.visible) {
+                    if (child.$.visible) {
+                        delete this.$invisibleChildMap[child.$cid];
+                        var el = child.render();
+                        this.$renderedChildren.push(child);
+
                         if (pos == undefined) {
                             this.$el.appendChild(el);
                         } else {
@@ -341,6 +343,17 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                     this.removeClass('active');
                 }
             },
+
+            _commitVisible: function (visible) {
+                if (this.$renderParent && !this.isRendered()) {
+                    if (visible) {
+                        this.$renderParent._renderChild(this, this.$renderParent.$children.indexOf(this));
+                    } else {
+
+                    }
+                }
+            },
+
             _renderVisible: function (visible) {
                 if (this.$renderParent) {
                     if (visible) {
@@ -575,6 +588,9 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
             },
             setChildVisible: function (child) {
                 if (this.isRendered() && this.$invisibleChildMap[child.$cid]) {
+                    if (!child.isRendered()) {
+                        child.render();
+                    }
                     var next = this._getNextVisibleChild(child);
                     if (next) {
                         this.$el.insertBefore(child.$el, next.$el);
