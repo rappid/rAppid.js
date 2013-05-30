@@ -3,9 +3,27 @@ define(
         return View.inherit({
             defaults: {
                 tagName: "div",
+                /**
+                 * An array or a List of items
+                 * @type Array
+                 * @type js.core.List
+                 */
                 items: null,
+                /**
+                 * The key you want to use in the item template
+                 * @type String
+                 */
                 itemKey: 'item',
+                /**
+                 * The key you want to use for the index
+                 * @type String
+                 */
                 indexKey: 'index',
+                /**
+                 * KeyPath is used for item comparison.
+                 * If it's not set the default === comparison is used.
+                 * @type String
+                 */
                 keyPath: null
             },
 
