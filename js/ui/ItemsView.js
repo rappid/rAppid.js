@@ -19,15 +19,6 @@ define(
                 this.bind('items','add', this._onItemAdd, this);
                 this.bind('items','remove', this._onItemRemove, this);
             },
-            /***
-             * Returns true if items are available
-             */
-            isEmpty: function () {
-                if (this.$.items) {
-                    return this.$.items.length;
-                }
-                return 0;
-            }.onChange('items'),
 
             render: function () {
                 if (!this.isRendered()) {
