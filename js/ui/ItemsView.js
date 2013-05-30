@@ -3,9 +3,27 @@ define(
         return View.inherit({
             defaults: {
                 tagName: "div",
+                /**
+                 * An array or a List of items
+                 * @type Array
+                 * @type js.core.List
+                 */
                 items: null,
+                /**
+                 * The key you want to use in the item template
+                 * @type String
+                 */
                 itemKey: 'item',
+                /**
+                 * The key you want to use for the index
+                 * @type String
+                 */
                 indexKey: 'index',
+                /**
+                 * KeyPath is used for item comparison.
+                 * If it's not set the default === comparison is used.
+                 * @type String
+                 */
                 keyPath: null
             },
 
@@ -19,15 +37,6 @@ define(
                 this.bind('items','add', this._onItemAdd, this);
                 this.bind('items','remove', this._onItemRemove, this);
             },
-            /***
-             * Returns true if items are available
-             */
-            isEmpty: function () {
-                if (this.$.items) {
-                    return this.$.items.length;
-                }
-                return 0;
-            }.onChange('items'),
 
             render: function () {
                 if (!this.isRendered()) {
