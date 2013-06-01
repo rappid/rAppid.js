@@ -52,6 +52,7 @@ or the ModuleLoader.loadModule method is invoked manually.
                     </documentation>
                     </annotation>
                 </attribute>
+                <attribute name="attributes"/>
             </extension>
         </complexContent>
     </complexType>

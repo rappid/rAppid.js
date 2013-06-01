@@ -1315,8 +1315,8 @@
             "annotations": {},
             "definedInFile": "js/ui/FileUpload.js",
             "lineNumbers": [
-                11,
-                18
+                13,
+                20
             ],
             "name": "_renderMultiSelect",
             "visibility": "protected"
@@ -2672,6 +2672,16 @@
                 8
             ]
         },
+        "accept": {
+            "name": "accept",
+            "defaultType": "value",
+            "visibility": "public",
+            "value": null,
+            "lineNumbers": [
+                10,
+                10
+            ]
+        },
         "selected": {
             "name": "selected",
             "defaultType": "value",
@@ -2887,7 +2897,7 @@
                 131
             ],
             "propertyType": "complex",
-            "value": " ['left', 'top']",
+            "value": " ['left', 'top', 'maxWidth', 'maxHeight']",
             "types": [
                 "Array"
             ],

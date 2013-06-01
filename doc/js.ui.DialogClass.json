@@ -1823,8 +1823,8 @@
             "annotations": {},
             "definedInFile": "js/ui/DialogClass.js",
             "lineNumbers": [
-                40,
-                45
+                48,
+                53
             ],
             "definedBy": "js.core.Window",
             "overwritesMethod": true,
@@ -1843,8 +1843,8 @@
             "annotations": {},
             "definedInFile": "js/ui/DialogClass.js",
             "lineNumbers": [
-                51,
-                53
+                59,
+                61
             ],
             "description": "default function invoked when ESC is pressed",
             "name": "closeDialog",
@@ -1862,8 +1862,8 @@
             "annotations": {},
             "definedInFile": "js/ui/DialogClass.js",
             "lineNumbers": [
-                62,
-                64
+                70,
+                72
             ],
             "description": "\nabstract function invoked when the enter key is pressed\n",
             "abstract": "",
@@ -2686,8 +2686,8 @@
             "annotations": {},
             "definedInFile": "js/ui/DialogClass.js",
             "lineNumbers": [
-                18,
-                38
+                19,
+                46
             ],
             "definedBy": "js.core.Window",
             "overwritesMethod": true,
@@ -2865,14 +2865,23 @@
                 9
             ]
         },
+        "tabindex": {
+            "name": "tabindex",
+            "defaultType": "factory",
+            "visibility": "public",
+            "lineNumbers": [
+                10,
+                10
+            ]
+        },
         "componentClass": {
             "name": "componentClass",
             "defaultType": "value",
             "visibility": "public",
             "value": "dialog {size}",
             "lineNumbers": [
-                10,
-                10
+                11,
+                11
             ],
             "definedBy": "js.core.DomElement",
             "overwrites": true
@@ -3069,8 +3078,8 @@
             "visibility": "private",
             "definedInFile": "js/ui/DialogClass.js",
             "lineNumbers": [
-                13,
-                16
+                14,
+                17
             ],
             "propertyType": "complex",
             "value": " {\n            27: \"closeDialog\",\n            13: \"confirmDialog\"\n        }"
@@ -3123,7 +3132,7 @@
                 131
             ],
             "propertyType": "complex",
-            "value": " ['left', 'top']",
+            "value": " ['left', 'top', 'maxWidth', 'maxHeight']",
             "types": [
                 "Array"
             ],

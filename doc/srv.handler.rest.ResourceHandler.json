@@ -88,8 +88,8 @@
             "annotations": {},
             "definedInFile": "srv/handler/rest/ResourceHandler.js",
             "lineNumbers": [
-                626,
-                628
+                634,
+                636
             ],
             "name": "_afterModelCreate",
             "visibility": "protected"
@@ -110,8 +110,8 @@
             "annotations": {},
             "definedInFile": "srv/handler/rest/ResourceHandler.js",
             "lineNumbers": [
-                638,
-                640
+                646,
+                648
             ],
             "name": "_afterModelRemove",
             "visibility": "protected"
@@ -132,8 +132,8 @@
             "annotations": {},
             "definedInFile": "srv/handler/rest/ResourceHandler.js",
             "lineNumbers": [
-                632,
-                634
+                640,
+                642
             ],
             "name": "_afterModelSave",
             "visibility": "protected"
@@ -154,8 +154,8 @@
             "annotations": {},
             "definedInFile": "srv/handler/rest/ResourceHandler.js",
             "lineNumbers": [
-                629,
-                631
+                637,
+                639
             ],
             "name": "_afterModelUpdate",
             "visibility": "protected"
@@ -176,8 +176,8 @@
             "annotations": {},
             "definedInFile": "srv/handler/rest/ResourceHandler.js",
             "lineNumbers": [
-                535,
-                541
+                543,
+                549
             ],
             "name": "_autoGenerateValue",
             "visibility": "protected"
@@ -211,8 +211,8 @@
             "annotations": {},
             "definedInFile": "srv/handler/rest/ResourceHandler.js",
             "lineNumbers": [
-                618,
-                620
+                626,
+                628
             ],
             "name": "_beforeModelCreate",
             "visibility": "protected"
@@ -233,8 +233,8 @@
             "annotations": {},
             "definedInFile": "srv/handler/rest/ResourceHandler.js",
             "lineNumbers": [
-                635,
-                637
+                643,
+                645
             ],
             "name": "_beforeModelRemove",
             "visibility": "protected"
@@ -261,8 +261,8 @@
             "annotations": {},
             "definedInFile": "srv/handler/rest/ResourceHandler.js",
             "lineNumbers": [
-                550,
-                565
+                558,
+                573
             ],
             "description": "",
             "private": "",
@@ -285,8 +285,8 @@
             "annotations": {},
             "definedInFile": "srv/handler/rest/ResourceHandler.js",
             "lineNumbers": [
-                622,
-                624
+                630,
+                632
             ],
             "name": "_beforeModelUpdate",
             "visibility": "protected"
@@ -424,8 +424,8 @@
             "annotations": {},
             "definedInFile": "srv/handler/rest/ResourceHandler.js",
             "lineNumbers": [
-                343,
-                395
+                351,
+                403
             ],
             "description": "",
             "private": "",
@@ -476,8 +476,8 @@
             "annotations": {},
             "definedInFile": "srv/handler/rest/ResourceHandler.js",
             "lineNumbers": [
-                166,
-                181
+                173,
+                188
             ],
             "name": "_createOptionsForCollectionFetch",
             "visibility": "protected"
@@ -495,8 +495,8 @@
             "annotations": {},
             "definedInFile": "srv/handler/rest/ResourceHandler.js",
             "lineNumbers": [
-                182,
-                195
+                189,
+                202
             ],
             "name": "_createSortStatement",
             "visibility": "protected"
@@ -534,8 +534,8 @@
             "annotations": {},
             "definedInFile": "srv/handler/rest/ResourceHandler.js",
             "lineNumbers": [
-                196,
-                198
+                203,
+                205
             ],
             "name": "_createWhereStatement",
             "visibility": "protected"
@@ -638,8 +638,8 @@
             "annotations": {},
             "definedInFile": "srv/handler/rest/ResourceHandler.js",
             "lineNumbers": [
-                572,
-                617
+                580,
+                625
             ],
             "description": "",
             "private": "",
@@ -685,8 +685,8 @@
             "annotations": {},
             "definedInFile": "srv/handler/rest/ResourceHandler.js",
             "lineNumbers": [
-                199,
-                223
+                206,
+                230
             ],
             "name": "_fetchAllHrefsForModel",
             "visibility": "protected"
@@ -695,19 +695,33 @@
             "type": "Method",
             "parameter": [
                 {
-                    "types": null,
+                    "types": [
+                        "srv.core.Context"
+                    ],
                     "name": "context",
                     "optional": false
                 },
                 {
-                    "name": "callback"
+                    "types": [
+                        "Function"
+                    ],
+                    "name": "callback",
+                    "optional": false
+                },
+                {
+                    "types": [
+                        "Boolean"
+                    ],
+                    "name": "checkParents",
+                    "optional": true,
+                    "description": "default true"
                 }
             ],
             "annotations": {},
             "definedInFile": "srv/handler/rest/ResourceHandler.js",
             "lineNumbers": [
-                115,
-                143
+                117,
+                150
             ],
             "description": "Returns a collection for this resource in the right context",
             "returns": {
@@ -801,8 +815,8 @@
             "annotations": {},
             "definedInFile": "srv/handler/rest/ResourceHandler.js",
             "lineNumbers": [
-                452,
-                457
+                460,
+                465
             ],
             "name": "_getCompositionOptions",
             "visibility": "protected"
@@ -864,8 +878,8 @@
             "annotations": {},
             "definedInFile": "srv/handler/rest/ResourceHandler.js",
             "lineNumbers": [
-                162,
-                164
+                169,
+                171
             ],
             "name": "_getModelFactory",
             "visibility": "protected"
@@ -903,8 +917,8 @@
             "annotations": {},
             "definedInFile": "srv/handler/rest/ResourceHandler.js",
             "lineNumbers": [
-                152,
-                160
+                159,
+                167
             ],
             "description": "determinate the request method from the request\n",
             "returns": {
@@ -991,8 +1005,8 @@
             "annotations": {},
             "definedInFile": "srv/handler/rest/ResourceHandler.js",
             "lineNumbers": [
-                230,
-                335
+                237,
+                343
             ],
             "description": "",
             "private": "",
@@ -1376,8 +1390,8 @@
             "annotations": {},
             "definedInFile": "srv/handler/rest/ResourceHandler.js",
             "lineNumbers": [
-                403,
-                450
+                411,
+                458
             ],
             "description": "",
             "private": "",
@@ -1432,8 +1446,8 @@
             "annotations": {},
             "definedInFile": "srv/handler/rest/ResourceHandler.js",
             "lineNumbers": [
-                465,
-                533
+                473,
+                541
             ],
             "description": "",
             "private": "",

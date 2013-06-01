@@ -2887,7 +2887,7 @@
                 131
             ],
             "propertyType": "complex",
-            "value": " ['left', 'top']",
+            "value": " ['left', 'top', 'maxWidth', 'maxHeight']",
             "types": [
                 "Array"
             ],

@@ -383,8 +383,8 @@
             "annotations": {},
             "definedInFile": "js/core/List.js",
             "lineNumbers": [
-                327,
-                330
+                328,
+                331
             ],
             "definedBy": "js.core.EventDispatcher",
             "overwritesMethod": true,
@@ -562,8 +562,8 @@
             },
             "definedInFile": "js/core/List.js",
             "lineNumbers": [
-                223,
-                228
+                224,
+                229
             ],
             "description": "Returns item at a specific index",
             "returns": {
@@ -605,8 +605,8 @@
             "annotations": {},
             "definedInFile": "js/core/List.js",
             "lineNumbers": [
-                332,
-                344
+                333,
+                345
             ],
             "definedBy": "js.core.EventDispatcher",
             "overwritesMethod": true,
@@ -627,8 +627,8 @@
             "annotations": {},
             "definedInFile": "js/core/List.js",
             "lineNumbers": [
-                208,
-                210
+                209,
+                211
             ],
             "description": "Clears all items and triggers reset event",
             "definedBy": "js.core.Bindable",
@@ -642,8 +642,8 @@
             "annotations": {},
             "definedInFile": "js/core/List.js",
             "lineNumbers": [
-                301,
-                307
+                302,
+                308
             ],
             "description": "Returns a fresh copy of the List",
             "returns": {
@@ -726,8 +726,8 @@
             "annotations": {},
             "definedInFile": "js/core/List.js",
             "lineNumbers": [
-                234,
-                279
+                235,
+                280
             ],
             "description": "Iterates over all items with given callback",
             "name": "each",
@@ -869,8 +869,8 @@
             },
             "definedInFile": "js/core/List.js",
             "lineNumbers": [
-                284,
-                295
+                285,
+                296
             ],
             "description": "Checks if item is included in List",
             "returns": {
@@ -936,8 +936,8 @@
             "annotations": {},
             "definedInFile": "js/core/List.js",
             "lineNumbers": [
-                400,
-                421
+                401,
+                422
             ],
             "description": "Checks if items are deep equal",
             "returns": {
@@ -1148,7 +1148,7 @@
             "definedInFile": "js/core/List.js",
             "lineNumbers": [
                 180,
-                202
+                203
             ],
             "description": "Resets the list with the given items and triggers reset event",
             "name": "reset",
@@ -1270,8 +1270,8 @@
             },
             "definedInFile": "js/core/List.js",
             "lineNumbers": [
-                214,
-                216
+                215,
+                217
             ],
             "description": "Returns the size of the list",
             "name": "size",
@@ -1291,8 +1291,8 @@
             "annotations": {},
             "definedInFile": "js/core/List.js",
             "lineNumbers": [
-                388,
-                394
+                389,
+                395
             ],
             "description": "Sorts the list by the given function and triggers sort event",
             "name": "sort",
@@ -1304,8 +1304,8 @@
             "annotations": {},
             "definedInFile": "js/core/List.js",
             "lineNumbers": [
-                312,
-                325
+                313,
+                326
             ],
             "description": "Syncs the items back to the source",
             "returns": {
@@ -1332,8 +1332,8 @@
             "annotations": {},
             "definedInFile": "js/core/List.js",
             "lineNumbers": [
-                370,
-                382
+                371,
+                383
             ],
             "description": "Transforms List to an array\nYou can specify a transform fnc",
             "returns": {
@@ -1409,8 +1409,8 @@
             "annotations": {},
             "definedInFile": "js/core/List.js",
             "lineNumbers": [
-                346,
-                362
+                347,
+                363
             ],
             "definedBy": "js.core.EventDispatcher",
             "overwritesMethod": true,

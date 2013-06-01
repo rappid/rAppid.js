@@ -3074,7 +3074,7 @@
                 131
             ],
             "propertyType": "complex",
-            "value": " ['left', 'top']",
+            "value": " ['left', 'top', 'maxWidth', 'maxHeight']",
             "types": [
                 "Array"
             ],
@@ -3095,7 +3095,7 @@
     "fqClassName": "js.ui.field.TextClass",
     "inherit": "js.ui.Field",
     "dependencies": [
-        "js.ui.Field"
+        "xaml!js.ui.Field"
     ],
     "type": "js",
     "file": "js/ui/field/TextClass.js",

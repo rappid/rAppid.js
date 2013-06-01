@@ -12,8 +12,27 @@
             "visibility": "public",
             "value": null,
             "lineNumbers": [
-                7,
-                7
+                11,
+                11
+            ],
+            "description": "The sort path",
+            "types": [
+                "String"
+            ],
+            "definedBy": "js.ui.DataGridColumnClass"
+        },
+        "path": {
+            "name": "path",
+            "defaultType": "value",
+            "visibility": "public",
+            "value": null,
+            "lineNumbers": [
+                17,
+                17
+            ],
+            "description": "The path to the data to display",
+            "types": [
+                "String"
             ],
             "definedBy": "js.ui.DataGridColumnClass"
         },
@@ -23,8 +42,12 @@
             "visibility": "public",
             "value": true,
             "lineNumbers": [
-                8,
-                8
+                24,
+                24
+            ],
+            "description": "Set's column to sortable\n",
+            "types": [
+                "Boolean"
             ],
             "definedBy": "js.ui.DataGridColumnClass"
         },
@@ -34,8 +57,12 @@
             "visibility": "public",
             "value": 0,
             "lineNumbers": [
-                9,
-                9
+                31,
+                31
+            ],
+            "description": "Set's the default sort direction",
+            "types": [
+                "Number"
             ],
             "definedBy": "js.ui.DataGridColumnClass"
         },
@@ -45,8 +72,12 @@
             "visibility": "public",
             "value": "column",
             "lineNumbers": [
-                10,
-                10
+                37,
+                37
+            ],
+            "description": "The name of the column",
+            "types": [
+                "String"
             ],
             "definedBy": "js.ui.DataGridColumnClass"
         },
@@ -56,8 +87,12 @@
             "visibility": "private",
             "value": null,
             "lineNumbers": [
-                11,
-                11
+                45,
+                45
+            ],
+            "description": "The dataItem for the colum",
+            "types": [
+                "Object"
             ],
             "definedBy": "js.ui.DataGridColumnClass"
         },
@@ -67,8 +102,12 @@
             "visibility": "public",
             "value": "$dataItem.data",
             "lineNumbers": [
-                12,
-                12
+                51,
+                51
+            ],
+            "description": "The path to the item",
+            "types": [
+                "String"
             ],
             "definedBy": "js.ui.DataGridColumnClass"
         },
@@ -78,8 +117,12 @@
             "visibility": "public",
             "value": "",
             "lineNumbers": [
-                13,
-                13
+                57,
+                57
+            ],
+            "description": "The title of the column",
+            "types": [
+                "String"
             ],
             "definedBy": "js.ui.DataGridColumnClass"
         },
@@ -1203,8 +1246,8 @@
             "annotations": {},
             "definedInFile": "js/ui/DataGridColumnClass.js",
             "lineNumbers": [
-                21,
-                23
+                65,
+                67
             ],
             "definedBy": "js.ui.DataGridColumnClass",
             "name": "createCellContainer",
@@ -1223,8 +1266,8 @@
             "annotations": {},
             "definedInFile": "js/ui/DataGridColumnClass.js",
             "lineNumbers": [
-                18,
-                20
+                62,
+                64
             ],
             "definedBy": "js.ui.DataGridColumnClass",
             "name": "createCellRenderer",
@@ -1389,8 +1432,8 @@
             "annotations": {},
             "definedInFile": "js/ui/DataGridColumnClass.js",
             "lineNumbers": [
-                15,
-                17
+                59,
+                61
             ],
             "definedBy": "js.ui.DataGridColumnClass",
             "name": "getFormatFnc",
@@ -1436,8 +1479,8 @@
             "annotations": {},
             "definedInFile": "js/ui/DataGridColumnClass.js",
             "lineNumbers": [
-                33,
-                35
+                77,
+                79
             ],
             "definedBy": "js.ui.DataGridColumnClass",
             "name": "getSortPath",
@@ -1574,8 +1617,8 @@
             },
             "definedInFile": "js/ui/DataGridColumnClass.js",
             "lineNumbers": [
-                27,
-                29
+                71,
+                73
             ],
             "definedBy": "js.ui.DataGridColumnClass",
             "name": "isSorted",
@@ -1764,8 +1807,8 @@
             },
             "definedInFile": "js/ui/DataGridColumnClass.js",
             "lineNumbers": [
-                30,
-                32
+                74,
+                76
             ],
             "definedBy": "js.ui.DataGridColumnClass",
             "name": "sortDirectionStatus",

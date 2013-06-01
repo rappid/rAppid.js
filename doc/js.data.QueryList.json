@@ -699,8 +699,8 @@
             },
             "definedInFile": "js/core/List.js",
             "lineNumbers": [
-                223,
-                228
+                224,
+                229
             ],
             "description": "Returns item at a specific index",
             "returns": {
@@ -849,8 +849,8 @@
             "annotations": {},
             "definedInFile": "js/core/List.js",
             "lineNumbers": [
-                234,
-                279
+                235,
+                280
             ],
             "description": "Iterates over all items with given callback",
             "definedBy": "js.core.List",
@@ -993,8 +993,8 @@
             },
             "definedInFile": "js/core/List.js",
             "lineNumbers": [
-                284,
-                295
+                285,
+                296
             ],
             "description": "Checks if item is included in List",
             "returns": {
@@ -1268,7 +1268,7 @@
             "definedInFile": "js/core/List.js",
             "lineNumbers": [
                 180,
-                202
+                203
             ],
             "description": "Resets the list with the given items and triggers reset event",
             "definedBy": "js.core.List",
@@ -1392,8 +1392,8 @@
             },
             "definedInFile": "js/core/List.js",
             "lineNumbers": [
-                214,
-                216
+                215,
+                217
             ],
             "description": "Returns the size of the list",
             "definedBy": "js.core.List",
@@ -1414,8 +1414,8 @@
             "annotations": {},
             "definedInFile": "js/core/List.js",
             "lineNumbers": [
-                388,
-                394
+                389,
+                395
             ],
             "description": "Sorts the list by the given function and triggers sort event",
             "definedBy": "js.core.List",
@@ -1450,8 +1450,8 @@
             "annotations": {},
             "definedInFile": "js/core/List.js",
             "lineNumbers": [
-                370,
-                382
+                371,
+                383
             ],
             "description": "Transforms List to an array\nYou can specify a transform fnc",
             "returns": {

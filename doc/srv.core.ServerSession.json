@@ -512,8 +512,8 @@
             },
             "definedInFile": "js/data/Model.js",
             "lineNumbers": [
-                235,
-                241
+                259,
+                265
             ],
             "definedBy": "js.data.Model",
             "name": "_status",
@@ -710,8 +710,8 @@
             "annotations": {},
             "definedInFile": "js/data/Model.js",
             "lineNumbers": [
-                256,
-                265
+                280,
+                289
             ],
             "description": "Converts the identifier to the given type in the schema",
             "returns": {
@@ -868,8 +868,8 @@
             "annotations": {},
             "definedInFile": "js/data/Model.js",
             "lineNumbers": [
-                172,
-                201
+                196,
+                225
             ],
             "definedBy": "js.data.Model",
             "name": "fetch",
@@ -945,8 +945,8 @@
             "annotations": {},
             "definedInFile": "js/data/Model.js",
             "lineNumbers": [
-                124,
-                143
+                148,
+                167
             ],
             "definedBy": "js.data.Model",
             "name": "getCollection",
@@ -1125,8 +1125,8 @@
             },
             "definedInFile": "js/data/Model.js",
             "lineNumbers": [
-                247,
-                249
+                271,
+                273
             ],
             "definedBy": "js.data.Model",
             "name": "isCreated",
@@ -1176,8 +1176,8 @@
             },
             "definedInFile": "js/data/Model.js",
             "lineNumbers": [
-                243,
-                245
+                267,
+                269
             ],
             "definedBy": "js.data.Model",
             "name": "isNew",
@@ -1290,8 +1290,8 @@
             "annotations": {},
             "definedInFile": "js/data/Model.js",
             "lineNumbers": [
-                145,
-                155
+                169,
+                179
             ],
             "definedBy": "js.data.Model",
             "name": "prepare",
@@ -1310,8 +1310,8 @@
             "annotations": {},
             "definedInFile": "js/data/Model.js",
             "lineNumbers": [
-                203,
-                224
+                227,
+                248
             ],
             "definedBy": "js.data.Model",
             "name": "remove",
@@ -1354,8 +1354,8 @@
             "annotations": {},
             "definedInFile": "js/data/Model.js",
             "lineNumbers": [
-                72,
-                99
+                82,
+                123
             ],
             "description": "\npersistent the model over the data-source in which it was created\n",
             "definedBy": "js.data.Model",
@@ -1633,8 +1633,8 @@
             "annotations": {},
             "definedInFile": "js/data/Model.js",
             "lineNumbers": [
-                105,
-                122
+                129,
+                146
             ],
             "description": "",
             "definedBy": "js.data.Model",
@@ -1692,8 +1692,8 @@
             "visibility": "public",
             "definedInFile": "js/data/Model.js",
             "lineNumbers": [
-                42,
-                42
+                52,
+                52
             ],
             "propertyType": "value",
             "description": "The field which will contain the href",

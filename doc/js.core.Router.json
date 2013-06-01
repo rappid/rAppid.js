@@ -1207,8 +1207,8 @@
             "annotations": {},
             "definedInFile": "js/core/Router.js",
             "lineNumbers": [
-                144,
-                187
+                145,
+                189
             ],
             "name": "executeRoute",
             "visibility": "public"
@@ -1241,7 +1241,7 @@
             "definedInFile": "js/core/Router.js",
             "lineNumbers": [
                 81,
-                142
+                143
             ],
             "name": "generateRoutingStack",
             "visibility": "public"
@@ -1498,8 +1498,8 @@
             "annotations": {},
             "definedInFile": "js/core/Router.js",
             "lineNumbers": [
-                195,
-                197
+                197,
+                199
             ],
             "description": "shortcut to history.navigate",
             "name": "navigate",

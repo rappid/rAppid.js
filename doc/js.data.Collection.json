@@ -602,8 +602,8 @@
             },
             "definedInFile": "js/core/List.js",
             "lineNumbers": [
-                223,
-                228
+                224,
+                229
             ],
             "description": "Returns item at a specific index",
             "returns": {
@@ -705,8 +705,8 @@
             "annotations": {},
             "definedInFile": "js/data/Collection.js",
             "lineNumbers": [
-                244,
-                252
+                272,
+                280
             ],
             "name": "count",
             "visibility": "public"
@@ -721,8 +721,8 @@
             "annotations": {},
             "definedInFile": "js/data/Collection.js",
             "lineNumbers": [
-                205,
-                212
+                233,
+                240
             ],
             "name": "createItem",
             "visibility": "public"
@@ -765,8 +765,8 @@
             "annotations": {},
             "definedInFile": "js/data/Collection.js",
             "lineNumbers": [
-                291,
-                295
+                319,
+                323
             ],
             "definedBy": "js.core.EventDispatcher",
             "overwritesMethod": true,
@@ -796,8 +796,8 @@
             "annotations": {},
             "definedInFile": "js/core/List.js",
             "lineNumbers": [
-                234,
-                279
+                235,
+                280
             ],
             "description": "Iterates over all items with given callback",
             "definedBy": "js.core.List",
@@ -828,19 +828,27 @@
             "type": "Method",
             "parameter": [
                 {
-                    "name": "options"
+                    "types": [
+                        "Object"
+                    ],
+                    "name": "options",
+                    "optional": false
                 },
                 {
-                    "name": "callback"
+                    "types": [
+                        "Function"
+                    ],
+                    "name": "callback",
+                    "optional": false
                 }
             ],
             "annotations": {},
             "definedInFile": "js/data/Collection.js",
             "lineNumbers": [
-                124,
-                186
+                133,
+                214
             ],
-            "description": " fetches the complete list",
+            "description": "\nWith no options it fetches all pages of the collection. So be careful.\n\nIf you want to fetch a specific page, provide limit and/or offset in the options object.\nThe callback will then return the err object and a page with the size of the provided limit and offset\n",
             "name": "fetch",
             "visibility": "public"
         },
@@ -860,8 +868,8 @@
             "annotations": {},
             "definedInFile": "js/data/Collection.js",
             "lineNumbers": [
-                214,
-                242
+                242,
+                270
             ],
             "name": "fetchPage",
             "visibility": "public"
@@ -938,8 +946,8 @@
             "annotations": {},
             "definedInFile": "js/data/Collection.js",
             "lineNumbers": [
-                197,
-                199
+                225,
+                227
             ],
             "name": "getContextForChild",
             "visibility": "public"
@@ -954,8 +962,8 @@
             "annotations": {},
             "definedInFile": "js/data/Collection.js",
             "lineNumbers": [
-                285,
-                287
+                313,
+                315
             ],
             "name": "getQueryParameters",
             "visibility": "public"
@@ -1016,8 +1024,8 @@
             "annotations": {},
             "definedInFile": "js/data/Collection.js",
             "lineNumbers": [
-                288,
-                290
+                316,
+                318
             ],
             "name": "getSortParameters",
             "visibility": "public"
@@ -1068,8 +1076,8 @@
             },
             "definedInFile": "js/core/List.js",
             "lineNumbers": [
-                284,
-                295
+                285,
+                296
             ],
             "description": "Checks if item is included in List",
             "returns": {
@@ -1129,8 +1137,8 @@
             "annotations": {},
             "definedInFile": "js/data/Collection.js",
             "lineNumbers": [
-                254,
-                271
+                282,
+                299
             ],
             "name": "invalidatePageCache",
             "visibility": "public"
@@ -1162,8 +1170,8 @@
             },
             "definedInFile": "js/data/Collection.js",
             "lineNumbers": [
-                277,
-                283
+                305,
+                311
             ],
             "definedBy": "js.core.List",
             "overwritesMethod": true,
@@ -1226,8 +1234,8 @@
             "annotations": {},
             "definedInFile": "js/data/Collection.js",
             "lineNumbers": [
-                188,
-                195
+                216,
+                223
             ],
             "name": "pageCount",
             "visibility": "public"
@@ -1242,8 +1250,8 @@
             "annotations": {},
             "definedInFile": "js/data/Collection.js",
             "lineNumbers": [
-                201,
-                203
+                229,
+                231
             ],
             "name": "parse",
             "visibility": "public"
@@ -1390,7 +1398,7 @@
             "definedInFile": "js/core/List.js",
             "lineNumbers": [
                 180,
-                202
+                203
             ],
             "description": "Resets the list with the given items and triggers reset event",
             "definedBy": "js.core.List",
@@ -1511,8 +1519,8 @@
             },
             "definedInFile": "js/data/Collection.js",
             "lineNumbers": [
-                273,
-                275
+                301,
+                303
             ],
             "definedBy": "js.core.List",
             "overwritesMethod": true,
@@ -1565,8 +1573,8 @@
             "annotations": {},
             "definedInFile": "js/core/List.js",
             "lineNumbers": [
-                370,
-                382
+                371,
+                383
             ],
             "description": "Transforms List to an array\nYou can specify a transform fnc",
             "returns": {

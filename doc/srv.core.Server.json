@@ -1324,7 +1324,7 @@
             "definedInFile": "srv/core/Server.js",
             "lineNumbers": [
                 159,
-                267
+                268
             ],
             "description": "determinate the request handler and routes a request through the server pipeline\n",
             "name": "handleRequest",
@@ -1786,8 +1786,8 @@
             "annotations": {},
             "definedInFile": "srv/core/Server.js",
             "lineNumbers": [
-                270,
-                302
+                271,
+                303
             ],
             "name": "setupEnvironment",
             "visibility": "public"

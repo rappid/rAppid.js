@@ -152,8 +152,8 @@
             "annotations": {},
             "definedInFile": "js/core/ModuleLoader.js",
             "lineNumbers": [
-                245,
-                255
+                247,
+                257
             ],
             "name": "_clearContentPlaceHolders",
             "visibility": "protected"
@@ -1399,8 +1399,8 @@
             "annotations": {},
             "definedInFile": "js/core/ModuleLoader.js",
             "lineNumbers": [
-                274,
-                277
+                276,
+                279
             ],
             "name": "_renderState",
             "visibility": "protected"
@@ -1545,8 +1545,8 @@
             "annotations": {},
             "definedInFile": "js/core/ModuleLoader.js",
             "lineNumbers": [
-                85,
-                153
+                86,
+                154
             ],
             "name": "_startModule",
             "visibility": "protected"
@@ -1639,7 +1639,7 @@
             "definedInFile": "js/core/ModuleLoader.js",
             "lineNumbers": [
                 45,
-                83
+                84
             ],
             "description": "adds a module to the list of known modules\n",
             "name": "addModule",
@@ -2275,8 +2275,8 @@
             },
             "definedInFile": "js/core/ModuleLoader.js",
             "lineNumbers": [
-                241,
-                243
+                243,
+                245
             ],
             "name": "isModuleActive",
             "visibility": "public"
@@ -2324,8 +2324,8 @@
             "annotations": {},
             "definedInFile": "js/core/ModuleLoader.js",
             "lineNumbers": [
-                162,
-                240
+                163,
+                241
             ],
             "description": "loads an module instance into the module loader and starts the module\n",
             "name": "loadModule",
@@ -2387,8 +2387,8 @@
             "annotations": {},
             "definedInFile": "js/core/ModuleLoader.js",
             "lineNumbers": [
-                263,
-                272
+                265,
+                274
             ],
             "description": " TODO: remove this method and make the modules bindable",
             "deprecated": "will be removed soon",
@@ -3059,7 +3059,7 @@
                 131
             ],
             "propertyType": "complex",
-            "value": " ['left', 'top']",
+            "value": " ['left', 'top', 'maxWidth', 'maxHeight']",
             "types": [
                 "Array"
             ],

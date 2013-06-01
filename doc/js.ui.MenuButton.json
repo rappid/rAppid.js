@@ -2166,9 +2166,10 @@
             "annotations": {},
             "definedInFile": "js/ui/MenuButtonClass.js",
             "lineNumbers": [
-                116,
-                118
+                118,
+                120
             ],
+            "description": "Closes the menu",
             "definedBy": "js.ui.MenuButtonClass",
             "name": "closeMenu",
             "visibility": "public"
@@ -2727,6 +2728,20 @@
             "type": "Method",
             "parameter": [],
             "annotations": {},
+            "definedInFile": "js/ui/MenuButtonClass.js",
+            "lineNumbers": [
+                125,
+                127
+            ],
+            "description": "Opens the menu",
+            "definedBy": "js.ui.MenuButtonClass",
+            "name": "openMenu",
+            "visibility": "public"
+        },
+        {
+            "type": "Method",
+            "parameter": [],
+            "annotations": {},
             "definedInFile": "js/core/DomElement.js",
             "lineNumbers": [
                 188,
@@ -2960,6 +2975,20 @@
             "description": "Writes attributes back to the source",
             "definedBy": "js.core.Bindable",
             "name": "sync",
+            "visibility": "public"
+        },
+        {
+            "type": "Method",
+            "parameter": [],
+            "annotations": {},
+            "definedInFile": "js/ui/MenuButtonClass.js",
+            "lineNumbers": [
+                132,
+                134
+            ],
+            "description": "Toggles the menu",
+            "definedBy": "js.ui.MenuButtonClass",
+            "name": "toggleMenu",
             "visibility": "public"
         },
         {

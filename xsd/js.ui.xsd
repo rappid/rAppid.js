@@ -223,12 +223,56 @@
                 <sequence>
                     <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
                 </sequence>
-                <attribute name="sortPath"/>
-                <attribute name="sortable" default="true"/>
-                <attribute name="sortDirection"/>
-                <attribute name="name" default="column"/>
-                <attribute name="item" default="$dataItem.data"/>
-                <attribute name="title"/>
+                <attribute name="sortPath">
+                    <annotation>
+                        <documentation>
+                        The sort path
+                    </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="path">
+                    <annotation>
+                        <documentation>
+                        The path to the data to display
+                    </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="sortable" default="true">
+                    <annotation>
+                        <documentation>
+                        Set's column to sortable
+
+                    </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="sortDirection">
+                    <annotation>
+                        <documentation>
+                        Set's the default sort direction
+                    </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="name" default="column">
+                    <annotation>
+                        <documentation>
+                        The name of the column
+                    </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="item" default="$dataItem.data">
+                    <annotation>
+                        <documentation>
+                        The path to the item
+                    </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="title">
+                    <annotation>
+                        <documentation>
+                        The title of the column
+                    </documentation>
+                    </annotation>
+                </attribute>
             </extension>
         </complexContent>
     </complexType>
@@ -241,12 +285,56 @@
                 <sequence>
                     <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
                 </sequence>
-                <attribute name="sortPath"/>
-                <attribute name="sortable" default="true"/>
-                <attribute name="sortDirection"/>
-                <attribute name="name" default="column"/>
-                <attribute name="item" default="$dataItem.data"/>
-                <attribute name="title"/>
+                <attribute name="sortPath">
+                    <annotation>
+                        <documentation>
+                        The sort path
+                    </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="path">
+                    <annotation>
+                        <documentation>
+                        The path to the data to display
+                    </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="sortable" default="true">
+                    <annotation>
+                        <documentation>
+                        Set's column to sortable
+
+                    </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="sortDirection">
+                    <annotation>
+                        <documentation>
+                        Set's the default sort direction
+                    </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="name" default="column">
+                    <annotation>
+                        <documentation>
+                        The name of the column
+                    </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="item" default="$dataItem.data">
+                    <annotation>
+                        <documentation>
+                        The path to the item
+                    </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="title">
+                    <annotation>
+                        <documentation>
+                        The title of the column
+                    </documentation>
+                    </annotation>
+                </attribute>
             </extension>
         </complexContent>
     </complexType>
@@ -358,6 +446,7 @@
                 <attribute name="title"/>
                 <attribute name="closable" default="true"/>
                 <attribute name="size" default="normal"/>
+                <attribute name="tabindex"/>
             </extension>
         </complexContent>
     </complexType>
@@ -373,6 +462,7 @@
                 <attribute name="title"/>
                 <attribute name="closable" default="true"/>
                 <attribute name="size" default="normal"/>
+                <attribute name="tabindex"/>
             </extension>
         </complexContent>
     </complexType>
@@ -418,6 +508,7 @@
                 <attribute name="tagName" default="input"/>
                 <attribute name="multiSelect"/>
                 <attribute name="type" default="file"/>
+                <attribute name="accept"/>
             </extension>
         </complexContent>
     </complexType>

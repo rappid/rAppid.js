@@ -1973,13 +1973,13 @@
             "type": "Method",
             "parameter": [],
             "annotations": {},
-            "definedInFile": "js/core/EventDispatcher.js",
+            "definedInFile": "js/core/Stage.js",
             "lineNumbers": [
-                185,
-                196
+                241,
+                258
             ],
-            "description": "Clears up the instance",
             "definedBy": "js.core.EventDispatcher",
+            "overwritesMethod": true,
             "name": "destroy",
             "visibility": "public"
         },
@@ -3045,7 +3045,7 @@
                 131
             ],
             "propertyType": "complex",
-            "value": " ['left', 'top']",
+            "value": " ['left', 'top', 'maxWidth', 'maxHeight']",
             "types": [
                 "Array"
             ],

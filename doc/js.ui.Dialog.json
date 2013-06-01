@@ -39,6 +39,16 @@
             ],
             "definedBy": "js.ui.DialogClass"
         },
+        "tabindex": {
+            "name": "tabindex",
+            "defaultType": "factory",
+            "visibility": "public",
+            "lineNumbers": [
+                10,
+                10
+            ],
+            "definedBy": "js.ui.DialogClass"
+        },
         "componentClass": {
             "name": "componentClass",
             "defaultType": "value",
@@ -2078,8 +2088,8 @@
             "annotations": {},
             "definedInFile": "js/ui/DialogClass.js",
             "lineNumbers": [
-                51,
-                53
+                59,
+                61
             ],
             "description": "default function invoked when ESC is pressed",
             "definedBy": "js.ui.DialogClass",
@@ -2098,8 +2108,8 @@
             "annotations": {},
             "definedInFile": "js/ui/DialogClass.js",
             "lineNumbers": [
-                62,
-                64
+                70,
+                72
             ],
             "description": "\nabstract function invoked when the enter key is pressed\n",
             "abstract": "",

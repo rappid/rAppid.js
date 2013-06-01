@@ -659,8 +659,8 @@
             "annotations": {},
             "definedInFile": "js/ui/TreeViewClass.js",
             "lineNumbers": [
-                37,
-                43
+                38,
+                46
             ],
             "definedBy": "js.ui.TreeViewClass",
             "name": "_expandParents",
@@ -872,8 +872,8 @@
             "annotations": {},
             "definedInFile": "js/ui/TreeViewClass.js",
             "lineNumbers": [
-                72,
-                82
+                75,
+                87
             ],
             "definedBy": "js.ui.TreeViewClass",
             "name": "_handleClick",
@@ -1331,8 +1331,8 @@
             "annotations": {},
             "definedInFile": "js/ui/TreeViewClass.js",
             "lineNumbers": [
-                28,
-                35
+                29,
+                36
             ],
             "definedBy": "js.ui.TreeViewClass",
             "name": "_onSelectedNodeChange",
@@ -1572,8 +1572,8 @@
             "annotations": {},
             "definedInFile": "js/ui/TreeViewClass.js",
             "lineNumbers": [
-                64,
-                70
+                67,
+                73
             ],
             "definedBy": "js.ui.TreeViewClass",
             "name": "_renderExpanded",
@@ -1669,8 +1669,8 @@
             "annotations": {},
             "definedInFile": "js/ui/TreeViewClass.js",
             "lineNumbers": [
-                45,
-                62
+                48,
+                65
             ],
             "definedBy": "js.ui.TreeViewClass",
             "name": "_renderNode",
@@ -1833,8 +1833,8 @@
             "annotations": {},
             "definedInFile": "js/ui/TreeViewClass.js",
             "lineNumbers": [
-                84,
-                86
+                89,
+                91
             ],
             "definedBy": "js.ui.TreeViewClass",
             "name": "_self",

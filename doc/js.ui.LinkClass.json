@@ -1332,8 +1332,8 @@
             "annotations": {},
             "definedInFile": "js/ui/LinkClass.js",
             "lineNumbers": [
-                68,
-                84
+                71,
+                87
             ],
             "name": "_renderHref",
             "visibility": "protected"
@@ -1349,7 +1349,7 @@
             "definedInFile": "js/ui/LinkClass.js",
             "lineNumbers": [
                 46,
-                52
+                55
             ],
             "name": "_renderIconClass",
             "visibility": "protected"
@@ -1381,8 +1381,8 @@
             "annotations": {},
             "definedInFile": "js/ui/LinkClass.js",
             "lineNumbers": [
-                54,
-                58
+                57,
+                61
             ],
             "name": "_renderLabel",
             "visibility": "protected"
@@ -1508,8 +1508,8 @@
             "annotations": {},
             "definedInFile": "js/ui/LinkClass.js",
             "lineNumbers": [
-                60,
-                66
+                63,
+                69
             ],
             "name": "_renderTitle",
             "visibility": "protected"
@@ -3062,7 +3062,7 @@
                 131
             ],
             "propertyType": "complex",
-            "value": " ['left', 'top']",
+            "value": " ['left', 'top', 'maxWidth', 'maxHeight']",
             "types": [
                 "Array"
             ],

@@ -419,8 +419,8 @@
             "annotations": {},
             "definedInFile": "js/ui/TreeViewClass.js",
             "lineNumbers": [
-                37,
-                43
+                38,
+                46
             ],
             "name": "_expandParents",
             "visibility": "protected"
@@ -631,8 +631,8 @@
             "annotations": {},
             "definedInFile": "js/ui/TreeViewClass.js",
             "lineNumbers": [
-                72,
-                82
+                75,
+                87
             ],
             "name": "_handleClick",
             "visibility": "protected"
@@ -684,7 +684,7 @@
             "definedInFile": "js/ui/TreeViewClass.js",
             "lineNumbers": [
                 18,
-                26
+                27
             ],
             "definedBy": "js.core.Bindable",
             "overwritesMethod": true,
@@ -1090,8 +1090,8 @@
             "annotations": {},
             "definedInFile": "js/ui/TreeViewClass.js",
             "lineNumbers": [
-                28,
-                35
+                29,
+                36
             ],
             "name": "_onSelectedNodeChange",
             "visibility": "protected"
@@ -1330,8 +1330,8 @@
             "annotations": {},
             "definedInFile": "js/ui/TreeViewClass.js",
             "lineNumbers": [
-                64,
-                70
+                67,
+                73
             ],
             "name": "_renderExpanded",
             "visibility": "protected"
@@ -1426,8 +1426,8 @@
             "annotations": {},
             "definedInFile": "js/ui/TreeViewClass.js",
             "lineNumbers": [
-                45,
-                62
+                48,
+                65
             ],
             "name": "_renderNode",
             "visibility": "protected"
@@ -1589,8 +1589,8 @@
             "annotations": {},
             "definedInFile": "js/ui/TreeViewClass.js",
             "lineNumbers": [
-                84,
-                86
+                89,
+                91
             ],
             "name": "_self",
             "visibility": "protected"
@@ -3064,7 +3064,7 @@
                 131
             ],
             "propertyType": "complex",
-            "value": " ['left', 'top']",
+            "value": " ['left', 'top', 'maxWidth', 'maxHeight']",
             "types": [
                 "Array"
             ],
