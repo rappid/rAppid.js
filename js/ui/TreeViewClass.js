@@ -18,30 +18,28 @@ define(["js/ui/View"], function (View) {
         _initializationComplete: function () {
             this.bind('root', 'change:selectedNode', this._onSelectedNodeChange, this);
             this.callBase();
-            if(this.$.root && this.$.root.$.selectedNode){
-                if(this.$.node === this.$.root.$.selectedNode){
-                    this._expandParents();
+            if (this.$.root && this.$.root.$.selectedNode) {
+                if (this.$.node === this.$.root.$.selectedNode) {
                     this.set('selected', true);
                 }
             }
         },
 
-        _onSelectedNodeChange: function (e) {
-            var node = e.$;
-
-            this.set('selected', node === this.$.node);
-            if(this.$.selected){
-                this._expandParents();
-            }
-        },
-
-        _expandParents: function(){
-            if(this.$.node){
-                var parentNode = this.$.node.$.parentNode;
-                while(parentNode){
+        _commitSelectedNode: function (node) {
+            if (node) {
+                var parentNode = node.$.parentNode;
+                while (parentNode) {
                     parentNode.set('expanded', true);
                     parentNode = parentNode.$.parentNode;
                 }
+            }
+
+        },
+
+        _onSelectedNodeChange: function (e) {
+            var node = e.$;
+            if (this.$.node) {
+                this.set('selected', node === this.$.node);
             }
         },
 

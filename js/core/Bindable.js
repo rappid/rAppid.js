@@ -707,8 +707,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
                             var parameters = pathElement.parameter;
                             for (var i = 0; i < parameters.length; i++) {
                                 var param = parameters[i];
-                                if (_.isObject(param)) {
-                                    param.type = "static";
+                                if (_.isObject(param) && param.type && param.path) {
                                     parameters[i] = this.get(param.path);
                                 }
                             }

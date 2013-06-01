@@ -1,4 +1,4 @@
-define(['js/core/EventDispatcher','js/lib/parser','js/core/Binding', 'underscore'], function(EventDispatcher,Parser, Binding, _){
+define(['js/core/EventDispatcher', 'js/lib/parser', 'js/core/Binding', 'underscore'], function (EventDispatcher, Parser, Binding, _) {
 
     function findTransformFunction(path, scope) {
         var pathElement = path[0];
@@ -24,13 +24,13 @@ define(['js/core/EventDispatcher','js/lib/parser','js/core/Binding', 'underscore
     var bindingCache = {},
         idCounter = 0;
 
-    function pathToString(path){
-        if(path instanceof Array){
+    function pathToString(path) {
+        if (path instanceof Array) {
             var el = [];
-            for(var i = 0; i < path.length; i++){
-                if(path[i].type === Binding.TYPE_VAR){
+            for (var i = 0; i < path.length; i++) {
+                if (path[i].type === Binding.TYPE_VAR) {
                     el.push(path[i].name);
-                } else if(path[i].type === Binding.TYPE_FNC){
+                } else if (path[i].type === Binding.TYPE_FNC) {
                     el.push(path[i].name + "(" + (idCounter++) + ")");
                 }
             }
@@ -42,7 +42,7 @@ define(['js/core/EventDispatcher','js/lib/parser','js/core/Binding', 'underscore
     }
 
 
-    return EventDispatcher.inherit('js.core.BindingCreator',{
+    return EventDispatcher.inherit('js.core.BindingCreator', {
 
         /***
          *
@@ -52,7 +52,7 @@ define(['js/core/EventDispatcher','js/lib/parser','js/core/Binding', 'underscore
          * @param context
          * @return {*}
          */
-        create: function(bindingDef, targetScope, attrKey, context){
+        create: function (bindingDef, targetScope, attrKey, context) {
 
             var path = bindingDef.path;
             var pathElement = path[0];
@@ -69,7 +69,7 @@ define(['js/core/EventDispatcher','js/lib/parser','js/core/Binding', 'underscore
                 scope = searchScope.getScopeForKey(pathElement.name);
             }
 
-            if(scope){
+            if (scope) {
                 if (bindingDef.type !== "static") {
                     var cb;
                     if (_.isFunction(attrKey)) {
@@ -80,14 +80,13 @@ define(['js/core/EventDispatcher','js/lib/parser','js/core/Binding', 'underscore
                         cacheId,
                         cacheBinding = !cb && !twoWay && context && context.length === 1 && (context[0] instanceof Object);
 
-                    if(cacheBinding){
+                    if (cacheBinding) {
                         cacheId = pathToString(bindingDef.path) + "_" + scope.$cid;
-                        if(bindingCache[cacheId]){
-                            bindingCache[cacheId].addTarget(targetScope,attrKey);
+                        if (bindingCache[cacheId]) {
+                            bindingCache[cacheId].addTarget(targetScope, attrKey);
                             return bindingCache[cacheId];
                         }
                     }
-
 
 
                     var options = {
@@ -123,8 +122,8 @@ define(['js/core/EventDispatcher','js/lib/parser','js/core/Binding', 'underscore
                     }
 
                     var binding = new Binding(options);
-                    if(cacheBinding){
-                        binding.bind('destroy', function(){
+                    if (cacheBinding) {
+                        binding.bind('destroy', function () {
                             delete bindingCache[cacheId];
                         });
                         bindingCache[cacheId] = binding;
@@ -133,9 +132,48 @@ define(['js/core/EventDispatcher','js/lib/parser','js/core/Binding', 'underscore
                     return binding;
 
                 } else {
+                    var par;
+
+                    function resolvePath(scope, path) {
+                        resolveParameter(path);
+                        return scope.get(path);
+                    }
+
+                    function resolveParameter(path) {
+                        var pathElement,
+                            first,
+                            scope;
+                        for (var i = 0; i < path.length; i++) {
+                            pathElement = path[i];
+                            if (_.isObject(pathElement)) {
+                                if (pathElement.type === "fnc") {
+                                    for (var j = 0; j < pathElement.parameter.length; j++) {
+                                        par = pathElement.parameter[j];
+                                        // if it's a path
+                                        if (_.isArray(par)) {
+                                            first = par[0];
+                                            // TODO: check targetscope first
+                                            if (first.type === "var") {
+                                                scope = searchScope.getScopeForKey(first.name);
+                                            } else if (first.type === "fnc") {
+                                                scope = searchScope.getScopeForKey(first.name);
+                                            }
+                                            if (scope) {
+                                                pathElement.parameter[j] = resolvePath(scope, par);
+                                            }
+
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    resolveParameter(bindingDef.path);
+
                     return scope.get(bindingDef.path);
                 }
-            }else{
+            } else {
                 throw new Error("Couldn't find scope for " + pathElement.name);
             }
 
@@ -193,16 +231,16 @@ define(['js/core/EventDispatcher','js/lib/parser','js/core/Binding', 'underscore
 
         },
 
-        parse: function(text) {
+        parse: function (text) {
             if (_.isString(text)) {
                 return Parser.parse(text, "text");
             }
         },
 
-        parsePath: function(text){
+        parsePath: function (text) {
             return Parser.parse(text, "path");
         },
-        containsBindingDefinition: function(bindingDefinitions) {
+        containsBindingDefinition: function (bindingDefinitions) {
 
             if (bindingDefinitions) {
                 for (var i = 0; i < bindingDefinitions.length; i++) {
