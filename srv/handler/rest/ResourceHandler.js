@@ -598,10 +598,10 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
                 .seq(function (cb) {
                     self._afterModelRemove(model, context, cb);
                 })
-                .exec(function (err) {
+                .exec(function (err, results) {
                     if (!err) {
                         // TODO: do correct invalidation
-                        collection.invalidatePageCache();
+                        results.collection.invalidatePageCache();
                         // TODO: generate the location header
                         var body = "";
 

@@ -264,7 +264,33 @@ describe("API", function () {
 
     describe("#DELETE", function () {
 
-        it.skip("should delete resource if exists", function () {
+        it("should delete resource if exists", function (done) {
+
+            var projectId = "my-project-to-delete";
+
+            flow()
+                .seq("result", function (cb) {
+                    request(url)
+                        .put("/projects/" + projectId)
+                        .send({})
+                        .expect(200)
+                        .expect(ContentType, applicationJson)
+                        .end(cb)
+                })
+                .seq("delete", function (cb) {
+                    request(url)
+                        .del("/projects/" + projectId)
+                        .send({})
+                        .expect(200)
+                        .end(cb);
+                })
+                .seq("getResult", function (cb) {
+                    request(url)
+                        .get("/projects/" + projectId)
+                        .expect(404)
+                        .end(cb);
+                })
+                .exec(done);
 
         });
 
