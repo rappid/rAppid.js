@@ -44,9 +44,11 @@ define(['js/ui/View', 'xaml!js/ui/DataGridColumn', 'js/core/List', 'underscore',
                 // add sortable attribute
                 if (path) {
                     var query = new Query();
-                    query.sort((column.$.sortDirection === 1 ? "+" : "-") + path);
+                    var sortDirection = column.$.sortDirection === 0 ? 1 : column.$.sortDirection;
+                    sortDirection = sortDirection === 1 ? -1 : 1;
+                    query.sort((sortDirection === 1 ? "+" : "-") + path);
                     this.$sortParamter = this.$sortParameter || {};
-                    column.set('sortDirection', column.$.sortDirection === -1 ? 1 : -1);
+                    column.set('sortDirection', sortDirection);
                     this.$sortParamter[path] = column.$.sortDirection;
                     this.set('query', query);
                 }
