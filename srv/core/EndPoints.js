@@ -12,6 +12,8 @@ define(['js/core/Component', 'srv/core/EndPoint', 'flow'], function (Component, 
             } else {
                 throw new Error("Child for EndPoints must be an EndPoint");
             }
+
+            this.callBase();
         },
 
         start: function(server, callback) {
