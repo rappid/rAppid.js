@@ -311,11 +311,13 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                     if (child.$.visible) {
                         delete this.$invisibleChildMap[child.$cid];
                         var el = child.render();
-                        this.$renderedChildren.push(child);
+
 
                         if (pos == undefined) {
                             this.$el.appendChild(el);
+                            this.$renderedChildren.push(child);
                         } else {
+                            this.$renderedChildren.splice(pos,0,child);
                             var childNode = this.$el.childNodes[pos];
                             if (childNode) {
                                 this.$el.insertBefore(el, childNode);
