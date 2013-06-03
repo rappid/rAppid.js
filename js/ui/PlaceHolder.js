@@ -17,7 +17,16 @@ define(["js/html/HtmlElement", "js/core/Content", "underscore"], function (HtmlE
             }
 
             this.$textNode = this.$stage.$document.createTextNode("");
-            this.$el = this.$textNode;
+
+            var el;
+            if (this.$.content) {
+                el = this._getDomElementForContent(this.$.content);
+            }
+            if (!el) {
+                el = this.$textNode;
+            }
+
+            this.$el = el;
 
             return this.$el;
         },
@@ -27,6 +36,21 @@ define(["js/html/HtmlElement", "js/core/Content", "underscore"], function (HtmlE
         },
 
         _renderContent: function (content) {
+
+
+            var parentNode = this.$el.parentNode;
+            if (parentNode) {
+                var el = this._getDomElementForContent(content);
+                if (el) {
+                    parentNode.replaceChild(el, this.$el);
+                } else if (this.$textNode !== this.$el) {
+                    parentNode.replaceChild(this.$textNode, this.$el);
+                    this.$el = this.$textNode;
+                }
+            }
+
+        },
+        _getDomElementForContent: function (content) {
             var children;
             if (content instanceof Content) {
                 children = content.$children;
@@ -37,25 +61,17 @@ define(["js/html/HtmlElement", "js/core/Content", "underscore"], function (HtmlE
             } else {
                 children = [];
             }
-
-            var parentNode = this.$el.parentNode;
-            if (parentNode) {
-                if (children.length > 0) {
-                    var child, el;
-                    for (var i = 0; i < children.length; i++) {
-                        child = children[i];
-                        if (child.render) {
-                            el = child.render();
-                            parentNode.replaceChild(el, this.$el);
-                            this.$el = el;
-                            return;
-                        }
-                    }
-                } else if (this.$textNode !== this.$el) {
-                    parentNode.replaceChild(this.$textNode, this.$el);
-                    this.$el = this.$textNode;
+            var child, el;
+            for (var i = 0; i < children.length; i++) {
+                child = children[i];
+                if (child.render) {
+                    el = child.render();
+                    return el;
                 }
             }
+
+            return null;
+
 
         }
     });
