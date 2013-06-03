@@ -56,10 +56,11 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore", "js/da
          * @return {*}
          */
         filter: function (query) {
+            var rootCollection = this.getRoot();
+
             if (query instanceof Query && query.query.where) {
 
-                var rootCollection = this.getRoot(),
-                    options = _.defaults({}, rootCollection.$, {
+                var options = _.defaults({}, rootCollection.$, {
                         query: query,
                         root: rootCollection
                     });
