@@ -28,7 +28,7 @@ define(["js/ui/View", 'js/data/Collection', 'js/core/List'], function (View, Col
                 this.callBase();
             },
 
-            _bindDomEvents: function(el){
+            _bindDomEvents: function (el) {
                 this.callBase();
                 var self = this;
 
@@ -39,7 +39,7 @@ define(["js/ui/View", 'js/data/Collection', 'js/core/List'], function (View, Col
 
             _onKeyDown: function (e) {
                 if (e.domEvent.keyCode === 40 || e.domEvent.keyCode === 38) {
-                    if(this.$.tileList.$.data.size() > 0){
+                    if (this.$.tileList.$.data.size() > 0) {
                         this.$.tileList._onKeyDown(e);
                     }
                 }
@@ -48,7 +48,7 @@ define(["js/ui/View", 'js/data/Collection', 'js/core/List'], function (View, Col
                     e.target.$el.blur();
                 }
             },
-            _onContainerSelect: function(e){
+            _onContainerSelect: function (e) {
                 e.stopPropagation();
             },
             _onEnter: function (e) {
@@ -93,12 +93,13 @@ define(["js/ui/View", 'js/data/Collection', 'js/core/List'], function (View, Col
             },
 
             _onSearchTermChange: function (e) {
-                if (!this.$searchTimeout) {
-                    var self = this;
-                    this.$searchTimeout = setTimeout(function () {
-                        self._search();
-                    }, 200);
+                if (this.$searchTimeout) {
+                    clearTimeout(this.$searchTimeout);
                 }
+                var self = this;
+                this.$searchTimeout = setTimeout(function () {
+                    self._search();
+                }, 200);
             },
 
             _search: function () {
@@ -123,7 +124,7 @@ define(["js/ui/View", 'js/data/Collection', 'js/core/List'], function (View, Col
             },
 
             createQuery: function (searchTerm) {
-                if(this.$.queryCreator){
+                if (this.$.queryCreator) {
                     return this.$.queryCreator(searchTerm);
                 }
                 // needs to be implemented
@@ -145,7 +146,7 @@ define(["js/ui/View", 'js/data/Collection', 'js/core/List'], function (View, Col
                 if (!this.$.open && (e.domEvent.keyCode === 40 || e.domEvent.keyCode === 38)) {
                     this.set('open', true);
                     e.stopPropagation();
-                } else if(e.domEvent.keyCode === 13){
+                } else if (e.domEvent.keyCode === 13) {
                     e.stopPropagation();
                     e.preventDefault();
                 }
