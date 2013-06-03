@@ -76,6 +76,10 @@ define(["exports", "Query"], function (exports, Query) {
                 field = operator.field;
                 ret[field].$gt = operator.value[0];
                 ret[field].$lt = operator.value[1];
+            } else if (name === "like") {
+                field = operator.field;
+                ret[field] = {};
+                ret[field].$regex = new RegExp(".*" + operator.value + ".*", "i");
             } else {
                 throw new Error("Query Operator '" + name + "' is not supported!");
             }
