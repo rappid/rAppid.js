@@ -57,18 +57,21 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore", "js/da
          */
         filter: function (query) {
             if (query instanceof Query && query.query.where) {
-                var options = _.defaults({}, this.$, {
-                    query: query,
-                    root: this.getRoot()
-                });
 
-                var filterCacheId = query.whereCacheId();
+                var rootCollection = this.getRoot(),
+                    options = _.defaults({}, this.$, {
+                        query: query,
+                        root: this.getRoot()
+                    });
 
-                if (!this.$filterCache[filterCacheId]) {
-                    this.$filterCache[filterCacheId] = this._createFilteredCollection(query, options);
+                var filterCacheId = query.whereCacheId(),
+                    cache = rootCollection.$filterCache;
+
+                if (!cache[filterCacheId]) {
+                    cache[filterCacheId] = this._createFilteredCollection(query, options);
                 }
 
-                return this.$filterCache[filterCacheId];
+                return cache[filterCacheId];
             } else {
                 return this.getRoot();
             }
