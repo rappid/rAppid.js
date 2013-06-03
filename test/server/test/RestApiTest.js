@@ -434,7 +434,7 @@ describe("API", function () {
     describe("#GET on Collection Resource", function () {
 
 
-        var count = 100,
+        var count = 10,
             initialCount = 0,
             items = [];
         for (var i = 0; i < count; i++) {
