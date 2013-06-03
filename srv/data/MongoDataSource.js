@@ -19,7 +19,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
             if (entity instanceof Model) {
                 data[CONTEXT_KEY] = this.$dataSource._composeContext(entity);
 
-                if(entity.idField === "id"){
+                if (entity.idField === "id") {
                     data[ID_KEY] = this.$dataSource._createIdObject(data[ID_KEY]);
                 }
             }
@@ -27,10 +27,10 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
             return data;
         },
 
-        _getCompositionValue: function(value, key, action, options){
-            if(value instanceof Model){
+        _getCompositionValue: function (value, key, action, options) {
+            if (value instanceof Model) {
                 var ret = this.$dataSource._composeContext(value);
-                ret[value.constructor.name.replace(/\./gi,"/")] = value.identifier();
+                ret[value.constructor.name.replace(/\./gi, "/")] = value.identifier();
 
                 return ret;
             }
@@ -69,7 +69,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
         parse: function (model, data, action, options) {
 
             if (model.createdField) {
-                if(data[ID_KEY]){
+                if (data[ID_KEY]) {
                     data[model.createdField] = data[ID_KEY].getTimestamp();
                 }
             }
@@ -102,7 +102,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
         _getIdForValue: function (value, factory) {
 
             if (factory.classof && factory.classof(Model)) {
-                return value[factory.prototype.constructor.name.replace(/\./g,"/")];
+                return value[factory.prototype.constructor.name.replace(/\./g, "/")];
             }
 
             var id = this.callBase();
@@ -263,18 +263,18 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
                 } else if (method === MongoDataSource.METHOD.SAVE) {
                     collection.findAndModify(where, {}, data, options, function (err, data, info) {
                         if (!err) {
-                            if(!options.upsert && !data){
+                            if (!options.upsert && !data) {
                                 // no update happened
                                 err = DataSource.ERROR.NOT_FOUND;
                             }
                             var idObject;
-                            if(info.lastErrorObject && !info.lastErrorObject.updatedExisting){
+                            if (info.lastErrorObject && !info.lastErrorObject.updatedExisting) {
                                 idObject = info.lastErrorObject.upserted;
-                            } else if(info.value) {
+                            } else if (info.value) {
                                 idObject = info.value[ID_KEY];
                             }
 
-                            if(idObject && model.createdField){
+                            if (idObject && model.createdField) {
                                 model.set(model.createdField, idObject.getTimestamp());
                             }
                         }
@@ -334,7 +334,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
 
             // TODO: add query, fields and options
             var self = this,
-                where = this._getWhereConditionForCollection(rootCollection);
+                where = _.extend(this._getWhereConditionForCollection(rootCollection), params.where || {});
 
 
             var offset = collectionPage.$offset;
@@ -447,7 +447,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
             return this.callBase();
         },
 
-        _getWhereConditionForModel: function(model){
+        _getWhereConditionForModel: function (model) {
             var where = {};
 
             where[CONTEXT_KEY] = this._composeContext(model);
@@ -460,7 +460,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
             return where;
         },
 
-        _getWhereConditionForCollection: function(collection){
+        _getWhereConditionForCollection: function (collection) {
             var where = {};
 
             where[CONTEXT_KEY] = this._composeContext(collection);
@@ -468,26 +468,26 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
             return where;
         },
 
-        _composeContext: function(model){
+        _composeContext: function (model) {
             var parent = model.$parent,
                 context = {};
 
             while (parent) {
-                context[parent.constructor.name.replace(/\./gi,"/")] = parent.identifier();
+                context[parent.constructor.name.replace(/\./gi, "/")] = parent.identifier();
                 parent = parent.$parent;
             }
 
             return  context;
         },
-        _getContext: function(factory, model, value){
+        _getContext: function (factory, model, value) {
 
-            if(model instanceof Model && factory.classof(Model) && !_.isString(value) && value instanceof Object){
+            if (model instanceof Model && factory.classof(Model) && !_.isString(value) && value instanceof Object) {
                 var configuration = this.getConfigurationForModelClass(factory);
 
                 var numParent = _.size(value) - 1,
                     baseConfiguration = configuration,
                     stack = [configuration];
-                for(var i = 0; i < numParent; i++){
+                for (var i = 0; i < numParent; i++) {
                     baseConfiguration = baseConfiguration.$parent;
                     stack.unshift(baseConfiguration);
                 }
@@ -499,7 +499,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
                     fullModelClassName = stack[i].$.modelClassName.replace(/\./gi, "/");
                     parentFactory = requirejs(fullModelClassName);
                     context = this.getContextForChild(parentFactory, parentModel || model);
-                    parentModel = context.createEntity(parentFactory,value[fullModelClassName]);
+                    parentModel = context.createEntity(parentFactory, value[fullModelClassName]);
                     parentModel.$parent = context.$contextModel;
                 }
 
@@ -509,7 +509,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
             return this.callBase();
         },
 
-        createContext: function(contextModel, properties, parentContext){
+        createContext: function (contextModel, properties, parentContext) {
             return new MongoDataSource.Context(this, contextModel, properties, parentContext);
         }
     });
