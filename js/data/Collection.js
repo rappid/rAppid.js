@@ -61,9 +61,9 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore", "js/da
             if (query instanceof Query && query.query.where) {
 
                 var options = _.defaults({}, rootCollection.$, {
-                        query: query,
-                        root: rootCollection
-                    });
+                    query: query,
+                    root: rootCollection
+                });
 
                 var filterCacheId = query.whereCacheId(),
                     cache = rootCollection.$filterCache;
