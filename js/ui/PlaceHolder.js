@@ -43,6 +43,7 @@ define(["js/html/HtmlElement", "js/core/Content", "underscore"], function (HtmlE
                 var el = this._getDomElementForContent(content);
                 if (el) {
                     parentNode.replaceChild(el, this.$el);
+                    this.$el = el;
                 } else if (this.$textNode !== this.$el) {
                     parentNode.replaceChild(this.$textNode, this.$el);
                     this.$el = this.$textNode;
