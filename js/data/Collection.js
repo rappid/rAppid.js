@@ -59,9 +59,9 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore", "js/da
             if (query instanceof Query && query.query.where) {
 
                 var rootCollection = this.getRoot(),
-                    options = _.defaults({}, this.$, {
+                    options = _.defaults({}, rootCollection.$, {
                         query: query,
-                        root: this.getRoot()
+                        root: rootCollection
                     });
 
                 var filterCacheId = query.whereCacheId(),
@@ -73,7 +73,7 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore", "js/da
 
                 return cache[filterCacheId];
             } else {
-                return this.getRoot();
+                return rootCollection;
             }
         },
 
