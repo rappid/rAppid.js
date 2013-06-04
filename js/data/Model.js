@@ -203,7 +203,7 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
                 this._fetch.callbacks.push(function (err, model) {
                     modelFetchedComplete(err, model, options, callback);
                 });
-            } else if (this._fetch.state == FETCHSTATE.LOADED) {
+            } else if (this._fetch.state == FETCHSTATE.LOADED && !options.noCache) {
                 // completed loaded -> execute
                 modelFetchedComplete(null, this, options, callback);
             } else {
