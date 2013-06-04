@@ -40,7 +40,14 @@ define(["js/ui/View"], function (View) {
              * the class name for the icon
              * @type String
              */
-            iconClass: null
+            iconClass: null,
+
+            /***
+             * The inner label for the icon
+             *
+             * @type String
+             */
+            iconLabel: ""
         },
 
         _renderIconClass: function (iconClass) {

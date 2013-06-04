@@ -33,7 +33,20 @@ define(["js/ui/View", "js/core/Content", "js/ui/Button", "underscore"], function
              *
              * @type String
              */
-            buttonClass: ""
+            buttonClass: "",
+
+            /***
+             * the class name for the icon
+             * @type String
+             */
+            iconClass: null,
+
+            /***
+             * The inner label for the icon
+             *
+             * @type String
+             */
+            iconLabel: ""
 
         },
         $defaultContentName: 'menu',
