@@ -120,13 +120,16 @@ define(['xaml!js/svg/SvgDescriptor', "js/svg/SvgElement", 'js/core/Base'], funct
                             cache.loaded = true;
                             hidden.removeChild(text);
 
-                            for (var i = 0; i < cache.callbacks.length; i++) {
-                                try {
-                                    cache.callbacks[i] && cache.callbacks[i]();
-                                } catch(e) {
-                                    // invoke callbacks
+                            setTimeout(function () {
+                                for (var i = 0; i < cache.callbacks.length; i++) {
+                                    try {
+                                        cache.callbacks[i] && cache.callbacks[i]();
+                                    } catch(e) {
+                                        // invoke callbacks
+                                    }
                                 }
-                            }
+                            },200);
+
                         }
                     }
                 },100);
