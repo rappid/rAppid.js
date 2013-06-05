@@ -24,9 +24,16 @@ define(["js/core/List" , "underscore", "js/data/Query", 'js/lib/query/ArrayExecu
             this.callBase([], options);
         },
 
-        _commitList: function (list) {
-            if (list && list instanceof List) {
-                this._innerReset(list.$items);
+        _commitChangedAttributes: function (attributes) {
+            this.callBase();
+
+            if (attributes.hasOwnProperty("list")) {
+                var list = attributes.list;
+                if (list && list instanceof List) {
+                    this._innerReset(list.$items);
+                } else {
+                    this._innerReset([]);
+                }
             }
         },
 
