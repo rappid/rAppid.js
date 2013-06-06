@@ -156,10 +156,23 @@ define(["js/ui/ItemsView", "js/html/HtmlElement", "underscore", "js/core/List"],
             }
         },
 
-        _renderSelectedIndex: function (i) {
-            if (i != null && i > -1 && i < this.$renderedChildren.length) {
-                this.$renderedChildren[i].set({selected: true});
+        _renderSelectedIndex: function (i, oldIndex) {
+            var items = this._getItemsArray(this.$.items),
+                comp;
+            if (i != null && i > -1 && i < items.length) {
+                comp = this.getComponentForItem(items[i]);
+                if (comp) {
+                    comp.set({selected: true});
+                }
             }
+
+            if (oldIndex != null && oldIndex > -1 && oldIndex < items.length) {
+                comp = this.getComponentForItem(items[oldIndex]);
+                if (comp) {
+                    comp.set({selected: false});
+                }
+            }
+
         },
 
         _onChildSelected: function (child) {
