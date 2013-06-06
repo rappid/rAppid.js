@@ -105,20 +105,25 @@ define(
              * @private
              */
             _innerRenderItems: function (items) {
-                var c;
+                var c,
+                    j;
                 if (this.$renderedItems) {
-                    for (var j = this.$renderedItems.length - 1; j >= 0; j--) {
+                    for (j = this.$renderedItems.length - 1; j >= 0; j--) {
                         c = this.$renderedItems[j];
                         this.removeChild(c.component);
                         c.component.destroy();
                     }
                 }
                 if (this.$renderedItemsMap) {
+                    var itemList;
                     for (var key in this.$renderedItemsMap) {
                         if (this.$renderedItemsMap.hasOwnProperty(key)) {
-                            c = this.$renderedItemsMap[key];
-                            this.removeChild(c);
-                            c.destroy();
+                            itemList = this.$renderedItemsMap[key];
+                            for (j = itemList.length - 1; j >= 0; j--) {
+                                c = itemList[j];
+                                this.removeChild(c.component);
+                                c.component.destroy();
+                            }
                         }
                     }
                 }
@@ -167,15 +172,20 @@ define(
              * @private
              */
             _cacheComponentForItem: function (item, component) {
-                var key = this._getKeyForItem(item);
-                if (key) {
-                    this.$renderedItemsMap[key] = component;
-                } else {
-                    // add to rendered item map
-                    this.$renderedItems.push({
+                var key = this._getKeyForItem(item),
+                    cacheItem = {
                         item: item,
                         component: component
-                    });
+                    };
+                if (key) {
+                    if (this.$renderedItemsMap[key]) {
+                        this.$renderedItemsMap[key].push(cacheItem);
+                    } else {
+                        this.$renderedItemsMap[key] = [cacheItem];
+                    }
+                } else {
+                    // add to rendered item map
+                    this.$renderedItems.push(cacheItem);
                 }
                 return component;
             },
@@ -240,20 +250,18 @@ define(
              * @private
              */
             _removeRenderedItem: function (item) {
-                var ri;
-                var key = this._getKeyForItem(item);
-                var comp;
+                var ri,
+                    key = this._getKeyForItem(item),
+                    comp,
+                    list = this.$renderedItems;
                 if (key) {
-                    comp = this.$renderedItemsMap[key];
-                    this.removeChild(comp);
-                    comp.destroy();
-                    delete this.$renderedItemsMap[key];
+                    list = this.$renderedItemsMap[key];
                 } else {
-                    for (var i = 0; i < this.$renderedItems.length; i++) {
-                        ri = this.$renderedItems[i];
+                    for (var i = 0; i < list.length; i++) {
+                        ri = list[i];
                         if (ri.item === item) {
                             this.removeChild(ri.component);
-                            this.$renderedItems.splice(i, 1);
+                            list.splice(i, 1);
                             ri.component.destroy();
                             return;
                         }
@@ -266,15 +274,18 @@ define(
              * @return {js/core/Component} component
              */
             getComponentForItem: function (item) {
-                var key = this._getKeyForItem(item);
+                var key = this._getKeyForItem(item),
+                    list = this.$renderedItems;
                 if (key) {
-                    return this.$renderedItemsMap[key];
+                    list = this.$renderedItemsMap[key];
                 }
-                var ri;
-                for (var i = 0; i < this.$renderedItems.length; i++) {
-                    ri = this.$renderedItems[i];
-                    if (ri.item === item) {
-                        return ri.component;
+                if (list) {
+                    var ri;
+                    for (var i = 0; i < list.length; i++) {
+                        ri = list[i];
+                        if (ri.item === item) {
+                            return ri.component;
+                        }
                     }
                 }
                 return null;
