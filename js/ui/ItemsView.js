@@ -29,13 +29,13 @@ define(
 
             $defaultTemplateName: 'item',
 
-            ctor: function(){
+            ctor: function () {
                 this.callBase();
 
-                this.bind('items','sort', this._onSort, this);
-                this.bind('items','reset', this._onReset, this);
-                this.bind('items','add', this._onItemAdd, this);
-                this.bind('items','remove', this._onItemRemove, this);
+                this.bind('items', 'sort', this._onSort, this);
+                this.bind('items', 'reset', this._onReset, this);
+                this.bind('items', 'add', this._onItemAdd, this);
+                this.bind('items', 'remove', this._onItemRemove, this);
             },
 
             render: function () {
@@ -54,7 +54,7 @@ define(
                 this._innerRenderItems(this._getItemsArray(items));
             },
 
-            _getItemsArray: function(items){
+            _getItemsArray: function (items) {
                 if (!items) {
                     return [];
                 } else if (items instanceof List) {
@@ -82,19 +82,19 @@ define(
                 }
             },
             _onReset: function (e) {
-                if(this.isRendered()){
+                if (this.isRendered()) {
                     this._innerRenderItems(e.$.items);
                 }
             },
 
             _onItemAdd: function (e) {
-                if(this.isRendered()){
+                if (this.isRendered()) {
                     this._innerRenderItem(e.$.item, e.$.index);
                 }
             },
 
             _onItemRemove: function (e) {
-                if(this.isRendered()){
+                if (this.isRendered()) {
                     this._removeRenderedItem(e.$.item);
                 }
             },
@@ -113,9 +113,9 @@ define(
                         c.component.destroy();
                     }
                 }
-                if(this.$renderedItemsMap){
-                    for(var key in this.$renderedItemsMap){
-                        if(this.$renderedItemsMap.hasOwnProperty(key)){
+                if (this.$renderedItemsMap) {
+                    for (var key in this.$renderedItemsMap) {
+                        if (this.$renderedItemsMap.hasOwnProperty(key)) {
                             c = this.$renderedItemsMap[key];
                             this.removeChild(c);
                             c.destroy();
@@ -125,17 +125,17 @@ define(
                 this.$renderedItems = [];
                 this.$renderedItemsMap = {};
                 this.$indexOffset = 0;
-                if(this.$children.length > 0){
+                if (this.$children.length > 0) {
                     var child, elIndex;
-                    for(var k = 0; k < this.$children.length; k++){
+                    for (var k = 0; k < this.$children.length; k++) {
                         child = this.$children[k];
                         elIndex = this.$elements.indexOf(child);
-                        if(elIndex === k){
+                        if (elIndex === k) {
                             this.$indexOffset++;
                         }
                     }
                 }
-                if(items){
+                if (items) {
                     for (var i = 0; i < items.length; i++) {
                         this._innerRenderItem(items[i], i);
                     }
@@ -166,7 +166,7 @@ define(
              * @return {js.core.Component} returns the component
              * @private
              */
-            _cacheComponentForItem: function(item,component){
+            _cacheComponentForItem: function (item, component) {
                 var key = this._getKeyForItem(item);
                 if (key) {
                     this.$renderedItemsMap[key] = component;
@@ -189,17 +189,18 @@ define(
              * @return {*}
              * @private
              */
-            _getKeyForItem: function(item){
+            _getKeyForItem: function (item) {
                 if (item instanceof Bindable) {
-                    var key;
                     if (this.$.keyPath) {
                         return item.get(this.$.keyPath);
                     } else {
                         return item.$cid;
                     }
                 } else {
-                    if(this.$.keyPath && item instanceof Object){
+                    if (this.$.keyPath && item instanceof Object) {
                         return this.get(item, this.$.keyPath);
+                    } else if (_.isString(item) || _.isNumber(item)) {
+                        return item;
                     }
                 }
                 return null;
@@ -213,7 +214,7 @@ define(
              */
             _innerRenderItem: function (item, index) {
                 var component = this._createComponentForItem(item, index);
-                this._cacheComponentForItem(item,component);
+                this._cacheComponentForItem(item, component);
                 this.addChild(component, {childIndex: index + this.$indexOffset});
             },
 
@@ -242,12 +243,12 @@ define(
                 var ri;
                 var key = this._getKeyForItem(item);
                 var comp;
-                if(key){
+                if (key) {
                     comp = this.$renderedItemsMap[key];
                     this.removeChild(comp);
                     comp.destroy();
                     delete this.$renderedItemsMap[key];
-                }else{
+                } else {
                     for (var i = 0; i < this.$renderedItems.length; i++) {
                         ri = this.$renderedItems[i];
                         if (ri.item === item) {
@@ -266,7 +267,7 @@ define(
              */
             getComponentForItem: function (item) {
                 var key = this._getKeyForItem(item);
-                if(key){
+                if (key) {
                     return this.$renderedItemsMap[key];
                 }
                 var ri;
