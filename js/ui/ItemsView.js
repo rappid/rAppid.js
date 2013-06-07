@@ -256,15 +256,14 @@ define(
                     list = this.$renderedItems;
                 if (key) {
                     list = this.$renderedItemsMap[key];
-                } else {
-                    for (var i = 0; i < list.length; i++) {
-                        ri = list[i];
-                        if (ri.item === item) {
-                            this.removeChild(ri.component);
-                            list.splice(i, 1);
-                            ri.component.destroy();
-                            return;
-                        }
+                }
+                for (var i = 0; i < list.length; i++) {
+                    ri = list[i];
+                    if (ri.item === item) {
+                        this.removeChild(ri.component);
+                        list.splice(i, 1);
+                        ri.component.destroy();
+                        return;
                     }
                 }
             },
