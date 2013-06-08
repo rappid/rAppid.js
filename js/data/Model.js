@@ -194,6 +194,12 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
          * @param {Function} callback - function(err, model, options)
          */
         fetch: function (options, callback) {
+
+            if (arguments.length === 1 && options instanceof Function) {
+                callback = options;
+                options = null;
+            }
+
             options = options || {};
 
             var self = this;
