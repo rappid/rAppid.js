@@ -1,4 +1,4 @@
-define(['Query', 'js/core/Bindable'], function(Query, Bindable){
+define(['Query'], function(Query){
 
     var Q = Query.inherit('js.data.Query',{
         ctor: Query,
