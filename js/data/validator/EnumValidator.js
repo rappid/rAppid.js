@@ -20,7 +20,7 @@ define(['js/data/validator/Validator', 'underscore'], function (Validator, _) {
             return b;
         },
 
-        _generateCacheKey: function(field, regEx){
+        _generateCacheKey: function(){
             return null;
         },
 
