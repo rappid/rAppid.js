@@ -45,10 +45,16 @@ define(['js/html/HtmlElement', 'underscore'], function(HtmlElement, _){
                     componentClass: 'modal'
                 });
 
-                child.addChild(this.createComponent(HtmlElement, {
+                var backdrop = this.createComponent(HtmlElement, {
                     tagName: 'div',
                     'class': 'modal-backdrop back-drop'
-                }));
+                });
+
+                child.addChild(backdrop);
+
+                backdrop.bind("on:pointer", function () {
+                    window.trigger("on:backdropClick");
+                });
 
                 child.addChild(window);
 

@@ -4,7 +4,24 @@ define(['js/ui/View'], function(View) {
 
         defaults: {
             tagName: 'div',
-            componentClass: 'window'
+            componentClass: 'window',
+            closeOnBackdrop: false
+        },
+
+        events: [
+            "on:backdropClick"
+        ],
+
+        ctor: function() {
+            this.callBase();
+
+            this.bind("on:backdropClick", this._onbackdropClick, this);
+        },
+
+        _onbackdropClick: function(e) {
+            if (this.$.closeOnBackdrop) {
+                this.close();
+            }
         },
 
         /***
