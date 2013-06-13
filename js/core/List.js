@@ -51,7 +51,7 @@ define(["js/core/EventDispatcher", "js/core/Bindable", "underscore"], function (
          * @return {*}
          */
         pop: function () {
-            return this.removeAt(this.$items.length);
+            return this.removeAt(this.$items.length - 1);
         },
         /**
          * Removes first item of list

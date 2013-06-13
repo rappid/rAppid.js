@@ -29,8 +29,8 @@ describe('js.core.List', function () {
         });
     });
 
-    describe('#size', function(){
-        it('should return size of list', function(){
+    describe('#size', function () {
+        it('should return size of list', function () {
             list.size().should.equal(0);
             list.add(item);
             list.size().should.equal(1);
@@ -39,15 +39,15 @@ describe('js.core.List', function () {
 
     describe('#add', function () {
 
-        it('should add a array of items', function() {
+        it('should add a array of items', function () {
             list.size().should.equal(0);
             list.add(items);
             list.size().should.equal(items.length);
         });
 
-        it('should add one item to index 0', function() {
+        it('should add one item to index 0', function () {
             list.add(items);
-            list.add(item,{index: 0});
+            list.add(item, {index: 0});
             list.at(0).should.equal(item);
         });
 
@@ -81,7 +81,7 @@ describe('js.core.List', function () {
     });
 
     describe('#remove', function () {
-        it('should remove one item', function(){
+        it('should remove one item', function () {
             list.add(item);
             list.size().should.equal(1);
             list.remove(item);
@@ -91,13 +91,13 @@ describe('js.core.List', function () {
         it('should remove a bunch of items', function () {
             list.add(item);
             list.add(items);
-            list.size().should.equal(1+items.length);
+            list.size().should.equal(1 + items.length);
             list.remove(items);
             list.size().should.equal(1);
         });
 
-        it('should trigger a remove event with the removed item', function(){
-            list.bind('remove', function(e){
+        it('should trigger a remove event with the removed item', function () {
+            list.bind('remove', function (e) {
                 expect(e.$.item).to.be.equal(item);
             });
             list.add(item);
@@ -109,7 +109,7 @@ describe('js.core.List', function () {
             var toRemove = items.length;
             list.bind('remove', function (e) {
                 toRemove--;
-                if(toRemove === 0){
+                if (toRemove === 0) {
                     done();
                 }
             });
@@ -120,14 +120,27 @@ describe('js.core.List', function () {
 
     });
 
+    describe("#pop", function () {
+        it("should remove last item", function (done) {
+            list.add(items);
+            list.add(item);
+            while (list.size()) {
+                list.pop();
+            }
+
+            done();
+
+        });
+    });
+
     describe('#removeAt', function () {
         it('should remove one item at a specific index', function () {
             var index = 1;
             list.add(items);
-            list.add(item,{index: index});
+            list.add(item, {index: index});
             list.removeAt(index);
-            list.each(function(citem){
-                should.not.equal(citem,item);
+            list.each(function (citem) {
+                should.not.equal(citem, item);
             });
         });
     });
@@ -135,16 +148,16 @@ describe('js.core.List', function () {
     describe('#sort', function () {
         it('should sort the list', function () {
             list.add(items);
-            list.sort(function(item,item2){
-               return parseInt(item) < parseInt(item2) ? -1 : 1;
+            list.sort(function (item, item2) {
+                return parseInt(item) < parseInt(item2) ? -1 : 1;
             });
-            list.each(function(citem, i){
-                expect(items[items.length-1-i]).to.be.equal(citem);
+            list.each(function (citem, i) {
+                expect(items[items.length - 1 - i]).to.be.equal(citem);
             });
         });
 
-        it('should trigger the sort event', function(){
-            list.bind('sort', function(){
+        it('should trigger the sort event', function () {
+            list.bind('sort', function () {
                 list.each(function (citem, i) {
                     expect(items[items.length - 1 - i]).to.be.equal(citem);
                 });
@@ -158,7 +171,7 @@ describe('js.core.List', function () {
         it('should trigger the sort event with sorted items', function () {
             list.bind('sort', function (e) {
                 var citem;
-                for(var i = 0; i < e.$.items.length; i++){
+                for (var i = 0; i < e.$.items.length; i++) {
                     citem = e.$.items[i];
                     expect(items[items.length - 1 - i]).to.be.equal(citem);
                 }
@@ -172,11 +185,11 @@ describe('js.core.List', function () {
 
     describe('#change of item attributes', function () {
         it('should trigger change event', function () {
-            list.bind('change', function(e){
+            list.bind('change', function (e) {
                 expect(e.$.item).to.equal(bindable);
             });
             list.add(bindable);
-            bindable.set('firstname','Peter');
+            bindable.set('firstname', 'Peter');
         });
     });
 
@@ -221,7 +234,7 @@ describe('js.core.List', function () {
 
     });
 
-    describe('#unbind item event', function(){
+    describe('#unbind item event', function () {
         var callback = function (e) {
             expect(true).to.equal(false);
         };
@@ -235,7 +248,7 @@ describe('js.core.List', function () {
 
     });
 
-    describe('#sync', function(){
+    describe('#sync', function () {
         var b1, b2, b3, copy;
         beforeEach(function () {
             b1 = new C.Bindable({
@@ -250,11 +263,11 @@ describe('js.core.List', function () {
                 foo: 'xyz',
                 bar: 'uvw'
             });
-            list = new C.List([b1,b2,b3]);
+            list = new C.List([b1, b2, b3]);
             copy = list.clone();
         });
 
-        it('should have same items after remove', function(){
+        it('should have same items after remove', function () {
             copy.removeAt(0);
 
             copy.sync();
@@ -262,7 +275,7 @@ describe('js.core.List', function () {
             expect(list.length).to.be.equal(copy.length);
         });
 
-        it('should have all new items of copy', function(){
+        it('should have all new items of copy', function () {
             copy.add(new C.Bindable({
                 a: "a",
                 b: "b"
@@ -271,10 +284,10 @@ describe('js.core.List', function () {
             copy.sync();
 
             expect(list.length).to.be.equal(copy.length);
-            expect(list.at(list.length-1)).to.be.equal(copy.at(list.length-1));
+            expect(list.at(list.length - 1)).to.be.equal(copy.at(list.length - 1));
         });
 
-        it('should not replace modified items', function() {
+        it('should not replace modified items', function () {
             copy.at(0).set({firstName: 'Peter', lastName: 'Pan'});
 
             copy.sync();
@@ -284,9 +297,6 @@ describe('js.core.List', function () {
             expect(list.at(0).$.lastName).to.be.equal(copy.at(0).$.lastName);
         });
     });
-
-
-
 
 
 });
