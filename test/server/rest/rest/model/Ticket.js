@@ -1,4 +1,4 @@
-define(["js/data/Model","rest/model/Project","rest/model/User","js/data/Collection","rest/model/Comment"], function(Model, Project, User, Collection, Comment) {
+define(["js/data/Model", "rest/model/Project", "rest/model/User", "js/data/Collection", "rest/model/Comment", "rest/model/IssueType"], function (Model, Project, User, Collection, Comment, IssueType) {
     return Model.inherit("rest.model.Ticket", {
         schema: {
             summary: String,
@@ -11,6 +11,10 @@ define(["js/data/Model","rest/model/Project","rest/model/User","js/data/Collecti
                 required: false
             },
             project: Project,
+            issueType: {
+                type: IssueType,
+                required: false
+            },
             comments: Collection.of(Comment),
             watchers: [User]
         },

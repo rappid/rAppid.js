@@ -10,6 +10,32 @@ describe("API", function () {
         ContentType = "Content-Type",
         LocationHeader = "Location-Header";
 
+    function createProject(name, cb) {
+        request(url)
+            .put("/projects/" + name)
+            .send({})
+            .expect(200)
+            .expect(ContentType, applicationJson)
+            .end(cb)
+    }
+
+    function checkProject(name, cb) {
+        request(url)
+            .get("/projects/" + name)
+            .expect(ContentType, applicationJson)
+            .end(cb);
+    }
+
+    function createTicket(payload, cb) {
+        request(url)
+            .post("/tickets")
+            .send(payload)
+            .expect(201)
+            .expect(ContentType, applicationJson)
+            .expect("Location", new RegExp(["^", url, "/", "tickets", "/", (payload.project ? payload.project.name : "") + "\-[0-9]+", "$"].join("")))
+            .end(cb);
+    }
+
     describe("#Initial test", function () {
 
 //        it("GET / should show available resources", function (done) {
@@ -40,6 +66,8 @@ describe("API", function () {
     describe('#PUT', function () {
 
         it('should create non existing resource if "upsert=true"', function (done) {
+            var projectName = "abc";
+
             flow()
                 .seq(function (cb) {
                     request(url)
@@ -48,18 +76,10 @@ describe("API", function () {
                         .end(cb);
                 })
                 .seq("result", function (cb) {
-                    request(url)
-                        .put("/projects/abc")
-                        .send({})
-                        .expect(200)
-                        .expect(ContentType, applicationJson)
-                        .end(cb)
+                    createProject(projectName, cb);
                 })
                 .seq(function (cb) {
-                    request(url)
-                        .get("/projects/abc")
-                        .expect(ContentType, applicationJson)
-                        .end(cb);
+                    checkProject(projectName, cb);
                 })
                 .exec(done);
         });
@@ -86,31 +106,22 @@ describe("API", function () {
         });
 
         it('should update resource with valid data', function (done) {
+            var projectName = "awesome";
+
             flow()
                 // create new project
                 .seq(function (cb) {
-                    request(url)
-                        .put("/projects/awesome")
-                        .send({})
-                        .expect(200)
-                        .expect(ContentType, applicationJson)
-                        .end(cb)
+                    createProject(projectName, cb);
                 })
                 // create new ticket
                 .seq("result", function (cb) {
-                    request(url)
-                        .post("/tickets")
-                        .send({
-                            summary: "Awesome Ticket",
-                            project: {
-                                name: "awesome"
-                            },
-                            watchers: []
-                        })
-                        .expect(201)
-                        .expect(ContentType, applicationJson)
-                        .expect("Location", new RegExp(["^", url, "/", "tickets", "/", "awesome\-[0-9]+", "$"].join("")))
-                        .end(cb)
+                    createTicket({
+                        summary: "Awesome Ticket",
+                        project: {
+                            name: projectName
+                        },
+                        watchers: []
+                    }, cb);
                 })
                 // update ticket!
                 .seq(function (cb) {
@@ -120,7 +131,7 @@ describe("API", function () {
                         .send({
                             summary: "Super Awesome ticket",
                             project: {
-                                name: "awesome"
+                                name: projectName
                             },
                             watchers: []
                         })
@@ -146,19 +157,13 @@ describe("API", function () {
             flow()
                 // create new ticket
                 .seq("result", function (cb) {
-                    request(url)
-                        .post("/tickets")
-                        .send({
-                            summary: "Awesome Ticket",
-                            project: {
-                                name: "awesome"
-                            },
-                            watchers: []
-                        })
-                        .expect(201)
-                        .expect(ContentType, applicationJson)
-                        .expect("Location", new RegExp(["^", url, "/", "tickets", "/", "awesome\-[0-9]+", "$"].join("")))
-                        .end(cb)
+                    createTicket({
+                        summary: "Awesome Ticket",
+                        project: {
+                            name: "awesome"
+                        },
+                        watchers: []
+                    }, cb);
                 })
                 // update ticket with invalid payload
                 .seq(function (cb) {
@@ -180,35 +185,37 @@ describe("API", function () {
 
     describe("#POST", function () {
 
-        var location;
+        var location,
+            projectName = "test";
 
         before(function (cb) {
-            request(url)
-                .put("/projects/test")
-                .send({})
-                .expect(200)
-                .expect(ContentType, applicationJson)
-                .end(cb);
+            createProject(projectName, cb);
         });
 
+        it('should not be allowed on resources which are created with PUT', function (done) {
+
+            flow()
+                .seq(function (cb) {
+                    request(url)
+                        .post("/projects/not-allowed-post")
+                        .send({})
+                        .expect(405)
+                        .end(cb);
+                })
+                .exec(done);
+        });
 
         it("should create new resource and return location header", function (done) {
 
             flow()
                 .seq("result", function (cb) {
-                    request(url)
-                        .post("/tickets")
-                        .send({
-                            summary: "Test Ticket",
-                            project: {
-                                name: "test"
-                            },
-                            watchers: []
-                        })
-                        .expect(201)
-                        .expect(ContentType, applicationJson)
-                        .expect("Location", new RegExp(["^", url, "/", "tickets", "/", "test\-[0-9]+", "$"].join("")))
-                        .end(cb)
+                    createTicket({
+                        summary: "Test Ticket",
+                        project: {
+                            name: projectName
+                        },
+                        watchers: []
+                    }, cb);
                 })
                 .seq(function (cb) {
                     var result = this.vars.result;
@@ -220,24 +227,39 @@ describe("API", function () {
                 .exec(done);
         });
 
-        it('should create resources with unique ids', function (done) {
-            var tickets = new Array(10);
-
+        it('should return 400 with wrong linked models', function (done) {
             flow()
-                .parEach(tickets, function (item, cb) {
+                .seq("result", function (cb) {
                     request(url)
                         .post("/tickets")
                         .send({
                             summary: "Test Ticket",
                             project: {
-                                name: "test"
+                                name: projectName
+                            },
+                            issueType: {
+                                key: "what"
                             },
                             watchers: []
                         })
-                        .expect(201)
-                        .expect(ContentType, applicationJson)
-                        .expect("Location", new RegExp(["^", url, "/", "tickets", "/", "test\-[0-9]+", "$"].join("")))
-                        .end(cb)
+                        .expect(400)
+                        .end(cb);
+                })
+                .exec(done);
+        });
+
+        it('should create resources with unique ids', function (done) {
+            var tickets = new Array(10);
+
+            flow()
+                .parEach(tickets, function (item, cb) {
+                    createTicket({
+                        summary: "Test Ticket",
+                        project: {
+                            name: projectName
+                        },
+                        watchers: []
+                    }, cb);
                 })
                 .exec(done);
 
@@ -270,12 +292,7 @@ describe("API", function () {
 
             flow()
                 .seq("result", function (cb) {
-                    request(url)
-                        .put("/projects/" + projectId)
-                        .send({})
-                        .expect(200)
-                        .expect(ContentType, applicationJson)
-                        .end(cb)
+                    createProject(projectId, cb);
                 })
                 .seq("delete", function (cb) {
                     request(url)
@@ -294,8 +311,16 @@ describe("API", function () {
 
         });
 
-        it.skip("should return 404 if resource wasn't found", function () {
-
+        it("should return 404 if resource wasn't found", function (done) {
+            flow()
+                .seq("delete", function (cb) {
+                    request(url)
+                        .del("/projects/not-existing-project")
+                        .send({})
+                        .expect(404)
+                        .end(cb);
+                })
+                .exec(done);
         });
 
     });
@@ -316,18 +341,16 @@ describe("API", function () {
 
         it("should return data with correct href for existing resource", function (done) {
 
+            var projectId = "my-new-project";
+
+
             flow()
                 .seq("result", function (cb) {
-                    request(url)
-                        .put("/projects/my-new-project")
-                        .send({})
-                        .expect(200)
-                        .expect(ContentType, applicationJson)
-                        .end(cb)
+                    createProject(projectId, cb);
                 })
                 .seq("getResult", function (cb) {
                     request(url)
-                        .get("/projects/my-new-project")
+                        .get("/projects/" + projectId)
                         .expect(ContentType, applicationJson)
                         .expect(200)
                         .end(cb);
@@ -335,8 +358,8 @@ describe("API", function () {
                 .seq(function () {
                     var result = this.vars.getResult;
                     expect(result.body).to.be.an.instanceof(Object);
-                    expect(result.body.name).to.equal("my-new-project");
-                    expect(result.body.href).to.equal(url + "/projects/my-new-project");
+                    expect(result.body.name).to.equal(projectId);
+                    expect(result.body.href).to.equal(url + "/projects/" + projectId);
                 })
                 .exec(done);
         });
@@ -346,12 +369,7 @@ describe("API", function () {
 
             flow()
                 .seq("result", function (cb) {
-                    request(url)
-                        .put("/projects/" + projectId)
-                        .send({})
-                        .expect(200)
-                        .expect(ContentType, applicationJson)
-                        .end(cb)
+                    createProject(projectId, cb);
                 })
                 .seq(function (cb) {
                     request(url)
@@ -361,19 +379,13 @@ describe("API", function () {
                         .end(cb);
                 })
                 .seq("ticket", function (cb) {
-                    request(url)
-                        .post("/tickets")
-                        .send({
-                            summary: "Test Ticket",
-                            project: {
-                                name: projectId
-                            },
-                            watchers: []
-                        })
-                        .expect(201)
-                        .expect(ContentType, applicationJson)
-                        .expect("Location", new RegExp(["^", url, "/", "tickets", "/", projectId + "\-[0-9]+", "$"].join("")))
-                        .end(cb)
+                    createTicket({
+                        summary: "Test Ticket",
+                        project: {
+                            name: projectId
+                        },
+                        watchers: []
+                    }, cb);
                 })
                 .seq("getResult", function (cb) {
                     var result = this.vars.ticket;
@@ -394,17 +406,13 @@ describe("API", function () {
 
         });
 
+
         it("should return href of linked collections", function (done) {
             var projectId = "project-2";
 
             flow()
                 .seq("result", function (cb) {
-                    request(url)
-                        .put("/projects/" + projectId)
-                        .send({})
-                        .expect(200)
-                        .expect(ContentType, applicationJson)
-                        .end(cb)
+                    createProject(projectId, cb);
                 })
                 .seq("getResult", function (cb) {
                     request(url)
@@ -425,8 +433,50 @@ describe("API", function () {
 
         });
 
-        it.skip("should return href of linked model from other context", function () {
+        it("should return href of linked model from other context", function (done) {
 
+            var issueType = "bug",
+                projectId = "project-with-issues";
+
+            flow()
+                .seq("result", function (cb) {
+                    createProject(projectId, cb);
+                })
+                .seq(function (cb) {
+                    request(url)
+                        .put("/projects/" + projectId + "/issueTypes/" + issueType)
+                        .send({})
+                        .expect(200)
+                        .end(cb);
+                })
+                .seq("ticket", function (cb) {
+                    createTicket({
+                        summary: "Ticket with IssueType",
+                        project: {
+                            name: projectId
+                        },
+                        issueType: {
+                            key: projectId + "/" + issueType
+                        },
+                        watchers: []
+                    }, cb);
+                })
+                .seq("getResult", function (cb) {
+                    var result = this.vars.ticket;
+                    request(result.header.location)
+                        .get('')
+                        .expect(200)
+                        .end(cb)
+                })
+                .seq(function () {
+                    var result = this.vars.getResult;
+                    expect(result.body).to.be.an.instanceof(Object);
+                    expect(result.body.issueType).to.eql({
+                        key: issueType,
+                        href: url + "/projects/" + projectId + "/issueTypes/" + issueType
+                    });
+                })
+                .exec(done);
 
         });
     });
@@ -459,17 +509,28 @@ describe("API", function () {
                     initialCount = result.body.count;
                 })
                 .parEach(items, function (item, cb) {
+                    createProject(item, cb);
+                })
+                .seq("collectionResult", function (cb) {
                     request(url)
-                        .put("/projects/" + item)
-                        .send({})
+                        .get("/projects")
                         .expect(200)
                         .expect(ContentType, applicationJson)
                         .end(cb)
                 })
+                .seq(function () {
+                    var result = this.vars.collectionResult;
+                    expect(result.body.results).to.be.an.instanceof(Array);
+                    var project;
+                    for (var i = 0; i < result.body.results.length; i++) {
+                        project = result.body.results[i];
+                        expect(project.name).to.exist;
+                    }
+                })
                 .exec(done);
         });
 
-        it.skip("should return 404 of resource was not found", function (done) {
+        it("should return 404 of resource was not found", function (done) {
             flow()
                 .seq(function (cb) {
                     request(url)

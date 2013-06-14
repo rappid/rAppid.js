@@ -1,4 +1,4 @@
-define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'js/data/Collection', 'js/data/DataSource', 'js/data/Model', 'underscore', 'js/core/List'], function (Component, HttpError, flow, require, JSON, Collection, DataSource, Model, _, List) {
+define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'js/data/Collection', 'js/data/DataSource', 'js/data/Model', 'underscore', 'js/core/List', 'js/data/Query'], function (Component, HttpError, flow, require, JSON, Collection, DataSource, Model, _, List, Query) {
 
     return Component.inherit('srv.handler.rest.ResourceHandler', {
         defaults: {
@@ -95,7 +95,7 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
                     // TODO: handle different payload formats -> format processor needed
                     try {
                         context.request.params = JSON.parse(body);
-                    } catch(e) {
+                    } catch (e) {
                         console.warn("Couldn't parse " + body);
                     }
                 }
@@ -103,7 +103,7 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
                 fn.call(this, context, callback);
 
             } else {
-                throw new HttpError("Method not supported", 404);
+                throw new HttpError("Method not supported", 405);
             }
         },
         /**
@@ -128,10 +128,10 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
                         id = parentCollection.$modelFactory.prototype.convertIdentifier(self.$parentResource.$resourceId);
                         var parent = parentCollection.createItem(id);
 
-                        if(checkParents){
+                        if (checkParents) {
                             parent.fetch(null, cb);
                         } else {
-                            cb();
+                            cb(null, parent);
                         }
                     })
                     .exec(function (err, results) {
@@ -277,17 +277,17 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
                     var firstPage = Math.floor(offset / pageSize),
                         lastPage = Math.floor((offset + limit) / pageSize);
 
-                    for(var i = firstPage; i <= lastPage; i++){
+                    for (var i = firstPage; i <= lastPage; i++) {
                         pages.push(i);
                     }
 
                     cb();
                 })
-                .seq(function(cb){
+                .seq(function (cb) {
                     var collection = this.vars.collection;
                     flow()
                         // TODO: don't use fetchPage
-                        .seqEach(pages, function(page, cb){
+                        .seqEach(pages, function (page, cb) {
                             collection.fetchPage(page, options, cb);
                         })
                         .exec(cb);
@@ -297,8 +297,8 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
 
                     cb();
                 })
-                .exec(function(err, results){
-                    if(!err){
+                .exec(function (err, results) {
+                    if (!err) {
                         var response = context.response;
 
                         // switch context of collection to RestDataSource
@@ -329,7 +329,7 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
                         response.write(JSON.stringify(res), 'utf8');
                         response.end();
 
-                         callback(null);
+                        callback(null);
                     } else {
                         var statusCode = 404;
                         if (err === DataSource.ERROR.NOT_FOUND) {
@@ -350,15 +350,20 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
          */
         _create: function (context, callback) {
 
+            if (this.$resourceConfiguration.$.upsert === true) {
+                callback(new HttpError("Please create with PUT", 405));
+                return;
+            }
+
             var self = this,
                 model,
                 processor;
 
             flow()
-                .seq("collection", function(cb){
+                .seq("collection", function (cb) {
                     self._findCollection(context, cb);
                 })
-                .seq(function(){
+                .seq(function () {
                     model = this.vars.collection.createItem();
 
                     var payload = context.request.params;
@@ -475,15 +480,28 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
             var self = this,
                 options = {},
                 model,
-                processor;
+                processor,
+                upsert = this.$resourceConfiguration.$.upsert,
+                defaults;
 
 
             flow()
                 .seq("collection", function (cb) {
                     self._findCollection(context, cb);
                 })
-                .seq(function () {
+                .seq(function (cb) {
                     model = this.vars.collection.createItem(self.$resourceId);
+                    defaults = _.clone(model.$);
+                    // check if model exists
+                    if (upsert) {
+                        cb();
+                    } else {
+                        model.fetch(null, cb);
+                    }
+                })
+                .seq(function () {
+                    model.clear();
+                    model.set(defaults);
 
                     var payload = context.request.params;
 
@@ -494,7 +512,7 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
                     options.action = DataSource.ACTION.UPDATE;
 
                     // TODO: add hook to add session data like user id
-                    if (self.$resourceConfiguration.$.upsert === true) {
+                    if (upsert === true) {
                         options.upsert = true;
                         model.set(model.idField, model.factory.prototype.convertIdentifier(self.$resourceId));
                     }
@@ -556,20 +574,52 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
          * @private
          */
         _beforeModelSave: function (model, context, callback) {
-            var schema = model.schema, schemaObject;
-            for (var schemaKey in schema) {
-                if (schema.hasOwnProperty(schemaKey)) {
-                    schemaObject = schema[schemaKey];
-                    if (schemaObject.generated) {
-                        var value = this._autoGenerateValue(schemaObject.key, context, model);
-                        if (!_.isUndefined(value)) {
-                            model.set(schemaKey, value);
+            var schema = model.schema,
+                schemaObject,
+                self = this;
+
+            flow()
+                .seq(function () {
+                    for (var schemaKey in schema) {
+                        if (schema.hasOwnProperty(schemaKey)) {
+                            schemaObject = schema[schemaKey];
+                            if (schemaObject.generated) {
+                                var value = self._autoGenerateValue(schemaObject.key, context, model);
+                                if (!_.isUndefined(value)) {
+                                    model.set(schemaKey, value);
+                                }
+                            }
                         }
                     }
-                }
-            }
 
-            callback && callback();
+                })
+                // check linked models -> TODO: move to validate
+                .seq(function (cb) {
+                    flow()
+                        .parEach(schema, function (schemaObject, cb) {
+                            var linkedModel = model.$[schemaObject._key];
+                            if (linkedModel instanceof Model) {
+                                if (linkedModel) {
+                                    // replace with exists?
+                                    linkedModel.fetch(null, function (err) {
+                                        var key = schemaObject._key;
+                                        if (err && err === DataSource.ERROR.NOT_FOUND) {
+                                            cb(new HttpError(key + " not found", 400));
+                                        } else {
+                                            cb(err);
+                                        }
+                                    });
+                                } else {
+                                    cb();
+                                }
+                            } else {
+                                cb();
+                            }
+
+                        })
+                        .exec(cb);
+                })
+                .exec(callback);
         },
         /***
          *
@@ -582,10 +632,10 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
                 self = this;
 
             flow()
-                .seq("collection", function(cb){
+                .seq("collection", function (cb) {
                     self._findCollection(context, cb);
                 })
-                .seq(function(){
+                .seq(function () {
                     model = this.vars.collection.createItem(self.$resourceId);
                 })
                 .seq(function (cb) {
@@ -624,7 +674,7 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
                 });
         },
         _beforeModelCreate: function (model, context, callback) {
-            callback && callback();
+            this._beforeModelSave(model, context, callback);
         },
 
         _beforeModelUpdate: function (model, context, callback) {
@@ -632,7 +682,7 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
         },
 
         _afterModelCreate: function (model, context, callback) {
-            this._beforeModelSave(model, context, callback);
+            callback && callback();
         },
         _afterModelUpdate: function (model, context, callback) {
             callback && callback();
