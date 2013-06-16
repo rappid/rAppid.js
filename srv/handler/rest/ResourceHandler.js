@@ -237,8 +237,6 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
         _index: function (context, callback) {
             var self = this,
                 options,
-                startIndex = 0,
-                endIndex = 0,
                 offset = 0,
                 limit = 0,
                 pages = [],
@@ -248,7 +246,7 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
                 .seq("collection", function (cb) {
                     self._findCollection(context, cb, false);
                 })
-                .seq(function (cb) {
+                .seq("page", function (cb) {
                     var parameters = context.request.urlInfo.parameter;
 
                     var query = self.$restHandler.parseQueryForResource(parameters, self);
@@ -271,31 +269,8 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
 
                     // calculate page
                     limit = limit > pageSize ? pageSize : limit;
-                    startIndex = offset || 0;
-                    endIndex = offset + limit;
 
-                    var firstPage = Math.floor(offset / pageSize),
-                        lastPage = Math.floor((offset + limit) / pageSize);
-
-                    for (var i = firstPage; i <= lastPage; i++) {
-                        pages.push(i);
-                    }
-
-                    cb();
-                })
-                .seq(function (cb) {
-                    var collection = this.vars.collection;
-                    flow()
-                        // TODO: don't use fetchPage
-                        .seqEach(pages, function (page, cb) {
-                            collection.fetchPage(page, options, cb);
-                        })
-                        .exec(cb);
-                })
-                .seq(function (cb) {
-                    items = this.vars["collection"].$items.slice(startIndex, endIndex);
-
-                    cb();
+                    this.vars.collection.fetch({limit: limit, offset: offset}, cb);
                 })
                 .exec(function (err, results) {
                     if (!err) {
@@ -303,9 +278,9 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
 
                         // switch context of collection to RestDataSource
                         var collection = results["collection"];
+                        items = results["page"].$items;
                         // call compose
                         var processor = self.$restHandler.$restDataSource.getProcessorForCollection(collection);
-
                         var itemArray = [];
 
                         items.forEach(function (item) {
