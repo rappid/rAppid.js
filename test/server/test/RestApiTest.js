@@ -616,8 +616,35 @@ describe("API", function () {
 
         });
 
-        it.skip("should return sorted collection when sort parameter is given", function () {
+        it("should return sorted collection when sort parameter is given", function (done) {
 
+            flow()
+                .seq("getResult", function (cb) {
+                    request(url)
+                        .get("/projects?sort=" + encodeURIComponent("+name"))
+                        .expect(200)
+                        .expect(ContentType, applicationJson)
+                        .end(cb)
+                })
+                .seq(function () {
+                    var results = this.vars.getResult.body.results;
+
+                    var sorted = results.slice(0, results.length - 1);
+
+                    sorted = sorted.sort(function (a, b) {
+                        if (a.name > b.name) {
+                            return 1;
+                        }
+                        return -1;
+                    });
+
+                    for (var i = 0; i < sorted.length; i++) {
+                        expect(sorted[i].name).to.eql(results[i].name);
+                    }
+
+
+                })
+                .exec(done);
         });
 
     });
