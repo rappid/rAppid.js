@@ -585,7 +585,30 @@ describe("API", function () {
                 .exec(done)
         });
 
-        it.skip("should return page in given offset and limit", function () {
+        it("should return page in given offset and limit", function (done) {
+            var maxCount = initialCount + count,
+                offset = initialCount - 1,
+                limit = count - 2;
+
+            flow()
+                .seq("getResult", function (cb) {
+                    request(url)
+                        .get("/projects?offset=" + offset + "&limit=" + limit)
+                        .expect(200)
+                        .expect(ContentType, applicationJson)
+                        .end(cb)
+                })
+                .seq(function () {
+                    var result = this.vars.getResult;
+                    expect(result.body).to.be.an.instanceof(Object);
+                    expect(result.body.offset).to.equal(offset);
+                    expect(result.body.limit).to.equal(limit);
+                    expect(result.body.count).to.equal(count + initialCount);
+                    expect(result.body.results).to.exist;
+                    expect(result.body.results).to.be.an.instanceof(Array);
+                    expect(result.body.results.length).to.equal(limit);
+                })
+                .exec(done);
 
         });
 
