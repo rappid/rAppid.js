@@ -18,7 +18,7 @@ define(['js/html/HtmlElement', 'underscore'], function(HtmlElement, _){
         defaults: {
             tagName: 'div',
             modalActive: false,
-            'class': 'window-manager {modalActiveClass()}'
+            'class': 'window-manager {modalActiveClass()} {activeModalsClasses()}'
         },
 
         $classAttributes: ["modalActive"],
@@ -26,6 +26,23 @@ define(['js/html/HtmlElement', 'underscore'], function(HtmlElement, _){
         modalActiveClass: function() {
             return this.$.modalActive ? "modal-active" : "";
         }.onChange("modalActive"),
+
+        activeModalsClasses: function() {
+
+            var ret = [];
+
+            for (var i = 0; i < this.$modalWindows.length; i++) {
+                var modal = this.$modalWindows[i];
+
+                if (modal && modal.$.name) {
+                    ret.push(modal.$.name + "-active");
+                }
+
+            }
+
+            return ret.join(" ");
+
+        }.on("modalStateChanged"),
 
         /***
          * Adds a window to the WindowManager and shows it
@@ -36,7 +53,7 @@ define(['js/html/HtmlElement', 'underscore'], function(HtmlElement, _){
         show: function(window, windowCloseCallback, modal) {
 
             var self = this,
-                list = modal ? this.$windows : this.$modalWindows,
+                list = modal ? this.$modalWindows : this.$windows,
                 child = window;
 
             if (modal) {
@@ -60,10 +77,15 @@ define(['js/html/HtmlElement', 'underscore'], function(HtmlElement, _){
 
                 window.set('windowClass', 'modal window');
                 self.set("modalActive", true);
+
             }
 
             this.addChild(child);
             list.push(window);
+
+            if (modal) {
+                this.trigger("modalStateChanged");
+            }
 
             var closeHandler = function(e) {
                 self.removeChild(child);
@@ -71,6 +93,7 @@ define(['js/html/HtmlElement', 'underscore'], function(HtmlElement, _){
 
                 window.unbind('close', closeHandler);
                 self.set("modalActive", false);
+                self.trigger("modalStateChanged");
 
                 if (windowCloseCallback) {
                     windowCloseCallback(null, window, e.$);
