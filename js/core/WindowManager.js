@@ -17,15 +17,12 @@ define(['js/html/HtmlElement', 'underscore'], function(HtmlElement, _){
 
         defaults: {
             tagName: 'div',
-            modalActive: false,
             'class': 'window-manager {modalActiveClass()} {activeModalsClasses()}'
         },
 
-        $classAttributes: ["modalActive"],
-
         modalActiveClass: function() {
-            return this.$.modalActive ? "modal-active" : "";
-        }.onChange("modalActive"),
+            return this.$modalWindows.length > 0 ? "modal-active" : "";
+        }.on("modalStateChanged"),
 
         activeModalsClasses: function() {
 
@@ -76,7 +73,6 @@ define(['js/html/HtmlElement', 'underscore'], function(HtmlElement, _){
                 child.addChild(window);
 
                 window.set('windowClass', 'modal window');
-                self.set("modalActive", true);
 
             }
 
@@ -92,7 +88,6 @@ define(['js/html/HtmlElement', 'underscore'], function(HtmlElement, _){
                 list.splice(_.indexOf(list, window), 1);
 
                 window.unbind('close', closeHandler);
-                self.set("modalActive", false);
                 self.trigger("modalStateChanged");
 
                 if (windowCloseCallback) {
