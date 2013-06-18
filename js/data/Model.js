@@ -114,9 +114,18 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
                         throw new Error("status '" + status + "' doesn't allow save");
                     }
                 } catch (e) {
+
+                    self._save.state = SAVESTATE.ERROR;
+
                     if (callback) {
                         callback(e);
                     }
+
+                    _.each(self._save.callbacks, function (cb) {
+                        cb.call(self, err, self);
+                    });
+
+                    self._save.callbacks = [];
                 }
             }
 
