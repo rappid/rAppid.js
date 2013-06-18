@@ -166,18 +166,6 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
 
         },
 
-        prepare: function (attributes, action) {
-            attributes = this.callBase();
-
-            if (action === "create") {
-                // remove id
-                delete(attributes.id);
-            }
-
-            return attributes;
-
-        },
-
         compose: function (action, options) {
             var ret = this.callBase();
 
