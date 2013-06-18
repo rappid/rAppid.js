@@ -472,18 +472,19 @@ define(["js/core/Component", "js/core/Base", "js/data/Collection", "underscore",
                                         factory = typeResolver.resolve(value[i], key);
                                     }
 
-                                    if (!(factory && factory.classof(Entity))) {
-                                        throw "Factory for type '" + key + "' isn't an instance of Entity";
+                                    if ((factory && factory.classof(Entity))) {
+                                        entity = this.$dataSource._getContext(factory, model, value[i]).createEntity(factory, this._getIdForValue(value[i], factory));
+                                        if (entity instanceof Entity && !(entity instanceof Model)) {
+                                            entity.$parent = model;
+                                            entity.$parentEntity = model;
+                                        }
+                                        entity.set(this._parseModel(entity, value[i], action, options));
+
+                                        list.add(entity);
+                                    } else {
+                                        list.add(value[i]);
                                     }
 
-                                    entity = this.$dataSource._getContext(factory, model, value[i]).createEntity(factory, this._getIdForValue(value[i], factory));
-                                    if (entity instanceof Entity && !(entity instanceof Model)) {
-                                        entity.$parent = model;
-                                        entity.$parentEntity = model;
-                                    }
-                                    entity.set(this._parseModel(entity, value[i], action, options));
-
-                                    list.add(entity);
                                 }
                             }
 
