@@ -317,7 +317,7 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                             this.$el.appendChild(el);
                             this.$renderedChildren.push(child);
                         } else {
-                            this.$renderedChildren.splice(pos,0,child);
+                            this.$renderedChildren.splice(pos, 0, child);
                             var childNode = this.$el.childNodes[pos];
                             if (childNode) {
                                 this.$el.insertBefore(el, childNode);
@@ -349,7 +349,19 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
             _commitVisible: function (visible) {
                 if (this.$renderParent && !this.isRendered()) {
                     if (visible) {
-                        this.$renderParent._renderChild(this, this.$renderParent.$children.indexOf(this));
+                        // calculate the index, where the element should appear
+                        var children = this.$renderParent.$children,
+                            index = children.indexOf(this),
+                            i = 0;
+
+                        // decrease it by the non visible children that are before ...
+                        while (i < index) {
+                            if (!children[i].$.visible) {
+                                index--;
+                            }
+                            i++;
+                        }
+                        this.$renderParent._renderChild(this, index);
                     } else {
 
                     }
