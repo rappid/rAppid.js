@@ -1,4 +1,4 @@
-define(["js/ui/View", "js/core/Content", "js/ui/Button", "underscore"], function(View, Content, Button, _) {
+define(["js/ui/View", "js/core/Content", "js/ui/Button", "underscore"], function (View, Content, Button, _) {
 
     return View.inherit("js.ui.MenuButtonClass", {
         defaults: {
@@ -102,14 +102,16 @@ define(["js/ui/View", "js/core/Content", "js/ui/Button", "underscore"], function
             }
             var self = this;
 
-            this.bindDomEvent('click', function (e) {
+            this.bindDomEvent('click', function () {
                 self.set({menuVisible: false});
             });
 
             this.$toggleButton.bind('on:click', function (e) {
-                e.stopPropagation();
-                e.preventDefault();
-                self.set({menuVisible: !self.$.menuVisible});
+                if (self.$.enabled) {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    self.set({menuVisible: !self.$.menuVisible});
+                }
             });
 
             this.$button.bind('on:click', function (e) {
@@ -135,14 +137,14 @@ define(["js/ui/View", "js/core/Content", "js/ui/Button", "underscore"], function
         /**
          * Opens the menu
          */
-        openMenu: function(){
+        openMenu: function () {
             this.set('menuVisible', true);
         },
 
         /***
          * Toggles the menu
          */
-        toggleMenu: function(){
+        toggleMenu: function () {
             this.set('menuVisible', !this.$.menuVisible);
         }
     });
