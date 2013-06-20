@@ -92,7 +92,7 @@ define(["exports", "Query"], function (exports, Query) {
                     case "between":
                         return itemValue >= value[0] && itemValue <= value[1];
                     case "like":
-                        return new RegExp(value).test(itemValue);
+                        return new RegExp(value, "i").test(itemValue);
                     case "ne":
                         return itemValue != value;
                     default :
