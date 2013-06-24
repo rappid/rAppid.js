@@ -7,7 +7,19 @@ define(
             },
             _initializeDescriptors: function () {
                 if (this.$descriptor) {
-                    this.$.textContent = this._getTextContentFromDescriptor(this.$descriptor);
+                    var textContent = this._getTextContentFromDescriptor(this.$descriptor),
+                        bindingCreator = this.$bindingCreator;
+
+                    var bindingDefinitions = bindingCreator.parse(textContent);
+                    if (bindingCreator.containsBindingDefinition(bindingDefinitions)) {
+                        this.$bindingAttributes["textContent"] = {
+                            bindingDefinitions: bindingDefinitions,
+                            value: textContent
+                        };
+                    } else {
+                        this.$.textContent = textContent;
+                    }
+
                 }
             },
             render: function () {
