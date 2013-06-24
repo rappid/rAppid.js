@@ -380,7 +380,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
                     })
                     .seq(function (cb) {
                         this.vars["cursor"].count(function (err, count) {
-                            collectionPage.$collection.$itemsCount = count;
+                            collectionPage.$collection.$.$itemsCount = count;
                             cb(err);
                         });
                     })
