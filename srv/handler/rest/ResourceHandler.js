@@ -291,7 +291,7 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
                             itemArray.push(processor.compose(item));
                         });
                         var res = {
-                            count: results["collection"].$itemsCount,
+                            count: results["collection"].$.$itemsCount,
                             limit: limit,
                             offset: offset,
                             results: itemArray
