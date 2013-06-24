@@ -2,6 +2,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
 
     var ID_KEY = "_id",
         CONTEXT_KEY = "_context",
+        CONTEXT_URI_KEY = "_contextURI",
         PARENT_TYPE_KEY = "_parent_type",
         TYPE_KEY = "_type",
         REF_ID_KEY = "_ref_id",
@@ -29,8 +30,10 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
 
         _getCompositionValue: function (value, key, action, options) {
             if (value instanceof Model) {
-                var ret = this.$dataSource._composeContext(value);
-                ret[value.constructor.name.replace(/\./gi, "/")] = value.identifier();
+                var context = this.$dataSource._composeContext(value);
+                var ret = {};
+                ret[value.idField] = value.identifier();
+                ret[CONTEXT_KEY] = context;
 
                 return ret;
             }
@@ -102,7 +105,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
         _getIdForValue: function (value, factory) {
 
             if (factory.classof && factory.classof(Model)) {
-                return value[factory.prototype.constructor.name.replace(/\./g, "/")];
+                return value[factory.prototype.idField];
             }
 
             var id = this.callBase();
@@ -470,38 +473,58 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
 
         _composeContext: function (model) {
             var parent = model.$parent,
-                context = {};
+                context = {},
+                contextStack = [],
+                uri = [];
 
+            // go to root context
             while (parent) {
-                context[parent.constructor.name.replace(/\./gi, "/")] = parent.identifier();
+                contextStack.unshift(parent);
                 parent = parent.$parent;
             }
 
-            return  context;
+            var configuration = this.$dataSourceConfiguration,
+                path,
+                id;
+
+            for (var i = 0; i < contextStack.length; i++) {
+                configuration = configuration.getConfigurationForModelClass(contextStack[i].factory);
+                path = configuration.$.path;
+                id = contextStack[i].identifier();
+                context[path] = id;
+            }
+
+            return context;
         },
         _getContext: function (factory, model, value) {
 
             if (model instanceof Model && factory.classof(Model) && !_.isString(value) && value instanceof Object) {
-                var configuration = this.getConfigurationForModelClass(factory);
+                var configuration = this.$dataSourceConfiguration;
+                var valueContext = value[CONTEXT_KEY],
+                    stack = [];
 
-                var numParent = _.size(value) - 1,
-                    baseConfiguration = configuration,
-                    stack = [configuration];
-                for (var i = 0; i < numParent; i++) {
-                    baseConfiguration = baseConfiguration.$parent;
-                    stack.unshift(baseConfiguration);
+                for (var key in valueContext) {
+                    if (valueContext.hasOwnProperty(key)) {
+                        configuration = configuration.getConfigurationForPath(key);
+                        stack.push(configuration);
+                    }
                 }
+
                 var parentFactory,
                     parentModel,
                     context,
                     fullModelClassName;
-                for (i = 0; i < stack.length; i++) {
+                for (var i = 0; i < stack.length; i++) {
                     fullModelClassName = stack[i].$.modelClassName.replace(/\./gi, "/");
                     parentFactory = requirejs(fullModelClassName);
-                    context = this.getContextForChild(parentFactory, parentModel || model);
-                    parentModel = context.createEntity(parentFactory, value[fullModelClassName]);
+                    context = this.getContextForChild(parentFactory, parentModel);
+                    parentModel = context.createEntity(parentFactory, valueContext[stack[i].$.path]);
                     parentModel.$parent = context.$contextModel;
                 }
+
+                context = this.getContextForChild(factory, parentModel);
+
+                parentModel = context.createEntity(factory, value[model.idField]);
 
                 return parentModel.$context;
             }
