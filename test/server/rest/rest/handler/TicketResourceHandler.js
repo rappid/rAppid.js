@@ -19,7 +19,7 @@ define(["srv/handler/rest/ResourceHandler", "flow", "js/data/Collection"], funct
                 .seq(function (cb) {
                     model.$context.createCollection(Collection.of(model.factory)).fetchPage(0, {limit: 1}, function (err, page) {
                         if (!err) {
-                            model.set('key', model.$.project.identifier()+"-"+(page.getCollection().$itemsCount + (++transactions)));
+                            model.set('key', model.$.project.identifier()+"-"+(page.getCollection().size() + (++transactions)));
                         }
                         cb(err);
                     });
