@@ -19,11 +19,26 @@ describe("Component tests", function () {
 
     });
 
-    describe('#attributes', function(){
+    describe('#attributes', function () {
 
-        it('should be configurable from outside', function(){
+        it('should be configurable from outside', function () {
             expect(window.application.$.customComponent.$.customAttribute).to.be.equal(window.application.$.foo);
             expect(window.application.$.customComponent.$.internalComponent.$.value).to.be.equal(window.application.$.foo);
+        });
+
+    });
+
+    describe("#binding attributes", function () {
+
+        it('should be created even it gets overriden by injection', function () {
+
+
+            var application = window.application;
+            var customComponent = application.$.customComponent;
+
+            application.set('foo', "bar2");
+
+            expect(customComponent.$.injectableAttribute).to.be.equal("bar2");
         });
 
     });
