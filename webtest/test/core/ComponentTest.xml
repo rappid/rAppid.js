@@ -1,7 +1,10 @@
 <app:ComponentTestClass xmlns:app="webtest.test.core" xmlns="http://www.w3.org/1999/xhtml" xmlns:js="js.core">
 
+    <js:Injection>
+        <js:Component cid="injectable" name="injectable" />
+    </js:Injection>
 
-    <app:CustomComponent cid="customComponent" customAttribute="{foo}"/>
+    <app:CustomComponent cid="customComponent" customAttribute="{foo}" injectableAttribute="{foo}"/>
 
 
 </app:ComponentTestClass>
