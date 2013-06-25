@@ -4,7 +4,7 @@
         {$dataItem.data}
     </js:Template>
     <js:Template name="rendererContainer">
-        <li selected="{isItemSelected($dataItem.data)}" item="{$dataItem.data}"/>
+        <li selected="{isItemSelected($dataItem.data)}" item="{$dataItem.data}" class="{$dataItem.$status}"/>
     </js:Template>
     <ul cid="$scrollContainer" class="scroll-container {scrollContainerClass}" position="relative" margin="0px">
     </ul>
