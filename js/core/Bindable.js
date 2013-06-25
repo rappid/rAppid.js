@@ -96,6 +96,8 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
                     this.callBase(null);
 
                     this.$ = {};
+                    this.$bindingAttributes = {};
+
                     this.$invalidatedProperties = {};
                     this.$invalidated = false;
 
@@ -126,6 +128,33 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
                     }
 
                     this.$ = attributes;
+
+                    var $ = this.$,
+                        bindingAttributes = this.$bindingAttributes,
+                        bindingDefinitions,
+                        value;
+
+                    // we need to find out all attributes which contains binding definitions and set
+                    // the corresponding $[key] to null -> than evaluate the bindings
+                    // this is because some function bindings belong on other binding values which are
+                    // at the time of evaluation maybe unresolved and for example {foo.bar} instead of a value
+                    for (key in $) {
+                        if ($.hasOwnProperty(key)) {
+                            value = $[key];
+                            bindingDefinitions = bindingCreator.parse(value);
+
+                            if (bindingCreator.containsBindingDefinition(bindingDefinitions)) {
+                                // we found an attribute containing a binding definition
+                                bindingAttributes[key] = {
+                                    bindingDefinitions: bindingDefinitions,
+                                    value: value
+                                };
+
+                                $[key] = null;
+                            }
+                        }
+                    }
+
 
                     this.$previousAttributes = {};
 
@@ -295,39 +324,18 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
 
                     var $ = this.$,
                         bindingCreator = this.$bindingCreator,
-                        bindingAttributes = {},
+                        bindingAttributes = this.$bindingAttributes,
                         bindingDefinitions,
                         bindingAttribute,
                         value,
                         key;
 
-                    // we need to find out all attributes which contains binding definitions and set
-                    // the corresponding $[key] to null -> than evaluate the bindings
-                    // this is because some function bindings belong on other binding values which are
-                    // at the time of evaluation maybe unresolved and for example {foo.bar} instead of a value
-                    for (key in $) {
-                        if ($.hasOwnProperty(key)) {
-                            value = $[key];
-                            bindingDefinitions = bindingCreator.parse(value);
-
-                            if (bindingCreator.containsBindingDefinition(bindingDefinitions)) {
-                                // we found an attribute containing a binding definition
-                                bindingAttributes[key] = {
-                                    bindingDefinitions: bindingDefinitions,
-                                    value: value
-                                };
-
-                                $[key] = null;
-                            }
-                        }
-                    }
-
                     // FIXME: resolve dependencies between bindings and loop in the correct order
                     // e.g. view="{{product.view}}" needs product
 
                     // Resolve bindings and events
-                    for (key in $) {
-                        if ($.hasOwnProperty(key)) {
+                    for (key in bindingAttributes) {
+                        if (bindingAttributes.hasOwnProperty(key)) {
                             bindingAttribute = bindingAttributes[key];
                             if (bindingAttribute) {
                                 value = bindingAttribute.value;

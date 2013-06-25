@@ -1,6 +1,7 @@
-<js:Component xmlns:js="js.core" xmlns="http://www.w3.org/1999/xhtml"
-        customAttribute="true" name="customComponent">
+<app:CustomComponentClass xmlns:js="js.core" xmlns="http://www.w3.org/1999/xhtml"
+                          name="customComponent"
+                          xmlns:app="webtest.test.core">
 
     <js:Component cid="internalComponent" value="{customAttribute}" internalName="{name}"/>
 
-</js:Component>
+</app:CustomComponentClass>
