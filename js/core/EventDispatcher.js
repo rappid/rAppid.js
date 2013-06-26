@@ -235,13 +235,15 @@ define(["js/core/Base"], function (Base) {
             preventDefault: function () {
                 this.isDefaultPrevented = true;
 
-                var e = this.$.orginalEvent;
+                if (this.$) {
+                    var e = this.$.orginalEvent;
 
-                if (e) {
-                    if (e.preventDefault) {
-                        e.preventDefault();
-                    } else {
-                        e.returnValue = false;  // IE
+                    if (e) {
+                        if (e.preventDefault) {
+                            e.preventDefault();
+                        } else {
+                            e.returnValue = false;  // IE
+                        }
                     }
                 }
             },
