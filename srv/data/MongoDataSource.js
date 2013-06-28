@@ -502,11 +502,12 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
                 var configuration = this.$dataSourceConfiguration;
                 var valueContext = value[CONTEXT_KEY],
                     stack = [];
-
-                for (var key in valueContext) {
-                    if (valueContext.hasOwnProperty(key)) {
-                        configuration = configuration.getConfigurationForPath(key);
-                        stack.push(configuration);
+                if(valueContext){
+                    for (var key in valueContext) {
+                        if (valueContext.hasOwnProperty(key)) {
+                            configuration = configuration.getConfigurationForPath(key);
+                            stack.push(configuration);
+                        }
                     }
                 }
 
