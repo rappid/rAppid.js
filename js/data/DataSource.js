@@ -211,7 +211,7 @@ define(["js/core/Component", "js/core/Base", "js/data/Collection", "underscore",
                 },
 
                 generateCacheIdFromCollection: function (collection) {
-                    return Context.generateCacheIdForCollection(collection.$modelFactory.prototype.constructor.name);
+                    return Context.generateCacheIdForCollection(collection.factory.prototype.constructor.name);
                 }
 
             });
