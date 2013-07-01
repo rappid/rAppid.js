@@ -116,8 +116,8 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
                     return;
                 }
 
-                this.$el.scrollTop = this.$.scrollTop;
-                this.$el.scrollLeft = this.$.scrollLeft;
+//                this.$el.scrollTop = this.$.scrollTop;
+//                this.$el.scrollLeft = this.$.scrollLeft;
             },
 
             _bindDomEvents: function (el) {
@@ -268,7 +268,6 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
                     }
 
                     if (forceRefresh || !(startIndex === this.$lastStartIndex && endIndex === this.$lastEndIndex)) {
-
 
                         // some items are not visible any more or scrolled into view
                         // remember the last
@@ -711,7 +710,7 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
             this.$data = data;
             this.$virtualItemsView = virtualItemsView;
 
-            if (data instanceof List) {
+            if (data instanceof List && !(data instanceof Collection)) {
 
                 var refreshView = function (e) {
 
