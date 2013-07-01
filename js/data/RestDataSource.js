@@ -617,7 +617,7 @@ define(["js/data/DataSource", "js/data/Model", "underscore", "flow", "JSON", "js
             if (options.noCache) {
                 params.timestamp = (new Date()).getTime();
             }
-            params.fullData = options.fullData || false;
+            params.fullData = params.fullData || options.fullData || false;
 
             for (var key in params) {
                 if (params.hasOwnProperty(key)) {
