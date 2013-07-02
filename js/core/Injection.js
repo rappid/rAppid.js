@@ -96,7 +96,7 @@ define(["js/core/Component", "underscore"], function (Component, _) {
 
             if (!factory.factory) {
                 // get factory from class
-                var fac = this.$stage.$applicationDomain.getDefinition(factory.type);
+                var fac = this.$stage.$requirejsContext((factory.type || "").replace(/\./g, "/"));
                 if (!fac) {
                     throw "factory for type '" + factory.type + "' not found";
                 }
