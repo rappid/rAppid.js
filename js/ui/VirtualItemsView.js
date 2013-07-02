@@ -116,8 +116,8 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
                     return;
                 }
 
-//                this.$el.scrollTop = this.$.scrollTop;
-//                this.$el.scrollLeft = this.$.scrollLeft;
+                this.$el.scrollTop = this.$.scrollTop;
+                this.$el.scrollLeft = this.$.scrollLeft;
             },
 
             _bindDomEvents: function (el) {
