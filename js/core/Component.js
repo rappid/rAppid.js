@@ -98,7 +98,7 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
              * Returns the start parameter of the application
              * @return {Object}
              */
-            PARAMETER: function() {
+            PARAMETER: function () {
                 return this.$stage.$parameter;
             },
 
@@ -418,16 +418,27 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
             },
 
             _initializeXamlEventAttributes: function (attributes, rootScope) {
-                var event = '', callback;
+                var event = '',
+                    callback,
+                    value,
+                    realValue;
                 for (var key in attributes) {
                     if (attributes.hasOwnProperty(key)) {
-                        var value = attributes[key];
+                        value = attributes[key];
 
                         if (this._isXamlEventAttribute(key)) {
-                            if (rootScope[value]) {
+                            var index = value.indexOf("(");
+                            if (index > 0) {
+                                realValue = value.substr(0, index);
+                            } else {
+                                realValue = value;
+                            }
+
+                            if (rootScope[realValue]) {
                                 event = key.substr(2);
+
                                 callback = rootScope[value];
-                                this.bind("on:" + event, rootScope[value], rootScope);
+                                this.bind("on:" + event, index > 0 ? value : rootScope[value], rootScope);
                             } else {
                                 throw "Couldn't find callback " + value + " for " + key + " event";
                             }

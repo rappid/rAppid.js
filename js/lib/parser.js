@@ -52,7 +52,8 @@ var exports = (typeof(exports) === "undefined" ? this : exports); exports.parser
         "binding": parse_binding,
         "twoWayBinding": parse_twoWayBinding,
         "staticBinding": parse_staticBinding,
-        "text": parse_text
+        "text": parse_text,
+        "eventHandler": parse_eventHandler
       };
       
       if (startRule !== undefined) {
@@ -1116,6 +1117,16 @@ var exports = (typeof(exports) === "undefined" ? this : exports); exports.parser
               }
             }
           }
+        }
+        return result0;
+      }
+      
+      function parse_eventHandler() {
+        var result0;
+        
+        result0 = parse_fnc();
+        if (result0 === null) {
+          result0 = parse_var();
         }
         return result0;
       }

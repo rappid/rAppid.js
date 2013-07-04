@@ -825,21 +825,38 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
                     if (event instanceof Function && _.isString(path)) {
                         this.callBase(path, event, callback);
                     } else {
-                        if (_.isArray(path) && path.length > 0) {
+                        // if we have a string with a function
+                        if(_.isString(event) && event.indexOf("(") > 0){
                             thisArg = callback;
-                            callback = event;
-                            event = path[1];
-                            path = path[0];
+                            var fncString = event;
+                            event = path;
+                            var parameters;
+                                var eventBinding = Parser.parse(fncString, "eventHandler");
+                                if (eventBinding.type === "fnc") {
+                                    parameters = eventBinding.parameter;
+                                }
+                                var scope = thisArg || this;
+                                callback = scope[fncString.split("(").shift()];
+
+                            this.callBase(event, new Bindable.EventHandler(callback, scope, parameters));
+                        } else {
+                            // else we have a chained event binding
+                            if (_.isArray(path) && path.length > 0) {
+                                thisArg = callback;
+                                callback = event;
+                                event = path[1];
+                                path = path[0];
+                            }
+                            var eb = new EventBindable({
+                                path: path,
+                                event: event,
+                                scope: thisArg,
+                                callback: callback,
+                                value: null
+                            });
+                            eb.set('binding', new Binding({path: path, scope: this, target: eb, targetKey: 'value'}));
+                            this.$eventBindables.push(eb);
                         }
-                        var eb = new EventBindable({
-                            path: path,
-                            event: event,
-                            scope: thisArg,
-                            callback: callback,
-                            value: null
-                        });
-                        eb.set('binding', new Binding({path: path, scope: this, target: eb, targetKey: 'value'}));
-                        this.$eventBindables.push(eb);
                     }
                 },
 
@@ -937,6 +954,50 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
                 this._unbindEvent(this.$.value);
                 this.$.binding.destroy();
                 this.callBase();
+            }
+        });
+
+        Bindable.EventHandler = EventDispatcher.EventHandler.inherit({
+            /**
+             * @param {Function} callback The callback function
+             * @param {Object} scope The callback scope
+             */
+            ctor: function (callback, scope, parameters) {
+                this.callBase();
+                this.parameters = parameters;
+            },
+
+            /**
+             * @param {js.core.EventDispatcher.Event} event
+             * @param {Object} caller
+             */
+            trigger: function (event, caller) {
+                var args = [event];
+                if (this.parameters) {
+                    var parameter,
+                        first,
+                        scope;
+                    for (var i = 0; i < this.parameters.length; i++) {
+                        parameter = this.parameters[i];
+                        if (_.isArray(parameter)) {
+                            first = parameter[0];
+                            if (first.type === "fnc") {
+                                scope = this.scope.getScopeForFncName(first.name);
+                            } else if (first.type === "var") {
+                                scope = this.scope.getScopeForKey(first.name);
+                            } else {
+                                throw new Error("Couldn't find scope for " + first.name);
+                            }
+                            if (scope) {
+                                args.push(scope.get(parameter));
+                            }
+                        } else {
+                            args.push(parameter);
+                        }
+                    }
+                }
+                this.$callback.apply(this.scope, args, caller);
+                return !event.isPropagationStopped;
             }
         });
 

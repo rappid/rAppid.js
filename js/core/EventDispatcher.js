@@ -78,7 +78,11 @@ define(["js/core/Base"], function (Base) {
                     // get the list for the event
                     var list = this._eventHandlers[eventType] || (this._eventHandlers[eventType] = []);
                     // and push the callback function
-                    list.push(new EventDispatcher.EventHandler(callback, scope));
+                    if (callback instanceof EventDispatcher.EventHandler) {
+                        list.push(callback);
+                    } else {
+                        list.push(new EventDispatcher.EventHandler(callback, scope));
+                    }
                 } else {
                     this.log('no eventHandler for "' + eventType + '"', "warn");
                 }
@@ -91,9 +95,10 @@ define(["js/core/Base"], function (Base) {
              *
              * @param {String} eventType
              * @param {EventDispatcher.Event|Object} event If you use an Object the object is wrapped in an Event
+             * @param {Array} a array of args
              * @param target
              */
-            trigger: function (eventType, event, target) {
+            trigger: function (eventType, event, target, additionalArgs) {
 
                 if (!(this._eventHandlers[eventType] || this._eventHandlers["*"])) {
                     return;
@@ -116,7 +121,7 @@ define(["js/core/Base"], function (Base) {
                     list = this._eventHandlers[eventType].slice();
                     for (i = 0; i < list.length; i++) {
                         if (list[i]) {
-                            result = list[i].trigger(event, target);
+                            result = list[i].trigger(event, target, additionalArgs);
                             if (result !== undefinedValue) {
 
                                 if (result === false) {
@@ -137,7 +142,7 @@ define(["js/core/Base"], function (Base) {
                     list = this._eventHandlers["*"].slice();
                     for (i = 0; i < list.length; i++) {
                         if (list[i]) {
-                            result = list[i].trigger(event, target);
+                            result = list[i].trigger(event, target, additionalArgs);
                             if (result !== undefinedValue) {
 
                                 if (result === false) {
