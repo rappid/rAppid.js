@@ -10,12 +10,16 @@ define(
                     var textContent = this._getTextContentFromDescriptor(this.$descriptor),
                         bindingCreator = this.$bindingCreator;
 
-                    var bindingDefinitions = bindingCreator.parse(textContent);
-                    if (bindingCreator.containsBindingDefinition(bindingDefinitions)) {
-                        this.$bindingAttributes["textContent"] = {
-                            bindingDefinitions: bindingDefinitions,
-                            value: textContent
-                        };
+                    if (this.$descriptor && this.$descriptor.nodeType != 4) {
+                        var bindingDefinitions = bindingCreator.parse(textContent);
+                        if (bindingCreator.containsBindingDefinition(bindingDefinitions)) {
+                            this.$bindingAttributes["textContent"] = {
+                                bindingDefinitions: bindingDefinitions,
+                                value: textContent
+                            };
+                        } else {
+                            this.$.textContent = textContent;
+                        }
                     } else {
                         this.$.textContent = textContent;
                     }
