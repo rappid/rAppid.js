@@ -988,9 +988,9 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
                                 args.push(event);
                             } else {
                                 if (first.type === "fnc") {
-                                    scope = this.scope.getScopeForFncName(first.name);
+                                    scope = caller.getScopeForFncName(first.name);
                                 } else if (first.type === "var") {
-                                    scope = this.scope.getScopeForKey(first.name);
+                                    scope = caller.getScopeForKey(first.name);
                                 }
                                 if (scope) {
                                     args.push(scope.get(parameter));
