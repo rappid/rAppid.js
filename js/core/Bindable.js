@@ -972,29 +972,38 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
              * @param {Object} caller
              */
             trigger: function (event, caller) {
-                var args = [event];
+                var args;
                 if (this.parameters) {
                     var parameter,
                         first,
                         scope;
+
+                    args = [];
+
                     for (var i = 0; i < this.parameters.length; i++) {
                         parameter = this.parameters[i];
                         if (_.isArray(parameter)) {
                             first = parameter[0];
-                            if (first.type === "fnc") {
-                                scope = this.scope.getScopeForFncName(first.name);
-                            } else if (first.type === "var") {
-                                scope = this.scope.getScopeForKey(first.name);
+                            if(first.name === "event"){
+                                args.push(event);
                             } else {
-                                throw new Error("Couldn't find scope for " + first.name);
-                            }
-                            if (scope) {
-                                args.push(scope.get(parameter));
+                                if (first.type === "fnc") {
+                                    scope = this.scope.getScopeForFncName(first.name);
+                                } else if (first.type === "var") {
+                                    scope = this.scope.getScopeForKey(first.name);
+                                }
+                                if (scope) {
+                                    args.push(scope.get(parameter));
+                                } else {
+                                    throw new Error("Couldn't find scope for " + first.name);
+                                }
                             }
                         } else {
                             args.push(parameter);
                         }
                     }
+                } else {
+                    args = [event];
                 }
                 this.$callback.apply(this.scope, args, caller);
                 return !event.isPropagationStopped;
