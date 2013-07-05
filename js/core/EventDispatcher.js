@@ -95,10 +95,9 @@ define(["js/core/Base"], function (Base) {
              *
              * @param {String} eventType
              * @param {EventDispatcher.Event|Object} event If you use an Object the object is wrapped in an Event
-             * @param {Array} a array of args
              * @param target
              */
-            trigger: function (eventType, event, target, additionalArgs) {
+            trigger: function (eventType, event, target) {
 
                 if (!(this._eventHandlers[eventType] || this._eventHandlers["*"])) {
                     return;
@@ -112,7 +111,7 @@ define(["js/core/Base"], function (Base) {
                 }
 
                 if (!event.target) {
-                    event.target = target || arguments.callee.caller;
+                    event.target = target || this;
                 }
                 event.type = eventType;
 
@@ -121,7 +120,7 @@ define(["js/core/Base"], function (Base) {
                     list = this._eventHandlers[eventType].slice();
                     for (i = 0; i < list.length; i++) {
                         if (list[i]) {
-                            result = list[i].trigger(event, target, additionalArgs);
+                            result = list[i].trigger(event, target);
                             if (result !== undefinedValue) {
 
                                 if (result === false) {
@@ -142,7 +141,7 @@ define(["js/core/Base"], function (Base) {
                     list = this._eventHandlers["*"].slice();
                     for (i = 0; i < list.length; i++) {
                         if (list[i]) {
-                            result = list[i].trigger(event, target, additionalArgs);
+                            result = list[i].trigger(event, target);
                             if (result !== undefinedValue) {
 
                                 if (result === false) {
