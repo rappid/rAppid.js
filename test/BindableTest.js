@@ -189,6 +189,93 @@ describe('js.core.Bindable', function () {
 
     });
 
+    describe('bind', function(){
+
+        var bindable;
+
+        it('#should bind to event and trigger callback on scope', function(done){
+
+            bindable = new C.Bindable({
+                foo: "bar"
+            });
+
+            var scope = {};
+
+            bindable.bind('change', function(){
+
+                expect(scope).to.equal(this);
+
+                done();
+
+            }, scope);
+
+            bindable.set('foo',"newValue");
+        });
+
+        it('#should bind to event behind a path', function(done){
+
+            bindable = new C.Bindable({
+                nested: new C.Bindable({
+                    foo: "bar"
+                })
+            });
+
+            var scope = {};
+
+            bindable.bind('nested','change', function(){
+
+                expect(scope).to.equal(this);
+                done();
+
+            },scope);
+
+            bindable.$.nested.set('foo', "newValue");
+        });
+
+        it('#should bind to an event with a function name', function(done){
+
+            var bindable = new C.Bindable({
+                foo: "bar"
+            });
+
+            var scope = {
+                callback: function(){
+                    expect(this).to.equal(scope);
+                    done();
+                }
+            };
+
+            bindable.bind('change',"callback()", scope);
+
+            bindable.set('foo', "newValue");
+
+        });
+
+        it('#should bind to an event with a function name and parameters', function(done){
+            var bindable = new C.Bindable({
+                foo: "bar",
+                foo2: "bar2"
+            });
+
+            var scope = {
+                callback: function (event, foo, foo2, n, b, s) {
+                    expect(this).to.equal(scope);
+                    expect(event).to.exist;
+                    expect(foo).to.equal(bindable.$.foo);
+                    expect(foo2).to.equal(bindable.$.foo2);
+                    expect(n).to.equal(5);
+                    expect(b).to.equal(true);
+                    expect(s).to.equal('test');
+                    done();
+                }
+            };
+
+            bindable.bind('change', "callback(event,foo,foo2,5,true,'test')", scope);
+            bindable.set('foo', "newValue");
+        });
+
+    });
+
 
     describe('clone', function () {
         var original, nestedBindable, copy;
