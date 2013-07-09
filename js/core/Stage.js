@@ -3,7 +3,8 @@ define(["js/html/HtmlElement", "js/core/Bus", "js/core/WindowManager", "js/core/
     var browserClassMap = {
         "hasTouch" : ["touch","no-touch"],
         "supportsTransition" : ["transition","no-transition"],
-        "isMobile" : ["mobile","desktop"]
+        "isMobile" : ["mobile","desktop"],
+        "supportViewPortRelativeSize": ["vs-support", "no-vs-support"]
     };
 
     /***
@@ -67,12 +68,21 @@ define(["js/html/HtmlElement", "js/core/Bus", "js/core/WindowManager", "js/core/
             browser.isBrowser = this.runsInBrowser();
 
             if (this.runsInBrowser()) {
-                var window = this.$window;
-
+                var window = this.$window,
+                    document = window.document,
+                    body = document.body || document.getElementsByTagName("body")[0];
 
                 browser.hasTouch = "ontouchend" in window;
                 browser.has3D = ('WebKitCSSMatrix' in window && 'm11' in new WebKitCSSMatrix());
                 browser.msPointerEnabled = "msPointerEnabled" in window.navigator;
+
+                var div = document.createElement("div");
+                div.setAttribute("style", "position: absolute; height: 100vh; width: 100vw");
+                body.appendChild(div);
+
+                browser.supportViewPortRelativeSize = (window.innerWidth === div.offsetWidth);
+
+                body.removeChild(div);
 
                 var navigator = window.navigator;
 
