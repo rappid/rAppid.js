@@ -4,7 +4,8 @@ define(["js/core/Application"], function (Application) {
 
         defaults: {
             prefix: "ns",
-            targetNamespace: null
+            targetNamespace: null,
+            namespace: null
         },
 
         start: function (parameter, callback) {
