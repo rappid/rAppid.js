@@ -5,8 +5,7 @@ define(["js/core/Base", "underscore"], function(Base, _) {
         ctor: function(resource) {
 
             this.$resource = _.defaults({
-                type: null,
-                path: null
+                type: null
             });
         }
 

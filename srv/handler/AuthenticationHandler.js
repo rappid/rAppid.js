@@ -1,5 +1,5 @@
-define(['srv/core/Handler', 'srv/core/AuthenticationService', 'srv/core/HttpError', 'srv/error/MethodNotAllowedError', 'srv/core/AuthenticationRequest', 'flow'],
-    function (Handler, AuthenticationService, HttpError, MethodNotAllowedError, AuthenticationRequest, flow) {
+define(['srv/core/Handler', 'srv/core/AuthenticationService', 'srv/core/HttpError', 'srv/error/MethodNotAllowedError', 'srv/core/AuthenticationRequest', 'flow', 'JSON'],
+    function (Handler, AuthenticationService, HttpError, MethodNotAllowedError, AuthenticationRequest, flow, JSON) {
 
     var ERROR = {
         AUTHENTICATION_EXPIRED: "Authentication expired",
@@ -42,7 +42,7 @@ define(['srv/core/Handler', 'srv/core/AuthenticationService', 'srv/core/HttpErro
             var pathName = context.request.urlInfo.pathname,
                 method = this._getRequestMethod(context);
 
-            var regex = new RegExp(this.$.path.replace(/\//g,"\\/") + "\/" + "([a-fA-F0-9\-]+)"),
+            var regex = new RegExp(this.$.path.replace(/\//g,"\\/") + "\/" + "([a-fA-F0-9-]+)"),
                 self = this,
                 authService = this.$.authenticationService;
 

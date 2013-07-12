@@ -1,4 +1,4 @@
-define(['js/data/Model'], function(Model) {
+define(['js/data/Model', 'srv/core/IdentityService'], function(Model, IdentityService) {
 
     /***
      *
@@ -30,11 +30,21 @@ define(['js/data/Model'], function(Model) {
             identity: null
         },
 
+        inject: {
+            identityService: IdentityService
+        },
+
         idField: "token",
 
-        init: function(identityService, callback) {
+        init: function(callback) {
 
-            var self = this;
+            if (this.$.identity) {
+                callback && callback();
+                return;
+            }
+
+            var self = this,
+                identityService = this.$.identityService;
 
             identityService.fetchIdentityForAuthentication(this, function(err, identity) {
                 if (!err) {

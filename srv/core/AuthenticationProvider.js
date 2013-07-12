@@ -41,11 +41,16 @@ define(['js/core/Component', 'srv/core/HttpError', 'srv/core/Authentication'], f
         },
 
         createAuthentication: function(providerUserId, providerUserData) {
-            return new Authentication({
+
+            var authentication = new Authentication({
                 providerUserId: providerUserId,
                 providerUserData: providerUserData,
                 provider: this.$.name
             });
+
+            this.$stage.setUp(authentication);
+
+            return authentication;
         }
 
     });

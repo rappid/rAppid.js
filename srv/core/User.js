@@ -81,10 +81,9 @@ define(["js/core/Bindable","js/core/List", "flow"], function(Bindable, List, flo
 
             flow()
                 .parEach(this.$.authentications.$items, function(authentication, cb) {
-                    authentication.init()
+                    authentication.init(cb)
                 })
                 .exec(callback)
-
         },
 
         isAuthorized: function (authorizationRequest, callback) {
