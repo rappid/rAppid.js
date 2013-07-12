@@ -1,11 +1,42 @@
-define(['js/core/Base', 'flow'], function (Base, flow) {
-    var Identity = Base.inherit('srv.core.Identity', {
+define(['js/data/Model', 'flow'], function (Model, flow) {
+
+    /***
+     *
+     *
+     * @type {*}
+     */
+    var Identity = Model.inherit('srv.core.Identity', {
+
+        defaults: {
+            /**
+             * The authentication object of this identity
+             */
+            authentication: null
+        },
+
+        schema: {
+            /**
+             * The internal user id
+             */
+            userId: String,
+            /**
+             * The name of the provider
+             */
+            provider: String,
+            /***
+             * The provider user id
+             */
+            providerUserId: String
+        },
+
         ctor: function (context, server) {
             this.$context = context;
             this.$server = server;
             this.$authenticationRequests = [];
 
             this.authentications = null;
+
+            this.callBase();
         },
 
         addAuthorisationRequest: function(data, filter){
@@ -68,7 +99,7 @@ define(['js/core/Base', 'flow'], function (Base, flow) {
         }
     });
 
-    Identity.AuthenticationRequest = Base.inherit('srv.core.Identity.AuthenticationRequest',{
+    Identity.AuthenticationRequest = Model.inherit('srv.core.Identity.AuthenticationRequest',{
         ctor: function(data, filter){
             this.data = data;
             this.filter = filter;

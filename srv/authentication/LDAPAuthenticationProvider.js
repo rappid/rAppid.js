@@ -1,11 +1,12 @@
-define(['srv/core/AuthenticationProvider', 'srv/core/Authentication', 'js/data/Collection', 'require', 'ldapjs', 'js/data/Model'], function (AuthenticationProvider, Authentication, Collection, require, ldap, Model) {
+define(['srv/core/AuthenticationProvider', 'srv/core/Authentication', 'js/data/Collection', 'require', 'js/data/Model', 'flow', 'ldapjs'], function (AuthenticationProvider, Authentication, Collection, require, Model, flow, ldap) {
 
 
     return AuthenticationProvider.inherit('srv.core.authentication.LDAPAuthenticationProvider', {
 
         defaults: {
             host: null,
-            dnTemplate: 'uid=%username%'
+            dnTemplate: 'uid=%username%',
+            name: 'ldap'
         },
 
         _authenticateCredentials: function (username, password, callback) {
@@ -30,10 +31,9 @@ define(['srv/core/AuthenticationProvider', 'srv/core/Authentication', 'js/data/C
             }
         },
 
-        _authenticateByData: function (authenticationRequest, callback) {
-            var username = authenticationRequest.data.username;
-            var password = authenticationRequest.data.password;
-
+        authenticate: function (authenticationRequest, callback) {
+            var username = authenticationRequest.$.username;
+            var password = authenticationRequest.$.password;
 
             var self = this;
 
@@ -46,20 +46,11 @@ define(['srv/core/AuthenticationProvider', 'srv/core/Authentication', 'js/data/C
                         var data = {
                             username: username
                         };
-                        callback(null, new Authentication(authenticationRequest, data, data, "LDAPAuthToken"));
+                        callback(null, self.createAuthentication(username, data));
                     } else {
                         callback("Invalid username or password");
                     }
                 });
-
-        },
-
-        _authenticateByToken: function (authenticationRequest, callback) {
-            if (authenticationRequest.token === "LDAPAuthToken") {
-                callback(null, new Authentication(authenticationRequest, authenticationRequest.data, authenticationRequest.data, "LDAPAuthToken"));
-            } else {
-                callback && callback("Authentication failed");
-            }
 
         }
 

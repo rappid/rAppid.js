@@ -3,18 +3,6 @@ define(['srv/core/Filter', 'require', 'flow', 'js/data/DataSource', 'srv/core/Se
 
     return Filter.inherit('srv.core.AuthenticationFilter', {
 
-        defaults: {
-            authenticationProvider: null
-        },
-
-        _start: function (callback) {
-            if (!this.$.authenticationProvider || !(this.$.authenticationProvider instanceof AuthenticationProvider)) {
-                callback(new Error("AuthenticationProvider not instanceof AuthenticationProvider"));
-            } else {
-                callback();
-            }
-        },
-
         /***
          * @abstract
          * @param context
@@ -24,6 +12,27 @@ define(['srv/core/Filter', 'require', 'flow', 'js/data/DataSource', 'srv/core/Se
             return false;
         },
 
+
+        authenticateRequestByToken: function(token, context, callback){
+            var authService = this.$.authenticationService,
+                identityService = this.$.identityService;
+
+            flow()
+                .seq("authentication", function (cb) {
+                    authService.authenticateByToken(token, cb);
+                })
+                .seq("identity", function (cb) {
+                    identityService.fetchIdentityByAuthentication(this.vars.authentication, cb);
+                })
+                .exec(function (err, results) {
+                    if (!err) {
+                        results.identity.set('authentication', results.authentication);
+                        context.addIdentity(results.identity);
+                    }
+
+                    callback && callback();
+                })
+        },
         /***
          *
          * @param context

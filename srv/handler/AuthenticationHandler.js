@@ -1,9 +1,17 @@
-define(['srv/core/Handler', 'srv/core/AuthenticationFilter', 'srv/core/HttpError', 'srv/error/MethodNotAllowedError'], function (Handler, AuthenticationFilter, HttpError, MethodNotAllowedError) {
+define(['srv/core/Handler', 'srv/core/AuthenticationFilter', 'srv/core/HttpError', 'srv/error/MethodNotAllowedError', 'srv/core/AuthenticationRequest', 'flow'], function (Handler, AuthenticationFilter, HttpError, MethodNotAllowedError, AuthenticationRequest, flow) {
+
+    var ERROR = {
+        AUTHENTICATION_EXPIRED: "Authentication expired",
+        AUTHENTICATION_FAILED: "Authentication failed",
+        NO_IDENTITY_FOUND: "No identity found"
+    };
 
     return Handler.inherit('srv.handler.SessionHandler', {
 
         defaults: {
-            path: "/api/authentications"
+            path: "/api/authentications",
+            authenticationService: null,
+            identityService: null
         },
 
         isResponsibleForRequest: function (context) {
@@ -13,57 +21,125 @@ define(['srv/core/Handler', 'srv/core/AuthenticationFilter', 'srv/core/HttpError
             return ret && pathName.indexOf(this.$.path) === 0;
         },
 
+        _createAuthenticationRequest: function(context){
+            var post = JSON.parse(context.request.body);
+            return new AuthenticationRequest(post);
+        },
+
+        _handleMissingIdentity: function(authentication, cb){
+            cb(ERROR.NO_IDENTITY_FOUND);
+        },
+
+        _handleAuthenticationSuccess: function(authentication, cb){
+            this.$.authenticationService.saveAuthentication(authentication, cb);
+        },
+
         handleRequest: function (context, callback) {
 
             var pathName = context.request.urlInfo.pathname,
                 method = this._getRequestMethod(context);
 
+            var regex = new RegExp(this.$.path.replace(/\//g,"\\/") + "\/" + "([a-fA-F0-9\-]+)"),
+                self = this,
+                authService = this.$.authenticationService;
+
             if (pathName === this.$.path) {
                 // /api/authentication request
 
                 if (method === "POST") {
-                    // login
-                    var authenticationFilter = this._getAuthenticationFilter(context);
 
-                    if (!authenticationFilter) {
-                        throw new HttpError("No responsible authentication filter found.", 500);
-                    }
-                    authenticationFilter.handleAuthenticationRequest(context, function(err) {
-                        if (!err) {
-                            var response = context.response;
+                    flow()
+                        .seq("authentication", function (cb) {
+                            var authRequest = self._createAuthenticationRequest(context);
+                            authService.authenticateByRequest(authRequest, cb);
+                        })
+                        .seq("newAuthentication", function (cb) {
+                            if (!this.vars.authentication.has('identity')) {
+                                self._handleMissingIdentity(this.vars.authentication, cb);
+                            } else {
+                                self._handleAuthenticationSuccess(this.vars.authentication, cb);
+                            }
+                        })
+                        .exec(function (err, results) {
+                            if (!err) {
+                                var authentication = results.newAuthentication;
 
-                            response.writeHead(201, {
-                                Location: context.request.urlInfo.uri + "/current"
-                            });
-                            response.end();
-                        } else {
+                                context.user.addAuthentication(authentication);
+
+                                var response = context.response,
+                                    uri = context.request.urlInfo.uri;
+
+                                response.writeHead(201, {
+                                    Location: uri + "/" + authentication.identifier()
+                                });
+
+                                var res = {};
+
+                                res[authentication.idField] = authentication.identifier();
+                                res.data = authentication.get("providerUserData");
+
+                                response.write(JSON.stringify(res, 2), 'utf8');
+
+                                response.end();
+                            }
                             callback(err);
-                        }
-                    });
+                        });
                 } else {
                     throw new MethodNotAllowedError("Method not supported", ["POST"]);
                 }
-            } else if (pathName === this.$.path + "/current") {
+            } else if (regex.test(pathName)) {
                 // current authentication
 
                 if (method === "GET") {
-                    var authenticationFilters = this._getAuthenticationFilters();
-                    for(var i = 0; i < authenticationFilters.length; i++){
-                        var filter = authenticationFilters[i];
-                        var authenticationData = context.session.getItem(filter.$.sessionKey);
-                        if(authenticationData){
-                            var response = context.response;
+                    var match = pathName.match(regex),
+                        token = match ? match.pop() : null;
 
-                            response.writeHead(200, "", {
-                                'Content-Type': 'application/json; charset=utf-8'
-                            });
 
-                            response.write(JSON.stringify(authenticationData), 'utf8');
-                            response.end();
-                            return;
-                        }
-                    }
-                    throw new HttpError("Resource not found.", 404);
+                    flow()
+                        .seq("authentication",function(cb){
+                            authService.authenticateByToken(token, cb);
+                        })
+                        .exec(function(err, results){
+                            if(!err){
+                                var res = {},
+                                    response = context.response;
+
+                                res[results.authentication.idField] = results.authentication.identifier();
+                                res.data = results.authentication.get("providerUserData");
+
+                                response.writeHead(200);
+
+                                response.write(JSON.stringify(res, 2), 'utf8');
+
+                                response.end();
+                            } else {
+
+                            }
+
+                            callback(err);
+                        });
+
+//                    var authenticationFilters = this.$.authenticationService.authenticateByToken(token, function(err, authentication){
+//                        if(!err){
+//
+//                        }
+//                    });
+//                    for (var i = 0; i < authenticationFilters.length; i++) {
+//                        var filter = authenticationFilters[i];
+//                        var authenticationData = context.session.getItem(filter.$.sessionKey);
+//                        if (authenticationData) {
+//                            var response = context.response;
+//
+//                            response.writeHead(200, "", {
+//                                'Content-Type': 'application/json; charset=utf-8'
+//                            });
+//
+//                            response.write(JSON.stringify(authenticationData), 'utf8');
+//                            response.end();
+//                            return;
+//                        }
+//                    }
+//                    throw new HttpError("Resource not found.", 404);
                     // TODO: retrieve authentications
                 } else if (method === "DELETE") {
                     // TODO: logout
@@ -107,7 +183,7 @@ define(['srv/core/Handler', 'srv/core/AuthenticationFilter', 'srv/core/HttpError
             return null;
         },
 
-        _getAuthenticationFilters: function(){
+        _getAuthenticationFilters: function () {
             var filters = this.$server.$filters.$filters;
             var ret = [];
             for (var i = 0; i < filters.length; i++) {

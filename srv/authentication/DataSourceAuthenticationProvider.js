@@ -46,7 +46,7 @@ define(['srv/core/AuthenticationProvider', 'srv/core/Authentication', 'js/data/C
             return algorithm.digest('hex');
         },
 
-        _authenticateByData: function (authenticationRequest, callback) {
+        authenticate: function (authenticationRequest, callback) {
             var self = this;
 
             var collection = this.$.dataSource.createCollection(this.$collectionClass);
@@ -63,26 +63,9 @@ define(['srv/core/AuthenticationProvider', 'srv/core/Authentication', 'js/data/C
                 } else if (collection.size() !== 1) {
                     callback(self._createAuthenticationError("Wrong username and password."));
                 } else {
-                    callback(null, self._createAuthentication(collection.at(0)));
-                }
-            });
-        },
-
-        _authenticateByToken: function (authenticationRequest, callback) {
-            var self = this;
-
-            var collection = this.$.dataSource.createCollection(this.$collectionClass);
-            collection.fetch({
-                where: {
-                    id: authenticationRequest.token
-                }
-            }, function (err) {
-                if (err) {
-                    callback(err);
-                } else if (collection.size() !== 1) {
-                    callback(self._createAuthenticationError("Authentication token not found."));
-                } else {
-                    callback(null, self._createAuthentication(collection.at(0)));
+                    callback(null, self.createAuthentication(authenticationRequest.data.username, {
+                        username: authenticationRequest.data.username
+                    }));
                 }
             });
         }

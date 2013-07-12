@@ -12,6 +12,7 @@ define(['js/core/EventDispatcher', 'url', 'querystring', 'underscore', 'flow', '
 
                     this.server = server;
                     this.identity = new Identity(this, server);
+                    this.identities = [];
 
                     this.endPoint = endPoint;
                     this.request = request;
@@ -28,6 +29,14 @@ define(['js/core/EventDispatcher', 'url', 'querystring', 'underscore', 'flow', '
 
                     response.cookies = new Context.CookieManager(this);
 
+                },
+
+                addIdentity: function(identity){
+                    this.identities.push(identity);
+                },
+
+                getIdentities: function(){
+                    return this.identities;
                 },
 
                 /***

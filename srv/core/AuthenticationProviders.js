@@ -37,6 +37,30 @@ define(['js/core/Component', 'srv/core/AuthenticationProvider', 'flow'],
                     })
                     .exec(callback);
 
+            },
+
+            /**
+             * Returns the authentication provider for a given request
+             *
+             * @param authenticationRequest
+             * @returns {*}
+             */
+            getAuthenticationProviderForRequest: function (authenticationRequest) {
+
+                var authenticationProviders = this.$providers,
+                    provider;
+
+                for (var i = 0; i < authenticationProviders.length; i++) {
+
+                    provider = authenticationProviders[i];
+
+                    if (provider.isResponsibleForAuthenticationRequest(authenticationRequest)) {
+                        return provider;
+                    }
+                }
+
+                return null;
+
             }
 
         });

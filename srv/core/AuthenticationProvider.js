@@ -2,6 +2,10 @@ define(['js/core/Component', 'srv/core/HttpError', 'srv/core/Authentication'], f
 
     return Component.inherit('srv.core.AuthenticationProvider', {
 
+        defaults: {
+            name: "abstract"
+        },
+
         start: function (server, callback) {
             this.$server = server;
             this._start(callback);
@@ -16,27 +20,24 @@ define(['js/core/Component', 'srv/core/HttpError', 'srv/core/Authentication'], f
         },
 
         authenticate: function (authenticationRequest, callback) {
-            if (authenticationRequest.isAuthenticationByToken()) {
-                this._authenticateByToken(authenticationRequest, callback);
-            } else {
-                this._authenticateByData(authenticationRequest, callback);
-            }
+            throw new Error("Not implemented yet");
         },
 
-        _authenticateByToken: function (authenticationRequest, callback) {
-            callback(new Error("AuthenticateByToken not implemented"));
-        },
 
-        _authenticateByData: function (authenticationRequest, callback) {
-            callback(new Error("AuthenticateByData not implemented"));
+        isResponsibleForAuthenticationRequest: function (authenticationRequest) {
+            return authenticationRequest.$.provider === this.$.name;
         },
 
         _createAuthenticationError: function(message) {
             return new HttpError(message, 400);
         },
 
-        _createAuthentication: function(user, token) {
-            return new Authentication(this, user, token);
+        createAuthentication: function(providerUserId, providerUserData) {
+            return new Authentication({
+                providerUserId: providerUserId,
+                providerUserData: providerUserData,
+                provider: this.$.name
+            });
         }
 
     });

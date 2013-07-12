@@ -1,13 +1,36 @@
-define(['js/core/Base'], function(Base) {
-    return Base.inherit('srv.core.Authentication', {
-        ctor: function(authenticationRequest, user, data, token) {
-            this.authenticationRequest = authenticationRequest;
-            this.authenticationProvider = authenticationRequest.authenticationProvider;
+define(['js/data/Model'], function(Model) {
 
-            this.user = user;
-            this.data = data;
-            this.token = token;
-        }
+    /***
+     *
+     * Authentication saves information about the authentication
+     *
+     */
+    return Model.inherit('srv.core.Authentication', {
+
+        schema: {
+            /**
+             *  A generated token for authentication
+             */
+            token: String,
+            /**
+             *  UserID provided by the provider
+             */
+            providerUserId: String,
+            /**
+             *  UserData provided by the provider
+             */
+            providerUserData: Object,
+            /**
+             * The name of the provider
+             */
+            provider: String
+        },
+
+        defaults: {
+            identity: null
+        },
+
+        idField: "token"
 
     });
 });
