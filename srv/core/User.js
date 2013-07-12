@@ -1,10 +1,16 @@
-define(["js/core/Bindable","js/core/List"], function(Bindable, List){
+define(["js/core/Bindable","js/core/List", "flow"], function(Bindable, List, flow){
 
     return Bindable.inherit('srv.core.User',{
 
         defaults: {
-            authentications: List,
-            userDetails: null
+            authentications: List
+        },
+
+        ctor: function (context, server) {
+            this.$context = context;
+            this.$server = server;
+
+            this.callBase();
         },
 
         addAuthentication: function(authentication){
@@ -25,6 +31,75 @@ define(["js/core/Bindable","js/core/List"], function(Bindable, List){
 
         isAnonymous: function(){
             return this.$.authentications.isEmpty();
+        },
+
+        addAuthorisationRequest: function (data, filter) {
+            this.$authenticationRequests.push(new Identity.AuthenticationRequest(data, filter));
+        },
+
+        loadAuthentications: function (callback) {
+
+            var self = this;
+            this._initAuthentications(function (err) {
+                callback(err, self.authentications);
+            });
+
+        },
+
+//        _initAuthentications: function (callback) {
+//            if (!this.authentications) {
+//                var self = this;
+//                this.authentications = [];
+//                flow()
+//                    .parEach(this.$authenticationRequests, function (authRequest, cb) {
+//                        // if the filter has it's own auth provider
+//                        if (authRequest.filter.$.authenticationProvider) {
+//                            authRequest.filter.$.authenticationProvider.authenticate(authRequest.data, function (err, authentication) {
+//                                if (!err && authentication) {
+//                                    self.authentications.push(authentication);
+//                                }
+//                                cb(err);
+//                            });
+//                        } else {
+//                            self.$server.$authenticationProviders.authenticate(authRequest.data, function (err, authentications) {
+//                                if (!err && authentications) {
+//                                    self.authentications = self.authentications.concat(authentications);
+//                                }
+//                                cb(err);
+//                            });
+//
+//                        }
+//
+//                    })
+//                    .exec(callback);
+//            } else {
+//                callback();
+//            }
+//        },
+
+        _initAuthentications: function(callback) {
+
+            flow()
+                .parEach(this.$.authentications.$items, function(authentication, cb) {
+                    authentication.init()
+                })
+                .exec(callback)
+
+        },
+
+        isAuthorized: function (authorizationRequest, callback) {
+            var self = this;
+
+            this._initAuthentications(doAuthorization);
+
+            function doAuthorization(err) {
+                if (!err) {
+                    self.$server.$authorisationService.isAuthorized(authorizationRequest, callback);
+                } else {
+                    callback(err);
+                }
+            }
+
         }
 
     });

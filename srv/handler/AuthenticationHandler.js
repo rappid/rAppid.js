@@ -1,4 +1,5 @@
-define(['srv/core/Handler', 'srv/core/AuthenticationFilter', 'srv/core/HttpError', 'srv/error/MethodNotAllowedError', 'srv/core/AuthenticationRequest', 'flow'], function (Handler, AuthenticationFilter, HttpError, MethodNotAllowedError, AuthenticationRequest, flow) {
+define(['srv/core/Handler', 'srv/core/AuthenticationService', 'srv/core/HttpError', 'srv/error/MethodNotAllowedError', 'srv/core/AuthenticationRequest', 'flow'],
+    function (Handler, AuthenticationService, HttpError, MethodNotAllowedError, AuthenticationRequest, flow) {
 
     var ERROR = {
         AUTHENTICATION_EXPIRED: "Authentication expired",
@@ -9,9 +10,11 @@ define(['srv/core/Handler', 'srv/core/AuthenticationFilter', 'srv/core/HttpError
     return Handler.inherit('srv.handler.SessionHandler', {
 
         defaults: {
-            path: "/api/authentications",
-            authenticationService: null,
-            identityService: null
+            path: "/api/authentications"
+        },
+
+        inject: {
+            authenticationService: AuthenticationService
         },
 
         isResponsibleForRequest: function (context) {
@@ -168,31 +171,6 @@ define(['srv/core/Handler', 'srv/core/AuthenticationFilter', 'srv/core/HttpError
             }
 
             return context.request.method;
-        },
-
-        _getAuthenticationFilter: function (context) {
-            var filters = this.$server.$filters.$filters;
-
-            for (var i = 0; i < filters.length; i++) {
-                var filter = filters[i];
-                if (filter instanceof AuthenticationFilter && filter.isResponsibleForAuthenticationRequest(context)) {
-                    return filter;
-                }
-            }
-
-            return null;
-        },
-
-        _getAuthenticationFilters: function () {
-            var filters = this.$server.$filters.$filters;
-            var ret = [];
-            for (var i = 0; i < filters.length; i++) {
-                var filter = filters[i];
-                if (filter instanceof AuthenticationFilter) {
-                    ret.push(filter);
-                }
-            }
-            return ret;
         }
 
     });

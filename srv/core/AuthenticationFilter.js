@@ -1,5 +1,4 @@
-define(['srv/core/Filter', 'require', 'flow', 'js/data/DataSource', 'srv/core/ServerSession', 'srv/core/AuthenticationProvider'],
-    function (Filter, require, flow, DataSource, ServerSession, AuthenticationProvider) {
+define(['srv/core/Filter', 'require', 'flow'], function (Filter, require, flow) {
 
     return Filter.inherit('srv.core.AuthenticationFilter', {
 
@@ -8,37 +7,33 @@ define(['srv/core/Filter', 'require', 'flow', 'js/data/DataSource', 'srv/core/Se
          * @param context
          * @return {Boolean}
          */
-        isResponsibleForAuthenticationRequest: function(context) {
+        isResponsibleForAuthenticationRequest: function (context) {
             return false;
         },
 
 
-        authenticateRequestByToken: function(token, context, callback){
-            var authService = this.$.authenticationService,
-                identityService = this.$.identityService;
+        authenticateRequestByToken: function (token, context, callback) {
+            var authService = this.$.authenticationService;
 
             flow()
                 .seq("authentication", function (cb) {
                     authService.authenticateByToken(token, cb);
                 })
-                .seq("identity", function (cb) {
-                    identityService.fetchIdentityByAuthentication(this.vars.authentication, cb);
-                })
                 .exec(function (err, results) {
                     if (!err) {
-                        results.identity.set('authentication', results.authentication);
-                        context.addIdentity(results.identity);
+                        context.user.addAuthentication(results.authentication);
                     }
 
+                    // TODO: pass err object here?
                     callback && callback();
-                })
+                });
         },
         /***
          *
          * @param context
          * @param callback
          */
-        handleAuthenticationRequest: function(context, callback) {
+        handleAuthenticationRequest: function (context, callback) {
 
             var self = this,
                 authentication = this._createAuthenticationRequest(context);
@@ -59,11 +54,11 @@ define(['srv/core/Filter', 'require', 'flow', 'js/data/DataSource', 'srv/core/Se
             });
         },
 
-        _saveAuthentication: function(context, authentication) {
+        _saveAuthentication: function (context, authentication) {
             throw new Error("SaveAuthentication not implemented");
         },
 
-        _createAuthenticationRequest: function(context){
+        _createAuthenticationRequest: function (context) {
             throw new Error("Not implemented");
         }
     });

@@ -3,7 +3,16 @@ define(['js/core/Component', 'srv/core/HttpError', 'srv/core/Authentication'], f
     return Component.inherit('srv.core.AuthenticationProvider', {
 
         defaults: {
-            name: "abstract"
+            name: null
+        },
+
+        _initializationComplete: function() {
+
+            if (!this.$.name) {
+                throw new Error("Name for authentication provider not set");
+            }
+
+            this.callBase();
         },
 
         start: function (server, callback) {
@@ -20,9 +29,8 @@ define(['js/core/Component', 'srv/core/HttpError', 'srv/core/Authentication'], f
         },
 
         authenticate: function (authenticationRequest, callback) {
-            throw new Error("Not implemented yet");
+            throw new Error("Abstract implementation");
         },
-
 
         isResponsibleForAuthenticationRequest: function (authenticationRequest) {
             return authenticationRequest.$.provider === this.$.name;

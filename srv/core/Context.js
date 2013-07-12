@@ -1,5 +1,5 @@
-define(['js/core/EventDispatcher', 'url', 'querystring', 'underscore', 'flow', 'srv/core/Identity', 'js/core/Base'],
-    function (EventDispatcher, Url, QueryString, _, flow, Identity, Base) {
+define(['js/core/EventDispatcher', 'url', 'querystring', 'underscore', 'flow', 'srv/core/User', 'js/core/Base'],
+    function (EventDispatcher, Url, QueryString, _, flow, User, Base) {
 
         var undefined,
             Context = EventDispatcher.inherit('srv.core.Context', {
@@ -11,8 +11,7 @@ define(['js/core/EventDispatcher', 'url', 'querystring', 'underscore', 'flow', '
                     this.$processingHooks = {};
 
                     this.server = server;
-                    this.identity = new Identity(this, server);
-                    this.identities = [];
+                    this.user = new User(this, server);
 
                     this.endPoint = endPoint;
                     this.request = request;
@@ -29,14 +28,6 @@ define(['js/core/EventDispatcher', 'url', 'querystring', 'underscore', 'flow', '
 
                     response.cookies = new Context.CookieManager(this);
 
-                },
-
-                addIdentity: function(identity){
-                    this.identities.push(identity);
-                },
-
-                getIdentities: function(){
-                    return this.identities;
                 },
 
                 /***

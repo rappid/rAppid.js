@@ -30,7 +30,20 @@ define(['js/data/Model'], function(Model) {
             identity: null
         },
 
-        idField: "token"
+        idField: "token",
+
+        init: function(identityService, callback) {
+
+            var self = this;
+
+            identityService.fetchIdentityForAuthentication(this, function(err, identity) {
+                if (!err) {
+                    self.set("identity", identity);
+                }
+
+                callback(err);
+            });
+        }
 
     });
 });
