@@ -261,7 +261,7 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
 
                 flow()
                     .parEach(validators, function (validator, cb) {
-                        validator.validate(self, function (err, result) {
+                        validator.validate(self, options, function (err, result) {
                             if (!err && result) {
                                 if (result instanceof Validator.Error) {
                                     validationErrors.push(result);
@@ -369,7 +369,15 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
 
 
         Entity.SchemaValidator = Validator.inherit('js.data.validator.SchemaValidator', {
-            validate: function (entity, callback) {
+            validate: function (entity, options, callback) {
+                if (options instanceof Function) {
+                    callback = options;
+                    options = {};
+                }
+
+                options = options || {};
+
+
                 var errors = [],
                     subEntities = [],
                     attributes = entity.$,
@@ -381,6 +389,12 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                 try {
                     for (var key in schema) {
                         if (schema.hasOwnProperty(key)) {
+
+                            if (options.fields && options.fields.length > 0) {
+                                if (options.fields.indexOf(key) === -1) {
+                                    continue
+                                }
+                            }
                             value = attributes[key];
                             schemaObject = schema[key];
 

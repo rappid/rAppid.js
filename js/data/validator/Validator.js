@@ -51,7 +51,13 @@ define(['js/core/Bindable', 'js/core/Base'], function (Bindable, Base) {
          * @param entity
          * @param callback
          */
-        validate: function (entity, callback) {
+        validate: function (entity, options, callback) {
+            if (options instanceof Function) {
+                callback = options;
+                options = {};
+            }
+
+            options = options || {};
 
             var self = this,
                 callbackInvoked = false,
