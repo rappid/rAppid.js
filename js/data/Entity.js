@@ -237,6 +237,7 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
 
                 _.defaults(options, {
                     setErrors: true,
+                    reset: true,
                     fields: null
                 });
 
@@ -274,7 +275,7 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                     })
                     .exec(function (err) {
                         if (options.setErrors === true) {
-                            self._setErrors(validationErrors);
+                            self._setErrors(validationErrors, options);
                         }
                         callback && callback(err, validationErrors.length === 0 ? null : validationErrors);
                     });
@@ -293,8 +294,23 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                 this.trigger('isValidChanged');
             },
 
-            _setErrors: function (errors) {
-                this.$errors.clear();
+            /***
+             *
+             * @param {Array} errors
+             * @param {Object} options
+             * @private
+             */
+            _setErrors: function (errors, options) {
+                if (options.fields && options.fields.length) {
+                    var field;
+                    for (var j = 0; j < options.fields.length; j++) {
+                        field = options.fields[j];
+                        this.$errors.unset(field);
+                    }
+                } else {
+                    this.$errors.clear();
+                }
+
 
                 var error;
                 try {
