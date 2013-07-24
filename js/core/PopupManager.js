@@ -64,10 +64,13 @@ define(['js/core/Component', 'underscore'], function (Component, _) {
          */
         showPopupAsync: function(preloaderUrl, options, task, callback) {
             var popup = this.showPopup(preloaderUrl, options);
+            this.$stage.$window.focus();
 
             if (task) {
                 try {
                     task(popup, function (err, url) {
+                        popup.focus();
+
                         if (err) {
                             popup.close();
                         } else if (url) {
