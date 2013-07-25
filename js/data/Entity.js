@@ -163,11 +163,6 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
              * @param [options]
              */
             parse: function (data, action, options) {
-                for (var key in this.initSchema) {
-                    if (this.initSchema.hasOwnProperty(key)) {
-                        this.$$[key] = data[key];
-                    }
-                }
                 return data;
             },
 
