@@ -324,9 +324,6 @@ define(["js/data/DataSource", "js/data/Model", "underscore", "flow", "JSON", "js
             // parse data inside processor
             data = processor.parse(model, data, DataSource.ACTION.LOAD, options);
 
-            // parse data inside model
-            data = model.parse(data);
-
             // set data
             model.set(data);
 
