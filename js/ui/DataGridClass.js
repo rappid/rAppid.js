@@ -43,23 +43,44 @@ define(['js/ui/View', 'xaml!js/ui/DataGridColumn', 'js/core/List', 'underscore',
                 var path = column.getSortPath();
                 // add sortable attribute
                 if (path) {
-                    var query = new Query();
                     var sortDirection = column.$.sortDirection === 0 ? 1 : column.$.sortDirection;
                     sortDirection = sortDirection === 1 ? -1 : 1;
-                    query.sort((sortDirection === 1 ? "+" : "-") + path);
-                    this.$sortParamter = this.$sortParameter || {};
-                    column.set('sortDirection', sortDirection);
-                    this.$sortParamter[path] = column.$.sortDirection;
-                    this.set('query', query);
+                    this.sort(path, sortDirection);
                 }
+            }
+        },
+        sort: function(sortPath, sortDirection){
+            this.$sortQuery = this.$sortQuery || new Query();
+            this.$sortQuery.sort((sortDirection === 1 ? "+" : "-") + sortPath);
+            this.$sortParamter = this.$sortParameter || {};
+            var sortColumn;
+            this.$.$columns.each(function(column){
+                if(column.getSortPath() === sortPath){
+                    column.set('sortDirection', sortDirection);
+                    sortColumn = column;
+                } else {
+                    column.set('sortDirection', 0);
+                }
+            });
+            if(sortColumn){
+                this.$sortParamter[sortPath] = sortColumn.$.sortDirection;
+            }
+            if (this.$.query) {
+                this.$.query.sort(this.$sortQuery.query.sort);
+                this.set('query', this.$.query, {force: true});
+            } else {
+                this.set('query', this.$sortQuery);
             }
         },
         _commitQuery: function (query) {
             if (query) {
+                if (this.$sortQuery) {
+                    query.sort(this.$sortQuery.query.sort);
+                }
                 // TODO: if sort parameters are set, use them
                 this.$.$itemsView.query(query);
             } else {
-                // TODO: CLEAN UP
+                this.$.$itemsView.query(this.$sortQuery || null);
             }
         },
         addChild: function (child) {
