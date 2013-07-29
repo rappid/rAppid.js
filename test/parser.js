@@ -30,12 +30,13 @@ describe('parser test', function () {
 
         it('should not parse an invalid var name', function (done) {
             // todo: complete the list
-            var invalidNames = ["123asd", "-asd", "+asd", "/asd", "asd()", ".asdasd"];
+            var invalidNames = ["123asd", "-asd", "asd()", ".asdasd"];
             var parsed, RULE = "varName";
             flow().seqEach(invalidNames,
                 function (name, cb) {
                     try {
                         parsed = C.Parser.parse(name, RULE);
+                        cb(name + " should be an invalid varname");
                     } catch(e) {
                         cb();
                     }
