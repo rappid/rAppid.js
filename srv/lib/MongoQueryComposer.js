@@ -1,4 +1,5 @@
 (define = typeof define != "undefined" ? define : function (deps, factory) {
+    var undefined;
     module.exports = factory(exports, require("../..").Query);
     define = undefined;
 });
@@ -62,7 +63,7 @@ define(["exports", "Query"], function (exports, Query) {
             var name = operator.operator,
                 ret = {},
                 field;
-            if (name === "and" || name === "or") {
+            if (name === "and" || name === "or" || name === "not") {
                 ret["$" + name] = this.translateExpressions(operator.expressions);
             } else if (name === "eql") {
                 field = operator.field;
