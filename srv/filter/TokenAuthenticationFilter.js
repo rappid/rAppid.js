@@ -1,12 +1,15 @@
-define(['srv/core/AuthenticationFilter', 'flow'], function (AuthenticationFilter, flow) {
+define(['srv/core/AuthenticationFilter', 'flow', 'srv/core/AuthenticationService'], function (AuthenticationFilter, flow, AuthenticationService) {
 
     return AuthenticationFilter.inherit('srv.filter.TokenAuthenticationFilter', {
 
         // TODO: store to session
         defaults: {
-            authenticationService: null,
             identityService: null,
             tokenParameter: "token"
+        },
+
+        inject: {
+            authenticationService: AuthenticationService
         },
 
         /***
