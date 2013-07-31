@@ -48,7 +48,7 @@ define(['js/core/Component', 'srv/core/HttpError', 'srv/core/Authentication'], f
                 provider: this.$.name
             });
 
-            this.$stage.setUp(authentication);
+            this.$stage.$bus.setUp(authentication);
 
             return authentication;
         }
