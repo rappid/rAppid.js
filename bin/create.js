@@ -112,9 +112,9 @@ function create(args, callback) {
     var cmd = args.shift();
 
     var dir = process.cwd();
-    var name = args.shift();
+    var name = args[0];
     if (args.length > 0) {
-        dir = args.shift();
+        dir = args[1];
     }
 
     dir = path.resolve(dir.replace(/^~\//, process.env.HOME + '/'));
@@ -123,6 +123,9 @@ function create(args, callback) {
         createLibrary(name, dir, callback);
     } else if (cmd == "app" || cmd == "application") {
         createApplication(name, dir, callback);
+    } else if (cmd === "cls" || cmd == "class") {
+        var parentClassName = args.length > 1 ? args[1]: null;
+        createClass(name, parentClassName, callback);
     } else {
         callback(true);
     }
@@ -215,4 +218,35 @@ function createApplication(appName, dir, callback) {
         });
 
     }
+}
+
+function createClass(fqClassName, fqParentCassName, callback){
+    var dir = process.cwd();
+
+    fs.mkdirParent(dir);
+
+    if (!fs.existsSync(dir)) {
+        callback("Directory " + dir + " could not be created");
+    }
+
+    var packages = fqClassName.split("."),
+        className = packages.pop(),
+        classDir = path.join(dir, packages.join("/"));
+
+    fs.mkdirParent(classDir);
+
+    if (!fs.existsSync(classDir)) {
+        callback("Directory " + classDir + " could not be created");
+    }
+
+    fqParentCassName = fqParentCassName || "js.core.Bindable";
+
+    fqParentCassName = fqParentCassName.replace(/\./g,"/");
+
+    var parentClassName = fqParentCassName.split("/").pop();
+
+    // scaffold index.html
+    Helper.template(path.join(__dirname, "templates", "Class.js"), path.join(classDir, className+".js"), {parentClassName: parentClassName, fqParentClassName: fqParentCassName, fqClassName: fqClassName});
+
+
 }

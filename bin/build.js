@@ -68,8 +68,18 @@ var optimizeConfig = {
 var build = function (args, callback) {
     var basePath = process.cwd();
 
+    args = args || [];
+
+    var argv = require('optimist')(args)
+        .usage("rappidjs build [<buildConfig>]")
+
+        .describe('version', 'the build version number')
+        .alias("v", "version")
+        .argv;
+
+
     // read out config.json
-    var buildFile = args[0] ||  "build.json";
+    var buildFile = argv._[0] || "build.json";
 
     var buildConfigPath = path.join(basePath, buildFile);
     var publicPath = path.join(basePath, "public");
@@ -182,23 +192,25 @@ var build = function (args, callback) {
 
     optimizeConfig.dir = buildConfig.targetDir || optimizeConfig.dir;
 
-    var versionDir;
-    if(buildConfig.usePackageVersion === true){
+    var versionDir,
+        version = argv.v || null;
+
+    if(!version && buildConfig.usePackageVersion === true){
         var packagePath = path.join(basePath, "package.json"),
-            packageContent = JSON.parse(fs.readFileSync(packagePath)),
-            version;
+            packageContent = JSON.parse(fs.readFileSync(packagePath));
 
         if(packageContent){
             version = versionDir = packageContent.version;
-            optimizeConfig.dir = path.join(optimizeConfig.dir,versionDir);
         }else{
             throw new Error("No package.json found");
         }
     }
 
+    if(version){
+        optimizeConfig.dir = path.join(optimizeConfig.dir, version);
+    }
 
     var buildDirPath = path.join(basePath,optimizeConfig.dir);
-    var newConfigPath = path.join(configPath, "config.json");
 
     // change config.json
     // set base url

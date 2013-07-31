@@ -130,7 +130,7 @@
         for (var i = 0; i < expressions.length; i++) {
             expression = expressions[i];
             if (expression instanceof Where) {
-                cacheId += expression.operator + ":" + generateExpressionsCache(expressions);
+                cacheId += expression.operator + ":" + generateExpressionsCache(expression.expressions);
             } else if (expression instanceof Comparator) {
                 value = expression.value;
                 if (!(value instanceof Array)) {

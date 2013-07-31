@@ -97,17 +97,22 @@ define(["exports", "Query", "RestConditionParser"], function (exports, Query, pa
         },
 
         _stringToPrimitive: function (str) {
-            var parts = str.split(":");
-            if (parts.length) {
-                var type = parts[0];
-                // TODO: add more types
-                if (type === "string") {
-                    return "" + parts[1];
-                }
+            var type = null;
+            if(typeof(str) == "object"){
+                type = str.type;
+                str = str.value;
             }
-            // if it's not a string
-            if (typeof(str) === "string") {
 
+            // if it's a string
+            if (typeof(str) === "string") {
+                var parts = str.split(":");
+                if (parts.length > 1) {
+                    type = parts[0];
+                    str = parts[1];
+                }
+                if (type === "string") {
+                    return "" + str;
+                }
                 var num = Number(str);
                 if (!isNaN(num)) {
                     return num;

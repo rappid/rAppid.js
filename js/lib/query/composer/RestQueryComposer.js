@@ -25,7 +25,7 @@ define(["exports", "Query"], function (exports, Query) {
             }
 
             if (hash.where) {
-                ret.where = this.translateOperator(hash.where);
+                ret.where = this.translateOperator(hash.where)
             }
 
             return ret;
@@ -44,8 +44,11 @@ define(["exports", "Query"], function (exports, Query) {
             var name = operator.operator;
             if (operator instanceof Query.Where) {
                 var expressions = this.translateExpressions(operator.expressions, depth + 1).join(" " + name + " ");
-                if (expressions.length > 1 && depth !== 0) {
-                    return "(" + expressions + ")";
+                if ((expressions.length && name !== "not" && depth !== 0)) {
+                    expressions = "(" + expressions + ")";
+                }
+                if (name === "not") {
+                    expressions = name + expressions;
                 }
                 return expressions;
             } else if (operator instanceof  Query.Comparator) {
