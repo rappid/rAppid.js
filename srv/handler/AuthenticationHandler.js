@@ -57,7 +57,7 @@ define(['srv/core/Handler', 'srv/core/AuthenticationService', 'srv/core/HttpErro
                             authService.authenticateByRequest(authRequest, cb);
                         })
                         .seq("newAuthentication", function (cb) {
-                            if (!this.vars.authentication.has('identity')) {
+                            if (!this.vars.authentication.get('identity')) {
                                 self._handleMissingIdentity(this.vars.authentication, cb);
                             } else {
                                 self._handleAuthenticationSuccess(this.vars.authentication, cb);
