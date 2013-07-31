@@ -19,6 +19,10 @@ define(["js/core/Bindable", "flow"], function (Bindable, flow) {
             this.$processUrl = true;
 
             this.$history = [];
+
+            if (this.$.useState === null) {
+                this.set("useState", (this.runsInBrowser() && ("onpopstate" in window)));
+            }
         },
 
         defaults: {
@@ -26,7 +30,12 @@ define(["js/core/Bindable", "flow"], function (Bindable, flow) {
              * The polling interval for the URL hash if onhashchange is not supported
              * @type Number
              */
-            interval: 50
+            interval: 50,
+
+            /***
+             * should the push and pop state api be used
+             */
+            useState: false
         },
 
         // TODO: make this bindable so that i can call this.fragment.triggerChange()
@@ -48,7 +57,13 @@ define(["js/core/Bindable", "flow"], function (Bindable, flow) {
             var fragment;
 
             if (this.runsInBrowser()) {
-                fragment = decodeURI(window.location.hash);
+
+                if (this.$.useState) {
+                    fragment = (window.history.state || {}).fragment || "";
+                } else {
+                    fragment = decodeURI(window.location.hash);
+                }
+
             } else {
                 fragment = this.$history[this.$history.length - 1] || "";
             }
@@ -63,24 +78,37 @@ define(["js/core/Bindable", "flow"], function (Bindable, flow) {
         start: function (callback, initialHash) {
 
             var self = this;
+
             this.$checkUrlFn = function () {
                 self.checkUrl.apply(self, arguments);
             };
 
-
             if (this.runsInBrowser()) {
-                // we're on a browser
-                if ("onhashchange" in window) {
+                // we're in a browser
+
+                if (this.$.useState) {
+
                     if (window.addEventListener) {
-                        window.addEventListener('hashchange',
-                            this.$checkUrlFn, false);
+                        window.addEventListener('popstate', this.$checkUrlFn, false);
                     } else {
-                        window.attachEvent('onhashchange', this.$checkUrlFn);
+                        window.attachEvent('onpopstate', this.$checkUrlFn);
                     }
+
                 } else {
-                    // polling
-                    this.$checkUrlInterval = setInterval(this.$checkUrlFn, this.$.interval);
+
+                    if ("onhashchange" in window) {
+                        if (window.addEventListener) {
+                            window.addEventListener('hashchange', this.$checkUrlFn, false);
+                        } else {
+                            window.attachEvent('onhashchange', this.$checkUrlFn);
+                        }
+                    } else {
+                        // polling
+                        this.$checkUrlInterval = setInterval(this.$checkUrlFn, this.$.interval);
+                    }
                 }
+
+
             } else {
                 // rendering on node
                 this.$history.push(initialHash || "");
@@ -94,19 +122,28 @@ define(["js/core/Bindable", "flow"], function (Bindable, flow) {
          */
         stop: function () {
             if (typeof window !== "undefined") {
-                if ("onhashchange" in window) {
+
+                if (this.$.useState) {
                     if (window.removeEventListener) {
-                        window.removeEventListener('hashchange',
-                            this.$checkUrlFn, false);
+                        window.removeEventListener('popstate', this.$checkUrlFn, false);
                     } else {
-                        window.detachEvent('onhashchange', this.$checkUrlFn);
+                        window.detachEvent('onpopstate', this.$checkUrlFn);
                     }
                 } else {
-                    // polling
-                    clearInterval(this.$checkUrlInterval);
+                    if ("onhashchange" in window) {
+                        if (window.removeEventListener) {
+                            window.removeEventListener('hashchange', this.$checkUrlFn, false);
+                        } else {
+                            window.detachEvent('onhashchange', this.$checkUrlFn);
+                        }
+                    } else {
+                        // polling
+                        clearInterval(this.$checkUrlInterval);
+                    }
                 }
             }
         },
+
         /**
          * Adds a router to the history instance
          *
@@ -115,6 +152,7 @@ define(["js/core/Bindable", "flow"], function (Bindable, flow) {
         addRouter: function (router) {
             this.$routers.push(router);
         },
+
         /**
          * Checks if the current fragment has changed and calls navigate in case it did
          *
@@ -127,7 +165,7 @@ define(["js/core/Bindable", "flow"], function (Bindable, flow) {
                     return false;
                 }
 
-                this.navigate(currentFragment, true, true, true, emptyCallback);
+                this.navigate(currentFragment, !this.$.useState, true, true, emptyCallback);
             }
 
             this.$processUrl = true;
@@ -162,11 +200,13 @@ define(["js/core/Bindable", "flow"], function (Bindable, flow) {
                     .exec(callback);
             }
         },
+
         /***
          * Navigates to a fragment
          * @param {String} fragment
          * @param {Boolean} [createHistoryEntry] - default true
          * @param {Boolean} [triggerRoute] - default true
+         * @param force
          * @param {Function} callback - navigate callback
          */
         navigate: function (fragment, createHistoryEntry, triggerRoute, force, callback) {
@@ -188,11 +228,11 @@ define(["js/core/Bindable", "flow"], function (Bindable, flow) {
                 force = null;
             }
 
-            if (createHistoryEntry == undefined || createHistoryEntry == null) {
+            if (createHistoryEntry == undefined || createHistoryEntry === null) {
                 createHistoryEntry = true;
             }
 
-            if (triggerRoute == undefined || triggerRoute == null) {
+            if (triggerRoute == undefined || triggerRoute === null) {
                 triggerRoute = true;
             }
 
@@ -214,16 +254,34 @@ define(["js/core/Bindable", "flow"], function (Bindable, flow) {
 
             if (createHistoryEntry) {
                 if (this.runsInBrowser()) {
-                    window.location.hash = "/" + encodeURI(fragment);
+                    if (this.$.useState) {
+
+                        console.log("Pushing " + fragment + " to history");
+
+                        window.history.pushState({
+                            fragment: fragment
+                        }, null, "/" + fragment);
+                    } else {
+                        window.location.hash = "/" + encodeURI(fragment);
+                    }
                 } else {
                     this.checkUrl(null);
                 }
                 this.$history.push(fragment);
             } else {
                 if (this.runsInBrowser()) {
-                    // replace hash
-                    window.location.replace("#/" + fragment);
 
+                    if (this.$.useState) {
+
+                        console.log("Replacing " + fragment + " to history");
+
+                        window.history.replaceState({
+                            fragment: fragment
+                        }, null, fragment);
+                    } else {
+                        // replace hash
+                        window.location.replace("#/" + fragment);
+                    }
                 }
                 this.$history[this.$history.length - 1] = fragment;
             }
