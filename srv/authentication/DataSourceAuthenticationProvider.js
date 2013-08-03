@@ -114,8 +114,28 @@ define(['srv/core/AuthenticationProvider', 'srv/core/Authentication', 'js/data/C
          * @returns {*}
          * @private
          */
-        _createQueryForUser: function(username){
+        _createQueryForUser: function (username) {
             return new Query().eql(this.$.usernameField, username);
+        },
+
+        /**
+         * Fetches a user by username, returns a User or NULL
+         * @param {String} username
+         * @param {Function} callback
+         */
+        fetchUser: function (username, callback) {
+            // create query to fetch the user
+            var query = this._createQueryForUser(username);
+            var collection = this.$.dataSource.createCollection(this.$collectionClass).query(query);
+            collection.fetch(null, function (err, users) {
+                var user;
+                if (!err) {
+                    if (users.size()) {
+                        user = users.at(0);
+                    }
+                }
+                callback(err, user);
+            });
         },
 
         authenticate: function (authenticationRequest, callback) {
@@ -123,19 +143,7 @@ define(['srv/core/AuthenticationProvider', 'srv/core/Authentication', 'js/data/C
 
             flow()
                 .seq("user", function (cb) {
-                    // create query to fetch the user
-                    var query = self._createQueryForUser(authenticationRequest.data.username);
-                    var collection = this.$.dataSource.createCollection(self.$collectionClass).query(query);
-                    collection.fetch(null, function (err, users) {
-                        var user;
-                        if (!err) {
-                            if (users.size()) {
-                                user = users.at(0);
-                            }
-                        }
-                        cb(err, user);
-                    });
-
+                     self.fetchUser(authenticationRequest.data, cb)
                 })
                 .seq("authentication", function (cb) {
                     // gets the authenticationData
