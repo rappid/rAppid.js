@@ -3,20 +3,39 @@ define(['srv/core/AuthenticationProvider', 'srv/core/Authentication', 'js/data/C
 
     return AuthenticationProvider.inherit('srv.core.authentication.DataSourceAuthenticationProvider', {
         defaults: {
+            /**
+             * The user model className for fetching the User
+             */
             userModelClassName: null,
+            /**
+             * The dataSource for the user
+             */
             dataSource: null,
-
+            /**
+             * The hashing algorithm
+             */
             algorithm: 'sha1',
+            /**
+             * The delimiter for creating the password hash
+             */
             delimiter: ":",
+            /**
+             * Maximum login attempts for failed logins
+             * NULL is unlimited
+             */
             maxLoginAttempts: 3,
-
-            blockTime: 60 * 60,
-
+            /**
+             * Block time in seconds
+             */
+            blockTime: 3600,
+            /**
+             * The field for fetching the user
+             */
             usernameField: "username",
-            encryptedPasswordField: "encryptedPassword",
-            lastLoginField: "lastLogin",
-            loginBlockedField: "loginBlocked",
-            loginAttemptsField: "loginAttempts"
+            /**
+             * The field which contains the authentication data in a user
+             */
+            authenticationField: "authentication"
         },
 
         _start: function (callback) {
@@ -44,6 +63,13 @@ define(['srv/core/AuthenticationProvider', 'srv/core/Authentication', 'js/data/C
                 });
             }
         },
+        /**
+         * Creates an hash for a password
+         * @param {String} password
+         * @param {String} [algorithm] - default sha1
+         * @param {String} [salt] - default is generated
+         * @returns {String}
+         */
         createHash: function (password, algorithm, salt) {
             salt = salt || Crypto.randomBytes(128);
             algorithm = algorithm || this.$.algorithm;
@@ -52,12 +78,44 @@ define(['srv/core/AuthenticationProvider', 'srv/core/Authentication', 'js/data/C
             hash.update(salt + password);
             return [algorithm, salt, hash.digest('hex')].join(this.$.delimiter);
         },
+        /***
+         * Validates a password with a given hash
+         * @param password
+         * @param correctHash
+         * @returns {boolean}
+         */
         validatePassword: function (password, correctHash) {
             var elements = correctHash.split(this.$.delimiter);
             if (elements.length === 3) {
                 return (this.createHash(password, elements[0], elements[1]) === correctHash);
             }
             return false;
+        },
+        /**
+         * Creates an authentication Object which contains all authentication relevant data for an user
+         * @param password
+         * @param algorithm
+         * @param salt
+         * @returns {{encryptedPassword: *, loginAttempts: number, loginBlocked: null}}
+         */
+        createAuthenticationData: function (password, algorithm, salt) {
+
+            return {
+                hash: this.createHash(password, algorithm, salt),
+                loginAttempts: 0,
+                loginBlocked: null
+            }
+
+        },
+
+        /**
+         * Creates a query for fetching a user
+         * @param username
+         * @returns {*}
+         * @private
+         */
+        _createQueryForUser: function(username){
+            return new Query().eql(this.$.usernameField, username);
         },
 
         authenticate: function (authenticationRequest, callback) {
@@ -66,29 +124,50 @@ define(['srv/core/AuthenticationProvider', 'srv/core/Authentication', 'js/data/C
             flow()
                 .seq("user", function (cb) {
                     // create query to fetch the user
-                    var query = new Query().eql(self.$.usernameField, authenticationRequest.data.username);
+                    var query = self._createQueryForUser(authenticationRequest.data.username);
                     var collection = this.$.dataSource.createCollection(self.$collectionClass).query(query);
                     collection.fetch(null, function (err, users) {
                         var user;
                         if (!err) {
                             if (users.size()) {
                                 user = users.at(0);
-                                // check if blocked
-                                var blocked = user.get(self.$.loginBlockedField);
-                                if (blocked && blocked > new Date().getTime()) {
-                                    err = new Error("Please try again later");
-
-                                }
                             }
                         }
                         cb(err, user);
                     });
+
+                })
+                .seq("authentication", function (cb) {
+                    // gets the authenticationData
+                    var user = this.vars.user,
+                        authentication = {
+                            loginBlocked: null,
+                            loginAttempts: 0,
+                            hash: ""
+                        };
+                    if (user) {
+                        authentication = user.get(self.$.authenticationField);
+                    }
+                    cb(null, authentication);
+
+                })
+                .seq(function (cb) {
+                    // checks if the authentication is blocked
+                    var authentication = this.vars.authentication,
+                        err = null;
+                    // check if blocked
+                    var blocked = authentication.loginBlocked;
+                    if (blocked && blocked > new Date().getTime()) {
+                        err = new Error("Please try again later");
+                    }
+
+                    cb(err);
                 })
                 .seq("authenticated", function () {
-                    // check if user is authenticated
-                    var user = this.vars.user;
-                    if (user) {
-                        var hash = user.get(self.$.encryptedPasswordField);
+                    // check if the password is right for the user
+                    var authentication = this.vars.authentication;
+                    if (authentication) {
+                        var hash = authentication.hash;
 
                         return self.validatePassword(authenticationRequest.data.password, hash);
                     }
@@ -97,25 +176,24 @@ define(['srv/core/AuthenticationProvider', 'srv/core/Authentication', 'js/data/C
 
                 .seq(function (cb) {
                     // check for login attempts if neccessary
-                    var user = this.vars.user;
+                    var user = this.vars.user,
+                        authenticationData = this.vars.authentication;
                     if (user && self.$.maxLoginAttempts !== null) {
                         if (this.vars.authenticated) {
-                            // if authenticated reset all
-                            user.set(self.$.loginAttemptsField, 0);
-                            user.set(self.$.loginBlockedField, null);
-                            user.save(null, cb);
+                            authenticationData.loginAttempts = 0;
+                            authenticationData.loginBlocked = null;
                         } else {
                             // if not authenticated, increase failed attempts or block him
-                            var loginAttempts = user.get(self.$.loginAttemptsField) || 1;
+                            var loginAttempts = authenticationData.loginAttemptsField || 1;
                             if (loginAttempts >= self.$.maxLoginAttempts) {
                                 var time = new Date().getTime();
                                 time += self.$.blockTime * 1000;
-                                user.set(self.$.loginBlockedField, time);
-                                user.save(null, cb);
+                                authenticationData.loginBlocked = time;
                             } else {
-                                user.set(self.$.loginAttemptsField, loginAttempts + 1);
-                                user.save(null, cb);
+                                authenticationData.loginAttempts = loginAttempts + 1;
                             }
+                            user.set(self.$.authenticationField, authenticationData);
+                            user.save(null, cb);
                         }
                     } else {
                         cb();
