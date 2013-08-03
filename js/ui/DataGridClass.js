@@ -8,7 +8,8 @@ define(['js/ui/View', 'xaml!js/ui/DataGridColumn', 'js/core/List', 'underscore',
             width: null,
             prefetchItemCount: 0,
             selectedItems: List,
-            selectionMode: "multi"
+            selectionMode: "multi",
+            data: null
         },
 
         events: [
