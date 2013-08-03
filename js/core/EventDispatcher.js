@@ -1,10 +1,10 @@
-define(["js/core/Base"], function (Base) {
+define(["js/core/Base",'rAppid'], function (Base, rAppid) {
 
     /***
      * @param {arguments} eventTypes
      * */
-    Function.prototype.on = function () {
 
+    rAppid.extendFunctionPrototype("on", function () {
         var events = Array.prototype.slice.call(arguments);
         this._events = this._events || [];
         for (var i = 0; i < events.length; i++) {
@@ -18,13 +18,9 @@ define(["js/core/Base"], function (Base) {
         }
 
         return this;
-    };
+    });
 
-
-    /***
-     * @param {arguments} changeEvents results in change
-     * */
-    Function.prototype.onChange = function () {
+    rAppid.extendFunctionPrototype("onChange", function () {
         var events = Array.prototype.slice.call(arguments);
         this._events = this._events || [];
         this._attributes = this._attributes || [];
@@ -39,9 +35,9 @@ define(["js/core/Base"], function (Base) {
         }
 
         return this;
-    };
+    });
 
-    Function.prototype.bus = function () {
+    rAppid.extendFunctionPrototype("bus", function () {
 
         var events = Array.prototype.slice.call(arguments);
         this._busEvents = this._busEvents || [];
@@ -50,7 +46,7 @@ define(["js/core/Base"], function (Base) {
         }
 
         return this;
-    };
+    });
 
     var undefinedValue;
 
