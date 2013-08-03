@@ -203,7 +203,7 @@ define(['srv/core/AuthenticationProvider', 'srv/core/Authentication', 'js/data/C
                     if (err) {
                         callback(err);
                     } else if (!results.authenticated) {
-                        callback(self._createAuthenticationError("Wrong username and password."));
+                        callback(self._createAuthenticationError("Wrong username or password."));
                     } else {
                         callback(null, self.createAuthentication(authenticationRequest.data.username, {
                             username: authenticationRequest.data.username
