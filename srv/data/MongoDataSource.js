@@ -246,7 +246,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
             var processor = this.getProcessorForModel(model),
                 data = processor.compose(model, action, options);
 
-            _.defaults(options || {}, {safe: true, upsert: !!configuration.$.upsert});
+            _.defaults(options || {}, {"safe": true, "new": true, "upsert": !!configuration.$.upsert});
 
             // here we have a polymorphic type
             if (configuration.$.modelClassName !== model.constructor.name) {
@@ -264,18 +264,13 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
                         cb(err);
                     });
                 } else if (method === MongoDataSource.METHOD.SAVE) {
-                    collection.findAndModify(where, {}, data, options, function (err, data, info) {
+                    collection.findAndModify(where, {}, data, options, function (err, newData, info) {
                         if (!err) {
-                            if (!options.upsert && !data) {
+                            if (!options.upsert && !newData) {
                                 // no update happened
                                 err = DataSource.ERROR.NOT_FOUND;
                             }
-                            var idObject;
-                            if (info.lastErrorObject && !info.lastErrorObject.updatedExisting) {
-                                idObject = info.lastErrorObject.upserted;
-                            } else if (info.value) {
-                                idObject = info.value[ID_KEY];
-                            }
+                            var idObject = newData._id;
 
                             if (idObject && model.createdField) {
                                 model.set(model.createdField, idObject.getTimestamp());
@@ -502,7 +497,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
                 var configuration = this.$dataSourceConfiguration;
                 var valueContext = value[CONTEXT_KEY],
                     stack = [];
-                if(valueContext){
+                if (valueContext) {
                     for (var key in valueContext) {
                         if (valueContext.hasOwnProperty(key)) {
                             configuration = configuration.getConfigurationForPath(key);
