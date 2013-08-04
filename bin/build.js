@@ -1,7 +1,7 @@
 var path = require('path'),
     requirejs = require('requirejs'),
     _ = require('underscore'),
-    rAppid = require('../rAppid.js').rAppid,
+    rAppid = require('..').rAppid,
     flow = require('flow.js').flow,
     fs = require('fs');
 

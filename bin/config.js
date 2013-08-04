@@ -2,7 +2,6 @@ var path = require('path'),
     fs = require('fs'),
     _ = require('underscore'),
     exclude_dirs = ["node_modules", "bin", "doc", "test"],
-    rRemoveExtension = /^(.*?)\.[^.]+$/,
     removeXMLSuffix = /^(.*).xml$/,
     backslashes = /\\/g;
 
