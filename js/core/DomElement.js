@@ -144,7 +144,7 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                     if (child instanceof DomElement || child.render) {
                         var pos = options && typeof(options.childIndex) !== "undefined" ? options.childIndex : this.$children.length;
 
-                        this.$children.splice(pos,0,child);
+                        this.$children.splice(pos, 0, child);
                         if (this.isRendered()) {
                             this._renderChild(child, pos);
                         }
@@ -312,11 +312,16 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                         delete this.$invisibleChildMap[child.$cid];
                         var el = child.render();
 
-
                         if (pos == undefined) {
                             this.$el.appendChild(el);
                             this.$renderedChildren.push(child);
                         } else {
+                            // decrease the pos by the number of invisible children before
+                            for (var i = 0; i < pos; i++) {
+                                if (!this.$children[i].$.visible) {
+                                    pos--;
+                                }
+                            }
                             this.$renderedChildren.splice(pos, 0, child);
                             var childNode = this.$el.childNodes[pos];
                             if (childNode) {
