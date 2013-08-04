@@ -116,7 +116,7 @@ define(["js/core/Base",'rAppid'], function (Base, rAppid) {
                     list = this._eventHandlers[eventType].slice();
                     for (i = 0; i < list.length; i++) {
                         if (list[i]) {
-                            result = list[i].trigger(event, target);
+                            result = list[i].trigger(event, event.target);
                             if (result !== undefinedValue) {
 
                                 if (result === false) {
