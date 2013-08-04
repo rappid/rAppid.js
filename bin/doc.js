@@ -6,7 +6,7 @@ var help = function (args, callback) {
         fs = require('fs'),
         path = require('path'),
         flow = require('flow.js').flow,
-        rAppid = require(__dirname + "/../rAppid.js").rAppid,
+        rAppid = require("..").rAppid,
         vkbeautify = require(__dirname + "/lib/vkbeautify").vkbeautify,
         argv = require('optimist')(args)
             .usage("rappidjs doc <dir> [<dir2>]")
