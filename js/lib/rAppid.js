@@ -62,7 +62,7 @@ if (typeof requirejs !== "undefined") {
         } else {
             Function.prototype[key] = fnc
         }
-    };
+    }
 
     /***
      * marks a function to be executed asynchronously
