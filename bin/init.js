@@ -12,11 +12,10 @@ var fs = require("fs"),
 function readJson(path, callback) {
     try {
         callback(null, JSON.parse(fs.readFileSync(path)));
-    } catch(e) {
+    } catch (e) {
         callback(e);
     }
 }
-
 
 function init(args, callback) {
     if (args.length > 0) {
@@ -30,15 +29,17 @@ function init(args, callback) {
         if (!err) {
 
             var dependencies = data.rAppid.dependencies, depArray = [];
-            var installFlow = flow();
-            for(var dep in dependencies){
-                if(dependencies.hasOwnProperty(dep)){
+
+            for (var dep in dependencies) {
+                if (dependencies.hasOwnProperty(dep)) {
                     depArray.push({package: dep, version: dependencies[dep]});
                 }
             }
-            flow().seqEach(depArray,function (dep,cb) {
+
+            flow().seqEach(depArray,function (dep, cb) {
                 install([dep.package, dep.version], cb);
             }).exec(callback);
+
         } else {
             callback(err);
         }
