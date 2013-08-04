@@ -8,7 +8,6 @@ var fs = require("fs"),
     flow = require("flow.js").flow,
     ejs = require('ejs'),
     args = process.argv.splice(2),
-    rl = require("readline"),
     install = require(path.join(__dirname, "install.js"));
 
 fs.existsSync || (fs.existsSync = path.existsSync);
