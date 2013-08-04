@@ -112,7 +112,7 @@ function create(args, callback) {
 
     var dir = process.cwd();
     var name = args[0];
-    if (args.length > 0) {
+    if (args.length > 1) {
         dir = args[1];
     }
 
@@ -211,9 +211,8 @@ function createApplication(appName, dir, callback) {
                 console.log("");
                 console.log("Application '" + appName + "' in directory '" + publicDir + "' successfully created.");
                 console.log("");
-            } else {
-                callback(err)
             }
+            callback(err)
         });
 
     }
