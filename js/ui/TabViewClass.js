@@ -1,5 +1,5 @@
-define(['js/ui/ItemsView', 'js/html/HtmlElement', 'js/ui/Tab', 'js/core/List'], function (ItemsView, HtmlElement, Tab, List) {
-    return ItemsView.inherit('js.ui.TabViewClass', {
+define(['js/ui/View', 'js/html/HtmlElement', 'js/ui/Tab', 'js/core/List'], function (View, HtmlElement, Tab, List) {
+    return View.inherit('js.ui.TabViewClass', {
 
         defaults: {
             selectedIndex: null,
