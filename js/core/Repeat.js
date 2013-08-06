@@ -26,6 +26,8 @@ define(["js/core/Component", "js/core/Bindable", "js/core/List"], function (Comp
             keyPath: null
         },
 
+        events: ["on:itemsRendered"],
+
         $defaultTemplateName: "item",
 
         ctor: function () {
@@ -44,8 +46,11 @@ define(["js/core/Component", "js/core/Bindable", "js/core/List"], function (Comp
          * @param items
          * @private
          */
-        _commitItems: function (items) {
-            this._innerRenderItems(this._getItemsArray(this.$.items));
+        _commitChangedAttributes: function ($) {
+            this.callBase($);
+            if ($.items) {
+                this._innerRenderItems(this._getItemsArray($.items));
+            }
         },
 
         _getItemsArray: function (items) {
@@ -132,7 +137,7 @@ define(["js/core/Component", "js/core/Bindable", "js/core/List"], function (Comp
                     this._innerRenderItem(items[i], i);
                 }
             }
-
+            this.trigger("on:itemsRendered", {}, this);
         },
         /***
          * Creates a component based on the template for a given item
@@ -148,7 +153,7 @@ define(["js/core/Component", "js/core/Bindable", "js/core/List"], function (Comp
 
             var virtualParent = this.createComponent(Component, attr);
             virtualParent._initialize();
-            var component = this.$templates.item.createComponents({}, virtualParent)[0];
+            var component = this.$templates.item.createComponents(attr, virtualParent)[0];
             if (component.$classAttributes) {
                 component.$classAttributes.push(this.$.itemKey, this.$.indexKey);
             }
@@ -241,7 +246,7 @@ define(["js/core/Component", "js/core/Bindable", "js/core/List"], function (Comp
                 element = this.$parent.$elements[i];
                 if (isViewComponent && element.render instanceof Function) {
                     index++;
-                } else if (element !== this) {
+                } else if (!isViewComponent && element !== this) {
                     index++;
                 } else {
                     return index;

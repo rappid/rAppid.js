@@ -317,7 +317,7 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                             this.$renderedChildren.push(child);
                         } else {
                             // decrease the pos by the number of invisible children before
-                            for (var i = 0; i < pos; i++) {
+                            for (var i = 0; i < pos && i < this.$children.length; i++) {
                                 if (!this.$children[i].$.visible) {
                                     pos--;
                                 }

@@ -11,14 +11,4 @@
         <div>{item.value}</div>
     </ui:ItemsView>
 
-    <ui:ItemsView cid="wTemplate" items="{woTemplateItems}" id="wTemplate">
-        <div>BEFORE1</div>
-        <div>BEFORE2</div>
-        <js:Template name="item">
-            <div>{item.value}</div>
-        </js:Template>
-        <div>AFTER1</div>
-        <div>AFTER2</div>
-    </ui:ItemsView>
-
 </app:ItemsViewTestClass>

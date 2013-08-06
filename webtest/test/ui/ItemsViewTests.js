@@ -65,23 +65,5 @@ describe("#ItemsView", function () {
 
     });
 
-    describe('#with template', function () {
-
-        it('should render children which are before template before items', function () {
-            var $wTemplate = $("#wTemplate");
-            var divs = $wTemplate.find('div');
-            $expect(divs.eq(0)).to.have.text("BEFORE1");
-            $expect(divs.eq(1)).to.have.text("BEFORE2");
-        });
-
-        it('should render children which are after template after items', function () {
-            var $wTemplate = $("#wTemplate");
-            var divs = $wTemplate.find('div');
-            $expect(divs.eq(divs.length-2)).to.have.text("AFTER1");
-            $expect(divs.eq(divs.length-1)).to.have.text("AFTER2");
-        });
-
-    });
-
 
 });
