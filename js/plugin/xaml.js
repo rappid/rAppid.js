@@ -202,27 +202,39 @@ define([], function () {
         };
 
         fetchXaml = function (url, callback) {
-            var xhr;
 
-            try {
-                xhr = createXhr();
-                xhr.open('GET', url, true);
-                xhr.onreadystatechange = function () {
-                    if (xhr.readyState === 4) {
-                        if (xhr.status === 200 || xhr.status === 304) {
-                            if (xhr.responseXML) {
-                                callback(null, xhr.responseXML);
+            var dataUrl = /^data:/;
+            if (dataUrl.test(url)) {
+                try {
+                    var data = url.replace(dataUrl, "").replace(/\.xml$/, "");
+                    callback(null, (new DOMParser()).parseFromString(data, "application/xml"));
+                } catch (e) {
+                    callback(e);
+                }
+
+            } else {
+                var xhr;
+
+                try {
+                    xhr = createXhr();
+                    xhr.open('GET', url, true);
+                    xhr.onreadystatechange = function () {
+                        if (xhr.readyState === 4) {
+                            if (xhr.status === 200 || xhr.status === 304) {
+                                if (xhr.responseXML) {
+                                    callback(null, xhr.responseXML);
+                                } else {
+                                    callback("no responseXML found");
+                                }
                             } else {
-                                callback("no responseXML found");
+                                callback("got status " + xhr.status + " for " + url);
                             }
-                        } else {
-                            callback("got status " + xhr.status + " for " + url);
                         }
-                    }
-                };
-                xhr.send(null);
-            } catch (e) {
-                callback(e);
+                    };
+                    xhr.send(null);
+                } catch (e) {
+                    callback(e);
+                }
             }
         };
         // end browser.js adapters
