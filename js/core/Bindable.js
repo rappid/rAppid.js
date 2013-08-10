@@ -1,7 +1,7 @@
 define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "underscore", "js/core/BindingCreator"],
     function (EventDispatcher, Parser, Binding, _, BindingCreator) {
 
-        var bindingCreator = new BindingCreator(),
+        var bindingCreator,
             Bindable,
             EventBindable;
 
@@ -88,6 +88,8 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
                  * @param {Object} [attributes] the default attributes which will be set during instantiation
                  */
                 ctor: function (attributes) {
+                    bindingCreator = bindingCreator || new BindingCreator();
+
                     this.$eventBindables = [];
                     this.$bindings = {};
                     this.$bindingCreator = bindingCreator;

@@ -28,6 +28,15 @@ define(['js/ui/View', 'js/html/HtmlElement', 'js/ui/Tab', 'js/core/List'], funct
             }
         },
 
+        removeChild: function (child) {
+            if (child instanceof Tab) {
+                this.$.tabItems.remove(child);
+                this.$.tabContent.removeChild(child);
+            } else {
+                this.callBase();
+            }
+        },
+
         _renderSelectedView: function (view) {
             this.$.tabSelection.set({selectedView: view});
         },
