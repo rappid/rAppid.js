@@ -1,12 +1,6 @@
 define(['srv/core/Handler', 'srv/core/AuthenticationService', 'srv/core/HttpError', 'srv/error/MethodNotAllowedError', 'srv/authentication/AuthenticationRequest', 'flow', 'JSON', 'srv/authentication/AuthenticationError'],
     function (Handler, AuthenticationService, HttpError, MethodNotAllowedError, AuthenticationRequest, flow, JSON, AuthenticationError) {
 
-        var ERROR = {
-            AUTHENTICATION_EXPIRED: "Authentication expired",
-            AUTHENTICATION_FAILED: "Authentication failed",
-            NO_IDENTITY_FOUND: "No identity found"
-        };
-
         return Handler.inherit('srv.handler.SessionHandler', {
 
             defaults: {
@@ -30,7 +24,7 @@ define(['srv/core/Handler', 'srv/core/AuthenticationService', 'srv/core/HttpErro
             },
 
             _handleMissingIdentity: function (authentication, cb) {
-                cb(ERROR.NO_IDENTITY_FOUND);
+                cb(AuthenticationError.WRONG_USERNAME_OR_PASSWORD);
             },
 
             _handleAuthenticationSuccess: function (authentication, cb) {
