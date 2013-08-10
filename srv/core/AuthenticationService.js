@@ -1,5 +1,4 @@
-define(["js/core/Component", "srv/core/AuthenticationProvider", "flow", "srv/core/Authentication"], function (Component, AuthenticationProvider, flow, Authentication) {
-
+define(["js/core/Component", "srv/core/AuthenticationProvider", "flow", "srv/core/Authentication", "js/data/Collection", 'srv/authentication/AuthenticationError'], function (Component, AuthenticationProvider, flow, Authentication, Collection, AuthenticationError) {
 
     var generateId = function () {
         var d = new Date().getTime();
@@ -10,12 +9,13 @@ define(["js/core/Component", "srv/core/AuthenticationProvider", "flow", "srv/cor
         });
     };
 
-    var ERROR = {
-        AUTHENTICATION_EXPIRED: "Authentication expired",
-        NO_PROVIDER_FOUND: "No authentication provider found"
-    };
-
     return Component.inherit({
+
+        defaults: {
+            dataSource: null,
+            userDataSource: null,
+            userModelClassName: null
+        },
 
         ctor: function () {
             this.$providers = [];
@@ -44,6 +44,10 @@ define(["js/core/Component", "srv/core/AuthenticationProvider", "flow", "srv/cor
         },
 
         start: function (server, callback) {
+
+            if (this.$.userModelClassName) {
+                this.$.userModelClassName = require(this.$.userModelClassName.replace(/\./g, "/"));
+            }
 
             flow()
                 .seqEach(this.$providers, function (provider, cb) {
@@ -77,6 +81,23 @@ define(["js/core/Component", "srv/core/AuthenticationProvider", "flow", "srv/cor
 
         },
 
+        getRegistrationProviderForRequest: function (registrationRequest) {
+
+            var authenticationProviders = this.$providers,
+                provider;
+
+            for (var i = 0; i < authenticationProviders.length; i++) {
+
+                provider = authenticationProviders[i];
+
+                if (provider.isResponsibleForRegistrationRequest(registrationRequest)) {
+                    return provider;
+                }
+            }
+
+            return null;
+        },
+
         /**
          * Checks token against a database
          *
@@ -95,7 +116,7 @@ define(["js/core/Component", "srv/core/AuthenticationProvider", "flow", "srv/cor
                                 // remove token
                                 authentication.remove();
                                 // return error
-                                cb(ERROR.AUTHENTICATION_EXPIRED, null);
+                                cb(AuthenticationError.AUTHENTICATION_EXPIRED, null);
                             }
                         } else {
                             cb(err);
@@ -125,11 +146,65 @@ define(["js/core/Component", "srv/core/AuthenticationProvider", "flow", "srv/cor
             var authProvider = this.getAuthenticationProviderForRequest(authenticationRequest);
 
             if (authProvider) {
-                // authenticate
-                authProvider.authenticate(authenticationRequest, callback);
+                flow()
+                    .seq("authentication", function (cb) {
+                        // authenticate
+                        authProvider.authenticate(authenticationRequest, cb);
+                    })
+                    .seq(function (cb) {
+                        // init authentication
+                        this.vars.authentication.init(cb);
+                    })
+                    .exec(function (err, results) {
+                        // return authentication with user id
+                        callback(err, results.authentication);
+                    })
             } else {
-                callback(ERROR.NO_PROVIDER_FOUND, null);
+                callback(AuthenticationError.NO_PROVIDER_FOUND, null);
             }
+        },
+
+        registerByRequest: function (registrationRequest, callback) {
+            var provider = this.getRegistrationProviderForRequest(registrationRequest);
+            if (provider) {
+                var userDataSource = this.$.userDataSource,
+                    userClass = this.$.userModelClassName,
+                    user,
+                    identityService = this.$.identityService;
+                flow()
+                    // check if user already exists
+                    .seq(function (cb) {
+                        provider.checkRegistrationRequest(registrationRequest, cb);
+                    })
+                    // validates the registration request and returns authentication data from the provider
+                    .seq("registrationData", function (cb) {
+                        provider.loadRegistrationDataForRequest(registrationRequest, cb);
+                    })
+                    // creates a new user and sets the user data
+                    .seq(function () {
+                        user = userDataSource.createCollection(Collection.of(userClass)).createItem();
+
+                        // TODO: find another way to extend user with data
+//                        user.set(registrationRequest.$.userData);
+                    })
+                    // extends the user with the authentication data
+                    .seq(function () {
+                        provider.extendUserWithRegistrationData(user, this.vars.registrationData);
+                    })
+                    // validates and saves user
+                    .seq("user", function (cb) {
+                        user.validateAndSave(null, cb)
+                    })
+                    // creates an identity for the user
+                    .seq(function (cb) {
+                        identityService.createAndSaveIdentity(user.identifier(), provider.$.name, this.vars.registrationData.providerUserId, cb);
+                    })
+                    .exec(function (err, results) {
+                        // TODO
+                        callback(err, results.user);
+                    });
+            }
+
         },
 
         /**

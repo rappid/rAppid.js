@@ -96,7 +96,7 @@ define(['require', 'srv/core/Handler', 'js/conf/DataSourceConfiguration', 'js/co
                     return;
                 }
 
-                if (this.$dataSources.length === 0) {
+                if (this.$dataSources.length === 0 && !this.$.dataSource) {
                     callback(new Error("DataSource missing."));
                     return;
                 }
@@ -142,11 +142,11 @@ define(['require', 'srv/core/Handler', 'js/conf/DataSourceConfiguration', 'js/co
              * @return {*}
              */
             getDataSource: function (context, resource) {
-                return this.$dataSources[0];
+                return this.$.dataSource || this.$dataSources[0];
             },
 
             getHrefDataSource: function () {
-                return this.$dataSources[0];
+                return this.$.dataSource || this.$dataSources[0];
             },
 
             handleRequest: function (context, callback) {

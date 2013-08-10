@@ -1,9 +1,18 @@
-define(["js/core/Component", "js/data/Collection", "srv/core/Identity", "js/data/Query"], function (Component, Collection, Identity, Query) {
+define(["js/core/Component", "js/data/Collection", "srv/core/Identity", "js/data/Query", "js/data/DataSource"], function (Component, Collection, Identity, Query, DataSource) {
 
     return Component.inherit('srv/core/IdentityService', {
 
         defaults: {
             dataSource: null
+        },
+
+        addChild: function (child) {
+
+            if (child instanceof DataSource) {
+                this.set('dataSource', child);
+            }
+
+            this.callBase();
         },
 
         /**
@@ -37,14 +46,14 @@ define(["js/core/Component", "js/data/Collection", "srv/core/Identity", "js/data
          * @param {srv.core.Authentication} authentication
          * @param cb  - callback returns error and identity
          */
-        createAndSaveIdentity: function (userId, authentication, cb) {
+        createAndSaveIdentity: function (userId, providerName, providerUserId, cb) {
 
             var identity = this.$.dataSource.createEntity(Identity);
 
             identity.set({
                 userId: userId,
-                provider: authentication.$.provider,
-                providerUserId: authentication.$.providerUserId
+                provider: providerName,
+                providerUserId: providerUserId
             });
 
             identity.save(null, cb);

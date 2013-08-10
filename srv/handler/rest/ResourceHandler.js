@@ -288,7 +288,7 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
                             if (id) {
                                 self._fetchAllHrefsForModel(item, context);
                             }
-                            itemArray.push(processor.compose(item));
+                            itemArray.push(processor.compose(item, "GET", options));
                         });
                         var res = {
                             count: results["collection"].$.$itemsCount,

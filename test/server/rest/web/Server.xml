@@ -1,21 +1,42 @@
 <Server xmlns="srv.core"
         xmlns:handler="srv.handler"
         xmlns:endpoint="srv.endpoint" xmlns:data="srv.data"
-        xmlns:restHandler="rest.handler" xmlns:restData="rest.data">
+        xmlns:restHandler="rest.handler" xmlns:restData="rest.data"
+        xmlns:conf="js.conf"
+        xmlns:auth="srv.authentication">
 
     <EndPoints>
         <endpoint:HttpEndPoint port="8080"/>
     </EndPoints>
 
-    <AuthenticationService />
-    <AuthorisationService />
+    <data:MongoDataSource cid="appDataSource" database="{ENV().database}">
+        <restData:TicketDataSourceConfiguration/>
+    </data:MongoDataSource>
+
+    <!-- DataSource for Identites and Authentications -->
+    <data:MongoDataSource cid="authDataSource" database="{ENV().database}">
+        <conf:DataSourceConfiguration>
+            <conf:ResourceConfiguration modelClassName="srv.core.Identity" path="identities"/>
+            <conf:ResourceConfiguration modelClassName="srv.core.Authentication" path="authentications" upsert="true"/>
+        </conf:DataSourceConfiguration>
+    </data:MongoDataSource>
+
+    <IdentityService cid="identityService" dataSource="{authDataSource}"/>
+
+    <AuthenticationService userDataSource="{appDataSource}"
+                           dataSource="{authDataSource}"
+                           identityService="{identityService}"
+                           userModelClassName="rest.model.User">
+        <auth:DataSourceAuthenticationProvider dataSource="{appDataSource}"
+                                               usernameField="email"
+                                               userModelClassName="rest.model.User"/>
+    </AuthenticationService>
+    <AuthorisationService/>
 
     <Handlers>
-        <handler:AuthenticationHandler />
-        <handler:RestHandler>
-            <data:MongoDataSource database="{ENV().database}">
-                <restData:TicketDataSourceConfiguration/>
-            </data:MongoDataSource>
+        <handler:AuthenticationHandler/>
+        <handler:RegistrationHandler/>
+        <handler:RestHandler dataSource="{appDataSource}">
             <restData:TicketDataSourceConfiguration/>
 
             <restHandler:TicketResourceHandler modelClassName="rest.model.Ticket"/>

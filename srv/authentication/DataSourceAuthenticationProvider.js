@@ -1,5 +1,4 @@
-define(['srv/core/AuthenticationProvider', 'srv/core/Authentication', 'js/data/Collection', 'require', 'crypto', 'js/data/Model', 'js/data/Query', 'flow'], function (AuthenticationProvider, Authentication, Collection, require, Crypto, Model, Query, flow) {
-
+define(['srv/core/AuthenticationProvider', 'srv/core/Authentication', 'js/data/Collection', 'require', 'crypto', 'js/data/Model', 'js/data/Query', 'flow', 'srv/authentication/AuthenticationError', 'srv/authentication/RegistrationError'], function (AuthenticationProvider, Authentication, Collection, require, Crypto, Model, Query, flow, AuthenticationError, RegistrationError) {
 
     return AuthenticationProvider.inherit('srv.core.authentication.DataSourceAuthenticationProvider', {
         defaults: {
@@ -35,11 +34,12 @@ define(['srv/core/AuthenticationProvider', 'srv/core/Authentication', 'js/data/C
             /**
              * The field which contains the authentication data in a user
              */
-            authenticationField: "authentication"
+            authenticationField: "authentication",
+
+            name: "dataSource"
         },
 
         _start: function (callback) {
-
             var self = this;
 
             if (!this.$.dataSource) {
@@ -71,12 +71,13 @@ define(['srv/core/AuthenticationProvider', 'srv/core/Authentication', 'js/data/C
          * @returns {String}
          */
         createHash: function (password, algorithm, salt) {
-            salt = salt || Crypto.randomBytes(128);
+            salt = salt || Crypto.randomBytes(128).toString("hex");
             algorithm = algorithm || this.$.algorithm;
 
             var hash = Crypto.createHash(this.$.algorithm);
-            hash.update(salt + password);
-            return [algorithm, salt, hash.digest('hex')].join(this.$.delimiter);
+            hash.update(salt + password, "utf8");
+
+            return [algorithm, salt, hash.digest("hex")].join(this.$.delimiter);
         },
         /***
          * Validates a password with a given hash
@@ -107,6 +108,41 @@ define(['srv/core/AuthenticationProvider', 'srv/core/Authentication', 'js/data/C
             }
 
         },
+        /**
+         * RegistrationRequest requires a password to create the registrationData
+         * @param registrationRequest
+         * @param cb
+         */
+        loadRegistrationDataForRequest: function (registrationRequest, cb) {
+            if (registrationRequest.$.password) {
+                var ret = {
+                    providerUserId: registrationRequest.get(this.$.usernameField),
+                    authenticationData: this.createAuthenticationData(registrationRequest.$.password)
+                };
+                cb(null, ret);
+            } else {
+                cb("No password set");
+            }
+        },
+        /**
+         * Checks if the user already exists
+         *
+         * @param registrationRequest
+         * @param callback
+         */
+        checkRegistrationRequest: function (registrationRequest, callback) {
+            this.fetchUser(registrationRequest.get(this.$.usernameField), function (err, user) {
+                if (!err && user) {
+                    err = RegistrationError.USER_ALREADY_EXISTS
+                }
+                callback(err);
+            });
+        },
+
+        extendUserWithRegistrationData: function (user, registrationData) {
+            user.set(this.$.authenticationField, registrationData.authenticationData);
+            user.set(this.$.usernameField, registrationData.providerUserId);
+        },
 
         /**
          * Creates a query for fetching a user
@@ -127,23 +163,25 @@ define(['srv/core/AuthenticationProvider', 'srv/core/Authentication', 'js/data/C
             // create query to fetch the user
             var query = this._createQueryForUser(username);
             var collection = this.$.dataSource.createCollection(this.$collectionClass).query(query);
-            collection.fetch(null, function (err, users) {
+
+            collection.fetch({limit: 1}, function (err, users) {
                 var user;
-                if (!err) {
-                    if (users.size()) {
-                        user = users.at(0);
-                    }
+                if (!err && users.size()) {
+                    user = users.at(0);
+                    user.fetch(null, callback);
+                } else {
+                    callback(err, null);
                 }
-                callback(err, user);
             });
         },
 
         authenticate: function (authenticationRequest, callback) {
-            var self = this;
+            var self = this,
+                username = authenticationRequest.get(self.$.usernameField);
 
             flow()
                 .seq("user", function (cb) {
-                     self.fetchUser(authenticationRequest.data, cb)
+                    self.fetchUser(authenticationRequest.get(self.$.usernameField), cb)
                 })
                 .seq("authentication", function (cb) {
                     // gets the authenticationData
@@ -166,7 +204,7 @@ define(['srv/core/AuthenticationProvider', 'srv/core/Authentication', 'js/data/C
                     // check if blocked
                     var blocked = authentication.loginBlocked;
                     if (blocked && blocked > new Date().getTime()) {
-                        err = new Error("Please try again later");
+                        err = AuthenticationError.TOO_MANY_WRONG_ATTEMPTS;
                     }
 
                     cb(err);
@@ -177,7 +215,7 @@ define(['srv/core/AuthenticationProvider', 'srv/core/Authentication', 'js/data/C
                     if (authentication) {
                         var hash = authentication.hash;
 
-                        return self.validatePassword(authenticationRequest.data.password, hash);
+                        return self.validatePassword(authenticationRequest.$.password, hash);
                     }
                     return false;
                 })
@@ -192,7 +230,7 @@ define(['srv/core/AuthenticationProvider', 'srv/core/Authentication', 'js/data/C
                             authenticationData.loginBlocked = null;
                         } else {
                             // if not authenticated, increase failed attempts or block him
-                            var loginAttempts = authenticationData.loginAttemptsField || 1;
+                            var loginAttempts = authenticationData.loginAttempts || 1;
                             if (loginAttempts >= self.$.maxLoginAttempts) {
                                 var time = new Date().getTime();
                                 time += self.$.blockTime * 1000;
@@ -200,9 +238,9 @@ define(['srv/core/AuthenticationProvider', 'srv/core/Authentication', 'js/data/C
                             } else {
                                 authenticationData.loginAttempts = loginAttempts + 1;
                             }
-                            user.set(self.$.authenticationField, authenticationData);
-                            user.save(null, cb);
                         }
+                        user.set(self.$.authenticationField, authenticationData);
+                        user.save(null, cb);
                     } else {
                         cb();
                     }
@@ -211,11 +249,11 @@ define(['srv/core/AuthenticationProvider', 'srv/core/Authentication', 'js/data/C
                     if (err) {
                         callback(err);
                     } else if (!results.authenticated) {
-                        callback(self._createAuthenticationError("Wrong username or password."));
+                        callback(AuthenticationError.WRONG_USERNAME_OR_PASSWORD);
                     } else {
-                        callback(null, self.createAuthentication(authenticationRequest.data.username, {
-                            username: authenticationRequest.data.username
-                        }));
+                        var data = {};
+                        data[self.$.usernameField] = username;
+                        callback(null, self.createAuthentication(username, data));
                     }
                 });
         }

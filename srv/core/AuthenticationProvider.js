@@ -6,7 +6,7 @@ define(['js/core/Component', 'srv/core/HttpError', 'srv/core/Authentication'], f
             name: null
         },
 
-        _initializationComplete: function() {
+        _initializationComplete: function () {
 
             if (!this.$.name) {
                 throw new Error("Name for authentication provider not set");
@@ -32,15 +32,62 @@ define(['js/core/Component', 'srv/core/HttpError', 'srv/core/Authentication'], f
             throw new Error("Abstract implementation");
         },
 
+        /***
+         *
+         * @param authenticationRequest
+         * @returns {boolean}
+         */
         isResponsibleForAuthenticationRequest: function (authenticationRequest) {
             return authenticationRequest.$.provider === this.$.name;
         },
 
-        _createAuthenticationError: function(message) {
+        /**
+         *
+         * @param registrationRequest
+         * @returns {boolean}
+         */
+        isResponsibleForRegistrationRequest: function (registrationRequest) {
+            return registrationRequest.$.provider === this.$.name;
+        },
+
+        /**
+         * Checks the registration request.
+         * For example useful to check if the username or something like this already exists
+         *
+         * @param registrationRequest
+         * @param callback
+         */
+        checkRegistrationRequest: function (registrationRequest, callback) {
+            callback(null);
+        },
+
+        /**
+         * Loads registration data for the registration request.
+         * For example can be used to load facebook user data
+         * @param registrationRequest
+         * @param callback
+         */
+        loadRegistrationDataForRequest: function (registrationRequest, callback) {
+            callback(null, {});
+        },
+
+        /**
+         * Extends the user with registration data,
+         * For example data from a facebook account.
+         *
+         * @param user
+         * @param registrationData
+         */
+        extendUserWithRegistrationData: function (user, registrationData) {
+
+        },
+
+
+        _createAuthenticationError: function (message) {
             return new HttpError(message, 400);
         },
 
-        createAuthentication: function(providerUserId, providerUserData) {
+        createAuthentication: function (providerUserId, providerUserData) {
 
             var authentication = new Authentication({
                 providerUserId: providerUserId,
@@ -52,6 +99,7 @@ define(['js/core/Component', 'srv/core/HttpError', 'srv/core/Authentication'], f
 
             return authentication;
         }
+
 
     });
 });

@@ -1,13 +1,14 @@
-define(['srv/core/Handler', 'srv/core/AuthenticationFilter', 'srv/core/HttpError', 'srv/error/MethodNotAllowedError', 'srv/core/AuthenticationRequest'], function (Handler, AuthenticationFilter, HttpError, MethodNotAllowedError, AuthenticationRequest) {
+define(['srv/core/Handler', 'srv/core/AuthenticationFilter', 'srv/core/HttpError', 'srv/error/MethodNotAllowedError', 'srv/core/AuthenticationService', 'srv/authentication/RegistrationRequest', 'srv/authentication/RegistrationError'], function (Handler, AuthenticationFilter, HttpError, MethodNotAllowedError, AuthenticationService, RegistrationRequest, RegistrationError) {
 
     return Handler.inherit('srv.handler.SessionHandler', {
 
         defaults: {
             path: "/api/register",
-            userDataSource: null,
-            userClassName: null,
-            authenticationService: null,
-            identityService: null
+            userPath: "/api/users"
+        },
+
+        inject: {
+            authenticationService: AuthenticationService
         },
 
         isResponsibleForRequest: function (context) {
@@ -15,6 +16,16 @@ define(['srv/core/Handler', 'srv/core/AuthenticationFilter', 'srv/core/HttpError
                 pathName = context.request.urlInfo.pathname;
 
             return ret && pathName.indexOf(this.$.path) === 0;
+        },
+
+        _createRegistrationRequest: function (context) {
+            var parameter = JSON.parse(context.request.body.content);
+
+            return new RegistrationRequest({
+                provider: "dataSource",
+                password: parameter.password,
+                email: parameter.email
+            });
         },
 
         handleRequest: function (context, callback) {
@@ -26,8 +37,37 @@ define(['srv/core/Handler', 'srv/core/AuthenticationFilter', 'srv/core/HttpError
                 // /api/authentication request
 
                 if (method === "POST") {
+                    var registrationRequest = this._createRegistrationRequest(context),
+                        self = this;
 
-                    // TODO:
+                    this.$.authenticationService.registerByRequest(registrationRequest, function (err, user) {
+                        if (!err) {
+                            var response = context.response,
+                                uri = context.request.urlInfo.baseUri + self.$.userPath;
+
+                            response.writeHead(201, {
+                                'Content-Type': 'application/json; charset=utf-8',
+                                'Location': uri + "/" + user.identifier()
+                            });
+
+                            var res = {};
+
+                            response.write(JSON.stringify(res, 2), 'utf8');
+
+                            response.end();
+
+                        } else {
+                            var statusCode = 500;
+                            switch (err) {
+                                case RegistrationError.USER_ALREADY_EXISTS:
+                                    statusCode = 400;
+                            }
+
+                            err = new HttpError(err.message, statusCode)
+                        }
+
+                        callback(err);
+                    });
 
                 } else {
                     throw new MethodNotAllowedError("Method not supported", ["POST"]);
