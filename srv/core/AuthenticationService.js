@@ -164,11 +164,24 @@ define(["js/core/Component", "srv/core/AuthenticationProvider", "flow", "srv/cor
             }
         },
 
+        /**
+         * Creates a new user instance for a registration request
+         * Can be overridden to change how a user is created.
+         *
+         * @param registrationRequest
+         * @returns {*}
+         * @private
+         */
+        _createUserForRegistrationRequest: function (registrationRequest) {
+            return this.$.userDataSource.createCollection(Collection.of(this.$.userModelClassName)).createItem();
+        },
+
         registerByRequest: function (registrationRequest, callback) {
             var provider = this.getRegistrationProviderForRequest(registrationRequest);
             if (provider) {
                 var userDataSource = this.$.userDataSource,
                     userClass = this.$.userModelClassName,
+                    self = this,
                     user,
                     identityService = this.$.identityService;
                 flow()
@@ -182,8 +195,7 @@ define(["js/core/Component", "srv/core/AuthenticationProvider", "flow", "srv/cor
                     })
                     // creates a new user and sets the user data
                     .seq(function () {
-                        user = userDataSource.createCollection(Collection.of(userClass)).createItem();
-
+                        user = self._createUserForRegistrationRequest(registrationRequest);
                         // TODO: find another way to extend user with data
 //                        user.set(registrationRequest.$.userData);
                     })
@@ -200,7 +212,6 @@ define(["js/core/Component", "srv/core/AuthenticationProvider", "flow", "srv/cor
                         identityService.createAndSaveIdentity(user.identifier(), provider.$.name, this.vars.registrationData.providerUserId, cb);
                     })
                     .exec(function (err, results) {
-                        // TODO
                         callback(err, results.user);
                     });
             }
