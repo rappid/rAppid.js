@@ -239,18 +239,20 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
                 options,
                 offset = 0,
                 limit = 0,
-                items;
+                items,
+                parameters = context.request.urlInfo.parameter;
 
             flow()
                 .seq("collection", function (cb) {
                     self._findCollection(context, cb, false);
                 })
-                .seq("page", function (cb) {
-                    var parameters = context.request.urlInfo.parameter;
-
+                .seq("query", function (cb) {
                     var query = self.$restHandler.parseQueryForResource(parameters, self);
+                    self._modifyCollectionQuery(query, cb);
+                })
+                .seq("page", function (cb) {
 
-                    this.vars.collection = this.vars.collection.query(query);
+                    this.vars.collection = this.vars.collection.query(this.vars.query);
                     var pageSize = context.dataSource.$.collectionPageSize;
                     options = self._createOptionsForCollectionFetch(context, parameters);
 
@@ -314,6 +316,15 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
 
 
                 });
+        },
+        /**
+         * Hook for modifying the collection query
+         * @param query
+         * @param callback
+         * @private
+         */
+        _modifyCollectionQuery: function (query, callback) {
+            callback && callback(null, query);
         },
 
         /***
