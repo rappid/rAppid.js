@@ -467,7 +467,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
         },
 
         _composeContext: function (model) {
-            var parent = model.$parent,
+            var parent = model.$context.$contextModel,
                 context = {},
                 contextStack = [],
                 uri = [];
