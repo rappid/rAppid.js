@@ -1,4 +1,4 @@
-define(["js/html/HtmlElement", "js/core/Bus", "js/core/WindowManager", "js/core/ExternalInterface"], function (HtmlElement, Bus, WindowManager, ExternalInterface) {
+define(["js/html/HtmlElement", "js/core/Bus", "js/core/WindowManager", "js/core/ExternalInterface", "js/core/ErrorProvider"], function (HtmlElement, Bus, WindowManager, ExternalInterface, ErrorProvider) {
 
     var browserClassMap = {
         "hasTouch" : ["touch","no-touch"],
@@ -43,7 +43,17 @@ define(["js/html/HtmlElement", "js/core/Bus", "js/core/WindowManager", "js/core/
             this.$browser = this._createBrowserObject();
 
             this._annotateBrowserInformation(this.$browser);
+
         },
+
+        _addInjectionFactories: function(injection) {
+            injection.addFactory({
+                type: "js.core.ErrorProvider",
+                factory: ErrorProvider,
+                singleton: true
+            });
+        },
+
         /**
          * Creates the browser object with the following information
          *

@@ -3,6 +3,6 @@
     <label class="control-label" for="{inputId}">{label}</label>
     <ui:ContentPlaceHolder class="controls" name="controls" tagName="div"/>
     <div class="error" visible="{error}">
-        {error.message}
+        {errorProvider.getErrorMessage(error)}
     </div>
 </ui:FieldClass>

@@ -470,6 +470,8 @@ if (typeof requirejs !== "undefined") {
             stage.$history = new History();
             var injection = stage.$injection = new Injection(null, null, stage);
 
+            stage._addInjectionFactories(injection);
+
             stage.$environment = new Bindable();
             stage.$parameter = parameter;
 

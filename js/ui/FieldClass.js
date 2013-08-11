@@ -1,4 +1,4 @@
-define(["js/ui/View", "js/html/Input", "js/html/Select", "js/html/TextArea"], function (View, Input, Select, TextArea) {
+define(["js/ui/View", "js/html/Input", "js/html/Select", "js/html/TextArea", 'js/core/ErrorProvider'], function (View, Input, Select, TextArea, ErrorProvider) {
 
 
     var fieldId = 0;
@@ -10,6 +10,10 @@ define(["js/ui/View", "js/html/Input", "js/html/Select", "js/html/TextArea"], fu
             inputId: null,
             enabled: true,
             error: null
+        },
+
+        inject: {
+            errorProvider: ErrorProvider
         },
 
         $errorAttribute: 'value',
