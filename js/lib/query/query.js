@@ -75,16 +75,16 @@
 
         toObject: function () {
             var ret = {};
-            if(this.query.offset){
+            if (this.query.offset) {
                 ret.offset = this.query.offset;
             }
-            if(this.query.where){
+            if (this.query.where) {
                 ret.where = this.query.where.toObject();
             }
-            if(this.query.limit){
+            if (this.query.limit) {
                 ret.limit = this.query.limit;
             }
-            if(this.query.sort){
+            if (this.query.sort) {
                 ret.sort = clone(this.query.sort);
             }
             return ret;
@@ -109,7 +109,7 @@
         },
 
         whereCacheId: function () {
-            if(this.query.where){
+            if (this.query.where) {
                 return this.query.where.operator + ":" + generateExpressionsCache(this.query.where.expressions);
             } else {
                 return "";
@@ -118,6 +118,39 @@
 
         cacheId: function () {
             return this.sortCacheId() + ":" + this.whereCacheId();
+        },
+        /**
+         * Tries to find a expression for an operator and a field
+         * @param {String} operator
+         * @param {String} field
+         * @returns {*}
+         */
+        findExpression: function (operator, field) {
+            if (!this.query.where) {
+                return null;
+            }
+
+            function findExpression(expressions) {
+                var expression,
+                    ret = null;
+                for (var i = 0; i < expressions.length; i++) {
+                    expression = expressions[i];
+                    if (expression instanceof Where) {
+                        ret = findExpression(expression.expressions);
+                    } else if (expression instanceof Comparator) {
+                        if (expression.operator == operator && expression.field == field) {
+                            ret = expression;
+                        }
+                    }
+                    if (ret) {
+                        return ret;
+                    }
+
+                }
+                return ret;
+            }
+
+            return findExpression(this.query.where.expressions);
         }
 
     };
@@ -187,12 +220,12 @@
         this.expressions.push(expression);
     };
 
-    Where.prototype.toObject = function(){
+    Where.prototype.toObject = function () {
 
         var expressions = [], expression;
-        for(var i =0; i < this.expressions.length; i++){
+        for (var i = 0; i < this.expressions.length; i++) {
             expression = this.expressions[i];
-            if(expression instanceof Where){
+            if (expression instanceof Where) {
                 expressions.push(expression.toObject());
             } else {
                 expressions.push(clone(expression));
