@@ -239,7 +239,6 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
                 options,
                 offset = 0,
                 limit = 0,
-                pages = [],
                 items;
 
             flow()
