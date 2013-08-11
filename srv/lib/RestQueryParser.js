@@ -98,7 +98,15 @@ define(["exports", "Query", "RestConditionParser"], function (exports, Query, pa
 
         _stringToPrimitive: function (str) {
             var type = null;
-            if(typeof(str) == "object"){
+            // check for array
+            if (str instanceof Array) {
+                for (var i = 0; i < str.length; i++) {
+                    str[i] = this._stringToPrimitive(str[i]);
+                }
+                return str;
+            }
+            // check for object
+            if (typeof(str) == "object") {
                 type = str.type;
                 str = str.value;
             }
