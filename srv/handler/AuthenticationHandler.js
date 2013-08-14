@@ -73,6 +73,7 @@ define(['srv/core/Handler', 'srv/core/AuthenticationService', 'srv/core/HttpErro
                                     var res = {};
 
                                     res[authentication.idField] = authentication.identifier();
+                                    // TODO: add expire date to payload ...
                                     res.data = authentication.get("providerUserData");
                                     res.userId = authentication.get('identity').get('userId');
                                     response.write(JSON.stringify(res, 2), 'utf8');
