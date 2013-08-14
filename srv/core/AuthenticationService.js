@@ -112,7 +112,7 @@ define(["js/core/Component", "srv/core/AuthenticationProvider", "flow", "srv/cor
                     authentication.fetch(null, function (err) {
                         if (!err) {
                             var now = new Date();
-                            if (authentication.$.created.getTime() < now.getTime() - (1000 * 60 * 10)) {
+                            if (authentication.$.updated.getTime() < now.getTime() - (1000 * 60 * 10)) {
                                 // remove token
                                 authentication.remove();
                                 // return error
