@@ -1,4 +1,4 @@
-define(['js/core/Component', 'srv/core/AuthorisationProvider', 'flow'], function (Component, AuthorisationProvider, flow) {
+define(['js/core/Component', 'srv/core/AuthorisationProvider', 'flow', "js/core/Error"], function (Component, AuthorisationProvider, flow, Error) {
 
     return Component.inherit('srv.core.AuthorisationService', {
 
@@ -11,7 +11,7 @@ define(['js/core/Component', 'srv/core/AuthorisationProvider', 'flow'], function
             if (child instanceof AuthorisationProvider) {
                 this.$providers.push(child);
             } else {
-                throw new Error("Child for AuthorisationProviders must be an AuthorisationProvider");
+                throw new Error("Child for Authorization Service must be an AuthorisationProvider");
             }
 
             this.callBase();
@@ -45,6 +45,7 @@ define(['js/core/Component', 'srv/core/AuthorisationProvider', 'flow'], function
                     provider.isAuthorized(authenticationRequest, function (err, isAuthorized) {
                         if (!err && isAuthorized) {
                             authorized = isAuthorized;
+                            authenticationRequest.$isAuthorized = true;
                             cb.end();
                         } else {
                             cb(err);
