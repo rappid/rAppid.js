@@ -1,6 +1,6 @@
 define([], function () {
 
-    var RegistrationError = Error.inherit('srv.authentication.RegistrationError', {
+    var RegistrationError = Error.inherit('srv.error.RegistrationError', {
         ctor: function (message, errorCode) {
 
             Error.prototype.constructor.call(this, message, errorCode);
