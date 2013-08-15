@@ -2,9 +2,7 @@ define(['srv/auth/AuthenticationFilter', 'flow', 'srv/core/AuthenticationService
 
     return AuthenticationFilter.inherit('srv.filter.TokenAuthenticationFilter', {
 
-        // TODO: store to session
         defaults: {
-            identityService: null,
             tokenParameter: "token"
         },
 
