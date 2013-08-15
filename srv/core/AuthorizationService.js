@@ -1,4 +1,4 @@
-define(['js/core/Component', 'srv/auth/AuthorizationProvider', 'flow', "js/core/Error"], function (Component, AuthorisationProvider, flow, Error) {
+define(['js/core/Component', 'srv/auth/AuthorizationProvider', 'flow', "js/core/Error", "srv/error/AuthorizationError"], function (Component, AuthorisationProvider, flow, Error, AuthorizationError) {
 
     return Component.inherit('srv.core.AuthorizationService', {
 
@@ -39,21 +39,34 @@ define(['js/core/Component', 'srv/auth/AuthorizationProvider', 'flow', "js/core/
         },
 
         isAuthorized: function (context, authorizationRequest, callback) {
-            var authorized = false;
+
+            var providers = this.$providers;
+
             flow()
-                .seqEach(this.$providers, function (provider, cb) {
-                    provider.isAuthorized(context, authorizationRequest, function (err, isAuthorized) {
-                        if (!err && isAuthorized) {
-                            authorized = isAuthorized;
-                            authorizationRequest.$isAuthorized = true;
-                            cb.end();
-                        } else {
-                            cb(err);
-                        }
-                    });
+                .seqEach(providers, function (provider, cb) {
+
+                    if (provider.isResponsibleForAuthorizationRequest(context, authorizationRequest)) {
+
+                        provider.isAuthorized(context, authorizationRequest, function (err) {
+                            if (!err) {
+                                authorizationRequest.$authorized = true;
+                                cb.end();
+                            } else {
+                                cb(err);
+                            }
+                        });
+                    } else {
+                        cb();
+                    }
+                })
+                .seq(function() {
+                    if (providers.length !== 0 && !authorizationRequest.isAuthorized()) {
+                        // default rule: deny
+                        throw new AuthorizationError();
+                    }
                 })
                 .exec(function (err) {
-                    callback(err, authorized);
+                    callback(err);
                 });
         }
     });
