@@ -1,4 +1,4 @@
-define(["js/core/Bindable","js/core/List", "flow"], function(Bindable, List, flow){
+define(["js/core/Bindable","js/core/List", "flow", "srv/core/AuthorizationRequest"], function(Bindable, List, flow, AuthorziationRequest){
 
     return Bindable.inherit('srv.core.User',{
 
@@ -89,15 +89,17 @@ define(["js/core/Bindable","js/core/List", "flow"], function(Bindable, List, flo
         isAuthorized: function (authorizationRequest, callback) {
             var self = this;
 
-            this._initAuthentications(doAuthorization);
+            if (!(authorizationRequest instanceof AuthorziationRequest)) {
+                authorizationRequest = new AuthorziationRequest(authorizationRequest);
+            }
 
-            function doAuthorization(err) {
+            this._initAuthentications(function (err) {
                 if (!err) {
                     self.$server.$authorisationService.isAuthorized(authorizationRequest, callback);
                 } else {
                     callback(err);
                 }
-            }
+            });
 
         }
 
