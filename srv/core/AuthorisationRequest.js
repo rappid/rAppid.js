@@ -4,9 +4,15 @@ define(["js/core/Base", "underscore"], function(Base, _) {
 
         ctor: function(resource) {
 
+            this.$isAuthorized = false;
+
             this.$resource = _.defaults({
                 type: null
             });
+        },
+
+        isAuthorized: function() {
+            return this.$isAuthorized;
         }
 
     });
