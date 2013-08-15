@@ -1,6 +1,6 @@
-define(['srv/core/AuthenticationProvider', 'srv/core/Authentication', 'js/data/Collection', 'require', 'crypto', 'js/data/Model', 'js/data/Query', 'flow', 'srv/auth/AuthenticationError', 'srv/error/RegistrationError'], function (AuthenticationProvider, Authentication, Collection, require, Crypto, Model, Query, flow, AuthenticationError, RegistrationError) {
+define(['srv/auth/AuthenticationProvider', 'srv/auth/Authentication', 'js/data/Collection', 'require', 'crypto', 'js/data/Model', 'js/data/Query', 'flow', 'srv/auth/AuthenticationError', 'srv/error/RegistrationError'], function (AuthenticationProvider, Authentication, Collection, require, Crypto, Model, Query, flow, AuthenticationError, RegistrationError) {
 
-    return AuthenticationProvider.inherit('srv.core.authentication.DataSourceAuthenticationProvider', {
+    return AuthenticationProvider.inherit('srv.auth.DataSourceAuthenticationProvider', {
         defaults: {
             /**
              * The user model className for fetching the User

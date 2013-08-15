@@ -5,7 +5,7 @@ define(['js/data/Model', 'srv/core/IdentityService'], function(Model, IdentitySe
      * Authentication saves information about the authentication
      *
      */
-    return Model.inherit('srv.core.Authentication', {
+    return Model.inherit('srv.auth.Authentication', {
 
         schema: {
             /**

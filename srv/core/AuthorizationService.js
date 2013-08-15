@@ -1,4 +1,4 @@
-define(['js/core/Component', 'srv/core/AuthorizationProvider', 'flow', "js/core/Error"], function (Component, AuthorisationProvider, flow, Error) {
+define(['js/core/Component', 'srv/auth/AuthorizationProvider', 'flow', "js/core/Error"], function (Component, AuthorisationProvider, flow, Error) {
 
     return Component.inherit('srv.core.AuthorizationService', {
 

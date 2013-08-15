@@ -1,4 +1,4 @@
-define(["js/core/Component", "srv/core/AuthenticationProvider", "flow", "srv/core/Authentication", "js/data/Collection", 'srv/auth/AuthenticationError'], function (Component, AuthenticationProvider, flow, Authentication, Collection, AuthenticationError) {
+define(["js/core/Component", "srv/auth/AuthenticationProvider", "flow", "srv/auth/Authentication", "js/data/Collection", 'srv/auth/AuthenticationError'], function (Component, AuthenticationProvider, flow, Authentication, Collection, AuthenticationError) {
 
     var generateId = function () {
         var d = new Date().getTime();

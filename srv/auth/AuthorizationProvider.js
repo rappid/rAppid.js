@@ -1,6 +1,6 @@
 define(['js/core/Component'], function (Component) {
 
-    return Component.inherit('srv.core.AuthorizationProvider', {
+    return Component.inherit('srv.auth.AuthorizationProvider', {
         start: function (server, callback) {
             this.$server = server;
             this._start(callback);

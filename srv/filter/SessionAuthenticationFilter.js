@@ -1,4 +1,4 @@
-define(['srv/core/AuthenticationFilter','flow'], function(AuthenticationFilter, flow) {
+define(['srv/auth/AuthenticationFilter','flow'], function(AuthenticationFilter, flow) {
 
     return AuthenticationFilter.inherit('srv.filter.SessionAuthenticationFilter', {
 

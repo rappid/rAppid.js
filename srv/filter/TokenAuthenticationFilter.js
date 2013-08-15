@@ -1,4 +1,4 @@
-define(['srv/core/AuthenticationFilter', 'flow', 'srv/core/AuthenticationService'], function (AuthenticationFilter, flow, AuthenticationService) {
+define(['srv/auth/AuthenticationFilter', 'flow', 'srv/core/AuthenticationService'], function (AuthenticationFilter, flow, AuthenticationService) {
 
     return AuthenticationFilter.inherit('srv.filter.TokenAuthenticationFilter', {
 

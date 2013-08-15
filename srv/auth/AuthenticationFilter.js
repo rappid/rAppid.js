@@ -1,6 +1,6 @@
 define(['srv/core/Filter', 'require', 'flow'], function (Filter, require, flow) {
 
-    return Filter.inherit('srv.core.AuthenticationFilter', {
+    return Filter.inherit('srv.auth.AuthenticationFilter', {
 
         /***
          * @abstract

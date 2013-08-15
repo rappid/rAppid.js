@@ -1,6 +1,6 @@
-define(['js/core/Component', 'srv/core/HttpError', 'srv/core/Authentication'], function (Component, HttpError, Authentication) {
+define(['js/core/Component', 'srv/core/HttpError', 'srv/auth/Authentication'], function (Component, HttpError, Authentication) {
 
-    return Component.inherit('srv.core.AuthenticationProvider', {
+    return Component.inherit('srv.auth.AuthenticationProvider', {
 
         defaults: {
             name: null

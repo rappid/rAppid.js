@@ -1,6 +1,6 @@
-define(['srv/core/AuthenticationProvider', 'srv/core/Authentication', 'js/data/Collection', 'require', 'js/data/Model', 'flow', 'ldapjs'], function (AuthenticationProvider, Authentication, Collection, require, Model, flow, ldap) {
+define(['srv/auth/AuthenticationProvider', 'srv/auth/Authentication', 'js/data/Collection', 'require', 'js/data/Model', 'flow', 'ldapjs'], function (AuthenticationProvider, Authentication, Collection, require, Model, flow, ldap) {
 
-    return AuthenticationProvider.inherit('srv.core.authentication.LDAPAuthenticationProvider', {
+    return AuthenticationProvider.inherit('srv.auth.LDAPAuthenticationProvider', {
 
         defaults: {
             host: null,

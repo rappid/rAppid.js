@@ -17,7 +17,7 @@
     <data:MongoDataSource cid="authDataSource" database="{ENV().database}">
         <conf:DataSourceConfiguration>
             <conf:ResourceConfiguration modelClassName="srv.core.Identity" path="identities"/>
-            <conf:ResourceConfiguration modelClassName="srv.core.Authentication" path="authentications" upsert="true"/>
+            <conf:ResourceConfiguration modelClassName="srv.auth.Authentication" path="authentications" upsert="true"/>
         </conf:DataSourceConfiguration>
     </data:MongoDataSource>
 

@@ -1,4 +1,4 @@
-define(['srv/filter/SessionAuthenticationFilter', 'srv/core/AuthenticationRequest'], function(SessionAuthenticationFilter, AuthenticationRequest) {
+define(['srv/filter/SessionAuthenticationFilter', 'srv/auth/AuthenticationRequest'], function(SessionAuthenticationFilter, AuthenticationRequest) {
 
     return SessionAuthenticationFilter.inherit('srv.filter.CredentialAuthenticationFilter', {
 

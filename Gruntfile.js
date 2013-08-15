@@ -185,7 +185,7 @@ module.exports = function (grunt) {
             })
             .seq(function(cb) {
 
-                require('child_process').exec('mocha -R spec test/server/test/RestApiTest.js', function (err, stdOut, stdErr) {
+                require('child_process').exec('mocha -R spec test/server/test/*', function (err, stdOut, stdErr) {
                     grunt.log.write(stdOut);
                     grunt.log.write(stdErr);
                     mochaError = err;
