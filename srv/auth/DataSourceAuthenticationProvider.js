@@ -1,4 +1,4 @@
-define(['srv/core/AuthenticationProvider', 'srv/core/Authentication', 'js/data/Collection', 'require', 'crypto', 'js/data/Model', 'js/data/Query', 'flow', 'srv/authentication/AuthenticationError', 'srv/authentication/RegistrationError'], function (AuthenticationProvider, Authentication, Collection, require, Crypto, Model, Query, flow, AuthenticationError, RegistrationError) {
+define(['srv/core/AuthenticationProvider', 'srv/core/Authentication', 'js/data/Collection', 'require', 'crypto', 'js/data/Model', 'js/data/Query', 'flow', 'srv/auth/AuthenticationError', 'srv/auth/RegistrationError'], function (AuthenticationProvider, Authentication, Collection, require, Crypto, Model, Query, flow, AuthenticationError, RegistrationError) {
 
     return AuthenticationProvider.inherit('srv.core.authentication.DataSourceAuthenticationProvider', {
         defaults: {

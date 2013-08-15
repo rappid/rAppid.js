@@ -1,4 +1,4 @@
-define(['require', 'path', 'js/core/Component', 'srv/core/Context', 'srv/core/Handlers', 'srv/core/EndPoints', 'srv/core/Filters', 'srv/handler/ExceptionHandler', 'flow', 'domain', 'srv/core/ServerSession', 'srv/core/AuthenticationService', 'srv/core/AuthorisationService', 'js/lib/extension', 'js/core/Injection', 'srv/core/IdentityService'],
+define(['require', 'path', 'js/core/Component', 'srv/core/Context', 'srv/core/Handlers', 'srv/core/EndPoints', 'srv/core/Filters', 'srv/handler/ExceptionHandler', 'flow', 'domain', 'srv/core/ServerSession', 'srv/core/AuthenticationService', 'srv/core/AuthorizationService', 'js/lib/extension', 'js/core/Injection', 'srv/core/IdentityService'],
     function (require, Path, Component, Context, Handlers, EndPoints, Filters, ExceptionHandler, flow, Domain, ServerSession, AuthenticationService, AuthorisationService, Extension, Injection, IdentityService) {
 
         return Component.inherit('srv.core.Server', {

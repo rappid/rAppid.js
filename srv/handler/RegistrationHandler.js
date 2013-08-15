@@ -1,4 +1,4 @@
-define(['srv/core/Handler', 'srv/core/AuthenticationFilter', 'srv/core/HttpError', 'srv/error/MethodNotAllowedError', 'srv/core/AuthenticationService', 'srv/authentication/RegistrationRequest', 'srv/authentication/RegistrationError'], function (Handler, AuthenticationFilter, HttpError, MethodNotAllowedError, AuthenticationService, RegistrationRequest, RegistrationError) {
+define(['srv/core/Handler', 'srv/core/AuthenticationFilter', 'srv/core/HttpError', 'srv/error/MethodNotAllowedError', 'srv/core/AuthenticationService', 'srv/auth/RegistrationRequest', 'srv/auth/RegistrationError'], function (Handler, AuthenticationFilter, HttpError, MethodNotAllowedError, AuthenticationService, RegistrationRequest, RegistrationError) {
 
     return Handler.inherit('srv.handler.SessionHandler', {
 

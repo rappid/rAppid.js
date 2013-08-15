@@ -3,7 +3,7 @@
         xmlns:endpoint="srv.endpoint" xmlns:data="srv.data"
         xmlns:restHandler="rest.handler" xmlns:restData="rest.data"
         xmlns:conf="js.conf"
-        xmlns:auth="srv.authentication">
+        xmlns:auth="srv.auth">
 
     <EndPoints>
         <endpoint:HttpEndPoint port="8080"/>
@@ -31,7 +31,10 @@
                                                usernameField="email"
                                                userModelClassName="rest.model.User"/>
     </AuthenticationService>
-    <AuthorisationService/>
+
+    <AuthorizationService>
+
+    </AuthorizationService>
 
     <Handlers>
         <handler:AuthenticationHandler/>
