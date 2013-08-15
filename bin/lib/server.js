@@ -48,6 +48,10 @@ module.exports = function (options, callback) {
         return;
     }
 
+    config.suppress =  {
+        nodeShim: true
+    };
+
     var rAppid = require(path.join(serverRoot, 'js/lib/rAppid.js')).rAppid;
 
     rAppid.createApplicationContext(null, config, function (err, applicationContext) {
