@@ -1,6 +1,6 @@
-define(["js/core/Bindable","js/core/List", "flow", "srv/auth/AuthorizationRequest"], function(Bindable, List, flow, AuthorizationRequest){
+define(["js/core/Bindable", "js/core/List", "flow", "srv/auth/AuthorizationRequest"], function (Bindable, List, flow, AuthorizationRequest) {
 
-    return Bindable.inherit('srv.core.User',{
+    return Bindable.inherit('srv.core.User', {
 
         defaults: {
             authentications: List
@@ -13,14 +13,14 @@ define(["js/core/Bindable","js/core/List", "flow", "srv/auth/AuthorizationReques
             this.callBase();
         },
 
-        addAuthentication: function(authentication){
+        addAuthentication: function (authentication) {
             this.$.authentications.add(authentication);
         },
 
-        getAuthenticationByProviderName: function(providerName){
+        getAuthenticationByProviderName: function (providerName) {
             var ret = null;
-            this.$.authentiactions.each(function(auth){
-                if(auth.$.provider === providerName){
+            this.$.authentiactions.each(function (auth) {
+                if (auth.$.provider === providerName) {
                     ret = auth;
                     this["break"]();
                 }
@@ -29,7 +29,7 @@ define(["js/core/Bindable","js/core/List", "flow", "srv/auth/AuthorizationReques
             return ret;
         },
 
-        isAnonymous: function(){
+        isAnonymous: function () {
             return this.$.authentications.isEmpty();
         },
 //
@@ -46,10 +46,10 @@ define(["js/core/Bindable","js/core/List", "flow", "srv/auth/AuthorizationReques
 
         },
 
-        _initAuthentications: function(callback) {
+        _initAuthentications: function (callback) {
 
             flow()
-                .parEach(this.$.authentications.$items, function(authentication, cb) {
+                .parEach(this.$.authentications.$items, function (authentication, cb) {
                     authentication.init(cb)
                 })
                 .exec(callback)
@@ -64,7 +64,7 @@ define(["js/core/Bindable","js/core/List", "flow", "srv/auth/AuthorizationReques
 
             this._initAuthentications(function (err) {
                 if (!err) {
-                    self.$server.$authorisationService.isAuthorized(authorizationRequest, callback);
+                    self.$server.$authorisationService.isAuthorized(self.$context, authorizationRequest, callback);
                 } else {
                     callback(err);
                 }

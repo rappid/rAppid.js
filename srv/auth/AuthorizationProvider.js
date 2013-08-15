@@ -14,7 +14,7 @@ define(['js/core/Component'], function (Component) {
             callback();
         },
 
-        isAuthorized: function (authorisationRequest, callback) {
+        isAuthorized: function (context, authorisationRequest, callback) {
             callback();
         }
 

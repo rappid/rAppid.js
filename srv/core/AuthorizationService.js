@@ -38,14 +38,14 @@ define(['js/core/Component', 'srv/auth/AuthorizationProvider', 'flow', "js/core/
 
         },
 
-        isAuthorized: function (authenticationRequest, callback) {
+        isAuthorized: function (context, authorizationRequest, callback) {
             var authorized = false;
             flow()
                 .seqEach(this.$providers, function (provider, cb) {
-                    provider.isAuthorized(authenticationRequest, function (err, isAuthorized) {
+                    provider.isAuthorized(context, authorizationRequest, function (err, isAuthorized) {
                         if (!err && isAuthorized) {
                             authorized = isAuthorized;
-                            authenticationRequest.$isAuthorized = true;
+                            authorizationRequest.$isAuthorized = true;
                             cb.end();
                         } else {
                             cb(err);
