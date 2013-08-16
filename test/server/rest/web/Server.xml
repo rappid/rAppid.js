@@ -3,7 +3,7 @@
         xmlns:endpoint="srv.endpoint" xmlns:data="srv.data"
         xmlns:restHandler="rest.handler" xmlns:restData="rest.data"
         xmlns:conf="js.conf"
-        xmlns:auth="srv.auth">
+        xmlns:auth="srv.auth" xmlns:filter="srv.filter" xmlns:restAuth="rest.auth">
 
     <EndPoints>
         <endpoint:HttpEndPoint port="8080"/>
@@ -33,8 +33,13 @@
     </AuthenticationService>
 
     <AuthorizationService>
-
+        <restAuth:UserAuthenticatedAuthorizationProvider/>
+        <restAuth:FileAuthorizationProvider/>
     </AuthorizationService>
+
+    <Filters>
+        <filter:TokenAuthenticationFilter/>
+    </Filters>
 
     <Handlers>
         <handler:AuthenticationHandler/>
