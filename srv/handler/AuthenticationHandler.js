@@ -48,7 +48,7 @@ define(['srv/core/Handler', 'srv/core/AuthenticationService', 'srv/core/HttpErro
                         flow()
                             .seq("authentication", function (cb) {
                                 var authRequest = self._createAuthenticationRequest(context);
-                                authService.authenticateByRequest(authRequest, cb);
+                                authService.authenticateByRequest(context, authRequest, cb);
                             })
                             .seq("newAuthentication", function (cb) {
                                 if (!this.vars.authentication.get('identity')) {
@@ -61,13 +61,12 @@ define(['srv/core/Handler', 'srv/core/AuthenticationService', 'srv/core/HttpErro
                                 if (!err) {
                                     var authentication = results.newAuthentication;
 
-                                    context.user.addAuthentication(authentication);
-
                                     var response = context.response,
                                         uri = context.request.urlInfo.uri;
 
                                     response.writeHead(201, {
-                                        Location: uri + "/" + authentication.identifier()
+                                        "Location": uri + "/" + authentication.identifier(),
+                                        "Content-Type": "application/json"
                                     });
 
                                     var res = {};
@@ -100,9 +99,9 @@ define(['srv/core/Handler', 'srv/core/AuthenticationService', 'srv/core/HttpErro
                 } else if (regex.test(pathName)) {
                     // current authentication
 
+                    var match = pathName.match(regex),
+                        token = match ? match.pop() : null;
                     if (method === "GET") {
-                        var match = pathName.match(regex),
-                            token = match ? match.pop() : null;
 
 
                         flow()
@@ -117,7 +116,9 @@ define(['srv/core/Handler', 'srv/core/AuthenticationService', 'srv/core/HttpErro
                                     res[results.authentication.idField] = results.authentication.identifier();
                                     res.data = results.authentication.get("providerUserData");
 
-                                    response.writeHead(200);
+                                    response.writeHead(200, {
+                                        "Content-Type": "application/json"
+                                    });
 
                                     response.write(JSON.stringify(res, 2), 'utf8');
 
@@ -150,9 +151,21 @@ define(['srv/core/Handler', 'srv/core/AuthenticationService', 'srv/core/HttpErro
 //                        }
 //                    }
 //                    throw new HttpError("Resource not found.", 404);
-                        // TODO: retrieve authentications
                     } else if (method === "DELETE") {
-                        // TODO: logout
+                        authService.deauthenticateToken(token, function (err) {
+                            if (!err) {
+                                var response = context.response;
+
+                                response.writeHead(200);
+
+                                response.write("", 'utf8');
+
+                                response.end();
+                            } else {
+                                // TODO
+                            }
+                            callback(err);
+                        });
                     } else {
                         throw new MethodNotAllowedError("Method not supported", ["GET", "POST"]);
                     }

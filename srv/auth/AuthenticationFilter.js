@@ -12,12 +12,12 @@ define(['srv/core/Filter', 'require', 'flow'], function (Filter, require, flow) 
         },
 
 
-        authenticateRequestByToken: function (token, context, callback) {
+        authenticateRequestByToken: function (context, token, callback) {
             var authService = this.$.authenticationService;
 
             flow()
                 .seq("authentication", function (cb) {
-                    authService.authenticateByToken(token, cb);
+                    authService.authenticateByToken(context, token, cb);
                 })
                 .exec(function (err, results) {
                     if (!err) {
@@ -27,31 +27,6 @@ define(['srv/core/Filter', 'require', 'flow'], function (Filter, require, flow) 
                     // TODO: pass err object here?
                     callback && callback();
                 });
-        },
-        /***
-         *
-         * @param context
-         * @param callback
-         */
-        handleAuthenticationRequest: function (context, callback) {
-
-            var self = this,
-                authentication = this._createAuthenticationRequest(context);
-
-            this.$.authenticationProvider.authenticate(authentication, function (err, authentication) {
-                if (err) {
-                    callback(err);
-                } else if (!authentication) {
-                    callback(new Error("Authenticate without authentication"));
-                } else {
-                    try {
-                        self._saveAuthentication(context, authentication);
-                        callback();
-                    } catch (e) {
-                        callback(e);
-                    }
-                }
-            });
         },
 
         _saveAuthentication: function (context, authentication) {

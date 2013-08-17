@@ -12,9 +12,22 @@ define(["js/core/Component", "srv/auth/AuthenticationProvider", "flow", "srv/aut
     return Component.inherit({
 
         defaults: {
+            /**
+             * The data source where to store the token
+             */
             dataSource: null,
+            /**
+             * The data source which contains the user
+             */
             userDataSource: null,
-            userModelClassName: null
+            /**
+             * The User mmodel class name
+             */
+            userModelClassName: null,
+            /**
+             * Token life time in seconds
+             */
+            tokenLifeTime: 600
         },
 
         ctor: function () {
@@ -104,35 +117,49 @@ define(["js/core/Component", "srv/auth/AuthenticationProvider", "flow", "srv/aut
          * @param token
          * @param callback
          */
-        authenticateByToken: function (token, callback) {
-            var authentication = this.$.dataSource.createEntity(Authentication, token);
+        authenticateByToken: function (context, token, callback) {
+            var authentication = this.$.dataSource.createEntity(Authentication, token),
+                self = this;
 
             flow()
                 .seq("authentication", function (cb) {
                     authentication.fetch(null, function (err) {
                         if (!err) {
                             var now = new Date();
-                            if (authentication.$.updated.getTime() < now.getTime() - (1000 * 60 * 10)) {
+                            if (authentication.$.updated.getTime() < now.getTime() - (1000 * self.$.tokenLifeTime)) {
                                 // remove token
                                 authentication.remove();
                                 // return error
-                                cb(AuthenticationError.AUTHENTICATION_EXPIRED, null);
+                                err = AuthenticationError.AUTHENTICATION_EXPIRED;
                             }
                         } else {
-                            cb(err);
+                            // TODO: change to authentication not found
+                            err = AuthenticationError.AUTHENTICATION_EXPIRED;
                         }
+
+                        cb(err, authentication);
                     });
                 })
                 .seq(function (cb) {
-                    if (this.authentication) {
-                        this.authentication.save(null, cb);
-                    } else {
-                        cb();
-                    }
+                    this.vars.authentication.save(null, cb);
+                })
+                .seq(function (cb) {
+                    // init authentication
+                    this.vars.authentication.init(cb);
                 })
                 .exec(function (err, results) {
-                    callback && callback(err, results.authentication);
+                    authentication = results.authentication;
+                    if (!err && authentication) {
+                        context.user.addAuthentication(authentication);
+                    }
+                    callback && callback(err, authentication);
                 });
+        },
+
+        deauthenticateToken: function (token, callback) {
+            var authentication = this.$.dataSource.createEntity(Authentication, token);
+
+            authentication.remove(null, callback);
         },
 
         /***
@@ -141,7 +168,7 @@ define(["js/core/Component", "srv/auth/AuthenticationProvider", "flow", "srv/aut
          * @param authenticationRequest
          * @param callback
          */
-        authenticateByRequest: function (authenticationRequest, callback) {
+        authenticateByRequest: function (context, authenticationRequest, callback) {
             //
             var authProvider = this.getAuthenticationProviderForRequest(authenticationRequest);
 
@@ -156,8 +183,12 @@ define(["js/core/Component", "srv/auth/AuthenticationProvider", "flow", "srv/aut
                         this.vars.authentication.init(cb);
                     })
                     .exec(function (err, results) {
+                        var authentication = results.authentication;
+                        if (!err && authentication) {
+                            context.user.addAuthentication(authentication);
+                        }
                         // return authentication with user id
-                        callback(err, results.authentication);
+                        callback(err, authentication);
                     })
             } else {
                 callback(AuthenticationError.NO_PROVIDER_FOUND, null);

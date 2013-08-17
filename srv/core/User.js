@@ -70,6 +70,10 @@ define(["js/core/Bindable", "js/core/List", "flow", "srv/auth/AuthorizationReque
                 }
             });
 
+        },
+
+        isAuthenticated: function () {
+            return !this.$.authentications.isEmpty();
         }
 
     });

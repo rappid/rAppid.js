@@ -21,9 +21,9 @@ define(['srv/auth/AuthenticationFilter', 'flow', 'srv/core/AuthenticationService
         },
 
         beginRequest: function (context, callback) {
-            if(this.isResponsibleForRequest(context)){
+            if (this.isResponsibleForRequest(context)) {
                 var parameter = context.request.get.parameter;
-                this.authenticateRequestByToken(parameter[this.$.tokenParameter], context, callback);
+                this.authenticateRequestByToken(context, parameter[this.$.tokenParameter], callback);
             } else {
                 callback();
             }
