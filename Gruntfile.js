@@ -170,7 +170,7 @@ module.exports = function (grunt) {
                         require(__dirname + "/bin/lib/server.js")({
                             environment: "test",
                             serverRoot: __dirname + "/test/server/rest",
-                            documentRoot: __dirname  + "test/server/public"
+                            documentRoot: __dirname  + "/test/server/public"
                         }, function(err, instance) {
 
                             if (!err) {
