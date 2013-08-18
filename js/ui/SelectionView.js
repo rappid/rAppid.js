@@ -111,7 +111,7 @@ define(["js/ui/ItemsView", "js/html/HtmlElement", "underscore", "js/core/List"],
             this.callBase();
 
             if (this.$.needsSelection) {
-                var items = this._getItemsArray();
+                var items = this._getItemsArray(this.$.items);
                 if (items && items.length) {
                     for (var i = 0; i < items.length; i++) {
                         if (this.$.selectedItem === items[i]) {
