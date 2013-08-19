@@ -31,17 +31,17 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
             },
 
             ctor: function (attributes) {
-                if(!Bindable){
+                if (!Bindable) {
                     try {
                         Bindable = requirejs('js/core/Bindable');
-                    } catch(e) {
+                    } catch (e) {
                         Bindable = null;
                     }
                 }
                 this.callBase();
                 this.$targets = [];
                 this.$ = attributes;
-                _.defaults(this.$,this.defaults);
+                _.defaults(this.$, this.defaults);
 
                 this.initialize();
             },
@@ -64,14 +64,14 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
                     this.$.rootScope = this;
                 }
                 var scope = this.$.scope;
-                if(_.isString(this.$.path)){
-                    this.$.path = Parser.parse(this.$.path,'path');
+                if (_.isString(this.$.path)) {
+                    this.$.path = Parser.parse(this.$.path, 'path');
                 }
                 // split up first key
                 this.$.key = this.$.path[0];
                 var self = this;
 
-                if(!this.$.parent){
+                if (!this.$.parent) {
                     // destroy yourself on target or scope destroy
                     scope.bind('destroy', this.destroy, this);
 
@@ -118,14 +118,14 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
                         for (var j = 0; j < parameters.length; j++) {
                             para = parameters[j];
                             // if we have an array, it's a path
-                            if(para instanceof Array) {
+                            if (para instanceof Array) {
                                 para = {
                                     path: para,
                                     type: TYPE_NORMAL,
                                     parent: null
                                 };
                             }
-                            if(_.isObject(para)){
+                            if (_.isObject(para)) {
                                 para = this.$.bindingCreator.create(para, this.$.target, cb);
                             }
                             this.$parameters.push(para);
@@ -146,7 +146,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
 
                 if (this.$.twoWay === true) {
                     this.$.targetEvent = 'change:' + this.$.targetKey;
-                    if(this.$.path.length === 1){
+                    if (this.$.path.length === 1) {
                         this.$.target.bind(this.$.targetEvent, this._revCallback, this);
                     }
                 }
@@ -158,7 +158,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
                 this._createSubBinding();
             },
 
-            _getOnChangeAttributesForFnc: function(scope, fnc) {
+            _getOnChangeAttributesForFnc: function (scope, fnc) {
                 var ret = [];
                 if (fnc._attributes && fnc._attributes.length > 0) {
 
@@ -184,7 +184,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
 
             },
 
-            _getEventsForFnc: function(scope, fnc){
+            _getEventsForFnc: function (scope, fnc) {
                 var ret = [];
                 if (fnc._events && fnc._events.length > 0) {
 
@@ -201,7 +201,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
                                 ret = ret.concat(this._getEventsForFnc(scope, extendFunction));
                             }
                         } else {
-                            if(!_.contains(ret,event)){
+                            if (!_.contains(ret, event)) {
                                 ret.push(event);
                             }
                         }
@@ -236,17 +236,17 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
 
                 }
 
-                if(!this.$.bindingCreator){
+                if (!this.$.bindingCreator) {
                     this.$.bindingCreator = this;
                 }
 
-                if(this.$.transform){
-                    this.transform = this.$.transform;
-                }
+                this.transform = this.$.transform || this.transform;
+                this.transformScope = this.$.transformScope || this.$.scope;
 
-                if (this.$.transformBack) {
-                    this.transformBack = this.$.transformBack;
-                }
+
+                this.transformBack = this.$.transformBack || this.transformBack;
+                this.transformBackScope = this.$.transformBackScope || this.$.scope;
+
             },
             _createSubBinding: function () {
                 if (this.$.path.length > 1) {
@@ -259,13 +259,28 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
                     this.$jsonObject = undefined;
                     // if keys are left and has value && is bindable
                     // get value for first child
-                    if(nScope instanceof Bindable){
+                    if (nScope instanceof Bindable) {
                         // init new binding, which triggers this binding
-                        this.$subBinding = new Binding({scope: nScope, path: this.$.path.slice(1), target: this.$.target, targetKey: this.$.targetKey, rootScope: this.$.rootScope, callback: this.$.callback, context: this.$.context, twoWay: this.$.twoWay, transform: this.$.transform, transformBack: this.$.transformBack, bindingCreator: this.$.bindingCreator, parent: this, root: this.$.root});
-                    } else if(nScope instanceof Object){
+                        this.$subBinding = new Binding({
+                            scope: nScope,
+                            path: this.$.path.slice(1),
+                            target: this.$.target,
+                            targetKey: this.$.targetKey,
+                            rootScope: this.$.rootScope,
+                            callback: this.$.callback,
+                            context: this.$.context,
+                            twoWay: this.$.twoWay,
+                            transform: this.$.transform,
+                            transformScope: this.$.transformScope,
+                            transformBack: this.$.transformBack,
+                            transformBackScope: this.$.transformBackScope,
+                            bindingCreator: this.$.bindingCreator,
+                            parent: this,
+                            root: this.$.root});
+                    } else if (nScope instanceof Object) {
                         // we have a object which is not bindable
                         this.$jsonObject = nScope;
-                    } else if(_.isString(nScope)){
+                    } else if (_.isString(nScope)) {
                         this.$jsonObject = nScope;
                     }
 
@@ -277,7 +292,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
                     params.unshift(e.$);
                     this.$.fnc.apply(this.$.scope, params);
                 } else {
-                    this.$.scope.set(pathToString(this.$.path), this.transformBack.call(this.$.scope, e.$, this.$originalValue));
+                    this.$.scope.set(pathToString(this.$.path), this.transformBack.call(this.transformBackScope, e.$, this.$originalValue));
                 }
             },
             /**
@@ -306,7 +321,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
              */
             _callback: function () {
 
-                if(!this.$){
+                if (!this.$) {
                     return;
                 }
 
@@ -328,7 +343,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
              */
             _innerDestroy: function () {
                 // binding already destroyed?
-                if(!this.$){
+                if (!this.$) {
                     return;
                 }
                 var e;
@@ -361,7 +376,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
                 this.callBase();
 
                 bindingsDestroyed++;
-                if(bindingsDestroyed === 500){
+                if (bindingsDestroyed === 500) {
                     if (typeof(CollectGarbage) == "function") {
                         CollectGarbage();
                     }
@@ -394,7 +409,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
                     return this.$subBinding.getValue();
                 } else {
 
-                    if(this.$cachedValue !== undefined && !this.$jsonObject){
+                    if (this.$cachedValue !== undefined && !this.$jsonObject) {
                         return this.$cachedValue;
                     }
 
@@ -403,16 +418,16 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
                         this.$originalValue = this.$.fnc.apply(this.$.scope, this._getFncParameters());
                     } else if (this.$.path.length === 1) {
                         this.$originalValue = this.$.scope.get(this.$.key.name);
-                    } else if(this.$jsonObject && !_.isString(this.$jsonObject)) {
+                    } else if (this.$jsonObject && !_.isString(this.$jsonObject)) {
                         this.$originalValue = this.$.scope.get(this.$jsonObject, this.$.path.slice(1));
                     }
-                    this.$cachedValue = this.transform.call(this.$.scope, this.$originalValue);
+                    this.$cachedValue = this.transform.call(this.transformScope, this.$originalValue);
                     return this.$cachedValue;
                 }
 
             },
 
-            invalidateValueCache: function(){
+            invalidateValueCache: function () {
                 this.$cachedValue = undefined;
             },
 
@@ -436,10 +451,10 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
 
                 var target,
                     targets = this.$.root.getTargets();
-                if(targets){
-                    for(var i = 0; i < targets.length; i++){
+                if (targets) {
+                    for (var i = 0; i < targets.length; i++) {
                         target = targets[i];
-                        if(target.key instanceof Function){
+                        if (target.key instanceof Function) {
                             target.key.call(target.scope, val, this);
                         } else {
                             target.scope.set(target.key, val);
@@ -452,7 +467,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
                 return this.getValue();
             },
 
-            getTargets: function(){
+            getTargets: function () {
                 return this.$targets;
             },
 
@@ -461,10 +476,10 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
              * @param {js.core.Bindable} targetScope
              * @param {String|Function} key
              */
-            addTarget: function(targetScope, key){
-                targetScope.bind('destroy', function(){
+            addTarget: function (targetScope, key) {
+                targetScope.bind('destroy', function () {
                     this.removeTarget(targetScope, key);
-                },this);
+                }, this);
 
                 this.$targets.push({
                     scope: targetScope,
@@ -476,41 +491,41 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
              * @param {js.core.Bindable} targetScope
              * @param {String|Function} key
              */
-            removeTarget: function(targetScope, key){
+            removeTarget: function (targetScope, key) {
                 var target;
-                if(this.$targets){
+                if (this.$targets) {
                     for (var i = 0; i < this.$targets.length; i++) {
                         target = this.$targets[i];
                         if (target.key === key && target.scope === targetScope) {
-                            this.$targets.splice(i,1);
+                            this.$targets.splice(i, 1);
                             break;
                         }
                     }
-                    if(this.$targets.length === 0){
+                    if (this.$targets.length === 0) {
                         this.destroy();
                     }
                 }
             },
 
-            create: function(bindingDef, target, callback){
+            create: function (bindingDef, target, callback) {
                 var options = {
                     scope: this.$.scope,
                     target: target,
                     callback: callback,
                     path: bindingDef.path,
                     parent: bindingDef.parent,
-                    twoWay : bindingDef.type === TYPE_TWOWAY, bindingCreator: this.$.bindingCreator};
+                    twoWay: bindingDef.type === TYPE_TWOWAY, bindingCreator: this.$.bindingCreator};
 
                 var fncEl;
                 var fncScope;
-                if(bindingDef.transform) {
+                if (bindingDef.transform) {
                     fncEl = bindingDef.transform.pop();
                     fncScope = this.get(bindingDef.transform);
-                    if(fncScope){
+                    if (fncScope) {
                         options.transform = fncScope[fncEl.name];
                     }
                 }
-                if(bindingDef.transformBack){
+                if (bindingDef.transformBack) {
                     fncEl = bindingDef.transformBack.pop();
                     fncScope = this.get(bindingDef.transform);
                     if (fncScope) {
@@ -523,9 +538,9 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
 
     var TYPE_FNC = Binding.TYPE_FNC = "fnc";
     var TYPE_VAR = Binding.TYPE_VAR = "var";
-    var TYPE_NORMAL = Binding.TYPE_NORMAL ="normal";
-    var TYPE_STATIC = Binding.TYPE_STATIC ="static";
-    var TYPE_TWOWAY = Binding.TYPE_TWOWAY ="twoWay";
+    var TYPE_NORMAL = Binding.TYPE_NORMAL = "normal";
+    var TYPE_STATIC = Binding.TYPE_STATIC = "static";
+    var TYPE_TWOWAY = Binding.TYPE_TWOWAY = "twoWay";
 
     Binding.contextToString = function (context) {
         var str = "", el;

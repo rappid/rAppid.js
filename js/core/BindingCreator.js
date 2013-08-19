@@ -81,7 +81,7 @@ define(['js/core/EventDispatcher', 'js/lib/parser', 'js/core/Binding', 'undersco
                         cacheBinding = !cb && !twoWay && context && context.length === 1 && (context[0] instanceof Object);
 
                     if (cacheBinding) {
-                        cacheId = pathToString(bindingDef.path) + "_" + scope.$cid;
+                        cacheId = pathToString(bindingDef.path) + "_" + scope.$cid + "_" + (bindingDef.transform ? bindingDef.transform : "") + "_" + (bindingDef.transformBack ? bindingDef.transformBack : "");
                         if (bindingCache[cacheId]) {
                             bindingCache[cacheId].addTarget(targetScope, attrKey);
                             return bindingCache[cacheId];
@@ -100,17 +100,23 @@ define(['js/core/EventDispatcher', 'js/lib/parser', 'js/core/Binding', 'undersco
                     };
 
                     if (twoWay) {
-                        if (bindingDef.transform) {
-                            var transformFnc = findTransformFunction(bindingDef.transform, searchScope);
-                            if (transformFnc) {
-                                options.transform = transformFnc;
+                        var fncName,
+                            fncScope;
+                        if (bindingDef.transform && bindingDef.transform.length) {
+                            fncName = bindingDef.transform[0].name;
+                            fncScope = searchScope.getScopeForFncName(fncName);
+                            if (fncScope && fncScope[fncName] instanceof Function) {
+                                options.transform = fncScope[fncName];
+                                options.transformScope = fncScope;
                             }
                         }
 
-                        if (bindingDef.transformBack) {
-                            var transformBackFnc = findTransformFunction(bindingDef.transformBack, searchScope);
-                            if (transformBackFnc) {
-                                options.transformBack = transformBackFnc;
+                        if (bindingDef.transformBack && bindingDef.transformBack.length) {
+                            fncName = bindingDef.transformBack[0].name;
+                            fncScope = searchScope.getScopeForFncName(fncName);
+                            if (fncScope && fncScope[fncName] instanceof Function) {
+                                options.transformBack = fncScope[fncName];
+                                options.transformBackScope = fncScope;
                             }
                         }
                     }
