@@ -150,7 +150,7 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
                     }
                 })
                 .exec(function (err) {
-                    callback(err, self);
+                    callback && callback(err, self);
                 });
         },
 
