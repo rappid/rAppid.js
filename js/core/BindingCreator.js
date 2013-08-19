@@ -81,7 +81,7 @@ define(['js/core/EventDispatcher', 'js/lib/parser', 'js/core/Binding', 'undersco
                         cacheBinding = !cb && !twoWay && context && context.length === 1 && (context[0] instanceof Object);
 
                     if (cacheBinding) {
-                        cacheId = pathToString(bindingDef.path) + "_" + scope.$cid + "_" + (bindingDef.transform ? bindingDef.transform : "") + "_" + (bindingDef.transformBack ? bindingDef.transformBack : "");
+                        cacheId = pathToString(bindingDef.path) + "_" + scope.$cid + "_" + (bindingDef.transform ? bindingDef.transform.join(".") : "") + "_" + (bindingDef.transformBack ? bindingDef.transformBack.join(".") : "");
                         if (bindingCache[cacheId]) {
                             bindingCache[cacheId].addTarget(targetScope, attrKey);
                             return bindingCache[cacheId];
