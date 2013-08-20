@@ -28,16 +28,26 @@ module.exports = function (options, callback) {
         serverFactoryClassName = options.serverFactoryClassName,
         serverInstance;
 
+    var serverModule = require(path.join(options.serverRoot, "..", "index.js"));
+
     if (path.resolve(configPath) !== configPath) {
         configPath = path.join(serverRoot, configPath);
     }
 
     var config = {},
-        parameter = {};
+        parameter = {},
+        projectRequire = serverModule.require,
+        rappidRequire = require;
 
     try {
         _.defaults(config, {
-            nodeRequire: require,
+            nodeRequire: function () {
+                try {
+                    return rappidRequire.apply(rappidRequire, arguments);
+                } catch (e) {
+                    return projectRequire.apply(projectRequire, arguments);
+                }
+            },
             baseUrl: serverRoot,
             documentRoot: documentRoot,
             serverRoot: serverRoot
@@ -48,7 +58,7 @@ module.exports = function (options, callback) {
         return;
     }
 
-    config.suppress =  {
+    config.suppress = {
         nodeShim: true
     };
 
