@@ -28,7 +28,12 @@ module.exports = function (options, callback) {
         serverFactoryClassName = options.serverFactoryClassName,
         serverInstance;
 
-    var serverModule = require(path.join(options.serverRoot, "..", "index.js"));
+    var serverModule;
+    try {
+        serverModule = require(path.join(options.serverRoot, "..", "index.js"));
+    } catch(e){
+        console.warn("WARN: No index.js for server module defined. Please add a index.js file in the project directory");
+    }
 
     if (path.resolve(configPath) !== configPath) {
         configPath = path.join(serverRoot, configPath);
@@ -36,7 +41,7 @@ module.exports = function (options, callback) {
 
     var config = {},
         parameter = {},
-        projectRequire = serverModule.require,
+        projectRequire = (serverModule ? serverModule.require : null),
         rappidRequire = require;
 
     try {
