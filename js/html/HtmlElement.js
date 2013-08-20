@@ -33,7 +33,10 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
             if (!element["__update" + attribute]) {
                 var self = element;
                 element["__update" + attribute] = function () {
-                    self.set(attribute, self.$el[attributeMap[attribute]]);
+                    // setTimeout fix because of safari iOS bug: height and width are set after event is triggered
+                    setTimeout(function(){
+                        self.set(attribute, self.$el[attributeMap[attribute]]);
+                    },1);
                 };
                 element.dom(element.$stage.$window).bindDomEvent('resize', element["__update" + attribute]);
             }
