@@ -64,7 +64,7 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
                 parentConfiguration = parentConfiguration.$parent;
             }
 
-            return path.join("/");
+            return encodeURI(path.join("/"));
         },
 
 
