@@ -93,6 +93,20 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
                             this.$events.push({eventType: "change", callback: this._changeCallback});
                         }
 
+                        var path;
+                        // for paths like .onChange("address.city","some.other.stuff");
+                        for (var a = 0; a < fnc._attributes.length; a++) {
+                            path = fnc._attributes[a];
+                            if (path.indexOf(".") > -1) {
+                                this.$.bindingCreator.create({
+                                    scope: this.$.scope,
+                                    path: path,
+                                    type: TYPE_NORMAL,
+                                    parent: null
+                                }, this, this._callback);
+                            }
+                        }
+
                         fnc._events = this._getEventsForFnc(scope, fnc);
                         if (fnc._events) {
                             events = fnc._events;

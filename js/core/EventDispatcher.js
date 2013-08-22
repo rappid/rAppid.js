@@ -1,4 +1,4 @@
-define(["js/core/Base",'rAppid'], function (Base, rAppid) {
+define(["js/core/Base", 'rAppid'], function (Base, rAppid) {
 
     /***
      * @param {arguments} eventTypes
@@ -24,8 +24,9 @@ define(["js/core/Base",'rAppid'], function (Base, rAppid) {
         var events = Array.prototype.slice.call(arguments);
         this._events = this._events || [];
         this._attributes = this._attributes || [];
+        var event;
         for (var i = 0; i < events.length; i++) {
-            var event = events[i];
+            event = events[i];
             this._attributes.push(event);
         }
 

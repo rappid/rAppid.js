@@ -312,6 +312,49 @@ describe('js.core.Binding', function () {
             target.get('val').should.equal("City1 Street1");
         });
 
+        it("onChange('address.city') should trigger when address or city changes", function () {
+            var Person = ExtendedClass.inherit({
+                defaults: {
+                    address: null
+                },
+                myCity: function () {
+                    return this.get('address.city');
+                }.onChange('address.city')
+            });
+
+            var Address = ExtendedClass.inherit({
+                defaults: {
+                    city: "OldCity",
+                    street: ""
+                }
+            });
+
+            var person = new Person();
+            var address = new Address({
+                city: "City1",
+                street: "Street1"
+            });
+            var target = new ExtendedClass();
+
+            new C.Binding({scope: person, path: "myCity()", target: target, targetKey: 'val'}).triggerBinding();
+
+            should.not.exist(target.get('val'));
+
+            var cityName = "AwesomeCity";
+            person.set('address', address);
+
+            should.exist(target.get('val'));
+
+            person.$.address.set('city', cityName);
+
+            should.exist(target.get('val'));
+            target.get('val').should.equal(cityName);
+
+            person.set('address', null);
+
+            should.not.exist(target.get('val'));
+        });
+
         it("function binding on non bindables should return correct value", function () {
 
 
