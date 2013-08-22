@@ -61,6 +61,10 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                  */
                 componentClass: null,
 
+                /**
+                 *
+                 */
+                animationClass: null,
                 /***
                  * sets the visibility of an component. If the value is false the component is removed from the DOM.
                  *
@@ -74,6 +78,7 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                 this.$renderMap = {};
                 this.$children = [];
                 this.$invisibleChildMap = {};
+                this.$animationDurationCache = {};
                 this.$renderedChildren = [];
                 this.$contentChildren = [];
                 this.$domEventHandler = {};
@@ -330,6 +335,21 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                                 this.$el.appendChild(el);
                             }
                         }
+
+
+                        if (child.$.animationClass) {
+                            var animationClass = child.$.animationClass + "-add";
+                            child.addClass(animationClass);
+
+                            var time = this.$animationDurationCache[animationClass] || this._calculationAnimationDuration(child);
+                            this.$animationDurationCache[animationClass] = time;
+
+
+                            setTimeout(function () {
+                                child.removeClass(animationClass);
+                            }, time);
+                        }
+
                         if (this.$addedToDom) {
                             child.trigger('add:dom', this.$el);
                         }
@@ -337,6 +357,35 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                         this.$invisibleChildMap[child.$cid] = child;
                     }
                 }
+            },
+
+            _calculationAnimationDuration: function (child) {
+                var style = window.getComputedStyle(child.$el, null),
+                    vendorPrefix = this.$stage.$browser.vendorPrefix;
+
+                function animation(key) {
+                    var ret = [vendorPrefix, "Animation", key].join("");
+                    if (vendorPrefix === "o") {
+                        ret = ret.toLowerCase();
+                    }
+                    return ret;
+                }
+
+                function transition(key) {
+                    var ret = [vendorPrefix, "Transition", key].join("");
+                    if (vendorPrefix === "o") {
+                        ret = ret.toLowerCase();
+                    }
+                    return ret;
+                }
+
+                // TODO: use correct vendor styles
+                var delay = Math.max(parseFloat(style[animation("Delay")]), parseFloat(style[transition("Delay")])) || 0,
+                    duration = Math.max(parseFloat(style[animation("Duration")]), parseFloat(style[transition("Duration")])) || 0,
+                    count = Math.max(parseInt(style[animation("Count")]), parseInt(style[transition("Count")])) || 1;
+
+
+                return ((delay + duration) * count) * 1000;
             },
             /**
              *
@@ -404,12 +453,11 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
             _removeRenderedChild: function (child) {
                 if (this.isRendered()) {
                     var rc;
+
                     for (var i = this.$renderedChildren.length - 1; i >= 0; i--) {
                         rc = this.$renderedChildren[i];
                         if (child === rc) {
-                            if (child.$.visible) {
-                                this.$el.removeChild(rc.$el);
-                            }
+                            this._internalRemoveChild(child);
                             this.$renderedChildren.splice(i, 1);
                             return;
                         }
@@ -417,14 +465,34 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                 }
             },
 
+            _internalRemoveChild: function (child) {
+                if (!child.$.visible) {
+                    return;
+                }
+                var el = this.$el;
+                // animation stuff
+                if (child.$.animationClass) {
+                    var animationClass = child.$.animationClass + "-remove";
+                    child.addClass(animationClass);
+
+                    var time = this.$animationDurationCache[animationClass] || this._calculationAnimationDuration(child);
+                    this.$animationDurationCache[animationClass] = time;
+
+                    setTimeout(function () {
+                        el.removeChild(child.$el);
+                    }, time);
+                } else {
+                    this.$el.removeChild(child.$el);
+                }
+            },
+
+
             _clearRenderedChildren: function () {
                 if (this.isRendered()) {
                     var rc;
                     for (var i = this.$renderedChildren.length - 1; i >= 0; i--) {
                         rc = this.$renderedChildren[i];
-                        if (rc.$.visible) {
-                            this.$el.removeChild(rc.$el);
-                        }
+                        this._internalRemoveChild(rc);
                     }
                 }
                 this.$renderedChildren = [];
@@ -685,7 +753,7 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                 var className = this.$el.getAttribute("class") || "";
 
                 if (!className && classNames.length === 1) {
-                    this.$el.setAttribute("class", value);
+                    className = value;
                 } else {
                     var setClasses = className.split(rspace);
 
@@ -694,9 +762,11 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                             setClasses.push(classNames[i]);
                         }
                     }
+                    className = setClasses.join(" ");
 
-                    this.$el.setAttribute("class", setClasses.join(" "));
                 }
+                // IMPORTANT: use setAttribute otherwise the css classes won't be set on SVG elements
+                this.$el.setAttribute("class", className);
             },
 
             removeClass: function (value) {
