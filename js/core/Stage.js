@@ -140,7 +140,20 @@ define(["js/html/HtmlElement", "js/core/Bus", "js/core/WindowManager", "js/core/
                     'MozTransition' in s ||
                     'msTransition' in s ||
                     'OTransition' in s;
+
+
+                function getVendorPrefix(){
+                    if('WebkitTransition' in s) return "webkit";
+                    if ('MozTransition' in s) return "Moz";
+                    if ('msTransition' in s) return "MS";
+                    if ('OTransition' in s) return "o";
+                    return "";
+                }
+
+                browser.vendorPrefix = getVendorPrefix();
             }
+
+
 
             return browser;
 
