@@ -446,6 +446,8 @@ if (typeof requirejs !== "undefined") {
 
     ApplicationContext.prototype.createApplicationInstance = function (window, callback, parameter) {
 
+        parameter = parameter || {};
+
         var document,
             time = (new Date()).getTime();
 
@@ -474,6 +476,7 @@ if (typeof requirejs !== "undefined") {
 
             stage.$environment = new Bindable();
             stage.$parameter = parameter;
+            stage.$environmentName = parameter.environment;
 
             injection.addInstance(stage.$bus);
             injection.addInstance(stage.$history);
