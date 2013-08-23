@@ -269,11 +269,12 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
                             if (!options.upsert && !newData) {
                                 // no update happened
                                 err = DataSource.ERROR.NOT_FOUND;
-                            }
-                            var idObject = newData._id;
+                            } else {
+                                var idObject = newData._id;
 
-                            if (idObject && model.createdField) {
-                                model.set(model.createdField, idObject.getTimestamp());
+                                if (idObject && model.createdField) {
+                                    model.set(model.createdField, idObject.getTimestamp());
+                                }
                             }
                         }
                         cb(err, model);

@@ -60,15 +60,15 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore", "js/da
 
             if (query instanceof Query) {
 
-                var options = _.defaults({}, rootCollection.$, {
+                var options = _.defaults({}, {
                     query: query,
                     root: rootCollection
-                });
+                }, rootCollection.$);
 
                 var filterCacheId = query.whereCacheId(),
                     cache = rootCollection.$filterCache;
 
-                if(filterCacheId){
+                if (filterCacheId) {
                     if (!cache[filterCacheId]) {
                         cache[filterCacheId] = this._createFilteredCollection(query, options);
                     }
@@ -100,12 +100,15 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore", "js/da
 
         sort: function (query) {
             if (query instanceof Query && query.query.sort) {
+                if (this.$.query) {
+                    query.query.where = this.$.query.query.where;
+                }
 
 
-                var options = _.defaults({}, this.$, {
+                var options = _.defaults({}, {
                     query: query,
                     root: this.getRoot()
-                });
+                }, this.$);
 
                 var sortCacheId = query.sortCacheId();
 

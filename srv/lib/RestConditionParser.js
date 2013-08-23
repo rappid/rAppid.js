@@ -1035,68 +1035,13 @@ exports.parser = (function () {
             function parse_unreserved() {
                 var result0;
 
-                if (/^[a-zA-Z]/.test(input.charAt(pos))) {
+                if (/^[^+{}()<>=, ]/.test(input.charAt(pos))) {
                     result0 = input.charAt(pos);
                     pos++;
                 } else {
                     result0 = null;
                     if (reportFailures === 0) {
-                        matchFailed("[a-zA-Z]");
-                    }
-                }
-                if (result0 === null) {
-                    if (/^[0-9]/.test(input.charAt(pos))) {
-                        result0 = input.charAt(pos);
-                        pos++;
-                    } else {
-                        result0 = null;
-                        if (reportFailures === 0) {
-                            matchFailed("[0-9]");
-                        }
-                    }
-                    if (result0 === null) {
-                        if (input.charCodeAt(pos) === 45) {
-                            result0 = "-";
-                            pos++;
-                        } else {
-                            result0 = null;
-                            if (reportFailures === 0) {
-                                matchFailed("\"-\"");
-                            }
-                        }
-                        if (result0 === null) {
-                            if (input.charCodeAt(pos) === 46) {
-                                result0 = ".";
-                                pos++;
-                            } else {
-                                result0 = null;
-                                if (reportFailures === 0) {
-                                    matchFailed("\".\"");
-                                }
-                            }
-                            if (result0 === null) {
-                                if (input.charCodeAt(pos) === 95) {
-                                    result0 = "_";
-                                    pos++;
-                                } else {
-                                    result0 = null;
-                                    if (reportFailures === 0) {
-                                        matchFailed("\"_\"");
-                                    }
-                                }
-                                if (result0 === null) {
-                                    if (input.charCodeAt(pos) === 126) {
-                                        result0 = "~";
-                                        pos++;
-                                    } else {
-                                        result0 = null;
-                                        if (reportFailures === 0) {
-                                            matchFailed("\"~\"");
-                                        }
-                                    }
-                                }
-                            }
-                        }
+                        matchFailed("[^+{}()<>=, ]");
                     }
                 }
                 return result0;
