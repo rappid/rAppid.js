@@ -7,13 +7,13 @@
             <font-face-src>
                 <font-face-name name="{$fontFamily}"/>
                 <font-face-uri xlink:href="{$src}">
-                    <font-face-format string="svg"/>
+                    <font-face-format string="woff"/>
                 </font-face-uri>
             </font-face-src>
         </font-face>
     </js:Template>
 
-    <g cid="hidden" style="visibility:hidden" />
+    <g cid="hidden"  />
 
 </svg:SvgClass>
 
