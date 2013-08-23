@@ -27,9 +27,6 @@ define(["js/core/Window", "js/html/HtmlElement", "js/lib/extension", "underscore
          * @param {Function} callback
          */
         start: function (parameter, callback) {
-            parameter = parameter || {};
-            this.$stage.$parameter = parameter;
-            this.$stage.$environmentName = parameter.environment;
             this.show();
 
             this._startHistory(callback, parameter.initialHash);
