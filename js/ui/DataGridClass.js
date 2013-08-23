@@ -1,4 +1,4 @@
-define(['js/ui/View', 'xaml!js/ui/DataGridColumn', 'js/core/List', 'underscore', 'js/ui/DataGridItemsViewClass', 'js/data/Query'], function (View, DataGridColumn, List, _, DataGridItemsViewClass, Query) {
+define(['js/ui/View', 'xaml!js/ui/DataGridColumn', 'js/core/List', 'underscore', 'js/ui/DataGridItemsViewClass', 'js/data/Query', "js/data/Collection"], function (View, DataGridColumn, List, _, DataGridItemsViewClass, Query, Collection) {
 
     return View.inherit('js.ui.DataGridClass', {
 
@@ -9,7 +9,8 @@ define(['js/ui/View', 'xaml!js/ui/DataGridColumn', 'js/core/List', 'underscore',
             prefetchItemCount: 0,
             selectedItems: List,
             selectionMode: "multi",
-            data: null
+            data: null,
+            query: null
         },
 
         events: [
@@ -50,40 +51,37 @@ define(['js/ui/View', 'xaml!js/ui/DataGridColumn', 'js/core/List', 'underscore',
                 }
             }
         },
-        sort: function(sortPath, sortDirection){
-            this.$sortQuery = this.$sortQuery || new Query();
-            this.$sortQuery.sort((sortDirection === 1 ? "+" : "-") + sortPath);
+        sort: function (sortPath, sortDirection) {
+            var sortQuery = new Query();
+            sortQuery.sort((sortDirection === 1 ? "+" : "-") + sortPath);
             this.$sortParamter = this.$sortParameter || {};
             var sortColumn;
-            this.$.$columns.each(function(column){
-                if(column.getSortPath() === sortPath){
+            this.$.$columns.each(function (column) {
+                if (column.getSortPath() === sortPath) {
                     column.set('sortDirection', sortDirection);
                     sortColumn = column;
                 } else {
                     column.set('sortDirection', 0);
                 }
             });
-            if(sortColumn){
+            if (sortColumn) {
                 this.$sortParamter[sortPath] = sortColumn.$.sortDirection;
             }
-            if (this.$.query) {
-                this.$.query.sort(this.$sortQuery.query.sort);
-                this.set('query', this.$.query, {force: true});
-            } else {
-                this.set('query', this.$sortQuery);
-            }
+            this.set('sortQuery', sortQuery);
         },
-        _commitQuery: function (query) {
-            if (query) {
-                if (this.$sortQuery) {
-                    query.sort(this.$sortQuery.query.sort);
+        _data: function () {
+            var data = this.$.data;
+            if (data instanceof Collection) {
+                if (this.$.query) {
+                    data = data.query(this.$.query);
                 }
-                // TODO: if sort parameters are set, use them
-                this.$.$itemsView.query(query);
-            } else {
-                this.$.$itemsView.query(this.$sortQuery || null);
+                if (this.$.sortQuery) {
+                    data = data.sort(this.$.sortQuery);
+                }
             }
-        },
+            return data;
+        }.onChange("data", "sortQuery", "query"),
+
         addChild: function (child) {
             this.callBase();
             if (child instanceof DataGridColumn) {
