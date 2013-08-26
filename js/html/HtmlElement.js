@@ -126,7 +126,7 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
         /**
          * @type Array
          */
-        $excludedStyleAttributes: ['src', 'content'],
+        $excludedStyleAttributes: ['src', 'content', 'item'],
 
         /***
          * @type Array
@@ -171,7 +171,7 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
         _setAttribute: function (key, value) {
 
             if (_.indexOf(this.$renderAsStyleWithPx, key) !== -1) {
-                if (!_.isString(value)) {
+                if (value != null && !_.isString(value)) {
                     value += "px";
                 }
             }
@@ -267,7 +267,7 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
         _renderAttributeInternal: function (key, value) {
             if (this._isStyleAttribute(key)) {
                 if (_.indexOf(this.$renderAsStyleWithPx, key) !== -1) {
-                    if (!_.isString(value)) {
+                    if (value != null && !_.isString(value)) {
                         value += "px";
                     }
                 }
