@@ -129,6 +129,9 @@ define(["js/html/HtmlElement", "js/core/Bus", "js/core/WindowManager", "js/core/
                     if (browserName) {
                         browserName = "ie ie" + browserName[1];
                         browser.name = browserName;
+                        browser.isIE = true;
+                    } else {
+                        browser.isIE = false;
                     }
 
                 }
