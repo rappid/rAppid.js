@@ -266,7 +266,16 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
                         if (injection) {
                             for (var name in inject) {
                                 if (inject.hasOwnProperty(name)) {
-                                    this.$[name] = injection.getInstance(inject[name]);
+                                    try {
+                                        this.$[name] = injection.getInstance(inject[name]);
+                                    } catch (e) {
+
+                                        if (_.isString(e)) {
+                                            e = new Error(e + " for key '" + name + "'");
+                                        }
+
+                                        throw e;
+                                    }
                                 }
                             }
                         } else {
