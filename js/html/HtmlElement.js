@@ -34,9 +34,9 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
                 var self = element;
                 element["__update" + attribute] = function () {
                     // setTimeout fix because of safari iOS bug: height and width are set after event is triggered
-                    setTimeout(function(){
+                    setTimeout(function () {
                         self.set(attribute, self.$el[attributeMap[attribute]]);
-                    },1);
+                    }, 1);
                 };
                 element.dom(element.$stage.$window).bindDomEvent('resize', element["__update" + attribute]);
             }
@@ -320,7 +320,12 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
 
                 if (camelCaseKey in this.$el.style) {
                     if (value != null) {
-                        this.$el.style.setProperty(dashKey, value, null);
+                        if (this.$stage.$browser.isIE) {
+                            // IE doesn't update style immediately with setProperty(), so we use style[key] = value
+                            this.$el.style[dashKey] = value;
+                        } else {
+                            this.$el.style.setProperty(dashKey, value, null);
+                        }
                     } else {
                         this.$el.style.removeProperty(dashKey);
                     }
