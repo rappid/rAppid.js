@@ -96,13 +96,6 @@ define(["js/core/Base", 'rAppid'], function (Base, rAppid) {
              */
             trigger: function (eventType, event, target) {
 
-                if (!(this._eventHandlers[eventType] || this._eventHandlers["*"])) {
-                    return;
-                }
-
-                var list,
-                    result, i;
-
                 if (!(event instanceof EventDispatcher.Event)) {
                     event = new EventDispatcher.Event(event);
                 }
@@ -110,7 +103,16 @@ define(["js/core/Base", 'rAppid'], function (Base, rAppid) {
                 if (!event.target) {
                     event.target = target || this;
                 }
+
                 event.type = eventType;
+
+
+                if (!(this._eventHandlers[eventType] || this._eventHandlers["*"])) {
+                    return event;
+                }
+
+                var list,
+                    result, i;
 
                 if (this._eventHandlers[eventType]) {
 
