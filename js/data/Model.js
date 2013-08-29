@@ -94,20 +94,24 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
             } else {
                 this._save.state = SAVESTATE.SAVING;
 
+                var self = this;
+
                 try {
                     var status = this._status();
-                    var self = this;
                     if (status === STATE.NEW || status === STATE.CREATED) {
                         this.$context.$dataSource.saveModel(this, options, function (err) {
+                            self._save.state = err ? SAVESTATE.ERROR : SAVESTATE.CREATED;
+
                             if (!err && self.$collection && options.invalidatePageCache) {
                                 self.$collection.invalidatePageCache();
                             }
+
                             callback && callback(err, self, options);
 
                             _.each(self._save.callbacks, function (cb) {
                                 cb.call(self, err, self);
                             });
-                            self._save.state = SAVESTATE.CREATED;
+
                             self._save.callbacks = [];
                         });
                     } else {
