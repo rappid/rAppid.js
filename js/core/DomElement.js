@@ -25,12 +25,12 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
 
         var pointerToMSPointerMap = {
             'pointer': 'click',
-            'pointerdown': 'mspointerdown',
-            'pointermove': 'mspointermove',
-            'pointerup': 'mspointerup',
-            'pointerout': 'mspointerout',
-            'pointerover': 'mspointerover',
-            'pointerhover': 'mspointerhover'
+            'pointerdown': 'MSPointerDown',
+            'pointermove': 'MSPointerMove',
+            'pointerup': 'MSPointerUp',
+            'pointerout': 'MSPointerOut',
+            'pointerover': 'MSPointerOver',
+            'pointerhover': 'MSPointerHover'
         };
 
         var DomElementFunctions = {
