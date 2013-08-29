@@ -359,6 +359,9 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
 
                     model.set('created', new Date());
                 })
+                .seq(function(cb){
+                    self._beforeModelSave(model, context, cb);
+                })
                 .seq(function (cb) {
                     self._beforeModelCreate(model, context, cb);
                 })
@@ -501,6 +504,9 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
                         options.upsert = true;
                         model.set(model.idField, model.factory.prototype.convertIdentifier(self.$resourceId));
                     }
+                })
+                .seq(function(cb){
+                    self._beforeModelSave(model, context, cb);
                 })
                 .seq(function (cb) {
                     self._beforeModelUpdate(model, context, cb);
@@ -659,11 +665,11 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
                 });
         },
         _beforeModelCreate: function (model, context, callback) {
-            this._beforeModelSave(model, context, callback);
+            callback && callback();
         },
 
         _beforeModelUpdate: function (model, context, callback) {
-            this._beforeModelSave(model, context, callback);
+            callback && callback();
         },
 
         _afterModelCreate: function (model, context, callback) {
