@@ -20,7 +20,7 @@ define(["js/data/DataSource", "js/data/Model", "underscore", "flow", "JSON", "js
                     configuration = configuration.$parent;
                 }
                 var i = 0;
-                while(scopeStack[i].$.path === subModelStack[i].$.path){
+                while(scopeStack[i] && subModelStack[i] && scopeStack[i].$.path === subModelStack[i].$.path){
                     i++;
                 }
                 contextDistance = subModelStack.length - i;
