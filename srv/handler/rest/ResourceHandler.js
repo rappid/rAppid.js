@@ -85,22 +85,34 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
             var method = this._getRequestMethod(context),
                 map = this._isCollectionResource() ? this.$collectionMethodMap : this.$modelMethodMap;
 
-            var fn = this[map[method]];
+            var fn = this[map[method]],
+                self = this;
 
             if (fn instanceof Function) {
                 context.dataSource = this.getDataSource(context, this);
-                var body = context.request.body.content;
+                flow()
+                    .seq(function (cb) {
+                        context.user.isAuthorized({
+                            type: "resource",
+                            method: method,
+                            resource: this
+                        }, cb);
+                    })
+                    .seq(function (cb) {
+                        var body = context.request.body.content;
 
-                if (body !== "") {
-                    // TODO: handle different payload formats -> format processor needed
-                    try {
-                        context.request.params = JSON.parse(body);
-                    } catch (e) {
-                        console.warn("Couldn't parse " + body);
-                    }
-                }
-                // TODO: better apply json post value here to the function
-                fn.call(this, context, callback);
+                        if (body !== "") {
+                            // TODO: handle different payload formats -> format processor needed
+                            try {
+                                context.request.params = JSON.parse(body);
+                            } catch (e) {
+                                console.warn("Couldn't parse " + body);
+                            }
+                        }
+                        // TODO: better apply json post value here to the function
+                        fn.call(self, context, cb);
+                    })
+                    .exec(callback);
 
             } else {
                 throw new HttpError("Method not supported", 405);
