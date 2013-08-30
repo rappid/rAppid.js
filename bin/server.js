@@ -71,6 +71,7 @@ var serverExport = function (args, callback) {
     }, function(err, instance) {
 
         if (err) {
+            console.error(err);
             process.exit(3);
         } else {
             serverInstance = instance;
