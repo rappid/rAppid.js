@@ -35,7 +35,9 @@ define(["js/core/Bindable", "flow"], function (Bindable, flow) {
             /***
              * should the push and pop state api be used
              */
-            useState: false
+            useState: false,
+
+            baseUrl: "/"
         },
 
         // TODO: make this bindable so that i can call this.fragment.triggerChange()
@@ -77,7 +79,8 @@ define(["js/core/Bindable", "flow"], function (Bindable, flow) {
          */
         start: function (callback, initialHash) {
 
-            var self = this;
+            var self = this,
+                fragment;
 
             this.$checkUrlFn = function () {
                 self.checkUrl.apply(self, arguments);
@@ -87,6 +90,9 @@ define(["js/core/Bindable", "flow"], function (Bindable, flow) {
                 // we're in a browser
 
                 if (this.$.useState) {
+
+                    fragment = window.location.pathname;
+                    fragment = fragment.replace(new RegExp("^" + (this.$.baseUrl || "")), "");
 
                     if (window.addEventListener) {
                         window.addEventListener('popstate', this.$checkUrlFn, false);
@@ -114,7 +120,9 @@ define(["js/core/Bindable", "flow"], function (Bindable, flow) {
                 this.$history.push(initialHash || "");
             }
 
-            this.navigate(this._getFragment(), true, true, true, callback);
+            fragment = fragment || this._getFragment();
+
+            this.navigate(fragment, true, true, true, callback);
             this.$processUrl = true;
         },
         /***
@@ -259,8 +267,8 @@ define(["js/core/Bindable", "flow"], function (Bindable, flow) {
                         console.log("Pushing " + fragment + " to history");
 
                         window.history.pushState({
-                            fragment: fragment
-                        }, null, "/" + fragment);
+                            fragment: "/" + fragment
+                        }, null, this.$.baseUrl + fragment);
                     } else {
                         window.location.hash = "/" + encodeURI(fragment);
                     }
@@ -276,8 +284,8 @@ define(["js/core/Bindable", "flow"], function (Bindable, flow) {
                         console.log("Replacing " + fragment + " to history");
 
                         window.history.replaceState({
-                            fragment: fragment
-                        }, null, fragment);
+                            fragment: "/" + fragment
+                        }, null, this.$.baseUrl + fragment);
                     } else {
                         // replace hash
                         window.location.replace("#/" + fragment);
@@ -292,7 +300,6 @@ define(["js/core/Bindable", "flow"], function (Bindable, flow) {
                 this.$fragment = fragment;
                 this.trigger('change:fragment', this.$fragment);
             }
-
 
             if (triggerRoute) {
                 this.triggerRoute(fragment, function() {
