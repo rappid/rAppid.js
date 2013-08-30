@@ -141,6 +141,10 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore", "js/da
          * @param {Function} callback
          */
         fetch: function (options, callback) {
+            if(options instanceof Function){
+                callback = options;
+                options = null;
+            }
             options = options || {};
 
             var self = this;
