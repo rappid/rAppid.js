@@ -92,10 +92,14 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
                 context.dataSource = this.getDataSource(context, this);
                 flow()
                     .seq(function (cb) {
+
+                        // TODO: there is no resource created that contains all information
+                        // about this request. e.g. with models and path elements
+
                         context.user.isAuthorized({
-                            type: "resource",
+                            type: "RestResource",
                             method: method,
-                            resource: this
+                            resource: self
                         }, cb);
                     })
                     .seq(function (cb) {
