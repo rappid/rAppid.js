@@ -137,7 +137,7 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore", "js/da
          * If you want to fetch a specific page, provide limit and/or offset in the options object.
          * The callback will then return the err object and a page with the size of the provided limit and offset
          *
-         * @param {Object} options
+         * @param {Object} [options]
          * @param {Function} callback
          */
         fetch: function (options, callback) {
