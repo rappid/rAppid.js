@@ -84,7 +84,7 @@ if (typeof requirejs !== "undefined") {
             "http://www.w3.org/2000/svg": "js.svg"
         },
         defaultRewriteMap = [
-            new Rewrite(/^js\/html\/(a)$/, "js/html/a"),
+            new Rewrite(/^js\/html\/(a)$/, "js/html/A"),
             new Rewrite(/^js\/html\/(input)$/, "js/html/Input"),
             new Rewrite(/^js\/html\/(select)$/, "js/html/Select"),
             new Rewrite(/^js\/html\/(textarea)$/, "js/html/TextArea"),
