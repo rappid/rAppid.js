@@ -261,10 +261,8 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
                         }
                         endIndex = Math.min(ItemsCount - 1, endIndex);
 
-                        if (this.$isLoading) {
-                            this.removeClass('loading');
-                            this.$isLoading = false;
-                        }
+                        this.removeClass('loading');
+                        this.$isLoading = false;
                     }
 
                     if (forceRefresh || !(startIndex === this.$lastStartIndex && endIndex === this.$lastEndIndex)) {
