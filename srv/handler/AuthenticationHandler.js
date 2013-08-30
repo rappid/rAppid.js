@@ -1,7 +1,7 @@
 define(['srv/core/Handler', 'srv/core/AuthenticationService', 'srv/core/HttpError', 'srv/error/MethodNotAllowedError', 'srv/auth/AuthenticationRequest', 'flow', 'JSON', 'srv/auth/AuthenticationError'],
     function (Handler, AuthenticationService, HttpError, MethodNotAllowedError, AuthenticationRequest, flow, JSON, AuthenticationError) {
 
-        return Handler.inherit('srv.handler.SessionHandler', {
+        return Handler.inherit('srv.handler.AuthenticationHandler', {
 
             defaults: {
                 path: "/api/authentications"
