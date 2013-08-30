@@ -10,6 +10,27 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
 
     MongoQueryComposer = MongoQueryComposer.MongoQueryComposer;
 
+    var translateOperator = MongoQueryComposer.translateOperator;
+
+    MongoQueryComposer.translateOperator = function(operator){
+        /**
+         * Fix to handle ID's right
+         * @param operator
+         * @returns {Function}
+         */
+        if (operator.field === "id") {
+            if ((operator.value instanceof Array)) {
+                for (var i = 0; i < operator.value.length; i++) {
+                    operator.value[i] = new MongoDb.ObjectID(operator.value[i]);
+                }
+            } else {
+                operator.value = new MongoDb.ObjectID(operator.value);
+            }
+        }
+
+        return translateOperator.call(this, operator);
+    };
+
     /***
      * @inherit js.data.DataSource.Processor
      */
