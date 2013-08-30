@@ -3,7 +3,7 @@ define(["srv/auth/AuthorizationProvider"], function (AuthorizationProvider) {
     return AuthorizationProvider.inherit({
 
         isResponsibleForAuthorizationRequest: function (context, authorizationRequest) {
-            return authorizationRequest.$.type === "rest";
+            return authorizationRequest.$.type === "RestResource";
         },
 
         _isAuthorized: function (context, authorizationRequest) {
