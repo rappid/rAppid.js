@@ -41,7 +41,7 @@ module.exports = function (options, callback) {
 
     var config = {},
         parameter = {},
-        projectRequire = (serverModule ? serverModule.require : null),
+        projectRequire = (serverModule ? serverModule.require || serverModule : null),
         rappidRequire = require;
 
     try {
@@ -137,4 +137,4 @@ module.exports = function (options, callback) {
             });
         }
     });
-}
+};
