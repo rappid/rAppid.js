@@ -25,6 +25,8 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
                 width: 300,
                 height: 300,
 
+                loading: false,
+
                 _itemWidth: 100,
                 _itemHeight: 100,
 
@@ -203,12 +205,17 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
 
                 // clear active renderer and scroll to top
                 this._releaseActiveRenderer();
-                if (this.isRendered()) {
-                    this.$isLoading = true;
-                    this.addClass('loading');
-                }
+                this.set('loading', true);
                 this._scrollToIndex(0);
                 this._updateVisibleItems();
+            },
+
+            _renderLoading: function(loading){
+                if(loading){
+                    this.addClass("loading");
+                } else {
+                    this.removeClass("loading");
+                }
             },
 
             _commitChangedAttributes: function (attributes, opt) {
@@ -261,10 +268,7 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
                         }
                         endIndex = Math.min(ItemsCount - 1, endIndex);
 
-                        if (this.$isLoading) {
-                            this.removeClass('loading');
-                            this.$isLoading = false;
-                        }
+                        this.set('loading', false);
                     }
 
                     if (forceRefresh || !(startIndex === this.$lastStartIndex && endIndex === this.$lastEndIndex)) {
