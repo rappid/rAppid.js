@@ -1,6 +1,6 @@
 define(["js/core/Component", "js/data/Collection", "srv/core/Identity", "js/data/Query", "js/data/DataSource"], function (Component, Collection, Identity, Query, DataSource) {
 
-    return Component.inherit('srv/core/IdentityService', {
+    return Component.inherit('srv.core.IdentityService', {
 
         defaults: {
             dataSource: null
