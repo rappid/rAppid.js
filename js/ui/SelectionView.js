@@ -66,23 +66,27 @@ define(["js/ui/ItemsView", "js/html/HtmlElement", "underscore", "js/core/List"],
         },
 
         _onSelectedItemAdd: function (e) {
-            var item;
-            var $renderedItems = this.$repeat.$renderedItems;
-            for (var i = 0; i < $renderedItems.length; i++) {
-                item = $renderedItems[i].item;
-                if (e.$ === item && !$renderedItems[i].component.$.selected) {
-                    $renderedItems[i].component.set({selected: true}, {silent: true});
+            if(this.isRendered()){
+                var item;
+                var $renderedItems = this.$repeat.$renderedItems;
+                for (var i = 0; i < $renderedItems.length; i++) {
+                    item = $renderedItems[i].item;
+                    if (e.$ === item && !$renderedItems[i].component.$.selected) {
+                        $renderedItems[i].component.set({selected: true}, {silent: true});
+                    }
                 }
             }
         },
 
         _onSelectedItemRemove: function (e) {
-            var item;
-            var $renderedItems = this.$repeat.$renderedItems;
-            for (var i = 0; i < $renderedItems.length; i++) {
-                item = $renderedItems[i].item;
-                if (e.$ === item && $renderedItems[i].component.$.selected) {
-                    $renderedItems[i].component.set({selected: false}, {silent: true});
+            if(this.isRendered()){
+                var item;
+                var $renderedItems = this.$repeat.$renderedItems;
+                for (var i = 0; i < $renderedItems.length; i++) {
+                    item = $renderedItems[i].item;
+                    if (e.$ === item && $renderedItems[i].component.$.selected) {
+                        $renderedItems[i].component.set({selected: false}, {silent: true});
+                    }
                 }
             }
         },
@@ -125,6 +129,15 @@ define(["js/ui/ItemsView", "js/html/HtmlElement", "underscore", "js/core/List"],
             }
 
         },
+
+        _commitChangedAttributes: function ($) {
+            if ($.hasOwnProperty("selectedItem") && $["selectedItem"] != null) {
+                this.$.selectedItems.add($["selectedItem"]);
+            }
+
+            this.callBase();
+        },
+
         _renderChild: function (child) {
             if (child instanceof HtmlElement) {
                 var self = this;
@@ -217,7 +230,7 @@ define(["js/ui/ItemsView", "js/html/HtmlElement", "underscore", "js/core/List"],
                     item = $renderedItems[i].item;
                     $renderedItems[i].component.set({selected: (list.indexOf(item) > -1)}, {silent: true});
                 }
-            } else if (this.$placeHolder) {
+            } else if (this.$placeHolder && this.$.selectedItem == null) {
                 this.$placeHolder.set({selected: true}, {silent: true});
             }
         },
