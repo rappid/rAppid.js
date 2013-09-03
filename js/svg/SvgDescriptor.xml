@@ -7,7 +7,7 @@
             <font-face-src>
                 <font-face-name name="{$fontFamily}"/>
                 <font-face-uri xlink:href="{$src}">
-                    <font-face-format string="woff"/>
+                    <font-face-format string="svg"/>
                 </font-face-uri>
             </font-face-src>
         </font-face>
