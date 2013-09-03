@@ -298,15 +298,16 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
                         items = results["page"].$items;
                         // call compose
                         var processor = self.$restHandler.$restDataSource.getProcessorForCollection(collection);
-                        var itemArray = [];
 
                         items.forEach(function (item) {
                             var id = item.identifier();
                             if (id) {
                                 self._fetchAllHrefsForModel(item, context);
                             }
-                            itemArray.push(processor.compose(item, "GET", options));
                         });
+
+                        var itemArray = processor.composeCollection(results["page"], "GET", null);
+
                         var res = {
                             count: results["collection"].$.$itemsCount,
                             limit: limit,
@@ -375,7 +376,7 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
 
                     model.set('created', new Date());
                 })
-                .seq(function(cb){
+                .seq(function (cb) {
                     self._beforeModelSave(model, context, cb);
                 })
                 .seq(function (cb) {
@@ -521,7 +522,7 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
                         model.set(model.idField, model.factory.prototype.convertIdentifier(self.$resourceId));
                     }
                 })
-                .seq(function(cb){
+                .seq(function (cb) {
                     self._beforeModelSave(model, context, cb);
                 })
                 .seq(function (cb) {
