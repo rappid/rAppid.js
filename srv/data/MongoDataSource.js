@@ -343,6 +343,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
             var mongoCollection = configuration.$.path;
 
             var params = {};
+            collectionPage.$collection.$.query = collectionPage.$collection.$.query || new Query();
             if (collectionPage.$collection.$.query) {
                 // TODO: add schema
                 params = MongoQueryComposer.compose(collectionPage.$collection.$.query);
@@ -354,18 +355,25 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
 
             // TODO: add query, fields and options
             var self = this,
-                where = _.extend(this._getWhereConditionForCollection(rootCollection), params.where || {});
+                addWhere = this._getWhereConditionForCollection(rootCollection) || {},
+                where = params.where || {};
 
+            // here we have a polymorphic type
+            if (configuration.$.modelClassName !== modelClassName) {
+                addWhere[TYPE_KEY] = modelClassName;
+            }
+
+            // extend where
+            if (where.$and) {
+                where.$and.push(addWhere);
+            } else {
+                _.extend(addWhere, where);
+            }
 
             var offset = collectionPage.$offset;
             var limit = collectionPage.$limit;
             // TODO: convert query to MongoQuery
 
-
-            // here we have a polymorphic type
-            if (configuration.$.modelClassName !== modelClassName) {
-                where[TYPE_KEY] = modelClassName;
-            }
 
             var sort;
             if (params.sort) {
