@@ -63,6 +63,7 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                 var schemaDefaults = {
                     required: true,
                     includeInIndex: false,
+                    serverOnly: false,
                     _rewritten: true
                 }, schemaObject;
 
@@ -71,6 +72,7 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                     this.schema[this.idField] = {
                         type: String,
                         required: false,
+                        serverOnly: false,
                         includeInIndex: true,
                         generated: true
                     };
@@ -80,6 +82,7 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                     this.schema[this.updatedField] = {
                         type: Date,
                         required: false,
+                        serverOnly: false,
                         includeInIndex: true,
                         generated: true
                     };
@@ -90,6 +93,7 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                         type: Date,
                         required: false,
                         includeInIndex: true,
+                        serverOnly: false,
                         generated: true
                     };
                 }
