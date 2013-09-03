@@ -3,19 +3,22 @@
     xmlns:ns1="js.html"
     xmlns:ns2="js.ui"
     xmlns:ns="js.core">
-    <import namespace="js.html"/>
-    <import namespace="js.ui"/>
+    <import/>
+    <import/>
     <element name="Application" type="ns:Application"/>
     <element name="Component" type="ns:Component"/>
     <element name="Template" type="ns:Template"/>
     <element name="Configuration" type="ns:Configuration"/>
     <element name="Content" type="ns:Content"/>
     <element name="DomElement" type="ns:DomElement"/>
+    <element name="ErrorProvider" type="ns:ErrorProvider"/>
     <element name="Head" type="ns:Head"/>
     <element name="I18n" type="ns:I18n"/>
     <element name="Injection" type="ns:Injection"/>
     <element name="Module" type="ns:Module"/>
     <element name="ModuleLoader" type="ns:ModuleLoader"/>
+    <element name="PopupManager" type="ns:PopupManager"/>
+    <element name="Repeat" type="ns:Repeat"/>
     <element name="Router" type="ns:Router"/>
     <element name="Stage" type="ns:Stage"/>
     <element name="Window" type="ns:Window"/>
@@ -132,6 +135,7 @@ children.
                     <documentation source="http://www.rappidjs.com/#/api/js.core.DomElement">
                                  first set empty -> needed for Chrome
  then remove -> needed for firefox
+ IMPORTANT: use setAttribute otherwise the css classes won't be set on SVG elements
                             </documentation>
                 </annotation>
                 <sequence>
@@ -155,6 +159,7 @@ The resulting class attributes is the union from class and componentClass of the
                     </documentation>
                     </annotation>
                 </attribute>
+                <attribute name="animationClass"/>
                 <attribute name="visible" default="true">
                     <annotation>
                         <documentation>
@@ -163,6 +168,20 @@ The resulting class attributes is the union from class and componentClass of the
                     </documentation>
                     </annotation>
                 </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+    <complexType name="ErrorProvider">
+        <complexContent>
+            <extension base="ns:Component">
+                <annotation>
+                    <documentation source="http://www.rappidjs.com/#/api/js.core.ErrorProvider"></documentation>
+                </annotation>
+                <sequence>
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+                <attribute name="i18n"/>
+                <attribute name="scope" default="error"/>
             </extension>
         </complexContent>
     </complexType>
@@ -271,6 +290,60 @@ The resulting class attributes is the union from class and componentClass of the
             </extension>
         </complexContent>
     </complexType>
+    <complexType name="PopupManager">
+        <complexContent>
+            <extension base="ns:Component">
+                <annotation>
+                    <documentation source="http://www.rappidjs.com/#/api/js.core.PopupManager"></documentation>
+                </annotation>
+                <sequence>
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+    <complexType name="Repeat">
+        <complexContent>
+            <extension base="ns:Component">
+                <annotation>
+                    <documentation source="http://www.rappidjs.com/#/api/js.core.Repeat"></documentation>
+                </annotation>
+                <sequence>
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+                <attribute name="items">
+                    <annotation>
+                        <documentation>
+                        An array or a List of items
+                    </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="itemKey" default="item">
+                    <annotation>
+                        <documentation>
+                        The key you want to use in the item template
+                    </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="indexKey" default="index">
+                    <annotation>
+                        <documentation>
+                        The key you want to use for the index
+                    </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="keyPath">
+                    <annotation>
+                        <documentation>
+                        KeyPath is used for item comparison.
+If it's not set the default === comparison is used.
+                    </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="onitemsRendered" default="_onItemsRenderedHandler" type="string"/>
+            </extension>
+        </complexContent>
+    </complexType>
     <complexType name="Router">
         <complexContent>
             <extension base="ns:Component">
@@ -309,6 +382,8 @@ The resulting class attributes is the union from class and componentClass of the
                 <sequence>
                     <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
                 </sequence>
+                <attribute name="closeOnBackdrop"/>
+                <attribute name="onbackdropClick" default="_onBackdropClickHandler" type="string"/>
             </extension>
         </complexContent>
     </complexType>
@@ -325,7 +400,6 @@ The resulting class attributes is the union from class and componentClass of the
                     <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
                 </sequence>
                 <attribute name="tagName" default="div"/>
-                <attribute name="modalActive"/>
             </extension>
         </complexContent>
     </complexType>

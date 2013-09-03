@@ -6,8 +6,8 @@
             "annotations": {},
             "definedInFile": "js/core/EventDispatcher.js",
             "lineNumbers": [
-                198,
-                200
+                201,
+                203
             ],
             "definedBy": "js.core.EventDispatcher",
             "name": "_beforeDestroy",
@@ -79,8 +79,8 @@
             "annotations": {},
             "definedInFile": "js/core/EventDispatcher.js",
             "lineNumbers": [
-                206,
-                212
+                209,
+                215
             ],
             "definedBy": "js.core.EventDispatcher",
             "name": "_destroyCompleted",
@@ -92,8 +92,8 @@
             "annotations": {},
             "definedInFile": "js/core/EventDispatcher.js",
             "lineNumbers": [
-                202,
-                204
+                205,
+                207
             ],
             "definedBy": "js.core.EventDispatcher",
             "name": "_innerDestroy",
@@ -125,8 +125,8 @@
             "annotations": {},
             "definedInFile": "js/core/EventDispatcher.js",
             "lineNumbers": [
-                75,
-                87
+                72,
+                88
             ],
             "description": "Binds a callback and a scope to a given eventType\n",
             "definedBy": "js.core.EventDispatcher",
@@ -143,8 +143,8 @@
             "annotations": {},
             "definedInFile": "js/core/BindingCreator.js",
             "lineNumbers": [
-                205,
-                216
+                249,
+                260
             ],
             "name": "containsBindingDefinition",
             "visibility": "public"
@@ -181,7 +181,7 @@
             "definedInFile": "js/core/BindingCreator.js",
             "lineNumbers": [
                 55,
-                142
+                186
             ],
             "description": "",
             "returns": {
@@ -211,8 +211,8 @@
             "annotations": {},
             "definedInFile": "js/core/EventDispatcher.js",
             "lineNumbers": [
-                185,
-                196
+                188,
+                199
             ],
             "description": "Clears up the instance",
             "definedBy": "js.core.EventDispatcher",
@@ -266,8 +266,8 @@
             "annotations": {},
             "definedInFile": "js/core/BindingCreator.js",
             "lineNumbers": [
-                152,
-                194
+                196,
+                238
             ],
             "description": "",
             "returns": {
@@ -321,8 +321,8 @@
             "annotations": {},
             "definedInFile": "js/core/BindingCreator.js",
             "lineNumbers": [
-                196,
-                200
+                240,
+                244
             ],
             "name": "parse",
             "visibility": "public"
@@ -337,8 +337,8 @@
             "annotations": {},
             "definedInFile": "js/core/BindingCreator.js",
             "lineNumbers": [
-                202,
-                204
+                246,
+                248
             ],
             "name": "parsePath",
             "visibility": "public"
@@ -391,8 +391,8 @@
             "annotations": {},
             "definedInFile": "js/core/EventDispatcher.js",
             "lineNumbers": [
-                96,
-                157
+                97,
+                160
             ],
             "description": "Triggers a specific event and the * event\n",
             "definedBy": "js.core.EventDispatcher",
@@ -423,8 +423,8 @@
             "annotations": {},
             "definedInFile": "js/core/EventDispatcher.js",
             "lineNumbers": [
-                165,
-                180
+                168,
+                183
             ],
             "description": "Unbinds callbacks for events\n",
             "definedBy": "js.core.EventDispatcher",

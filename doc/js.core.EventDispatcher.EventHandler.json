@@ -83,8 +83,8 @@
             "annotations": {},
             "definedInFile": "js/core/EventDispatcher.js",
             "lineNumbers": [
-                272,
-                275
+                277,
+                280
             ],
             "definedBy": "js.core.Base",
             "overwritesMethod": true,
@@ -185,8 +185,8 @@
             "annotations": {},
             "definedInFile": "js/core/EventDispatcher.js",
             "lineNumbers": [
-                281,
-                284
+                286,
+                289
             ],
             "name": "trigger",
             "visibility": "public"
@@ -198,7 +198,8 @@
     "fqClassName": "js.core.EventDispatcher.EventHandler",
     "inherit": "js.core.Base",
     "dependencies": [
-        "js.core.Base"
+        "js.core.Base",
+        "rAppid"
     ],
     "summary": "Simple EventHandler",
     "type": "js",

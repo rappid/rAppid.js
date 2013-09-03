@@ -2,7 +2,7 @@
     xmlns="http://www.w3.org/2001/XMLSchema"
     xmlns:ns1="js.core"
     xmlns:ns="js.svg">
-    <import namespace="js.core"/>
+    <import/>
     <element name="SvgElement" type="ns:SvgElement"/>
     <complexType name="SvgElement">
         <complexContent>

@@ -31,8 +31,7 @@
     "fqClassName": "js.data.Query",
     "inherit": "Query",
     "dependencies": [
-        "Query",
-        "js.core.Bindable"
+        "Query"
     ],
     "type": "js",
     "file": "js/data/Query.js",

@@ -10,8 +10,8 @@
             "annotations": {},
             "definedInFile": "srv/data/MongoDataSource.js",
             "lineNumbers": [
-                471,
-                481
+                491,
+                515
             ],
             "name": "_composeContext",
             "visibility": "protected"
@@ -26,8 +26,8 @@
             "annotations": {},
             "definedInFile": "srv/data/MongoDataSource.js",
             "lineNumbers": [
-                148,
-                150
+                172,
+                174
             ],
             "name": "_createIdObject",
             "visibility": "protected"
@@ -42,8 +42,8 @@
             "annotations": {},
             "definedInFile": "srv/data/MongoDataSource.js",
             "lineNumbers": [
-                144,
-                146
+                168,
+                170
             ],
             "name": "_getConfigurationForModel",
             "visibility": "protected"
@@ -64,8 +64,8 @@
             "annotations": {},
             "definedInFile": "srv/data/MongoDataSource.js",
             "lineNumbers": [
-                482,
-                510
+                516,
+                551
             ],
             "name": "_getContext",
             "visibility": "protected"
@@ -80,8 +80,8 @@
             "annotations": {},
             "definedInFile": "srv/data/MongoDataSource.js",
             "lineNumbers": [
-                463,
-                469
+                483,
+                489
             ],
             "name": "_getWhereConditionForCollection",
             "visibility": "protected"
@@ -96,8 +96,8 @@
             "annotations": {},
             "definedInFile": "srv/data/MongoDataSource.js",
             "lineNumbers": [
-                450,
-                461
+                470,
+                481
             ],
             "name": "_getWhereConditionForModel",
             "visibility": "protected"
@@ -118,8 +118,8 @@
             "annotations": {},
             "definedInFile": "srv/data/MongoDataSource.js",
             "lineNumbers": [
-                211,
-                289
+                235,
+                309
             ],
             "name": "_saveModel",
             "visibility": "protected"
@@ -134,8 +134,8 @@
             "annotations": {},
             "definedInFile": "srv/data/MongoDataSource.js",
             "lineNumbers": [
-                135,
-                142
+                159,
+                166
             ],
             "name": "connect",
             "visibility": "public"
@@ -156,8 +156,8 @@
             "annotations": {},
             "definedInFile": "srv/data/MongoDataSource.js",
             "lineNumbers": [
-                187,
-                209
+                211,
+                233
             ],
             "name": "connectCollection",
             "visibility": "public"
@@ -178,8 +178,8 @@
             "annotations": {},
             "definedInFile": "srv/data/MongoDataSource.js",
             "lineNumbers": [
-                390,
-                441
+                410,
+                461
             ],
             "name": "countCollection",
             "visibility": "public"
@@ -200,8 +200,8 @@
             "annotations": {},
             "definedInFile": "srv/data/MongoDataSource.js",
             "lineNumbers": [
-                512,
-                514
+                553,
+                555
             ],
             "name": "createContext",
             "visibility": "public"
@@ -219,8 +219,8 @@
             "annotations": {},
             "definedInFile": "srv/data/MongoDataSource.js",
             "lineNumbers": [
-                443,
-                448
+                463,
+                468
             ],
             "name": "getContextForChild",
             "visibility": "public"
@@ -241,8 +241,8 @@
             "annotations": {},
             "definedInFile": "srv/data/MongoDataSource.js",
             "lineNumbers": [
-                314,
-                388
+                334,
+                408
             ],
             "name": "loadCollectionPage",
             "visibility": "public"
@@ -263,8 +263,8 @@
             "annotations": {},
             "definedInFile": "srv/data/MongoDataSource.js",
             "lineNumbers": [
-                152,
-                185
+                176,
+                209
             ],
             "name": "loadModel",
             "visibility": "public"
@@ -285,8 +285,8 @@
             "annotations": {},
             "definedInFile": "srv/data/MongoDataSource.js",
             "lineNumbers": [
-                291,
-                312
+                311,
+                332
             ],
             "name": "removeModel",
             "visibility": "public"
@@ -300,8 +300,8 @@
             "visibility": "public",
             "value": null,
             "lineNumbers": [
-                121,
-                121
+                145,
+                145
             ]
         },
         "password": {
@@ -310,8 +310,8 @@
             "visibility": "public",
             "value": null,
             "lineNumbers": [
-                122,
-                122
+                146,
+                146
             ]
         },
         "collectionPageSize": {
@@ -320,8 +320,8 @@
             "visibility": "public",
             "value": 500,
             "lineNumbers": [
-                123,
-                123
+                147,
+                147
             ]
         },
         "host": {
@@ -330,8 +330,8 @@
             "visibility": "public",
             "value": "localhost",
             "lineNumbers": [
-                125,
-                125
+                149,
+                149
             ]
         },
         "port": {
@@ -340,8 +340,8 @@
             "visibility": "public",
             "value": 27017,
             "lineNumbers": [
-                126,
-                126
+                150,
+                150
             ]
         },
         "poolSize": {
@@ -350,8 +350,8 @@
             "visibility": "public",
             "value": 2,
             "lineNumbers": [
-                127,
-                127
+                151,
+                151
             ]
         },
         "database": {
@@ -360,8 +360,8 @@
             "visibility": "public",
             "value": null,
             "lineNumbers": [
-                128,
-                128
+                152,
+                152
             ]
         },
         "autoReconnect": {
@@ -370,8 +370,8 @@
             "visibility": "public",
             "value": true,
             "lineNumbers": [
-                129,
-                129
+                153,
+                153
             ]
         },
         "w": {
@@ -380,8 +380,8 @@
             "visibility": "public",
             "value": 1,
             "lineNumbers": [
-                130,
-                130
+                154,
+                154
             ]
         }
     },
@@ -391,8 +391,8 @@
             "visibility": "private",
             "definedInFile": "srv/data/MongoDataSource.js",
             "lineNumbers": [
-                133,
-                133
+                157,
+                157
             ],
             "propertyType": "complex",
             "value": " MongoDataProcessor"

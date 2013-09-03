@@ -10,8 +10,8 @@
             "annotations": {},
             "definedInFile": "js/data/RestDataSource.js",
             "lineNumbers": [
-                803,
-                805
+                800,
+                802
             ],
             "name": "deserialize",
             "visibility": "public"
@@ -26,8 +26,8 @@
             "annotations": {},
             "definedInFile": "js/data/RestDataSource.js",
             "lineNumbers": [
-                800,
-                802
+                797,
+                799
             ],
             "name": "serialize",
             "visibility": "public"

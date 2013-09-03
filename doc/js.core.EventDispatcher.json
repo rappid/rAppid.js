@@ -6,8 +6,8 @@
             "annotations": {},
             "definedInFile": "js/core/EventDispatcher.js",
             "lineNumbers": [
-                198,
-                200
+                201,
+                203
             ],
             "name": "_beforeDestroy",
             "visibility": "protected"
@@ -78,8 +78,8 @@
             "annotations": {},
             "definedInFile": "js/core/EventDispatcher.js",
             "lineNumbers": [
-                206,
-                212
+                209,
+                215
             ],
             "name": "_destroyCompleted",
             "visibility": "protected"
@@ -90,8 +90,8 @@
             "annotations": {},
             "definedInFile": "js/core/EventDispatcher.js",
             "lineNumbers": [
-                202,
-                204
+                205,
+                207
             ],
             "name": "_innerDestroy",
             "visibility": "protected"
@@ -122,8 +122,8 @@
             "annotations": {},
             "definedInFile": "js/core/EventDispatcher.js",
             "lineNumbers": [
-                75,
-                87
+                72,
+                88
             ],
             "description": "Binds a callback and a scope to a given eventType\n",
             "name": "bind",
@@ -135,8 +135,8 @@
             "annotations": {},
             "definedInFile": "js/core/EventDispatcher.js",
             "lineNumbers": [
-                63,
-                66
+                60,
+                63
             ],
             "definedBy": "js.core.Base",
             "overwritesMethod": true,
@@ -149,8 +149,8 @@
             "annotations": {},
             "definedInFile": "js/core/EventDispatcher.js",
             "lineNumbers": [
-                185,
-                196
+                188,
+                199
             ],
             "description": "Clears up the instance",
             "name": "destroy",
@@ -257,8 +257,8 @@
             "annotations": {},
             "definedInFile": "js/core/EventDispatcher.js",
             "lineNumbers": [
-                96,
-                157
+                97,
+                160
             ],
             "description": "Triggers a specific event and the * event\n",
             "name": "trigger",
@@ -288,8 +288,8 @@
             "annotations": {},
             "definedInFile": "js/core/EventDispatcher.js",
             "lineNumbers": [
-                165,
-                180
+                168,
+                183
             ],
             "description": "Unbinds callbacks for events\n",
             "name": "unbind",
@@ -312,7 +312,8 @@
         }
     },
     "dependencies": [
-        "js.core.Base"
+        "js.core.Base",
+        "rAppid"
     ],
     "summary": "Allows binding and triggering of custom events",
     "type": "js",

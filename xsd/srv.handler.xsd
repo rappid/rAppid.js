@@ -2,17 +2,18 @@
     xmlns="http://www.w3.org/2001/XMLSchema"
     xmlns:ns1="srv.core"
     xmlns:ns="srv.handler">
-    <import namespace="srv.core"/>
-    <element name="SessionHandler" type="ns:SessionHandler"/>
+    <import/>
+    <element name="AuthenticationHandler" type="ns:AuthenticationHandler"/>
     <element name="ExceptionHandler" type="ns:ExceptionHandler"/>
     <element name="NodeRenderingHandler" type="ns:NodeRenderingHandler"/>
+    <element name="SessionHandler" type="ns:SessionHandler"/>
     <element name="RestHandler" type="ns:RestHandler"/>
     <element name="StaticFileHandler" type="ns:StaticFileHandler"/>
-    <complexType name="SessionHandler">
+    <complexType name="AuthenticationHandler">
         <complexContent>
             <extension base="ns1:Handler">
                 <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/srv.handler.SessionHandler"></documentation>
+                    <documentation source="http://www.rappidjs.com/#/api/srv.handler.AuthenticationHandler"></documentation>
                 </annotation>
                 <sequence>
                     <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
@@ -61,6 +62,19 @@
                 <attribute name="config" default="config.json"/>
                 <attribute name="usePackageVersion"/>
                 <attribute name="defaultStartParameter"/>
+            </extension>
+        </complexContent>
+    </complexType>
+    <complexType name="SessionHandler">
+        <complexContent>
+            <extension base="ns1:Handler">
+                <annotation>
+                    <documentation source="http://www.rappidjs.com/#/api/srv.handler.SessionHandler"></documentation>
+                </annotation>
+                <sequence>
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+                <attribute name="userPath" default="/api/users"/>
             </extension>
         </complexContent>
     </complexType>

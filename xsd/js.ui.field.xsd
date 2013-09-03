@@ -2,7 +2,7 @@
     xmlns="http://www.w3.org/2001/XMLSchema"
     xmlns:ns1="js.ui"
     xmlns:ns="js.ui.field">
-    <import namespace="js.ui"/>
+    <import/>
     <element name="Password" type="ns:Password"/>
     <element name="RadioGroup" type="ns:RadioGroup"/>
     <element name="RadioGroupClass" type="ns:RadioGroupClass"/>
