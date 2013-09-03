@@ -210,8 +210,8 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
                 this._updateVisibleItems();
             },
 
-            _renderLoading: function(loading){
-                if(loading){
+            _renderLoading: function (loading) {
+                if (loading) {
                     this.addClass("loading");
                 } else {
                     this.removeClass("loading");
@@ -649,7 +649,7 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
              */
             isItemSelected: function (data) {
                 var key = this.getSelectionKeyForItem(data);
-                if(key){
+                if (key) {
                     return this.$selectionMap[key] !== undefined;
                 }
                 return false;
@@ -657,12 +657,14 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
 
 
             getSelectionKeyForItem: function (item) {
-                if(!item){
+                if (!item) {
                     return false;
                 }
                 var key;
                 if (item.identifier) {
                     return item.identifier();
+                } else if (_.isString(item)) {
+                    return item;
                 } else {
                     key = this.get(item, "id");
                     if (key) {
