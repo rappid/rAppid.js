@@ -131,7 +131,7 @@ define(['srv/auth/AuthenticationProvider', 'srv/auth/Authentication', 'js/data/C
          * @param callback
          */
         checkRegistrationRequest: function (registrationRequest, callback) {
-            this.fetchUser(registrationRequest.get(this.$.usernameField), function (err, user) {
+            this.fetchUser(registrationRequest, function (err, user) {
                 if (!err && user) {
                     err = RegistrationError.USER_ALREADY_EXISTS
                 }
@@ -156,12 +156,12 @@ define(['srv/auth/AuthenticationProvider', 'srv/auth/Authentication', 'js/data/C
 
         /**
          * Fetches a user by username, returns a User or NULL
-         * @param {String} username
+         * @param {srv.auth.authenticationRequest} authenticationRequest
          * @param {Function} callback
          */
-        fetchUser: function (username, callback) {
+        fetchUser: function (authenticationRequest, callback) {
             // create query to fetch the user
-            var query = this._createQueryForUser(username);
+            var query = this._createQueryForUser(authenticationRequest.get(this.$.usernameField));
             var collection = this.$.dataSource.createCollection(this.$collectionClass).query(query);
 
             collection.fetch({limit: 1}, function (err, users) {
@@ -181,7 +181,7 @@ define(['srv/auth/AuthenticationProvider', 'srv/auth/Authentication', 'js/data/C
 
             flow()
                 .seq("user", function (cb) {
-                    self.fetchUser(authenticationRequest.get(self.$.usernameField), cb)
+                    self.fetchUser(authenticationRequest, cb)
                 })
                 .seq("authentication", function (cb) {
                     // gets the authenticationData
