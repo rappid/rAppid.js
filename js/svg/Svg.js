@@ -87,7 +87,7 @@ define(['xaml!js/svg/SvgDescriptor', "js/svg/SvgElement", 'js/core/Base'], funct
 
                 hidden.appendChild(text);
 
-                if (src.indexOf(".woff") > -1) {
+                if (/\.woff|\.eot/.test(src)) {
 
                     var document = svg.$stage.$document,
                         body = document.getElementsByTagName("body")[0],
@@ -96,24 +96,24 @@ define(['xaml!js/svg/SvgDescriptor', "js/svg/SvgElement", 'js/core/Base'], funct
 
                     style.setAttribute("type", "text/css");
 
+                    var srcAttribute = "";
+                    if(src.indexOf(".woff") > -1){
+                        srcAttribute = "url('" + src + "') format('woff');";
+                    } else {
+                        srcAttribute = "url('" + src + "') ;";
+                    }
+
                     /*Paul Irish's smiley method for font loading -
                      http://paulirish.com/2009/bulletproof-font-face-implementation-syntax/ */
                     style.innerHTML = "@font-face{\n" +
                         "font-family: '" + fontFamily + "';" +
-//                        "src: url('" + fontPath + ".eot');" +
-                        "src: local('Ø'), " +
-                        "url('" + src + "') format('woff'); " +
+//                        "src: url('" + src.replace(".woff",".eot") + "'); " +
+//                        "src: url('" + src +);" +
+                        "src: " + srcAttribute +
 //                        "url('" + fontPath + ".ttf') format('truetype');" +
                         "}\n";
 
                     head.appendChild(style);
-
-                    //apply this font to the body, this helps IE8
-                    //  to actually use the font after it was lazy-loaded
-//                    setTimeout(function () {
-//                        document.body.css("font-family", fontFamily)
-//                    }, 500);
-
 
                 } else if (src.indexOf(".svg") > -1) {
                     var font = svg.$templates["external-font"].createInstance({
@@ -129,7 +129,7 @@ define(['xaml!js/svg/SvgDescriptor', "js/svg/SvgElement", 'js/core/Base'], funct
                     callbacks: [callback]
                 };
 
-                var maxChecks = 1000;
+                var maxChecks = 500;
                 setTimeout(function () {
                     text.setAttribute("font-family", "__ABCDE__");  // set to undefined font and measure
 
