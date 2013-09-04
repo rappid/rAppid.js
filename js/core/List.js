@@ -114,12 +114,7 @@ define(["js/core/EventDispatcher", "js/core/Bindable", "underscore"], function (
         },
         _onItemEvent: function (e, item) {
             if (this.$itemEventMap[e.type]) {
-                var listeners = this.$itemEventMap[e.type],
-                    listener;
-                for (var i = 0; i < listeners.length; i++) {
-                    listener = listeners[i];
-                    this.trigger(listener.eventType, {item: item, index: this.indexOf(item), itemEvent: e}, listener.callback, listener.scope);
-                }
+                this.trigger("item:" + e.type, {item: item, index: this.indexOf(item), itemEvent: e});
             }
         },
         /**
@@ -357,9 +352,8 @@ define(["js/core/EventDispatcher", "js/core/Bindable", "underscore"], function (
                         listeners.splice(i, 1);
                     }
                 }
-            } else {
-                this.callBase();
             }
+            this.callBase();
         },
 
         /***
