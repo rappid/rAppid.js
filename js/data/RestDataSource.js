@@ -676,13 +676,13 @@ define(["js/data/DataSource", "js/data/Model", "underscore", "flow", "JSON", "js
             });
         },
 
-        _createSortParameter: function (sortParmeters) {
+        _createSortParameter: function (sortParameters) {
             var parameters = null,
                 sortFields = [];
-            for (var key in sortParmeters) {
-                if (sortParmeters.hasOwnProperty(key)) {
+            for (var key in sortParameters) {
+                if (sortParameters.hasOwnProperty(key)) {
                     parameters = parameters || {};
-                    sortFields.push((sortParmeters[key] === -1 ? "+" : "-")+key);
+                    sortFields.push((sortParameters[key] === -1 ? "+" : "-")+key);
                 }
             }
             if(sortFields.length > 0){
