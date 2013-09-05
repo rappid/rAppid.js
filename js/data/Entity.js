@@ -24,7 +24,7 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                 this.$entityInitialized = false;
                 this._extendSchema();
 
-                this.callBase(attributes);
+                this.callBase();
             },
 
             schema: {},
