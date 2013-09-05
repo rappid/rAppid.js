@@ -86,8 +86,9 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
                  * creates a new instance of Bindable, which can be bound to components
                  *
                  * @param {Object} [attributes] the default attributes which will be set during instantiation
+                 * @param {Boolean} [evaluateBindingsInCtor] decides if bindings should be evaluated in ctor or not
                  */
-                ctor: function (attributes) {
+                ctor: function (attributes, evaluateBindingsInCtor) {
                     bindingCreator = bindingCreator || new BindingCreator();
 
                     this.$eventBindables = [];
@@ -109,6 +110,24 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
 
                     var defaultAttributes = this._defaultAttributes(),
                         defaultAttribute;
+
+                    var nonBindings = {};
+
+                    if (!evaluateBindingsInCtor) {
+                        for (var k in attributes) {
+                            if (attributes.hasOwnProperty(k)) {
+                                if (_.isString(attributes[k])) {
+                                    bindingDefinitions = bindingCreator.parse(attributes[k]);
+
+                                    if (bindingCreator.containsBindingDefinition(bindingDefinitions)) {
+                                        // we found an attribute containing a binding definition
+                                        nonBindings[k] = true;
+                                    }
+                                }
+                            }
+                        }
+
+                    }
 
                     for (var key in defaultAttributes) {
                         if (defaultAttributes.hasOwnProperty(key)) {
@@ -141,7 +160,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
                     // this is because some function bindings belong on other binding values which are
                     // at the time of evaluation maybe unresolved and for example {foo.bar} instead of a value
                     for (key in $) {
-                        if ($.hasOwnProperty(key)) {
+                        if ($.hasOwnProperty(key) && !nonBindings.hasOwnProperty(key)) {
                             value = $[key];
                             bindingDefinitions = bindingCreator.parse(value);
 
@@ -161,7 +180,6 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
                     this.$previousAttributes = {};
 
                     this._initializeFromCtor();
-
                 },
 
                 /**
@@ -837,17 +855,17 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
                         this.callBase(path, event, callback);
                     } else {
                         // if we have a string with a function
-                        if(_.isString(event) && event.indexOf("(") > 0){
+                        if (_.isString(event) && event.indexOf("(") > 0) {
                             thisArg = callback;
                             var fncString = event;
                             event = path;
                             var parameters;
-                                var eventBinding = Parser.parse(fncString, "eventHandler");
-                                if (eventBinding.type === "fnc") {
-                                    parameters = eventBinding.parameter;
-                                }
-                                var scope = thisArg || this;
-                                callback = scope[fncString.split("(").shift()];
+                            var eventBinding = Parser.parse(fncString, "eventHandler");
+                            if (eventBinding.type === "fnc") {
+                                parameters = eventBinding.parameter;
+                            }
+                            var scope = thisArg || this;
+                            callback = scope[fncString.split("(").shift()];
 
                             this.callBase(event, new Bindable.EventHandler(callback, scope, parameters));
                         } else {
@@ -995,7 +1013,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
                         parameter = this.parameters[i];
                         if (_.isArray(parameter)) {
                             first = parameter[0];
-                            if(first.name === "event"){
+                            if (first.name === "event") {
                                 args.push(event);
                             } else {
                                 if (first.type === "fnc") {

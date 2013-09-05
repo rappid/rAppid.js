@@ -13,8 +13,9 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
              * @param {js.core.Stage} stage
              * @param {Element} parentScope
              * @param {Element} rootScope
+             * @param {Boolean} [evaluateBindingsInCtor] - default false
              */
-            ctor: function (attributes, descriptor, stage, parentScope, rootScope) {
+            ctor: function (attributes, descriptor, stage, parentScope, rootScope, evaluateBindingsInCtor) {
                 this.$eventDefinitions = [];
                 this.$internalDescriptors = [];
                 this.$xamlDefaults = {};
@@ -53,7 +54,7 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
 
                 _.defaults(attributes, this.$xamlAttributes, this.$xamlDefaults);
                 // added parameters, otherwise it comes to problems in Chrome!
-                this.callBase(attributes, descriptor, stage, parentScope, rootScope);
+                this.callBase(attributes, descriptor, stage, parentScope, rootScope, evaluateBindingsInCtor);
             },
 
             defaults: {
@@ -474,11 +475,11 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                         factory = FactoryCache[cacheKey];
 
                     if (factory) {
-                        instance = new factory(attributes, node, this.$stage, this, rootScope);
+                        instance = new factory(attributes, node, this.$stage, this, rootScope, true);
                     } else {
                         var fqClassName = this.$stage.$applicationContext.getFqClassName(namespaceURI, localName, true);
                         var className = this.$stage.$applicationContext.getFqClassName(namespaceURI, localName, false);
-                        instance = this.$stage.$applicationContext.createInstance(fqClassName, [attributes, node, this.$stage, this, rootScope], className);
+                        instance = this.$stage.$applicationContext.createInstance(fqClassName, [attributes, node, this.$stage, this, rootScope, true], className);
                         FactoryCache[cacheKey] = instance.factory;
                     }
 
@@ -500,9 +501,9 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                 descriptor = descriptor || false;
                 attributes = attributes || [];
                 if (factory instanceof Function) {
-                    return new factory(attributes, descriptor, this.$stage, this, this.$rootScope);
+                    return new factory(attributes, descriptor, this.$stage, this, this.$rootScope, true);
                 }
-                return this.$stage.$applicationContext.createInstance(factory, [attributes, descriptor, this.$stage, this, this.$rootScope]);
+                return this.$stage.$applicationContext.createInstance(factory, [attributes, descriptor, this.$stage, this, this.$rootScope, true]);
             },
 
             createBinding: function (path, callback, callbackScope) {
@@ -514,9 +515,9 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
 
             _createTextElement: function (node, rootScope) {
                 if (TextElementFactory) {
-                    return new TextElementFactory(null, node, this.$stage, this, rootScope);
+                    return new TextElementFactory(null, node, this.$stage, this, rootScope, true);
                 }
-                var instance = this.$stage.$applicationContext.createInstance('js/core/TextElement', [null, node, this.$stage, this, rootScope]);
+                var instance = this.$stage.$applicationContext.createInstance('js/core/TextElement', [null, node, this.$stage, this, rootScope, true]);
                 TextElementFactory = instance.factory;
                 return instance;
 
