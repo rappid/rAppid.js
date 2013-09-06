@@ -138,11 +138,9 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
                         self.$parentResource._findCollection(context, cb);
                     })
                     .seq("parent", function (cb) {
-                        var id = self.$parentResource.$resourceId,
-                            parentCollection = this.vars.parentCollection;
-
-                        id = parentCollection.$modelFactory.prototype.convertIdentifier(self.$parentResource.$resourceId);
-                        var parent = parentCollection.createItem(id);
+                        var parentCollection = this.vars.parentCollection,
+                            id = parentCollection.$modelFactory.prototype.convertIdentifier(self.$parentResource.$resourceId),
+                            parent = parentCollection.createItem(id);
 
                         if (checkParents) {
                             parent.fetch(null, cb);
@@ -153,7 +151,6 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
                     .exec(function (err, results) {
                         if (!err) {
                             var collection = results.parent.getCollection(self.$resourceConfiguration.$.path);
-                            collection.$context.$dataSource = self.$restHandler.getDataSource(context, self);
                             callback && callback(null, collection);
                         } else {
                             callback && callback(err);
