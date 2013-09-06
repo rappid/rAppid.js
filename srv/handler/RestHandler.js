@@ -16,8 +16,24 @@ define(['require', 'srv/core/Handler', 'js/conf/DataSourceConfiguration', 'js/co
                     href: collection.$.href
                 };
             },
+
+            _composeEntity: function (entity, action, options) {
+                var ret = this.callBase(),
+                    schema = entity.schema;
+
+                for (var key in schema) {
+                    if (schema.hasOwnProperty(key)) {
+                        if (schema[key].serverOnly === true) {
+                            delete ret[key];
+                        }
+                    }
+                }
+                return ret;
+            },
+
             compose: function (model, action, options) {
-                var ret = this.callBase();
+
+                var ret = this.callBase(model, action, options);
                 ret.href = model.$.href;
                 return ret;
             }

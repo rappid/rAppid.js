@@ -379,10 +379,6 @@ define(["js/core/Component", "js/core/Base", "js/data/Collection", "underscore",
                         schemaDefinition = entity.schema[key];
                         schemaType = schemaDefinition.type;
 
-                        if(schemaDefinition.serverOnly){
-                            continue;
-                        }
-
                         var value = this._getCompositionValue(data[key], key, action, options, entity);
                         if (value !== undefined) {
                             if (value && schemaDefinition.isReference && schemaType.classof && schemaType.classof(Entity) && !schemaType.classof(Model)) {
