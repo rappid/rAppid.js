@@ -1,6 +1,6 @@
 define(['js/html/HtmlElement'], function (HtmlElement) {
 
-    var externalLink = /^(([^:]+:\/\/)|(javascript:))/i,
+    var externalLink = /^(([^:]+:\/\/)|(javascript:)|(\/\/))/i,
         stripHashSlash = /^#?\/?/,
         hashBankUrl = /^#?(.*)$/;
 
