@@ -725,7 +725,7 @@ define(["js/data/DataSource", "js/data/Model", "underscore", "flow", "JSON", "js
                 type: method,
                 queryParameter: params
             }, function (err, xhr) {
-                if (!err && (xhr.status == 200 || xhr.status == 304)) {
+                if (!err && (xhr.status == 200 || xhr.status == 304 || xhr.status == 202)) {
                     callback(null, model);
                 } else {
                     // TODO: better error handling
