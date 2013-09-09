@@ -121,6 +121,9 @@ define(["js/core/Component", "srv/auth/AuthenticationProvider", "flow", "srv/aut
             var authentication = this.$.dataSource.createEntity(Authentication, token),
                 self = this;
 
+            // setup authentication
+            this.$stage.$bus.setUp(authentication);
+
             flow()
                 .seq("authentication", function (cb) {
                     authentication.fetch(null, function (err) {
@@ -210,9 +213,7 @@ define(["js/core/Component", "srv/auth/AuthenticationProvider", "flow", "srv/aut
         registerByRequest: function (registrationRequest, callback) {
             var provider = this.getRegistrationProviderForRequest(registrationRequest);
             if (provider) {
-                var userDataSource = this.$.userDataSource,
-                    userClass = this.$.userModelClassName,
-                    self = this,
+                var self = this,
                     user,
                     identityService = this.$.identityService;
                 flow()
