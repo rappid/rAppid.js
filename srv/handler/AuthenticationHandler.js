@@ -11,13 +11,6 @@ define(['srv/core/Handler', 'srv/core/AuthenticationService', 'srv/core/HttpErro
                 authenticationService: AuthenticationService
             },
 
-            isResponsibleForRequest: function (context) {
-                var ret = this.callBase(),
-                    pathName = context.request.urlInfo.pathname;
-
-                return ret && pathName.indexOf(this.$.path) === 0;
-            },
-
             _createAuthenticationRequest: function (context) {
                 var post = JSON.parse(context.request.body);
                 return new AuthenticationRequest(post);
@@ -38,141 +31,120 @@ define(['srv/core/Handler', 'srv/core/AuthenticationService', 'srv/core/HttpErro
 
                 var regex = new RegExp(this.$.path.replace(/\//g, "\\/") + "\/" + "([a-fA-F0-9-]+)"),
                     self = this,
-                    authService = this.$.authenticationService;
-
-                if (pathName === this.$.path) {
-                    // /api/authentication request
-
-                    if (method === "POST") {
-
-                        flow()
-                            .seq("authentication", function (cb) {
-                                var authRequest = self._createAuthenticationRequest(context);
-                                authService.authenticateByRequest(context, authRequest, cb);
-                            })
-                            .seq("newAuthentication", function (cb) {
-                                if (!this.vars.authentication.get('identity')) {
-                                    self._handleMissingIdentity(this.vars.authentication, cb);
-                                } else {
-                                    self._handleAuthenticationSuccess(this.vars.authentication, cb);
-                                }
-                            })
-                            .exec(function (err, results) {
-                                if (!err) {
-                                    var authentication = results.newAuthentication;
-
-                                    var response = context.response,
-                                        uri = context.request.urlInfo.uri;
-
-                                    response.writeHead(201, {
-                                        "Location": uri + "/" + authentication.identifier(),
-                                        "Content-Type": "application/json"
-                                    });
-
-                                    var res = {};
-
-                                    res[authentication.idField] = authentication.identifier();
-                                    // TODO: add expire date to payload ...
-                                    res.data = authentication.get("providerUserData");
-                                    res.userId = authentication.get('identity').get('userId');
-                                    response.write(JSON.stringify(res, 2), 'utf8');
-
-                                    response.end();
-                                } else {
-                                    var statusCode = 500;
-                                    switch (err) {
-                                        case AuthenticationError.WRONG_USERNAME_OR_PASSWORD:
-                                            statusCode = 401;
-                                            break;
-                                        case AuthenticationError.TOO_MANY_WRONG_ATTEMPTS:
-                                            statusCode = 400;
-                                            break;
-                                    }
-
-                                    err = new HttpError(err.message, statusCode)
-                                }
-                                callback(err);
-                            });
-                    } else {
-                        throw new MethodNotAllowedError("Method not supported", ["POST"]);
-                    }
-                } else if (regex.test(pathName)) {
-                    // current authentication
-
-                    var match = pathName.match(regex),
-                        token = match ? match.pop() : null;
-                    if (method === "GET") {
+                    authService = this.$.authenticationService,
+                    match = pathName.match(regex),
+                    token = match ? match.pop() : null;
 
 
-                        flow()
-                            .seq("authentication", function (cb) {
-                                authService.authenticateByToken(token, cb);
-                            })
-                            .exec(function (err, results) {
-                                if (!err) {
-                                    var res = {},
-                                        response = context.response;
+                if (method === "POST") {
 
-                                    res[results.authentication.idField] = results.authentication.identifier();
-                                    res.data = results.authentication.get("providerUserData");
-
-                                    response.writeHead(200, {
-                                        "Content-Type": "application/json"
-                                    });
-
-                                    response.write(JSON.stringify(res, 2), 'utf8');
-
-                                    response.end();
-                                } else {
-
-                                }
-
-                                callback(err);
-                            });
-
-//                    var authenticationFilters = this.$.authenticationService.authenticateByToken(token, function(err, authentication){
-//                        if(!err){
-//
-//                        }
-//                    });
-//                    for (var i = 0; i < authenticationFilters.length; i++) {
-//                        var filter = authenticationFilters[i];
-//                        var authenticationData = context.session.getItem(filter.$.sessionKey);
-//                        if (authenticationData) {
-//                            var response = context.response;
-//
-//                            response.writeHead(200, "", {
-//                                'Content-Type': 'application/json; charset=utf-8'
-//                            });
-//
-//                            response.write(JSON.stringify(authenticationData), 'utf8');
-//                            response.end();
-//                            return;
-//                        }
-//                    }
-//                    throw new HttpError("Resource not found.", 404);
-                    } else if (method === "DELETE") {
-                        authService.deauthenticateToken(token, function (err) {
+                    flow()
+                        .seq("authentication", function (cb) {
+                            var authRequest = self._createAuthenticationRequest(context);
+                            authService.authenticateByRequest(context, authRequest, cb);
+                        })
+                        .seq("newAuthentication", function (cb) {
+                            if (!this.vars.authentication.get('identity')) {
+                                self._handleMissingIdentity(this.vars.authentication, cb);
+                            } else {
+                                self._handleAuthenticationSuccess(this.vars.authentication, cb);
+                            }
+                        })
+                        .exec(function (err, results) {
                             if (!err) {
-                                var response = context.response;
+                                var authentication = results.newAuthentication;
 
-                                response.writeHead(200);
+                                var response = context.response,
+                                    uri = context.request.urlInfo.uri;
 
-                                response.write("", 'utf8');
+                                response.writeHead(201, {
+                                    "Location": uri + "/" + authentication.identifier(),
+                                    "Content-Type": "application/json"
+                                });
+
+                                var res = {};
+
+                                res[authentication.idField] = authentication.identifier();
+                                // TODO: add expire date to payload ...
+                                res.data = authentication.get("providerUserData");
+                                res.userId = authentication.get('identity').get('userId');
+                                response.write(JSON.stringify(res, 2), 'utf8');
 
                                 response.end();
                             } else {
-                                // TODO
+                                var statusCode = 500;
+                                switch (err) {
+                                    case AuthenticationError.WRONG_USERNAME_OR_PASSWORD:
+                                        statusCode = 401;
+                                        break;
+                                    case AuthenticationError.AUTHENTICATION_EXPIRED:
+                                        statusCode = 400;
+                                        break;
+                                    case AuthenticationError.TOO_MANY_WRONG_ATTEMPTS:
+                                        statusCode = 400;
+                                        break;
+                                }
+
+                                err = new HttpError(err.message, statusCode)
                             }
                             callback(err);
                         });
-                    } else {
-                        throw new MethodNotAllowedError("Method not supported", ["GET", "POST"]);
-                    }
 
+                } else if (method === "GET") {
+                    // current authentication
+
+                    flow()
+                        .seq("authentication", function (cb) {
+                            authService.authenticateByToken(context, token, cb);
+                        })
+                        .exec(function (err, results) {
+                            if (!err) {
+                                var res = {},
+                                    response = context.response;
+
+                                res[results.authentication.idField] = results.authentication.identifier();
+                                res.data = results.authentication.get("providerUserData");
+
+                                response.writeHead(200, {
+                                    "Content-Type": "application/json"
+                                });
+
+                                response.write(JSON.stringify(res, 2), 'utf8');
+
+                                response.end();
+                            } else {
+                                var statusCode = 500;
+                                switch (err) {
+                                    case AuthenticationError.AUTHENTICATION_EXPIRED:
+                                        statusCode = 400;
+                                        break;
+                                }
+
+                                err = new HttpError(err.message, statusCode)
+                            }
+
+                            callback(err);
+                        });
+
+                } else if (method === "DELETE") {
+                    authService.deauthenticateToken(token, function (err) {
+                        if (!err) {
+                            var response = context.response;
+
+                            response.writeHead(200);
+
+                            response.write("", 'utf8');
+
+                            response.end();
+                        } else {
+                            // TODO
+                        }
+                        callback(err);
+                    });
                 } else {
-                    throw new HttpError("Resource not found.", 404);
+                    throw new MethodNotAllowedError("Method not supported", ["GET", "POST"]);
                 }
+
 
             },
 
