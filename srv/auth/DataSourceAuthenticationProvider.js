@@ -156,7 +156,7 @@ define(['srv/auth/AuthenticationProvider', 'srv/auth/Authentication', 'js/data/C
 
         /**
          * Fetches a user by username, returns a User or NULL
-         * @param {srv.auth.authenticationRequest} authenticationRequest
+         * @param {srv.auth.AuthenticationRequest} authenticationRequest
          * @param {Function} callback
          */
         fetchUser: function (authenticationRequest, callback) {
@@ -192,7 +192,7 @@ define(['srv/auth/AuthenticationProvider', 'srv/auth/Authentication', 'js/data/C
                             hash: ""
                         };
                     if (user) {
-                        authentication = user.get(self.$.authenticationField);
+                        authentication = user.get(self.$.authenticationField) || authentication;
                     }
                     cb(null, authentication);
 
