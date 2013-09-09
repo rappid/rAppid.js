@@ -70,7 +70,12 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                  *
                  * @type {Boolean}
                  */
-                visible: true
+                visible: true,
+
+                /**
+                 * @type Boolean
+                 */
+                enabled: true
             },
 
             ctor: function (attributes, descriptor, systemManager, parentScope, rootScope) {
@@ -295,6 +300,21 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                 for (var i = 0; i < children.length; i++) {
                     child = children[i];
                     this._renderChild(child);
+                }
+            },
+
+            _renderEnabled: function (enabled) {
+                if ("disabled" in this.$el) {
+                    if (!enabled) {
+                        this.$el.setAttribute('disabled', true);
+                    } else {
+                        this.$el.removeAttribute('disabled');
+                    }
+                }
+                if (enabled) {
+                    this.removeClass('disabled');
+                } else {
+                    this.addClass('disabled');
                 }
             },
 

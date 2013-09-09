@@ -75,11 +75,6 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
             namespace: HTML_Namespace,
 
             /**
-             * @type Boolean
-             */
-            enabled: true,
-
-            /**
              * Possible values: "absolute", "relative"
              * @type String
              */
@@ -199,21 +194,6 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
                 if (this._onSelect) {
                     this.unbindDomEvent('click', this._onSelect);
                 }
-            }
-        },
-
-        _renderEnabled: function (enabled) {
-            if ("disabled" in this.$el) {
-                if (!enabled) {
-                    this.$el.setAttribute('disabled', true);
-                } else {
-                    this.$el.removeAttribute('disabled');
-                }
-            }
-            if (enabled) {
-                this.removeClass('disabled');
-            } else {
-                this.addClass('disabled');
             }
         },
 
