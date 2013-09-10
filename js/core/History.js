@@ -122,7 +122,7 @@ define(["js/core/Bindable", "flow"], function (Bindable, flow) {
 
             fragment = fragment || this._getFragment();
 
-            this.navigate(fragment, true, true, true, callback);
+            this.navigate(fragment, false, true, true, callback);
             this.$processUrl = true;
         },
         /***
