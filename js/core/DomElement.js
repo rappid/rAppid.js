@@ -686,11 +686,15 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                 }
             },
             setChildInvisible: function (child) {
-                if (this.isRendered() && this.$renderedChildren.indexOf(child) > -1) {
-                    if (child.$el.parentNode) {
-                        this.$el.removeChild(child.$el);
+                if (this.isRendered()) {
+                    var index = this.$renderedChildren.indexOf(child);
+                    if (index > -1) {
+                        this.$renderedChildren.splice(index, 1);
+                        if (child.$el.parentNode) {
+                            this.$el.removeChild(child.$el);
+                        }
+                        this.$invisibleChildMap[child.$cid] = child;
                     }
-                    this.$invisibleChildMap[child.$cid] = child;
                 }
             },
             setChildVisible: function (child) {
@@ -700,8 +704,11 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                     }
                     var next = this._getNextVisibleChild(child);
                     if (next) {
+                        var index = this.$renderedChildren.indexOf(next);
+                        this.$renderedChildren.splice(index, 0, child);
                         this.$el.insertBefore(child.$el, next.$el);
                     } else {
+                        this.$renderedChildren.push(child);
                         this.$el.appendChild(child.$el);
                     }
                     if (this.$addedToDom) {
@@ -714,14 +721,16 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                 if (this.$el.childNodes.length === 0) {
                     return null;
                 }
-                var index = this.$renderedChildren.indexOf(child);
-                for (var i = index + 1; i < this.$renderedChildren.length; i++) {
-                    if (!this.$invisibleChildMap[this.$renderedChildren[i].$cid]) {
+                var index = this.$children.indexOf(child),
+                    renderedChild;
+                for (var i = index + 1; i < this.$children.length; i++) {
+                    renderedChild = this.$children[i];
+                    if (renderedChild.render instanceof Function && !this.$invisibleChildMap[renderedChild.$cid] && renderedChild.$.visible) {
                         break;
                     }
                 }
-                if (i < this.$renderedChildren.length && child !== this.$renderedChildren[i]) {
-                    return this.$renderedChildren[i];
+                if (i < this.$children.length && child !== this.$children[i]) {
+                    return this.$children[i];
                 }
                 return null;
             },
