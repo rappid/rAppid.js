@@ -1078,7 +1078,7 @@ define(["js/core/Component", "js/core/Base", "js/data/Collection", "underscore",
 
         DataSource.JsonFormatProcessor = DataSource.FormatProcessor.inherit("js.data.DataSource.JsonFormatProcessor", {
             serialize: function (data) {
-                return encodeURIComponent(JSON.stringify(data));
+                return JSON.stringify(data);
             },
             deserialize: function (text) {
                 return JSON.parse(text);
