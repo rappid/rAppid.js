@@ -63,6 +63,9 @@ define(["js/ui/ItemsView", "js/html/HtmlElement", "underscore", "js/core/List"],
             this.bind('selectedItems', 'add', this._onSelectedItemAdd, this);
             this.bind('selectedItems', 'remove', this._onSelectedItemRemove, this);
             this.bind('selectedItems', 'reset', this._onSelectedItemReset, this);
+
+            this.bind('items', 'remove', this._itemRemove, this);
+            this.bind('items', 'add', this._itemAdd, this);
         },
 
         _onSelectedItemAdd: function (e) {
@@ -78,8 +81,21 @@ define(["js/ui/ItemsView", "js/html/HtmlElement", "underscore", "js/core/List"],
             }
         },
 
+        _itemRemove: function(e) {
+            if (e.$.item === this.$.selectedItem) {
+                this._checkNeedsSelection();
+            }
+        },
+
+        _itemAdd: function() {
+            if (!this.$.selectedItem) {
+                this._checkNeedsSelection();
+            }
+        },
+
         _onSelectedItemRemove: function (e) {
             if(this.isRendered()){
+
                 var item;
                 var $renderedItems = this.$repeat.$renderedItems;
                 for (var i = 0; i < $renderedItems.length; i++) {
@@ -114,6 +130,10 @@ define(["js/ui/ItemsView", "js/html/HtmlElement", "underscore", "js/core/List"],
         _onItemsRendered: function () {
             this.callBase();
 
+            this._checkNeedsSelection();
+        },
+
+        _checkNeedsSelection: function() {
             if (this.$.needsSelection) {
                 var items = this._getItemsArray(this.$.items);
                 if (items && items.length) {
@@ -127,7 +147,6 @@ define(["js/ui/ItemsView", "js/html/HtmlElement", "underscore", "js/core/List"],
                     this.set('selectedItem', null);
                 }
             }
-
         },
 
         _commitChangedAttributes: function ($) {

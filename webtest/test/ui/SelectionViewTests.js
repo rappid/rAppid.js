@@ -127,6 +127,46 @@ describe("#SelectionView", function () {
             expect(view.$.selectedItem).to.be.equal(items.at(0));
         });
 
+        it('should set selectedItem to first item if selected element is removed and "needsSelection=true"', function () {
+            $expect($("#sv3").find('li.active')).to.have.items(1);
+            expect(view.$.selectedItem).to.be.equal(items.at(0));
+
+            items.removeAt(0);
+            expect(view.$.selectedItem).to.be.equal(items.at(0));
+            $expect($("#sv3").find('li.active')).to.have.items(1);
+        });
+
+        it('should set selectedItem to null if element(s) are removed and "needsSelection=true"', function () {
+            $expect($("#sv3").find('li.active')).to.have.items(1);
+            expect(view.$.selectedItem).to.be.equal(items.at(0));
+
+            items.clear();
+            expect(view.$.selectedItem).to.be.equal(null);
+            $expect($("#sv3").find('li.active')).to.have.items(0);
+        });
+
+        it('should set selectedItem to first items if empty list is filled and "needsSelection=true"', function () {
+            items.clear();
+            expect(view.$.selectedItem).to.be.equal(null);
+            $expect($("#sv3").find('li')).to.have.items(0);
+
+            var foo = {
+                id: 3,
+                value: "Foo"
+            };
+            var bar = {
+                id: 4,
+                value: "Bar"
+            };
+
+            items.add([foo, bar]);
+
+            expect(view.$.selectedItem).to.be.equal(foo);
+            expect(view.$.selectedItem).to.be.equal(items.at(0));
+
+            $expect($("#sv3").find('li.active')).to.have.items(1);
+        });
+
     });
 
     describe('#sv4', function () {
