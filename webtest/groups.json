@@ -16,11 +16,6 @@
             "type": "browser"
         },
         {
-            "app": "ui/SelectionViewTest.xml",
-            "test": "ui/SelectionViewTests.js",
-            "type": "browser"
-        },
-        {
             "app": "ui/ItemsViewTest.xml",
             "test": "ui/ItemsViewTests.js",
             "type": "browser"
