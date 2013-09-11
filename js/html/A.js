@@ -19,6 +19,9 @@ define(['js/html/HtmlElement'], function (HtmlElement) {
 
             if (history.$.useState) {
                 this.bind("on:click", function (e) {
+                    if (e.isDefaultPrevented) {
+                        return;
+                    }
                     e.preventDefault();
                     history.navigate(this.plainHref());
                 }, this);
