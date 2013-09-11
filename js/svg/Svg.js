@@ -129,21 +129,28 @@ define(['xaml!js/svg/SvgDescriptor', "js/svg/SvgElement", 'js/core/Base'], funct
                     callbacks: [callback]
                 };
 
-                var maxChecks = 500;
+
+                var maxChecks = 500,
+                    originalBox,
+                    current;
                 setTimeout(function () {
                     text.setAttribute("font-family", "__ABCDE__");  // set to undefined font and measure
-
-                    var originalBox = text.getBBox();
+                    try{
+                        originalBox = text.getBBox();
+                    } catch(e){}
 
                     text.setAttribute("font-family", fontFamily); // set to loading font / first undefined
                     setTimeout(checkFontLoaded, 0);
 
                     function checkFontLoaded() {
-                        var current = text.getBBox();
+                        try {
+                            current = text.getBBox();
+                        } catch (e) {
+                        }
 
                         // compare bounding boxes of two
-                        if (maxChecks > 0 && current.x === originalBox.x && current.y === originalBox.y &&
-                            current.width === originalBox.width && current.height === originalBox.height) {
+                        if (!current || !originalBox || (maxChecks > 0 && current.x === originalBox.x && current.y === originalBox.y &&
+                            current.width === originalBox.width && current.height === originalBox.height)) {
                             maxChecks--;
 
                             // same check later
