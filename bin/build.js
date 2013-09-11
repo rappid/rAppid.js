@@ -242,7 +242,7 @@ var build = function (args, callback) {
         content = content.replace(/<script.*?require\.js.*?<\/script>/, "");
         content = content.replace("js/lib/rAppid", mainModule);
         if (versionDir) {
-            content = content.replace(/(href|src)=(["'])(?!(http|\/\/))([^'"]+)/g, '$1=$2' + versionDir + '/$4');
+            content = content.replace(/(href|src)=(["'])(?!(http|\/\/))(\/)?([^'"]+)/g, '$1=$2$4' + versionDir + '/$5');
             content = content.replace(/\$\{VERSION\}/g, version);
 
             mainModule = path.join(versionDir, mainModule);
