@@ -270,6 +270,14 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                 this._renderAttributes(this.$);
                 this._bindDomEvents(this.$el);
 
+
+                if (this.$stage.$applicationContext.$config["enableInspection"] === true) {
+                    var self = this;
+                    this.$el.inspect = function() {
+                        return self;
+                    }
+                }
+
                 return this.$el;
             },
 
