@@ -119,8 +119,11 @@ define(["js/html/HtmlElement", "js/core/Bus", "js/core/WindowManager", "js/core/
                         browser.os = os;
                     }
 
-                    var browserName = /firefox|chrome|safari/i.exec(userAgent);
+                    var browserName = /(firefox)|(chrome)|(safari)/i.exec(userAgent);
                     if (browserName) {
+                        browser.isFF = !!browserName[1];
+                        browser.isChrome = !!browserName[2];
+                        browser.isSafari = !!browserName[3];
                         browserName = browserName[0].toLowerCase();
                         browser.name = browserName;
                     }
