@@ -85,7 +85,7 @@ define(['srv/core/Handler', 'srv/core/AuthenticationService', 'srv/core/HttpErro
                                         break;
                                 }
 
-                                err = new HttpError(err.message, statusCode)
+                                err = new HttpError(err.errorCode, statusCode)
                             }
                             callback(err);
                         });
