@@ -312,6 +312,10 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
                 }
 
             } else {
+                // HACK FOR FF TO CLEAR THE IMAGE BEFORE SETTING A NEW ONE
+                if(key === "src" && this.$stage.$browser.isFF){
+                    this.$el.removeAttribute(key);
+                }
                 this.callBase();
             }
         },
