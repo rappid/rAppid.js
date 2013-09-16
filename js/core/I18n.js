@@ -121,6 +121,10 @@ define(["require", "js/core/Component", "underscore", "moment", "flow"], functio
                 key = args.shift(),
                 num;
 
+            if(!args.length || args[0] == null){
+                return "";
+            }
+
             if (_.isNumber(key)) {
                 num = key;
                 key = args.shift();
