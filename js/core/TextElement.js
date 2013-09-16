@@ -46,7 +46,7 @@ define(
             },
             _commitChangedAttributes: function (attributes) {
                 if (this.$el) {
-                    if (!_.isUndefined(attributes.textContent)) {
+                    if (attributes.hasOwnProperty("textContent")) {
                         this._renderTextContent(attributes.textContent);
                     }
                 }
