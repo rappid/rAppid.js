@@ -32,6 +32,10 @@ define(['srv/auth/AuthenticationProvider', 'srv/auth/Authentication', 'js/data/C
              */
             usernameField: "username",
             /**
+             * Max. length of passwords
+             */
+            maxPasswordLength: 60,
+            /**
              * The field which contains the authentication data in a user
              */
             authenticationField: "authentication",
@@ -86,6 +90,10 @@ define(['srv/auth/AuthenticationProvider', 'srv/auth/Authentication', 'js/data/C
          * @returns {boolean}
          */
         validatePassword: function (password, correctHash) {
+            // validate password length
+            if(password && password.length > this.$.maxPasswordLength){
+                return false;
+            }
             var elements = correctHash.split(this.$.delimiter);
             if (elements.length === 3) {
                 return (this.createHash(password, elements[0], elements[1]) === correctHash);
