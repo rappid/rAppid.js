@@ -4,12 +4,12 @@ define(["js/data/DataSource", "js/data/Model", "underscore", "flow", "JSON", "js
 
     var RestDataProcessor = DataSource.Processor.inherit('js.data.RestDataSource.RestDataProcessor', {
         _composeSubModel: function (model, action, options, scope) {
-            if(scope instanceof Model){
+            if (scope instanceof Model) {
                 var contextDistance = 0;
                 var configuration = this.$dataSource.$dataSourceConfiguration.getConfigurationForModelClass(model.factory);
                 var parent = contextDistance.$parent;
                 var subModelStack = [];
-                while(configuration && configuration.$.path){
+                while (configuration && configuration.$.path) {
                     subModelStack.unshift(configuration);
                     configuration = configuration.$parent;
                 }
@@ -20,15 +20,15 @@ define(["js/data/DataSource", "js/data/Model", "underscore", "flow", "JSON", "js
                     configuration = configuration.$parent;
                 }
                 var i = 0;
-                while(scopeStack[i] && subModelStack[i] && scopeStack[i].$.path === subModelStack[i].$.path){
+                while (scopeStack[i] && subModelStack[i] && scopeStack[i].$.path === subModelStack[i].$.path) {
                     i++;
                 }
                 contextDistance = subModelStack.length - i;
 
-                if(contextDistance > 0){
+                if (contextDistance > 0) {
                     var path = [];
                     parent = model;
-                    while(contextDistance > 0){
+                    while (contextDistance > 0) {
                         path.unshift(parent.identifier());
                         parent = parent.$context.$contextModel;
                         contextDistance--;
@@ -157,9 +157,9 @@ define(["js/data/DataSource", "js/data/Model", "underscore", "flow", "JSON", "js
                 }
             }
 
-            if(resource instanceof Collection){
+            if (resource instanceof Collection) {
                 _.defaults(params, resource.getQueryParameters(action), resource.getRoot().$context.getQueryParameters());
-                if(resource.$.query){
+                if (resource.$.query) {
                     _.defaults(params, this.getQueryComposer().compose(resource.$.query));
                 }
             }
@@ -167,7 +167,7 @@ define(["js/data/DataSource", "js/data/Model", "underscore", "flow", "JSON", "js
             return params;
         },
 
-        getQueryComposer: function(){
+        getQueryComposer: function () {
             return RestQueryComposer.RestQueryComposer;
         },
 
@@ -253,7 +253,7 @@ define(["js/data/DataSource", "js/data/Model", "underscore", "flow", "JSON", "js
 
         },
 
-        _resourcePathToUri: function(resourcePath, resource) {
+        _resourcePathToUri: function (resourcePath, resource) {
             return resourcePath.join("/");
         },
 
@@ -295,8 +295,13 @@ define(["js/data/DataSource", "js/data/Model", "underscore", "flow", "JSON", "js
                         cb(null, model, options);
 
                     } else {
-                        // TODO: better error handling
-                        cb("Got status code " + xhr.status + " for '" + url + "'", xhr, null, options);
+                        self._handleXHRError({
+                            url: url,
+                            xhr: xhr,
+                            queryParameter: params,
+                            model: model,
+                            options: options
+                        }, callback);
                     }
                 })
                 .exec(function (err) {
@@ -338,26 +343,6 @@ define(["js/data/DataSource", "js/data/Model", "underscore", "flow", "JSON", "js
          * @param xhr
          * @param callback
          */
-        handleSaveError: function (request, xhr, callback) {
-            if (callback) {
-                callback({
-                    status: xhr.status,
-                    statusText: xhr.statusText,
-                    responses: xhr.responses,
-                    xhr: xhr
-                });
-            }
-        },
-
-        /***
-         *
-         * @param request.url
-         * @param request.queryParameter
-         * @param request.model
-         * @param request.options
-         * @param xhr
-         * @param callback
-         */
         handleCreationSuccess: function (request, xhr, callback) {
 
             var model = request.model;
@@ -384,7 +369,7 @@ define(["js/data/DataSource", "js/data/Model", "underscore", "flow", "JSON", "js
 
                     if (id || id === 0) {
                         model.set(model.idField, id);
-                        if(model.hrefField){
+                        if (model.hrefField) {
                             model.set(model.hrefField, location);
                         }
                         var schema = model.schema, schemaType;
@@ -411,7 +396,7 @@ define(["js/data/DataSource", "js/data/Model", "underscore", "flow", "JSON", "js
                     cb('Location header not found');
                 }
 
-            } catch(e) {
+            } catch (e) {
                 cb(e || true);
             }
         },
@@ -433,17 +418,17 @@ define(["js/data/DataSource", "js/data/Model", "underscore", "flow", "JSON", "js
                         pathElement;
 
 
-                    if(!this.$cachedEndpoint){
+                    if (!this.$cachedEndpoint) {
                         var href = data[this.$.determinateContextAttribute];
                         path = href.replace(/(http(s)?:\/\/.+?)\//i, "");
-                        this.$cachedEndpoint = href.substring(0,href.length - path.length);
+                        this.$cachedEndpoint = href.substring(0, href.length - path.length);
                         components = path.split("/");
 
-                        while(!this.$dataSourceConfiguration.getConfigurationByKeyValue("path", components[0])){
+                        while (!this.$dataSourceConfiguration.getConfigurationByKeyValue("path", components[0])) {
                             this.$cachedEndpoint += components.shift() + "/";
                         }
                     } else {
-                        path = data[this.$.determinateContextAttribute].replace(this.$cachedEndpoint,"");
+                        path = data[this.$.determinateContextAttribute].replace(this.$cachedEndpoint, "");
                         components = path.split("/");
                     }
 
@@ -551,21 +536,24 @@ define(["js/data/DataSource", "js/data/Model", "underscore", "flow", "JSON", "js
                         contentType: formatProcessor.getContentType()
                     }, function (err, xhr) {
 
-                        var request = {
-                            url: url,
-                            queryParameter: params,
-                            model: model,
-                            options: options
-                        };
+                        if (!err) {
+                            var request = {
+                                xhr: xhr,
+                                url: url,
+                                queryParameter: params,
+                                model: model,
+                                options: options
+                            };
 
-                        if (!err && action === DataSource.ACTION.CREATE && xhr.status === 201) {
-                            self.handleCreationSuccess(request, xhr, cb);
-                        } else if (!err && action === DataSource.ACTION.UPDATE && xhr.status === 200) {
-                            self.handleUpdateSuccess(request, xhr, cb);
-                        }
-                        else {
-                            // error handling
-                            self.handleSaveError(request, xhr, cb);
+                            if (action === DataSource.ACTION.CREATE && xhr.status === 201) {
+                                self.handleCreationSuccess(request, xhr, cb);
+                            } else if (action === DataSource.ACTION.UPDATE && xhr.status === 200) {
+                                self.handleUpdateSuccess(request, xhr, cb);
+                            } else {
+                                self._handleXHRError(request, cb);
+                            }
+                        } else {
+                            cb(err);
                         }
 
                     });
@@ -609,7 +597,7 @@ define(["js/data/DataSource", "js/data/Model", "underscore", "flow", "JSON", "js
             var params = {};
 
             _.defaults(params, (options || {}).params, this.getQueryParameters(RestDataSource.METHOD.GET, collectionPage.$collection));
-            _.extend(params,this._getPagingParameterForCollectionPage(collectionPage));
+            _.extend(params, this._getPagingParameterForCollectionPage(collectionPage));
 
             if (options.noCache) {
                 params.timestamp = (new Date()).getTime();
@@ -663,17 +651,35 @@ define(["js/data/DataSource", "js/data/Model", "underscore", "flow", "JSON", "js
 
                         callback(null, collectionPage, options);
 
-                    } catch(e) {
+                    } catch (e) {
                         self.log(e, 'error');
                         callback(e, collectionPage, options);
                     }
 
                 } else {
-                    // TODO: better error handling
-                    err = err || "wrong status code";
-                    callback(err, collectionPage, options);
+                    self._handleXHRError({
+                        url: url,
+                        xhr: xhr,
+                        queryParameter: params,
+                        collection: rootCollection,
+                        options: options
+                    }, callback);
                 }
             });
+        },
+        /***
+         *
+         * @param err.url
+         * @param err.xhr
+         * @param err.queryParameter
+         * @param err.model
+         * @param err.options
+         * @param callback
+         */
+        _handleXHRError: function (err, callback) {
+            this.trigger('on:xhrError', err);
+
+            callback && callback(err);
         },
 
         _createSortParameter: function (sortParameters) {
@@ -682,18 +688,18 @@ define(["js/data/DataSource", "js/data/Model", "underscore", "flow", "JSON", "js
             for (var key in sortParameters) {
                 if (sortParameters.hasOwnProperty(key)) {
                     parameters = parameters || {};
-                    sortFields.push((sortParameters[key] === -1 ? "+" : "-")+key);
+                    sortFields.push((sortParameters[key] === -1 ? "+" : "-") + key);
                 }
             }
-            if(sortFields.length > 0){
+            if (sortFields.length > 0) {
                 parameters = {
-                    sort: "("+sortFields.join(",")+")"
+                    sort: "(" + sortFields.join(",") + ")"
                 };
             }
             return parameters;
         },
 
-        _getPagingParameterForCollectionPage: function(collectionPage){
+        _getPagingParameterForCollectionPage: function (collectionPage) {
             var ret = {};
             if (collectionPage.$offset) {
                 ret.offset = collectionPage.$offset;
