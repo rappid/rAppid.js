@@ -15,6 +15,7 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
         $modelMethodMap: {
             GET: "_show",
             PUT: "_update",
+            PATCH: "_update",
             DELETE: "_delete"
         },
 
@@ -108,6 +109,7 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
                         if (body !== "") {
                             // TODO: handle different payload formats -> format processor needed
                             try {
+                                context.request.method = method;
                                 context.request.params = JSON.parse(body);
                             } catch (e) {
                                 console.warn("Couldn't parse " + body);
@@ -483,6 +485,7 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
                 options = {},
                 model,
                 processor,
+                isPatch = context.request.method === "PATCH",
                 upsert = this.$resourceConfiguration.$.upsert,
                 defaults;
 
@@ -495,15 +498,17 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
                     model = this.vars.collection.createItem(self.$resourceId);
                     defaults = _.clone(model.$);
                     // check if model exists
-                    if (upsert) {
+                    if (upsert && !isPatch) {
                         cb();
                     } else {
                         model.fetch(null, cb);
                     }
                 })
                 .seq(function () {
-                    model.clear();
-                    model.set(defaults);
+                    if(!isPatch){
+                        model.clear();
+                        model.set(defaults);
+                    }
 
                     var payload = context.request.params;
 
