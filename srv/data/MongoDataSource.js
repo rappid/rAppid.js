@@ -12,7 +12,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
 
     var translateOperator = MongoQueryComposer.translateOperator;
 
-    MongoQueryComposer.translateOperator = function(operator){
+    MongoQueryComposer.translateOperator = function (operator) {
         /**
          * Fix to handle ID's right
          * @param operator
@@ -91,12 +91,6 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
         },
 
         parse: function (model, data, action, options) {
-
-            if (model.createdField) {
-                if (data[ID_KEY]) {
-                    data[model.createdField] = data[ID_KEY].getTimestamp();
-                }
-            }
 
             function readId(fromField) {
                 if (data[fromField] && !data.id) {
@@ -246,6 +240,10 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
 
             if (model.updatedField) {
                 model.set(model.updatedField, new Date());
+            }
+
+            if (model.createdField && model.isNew()) {
+                model.set(model.createdField, new Date());
             }
 
             if (!options.action) {
