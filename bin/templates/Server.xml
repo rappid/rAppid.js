@@ -3,7 +3,7 @@
         xmlns:endpoint="srv.endpoint">
 
     <EndPoints>
-        <endpoint:HttpEndPoint port="80"/>
+        <endpoint:HttpEndPoint port="4444"/>
     </EndPoints>
 
     <Handlers>
