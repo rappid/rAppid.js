@@ -26,5 +26,7 @@ define([], function () {
     AuthenticationError.TOO_MANY_WRONG_ATTEMPTS = new AuthenticationError("Too many wrong login attempts", "too_many_wrong_login_attempts");
     AuthenticationError.AUTHENTICATION_EXPIRED = new AuthenticationError("Authentication expired", "authentication_expired");
     AuthenticationError.NO_PROVIDER_FOUND = new AuthenticationError("No authentication provider found for request", "no_provider_found");
+    AuthenticationError.NO_IDENTITY_FOUND = new AuthenticationError("No Identity found!", "no_identity_found");
+
     return AuthenticationError;
 });

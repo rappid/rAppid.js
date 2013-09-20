@@ -80,6 +80,9 @@ define(['srv/core/Handler', 'srv/core/AuthenticationService', 'srv/core/HttpErro
                                     case AuthenticationError.AUTHENTICATION_EXPIRED:
                                         statusCode = 400;
                                         break;
+                                    case AuthenticationError.NO_IDENTITY_FOUND:
+                                        statusCode = 301;
+                                        break;
                                     case AuthenticationError.TOO_MANY_WRONG_ATTEMPTS:
                                         statusCode = 400;
                                         break;

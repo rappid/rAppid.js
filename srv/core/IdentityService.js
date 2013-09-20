@@ -1,4 +1,4 @@
-define(["js/core/Component", "js/data/Collection", "srv/core/Identity", "js/data/Query", "js/data/DataSource"], function (Component, Collection, Identity, Query, DataSource) {
+define(["js/core/Component", "js/data/Collection", "srv/core/Identity", "js/data/Query", "js/data/DataSource", "srv/auth/AuthenticationError"], function (Component, Collection, Identity, Query, DataSource, AuthenticationError) {
 
     return Component.inherit('srv.core.IdentityService', {
 
@@ -30,7 +30,7 @@ define(["js/core/Component", "js/data/Collection", "srv/core/Identity", "js/data
             this.$.dataSource.createCollection(Collection.of(Identity)).query(query).fetch(null, function (err, identities) {
                 if (!err) {
                     if (identities.isEmpty()) {
-                        cb("no identity found")
+                        cb(AuthenticationError.NO_IDENTITY_FOUND);
                     } else {
                         cb(null, identities.at(0));
                     }
