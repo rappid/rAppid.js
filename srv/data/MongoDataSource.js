@@ -244,12 +244,8 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
                 method;
 
 
-            if (model.updatedField) {
-//                model.set(model.updatedField, new Date());
-            }
-
-            if (model.createdField && model.isNew()) {
-                // model.set(model.createdField, new Date());
+            if (model.updatedField && !model.get(model.updatedField)) {
+                model.set(model.updatedField, new Date());
             }
 
             if (!options.action) {
