@@ -92,6 +92,12 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
 
         parse: function (model, data, action, options) {
 
+            if (model.createdField) {
+                if(!data[model.createdField] && data[ID_KEY]) {
+                    data[model.createdField] = data[ID_KEY].getTimestamp();
+                }
+            }
+
             function readId(fromField) {
                 if (data[fromField] && !data.id) {
                     var _id = data[fromField];
@@ -239,11 +245,11 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
 
 
             if (model.updatedField) {
-                model.set(model.updatedField, new Date());
+//                model.set(model.updatedField, new Date());
             }
 
             if (model.createdField && model.isNew()) {
-                model.set(model.createdField, new Date());
+                // model.set(model.createdField, new Date());
             }
 
             if (!options.action) {
