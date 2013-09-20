@@ -19,7 +19,7 @@ define(["js/core/Bindable", "js/core/List", "flow", "srv/auth/AuthorizationReque
 
         getAuthenticationByProviderName: function (providerName) {
             var ret = null;
-            this.$.authentiactions.each(function (auth) {
+            this.$.authentications.each(function (auth) {
                 if (auth.$.provider === providerName) {
                     ret = auth;
                     this["break"]();
