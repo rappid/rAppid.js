@@ -425,7 +425,7 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                                     key: key,
                                     value: value
                                 });
-                            } else if (value instanceof List && value.isCollection) {
+                            } else if (value instanceof List && !value.isCollection) {
                                 if (value.size() > 0 && value.at(0) instanceof Entity) {
                                     for (var i = 0; i < value.$items.length; i++) {
                                         subEntities.push({
