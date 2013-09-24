@@ -137,6 +137,8 @@ define(["js/html/HtmlElement", "js/core/Bus", "js/core/WindowManager", "js/core/
                         browser.isIE = false;
                     }
 
+                    browser.name = browser.name || "";
+
                 }
 
                 var s = window.document.createElement('div').style;
