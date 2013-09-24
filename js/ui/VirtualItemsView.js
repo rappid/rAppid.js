@@ -566,6 +566,8 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
                 if (!this.$.selectedItems.isEmpty()) {
                     this.$.selectedItems.clear({silent: true});
                 }
+                this.$currentSelectionIndex = -1;
+
                 this.trigger('selectionChanged');
             },
 
