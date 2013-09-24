@@ -1,4 +1,4 @@
-define(['js/html/HtmlElement', 'underscore'], function(HtmlElement, _){
+define(['js/html/HtmlElement', 'underscore', 'require', 'js/core/Window'], function(HtmlElement, _, require, Window){
 
     /***
      * The WindowManager manages Windows on the Stage.
@@ -96,6 +96,23 @@ define(['js/html/HtmlElement', 'underscore'], function(HtmlElement, _){
             };
 
             window.bind('close', closeHandler, this);
+        },
+
+        createWindow: function(windowClassName, callback) {
+
+            var self = this;
+
+            windowClassName = this.$stage.$applicationContext.getFqClassName(windowClassName);
+            require([windowClassName], function(window) {
+                if (window.classof(Window)) {
+                    callback && callback(null, self.createComponent(window));
+                } else {
+                    callback && callback(new Error("Window of class '" + windowClassName + "' is not a window"));
+                }
+            }, function(err) {
+                callback && callback(err);
+            });
+
         }
 
     });
