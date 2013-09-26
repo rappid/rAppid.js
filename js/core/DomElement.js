@@ -273,7 +273,7 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
 
                 if (this.$stage.$applicationContext.$config["enableInspection"] === true) {
                     var self = this;
-                    this.$el.inspect = function() {
+                    this.$el.inspect = function () {
                         return self;
                     }
                 }
@@ -781,7 +781,7 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
 
         var DomManipulationFunctions = {
             hasClass: function (value) {
-                return (this.$el.getAttribute("class") || "").split(" " + value + " ").length != 1;
+                return new RegExp("\\b" + value + "\\b").test(this.$el.getAttribute("class") || "");
             },
 
             addClass: function (value) {
