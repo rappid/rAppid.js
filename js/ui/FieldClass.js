@@ -9,7 +9,9 @@ define(["js/ui/View", "js/html/Input", "js/html/Select", "js/html/TextArea", 'js
             label: "",
             inputId: null,
             enabled: true,
-            error: null
+            error: null,
+            required: false,
+            requiredClass: "required"
         },
 
         inject: {
@@ -52,6 +54,14 @@ define(["js/ui/View", "js/html/Input", "js/html/Select", "js/html/TextArea", 'js
                 }
             }
 
+        },
+
+        _renderRequired: function (required) {
+            if (required) {
+                this.addClass(this.$.requiredClass);
+            } else {
+                this.removeClass(this.$.requiredClass);
+            }
         },
 
         getFirstChild: function (child) {
