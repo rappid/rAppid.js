@@ -19,7 +19,8 @@ var args = process.argv.splice(2),
         "doc",
         "sitemap",
         "server",
-        "webtest"
+        "webtest",
+        "version"
     ],
     allCmds = cmdList.concat(Object.keys(aliases));
 
