@@ -1,0 +1,23 @@
+<parent:SliderClass xmlns="http://www.w3.org/1999/xhtml"
+                    xmlns:parent="js.ui">
+
+    <div cid="sliderBar" class="slider-bar" position="absolute"/>
+    <a cid="startHandle"
+       position="absolute"
+       visible="{range}"
+       class="slider-handle start-handle"
+       onpointerdown="_handleDown(event, 'startHandle')"
+       selectable="true"
+       onkeydown="_handleKeyDown">
+        <span class="inner-handle"/>
+       </a>
+    <a cid="mainHandle"
+       position="absolute"
+       class="slider-handle main-handle"
+       onpointerdown="_handleDown(event,'mainHandle')"
+       selectable="true"
+       onkeydown="_handleKeyDown">
+        <span class="inner-handle"/>
+       </a>
+
+</parent:SliderClass>
