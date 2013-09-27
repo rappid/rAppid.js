@@ -33,7 +33,7 @@ define(["js/ui/View", "js/core/Content", "js/ui/Button", "underscore"], function
              *
              * @type String
              */
-            buttonClass: "",
+            buttonClass: "btn",
 
             /***
              * the class name for the icon
