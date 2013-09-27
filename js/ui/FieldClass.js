@@ -41,7 +41,7 @@ define(["js/ui/View", "js/html/Input", "js/html/Select", "js/html/TextArea", 'js
             this.callBase();
 
             // find first Input, Select or TextArea and set id if null
-            var children = this.getPlaceHolder('controls').$.content.getChildren();
+            var children = this.findContent('controls').$children;
             var firstChild;
 
             for (var j = 0; j < children.length; j++) {
@@ -70,13 +70,16 @@ define(["js/ui/View", "js/html/Input", "js/html/Select", "js/html/TextArea", 'js
             }
 
             if (child && child.$children) {
-                for (var i = 0; i < child.$children.length; i++) {
-                    var c = this.getFirstChild(child.$children[i]);
+                var children = child.getViewChildren();
+                for (var i = 0; i < children.length; i++) {
+                    var c = this.getFirstChild(children[i]);
                     if (c) {
                         return c;
                     }
                 }
             }
+
+            return null;
         }
     });
 

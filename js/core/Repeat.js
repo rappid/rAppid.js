@@ -122,16 +122,7 @@ define(["js/core/Component", "js/core/Bindable", "js/core/List"], function (Comp
             this.$renderedItems = [];
             this.$renderedItemsMap = {};
             this.$indexOffset = 0;
-            if (this.$children.length > 0) {
-                var child, elIndex;
-                for (var k = 0; k < this.$children.length; k++) {
-                    child = this.$children[k];
-                    elIndex = this.$elements.indexOf(child);
-                    if (elIndex === k) {
-                        this.$indexOffset++;
-                    }
-                }
-            }
+
             if (items) {
                 for (var i = 0; i < items.length; i++) {
                     this._innerRenderItem(items[i], i);
@@ -240,16 +231,14 @@ define(["js/core/Component", "js/core/Bindable", "js/core/List"], function (Comp
          */
         _calculateIndexOffsetForChild: function (child) {
             var index = 0,
-                element,
-                isViewComponent = (child.render instanceof Function);
-            for (var i = 0; i < this.$parent.$elements.length; i++) {
-                element = this.$parent.$elements[i];
-                if (isViewComponent && element.render instanceof Function) {
-                    index++;
-                } else if (!isViewComponent && element !== this) {
-                    index++;
+                element;
+
+            for (var i = 0; i < this.$parent.$children.length; i++) {
+                element = this.$parent.$children[i];
+                if (element === this) {
+                    return ++index;
                 } else {
-                    return index;
+                    index++;
                 }
             }
             return index;

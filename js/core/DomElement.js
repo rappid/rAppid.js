@@ -152,9 +152,9 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
 
                 if (child.$initialized || child.$initializing) {
                     if (child instanceof DomElement || child.render) {
-                        var pos = options && typeof(options.childIndex) !== "undefined" ? options.childIndex : this.$children.length;
+                        var pos = options && options.childIndex != null ? options.childIndex : this.$children.length;
 
-                        this.$children.splice(pos, 0, child);
+//                        this.$children.splice(pos, 0, child);
                         if (this.isRendered()) {
                             this._renderChild(child, pos);
                         }
@@ -171,21 +171,22 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                     if (this.isRendered()) {
                         this._removeRenderedChild(child);
                     }
-                    var i = this.$children.indexOf(child);
-                    this.$children.splice(i, 1);
                 }
             },
 
             getPlaceHolder: function (name) {
+                var element;
                 for (var i = 0; i < this.$children.length; i++) {
-                    if (this.$children[i].$.name === name) {
-                        return this.$children[i];
+                    element = this.$children[i];
+                    if (element.render instanceof Function && element.$.name === name) {
+                        return element;
                     }
                 }
                 var placeholder;
                 for (i = 0; i < this.$children.length; i++) {
-                    if (this.$children[i].getPlaceHolder) {
-                        placeholder = this.$children[i].getPlaceHolder(name);
+                    element = this.$children[i];
+                    if (element.getPlaceHolder) {
+                        placeholder = element.getPlaceHolder(name);
                         if (placeholder) {
                             return placeholder;
                         }
@@ -199,6 +200,16 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                 if (this.$parent) {
                     this.$parent.removeChild(this);
                 }
+            },
+
+            getViewChildren: function () {
+                var ret = [];
+                for (var i = 0; i < this.$children.length; i++) {
+                    if (this.$children[i].render instanceof Function) {
+                        ret.push(this.$children[i]);
+                    }
+                }
+                return ret;
             },
 
             getContentPlaceHolders: function () {
@@ -349,9 +360,10 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                             this.$el.appendChild(el);
                             this.$renderedChildren.push(child);
                         } else {
-                            // decrease the pos by the number of invisible children before
+                            // decrease the pos by the number of invisible children and elements before
                             for (var i = 0; i < pos && i < this.$children.length; i++) {
-                                if (!this.$children[i].$.visible) {
+                                var element = this.$children[i];
+                                if (!element.render || !element.$.visible) {
                                     pos--;
                                 }
                             }
@@ -438,7 +450,7 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
 
                         // decrease it by the non visible children that are before ...
                         while (i < index) {
-                            if (!children[i].$.visible) {
+                            if (children[i].render instanceof Function && !children[i].$.visible) {
                                 index--;
                             }
                             i++;
@@ -528,7 +540,8 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
 
             _getIndexOfPlaceHolder: function (placeHolder) {
                 if (this.$layoutTpl) {
-                    var child;
+                    var child,
+                        placeHolderId;
                     for (var i = 0; i < this.$layoutTpl.$children.length; i++) {
                         child = this.$layoutTpl.$children[i];
                         if (placeHolderId == child.$cid) {
