@@ -186,6 +186,7 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
              */
             clearErrors: function () {
                 this.$errors.clear();
+                this.trigger('isValidChanged', {}, this);
             },
 
             /***
