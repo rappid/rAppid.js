@@ -379,7 +379,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
 
                     if (this.$errorAttribute && this.$bindings[this.$errorAttribute]) {
                         var b = this.$bindings[this.$errorAttribute][0], errorBinding;
-                        if (b.$.twoWay && b.$.path.length > 1) {
+                        if (b.$.path.length > 1) {
                             var path = b.$.path.slice(), attrKey = path.pop().name;
                             path = path.concat(bindingCreator.parsePath("errors()." + attrKey));
 
