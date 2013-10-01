@@ -156,6 +156,9 @@ define(["js/ui/View", 'js/data/Collection', 'js/core/List'], function (View, Col
                     this.addClass('open');
                     this.$.inputField.$el.focus();
                     this.$.inputField.$el.select();
+
+                    // too refresh view
+                    this.$.tileList._updateVisibleItems(true);
                 } else {
                     this.removeClass('open');
                 }
