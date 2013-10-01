@@ -52,7 +52,7 @@ define(["js/html/HtmlElement", "underscore", "moment"], function (HtmlElement, _
         },
 
         _supportsPlaceholder: function () {
-            return "placeholder" in this.$el;
+            return "placeHolder" in this.$el;
         },
 
         _renderValue: function (value) {
