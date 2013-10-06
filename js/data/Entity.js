@@ -64,7 +64,9 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                     required: true,
                     includeInIndex: false,
                     serverOnly: false,
-                    _rewritten: true
+                    _rewritten: true,
+                    // if true, sub models get composed and not just linked
+                    compose: false
                 }, schemaObject;
 
                 // add id schema

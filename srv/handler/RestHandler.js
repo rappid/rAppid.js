@@ -16,6 +16,15 @@ define(['require', 'srv/core/Handler', 'js/conf/DataSourceConfiguration', 'js/co
                     href: collection.$.href
                 };
             },
+            _getCompositionValue: function (value, key, action, options, scope) {
+                if (value instanceof Model) {
+                    if (scope.schema[key] && scope.schema[key].compose === true) {
+                        return this._composeEntity(value, action, options);
+                    }
+                }
+
+                return this.callBase();
+            },
 
             _composeEntity: function (entity, action, options) {
                 var ret = this.callBase(),
