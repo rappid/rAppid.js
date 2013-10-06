@@ -230,12 +230,14 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
                 if (model.schema.hasOwnProperty(key)) {
                     var value = model.$[key];
                     if (value instanceof Model) {
+                        this._fetchAllHrefsForModel(value, context);
                         value.$.href = baseUri + this._getPathForModel(value);
                     } else if (value instanceof Collection) {
                         value.$.href = model.$.href + "/" + key;
                     } else if (value instanceof List) {
                         value.each(function (item) {
                             if (item instanceof Model) {
+                                self._fetchAllHrefsForModel(item, context);
                                 item.$.href = baseUri + self._getPathForModel(item);
                             }
                         });
