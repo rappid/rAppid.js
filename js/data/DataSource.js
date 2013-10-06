@@ -401,7 +401,7 @@ define(["js/core/Component", "js/core/Base", "js/data/Collection", "underscore",
              * @return {Object}
              * @private
              */
-            _composeSubModel: function (model, action, options) {
+            _composeSubModel: function (model, action, options, scope) {
                 // TODO: implement compose SubModel
                 // just return id
                 return model.identifier();
