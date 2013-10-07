@@ -135,6 +135,12 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
         _onDomAdded: function () {
             this.callBase();
 
+            this.checkSizePolicies();
+        },
+        /**
+         * Checks if the element has the correct width and height according to the width and height update policy
+         */
+        checkSizePolicies: function(){
             checkSizePolicy(this, this.$.widthUpdatePolicy, 'width');
             checkSizePolicy(this, this.$.heightUpdatePolicy, 'height');
         },
