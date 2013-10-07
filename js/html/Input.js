@@ -52,7 +52,7 @@ define(["js/html/HtmlElement", "underscore", "moment"], function (HtmlElement, _
         },
 
         _supportsPlaceholder: function () {
-            return "placeHolder" in this.$el;
+            return "placeHolder" in this.$el || "placeholder" in this.$el;
         },
 
         _renderValue: function (value) {
@@ -175,6 +175,8 @@ define(["js/html/HtmlElement", "underscore", "moment"], function (HtmlElement, _
                 if (placeholder) {
                     this.addClass('placeholder');
                 }
+            } else {
+                this._setAttribute("placeHolder", placeholder);
             }
         }
     });
