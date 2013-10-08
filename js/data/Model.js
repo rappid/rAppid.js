@@ -74,10 +74,11 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
 
         /***
          *
-         * persistent the model over the data-source in which it was created
+         * Perstists the model over the DataSource in which it was created
          *
-         * @param options
-         * @param callback
+         * @param {Object} options
+         * @param {Boolean} options.invalidatePageCache - if set to true the corresponding collection page cache is cleared
+         * @param {Function} callback - The callback when save has finished
          */
         save: function (options, callback) {
 
@@ -186,7 +187,13 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
 
 
         },
-
+        /**
+         * Pre-Composes the model before it goes to the DataSource processor
+         *
+         * @param action
+         * @param options
+         * @returns {*}
+         */
         compose: function (action, options) {
             var ret = this.callBase();
 
@@ -198,8 +205,10 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
         },
 
         /**
-         * @param options
-         * @param options.fetchSubModels
+         * Fetches the model over the given DataSource. The id of the model must be set.
+         *
+         * @param {Object} options
+         * @param {Array} options.fetchSubModels - array of submodels to fetch
          * @param {Function} callback - function(err, model, options)
          */
         fetch: function (options, callback) {
