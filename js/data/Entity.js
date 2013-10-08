@@ -26,15 +26,30 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
 
                 this.callBase();
             },
-
+            /**
+             * The schema of the entity
+             */
             schema: {},
-
+            /**
+             * An array of validators to apply
+             */
             validators: [],
-
+            /**
+             * The field for the id. Is automatically added to the schema as String
+             */
             idField: "id",
+            /**
+             * The created field. Is automatically added to the schema with Date
+             */
             createdField: false,
-            updatedField: false,
 
+            /**
+             * The updated field. Is automatically added to the schema with Date
+             */
+            updatedField: false,
+            /**
+             * The context of the entity
+             */
             $context: null,
             $dependentObjectContext: null,
 
@@ -42,6 +57,10 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
             $isEntity: true,
             $isDependentObject: true,
 
+            /**
+             * Constructs the schema with the schema definition
+             * @private
+             */
             _extendSchema: function () {
 
                 if (this.factory.schema) {
@@ -200,13 +219,19 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                 return this.$errors;
             }.on('isValidChanged'),
 
+            /**
+             * Returns the error for a given field
+             * @param field
+             * @returns {*}
+             */
             fieldError: function (field) {
                 return this.$errors.$[field];
             }.on('isValidChanged'),
 
             /***
+             * Returns true if valid
              *
-             * @return {Boolean} true if valid
+             * @return {Boolean}
              */
             isValid: function ($) {
                 $ = $ || this.$errors.$;
@@ -222,11 +247,13 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
             }.on('isValidChanged'),
 
             /***
+             * Validates the entity.
+             * If there are asynchronous validators applied use the callback to get notified when validation has finished.
              *
              * @param {Object} [options]
-             * @param {Object} [options.setErrors=true] -
-             * @param {Object} [options.fields=null] - fields to validate
-             *
+             * @param {Boolean} [options.setErrors = true] - apply errors to entity
+             * @param {Array} [options.fields = null] - fields to validate
+             * @param {Boolean} [options.reset = true] - clears all errors before setting new
              * @param {Function} [callback]
              */
             validate: function (options, callback) {
@@ -329,14 +356,23 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                 }
                 this.trigger('isValidChanged');
             },
-
-            error: function (key) {
-                if (key) {
-                    return this.$errors.get(key);
+            /**
+             * Returns the error for a given field
+             * @deprecated
+             * @param field
+             * @returns {*}
+             */
+            error: function (field) {
+                if (field) {
+                    return this.$errors.get(field);
                 }
                 return null;
             },
-
+            /**
+             * Validates a sub entity
+             * @param {js.data.Entity} entity
+             * @param {Function} callback
+             */
             validateSubEntity: function (entity, callback) {
                 if (entity instanceof Entity) {
                     entity.validate(null, callback);
@@ -344,7 +380,6 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                     callback("parameter is not an entity");
                 }
             },
-
             clone: function () {
                 var ret = this.callBase();
                 ret.$context = this.$context;
@@ -375,11 +410,17 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
             init: function (callback) {
                 callback && callback();
             },
-
+            /**
+             * Returns the value of the idField
+             * @returns {*}
+             */
             identifier: function () {
                 return this.$[this.idField];
             },
-
+            /**
+             * Returns the context model if the context is set
+             * @returns {js.data.Entity}
+             */
             contextModel: function () {
                 return this.$context ? this.$context.$contextModel : null;
             }
