@@ -181,11 +181,11 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
             },
 
             /**
-             * Parses data
-             * Can be overridden to post change parsed data
-             * @param data
-             * @param [action]
-             * @param [options]
+             * Parses the data. Can be overridden to change parsed data.
+             *
+             * @param {Object} data - the data parsed by the processor
+             * @param {String} [action] - the action of the data source (create or update)
+             * @param {String} [options] - some options
              */
             parse: function (data, action, options) {
                 return data;
