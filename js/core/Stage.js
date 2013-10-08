@@ -72,7 +72,6 @@ define(["js/html/HtmlElement", "js/core/Bus", "js/core/WindowManager", "js/core/
          * @private
          */
         _createBrowserObject: function() {
-
             var browser = {};
 
             browser.isBrowser = this.runsInBrowser();
@@ -139,6 +138,10 @@ define(["js/html/HtmlElement", "js/core/Bus", "js/core/WindowManager", "js/core/
 
                     browser.name = browser.name || "";
 
+                    var version = /(?:opera|chrome|safari|firefox|msie|trident)\/?\s*([\d]+)/i.exec(userAgent);
+                    if (version && version [1]) {
+                        browser.version = version[1];
+                    }
                 }
 
                 var s = window.document.createElement('div').style;
@@ -175,19 +178,40 @@ define(["js/html/HtmlElement", "js/core/Bus", "js/core/WindowManager", "js/core/
          */
         _annotateBrowserInformation: function(browser){
             var classes = ["stage"], value;
+
             for(var key in browser){
                 if(browser.hasOwnProperty(key)){
+
                     value = browser[key];
+
                     if(typeof(value) === "boolean"){
-                        if(browserClassMap.hasOwnProperty(key)){
+                        if (browserClassMap.hasOwnProperty(key)){
                             classes.push(browserClassMap[key][value ? 0 : 1]);
+                        } else if (key === 'isIOS' && value) {
+                            classes.push('ios');
+                            classes.push('ios' + this._getIOSVersion());
                         }
                     } else {
-                        classes.push(value);
+                        if (key === 'version') {
+                            classes.push(browser.name + value);
+                        } else {
+                            classes.push(value);
+                        }
                     }
                 }
             }
+
             this.set('componentClass', classes.join(" "));
+        },
+
+        _getIOSVersion : function () {
+            var iOSVersionRegexp = this.$window.navigator.userAgent.match(/OS ([0-9]+)(?:_[0-9])* like Mac OS/);
+
+            if (iOSVersionRegexp && iOSVersionRegexp.length > 0) {
+                return (iOSVersionRegexp[1]);
+            } else {
+                return '';
+            }
         },
 
         /**
