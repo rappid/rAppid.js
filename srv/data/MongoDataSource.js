@@ -34,7 +34,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
     /***
      * @inherit js.data.DataSource.Processor
      */
-    var MongoDataProcessor = DataSource.Processor.inherit('src.data.MongoDataProcessor', {
+    var MongoDataProcessor = DataSource.Processor.inherit('srv.data.MongoDataProcessor', {
         compose: function (entity, action, options) {
             var data = this.callBase();
 
@@ -563,7 +563,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
         }
     });
 
-    MongoDataSource.Context = DataSource.Context.inherit("js.data.MongoDataSource.Context", {
+    MongoDataSource.Context = DataSource.Context.inherit("srv.data.MongoDataSource.Context", {
 
         createCollection: function (factory, options, type) {
             options = options || {};
