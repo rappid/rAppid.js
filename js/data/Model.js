@@ -291,14 +291,14 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
             } else {
                 return this.identifier() ? STATE.CREATED : STATE.NEW;
             }
-        }.onChange('id'),
+        }.on("change"),
         /**
          * Returns true if status is NEW
          * @return {Boolean}
          */
         isNew: function () {
             return this._status() === STATE.NEW;
-        }.onChange('id'),
+        }.on("change"),
 
         /**
          * Returns true if status is CREATED
@@ -306,7 +306,7 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
          */
         isCreated: function () {
             return this._status() === STATE.CREATED;
-        }.onChange('id'),
+        }.on("change"),
 
         /**
          * Converts the identifier to the given type in the schema
