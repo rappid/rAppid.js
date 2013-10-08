@@ -135,9 +135,10 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
 
         },
         /***
+         * Validates the model before saving. If the model is valid it gets saved otherwise it returns an error in the callback.
          *
-         * @param options
-         * @param callback
+         * @param {Object} options - options for validation and saving
+         * @param {Function} callback
          */
         validateAndSave: function (options, callback) {
             var self = this;
@@ -157,21 +158,28 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
                     callback && callback(err, self);
                 });
         },
-
-        getCollection: function (key) {
-            var schemaDefinition = this.schema[key];
+        /**
+         * Returns a sub collection of the model for a given field.
+         * If the collection doesn't exist it gets created.
+         * You should always use this method to get a sub collection.
+         *
+         * @param {String} field
+         * @returns {js.data.Collection}
+         */
+        getCollection: function (field) {
+            var schemaDefinition = this.schema[field];
             if (!schemaDefinition) {
-                throw "Couldn't find '" + key + "' in schema";
+                throw "Couldn't find '" + field + "' in schema";
             }
-            var collection = this.get(key);
+            var collection = this.get(field);
             if (!collection) {
                 var context = this.getContextForChild(schemaDefinition.type);
                 if (context) {
                     collection = context.createCollection(schemaDefinition.type, null);
                     collection.$parent = this;
-                    this.set(key, collection);
+                    this.set(field, collection);
                 } else {
-                    throw "Couldn't determine context for " + key;
+                    throw "Couldn't determine context for " + field;
                 }
             }
             return collection;
@@ -230,7 +238,12 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
                 });
             }
         },
-
+        /**
+         * Removes the model from the DataSource
+         *
+         * @param {Object} options
+         * @param {Function} callback
+         */
         remove: function (options, callback) {
             // TODO: handle multiple access
             try {
@@ -253,7 +266,12 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
                 callback && callback(e);
             }
         },
-
+        /**
+         * Validates a sub entity
+         *
+         * @param {js.data.Entity} entity
+         * @param {Function} callback
+         */
         validateSubEntity: function (entity, callback) {
             if (entity instanceof Model) {
                 // does nothing :)
@@ -263,6 +281,10 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
             }
         },
 
+        /**
+         * Returns CREATED if identifier() is set, NEW if identifier is null or undefined and DELETED if identifier is false.
+         * @return {Boolean}
+         */
         _status: function () {
             if (this.identifier() === false) {
                 return STATE.DELETED;
@@ -270,19 +292,26 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
                 return this.identifier() ? STATE.CREATED : STATE.NEW;
             }
         }.onChange('id'),
-
+        /**
+         * Returns true if status is NEW
+         * @return {Boolean}
+         */
         isNew: function () {
             return this._status() === STATE.NEW;
         }.onChange('id'),
 
+        /**
+         * Returns true if status is CREATED
+         * @return {Boolean}
+         */
         isCreated: function () {
             return this._status() === STATE.CREATED;
         }.onChange('id'),
 
         /**
          * Converts the identifier to the given type in the schema
-         * @param identifier
-         * @return {*}
+         * @param {String} identifier
+         * @return {Number|String}
          */
         convertIdentifier: function (identifier) {
             var idField = this.idField;
