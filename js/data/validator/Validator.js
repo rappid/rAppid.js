@@ -47,7 +47,8 @@ define(['js/core/Bindable', 'js/core/Base'], function (Bindable, Base) {
         },
 
         /***
-         * validates entities
+         * Validates an entity asynchronously. The validation error is returned as the second parameter of the callback
+         *
          * @param {js.data.Entity} entity
          * @param {Object} [options]
          * @param {Function} callback
