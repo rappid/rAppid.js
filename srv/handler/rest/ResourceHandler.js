@@ -436,6 +436,9 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
                     if (context) {
                         // TODO: build options
                     }
+                    self._beforeModelFetch(model, context, cb);
+                })
+                .seq(function(cb){
                     model.fetch(null, cb);
                 })
                 .seq(function () {
@@ -466,6 +469,17 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
                     }
 
                 });
+        },
+
+        /**
+         * Get's called before a model fetch
+         * @param model
+         * @param context
+         * @param callback
+         * @private
+         */
+        _beforeModelFetch: function(model, context, callback){
+            callback && callback();
         },
 
         _getCompositionOptions: function (context) {
