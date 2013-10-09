@@ -1,3 +1,4 @@
+
 define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
 
     var HTML_Namespace = "http://www.w3.org/1999/xhtml",
@@ -313,7 +314,11 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
                             this.$el.style.setProperty(dashKey, value, null);
                         }
                     } else {
-                        this.$el.style.removeProperty(dashKey);
+                        if(this.$el.style.setProperty){
+                            this.$el.style.removeProperty(dashKey);
+                        } else {
+                            this.$el.style.removeAttribute(dashKey);
+                        }
                     }
                 }
 
