@@ -144,6 +144,7 @@ define(["js/core/Component", "srv/auth/AuthenticationProvider", "flow", "srv/aut
                     });
                 })
                 .seq(function (cb) {
+                    this.vars.authentication.set('updated', new Date());
                     this.vars.authentication.save(null, cb);
                 })
                 .seq(function (cb) {
