@@ -26,6 +26,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
             } else {
                 operator.value = new MongoDb.ObjectID(operator.value);
             }
+            operator.field = "_id";
         }
 
         return translateOperator.call(this, operator);
