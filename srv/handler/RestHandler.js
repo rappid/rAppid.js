@@ -52,7 +52,7 @@ define(['require', 'srv/core/Handler', 'js/conf/DataSourceConfiguration', 'js/co
             $defaultProcessorFactory: RestDataProcessor,
             _getContext: function (factory, parent, data) {
                 // here we have a combined id
-                if (factory.classof && factory.classof(Model) && data[factory.prototype.idField].indexOf("/") > -1) {
+                if (factory.classof && factory.classof(Model) && data[factory.prototype.idField] && data[factory.prototype.idField].indexOf("/") > -1) {
                     var ids = data[factory.prototype.idField].split("/");
                     data[factory.prototype.idField] = ids[ids.length - 1];
                     var config = this.getConfigurationForModelClass(factory),
