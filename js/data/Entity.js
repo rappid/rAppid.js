@@ -400,13 +400,18 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                         }
                     }
                 } else if (value instanceof Entity && !value.$isEntity) {
-                    // dont clone linked models
+                    // don't clone linked models
                     return value;
                 }
 
                 return this.callBase();
             },
-
+            /***
+             * The init method can be used to setup/init an entity asynchronously.
+             * It must be called from outside by hand.
+             *
+             * @param {Function} callback
+             */
             init: function (callback) {
                 callback && callback();
             },
