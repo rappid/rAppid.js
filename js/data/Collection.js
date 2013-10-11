@@ -15,6 +15,9 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore", "js/da
 
     var Collection = List.inherit("js.data.Collection", {
 
+        /**
+         * The model factory for creating items
+         */
         $modelFactory: Model,
 
         isCollection: true, // read only to determinate if its a collection and prevent circular dependencies
@@ -80,7 +83,13 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore", "js/da
 
             return rootCollection;
         },
-
+        /**
+         * This method creates internally a filtered collection
+         * @param {js.data.Query} query
+         * @param {Object} options
+         * @returns {js.data.Collection}
+         * @private
+         */
         _createFilteredCollection: function (query, options) {
             options.$itemsCount = undefined;
 
@@ -89,7 +98,13 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore", "js/da
 
             return collection;
         },
-
+        /**
+         * This method creates internally a sorted collection
+         * @param {js.data.Query} query
+         * @param {Object} options
+         * @returns {this.factory}
+         * @private
+         */
         _createSortedCollection: function (query, options) {
             // TODO: if fully loaded -> return this.callBase();
             var collection = new this.factory(null, options);
@@ -97,7 +112,12 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore", "js/da
 
             return collection;
         },
-
+        /**
+         * Returns a sorted query collection
+         *
+         * @param {js.data.Query} query
+         * @returns {js.data.Collection}
+         */
         sort: function (query) {
             if (query instanceof Query && query.query.sort) {
                 if (this.$.query) {
@@ -121,11 +141,21 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore", "js/da
 
             return this;
         },
-
+        /**
+         * Returns a query collection
+         *
+         * @param {js.data.Query} query
+         * @returns {js.data.Collection}
+         */
         query: function (query) {
             return this.filter(query).sort(query);
         },
 
+        /**
+         * Returns the original root collection of a query or sorted or filtered collection.
+         *
+         * @return {js.data.Collection}
+         */
         getRoot: function () {
             return this.$.root || this;
         },
@@ -141,7 +171,7 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore", "js/da
          * @param {Function} callback
          */
         fetch: function (options, callback) {
-            if(options instanceof Function){
+            if (options instanceof Function) {
                 callback = options;
                 options = null;
             }
@@ -226,7 +256,11 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore", "js/da
 
 
         },
-
+        /**
+         * Returns the number of pages
+         *
+         * @returns {*}
+         */
         pageCount: function () {
             if (this.$.hasOwnProperty("$itemsCount")) {
                 return Math.ceil(this.$.$itemsCount / this.$.pageSize);
@@ -243,7 +277,14 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore", "js/da
         parse: function (data) {
             return data;
         },
-
+        /**
+         * Creates an item with the $modelFactory of the collection.
+         *
+         * In other words. It creates a model for the collection but the model is not added to the collection.
+         *
+         * @param {String} [id] - the id of the item
+         * @returns {js.data.Entity}
+         */
         createItem: function (id) {
             var item = this.getContextForChild(this.$modelFactory).createEntity(this.$modelFactory, id);
 
@@ -252,7 +293,13 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore", "js/da
 
             return item;
         },
-
+        /**
+         * Fetches a page and returns it in the callback
+         *
+         * @param {Number} pageIndex - starts at 0
+         * @param {Object} options
+         * @param {Function} callback
+         */
         fetchPage: function (pageIndex, options, callback) {
 
             if (pageIndex < 0) {
@@ -282,7 +329,13 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore", "js/da
                 }
             });
         },
-
+        /**
+         * Asynchronous counts the collection. The count is returned in the callback.
+         * Note: The dataSource must support the countCollection method
+         *
+         * @param {Object} options
+         * @param {Function} callback
+         */
         count: function (options, callback) {
             var self = this;
             this.$context.$dataSource.countCollection(this, options, function (err, count) {
@@ -292,7 +345,14 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore", "js/da
                 callback && callback(err, count);
             });
         },
-
+        /**
+         * This method invalidates the page cache of the collection.
+         * It also clears all page caches of query collections, that have this collection has root collection.
+         * After the invalidation the $itemsCount is set to NaN and a reset is done. So all listeners are informed of the change.
+         *
+         * You should call this method after removing or adding some item to the collection.
+         *
+         */
         invalidatePageCache: function () {
             this.$pageCache = {};
 
@@ -311,11 +371,16 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore", "js/da
             this.set('$itemsCount', NaN, {silent: true});
             this.reset([]);
         },
-
+        /**
+         * Returns the $itemsCount of the collection.
+         *
+         */
         size: function () {
             return this.$.$itemsCount;
         }.onChange('$itemsCount'),
-
+        /**
+         * Returns true if list is empty
+         */
         isEmpty: function () {
             var pageCount = this.pageCount();
             if (!isNaN(pageCount)) {
@@ -456,6 +521,12 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore", "js/da
         }
     });
 
+    /**
+     * Creates a query collection.
+     *
+     * @param {Function} modelFactory
+     * @returns {js.data.Collection}
+     */
     Collection.of = function (modelFactory) {
 
         if (modelFactory instanceof Function) {
