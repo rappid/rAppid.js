@@ -184,7 +184,7 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
              * Parses the data. Can be overridden to change parsed data.
              *
              * @param {Object} data - the data parsed by the processor
-             * @param {String} [action] - the action of the data source (create or update)
+             * @param {String} [action] - the action of the data source ("create", "save", "update" or "delete")
              * @param {String} [options] - some options
              */
             parse: function (data, action, options) {
@@ -194,8 +194,8 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
             /***
              * Composes the data based on the schema.
              * Can pe used to pre compose the data for the processor
-             * @param action
-             * @param options
+             * @param {String} action - "create", "save", "update" or "delete"
+             * @param {Object} options
              * @return {Object} all data that should be serialized
              */
             compose: function (action, options) {
@@ -221,7 +221,7 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
 
             /**
              * Returns the error for a given field
-             * @param field
+             * @param {String} field - the name of the field
              * @returns {*}
              */
             fieldError: function (field) {
@@ -359,7 +359,7 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
             /**
              * Returns the error for a given field
              * @deprecated
-             * @param field
+             * @param {String} field - the name of the field
              * @returns {*}
              */
             error: function (field) {
