@@ -233,8 +233,8 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
              *
              * @return {Boolean}
              */
-            isValid: function ($) {
-                $ = $ || this.$errors.$;
+            isValid: function () {
+                var $ = this.$errors.$;
                 for (var key in $) {
                     if ($.hasOwnProperty(key)) {
                         if ($[key]) {
