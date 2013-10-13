@@ -45,6 +45,10 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
                 if (entity.idField === "id") {
                     data[ID_KEY] = this.$dataSource._createIdObject(data[ID_KEY]);
                 }
+                // don't compose href field ...
+                if(entity.hrefField){
+                    delete data[entity.hrefField];
+                }
             }
 
             return data;
