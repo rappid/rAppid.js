@@ -1,9 +1,10 @@
-define(["js/html/HtmlElement", "js/core/Bus", "js/core/WindowManager", "js/core/ExternalInterface"], function (HtmlElement, Bus, WindowManager, ExternalInterface) {
+define(["js/html/HtmlElement", "js/core/Bus", "js/core/WindowManager", "js/core/ExternalInterface", "js/core/ErrorProvider"], function (HtmlElement, Bus, WindowManager, ExternalInterface, ErrorProvider) {
 
     var browserClassMap = {
         "hasTouch" : ["touch","no-touch"],
         "supportsTransition" : ["transition","no-transition"],
-        "isMobile" : ["mobile","desktop"]
+        "isMobile" : ["mobile","desktop"],
+        "supportViewPortRelativeSize": ["vs-support", "no-vs-support"]
     };
 
     /***
@@ -42,7 +43,17 @@ define(["js/html/HtmlElement", "js/core/Bus", "js/core/WindowManager", "js/core/
             this.$browser = this._createBrowserObject();
 
             this._annotateBrowserInformation(this.$browser);
+
         },
+
+        _addInjectionFactories: function(injection) {
+            injection.addFactory({
+                type: "js.core.ErrorProvider",
+                factory: ErrorProvider,
+                singleton: true
+            });
+        },
+
         /**
          * Creates the browser object with the following information
          *
@@ -61,18 +72,26 @@ define(["js/html/HtmlElement", "js/core/Bus", "js/core/WindowManager", "js/core/
          * @private
          */
         _createBrowserObject: function() {
-
             var browser = {};
 
             browser.isBrowser = this.runsInBrowser();
 
             if (this.runsInBrowser()) {
-                var window = this.$window;
-
+                var window = this.$window,
+                    document = window.document,
+                    body = document.body || document.getElementsByTagName("body")[0];
 
                 browser.hasTouch = "ontouchend" in window;
                 browser.has3D = ('WebKitCSSMatrix' in window && 'm11' in new WebKitCSSMatrix());
                 browser.msPointerEnabled = "msPointerEnabled" in window.navigator;
+
+                var div = document.createElement("div");
+                div.setAttribute("style", "position: absolute; height: 100vh; width: 100vw");
+                body.appendChild(div);
+
+                browser.supportViewPortRelativeSize = (window.innerWidth === div.offsetWidth);
+
+                body.removeChild(div);
 
                 var navigator = window.navigator;
 
@@ -99,8 +118,11 @@ define(["js/html/HtmlElement", "js/core/Bus", "js/core/WindowManager", "js/core/
                         browser.os = os;
                     }
 
-                    var browserName = /firefox|chrome|safari/i.exec(userAgent);
+                    var browserName = /(firefox)|(chrome)|(safari)/i.exec(userAgent);
                     if (browserName) {
+                        browser.isFF = !!browserName[1];
+                        browser.isChrome = !!browserName[2];
+                        browser.isSafari = !!browserName[3];
                         browserName = browserName[0].toLowerCase();
                         browser.name = browserName;
                     }
@@ -109,8 +131,17 @@ define(["js/html/HtmlElement", "js/core/Bus", "js/core/WindowManager", "js/core/
                     if (browserName) {
                         browserName = "ie ie" + browserName[1];
                         browser.name = browserName;
+                        browser.isIE = true;
+                    } else {
+                        browser.isIE = false;
                     }
 
+                    browser.name = browser.name || "";
+
+                    var version = /(?:opera|chrome|safari|firefox|msie|trident)\/?\s*([\d]+)/i.exec(userAgent);
+                    if (version && version [1]) {
+                        browser.version = version[1];
+                    }
                 }
 
                 var s = window.document.createElement('div').style;
@@ -120,7 +151,20 @@ define(["js/html/HtmlElement", "js/core/Bus", "js/core/WindowManager", "js/core/
                     'MozTransition' in s ||
                     'msTransition' in s ||
                     'OTransition' in s;
+
+
+                function getVendorPrefix(){
+                    if('WebkitTransition' in s) return "webkit";
+                    if ('MozTransition' in s) return "Moz";
+                    if ('msTransition' in s) return "MS";
+                    if ('OTransition' in s) return "o";
+                    return "";
+                }
+
+                browser.vendorPrefix = getVendorPrefix();
             }
+
+
 
             return browser;
 
@@ -134,19 +178,40 @@ define(["js/html/HtmlElement", "js/core/Bus", "js/core/WindowManager", "js/core/
          */
         _annotateBrowserInformation: function(browser){
             var classes = ["stage"], value;
+
             for(var key in browser){
                 if(browser.hasOwnProperty(key)){
+
                     value = browser[key];
+
                     if(typeof(value) === "boolean"){
-                        if(browserClassMap.hasOwnProperty(key)){
+                        if (browserClassMap.hasOwnProperty(key)){
                             classes.push(browserClassMap[key][value ? 0 : 1]);
+                        } else if (key === 'isIOS' && value) {
+                            classes.push('ios');
+                            classes.push('ios' + this._getIOSVersion());
                         }
                     } else {
-                        classes.push(value);
+                        if (key === 'version') {
+                            classes.push(browser.name + value);
+                        } else {
+                            classes.push(value);
+                        }
                     }
                 }
             }
+
             this.set('componentClass', classes.join(" "));
+        },
+
+        _getIOSVersion : function () {
+            var iOSVersionRegexp = this.$window.navigator.userAgent.match(/OS ([0-9]+)(?:_[0-9])* like Mac OS/);
+
+            if (iOSVersionRegexp && iOSVersionRegexp.length > 0) {
+                return (iOSVersionRegexp[1]);
+            } else {
+                return '';
+            }
         },
 
         /**

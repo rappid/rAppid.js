@@ -1,1 +1,75 @@
-{"xamlClasses":["js/svg/SvgDescriptor","js/ui/ButtonGroup","js/ui/Checkbox","js/ui/ColorPicker","js/ui/DataGrid","js/ui/DataGridColumn","js/ui/DataGridItemsView","js/ui/DatePicker","js/ui/Dialog","js/ui/field/Password","js/ui/field/RadioGroup","js/ui/field/Text","js/ui/field/TextArea","js/ui/Field","js/ui/Link","js/ui/MenuButton","js/ui/ProgressBar","js/ui/Radio","js/ui/Scrollable","js/ui/ScrollView","js/ui/Select","js/ui/SplitButton","js/ui/TabView","js/ui/TileList","webtest/test/core/ComponentTest","webtest/test/core/CustomComponent","webtest/test/core/StageTest","webtest/test/html/SelectTest","webtest/test/ui/ItemsViewTest"],"paths":{"xaml":"js/plugin/xaml","json":"js/plugin/json","raw":"js/plugin/raw","flow":"js/lib/flow","Query":"js/lib/query/query","inherit":"js/lib/inherit","underscore":"js/lib/underscore","moment":"js/lib/moment","JSON":"js/lib/json2.js","RestConditionParser":"srv/lib/RestConditionParser"},"shim":{"inherit":{"exports":"inherit"},"flow":{"exports":"flow"},"underscore":{"exports":"_"},"JSON":{"exports":"JSON"},"Query":{"exports":"Query"},"js/lib/parser":{"exports":"parser"},"RestConditionParser":{"exports":"parser"},"moment":{"exports":"moment"}},"namespaceMap":null,"rewriteMap":null}
+{
+    "xamlClasses": [
+        "js/svg/SvgDescriptor",
+        "js/ui/ButtonGroup",
+        "js/ui/Checkbox",
+        "js/ui/ColorPicker",
+        "js/ui/DataGrid",
+        "js/ui/DataGridColumn",
+        "js/ui/DataGridItemsView",
+        "js/ui/DatePicker",
+        "js/ui/Dialog",
+        "js/ui/Field",
+        "js/ui/Link",
+        "js/ui/MenuButton",
+        "js/ui/ProgressBar",
+        "js/ui/Radio",
+        "js/ui/ScrollView",
+        "js/ui/Scrollable",
+        "js/ui/Select",
+        "js/ui/SplitButton",
+        "js/ui/TabView",
+        "js/ui/TileList",
+        "js/ui/TreeView",
+        "js/ui/field/Password",
+        "js/ui/field/RadioGroup",
+        "js/ui/field/Text",
+        "js/ui/field/TextArea",
+        "webtest/test/core/ComponentTest",
+        "webtest/test/core/CustomComponent",
+        "webtest/test/core/StageTest",
+        "webtest/test/html/SelectTest",
+        "webtest/test/ui/ItemsViewTest",
+        "webtest/test/ui/SelectionViewTest"
+    ],
+    "paths": {
+        "xaml": "js/plugin/xaml",
+        "json": "js/plugin/json",
+        "raw": "js/plugin/raw",
+        "flow": "js/lib/flow",
+        "Query": "js/lib/query/query",
+        "inherit": "js/lib/inherit",
+        "underscore": "js/lib/underscore",
+        "moment": "js/lib/moment",
+        "JSON": "js/lib/json2.js",
+        "RestConditionParser": "srv/lib/RestConditionParser"
+    },
+    "shim": {
+        "inherit": {
+            "exports": "inherit"
+        },
+        "flow": {
+            "exports": "flow"
+        },
+        "underscore": {
+            "exports": "_"
+        },
+        "JSON": {
+            "exports": "JSON"
+        },
+        "Query": {
+            "exports": "Query"
+        },
+        "js/lib/parser": {
+            "exports": "parser"
+        },
+        "RestConditionParser": {
+            "exports": "parser"
+        },
+        "moment": {
+            "exports": "moment"
+        }
+    },
+    "namespaceMap": null,
+    "rewriteMap": null
+}

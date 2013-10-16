@@ -70,8 +70,8 @@
             "annotations": {},
             "definedInFile": "js/core/DomElement.js",
             "lineNumbers": [
-                810,
-                815
+                965,
+                970
             ],
             "definedBy": "js.core.Base",
             "overwritesMethod": true,
@@ -137,8 +137,8 @@
             "annotations": {},
             "definedInFile": "js/core/DomElement.js",
             "lineNumbers": [
-                827,
-                837
+                982,
+                992
             ],
             "definedBy": "js.core.EventDispatcher.Event",
             "overwritesMethod": true,
@@ -171,8 +171,8 @@
             "annotations": {},
             "definedInFile": "js/core/EventDispatcher.js",
             "lineNumbers": [
-                257,
-                260
+                262,
+                265
             ],
             "definedBy": "js.core.EventDispatcher.Event",
             "name": "stopImmediatePropagation",
@@ -184,8 +184,8 @@
             "annotations": {},
             "definedInFile": "js/core/DomElement.js",
             "lineNumbers": [
-                816,
-                826
+                971,
+                981
             ],
             "definedBy": "js.core.EventDispatcher.Event",
             "overwritesMethod": true,

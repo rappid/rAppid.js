@@ -48,8 +48,8 @@
             "annotations": {},
             "definedInFile": "srv/core/HttpError.js",
             "lineNumbers": [
-                18,
-                27
+                19,
+                28
             ],
             "definedBy": "srv.core.HttpError",
             "name": "toString",

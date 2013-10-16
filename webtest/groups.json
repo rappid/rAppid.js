@@ -16,11 +16,6 @@
             "type": "browser"
         },
         {
-            "app": "ui/SelectionViewTest.xml",
-            "test": "ui/SelectionViewTests.js",
-            "type": "browser"
-        },
-        {
             "app": "ui/ItemsViewTest.xml",
             "test": "ui/ItemsViewTests.js",
             "type": "browser"
@@ -36,12 +31,17 @@
             "app": "core/StageTest.xml",
             "test": "core/StageTests.js",
             "type": "browser"
+        },
+        {
+            "app": "core/DomElementTest.xml",
+            "test": "core/DomElementTests.js",
+            "type": "browser"
         }
     ],
     "c": [
         {
-            "app": "ui/SelectionViewTest.xml",
-            "test": "ui/SelectionViewTests.js",
+            "app": "core/DomElementTest.xml",
+            "test": "core/DomElementTests.js",
             "type": "browser"
         }
     ],

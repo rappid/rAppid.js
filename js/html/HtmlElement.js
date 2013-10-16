@@ -1,3 +1,4 @@
+
 define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
 
     var HTML_Namespace = "http://www.w3.org/1999/xhtml",
@@ -33,7 +34,10 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
             if (!element["__update" + attribute]) {
                 var self = element;
                 element["__update" + attribute] = function () {
-                    self.set(attribute, self.$el[attributeMap[attribute]]);
+                    // setTimeout fix because of safari iOS bug: height and width are set after event is triggered
+                    setTimeout(function () {
+                        self.set(attribute, self.$el[attributeMap[attribute]]);
+                    }, 1);
                 };
                 element.dom(element.$stage.$window).bindDomEvent('resize', element["__update" + attribute]);
             }
@@ -70,11 +74,6 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
              * @type String
              */
             namespace: HTML_Namespace,
-
-            /**
-             * @type Boolean
-             */
-            enabled: true,
 
             /**
              * Possible values: "absolute", "relative"
@@ -123,7 +122,7 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
         /**
          * @type Array
          */
-        $excludedStyleAttributes: ['src', 'content'],
+        $excludedStyleAttributes: ['src', 'content', 'item'],
 
         /***
          * @type Array
@@ -137,6 +136,12 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
         _onDomAdded: function () {
             this.callBase();
 
+            this.checkSizePolicies();
+        },
+        /**
+         * Checks if the element has the correct width and height according to the width and height update policy
+         */
+        checkSizePolicies: function(){
             checkSizePolicy(this, this.$.widthUpdatePolicy, 'width');
             checkSizePolicy(this, this.$.heightUpdatePolicy, 'height');
         },
@@ -168,7 +173,7 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
         _setAttribute: function (key, value) {
 
             if (_.indexOf(this.$renderAsStyleWithPx, key) !== -1) {
-                if (!_.isString(value)) {
+                if (value != null && !_.isString(value)) {
                     value += "px";
                 }
             }
@@ -196,21 +201,6 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
                 if (this._onSelect) {
                     this.unbindDomEvent('click', this._onSelect);
                 }
-            }
-        },
-
-        _renderEnabled: function (enabled) {
-            if ("disabled" in this.$el) {
-                if (!enabled) {
-                    this.$el.setAttribute('disabled', true);
-                } else {
-                    this.$el.removeAttribute('disabled');
-                }
-            }
-            if (enabled) {
-                this.removeClass('disabled');
-            } else {
-                this.addClass('disabled');
             }
         },
 
@@ -264,7 +254,7 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
         _renderAttributeInternal: function (key, value) {
             if (this._isStyleAttribute(key)) {
                 if (_.indexOf(this.$renderAsStyleWithPx, key) !== -1) {
-                    if (!_.isString(value)) {
+                    if (value != null && !_.isString(value)) {
                         value += "px";
                     }
                 }
@@ -317,13 +307,26 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
 
                 if (camelCaseKey in this.$el.style) {
                     if (value != null) {
-                        this.$el.style.setProperty(dashKey, value, null);
+                        if (this.$stage.$browser.isIE) {
+                            // IE doesn't update style immediately with setProperty(), so we use style[key] = value
+                            this.$el.style[dashKey] = value;
+                        } else {
+                            this.$el.style.setProperty(dashKey, value, null);
+                        }
                     } else {
-                        this.$el.style.removeProperty(dashKey);
+                        if(this.$el.style.setProperty){
+                            this.$el.style.removeProperty(dashKey);
+                        } else {
+                            this.$el.style.removeAttribute(dashKey);
+                        }
                     }
                 }
 
             } else {
+                // HACK FOR FF AND IE TO CLEAR THE IMAGE BEFORE SETTING A NEW ONE
+                if (key === "src" && (this.$stage.$browser.isFF || this.$stage.$browser.isIE)) {
+                    this.$el.removeAttribute(key);
+                }
                 this.callBase();
             }
         },

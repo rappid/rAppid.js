@@ -10,8 +10,8 @@
             "annotations": {},
             "definedInFile": "srv/core/HttpError.js",
             "lineNumbers": [
-                14,
-                16
+                15,
+                17
             ],
             "name": "_beforeSend",
             "visibility": "protected"
@@ -33,7 +33,7 @@
             "definedInFile": "srv/core/HttpError.js",
             "lineNumbers": [
                 4,
-                12
+                13
             ],
             "name": "ctor",
             "visibility": "public"
@@ -44,8 +44,8 @@
             "annotations": {},
             "definedInFile": "srv/core/HttpError.js",
             "lineNumbers": [
-                18,
-                27
+                19,
+                28
             ],
             "name": "toString",
             "visibility": "public"

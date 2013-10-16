@@ -528,7 +528,7 @@ describe('js.core.Bindable', function () {
 
         });
 
-        it('should initialize bindings in defaults', function(){
+        it('should initialize bindings in defaults when flag is set', function(){
             var ExtendedBindable = C.Bindable.inherit({
                 defaults: {
                     firstName: "Peter",
@@ -547,7 +547,7 @@ describe('js.core.Bindable', function () {
                     city: "Leipzig",
                     subEntity: new ExtendedBindable()
                 })
-            });
+            }, true);
 
             expect(bindable.$.city).to.be.equal(bindable.$.address.$.city);
             expect(bindable.$.fullName).to.be.equal(bindable.get('address.subEntity').fullName());

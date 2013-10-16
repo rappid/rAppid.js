@@ -70,8 +70,8 @@
             "annotations": {},
             "definedInFile": "js/core/DomElement.js",
             "lineNumbers": [
-                844,
-                852
+                999,
+                1007
             ],
             "definedBy": "js.core.Base",
             "overwritesMethod": true,
@@ -137,8 +137,8 @@
             "annotations": {},
             "definedInFile": "js/core/EventDispatcher.js",
             "lineNumbers": [
-                235,
-                247
+                238,
+                252
             ],
             "description": "Prevent default triggering",
             "definedBy": "js.core.EventDispatcher.Event",
@@ -171,8 +171,8 @@
             "annotations": {},
             "definedInFile": "js/core/EventDispatcher.js",
             "lineNumbers": [
-                257,
-                260
+                262,
+                265
             ],
             "definedBy": "js.core.EventDispatcher.Event",
             "name": "stopImmediatePropagation",
@@ -184,8 +184,8 @@
             "annotations": {},
             "definedInFile": "js/core/EventDispatcher.js",
             "lineNumbers": [
-                252,
-                254
+                257,
+                259
             ],
             "description": "Call this to stop propagation",
             "definedBy": "js.core.EventDispatcher.Event",

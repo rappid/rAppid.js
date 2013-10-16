@@ -401,7 +401,7 @@ define(["js/core/Component", "js/core/Base", "js/data/Collection", "underscore",
              * @return {Object}
              * @private
              */
-            _composeSubModel: function (model, action, options) {
+            _composeSubModel: function (model, action, options, scope) {
                 // TODO: implement compose SubModel
                 // just return id
                 return model.identifier();
@@ -1078,7 +1078,7 @@ define(["js/core/Component", "js/core/Base", "js/data/Collection", "underscore",
 
         DataSource.JsonFormatProcessor = DataSource.FormatProcessor.inherit("js.data.DataSource.JsonFormatProcessor", {
             serialize: function (data) {
-                return decodeURI(JSON.stringify(data));
+                return JSON.stringify(data);
             },
             deserialize: function (text) {
                 return JSON.parse(text);

@@ -10,7 +10,7 @@
             </js:Template>
         </ui:ItemsView>
     </table>
-    <ui:DataGridItemsView cid="$itemsView" columns="{$columns}" data="{data}" _itemHeight="{rowHeight}" width="{width}"
+    <ui:DataGridItemsView cid="$itemsView" columns="{$columns}" data="{_data()}" _itemHeight="{rowHeight}" width="{width}"
                           prefetchItemCount="{prefetchItemCount}" heightUpdatePolicy="in"
                           class="data-grid-body" selectedItems="{{selectedItems}}" selectionMode="{{selectionMode}}"/>
 </ui:DataGridClass>

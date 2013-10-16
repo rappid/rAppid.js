@@ -51,10 +51,20 @@ define(["js/html/HtmlElement", "underscore", "moment"], function (HtmlElement, _
             }
         },
 
+        _supportsPlaceholder: function () {
+            return "placeHolder" in this.$el || "placeholder" in this.$el;
+        },
+
         _renderValue: function (value) {
             if (value === null || value === undefined) {
                 value = "";
             }
+
+            if (value == "" && !this._supportsPlaceholder() && this.$.placeholder && !this.$.focused) {
+                value = this.$.placeholder;
+
+            }
+
             if (String(value) !== this.$el.value) {
                 if (this.$.type === "date") {
                     if (value instanceof Date) {
@@ -136,6 +146,37 @@ define(["js/html/HtmlElement", "underscore", "moment"], function (HtmlElement, _
             }
 
             this.callBase();
+        },
+        _renderPlaceholder: function (placeholder) {
+            // shim for placeholder
+            if (!this._supportsPlaceholder()) {
+                var self = this;
+                if (!this.__blurHandler) {
+                    this.__blurHandler = function (e) {
+                        self.set('focused', false);
+                        if (self.$el.value != "") {
+                            return;
+                        }
+                        self.$el.value = self.$.placeholder || "";
+                        self.addClass('placeholder');
+                    };
+                    this.bindDomEvent('blur', this.__blurHandler);
+                }
+                if (!this.__focusHandler) {
+                    this.__focusHandler = function () {
+                        self.set('focused', true);
+                        self.removeClass('placeholder');
+                        self.$el.value = '';
+
+                    };
+                    this.bindDomEvent("focus", this.__focusHandler);
+                }
+                if (placeholder) {
+                    this.addClass('placeholder');
+                }
+            } else {
+                this._setAttribute("placeHolder", placeholder);
+            }
         }
     });
 });

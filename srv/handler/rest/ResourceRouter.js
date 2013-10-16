@@ -2,7 +2,7 @@ define(['require', 'js/core/Base', 'srv/handler/rest/ResourceHandler', 'flow', '
 
     return Base.inherit('srv.handler.rest.ResourceRouter', {
 
-        ctor: function(restHandler) {
+        ctor: function (restHandler) {
             this.$restHandler = restHandler;
         },
 
@@ -12,7 +12,7 @@ define(['require', 'js/core/Base', 'srv/handler/rest/ResourceHandler', 'flow', '
          * @param {Function} callback - function(err, resource)
          *
          */
-        getResource: function(context, callback) {
+        getResource: function (context, callback) {
 
             var path = context.request.urlInfo.pathname,
                 relativePath = this.$restHandler.$.path;
@@ -45,7 +45,7 @@ define(['require', 'js/core/Base', 'srv/handler/rest/ResourceHandler', 'flow', '
          *
          * @private
          */
-        _getResourceForPath: function(pathElements) {
+        _getResourceForPath: function (pathElements) {
             var configuration = this.$restHandler.$resourceConfiguration,
                 parentResourceHandler = null,
                 resourceStack = [],
@@ -53,14 +53,14 @@ define(['require', 'js/core/Base', 'srv/handler/rest/ResourceHandler', 'flow', '
 
             // build a stack of configurations
             for (i = 0; i < pathElements.length; i += 2) {
-                var path = pathElements[i];
+                var path = decodeURIComponent(pathElements[i]);
                 configuration = configuration.getConfigurationForPath(path);
 
                 if (!configuration) {
                     throw new HttpError("Configuration for '" + pathElements.slice(0, i + 1).join('/') + "' not found.", 404);
                 }
 
-                if(this.$restHandler.$modelClassResourceHandler[configuration.$.modelClassName]){
+                if (this.$restHandler.$modelClassResourceHandler[configuration.$.modelClassName]) {
                     configuration.$.resourceHandler = this.$restHandler.$modelClassResourceHandler[configuration.$.modelClassName];
                 }
 
@@ -69,10 +69,16 @@ define(['require', 'js/core/Base', 'srv/handler/rest/ResourceHandler', 'flow', '
                     configuration.$.resourceHandler = new ResourceHandler();
                 }
 
+                var id = pathElements[i + 1];
+
+                if (id) {
+                    id = decodeURIComponent(id);
+                }
+
                 resourceStack.push({
                     resourceHandler: configuration.$.resourceHandler,
                     configuration: configuration,
-                    id: pathElements[i + 1]
+                    id: id
                 });
 
             }

@@ -29,7 +29,7 @@ define(["js/core/Bindable", "underscore"], function (Bindable, _) {
         }
 
         var Element = Bindable.inherit("js.core.Element", {
-            ctor: function (attributes, descriptor, stage, parentScope, rootScope) {
+            ctor: function (attributes, descriptor, stage, parentScope, rootScope, evaluateBindingsInCtor) {
                 attributes = attributes || {};
 
                 if (!descriptor) {
@@ -44,7 +44,7 @@ define(["js/core/Bindable", "underscore"], function (Bindable, _) {
                 this.$rootScope = rootScope || null;
                 this.$attributesNamespace = this.$attributesNamespace || {};
 
-                this.callBase(attributes);
+                this.callBase(attributes, evaluateBindingsInCtor);
 
                 this._initializeAttributes(this.$);
 

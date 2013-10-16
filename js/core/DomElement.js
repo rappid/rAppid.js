@@ -25,12 +25,12 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
 
         var pointerToMSPointerMap = {
             'pointer': 'click',
-            'pointerdown': 'mspointerdown',
-            'pointermove': 'mspointermove',
-            'pointerup': 'mspointerup',
-            'pointerout': 'mspointerout',
-            'pointerover': 'mspointerover',
-            'pointerhover': 'mspointerhover'
+            'pointerdown': 'MSPointerDown',
+            'pointermove': 'MSPointerMove',
+            'pointerup': 'MSPointerUp',
+            'pointerout': 'MSPointerOut',
+            'pointerover': 'MSPointerOver',
+            'pointerhover': 'MSPointerHover'
         };
 
         var DomElementFunctions = {
@@ -61,12 +61,21 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                  */
                 componentClass: null,
 
+                /**
+                 *
+                 */
+                animationClass: null,
                 /***
                  * sets the visibility of an component. If the value is false the component is removed from the DOM.
                  *
                  * @type {Boolean}
                  */
-                visible: true
+                visible: true,
+
+                /**
+                 * @type Boolean
+                 */
+                enabled: true
             },
 
             ctor: function (attributes, descriptor, systemManager, parentScope, rootScope) {
@@ -74,6 +83,7 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                 this.$renderMap = {};
                 this.$children = [];
                 this.$invisibleChildMap = {};
+                this.$animationDurationCache = {};
                 this.$renderedChildren = [];
                 this.$contentChildren = [];
                 this.$domEventHandler = {};
@@ -142,9 +152,9 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
 
                 if (child.$initialized || child.$initializing) {
                     if (child instanceof DomElement || child.render) {
-                        var pos = options && typeof(options.childIndex) !== "undefined" ? options.childIndex : this.$children.length;
+                        var pos = options && options.childIndex != null ? options.childIndex : this.$children.length;
 
-                        this.$children[pos] = child;
+//                        this.$children.splice(pos, 0, child);
                         if (this.isRendered()) {
                             this._renderChild(child, pos);
                         }
@@ -161,21 +171,22 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                     if (this.isRendered()) {
                         this._removeRenderedChild(child);
                     }
-                    var i = this.$children.indexOf(child);
-                    this.$children.splice(i, 1);
                 }
             },
 
             getPlaceHolder: function (name) {
+                var element;
                 for (var i = 0; i < this.$children.length; i++) {
-                    if (this.$children[i].$.name === name) {
-                        return this.$children[i];
+                    element = this.$children[i];
+                    if (element.render instanceof Function && element.$.name === name) {
+                        return element;
                     }
                 }
                 var placeholder;
                 for (i = 0; i < this.$children.length; i++) {
-                    if (this.$children[i].getPlaceHolder) {
-                        placeholder = this.$children[i].getPlaceHolder(name);
+                    element = this.$children[i];
+                    if (element.getPlaceHolder) {
+                        placeholder = element.getPlaceHolder(name);
                         if (placeholder) {
                             return placeholder;
                         }
@@ -189,6 +200,16 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                 if (this.$parent) {
                     this.$parent.removeChild(this);
                 }
+            },
+
+            getViewChildren: function () {
+                var ret = [];
+                for (var i = 0; i < this.$children.length; i++) {
+                    if (this.$children[i].render instanceof Function) {
+                        ret.push(this.$children[i]);
+                    }
+                }
+                return ret;
             },
 
             getContentPlaceHolders: function () {
@@ -260,6 +281,14 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                 this._renderAttributes(this.$);
                 this._bindDomEvents(this.$el);
 
+
+                if (this.$stage.$applicationContext.$config["enableInspection"] === true) {
+                    var self = this;
+                    this.$el.inspect = function () {
+                        return self;
+                    }
+                }
+
                 return this.$el;
             },
 
@@ -293,6 +322,21 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                 }
             },
 
+            _renderEnabled: function (enabled) {
+                if ("disabled" in this.$el) {
+                    if (!enabled) {
+                        this.$el.setAttribute('disabled', true);
+                    } else {
+                        this.$el.removeAttribute('disabled');
+                    }
+                }
+                if (enabled) {
+                    this.removeClass('disabled');
+                } else {
+                    this.addClass('disabled');
+                }
+            },
+
             _renderContentChildren: function (children) {
                 var child;
                 for (var i = 0; i < children.length; i++) {
@@ -312,11 +356,17 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                         delete this.$invisibleChildMap[child.$cid];
                         var el = child.render();
 
-
                         if (pos == undefined) {
                             this.$el.appendChild(el);
                             this.$renderedChildren.push(child);
                         } else {
+                            // decrease the pos by the number of invisible children and elements before
+                            for (var i = 0; i < pos && i < this.$children.length; i++) {
+                                var element = this.$children[i];
+                                if (!element.render || !element.$.visible) {
+                                    pos--;
+                                }
+                            }
                             this.$renderedChildren.splice(pos, 0, child);
                             var childNode = this.$el.childNodes[pos];
                             if (childNode) {
@@ -325,6 +375,21 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                                 this.$el.appendChild(el);
                             }
                         }
+
+
+                        if (child.$.animationClass) {
+                            var animationClass = child.$.animationClass + "-add";
+                            child.addClass(animationClass);
+
+                            var time = this.$animationDurationCache[animationClass] || this._calculationAnimationDuration(child);
+                            this.$animationDurationCache[animationClass] = time;
+
+
+                            setTimeout(function () {
+                                child.removeClass(animationClass);
+                            }, time);
+                        }
+
                         if (this.$addedToDom) {
                             child.trigger('add:dom', this.$el);
                         }
@@ -332,6 +397,35 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                         this.$invisibleChildMap[child.$cid] = child;
                     }
                 }
+            },
+
+            _calculationAnimationDuration: function (child) {
+                var style = window.getComputedStyle(child.$el, null),
+                    vendorPrefix = this.$stage.$browser.vendorPrefix;
+
+                function animation(key) {
+                    var ret = [vendorPrefix, "Animation", key].join("");
+                    if (vendorPrefix === "o") {
+                        ret = ret.toLowerCase();
+                    }
+                    return ret;
+                }
+
+                function transition(key) {
+                    var ret = [vendorPrefix, "Transition", key].join("");
+                    if (vendorPrefix === "o") {
+                        ret = ret.toLowerCase();
+                    }
+                    return ret;
+                }
+
+                // TODO: use correct vendor styles
+                var delay = Math.max(parseFloat(style[animation("Delay")]), parseFloat(style[transition("Delay")])) || 0,
+                    duration = Math.max(parseFloat(style[animation("Duration")]), parseFloat(style[transition("Duration")])) || 0,
+                    count = Math.max(parseInt(style[animation("Count")]), parseInt(style[transition("Count")])) || 1;
+
+
+                return ((delay + duration) * count) * 1000;
             },
             /**
              *
@@ -356,7 +450,7 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
 
                         // decrease it by the non visible children that are before ...
                         while (i < index) {
-                            if (!children[i].$.visible) {
+                            if (children[i].render instanceof Function && !children[i].$.visible) {
                                 index--;
                             }
                             i++;
@@ -399,12 +493,11 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
             _removeRenderedChild: function (child) {
                 if (this.isRendered()) {
                     var rc;
+
                     for (var i = this.$renderedChildren.length - 1; i >= 0; i--) {
                         rc = this.$renderedChildren[i];
                         if (child === rc) {
-                            if (child.$.visible) {
-                                this.$el.removeChild(rc.$el);
-                            }
+                            this._internalRemoveChild(child);
                             this.$renderedChildren.splice(i, 1);
                             return;
                         }
@@ -412,14 +505,34 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                 }
             },
 
+            _internalRemoveChild: function (child) {
+                if (!child.$.visible) {
+                    return;
+                }
+                var el = this.$el;
+                // animation stuff
+                if (child.$.animationClass) {
+                    var animationClass = child.$.animationClass + "-remove";
+                    child.addClass(animationClass);
+
+                    var time = this.$animationDurationCache[animationClass] || this._calculationAnimationDuration(child);
+                    this.$animationDurationCache[animationClass] = time;
+
+                    setTimeout(function () {
+                        el.removeChild(child.$el);
+                    }, time);
+                } else {
+                    this.$el.removeChild(child.$el);
+                }
+            },
+
+
             _clearRenderedChildren: function () {
                 if (this.isRendered()) {
                     var rc;
                     for (var i = this.$renderedChildren.length - 1; i >= 0; i--) {
                         rc = this.$renderedChildren[i];
-                        if (rc.$.visible) {
-                            this.$el.removeChild(rc.$el);
-                        }
+                        this._internalRemoveChild(rc);
                     }
                 }
                 this.$renderedChildren = [];
@@ -427,7 +540,8 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
 
             _getIndexOfPlaceHolder: function (placeHolder) {
                 if (this.$layoutTpl) {
-                    var child;
+                    var child,
+                        placeHolderId;
                     for (var i = 0; i < this.$layoutTpl.$children.length; i++) {
                         child = this.$layoutTpl.$children[i];
                         if (placeHolderId == child.$cid) {
@@ -593,11 +707,15 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                 }
             },
             setChildInvisible: function (child) {
-                if (this.isRendered() && this.$renderedChildren.indexOf(child) > -1) {
-                    if (child.$el.parentNode) {
-                        this.$el.removeChild(child.$el);
+                if (this.isRendered()) {
+                    var index = this.$renderedChildren.indexOf(child);
+                    if (index > -1) {
+                        this.$renderedChildren.splice(index, 1);
+                        if (child.$el.parentNode) {
+                            this.$el.removeChild(child.$el);
+                        }
+                        this.$invisibleChildMap[child.$cid] = child;
                     }
-                    this.$invisibleChildMap[child.$cid] = child;
                 }
             },
             setChildVisible: function (child) {
@@ -607,8 +725,11 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                     }
                     var next = this._getNextVisibleChild(child);
                     if (next) {
+                        var index = this.$renderedChildren.indexOf(next);
+                        this.$renderedChildren.splice(index, 0, child);
                         this.$el.insertBefore(child.$el, next.$el);
                     } else {
+                        this.$renderedChildren.push(child);
                         this.$el.appendChild(child.$el);
                     }
                     if (this.$addedToDom) {
@@ -621,14 +742,16 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                 if (this.$el.childNodes.length === 0) {
                     return null;
                 }
-                var index = this.$renderedChildren.indexOf(child);
-                for (var i = index + 1; i < this.$renderedChildren.length; i++) {
-                    if (!this.$invisibleChildMap[this.$renderedChildren[i].$cid]) {
+                var index = this.$children.indexOf(child),
+                    renderedChild;
+                for (var i = index + 1; i < this.$children.length; i++) {
+                    renderedChild = this.$children[i];
+                    if (renderedChild.render instanceof Function && !this.$invisibleChildMap[renderedChild.$cid] && renderedChild.$.visible) {
                         break;
                     }
                 }
-                if (i < this.$renderedChildren.length && child !== this.$renderedChildren[i]) {
-                    return this.$renderedChildren[i];
+                if (i < this.$children.length && child !== this.$children[i]) {
+                    return this.$children[i];
                 }
                 return null;
             },
@@ -671,7 +794,7 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
 
         var DomManipulationFunctions = {
             hasClass: function (value) {
-                return (this.$el.getAttribute("class") || "").split(" " + value + " ").length != 1;
+                return new RegExp("\\b" + value + "\\b").test(this.$el.getAttribute("class") || "");
             },
 
             addClass: function (value) {
@@ -680,7 +803,7 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                 var className = this.$el.getAttribute("class") || "";
 
                 if (!className && classNames.length === 1) {
-                    this.$el.setAttribute("class", value);
+                    className = value;
                 } else {
                     var setClasses = className.split(rspace);
 
@@ -689,9 +812,11 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                             setClasses.push(classNames[i]);
                         }
                     }
+                    className = setClasses.join(" ");
 
-                    this.$el.setAttribute("class", setClasses.join(" "));
                 }
+                // IMPORTANT: use setAttribute otherwise the css classes won't be set on SVG elements
+                this.$el.setAttribute("class", className);
             },
 
             removeClass: function (value) {

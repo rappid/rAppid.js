@@ -16,8 +16,33 @@ define(['require', 'srv/core/Handler', 'js/conf/DataSourceConfiguration', 'js/co
                     href: collection.$.href
                 };
             },
+            _getCompositionValue: function (value, key, action, options, scope) {
+                if (value instanceof Model) {
+                    if (scope.schema[key] && scope.schema[key].compose === true) {
+                        return this._composeEntity(value, action, options);
+                    }
+                }
+
+                return this.callBase();
+            },
+
+            _composeEntity: function (entity, action, options) {
+                var ret = this.callBase(),
+                    schema = entity.schema;
+
+                for (var key in schema) {
+                    if (schema.hasOwnProperty(key)) {
+                        if (schema[key].serverOnly === true) {
+                            delete ret[key];
+                        }
+                    }
+                }
+                return ret;
+            },
+
             compose: function (model, action, options) {
-                var ret = this.callBase();
+
+                var ret = this.callBase(model, action, options);
                 ret.href = model.$.href;
                 return ret;
             }
@@ -27,7 +52,7 @@ define(['require', 'srv/core/Handler', 'js/conf/DataSourceConfiguration', 'js/co
             $defaultProcessorFactory: RestDataProcessor,
             _getContext: function (factory, parent, data) {
                 // here we have a combined id
-                if (factory.classof && factory.classof(Model) && data[factory.prototype.idField].indexOf("/") > -1) {
+                if (factory.classof && factory.classof(Model) && data[factory.prototype.idField] && data[factory.prototype.idField].indexOf("/") > -1) {
                     var ids = data[factory.prototype.idField].split("/");
                     data[factory.prototype.idField] = ids[ids.length - 1];
                     var config = this.getConfigurationForModelClass(factory),
@@ -96,7 +121,7 @@ define(['require', 'srv/core/Handler', 'js/conf/DataSourceConfiguration', 'js/co
                     return;
                 }
 
-                if (this.$dataSources.length === 0) {
+                if (this.$dataSources.length === 0 && !this.$.dataSource) {
                     callback(new Error("DataSource missing."));
                     return;
                 }
@@ -142,11 +167,11 @@ define(['require', 'srv/core/Handler', 'js/conf/DataSourceConfiguration', 'js/co
              * @return {*}
              */
             getDataSource: function (context, resource) {
-                return this.$dataSources[0];
+                return this.$.dataSource || this.$dataSources[0];
             },
 
             getHrefDataSource: function () {
-                return this.$dataSources[0];
+                return this.$.dataSource || this.$dataSources[0];
             },
 
             handleRequest: function (context, callback) {

@@ -49,6 +49,14 @@ define(['require', 'srv/core/Handler', 'flow', 'fs', 'path', 'srv/core/HttpError
 
                         return path;
                     })
+                    .seq(function(cb) {
+                        // authorization
+
+                        context.user.isAuthorized({
+                            type: "file",
+                            path: this.vars.path
+                        }, cb);
+                    })
                     .seq(function (cb) {
                         Fs.exists(this.vars['path'], function (exists) {
                             if (!exists) {

@@ -47,11 +47,19 @@ define(['js/core/Bindable', 'js/core/Base'], function (Bindable, Base) {
         },
 
         /***
-         * validates entities
-         * @param entity
-         * @param callback
+         * Validates an entity asynchronously. The validation error is returned as the second parameter of the callback
+         *
+         * @param {js.data.Entity} entity
+         * @param {Object} [options]
+         * @param {Function} callback
          */
-        validate: function (entity, callback) {
+        validate: function (entity, options, callback) {
+            if (options instanceof Function) {
+                callback = options;
+                options = {};
+            }
+
+            options = options || {};
 
             var self = this,
                 callbackInvoked = false,
@@ -81,10 +89,14 @@ define(['js/core/Bindable', 'js/core/Base'], function (Bindable, Base) {
             }
         },
 
+        /***
+         * Returns true if entity has the field set or the field is required
+         * @param {js.data.Entity} entity
+         * @returns {boolean}
+         * @private
+         */
         _validationRequired: function(entity) {
-
             return !(this.$.field && !entity.$[this.$.field] && !entity.schema[this.$.field].required);
-
         },
 
         /***
@@ -104,6 +116,14 @@ define(['js/core/Bindable', 'js/core/Base'], function (Bindable, Base) {
                 return this.$.errorMessage || "Entity is invalid";
             }
         },
+        /***
+         * Creates an Validation Error object with a code, message and a field
+         * @param {String} code
+         * @param {String} message
+         * @param {String} field
+         * @returns {js.data.validator.Validator.Error}
+         * @private
+         */
         _createError: function(code, message, field){
             return new Validator.Error({
                 code: code,
@@ -111,6 +131,13 @@ define(['js/core/Bindable', 'js/core/Base'], function (Bindable, Base) {
                 field: field
             });
         },
+        /***
+         * Create a field error
+         *
+         * @param {String} [field] - the field
+         * @returns {js.data.validator.Validator.Error} an error instance
+         * @private
+         */
         _createFieldError: function (field) {
             return this._createError(this.$.errorCode, this._getErrorMessage(), field || this.$.field);
         }

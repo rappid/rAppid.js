@@ -1,5 +1,5 @@
-define(['js/ui/ItemsView', 'js/html/HtmlElement', 'js/ui/Tab', 'js/core/List'], function (ItemsView, HtmlElement, Tab, List) {
-    return ItemsView.inherit('js.ui.TabViewClass', {
+define(['js/ui/View', 'js/html/HtmlElement', 'js/ui/Tab', 'js/core/List'], function (View, HtmlElement, Tab, List) {
+    return View.inherit('js.ui.TabViewClass', {
 
         defaults: {
             selectedIndex: null,
@@ -23,6 +23,15 @@ define(['js/ui/ItemsView', 'js/html/HtmlElement', 'js/ui/Tab', 'js/core/List'], 
             if (child instanceof Tab) {
                 this.$.tabItems.add(child);
                 this.$.tabContent.addChild(child);
+            } else {
+                this.callBase();
+            }
+        },
+
+        removeChild: function (child) {
+            if (child instanceof Tab) {
+                this.$.tabItems.remove(child);
+                this.$.tabContent.removeChild(child);
             } else {
                 this.callBase();
             }

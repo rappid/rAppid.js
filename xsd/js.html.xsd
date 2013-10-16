@@ -3,19 +3,19 @@
     xmlns:ns1="js.core"
     xmlns:ns2="js.ui"
     xmlns:ns="js.html">
-    <import namespace="js.core"/>
-    <import namespace="js.ui"/>
-    <element name="a" type="ns:a"/>
+    <import/>
+    <import/>
+    <element name="A" type="ns:A"/>
     <element name="HtmlElement" type="ns:HtmlElement"/>
     <element name="Input" type="ns:Input"/>
     <element name="Option" type="ns:Option"/>
     <element name="Select" type="ns:Select"/>
     <element name="TextArea" type="ns:TextArea"/>
-    <complexType name="a">
+    <complexType name="A">
         <complexContent>
             <extension base="ns:HtmlElement">
                 <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.html.a"></documentation>
+                    <documentation source="http://www.rappidjs.com/#/api/js.html.A"></documentation>
                 </annotation>
                 <sequence>
                     <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>

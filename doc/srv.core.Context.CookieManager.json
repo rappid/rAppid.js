@@ -219,7 +219,7 @@
         "js.core.Base",
         "js.core.EventDispatcher",
         "querystring",
-        "srv.core.Identity",
+        "srv.core.User",
         "underscore",
         "url"
     ],

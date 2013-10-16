@@ -1,5 +1,5 @@
-define(['require', 'path', 'js/core/Component', 'srv/core/Context', 'srv/core/Handlers', 'srv/core/EndPoints', 'srv/core/Filters', 'srv/handler/ExceptionHandler', 'flow', 'domain', 'srv/core/ServerSession', 'srv/core/AuthenticationProviders', 'srv/core/AuthorisationProviders', 'js/lib/extension'],
-    function (require, Path, Component, Context, Handlers, EndPoints, Filters, ExceptionHandler, flow, Domain, ServerSession, AuthenticationProviders, AuthorisationProviders, Extension) {
+define(['require', 'path', 'js/core/Component', 'srv/core/Context', 'srv/core/Handlers', 'srv/core/EndPoints', 'srv/core/Filters', 'srv/handler/ExceptionHandler', 'flow', 'domain', 'srv/core/ServerSession', 'srv/core/AuthenticationService', 'srv/core/AuthorizationService', 'js/lib/extension', 'js/core/Injection', 'srv/core/IdentityService'],
+    function (require, Path, Component, Context, Handlers, EndPoints, Filters, ExceptionHandler, flow, Domain, ServerSession, AuthenticationService, AuthorisationService, Extension, Injection, IdentityService) {
 
         return Component.inherit('srv.core.Server', {
 
@@ -11,23 +11,32 @@ define(['require', 'path', 'js/core/Component', 'srv/core/Context', 'srv/core/Ha
                 this.$handlers = null;
                 this.$filters = null;
                 this.$endPoints = null;
-                this.$authenticationProviders = null;
-                this.$authorisationProviders = null;
+                this.$authenticationService = null;
+                this.$authorisationService = null;
 
                 this.callBase();
+
+                this.$injection = this.createComponent(Injection);
             },
 
             addChild: function (child) {
+
                 if (child instanceof Handlers) {
                     this.$handlers = child;
                 } else if (child instanceof EndPoints) {
                     this.$endPoints = child;
                 } else if (child instanceof Filters) {
                     this.$filters = child;
-                } else if (child instanceof AuthenticationProviders) {
-                    this.$authenticationProviders = child;
-                } else if (child instanceof AuthorisationProviders) {
-                    this.$authorisationProviders = child;
+                } else if (child instanceof AuthenticationService) {
+                    this.$authenticationService = child;
+                    this.$injection.addInstance(child);
+
+                } else if (child instanceof AuthorisationService) {
+                    this.$authorisationService = child;
+                    this.$injection.addInstance(child);
+                } else if (child instanceof IdentityService) {
+                    this.$authorisationService = child;
+                    this.$injection.addInstance(child);
                 }
 
                 this.callBase();
@@ -60,13 +69,14 @@ define(['require', 'path', 'js/core/Component', 'srv/core/Context', 'srv/core/Ha
                     this.addChild(this.createComponent(Filters));
                 }
 
-                if (!this.$authenticationProviders) {
-                    this.addChild(this.createComponent(AuthenticationProviders));
+                if (!this.$authenticationService) {
+                    this.addChild(this.createComponent(AuthenticationService));
                 }
 
-                if (!this.$authorisationProviders) {
-                    this.addChild(this.createComponent(AuthorisationProviders));
+                if (!this.$authorisationService) {
+                    this.addChild(this.createComponent(AuthorisationService));
                 }
+
 
                 var self = this;
 
@@ -96,7 +106,7 @@ define(['require', 'path', 'js/core/Component', 'srv/core/Context', 'srv/core/Ha
                         self.$filters.start(self, cb);
                     })
                     .seq(function (cb) {
-                        self.$authenticationProviders.start(self, cb);
+                        self.$authenticationService.start(self, cb);
                     })
                     .seq(function (cb) {
                         // handlers starts also asynchronous to load e.g. classes
@@ -127,7 +137,7 @@ define(['require', 'path', 'js/core/Component', 'srv/core/Context', 'srv/core/Ha
                         });
                     })
                     .seq(function (cb) {
-                        self.$authenticationProviders.stop(function () {
+                        self.$authenticationService.stop(function () {
                             cb();
                         });
                     })

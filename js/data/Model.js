@@ -74,10 +74,11 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
 
         /***
          *
-         * persistent the model over the data-source in which it was created
+         * Perstists the model over the DataSource in which it was created
          *
-         * @param options
-         * @param callback
+         * @param {Object} options
+         * @param {Boolean} options.invalidatePageCache - if set to true the corresponding collection page cache is cleared
+         * @param {Function} callback - The callback when save has finished
          */
         save: function (options, callback) {
 
@@ -94,20 +95,24 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
             } else {
                 this._save.state = SAVESTATE.SAVING;
 
+                var self = this;
+
                 try {
                     var status = this._status();
-                    var self = this;
                     if (status === STATE.NEW || status === STATE.CREATED) {
                         this.$context.$dataSource.saveModel(this, options, function (err) {
+                            self._save.state = err ? SAVESTATE.ERROR : SAVESTATE.CREATED;
+
                             if (!err && self.$collection && options.invalidatePageCache) {
                                 self.$collection.invalidatePageCache();
                             }
+
                             callback && callback(err, self, options);
 
                             _.each(self._save.callbacks, function (cb) {
                                 cb.call(self, err, self);
                             });
-                            self._save.state = SAVESTATE.CREATED;
+
                             self._save.callbacks = [];
                         });
                     } else {
@@ -131,9 +136,10 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
 
         },
         /***
+         * Validates the model before saving. If the model is valid it gets saved otherwise it returns an error in the callback.
          *
-         * @param options
-         * @param callback
+         * @param {Object} options - options for validation and saving
+         * @param {Function} callback
          */
         validateAndSave: function (options, callback) {
             var self = this;
@@ -150,31 +156,44 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
                     }
                 })
                 .exec(function (err) {
-                    callback(err, self);
+                    callback && callback(err, self);
                 });
         },
-
-        getCollection: function (key) {
-            var schemaDefinition = this.schema[key];
+        /**
+         * Returns a sub collection of the model for a given field.
+         * If the collection doesn't exist it gets created.
+         * You should always use this method to get a sub collection.
+         *
+         * @param {String} field
+         * @returns {js.data.Collection}
+         */
+        getCollection: function (field) {
+            var schemaDefinition = this.schema[field];
             if (!schemaDefinition) {
-                throw "Couldn't find '" + key + "' in schema";
+                throw "Couldn't find '" + field + "' in schema";
             }
-            var collection = this.get(key);
+            var collection = this.get(field);
             if (!collection) {
                 var context = this.getContextForChild(schemaDefinition.type);
                 if (context) {
                     collection = context.createCollection(schemaDefinition.type, null);
                     collection.$parent = this;
-                    this.set(key, collection);
+                    this.set(field, collection);
                 } else {
-                    throw "Couldn't determine context for " + key;
+                    throw "Couldn't determine context for " + field;
                 }
             }
             return collection;
 
 
         },
-
+        /**
+         * Pre-Composes the model before it goes to the DataSource processor
+         *
+         * @param action
+         * @param options
+         * @returns {*}
+         */
         compose: function (action, options) {
             var ret = this.callBase();
 
@@ -186,8 +205,10 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
         },
 
         /**
-         * @param options
-         * @param options.fetchSubModels
+         * Fetches the model over the given DataSource. The id of the model must be set.
+         *
+         * @param {Object} options
+         * @param {Array} options.fetchSubModels - array of submodels to fetch
          * @param {Function} callback - function(err, model, options)
          */
         fetch: function (options, callback) {
@@ -226,7 +247,12 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
                 });
             }
         },
-
+        /**
+         * Removes the model from the DataSource
+         *
+         * @param {Object} options
+         * @param {Function} callback
+         */
         remove: function (options, callback) {
             // TODO: handle multiple access
             try {
@@ -249,7 +275,12 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
                 callback && callback(e);
             }
         },
-
+        /**
+         * Validates a sub entity
+         *
+         * @param {js.data.Entity} entity
+         * @param {Function} callback
+         */
         validateSubEntity: function (entity, callback) {
             if (entity instanceof Model) {
                 // does nothing :)
@@ -259,26 +290,37 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
             }
         },
 
+        /**
+         * Returns CREATED if identifier() is set, NEW if identifier is null or undefined and DELETED if identifier is false.
+         * @return {Boolean}
+         */
         _status: function () {
             if (this.identifier() === false) {
                 return STATE.DELETED;
             } else {
                 return this.identifier() ? STATE.CREATED : STATE.NEW;
             }
-        }.onChange('id'),
-
+        }.on("change"),
+        /**
+         * Returns true if status is NEW
+         * @return {Boolean}
+         */
         isNew: function () {
             return this._status() === STATE.NEW;
-        }.onChange('id'),
+        }.on("change"),
 
+        /**
+         * Returns true if status is CREATED
+         * @return {Boolean}
+         */
         isCreated: function () {
             return this._status() === STATE.CREATED;
-        }.onChange('id'),
+        }.on("change"),
 
         /**
          * Converts the identifier to the given type in the schema
-         * @param identifier
-         * @return {*}
+         * @param {String} identifier
+         * @return {Number|String}
          */
         convertIdentifier: function (identifier) {
             var idField = this.idField;

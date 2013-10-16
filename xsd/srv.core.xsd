@@ -2,73 +2,62 @@
     xmlns="http://www.w3.org/2001/XMLSchema"
     xmlns:ns1="js.core"
     xmlns:ns="srv.core">
-    <import namespace="js.core"/>
-    <element name="AuthenticationFilter" type="ns:AuthenticationFilter"/>
-    <element name="AuthenticationProvider" type="ns:AuthenticationProvider"/>
-    <element name="AuthenticationProviders" type="ns:AuthenticationProviders"/>
-    <element name="AuthorisationProvider" type="ns:AuthorisationProvider"/>
-    <element name="AuthorisationProviders" type="ns:AuthorisationProviders"/>
+    <import/>
+    <element name="AuthenticationService" type="ns:AuthenticationService"/>
+    <element name="AuthorizationService" type="ns:AuthorizationService"/>
     <element name="EndPoint" type="ns:EndPoint"/>
     <element name="EndPoints" type="ns:EndPoints"/>
     <element name="Filter" type="ns:Filter"/>
     <element name="Filters" type="ns:Filters"/>
     <element name="Handler" type="ns:Handler"/>
     <element name="Handlers" type="ns:Handlers"/>
+    <element name="IdentityService" type="ns:IdentityService"/>
     <element name="Server" type="ns:Server"/>
-    <complexType name="AuthenticationFilter">
+    <complexType name="AuthenticationService">
         <complexContent>
-            <extension base="ns:Filter">
+            <extension base="ns1:Component">
                 <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/srv.core.AuthenticationFilter"></documentation>
+                    <documentation source="http://www.rappidjs.com/#/api/srv.core.AuthenticationService"></documentation>
                 </annotation>
                 <sequence>
                     <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
                 </sequence>
-                <attribute name="authenticationProvider"/>
+                <attribute name="dataSource">
+                    <annotation>
+                        <documentation>
+                        The data source where to store the token
+                    </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="userDataSource">
+                    <annotation>
+                        <documentation>
+                        The data source which contains the user
+                    </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="userModelClassName">
+                    <annotation>
+                        <documentation>
+                        The User mmodel class name
+                    </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="tokenLifeTime" default="600">
+                    <annotation>
+                        <documentation>
+                        Token life time in seconds
+                    </documentation>
+                    </annotation>
+                </attribute>
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="AuthenticationProvider">
+    <complexType name="AuthorizationService">
         <complexContent>
             <extension base="ns1:Component">
                 <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/srv.core.AuthenticationProvider"></documentation>
-                </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
-                </sequence>
-            </extension>
-        </complexContent>
-    </complexType>
-    <complexType name="AuthenticationProviders">
-        <complexContent>
-            <extension base="ns1:Component">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/srv.core.AuthenticationProviders"></documentation>
-                </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
-                </sequence>
-            </extension>
-        </complexContent>
-    </complexType>
-    <complexType name="AuthorisationProvider">
-        <complexContent>
-            <extension base="ns1:Component">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/srv.core.AuthorisationProvider"></documentation>
-                </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
-                </sequence>
-            </extension>
-        </complexContent>
-    </complexType>
-    <complexType name="AuthorisationProviders">
-        <complexContent>
-            <extension base="ns1:Component">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/srv.core.AuthorisationProviders"></documentation>
+                    <documentation source="http://www.rappidjs.com/#/api/srv.core.AuthorizationService"></documentation>
                 </annotation>
                 <sequence>
                     <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
@@ -136,6 +125,8 @@
                 <attribute name="autoStartSession"/>
                 <attribute name="path" default="/"/>
                 <attribute name="route"/>
+                <attribute name="contentType" default="text/plain"/>
+                <attribute name="encoding" default="utf8"/>
             </extension>
         </complexContent>
     </complexType>
@@ -148,6 +139,19 @@
                 <sequence>
                     <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
                 </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+    <complexType name="IdentityService">
+        <complexContent>
+            <extension base="ns1:Component">
+                <annotation>
+                    <documentation source="http://www.rappidjs.com/#/api/srv.core.IdentityService"></documentation>
+                </annotation>
+                <sequence>
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+                <attribute name="dataSource"/>
             </extension>
         </complexContent>
     </complexType>

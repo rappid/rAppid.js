@@ -20,7 +20,7 @@ define(['js/data/validator/Validator', 'underscore'], function (Validator, _) {
             return null;
         },
 
-        _validate: function (entity) {
+        _validate: function (entity, options) {
             var value = entity.$[this.$.field],
                 schemaDefinition = entity.schema[this.$.field],
                 required = schemaDefinition ? schemaDefinition.required : true;

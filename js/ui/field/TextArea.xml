@@ -1,6 +1,7 @@
-<field:TextAreaClass xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="js.ui" xmlns:js="js.core" xmlns:field="js.ui.field">
+<field:TextAreaClass xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="js.ui" xmlns:js="js.core" xmlns:field="js.ui.field"
+        rows="2">
     <js:Content name="controls">
-        <textarea class="input-{size}" enabled="{enabled}" placeholder="{placeholder}">{{value}}</textarea>
+        <textarea class="input-{size}" enabled="{enabled}" placeholder="{placeholder}" rows="{rows}">{{value}}</textarea>
         <ui:ContentPlaceHolder name="additionalControls"/>
     </js:Content>
 </field:TextAreaClass>

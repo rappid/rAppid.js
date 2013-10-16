@@ -15,6 +15,7 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
         $modelMethodMap: {
             GET: "_show",
             PUT: "_update",
+            PATCH: "_update",
             DELETE: "_delete"
         },
 
@@ -64,7 +65,7 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
                 parentConfiguration = parentConfiguration.$parent;
             }
 
-            return path.join("/");
+            return encodeURI(path.join("/"));
         },
 
 
@@ -85,22 +86,39 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
             var method = this._getRequestMethod(context),
                 map = this._isCollectionResource() ? this.$collectionMethodMap : this.$modelMethodMap;
 
-            var fn = this[map[method]];
+            var fn = this[map[method]],
+                self = this;
 
             if (fn instanceof Function) {
                 context.dataSource = this.getDataSource(context, this);
-                var body = context.request.body.content;
+                flow()
+                    .seq(function (cb) {
 
-                if (body !== "") {
-                    // TODO: handle different payload formats -> format processor needed
-                    try {
-                        context.request.params = JSON.parse(body);
-                    } catch (e) {
-                        console.warn("Couldn't parse " + body);
-                    }
-                }
-                // TODO: better apply json post value here to the function
-                fn.call(this, context, callback);
+                        // TODO: there is no resource created that contains all information
+                        // about this request. e.g. with models and path elements
+
+                        context.user.isAuthorized({
+                            type: "RestResource",
+                            method: method,
+                            resource: self
+                        }, cb);
+                    })
+                    .seq(function (cb) {
+                        var body = context.request.body.content;
+
+                        if (body !== "") {
+                            // TODO: handle different payload formats -> format processor needed
+                            try {
+                                context.request.method = method;
+                                context.request.params = JSON.parse(body);
+                            } catch (e) {
+                                console.warn("Couldn't parse " + body);
+                            }
+                        }
+                        // TODO: better apply json post value here to the function
+                        fn.call(self, context, cb);
+                    })
+                    .exec(callback);
 
             } else {
                 throw new HttpError("Method not supported", 405);
@@ -122,11 +140,9 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
                         self.$parentResource._findCollection(context, cb);
                     })
                     .seq("parent", function (cb) {
-                        var id = self.$parentResource.$resourceId,
-                            parentCollection = this.vars.parentCollection;
-
-                        id = parentCollection.$modelFactory.prototype.convertIdentifier(self.$parentResource.$resourceId);
-                        var parent = parentCollection.createItem(id);
+                        var parentCollection = this.vars.parentCollection,
+                            id = parentCollection.$modelFactory.prototype.convertIdentifier(self.$parentResource.$resourceId),
+                            parent = parentCollection.createItem(id);
 
                         if (checkParents) {
                             parent.fetch(null, cb);
@@ -137,7 +153,6 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
                     .exec(function (err, results) {
                         if (!err) {
                             var collection = results.parent.getCollection(self.$resourceConfiguration.$.path);
-                            collection.$context.$dataSource = self.$restHandler.getDataSource(context, self);
                             callback && callback(null, collection);
                         } else {
                             callback && callback(err);
@@ -215,12 +230,14 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
                 if (model.schema.hasOwnProperty(key)) {
                     var value = model.$[key];
                     if (value instanceof Model) {
+                        this._fetchAllHrefsForModel(value, context);
                         value.$.href = baseUri + this._getPathForModel(value);
                     } else if (value instanceof Collection) {
                         value.$.href = model.$.href + "/" + key;
                     } else if (value instanceof List) {
                         value.each(function (item) {
                             if (item instanceof Model) {
+                                self._fetchAllHrefsForModel(item, context);
                                 item.$.href = baseUri + self._getPathForModel(item);
                             }
                         });
@@ -239,19 +256,20 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
                 options,
                 offset = 0,
                 limit = 0,
-                pages = [],
-                items;
+                items,
+                parameters = context.request.urlInfo.parameter;
 
             flow()
                 .seq("collection", function (cb) {
                     self._findCollection(context, cb, false);
                 })
-                .seq("page", function (cb) {
-                    var parameters = context.request.urlInfo.parameter;
-
+                .seq("query", function (cb) {
                     var query = self.$restHandler.parseQueryForResource(parameters, self);
+                    self._modifyCollectionQuery(query, cb);
+                })
+                .seq("page", function (cb) {
 
-                    this.vars.collection = this.vars.collection.query(query);
+                    this.vars.collection = this.vars.collection.query(this.vars.query);
                     var pageSize = context.dataSource.$.collectionPageSize;
                     options = self._createOptionsForCollectionFetch(context, parameters);
 
@@ -281,15 +299,16 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
                         items = results["page"].$items;
                         // call compose
                         var processor = self.$restHandler.$restDataSource.getProcessorForCollection(collection);
-                        var itemArray = [];
 
                         items.forEach(function (item) {
                             var id = item.identifier();
                             if (id) {
                                 self._fetchAllHrefsForModel(item, context);
                             }
-                            itemArray.push(processor.compose(item));
                         });
+
+                        var itemArray = processor.composeCollection(results["page"], "GET", null);
+
                         var res = {
                             count: results["collection"].$.$itemsCount,
                             limit: limit,
@@ -315,6 +334,15 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
 
 
                 });
+        },
+        /**
+         * Hook for modifying the collection query
+         * @param query
+         * @param callback
+         * @private
+         */
+        _modifyCollectionQuery: function (query, callback) {
+            callback && callback(null, query);
         },
 
         /***
@@ -348,6 +376,9 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
                     model.set(processor.parse(model, payload));
 
                     model.set('created', new Date());
+                })
+                .seq(function (cb) {
+                    self._beforeModelSave(model, context, cb);
                 })
                 .seq(function (cb) {
                     self._beforeModelCreate(model, context, cb);
@@ -405,6 +436,9 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
                     if (context) {
                         // TODO: build options
                     }
+                    self._beforeModelFetch(model, context, cb);
+                })
+                .seq(function(cb){
                     model.fetch(null, cb);
                 })
                 .seq(function () {
@@ -437,6 +471,17 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
                 });
         },
 
+        /**
+         * Get's called before a model fetch
+         * @param model
+         * @param context
+         * @param callback
+         * @private
+         */
+        _beforeModelFetch: function(model, context, callback){
+            callback && callback();
+        },
+
         _getCompositionOptions: function (context) {
             return {
                 resourceHandler: this,
@@ -456,6 +501,7 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
                 options = {},
                 model,
                 processor,
+                isPatch = context.request.method === "PATCH",
                 upsert = this.$resourceConfiguration.$.upsert,
                 defaults;
 
@@ -468,15 +514,17 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
                     model = this.vars.collection.createItem(self.$resourceId);
                     defaults = _.clone(model.$);
                     // check if model exists
-                    if (upsert) {
+                    if (upsert && !isPatch) {
                         cb();
                     } else {
                         model.fetch(null, cb);
                     }
                 })
                 .seq(function () {
-                    model.clear();
-                    model.set(defaults);
+                    if(!isPatch){
+                        model.clear();
+                        model.set(defaults);
+                    }
 
                     var payload = context.request.params;
 
@@ -491,6 +539,9 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
                         options.upsert = true;
                         model.set(model.idField, model.factory.prototype.convertIdentifier(self.$resourceId));
                     }
+                })
+                .seq(function (cb) {
+                    self._beforeModelSave(model, context, cb);
                 })
                 .seq(function (cb) {
                     self._beforeModelUpdate(model, context, cb);
@@ -649,11 +700,11 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
                 });
         },
         _beforeModelCreate: function (model, context, callback) {
-            this._beforeModelSave(model, context, callback);
+            callback && callback();
         },
 
         _beforeModelUpdate: function (model, context, callback) {
-            this._beforeModelSave(model, context, callback);
+            callback && callback();
         },
 
         _afterModelCreate: function (model, context, callback) {

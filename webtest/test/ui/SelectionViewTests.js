@@ -5,7 +5,7 @@ describe("#SelectionView", function () {
 
     describe("#sv1", function () {
 
-        beforeEach(function(){
+        beforeEach(function () {
             view = window.application.$.sv1;
             items = window.application.$.sv1_items;
         });
@@ -16,16 +16,16 @@ describe("#SelectionView", function () {
                 that.have.items(items.size());
 
 
-            items.each(function(item, index){
-                $expect($("#sv1").find('li').eq(index)).to.have.attr('class', ""+item.id).and.to.have.text(item.value);
+            items.each(function (item, index) {
+                $expect($("#sv1").find('li').eq(index)).to.have.attr('class', "" + item.id).and.to.have.text(item.value);
             });
         });
 
-        it('should by default have NO item which is selected', function(){
+        it('should by default have NO item which is selected', function () {
             $expect($("#sv1").find('li.active')).to.have.items(0);
         });
 
-        it('should add class active to selectedItem and remove when unset selectedItem', function(){
+        it('should add class active to selectedItem and remove when unset selectedItem', function () {
             view.set('selectedItem', items.at(1));
             $expect($("#sv1").find('li.active')).to.have.items(1);
 
@@ -33,10 +33,10 @@ describe("#SelectionView", function () {
             $expect($("#sv1").find('li.active')).to.have.items(0);
         });
 
-        it('should have correct selectedItem on click', function(){
+        it('should have correct selectedItem on click', function () {
 
             var index = 0;
-            $("#sv1").find('li').eq(index).click();
+            $("#sv1").find('li').eq(0).click();
 
             expect(view.$.selectedItem).to.exist;
             expect(view.$.selectedItem).to.be.equal(items.at(index));
@@ -44,7 +44,7 @@ describe("#SelectionView", function () {
             view.set('selectedItem', null);
         });
 
-        it('should not be possible to deselect item when "allowDeselection=false"', function(){
+        it('should not be possible to deselect item when "allowDeselection=false"', function () {
 
             expect(view.$.selectedItem).to.not.exist;
 
@@ -63,7 +63,7 @@ describe("#SelectionView", function () {
             view.set('selectedItem', null);
         });
 
-        it('should not be possible to select multiple items when "multiSelect=false"', function(){
+        it('should not be possible to select multiple items when "multiSelect=false"', function () {
 
             expect(view.$.selectedItem).to.not.exist;
 
@@ -91,7 +91,7 @@ describe("#SelectionView", function () {
             expect(view.$.selectedItem).to.be.equal(items.at(0));
         });
 
-        it('should allow deselection when "allowDeselection=true" and "needsSelection="true"', function(){
+        it('should allow deselection when "allowDeselection=true" and "needsSelection="true"', function () {
 
             $expect($("#sv2").find('li.active')).to.have.items(1);
 
@@ -100,7 +100,7 @@ describe("#SelectionView", function () {
             $expect($("#sv2").find('li.active')).to.have.items(0);
         });
 
-        it('should be possible to select more then one item when "multiSelect=true"', function(){
+        it('should be possible to select more then one item when "multiSelect=true"', function () {
             // no items selected
             $expect($("#sv2").find('li.active')).to.have.items(0);
 
@@ -115,7 +115,7 @@ describe("#SelectionView", function () {
 
     });
 
-    describe('#sv3', function(){
+    describe('#sv3', function () {
 
         beforeEach(function () {
             view = window.application.$.sv3;
@@ -125,6 +125,46 @@ describe("#SelectionView", function () {
         it('should select first item when "needsSelection=true" and wrong selectedItem is set', function () {
             $expect($("#sv3").find('li.active')).to.have.items(1);
             expect(view.$.selectedItem).to.be.equal(items.at(0));
+        });
+
+        it('should set selectedItem to first item if selected element is removed and "needsSelection=true"', function () {
+            $expect($("#sv3").find('li.active')).to.have.items(1);
+            expect(view.$.selectedItem).to.be.equal(items.at(0));
+
+            items.removeAt(0);
+            expect(view.$.selectedItem).to.be.equal(items.at(0));
+            $expect($("#sv3").find('li.active')).to.have.items(1);
+        });
+
+        it('should set selectedItem to null if element(s) are removed and "needsSelection=true"', function () {
+            $expect($("#sv3").find('li.active')).to.have.items(1);
+            expect(view.$.selectedItem).to.be.equal(items.at(0));
+
+            items.clear();
+            expect(view.$.selectedItem).to.be.equal(null);
+            $expect($("#sv3").find('li.active')).to.have.items(0);
+        });
+
+        it('should set selectedItem to first items if empty list is filled and "needsSelection=true"', function () {
+            items.clear();
+            expect(view.$.selectedItem).to.be.equal(null);
+            $expect($("#sv3").find('li')).to.have.items(0);
+
+            var foo = {
+                id: 3,
+                value: "Foo"
+            };
+            var bar = {
+                id: 4,
+                value: "Bar"
+            };
+
+            items.add([foo, bar]);
+
+            expect(view.$.selectedItem).to.be.equal(foo);
+            expect(view.$.selectedItem).to.be.equal(items.at(0));
+
+            $expect($("#sv3").find('li.active')).to.have.items(1);
         });
 
     });
@@ -143,7 +183,32 @@ describe("#SelectionView", function () {
 
     });
 
+    describe('#sv5', function () {
+        var $sv;
+        beforeEach(function () {
+            $sv = $("#sv5");
+            view = window.application.$.sv5;
+            items = window.application.$.sv4_items;
+        });
 
+        it('should select the placeholder component if a placeHolder is defined and selectedItem should be null', function () {
+            $expect($sv.find('li.active')).to.have.items(1);
+            expect(view.$.selectedItem).to.be.equal(null);
+        });
+
+        it('should set correct selectedItem on click and set first child to not selected', function () {
+            $sv.find('li').eq(1).click();
+            expect(view.$.selectedItem).to.be.equal(items.at(0));
+            $expect($sv.find('li.active')).to.have.items(1);
+            $expect($sv.find('li.active').eq(0)).to.not.exist;
+        });
+
+        it('should select placeholder when setting selectedItem to null', function () {
+            view.set('selectedItem', null);
+            $expect($sv.find('li.active').eq(0)).to.have.items(1);
+        })
+
+    });
 
 
 });

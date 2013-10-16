@@ -7,7 +7,7 @@
                 <span class="caret"/>
             </js:Template>
         </ui:Button>
-        <ui:ContentPlaceHolder tagName="div" name="menu" class="{menuClassName}"/>
+        <ui:ContentPlaceHolder tagName="div" name="menu" class="{menuClassName}" onclick="_preventDefault"/>
     </js:Template>
 
 </ui:SplitButtonClass>

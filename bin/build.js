@@ -1,16 +1,16 @@
 var path = require('path'),
     requirejs = require('requirejs'),
     _ = require('underscore'),
-    rAppid = require('../rAppid.js').rAppid,
+    rAppid = require('..').rAppid,
     flow = require('flow.js').flow,
     fs = require('fs');
 
 fs.existsSync || (fs.existsSync = path.existsSync);
 
-var createOnBuildWriteFnc = function(shim){
-    return function(moduleName,path, contents){
-        if(shim[moduleName]){
-            contents = "define('"+moduleName+"', function () { " + contents + "; return "+ shim[moduleName].exports+"; });"
+var createOnBuildWriteFnc = function (shim) {
+    return function (moduleName, path, contents) {
+        if (shim[moduleName]) {
+            contents = "define('" + moduleName + "', function () { " + contents + "; return " + shim[moduleName].exports + "; });"
         } else if (moduleName == "rAppid") {
             // rollback content changes
             contents = contents.replace(/EMPTYDEFINE/g, 'define');
@@ -68,8 +68,18 @@ var optimizeConfig = {
 var build = function (args, callback) {
     var basePath = process.cwd();
 
+    args = args || [];
+
+    var argv = require('optimist')(args)
+        .usage("rappidjs build [<buildConfig>]")
+
+        .describe('version', 'the build version number')
+        .alias("v", "version")
+        .argv;
+
+
     // read out config.json
-    var buildFile = args[0] ||  "build.json";
+    var buildFile = argv._[0] || "build.json";
 
     var buildConfigPath = path.join(basePath, buildFile);
     var publicPath = path.join(basePath, "public");
@@ -93,8 +103,8 @@ var build = function (args, callback) {
     var config = JSON.parse(fs.readFileSync(configPath));
     var buildConfig = JSON.parse(fs.readFileSync(buildConfigPath));
 
-    for(var configKey in optimizeConfig){
-        if(optimizeConfig.hasOwnProperty(configKey) && buildConfig.hasOwnProperty(configKey)){
+    for (var configKey in optimizeConfig) {
+        if (optimizeConfig.hasOwnProperty(configKey) && buildConfig.hasOwnProperty(configKey)) {
             optimizeConfig[configKey] = buildConfig[configKey];
         }
     }
@@ -115,7 +125,7 @@ var build = function (args, callback) {
 
     buildConfig.modules.forEach(function (module, index) {
 
-        if (typeof module === "string"){
+        if (typeof module === "string") {
             moduleConfig = {
                 name: module,
                 create: true,
@@ -157,7 +167,7 @@ var build = function (args, callback) {
 
         moduleConfig.include.push(realModuleName);
 
-        if(isXamlClass){
+        if (isXamlClass) {
             config.optimizedXAML.push(moduleConfig.name);
         }
 
@@ -166,9 +176,9 @@ var build = function (args, callback) {
 
     optimizeConfig.xamlClasses = config.xamlClasses;
 
-    for (var key in config.paths){
-        if(config.paths.hasOwnProperty(key)){
-            if(key !== "JSON"){
+    for (var key in config.paths) {
+        if (config.paths.hasOwnProperty(key)) {
+            if (key !== "JSON") {
                 optimizeConfig.paths[key] = config.paths[key];
 
             }
@@ -182,34 +192,37 @@ var build = function (args, callback) {
 
     optimizeConfig.dir = buildConfig.targetDir || optimizeConfig.dir;
 
-    var versionDir;
-    if(buildConfig.usePackageVersion === true){
-        var packagePath = path.join(basePath, "package.json"),
-            packageContent = JSON.parse(fs.readFileSync(packagePath)),
-            version;
+    var versionDir,
+        version = argv.v || null;
 
-        if(packageContent){
-            version = versionDir = packageContent.version;
-            optimizeConfig.dir = path.join(optimizeConfig.dir,versionDir);
-        }else{
+    if (!version && buildConfig.usePackageVersion === true) {
+        var packagePath = path.join(basePath, "package.json"),
+            packageContent = JSON.parse(fs.readFileSync(packagePath));
+
+        if (packageContent) {
+            version = packageContent.version;
+        } else {
             throw new Error("No package.json found");
         }
     }
 
+    if (version) {
+        optimizeConfig.dir = path.join(optimizeConfig.dir, version);
+        versionDir = version;
+    }
 
-    var buildDirPath = path.join(basePath,optimizeConfig.dir);
-    var newConfigPath = path.join(configPath, "config.json");
+    var buildDirPath = path.join(basePath, optimizeConfig.dir);
 
     // change config.json
     // set base url
     var realBaseUrl = config.baseUrl;
     if (versionDir) {
-        config.baseUrl = path.join(config.baseUrl || ".",versionDir);
+        config.baseUrl = path.join(config.baseUrl || ".", versionDir);
     }
 
     fs.writeFileSync(configPath, JSON.stringify(config));
 
-    var writeBackConfig = function(){
+    var writeBackConfig = function () {
         // write back normal config
         delete config['optimizedXAML'];
         config.baseUrl = realBaseUrl;
@@ -226,18 +239,18 @@ var build = function (args, callback) {
         var indexFilePath = path.join(buildDirPath, buildConfig.indexFile || "index.html");
         var indexFile = fs.readFileSync(indexFilePath, "utf8");
         var content = String(indexFile);
-        content = content.replace(/<script.*?require\.js.*?<\/script>/,"");
+        content = content.replace(/<script.*?require\.js.*?<\/script>/, "");
         content = content.replace("js/lib/rAppid", mainModule);
-        if(versionDir){
-            content = content.replace(/(href|src)=(["'])(?!(http|\/\/))([^'"]+)/g,'$1=$2'+versionDir+'/$4');
+        if (versionDir) {
+            content = content.replace(/(href|src)=(["'])(?!(http|\/\/))(\/)?([^'"]+)/g, '$1=$2$4' + versionDir + '/$5');
             content = content.replace(/\$\{VERSION\}/g, version);
 
             mainModule = path.join(versionDir, mainModule);
-            var externalIndexFilePath = path.join(buildDirPath , "..", buildConfig.indexFile || "index.html");
+            var externalIndexFilePath = path.join(buildDirPath, "..", buildConfig.indexFile || "index.html");
             fs.writeFileSync(externalIndexFilePath, content);
         }
         fs.writeFileSync(indexFilePath, content);
-    }, function(err){
+    }, function (err) {
         writeBackConfig();
 
         console.log(err);

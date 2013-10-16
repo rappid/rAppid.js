@@ -1,10 +1,10 @@
-define(['js/ui/View', 'xaml!js/ui/Radio'], function(View, Radio) {
+define(['js/ui/View', 'xaml!js/ui/Radio'], function (View, Radio) {
 
     var radioId = 0;
 
     return View.inherit('js.ui.RadioGroup', {
 
-        ctor: function() {
+        ctor: function () {
             this.callBase();
 
             if (!this.$.name) {
@@ -17,7 +17,7 @@ define(['js/ui/View', 'xaml!js/ui/Radio'], function(View, Radio) {
             componentClass: "radio-group"
         },
 
-        addChild: function(child) {
+        addChild: function (child) {
 
             if (!(child instanceof Radio)) {
                 throw new Error("Children for RadioGroup must be from type Radio");
@@ -33,16 +33,17 @@ define(['js/ui/View', 'xaml!js/ui/Radio'], function(View, Radio) {
             this.callBase();
         },
 
-        _commitValue: function(value) {
-            for (var i = 0; i < this.$children.length; i++) {
-                var child = this.$children[i];
+        _commitValue: function (value) {
+            var children = this.getViewChildren();
+            for (var i = 0; i < children.length; i++) {
+                var child = children[i];
                 if (child.$.value === value) {
                     child.set("checked", true);
                 }
             }
         },
 
-        _onRadioSelected: function(e) {
+        _onRadioSelected: function (e) {
             if (e.$ === true) {
                 this.set("value", e.target.$.value);
             }

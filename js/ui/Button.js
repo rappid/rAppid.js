@@ -1,7 +1,13 @@
 define(["xaml!js/ui/Link", "js/core/Content"], function (Link) {
         return Link.inherit({
             defaults: {
-                'componentClass': 'btn'
+                'componentClass': 'btn',
+
+                /***
+                 * the type of the button
+                 * @type String
+                 */
+                type: null
             },
             _renderType: function (type, oldType) {
                 if (oldType) {

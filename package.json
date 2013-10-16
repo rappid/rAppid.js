@@ -1,7 +1,7 @@
 {
   "name": "rAppid.js",
   "preferGlobal": "false",
-  "version": "0.6.6",
+  "version": "0.6.8",
   "author": "rAppid <support@rappidjs.com> (http://rappidjs.com)",
   "contributors": [
     "Tony Findeisen <tony@rappidjs.com>",
@@ -9,9 +9,7 @@
   ],
   "description": "rAppid.js is a declarative JavaScript web application for rapid web application development. It uses XML to define the structure of applications, modules, components and views and JavaScript for the business logic of the application. The XML (xaml) gets translated to javascript components during runtime which will render itself as HTML5 DOM elements. This enables a rapid development of applications.",
   "scripts": {
-    "test": "mocha -R spec",
-    "postinstall": "node bin/rappidjs postinstall",
-    "preuninstall": "node bin/rappidjs preuninstall"
+    "test": "mocha -R spec"
   },
   "bin": {
     "rappidjs": "./bin/rappidjs"
@@ -38,7 +36,7 @@
   ],
   "dependencies": {
     "underscore": "latest",
-    "requirejs": ">=2.0.2 <=2.1.5",
+    "requirejs": "latest",
     "flow.js": ">=0.2.5",
     "inherit.js": "latest",
     "ejs": "latest",

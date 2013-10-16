@@ -2,7 +2,7 @@
     xmlns="http://www.w3.org/2001/XMLSchema"
     xmlns:ns1="srv.core"
     xmlns:ns="srv.endpoint">
-    <import namespace="srv.core"/>
+    <import/>
     <element name="HttpEndPoint" type="ns:HttpEndPoint"/>
     <element name="HttpsEndPoint" type="ns:HttpsEndPoint"/>
     <element name="SpdyEndPoint" type="ns:SpdyEndPoint"/>

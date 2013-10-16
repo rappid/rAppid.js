@@ -5,15 +5,56 @@ define(["js/ui/ItemsView", "js/html/HtmlElement", "underscore", "js/core/List"],
         $defaultTemplateName: null,
 
         defaults: {
+            /**
+             * If multi selection is allowed or not
+             */
             multiSelect: false,
+            /**
+             * The default place holder value if a placeholder template is defined
+             */
+            placeHolderValue: null,
+            /**
+             * The list of selected views
+             */
             selectedViews: List,
+            /**
+             * The list of selected items
+             */
             selectedItems: List,
+            /**
+             * The selected item
+             */
             selectedItem: null,
+            /**
+             * The selected view index
+             */
             selectedIndex: null,
+            /**
+             * If true, the first element is selected if no selectedItem is set
+             */
             needsSelection: false,
+            /**
+             * The items
+             * @type js.core.List
+             * @type Array
+             */
             items: [],
+            /**
+             * A key path for comparison of items
+             */
             keyPath: null,
+            /**
+             * If false, elements are not selectable
+             * Useful for readonly selection
+             * @type Boolean
+             */
             forceSelectable: true,
+            /***
+             * If true an element can be deselected
+             * Default is false
+             *
+             * @type Boolean
+             */
             allowDeselection: false
         },
 
@@ -22,34 +63,52 @@ define(["js/ui/ItemsView", "js/html/HtmlElement", "underscore", "js/core/List"],
             this.bind('selectedItems', 'add', this._onSelectedItemAdd, this);
             this.bind('selectedItems', 'remove', this._onSelectedItemRemove, this);
             this.bind('selectedItems', 'reset', this._onSelectedItemReset, this);
+
+            this.bind('items', 'remove', this._itemRemove, this);
+            this.bind('items', 'add', this._itemAdd, this);
         },
 
         _onSelectedItemAdd: function (e) {
-            var item;
-            for (var i = 0; i < this.$renderedItems.length; i++) {
-                item = this.$renderedItems[i].item;
-                if (e.$ === item && !this.$renderedItems[i].component.$.selected) {
-                    this.$renderedItems[i].component.set({selected: true}, {silent: true});
+            if(this.isRendered()){
+                var item;
+                var $renderedItems = this.$repeat.$renderedItems;
+                for (var i = 0; i < $renderedItems.length; i++) {
+                    item = $renderedItems[i].item;
+                    if (e.$ === item && !$renderedItems[i].component.$.selected) {
+                        $renderedItems[i].component.set({selected: true}, {silent: true});
+                    }
                 }
             }
         },
 
+        _itemRemove: function(e) {
+            if (e.$.item === this.$.selectedItem) {
+                this._checkNeedsSelection();
+            }
+        },
+
+        _itemAdd: function() {
+            if (!this.$.selectedItem) {
+                this._checkNeedsSelection();
+            }
+        },
+
         _onSelectedItemRemove: function (e) {
-            var item;
-            for (var i = 0; i < this.$renderedItems.length; i++) {
-                item = this.$renderedItems[i].item;
-                if (e.$ === item && this.$renderedItems[i].component.$.selected) {
-                    this.$renderedItems[i].component.set({selected: false}, {silent: true});
+            if(this.isRendered()){
+
+                var item;
+                var $renderedItems = this.$repeat.$renderedItems;
+                for (var i = 0; i < $renderedItems.length; i++) {
+                    item = $renderedItems[i].item;
+                    if (e.$ === item && $renderedItems[i].component.$.selected) {
+                        $renderedItems[i].component.set({selected: false}, {silent: true});
+                    }
                 }
             }
         },
 
         _onSelectedItemReset: function () {
             this._renderSelectedItems(this.$.selectedItems);
-        },
-
-        hasSelectedItems: function () {
-            return this.$.selectedItems.length > 0;
         },
 
         hasSelection: function () {
@@ -67,23 +126,35 @@ define(["js/ui/ItemsView", "js/html/HtmlElement", "underscore", "js/core/List"],
             return false;
         }.onChange('selectedItem'),
 
-        _innerRenderItems: function (items) {
 
+        _onItemsRendered: function () {
             this.callBase();
 
+            this._checkNeedsSelection();
+        },
+
+        _checkNeedsSelection: function() {
             if (this.$.needsSelection) {
+                var items = this._getItemsArray(this.$.items);
                 if (items && items.length) {
                     for (var i = 0; i < items.length; i++) {
                         if (this.$.selectedItem === items[i]) {
                             return;
                         }
                     }
-                    this.set('selectedItem', this.$renderedChildren[0].get(this._getItemKey()));
+                    this.set('selectedItem', items[0]);
                 } else {
                     this.set('selectedItem', null);
                 }
             }
+        },
 
+        _commitChangedAttributes: function ($) {
+            if ($.hasOwnProperty("selectedItem") && $["selectedItem"] != null) {
+                this.$.selectedItems.add($["selectedItem"]);
+            }
+
+            this.callBase();
         },
 
         _renderChild: function (child) {
@@ -122,11 +193,35 @@ define(["js/ui/ItemsView", "js/html/HtmlElement", "underscore", "js/core/List"],
                 this.set('selectedItem', child.get(this._getItemKey()));
             }
 
+        },
 
+        _addTemplate: function (template) {
+            this.callBase();
+            if (template.$.name == "placeHolder") {
+                this.$hasPlaceHolder = true;
+            }
+        },
+
+        _renderPlaceHolderValue: function (placeHolderValue, oldValue) {
+            if (this.$placeHolder) {
+                this.removeChild(this.$placeHolder);
+            }
+
+            if (this.$hasPlaceHolder) {
+                var attr = {};
+                attr[this._getItemKey()] = placeHolderValue;
+                attr["selected"] = this.$.selectedItem === placeHolderValue;
+                this.$placeHolder = this.$templates.placeHolder.createInstance(attr);
+
+                this.addChild(this.$placeHolder, {childIndex: 0});
+            }
         },
 
         _renderSelectedItem: function (item, oldItem) {
             var comp = this.getComponentForItem(item);
+            if (this.$hasPlaceHolder && item === this.$.placeHolderValue) {
+                comp = this.$placeHolder;
+            }
             if (comp) {
                 comp.set({selected: true}, {silent: true});
                 var c;
@@ -149,28 +244,24 @@ define(["js/ui/ItemsView", "js/html/HtmlElement", "underscore", "js/core/List"],
         _renderSelectedItems: function (list) {
             if (list && list.length) {
                 var item;
-                for (var i = 0; i < this.$renderedItems.length; i++) {
-                    item = this.$renderedItems[i].item;
-                    this.$renderedItems[i].component.set({selected: (list.indexOf(item) > -1)}, {silent: true});
+                var $renderedItems = this.$repeat.$renderedItems;
+                for (var i = 0; i < $renderedItems.length; i++) {
+                    item = $renderedItems[i].item;
+                    $renderedItems[i].component.set({selected: (list.indexOf(item) > -1)}, {silent: true});
                 }
+            } else if (this.$placeHolder && this.$.selectedItem == null) {
+                this.$placeHolder.set({selected: true}, {silent: true});
             }
         },
 
         _renderSelectedIndex: function (i, oldIndex) {
-            var items = this._getItemsArray(this.$.items),
-                comp;
-            if (i != null && i > -1 && i < items.length) {
-                comp = this.getComponentForItem(items[i]);
-                if (comp) {
-                    comp.set({selected: true});
-                }
+            if (i !== null && i < this.$renderedChildren.length && i > -1) {
+                var c = this.$renderedChildren[i];
+                c.set({selected: true}, {silent: true});
             }
-
-            if (oldIndex != null && oldIndex > -1 && oldIndex < items.length) {
-                comp = this.getComponentForItem(items[oldIndex]);
-                if (comp) {
-                    comp.set({selected: false});
-                }
+            if (oldIndex !== null && oldIndex < this.$renderedChildren.length && oldIndex > -1) {
+                var oc = this.$renderedChildren[oldIndex];
+                oc.set({selected: false}, {silent: true});
             }
 
         },

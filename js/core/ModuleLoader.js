@@ -4,12 +4,25 @@ define(["require", "js/html/HtmlElement", "js/ui/ContentPlaceHolder", "js/core/M
 
             $classAttributes: ['router', 'currentModuleName', 'state'],
             defaults: {
+                /**
+                 * The current module name
+                 */
                 currentModuleName: null,
+                /**
+                 * The current module
+                 */
                 $currentModule: null,
-                tagName: 'div',
-                componentClass: "module-loader",
-                state: null,
 
+                tagName: 'div',
+                /**
+                 * The css class of the component
+                 */
+                componentClass: "module-loader",
+                /**
+                 * The current state - is set to "loading" or "loading unloading"
+                 * Is rendered to css className
+                 */
+                state: null,
                 /***
                  * the router used for automatically registering routes from {@link js.conf.ModuleConfiguration}
                  *
@@ -82,7 +95,15 @@ define(["require", "js/html/HtmlElement", "js/ui/ContentPlaceHolder", "js/core/M
                 }
 
             },
-
+            /**
+             * Starts the module with the given name
+             * @param {String} moduleName - The name of the module
+             * @param {js.core.Module} moduleInstance - the module instance
+             * @param {Function} callback - the callback function
+             * @param {Object} routeContext - the route context
+             * @param {Object} [cachedInstance]
+             * @private
+             */
             _startModule: function (moduleName, moduleInstance, callback, routeContext, cachedInstance) {
 
                 var self = this;
@@ -239,7 +260,11 @@ define(["require", "js/html/HtmlElement", "js/ui/ContentPlaceHolder", "js/core/M
                 }
 
             },
-
+            /**
+             * Returns true if module with name is active
+             *
+             * @param {String} moduleName
+             */
             isModuleActive: function (moduleName) {
                 return this.$.currentModuleName == moduleName;
             }.onChange('currentModuleName'),

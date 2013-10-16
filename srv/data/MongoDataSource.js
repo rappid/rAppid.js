@@ -10,10 +10,32 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
 
     MongoQueryComposer = MongoQueryComposer.MongoQueryComposer;
 
+    var translateOperator = MongoQueryComposer.translateOperator;
+
+    MongoQueryComposer.translateOperator = function (operator) {
+        /**
+         * Fix to handle ID's right
+         * @param operator
+         * @returns {Function}
+         */
+        if (operator.field === "id") {
+            if ((operator.value instanceof Array)) {
+                for (var i = 0; i < operator.value.length; i++) {
+                    operator.value[i] = new MongoDb.ObjectID(operator.value[i]);
+                }
+            } else {
+                operator.value = new MongoDb.ObjectID(operator.value);
+            }
+            operator.field = "_id";
+        }
+
+        return translateOperator.call(this, operator);
+    };
+
     /***
      * @inherit js.data.DataSource.Processor
      */
-    var MongoDataProcessor = DataSource.Processor.inherit('src.data.MongoDataProcessor', {
+    var MongoDataProcessor = DataSource.Processor.inherit('srv.data.MongoDataProcessor', {
         compose: function (entity, action, options) {
             var data = this.callBase();
 
@@ -22,6 +44,10 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
 
                 if (entity.idField === "id") {
                     data[ID_KEY] = this.$dataSource._createIdObject(data[ID_KEY]);
+                }
+                // don't compose href field ...
+                if(entity.hrefField){
+                    delete data[entity.hrefField];
                 }
             }
 
@@ -72,7 +98,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
         parse: function (model, data, action, options) {
 
             if (model.createdField) {
-                if (data[ID_KEY]) {
+                if(!data[model.createdField] && data[ID_KEY]) {
                     data[model.createdField] = data[ID_KEY].getTimestamp();
                 }
             }
@@ -223,7 +249,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
                 method;
 
 
-            if (model.updatedField) {
+            if (model.updatedField && !model.get(model.updatedField)) {
                 model.set(model.updatedField, new Date());
             }
 
@@ -246,7 +272,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
             var processor = this.getProcessorForModel(model),
                 data = processor.compose(model, action, options);
 
-            _.defaults(options || {}, {safe: true, upsert: !!configuration.$.upsert});
+            _.defaults(options || {}, {"safe": true, "new": true, "upsert": !!configuration.$.upsert});
 
             // here we have a polymorphic type
             if (configuration.$.modelClassName !== model.constructor.name) {
@@ -264,21 +290,17 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
                         cb(err);
                     });
                 } else if (method === MongoDataSource.METHOD.SAVE) {
-                    collection.findAndModify(where, {}, data, options, function (err, data, info) {
+                    collection.findAndModify(where, {}, data, options, function (err, newData, info) {
                         if (!err) {
-                            if (!options.upsert && !data) {
+                            if (!options.upsert && !newData) {
                                 // no update happened
                                 err = DataSource.ERROR.NOT_FOUND;
-                            }
-                            var idObject;
-                            if (info.lastErrorObject && !info.lastErrorObject.updatedExisting) {
-                                idObject = info.lastErrorObject.upserted;
-                            } else if (info.value) {
-                                idObject = info.value[ID_KEY];
-                            }
+                            } else {
+                                var idObject = newData._id;
 
-                            if (idObject && model.createdField) {
-                                model.set(model.createdField, idObject.getTimestamp());
+                                if (idObject && model.createdField) {
+                                    model.set(model.createdField, idObject.getTimestamp());
+                                }
                             }
                         }
                         cb(err, model);
@@ -326,6 +348,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
             var mongoCollection = configuration.$.path;
 
             var params = {};
+            collectionPage.$collection.$.query = collectionPage.$collection.$.query || new Query();
             if (collectionPage.$collection.$.query) {
                 // TODO: add schema
                 params = MongoQueryComposer.compose(collectionPage.$collection.$.query);
@@ -337,18 +360,25 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
 
             // TODO: add query, fields and options
             var self = this,
-                where = _.extend(this._getWhereConditionForCollection(rootCollection), params.where || {});
+                addWhere = this._getWhereConditionForCollection(rootCollection) || {},
+                where = params.where || {};
 
+            // here we have a polymorphic type
+            if (configuration.$.modelClassName !== modelClassName) {
+                addWhere[TYPE_KEY] = modelClassName;
+            }
+
+            // extend where
+            if (where.$and) {
+                where.$and.push(addWhere);
+            } else {
+                _.extend(addWhere, where);
+            }
 
             var offset = collectionPage.$offset;
             var limit = collectionPage.$limit;
             // TODO: convert query to MongoQuery
 
-
-            // here we have a polymorphic type
-            if (configuration.$.modelClassName !== modelClassName) {
-                where[TYPE_KEY] = modelClassName;
-            }
 
             var sort;
             if (params.sort) {
@@ -472,7 +502,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
         },
 
         _composeContext: function (model) {
-            var parent = model.$parent,
+            var parent = model.$context.$contextModel,
                 context = {},
                 contextStack = [],
                 uri = [];
@@ -502,7 +532,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
                 var configuration = this.$dataSourceConfiguration;
                 var valueContext = value[CONTEXT_KEY],
                     stack = [];
-                if(valueContext){
+                if (valueContext) {
                     for (var key in valueContext) {
                         if (valueContext.hasOwnProperty(key)) {
                             configuration = configuration.getConfigurationForPath(key);
@@ -538,7 +568,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
         }
     });
 
-    MongoDataSource.Context = DataSource.Context.inherit("js.data.MongoDataSource.Context", {
+    MongoDataSource.Context = DataSource.Context.inherit("srv.data.MongoDataSource.Context", {
 
         createCollection: function (factory, options, type) {
             options = options || {};

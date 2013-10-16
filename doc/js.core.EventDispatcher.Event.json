@@ -78,8 +78,8 @@
             "annotations": {},
             "definedInFile": "js/core/EventDispatcher.js",
             "lineNumbers": [
-                222,
-                230
+                225,
+                233
             ],
             "description": "Description of constructor.",
             "definedBy": "js.core.Base",
@@ -146,8 +146,8 @@
             "annotations": {},
             "definedInFile": "js/core/EventDispatcher.js",
             "lineNumbers": [
-                235,
-                247
+                238,
+                252
             ],
             "description": "Prevent default triggering",
             "name": "preventDefault",
@@ -179,8 +179,8 @@
             "annotations": {},
             "definedInFile": "js/core/EventDispatcher.js",
             "lineNumbers": [
-                257,
-                260
+                262,
+                265
             ],
             "name": "stopImmediatePropagation",
             "visibility": "public"
@@ -191,8 +191,8 @@
             "annotations": {},
             "definedInFile": "js/core/EventDispatcher.js",
             "lineNumbers": [
-                252,
-                254
+                257,
+                259
             ],
             "description": "Call this to stop propagation",
             "name": "stopPropagation",
@@ -205,7 +205,8 @@
     "fqClassName": "js.core.EventDispatcher.Event",
     "inherit": "js.core.Base",
     "dependencies": [
-        "js.core.Base"
+        "js.core.Base",
+        "rAppid"
     ],
     "type": "js",
     "file": "js/core/EventDispatcher.js",

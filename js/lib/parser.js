@@ -115,35 +115,35 @@ var exports = (typeof(exports) === "undefined" ? this : exports); exports.parser
         
         pos0 = pos;
         pos1 = pos;
-        if (/^[a-zA-Z$_]/.test(input.charAt(pos))) {
+        if (/^[^\-+{}.,()0-9[\]|]/.test(input.charAt(pos))) {
           result0 = input.charAt(pos);
           pos++;
         } else {
           result0 = null;
           if (reportFailures === 0) {
-            matchFailed("[a-zA-Z$_]");
+            matchFailed("[^\\-+{}.,()0-9[\\]|]");
           }
         }
         if (result0 !== null) {
           result1 = [];
-          if (/^[a-zA-Z0-9$_\- ]/.test(input.charAt(pos))) {
+          if (/^[^{}.,()[\]|]/.test(input.charAt(pos))) {
             result2 = input.charAt(pos);
             pos++;
           } else {
             result2 = null;
             if (reportFailures === 0) {
-              matchFailed("[a-zA-Z0-9$_\\- ]");
+              matchFailed("[^{}.,()[\\]|]");
             }
           }
           while (result2 !== null) {
             result1.push(result2);
-            if (/^[a-zA-Z0-9$_\- ]/.test(input.charAt(pos))) {
+            if (/^[^{}.,()[\]|]/.test(input.charAt(pos))) {
               result2 = input.charAt(pos);
               pos++;
             } else {
               result2 = null;
               if (reportFailures === 0) {
-                matchFailed("[a-zA-Z0-9$_\\- ]");
+                matchFailed("[^{}.,()[\\]|]");
               }
             }
           }

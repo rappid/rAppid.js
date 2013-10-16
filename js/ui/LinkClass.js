@@ -68,10 +68,12 @@ define(["js/ui/View"], function (View) {
         },
 
         _renderTitle: function (title) {
-            if (title) {
-                this.$el.setAttribute("title", title);
-            } else {
-                this.$el.removeAttribute("title");
+            this._setAttribute("title", title);
+        },
+
+        _renderTarget: function (target) {
+            if (target !== "intern" && target !== "external") {
+                this._setAttribute("target", target);
             }
         },
 

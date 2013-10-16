@@ -50,14 +50,28 @@ if (typeof requirejs !== "undefined") {
         Stage,
         document = window.document;
 
+    function extendFunctionPrototype(key, fnc) {
+        var originalFunction = Function.prototype[key];
+
+        if (originalFunction) {
+            Function.prototype[key] = function () {
+                originalFunction.apply(this, arguments);
+                fnc.apply(this, arguments);
+                return this;
+            };
+        } else {
+            Function.prototype[key] = fnc
+        }
+    }
+
     /***
      * marks a function to be executed asynchronously
      * @return {*}
      */
-    Function.prototype.async = function () {
+    extendFunctionPrototype("async",function () {
         this._async = true;
         return this;
-    };
+    });
 
     var xamlApplication = /^(xaml!)?(.+?)(\.xml)?$/;
 
@@ -70,7 +84,7 @@ if (typeof requirejs !== "undefined") {
             "http://www.w3.org/2000/svg": "js.svg"
         },
         defaultRewriteMap = [
-            new Rewrite(/^js\/html\/(a)$/, "js/html/a"),
+            new Rewrite(/^js\/html\/(a)$/, "js/html/A"),
             new Rewrite(/^js\/html\/(input)$/, "js/html/Input"),
             new Rewrite(/^js\/html\/(select)$/, "js/html/Select"),
             new Rewrite(/^js\/html\/(textarea)$/, "js/html/TextArea"),
@@ -371,7 +385,8 @@ if (typeof requirejs !== "undefined") {
             return xhr;
         },
 
-        instances: []
+        instances: [],
+        extendFunctionPrototype: extendFunctionPrototype
     };
 
     var rheaders = /^(.*?):[ \t]*([^\r\n]*)\r?$/mg; // IE leaves an \r character at EOL
@@ -431,6 +446,8 @@ if (typeof requirejs !== "undefined") {
 
     ApplicationContext.prototype.createApplicationInstance = function (window, callback, parameter) {
 
+        parameter = parameter || {};
+
         var document,
             time = (new Date()).getTime();
 
@@ -455,8 +472,11 @@ if (typeof requirejs !== "undefined") {
             stage.$history = new History();
             var injection = stage.$injection = new Injection(null, null, stage);
 
+            stage._addInjectionFactories(injection);
+
             stage.$environment = new Bindable();
             stage.$parameter = parameter;
+            stage.$environmentName = parameter.environment;
 
             injection.addInstance(stage.$bus);
             injection.addInstance(stage.$history);
@@ -587,6 +607,9 @@ if (typeof requirejs !== "undefined") {
 
         rAppid.ajax(url, options, callback);
     };
+
+    // define rAppid in requirejs
+    define('rAppid',[], rAppid);
 
     rAppid.defaultNamespaceMap = defaultNamespaceMap;
     rAppid.defaultRewriteMap = defaultRewriteMap;

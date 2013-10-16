@@ -6,8 +6,8 @@
             "annotations": {},
             "definedInFile": "js/core/EventDispatcher.js",
             "lineNumbers": [
-                198,
-                200
+                201,
+                203
             ],
             "definedBy": "js.core.EventDispatcher",
             "name": "_beforeDestroy",
@@ -19,8 +19,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                251,
-                260
+                309,
+                318
             ],
             "definedBy": "js.core.Bindable",
             "name": "_bindBus",
@@ -43,8 +43,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                481,
-                507
+                518,
+                544
             ],
             "description": "Returns a copy of the attribute. This method is a hook for further cloning options",
             "private": "",
@@ -75,8 +75,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                764,
-                766
+                800,
+                802
             ],
             "description": "called after attributes has set and some of the has been changed\n",
             "abstract": "",
@@ -91,8 +91,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                668,
-                671
+                705,
+                708
             ],
             "definedBy": "js.core.Bindable",
             "name": "_commitInvalidatedAttributes",
@@ -164,8 +164,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                513,
-                515
+                550,
+                552
             ],
             "description": "",
             "returns": {
@@ -185,8 +185,8 @@
             "annotations": {},
             "definedInFile": "js/core/EventDispatcher.js",
             "lineNumbers": [
-                206,
-                212
+                209,
+                215
             ],
             "definedBy": "js.core.EventDispatcher",
             "name": "_destroyCompleted",
@@ -198,9 +198,11 @@
             "annotations": {},
             "definedInFile": "js/data/Entity.js",
             "lineNumbers": [
-                45,
-                113
+                64,
+                138
             ],
+            "description": "Constructs the schema with the schema definition",
+            "private": "",
             "definedBy": "js.data.Entity",
             "name": "_extendSchema",
             "visibility": "protected"
@@ -211,8 +213,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                273,
-                286
+                331,
+                344
             ],
             "definedBy": "js.core.Bindable",
             "name": "_extract",
@@ -233,8 +235,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                524,
-                552
+                561,
+                589
             ],
             "description": "generates a default chain containing the values from this instance and base classes\n",
             "returns": {
@@ -260,8 +262,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                768,
-                777
+                804,
+                813
             ],
             "definedBy": "js.core.Bindable",
             "name": "_hasAll",
@@ -280,8 +282,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                779,
-                788
+                815,
+                824
             ],
             "definedBy": "js.core.Bindable",
             "name": "_hasSome",
@@ -293,8 +295,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                368,
-                379
+                405,
+                416
             ],
             "definedBy": "js.core.Bindable",
             "name": "_initializationComplete",
@@ -306,8 +308,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                164,
-                174
+                213,
+                223
             ],
             "description": "starts the initialization of the `Bindable` if it hasn't initialized yet.\n\nIt calls the following methods:\n\n* initialize();\n* _initializeBindings();\n",
             "private": "",
@@ -321,8 +323,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                291,
-                362
+                349,
+                399
             ],
             "description": "Initialize all Binding and Event attributes",
             "definedBy": "js.core.Bindable",
@@ -335,8 +337,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                364,
-                366
+                401,
+                403
             ],
             "definedBy": "js.core.Bindable",
             "name": "_initializeBindingsBeforeComplete",
@@ -348,8 +350,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                149,
-                152
+                198,
+                201
             ],
             "description": "\ninvokes the `_initialize` method. This method is a hook function and is overwritten by js.core.Component\n",
             "private": "",
@@ -363,8 +365,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                224,
-                248
+                273,
+                306
             ],
             "definedBy": "js.core.Bindable",
             "name": "_inject",
@@ -376,8 +378,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                189,
-                191
+                238,
+                240
             ],
             "description": "\nreturns the chained object defining the required injections\n",
             "returns": {
@@ -396,8 +398,8 @@
             "annotations": {},
             "definedInFile": "js/core/EventDispatcher.js",
             "lineNumbers": [
-                202,
-                204
+                205,
+                207
             ],
             "definedBy": "js.core.EventDispatcher",
             "name": "_innerDestroy",
@@ -413,8 +415,8 @@
             "annotations": {},
             "definedInFile": "js/data/Entity.js",
             "lineNumbers": [
-                154,
-                156
+                179,
+                181
             ],
             "definedBy": "js.data.Entity",
             "name": "_isChildFactoryDependentObject",
@@ -426,8 +428,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                381,
-                383
+                418,
+                420
             ],
             "definedBy": "js.core.Bindable",
             "name": "_postConstruct",
@@ -439,8 +441,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                385,
-                387
+                422,
+                424
             ],
             "definedBy": "js.core.Bindable",
             "name": "_preDestroy",
@@ -459,8 +461,8 @@
             "annotations": {},
             "definedInFile": "js/data/Entity.js",
             "lineNumbers": [
-                285,
-                294
+                315,
+                324
             ],
             "description": " TODO: combine _setError and _setErrors",
             "definedBy": "js.data.Entity",
@@ -471,15 +473,28 @@
             "type": "Method",
             "parameter": [
                 {
-                    "name": "errors"
+                    "types": [
+                        "Array"
+                    ],
+                    "name": "errors",
+                    "optional": false
+                },
+                {
+                    "types": [
+                        "Object"
+                    ],
+                    "name": "options",
+                    "optional": false
                 }
             ],
             "annotations": {},
             "definedInFile": "js/data/Entity.js",
             "lineNumbers": [
-                296,
-                313
+                332,
+                358
             ],
+            "description": "",
+            "private": "",
             "definedBy": "js.data.Entity",
             "name": "_setErrors",
             "visibility": "protected"
@@ -490,8 +505,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                206,
-                209
+                255,
+                258
             ],
             "description": "sets up the Bindable or Component. It will inject the required injections and\nalso will bind the application wide `MessageBus` to all methods annotated with the\n`.bus()` method annotation\n\nFor `Components` the setUp method is invoked automatically during the add of the Component.\nFor non `Components`\n\n",
             "private": "",
@@ -506,15 +521,24 @@
             "type": "Method",
             "parameter": [],
             "annotations": {
-                "onChange": [
-                    "id"
+                "on": [
+                    [
+                        "this",
+                        "change"
+                    ]
                 ]
             },
             "definedInFile": "js/data/Model.js",
             "lineNumbers": [
-                259,
-                265
+                297,
+                303
             ],
+            "description": "Returns CREATED if identifier() is set, NEW if identifier is null or undefined and DELETED if identifier is false.",
+            "returns": {
+                "types": [
+                    "Boolean"
+                ]
+            },
             "definedBy": "js.data.Model",
             "name": "_status",
             "visibility": "protected"
@@ -525,8 +549,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                219,
-                222
+                268,
+                271
             ],
             "description": "tears down the Bindable or Component. It will remove the injected variables and\nalso will unbind the annotated event handlers from the application wide `MessageBus`\n",
             "private": "",
@@ -543,8 +567,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                262,
-                271
+                320,
+                329
             ],
             "definedBy": "js.core.Bindable",
             "name": "_unbindBus",
@@ -576,8 +600,8 @@
             "annotations": {},
             "definedInFile": "js/core/EventDispatcher.js",
             "lineNumbers": [
-                75,
-                87
+                72,
+                88
             ],
             "description": "Binds a callback and a scope to a given eventType\n",
             "definedBy": "js.core.EventDispatcher",
@@ -590,8 +614,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                805,
-                807
+                841,
+                843
             ],
             "description": "Clears all attributes",
             "returns": {
@@ -609,8 +633,8 @@
             "annotations": {},
             "definedInFile": "js/data/Entity.js",
             "lineNumbers": [
-                188,
-                190
+                208,
+                211
             ],
             "description": "Clears all errors",
             "definedBy": "js.data.Entity",
@@ -640,8 +664,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                454,
-                474
+                491,
+                511
             ],
             "description": "This method returns a copy of the Object",
             "returns": {
@@ -658,12 +682,17 @@
             "type": "Method",
             "parameter": [
                 {
-                    "types": null,
+                    "types": [
+                        "String"
+                    ],
                     "name": "action",
-                    "optional": false
+                    "optional": false,
+                    "description": "\"create\", \"save\", \"update\" or \"delete\""
                 },
                 {
-                    "types": null,
+                    "types": [
+                        "Object"
+                    ],
                     "name": "options",
                     "optional": false
                 }
@@ -671,8 +700,8 @@
             "annotations": {},
             "definedInFile": "js/data/Entity.js",
             "lineNumbers": [
-                181,
-                183
+                201,
+                203
             ],
             "description": "Composes the data based on the schema.\nCan pe used to pre compose the data for the processor",
             "returns": {
@@ -691,9 +720,15 @@
             "annotations": {},
             "definedInFile": "js/data/Entity.js",
             "lineNumbers": [
-                365,
-                367
+                429,
+                431
             ],
+            "description": "Returns the context model if the context is set",
+            "returns": {
+                "types": [
+                    "js.data.Entity"
+                ]
+            },
             "definedBy": "js.data.Entity",
             "name": "contextModel",
             "visibility": "public"
@@ -702,7 +737,9 @@
             "type": "Method",
             "parameter": [
                 {
-                    "types": null,
+                    "types": [
+                        "String"
+                    ],
                     "name": "identifier",
                     "optional": false
                 }
@@ -710,13 +747,14 @@
             "annotations": {},
             "definedInFile": "js/data/Model.js",
             "lineNumbers": [
-                280,
-                289
+                325,
+                334
             ],
             "description": "Converts the identifier to the given type in the schema",
             "returns": {
                 "types": [
-                    "*"
+                    "Number",
+                    "String"
                 ]
             },
             "definedBy": "js.data.Model",
@@ -745,8 +783,8 @@
             "annotations": {},
             "definedInFile": "js/data/Entity.js",
             "lineNumbers": [
-                148,
-                152
+                173,
+                177
             ],
             "description": "Creates an entity in the context of the given entity",
             "returns": {
@@ -777,8 +815,8 @@
             "annotations": {},
             "definedInFile": "js/core/EventDispatcher.js",
             "lineNumbers": [
-                185,
-                196
+                188,
+                199
             ],
             "description": "Clears up the instance",
             "definedBy": "js.core.EventDispatcher",
@@ -809,15 +847,27 @@
             "type": "Method",
             "parameter": [
                 {
-                    "name": "key"
+                    "types": [
+                        "String"
+                    ],
+                    "name": "field",
+                    "optional": false,
+                    "description": "the name of the field"
                 }
             ],
             "annotations": {},
             "definedInFile": "js/data/Entity.js",
             "lineNumbers": [
-                315,
-                320
+                365,
+                370
             ],
+            "description": "Returns the error for a given field",
+            "deprecated": "",
+            "returns": {
+                "types": [
+                    "*"
+                ]
+            },
             "definedBy": "js.data.Entity",
             "name": "error",
             "visibility": "public"
@@ -835,8 +885,8 @@
             },
             "definedInFile": "js/data/Entity.js",
             "lineNumbers": [
-                197,
-                199
+                218,
+                220
             ],
             "description": "Returns the errors of the entity",
             "returns": {
@@ -852,7 +902,9 @@
             "type": "Method",
             "parameter": [
                 {
-                    "types": null,
+                    "types": [
+                        "Object"
+                    ],
                     "name": "options",
                     "optional": false
                 },
@@ -868,9 +920,10 @@
             "annotations": {},
             "definedInFile": "js/data/Model.js",
             "lineNumbers": [
-                196,
-                225
+                214,
+                249
             ],
+            "description": "Fetches the model over the given DataSource. The id of the model must be set.\n",
             "definedBy": "js.data.Model",
             "name": "fetch",
             "visibility": "public"
@@ -879,7 +932,12 @@
             "type": "Method",
             "parameter": [
                 {
-                    "name": "field"
+                    "types": [
+                        "String"
+                    ],
+                    "name": "field",
+                    "optional": false,
+                    "description": "the name of the field"
                 }
             ],
             "annotations": {
@@ -892,9 +950,15 @@
             },
             "definedInFile": "js/data/Entity.js",
             "lineNumbers": [
-                201,
-                203
+                227,
+                229
             ],
+            "description": "Returns the error for a given field",
+            "returns": {
+                "types": [
+                    "*"
+                ]
+            },
             "definedBy": "js.data.Entity",
             "name": "fieldError",
             "visibility": "public"
@@ -923,8 +987,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                680,
-                744
+                717,
+                780
             ],
             "description": "evaluates a path to retrieve a value\n",
             "returns": {
@@ -939,15 +1003,25 @@
             "type": "Method",
             "parameter": [
                 {
-                    "name": "key"
+                    "types": [
+                        "String"
+                    ],
+                    "name": "field",
+                    "optional": false
                 }
             ],
             "annotations": {},
             "definedInFile": "js/data/Model.js",
             "lineNumbers": [
-                148,
-                167
+                170,
+                189
             ],
+            "description": "Returns a sub collection of the model for a given field.\nIf the collection doesn't exist it gets created.\nYou should always use this method to get a sub collection.\n",
+            "returns": {
+                "types": [
+                    "js.data.Collection"
+                ]
+            },
             "definedBy": "js.data.Model",
             "name": "getCollection",
             "visibility": "public"
@@ -966,8 +1040,8 @@
             "annotations": {},
             "definedInFile": "js/data/Entity.js",
             "lineNumbers": [
-                120,
-                140
+                145,
+                165
             ],
             "description": "Returns the correct context for a child factory",
             "returns": {
@@ -1018,8 +1092,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                400,
-                409
+                437,
+                446
             ],
             "definedBy": "js.core.Bindable",
             "name": "getScopeForFncName",
@@ -1035,8 +1109,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                389,
-                398
+                426,
+                435
             ],
             "definedBy": "js.core.Bindable",
             "name": "getScopeForKey",
@@ -1057,8 +1131,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                752,
-                754
+                788,
+                790
             ],
             "description": "determinate if a attribute is available\n",
             "returns": {
@@ -1077,9 +1151,15 @@
             "annotations": {},
             "definedInFile": "js/data/Entity.js",
             "lineNumbers": [
-                361,
-                363
+                422,
+                424
             ],
+            "description": "Returns the value of the idField",
+            "returns": {
+                "types": [
+                    "*"
+                ]
+            },
             "definedBy": "js.data.Entity",
             "name": "identifier",
             "visibility": "public"
@@ -1088,15 +1168,20 @@
             "type": "Method",
             "parameter": [
                 {
-                    "name": "callback"
+                    "types": [
+                        "Function"
+                    ],
+                    "name": "callback",
+                    "optional": false
                 }
             ],
             "annotations": {},
             "definedInFile": "js/data/Entity.js",
             "lineNumbers": [
-                357,
-                359
+                415,
+                417
             ],
+            "description": "The init method can be used to setup/init an entity asynchronously.\nIt must be called from outside by hand.\n",
             "definedBy": "js.data.Entity",
             "name": "init",
             "visibility": "public"
@@ -1107,8 +1192,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                179,
-                180
+                228,
+                229
             ],
             "description": "the initialize method is a hook function to add a custom logic during the initiation process.",
             "definedBy": "js.core.Bindable",
@@ -1119,15 +1204,24 @@
             "type": "Method",
             "parameter": [],
             "annotations": {
-                "onChange": [
-                    "id"
+                "on": [
+                    [
+                        "this",
+                        "change"
+                    ]
                 ]
             },
             "definedInFile": "js/data/Model.js",
             "lineNumbers": [
-                271,
-                273
+                316,
+                318
             ],
+            "description": "Returns true if status is CREATED",
+            "returns": {
+                "types": [
+                    "Boolean"
+                ]
+            },
             "definedBy": "js.data.Model",
             "name": "isCreated",
             "visibility": "public"
@@ -1142,8 +1236,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                880,
-                897
+                933,
+                950
             ],
             "definedBy": "js.core.Bindable",
             "name": "isDeepEqual",
@@ -1159,8 +1253,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                898,
-                900
+                951,
+                953
             ],
             "definedBy": "js.core.Bindable",
             "name": "isEqual",
@@ -1170,26 +1264,31 @@
             "type": "Method",
             "parameter": [],
             "annotations": {
-                "onChange": [
-                    "id"
+                "on": [
+                    [
+                        "this",
+                        "change"
+                    ]
                 ]
             },
             "definedInFile": "js/data/Model.js",
             "lineNumbers": [
-                267,
-                269
+                308,
+                310
             ],
+            "description": "Returns true if status is NEW",
+            "returns": {
+                "types": [
+                    "Boolean"
+                ]
+            },
             "definedBy": "js.data.Model",
             "name": "isNew",
             "visibility": "public"
         },
         {
             "type": "Method",
-            "parameter": [
-                {
-                    "name": "$"
-                }
-            ],
+            "parameter": [],
             "annotations": {
                 "on": [
                     [
@@ -1200,15 +1299,14 @@
             },
             "definedInFile": "js/data/Entity.js",
             "lineNumbers": [
-                209,
-                220
+                236,
+                247
             ],
-            "description": "",
+            "description": "Returns true if valid\n",
             "returns": {
                 "types": [
                     "Boolean"
-                ],
-                "description": "true if valid"
+                ]
             },
             "definedBy": "js.data.Entity",
             "name": "isValid",
@@ -1251,28 +1349,37 @@
             "type": "Method",
             "parameter": [
                 {
-                    "types": null,
+                    "types": [
+                        "Object"
+                    ],
                     "name": "data",
-                    "optional": false
+                    "optional": false,
+                    "description": "the data parsed by the processor"
                 },
                 {
-                    "types": null,
+                    "types": [
+                        "String"
+                    ],
                     "name": "action",
-                    "optional": true
+                    "optional": true,
+                    "description": "the action of the data source (\"create\", \"save\", \"update\" or \"delete\")"
                 },
                 {
-                    "types": null,
+                    "types": [
+                        "String"
+                    ],
                     "name": "options",
-                    "optional": true
+                    "optional": true,
+                    "description": "some options"
                 }
             ],
             "annotations": {},
             "definedInFile": "js/data/Entity.js",
             "lineNumbers": [
-                165,
-                172
+                190,
+                192
             ],
-            "description": "Parses data\nCan be overridden to post change parsed data",
+            "description": "Parses the data. Can be overridden to change parsed data.\n",
             "definedBy": "js.data.Entity",
             "name": "parse",
             "visibility": "public"
@@ -1281,38 +1388,27 @@
             "type": "Method",
             "parameter": [
                 {
-                    "name": "attributes"
+                    "types": [
+                        "Object"
+                    ],
+                    "name": "options",
+                    "optional": false
                 },
                 {
-                    "name": "action"
+                    "types": [
+                        "Function"
+                    ],
+                    "name": "callback",
+                    "optional": false
                 }
             ],
             "annotations": {},
             "definedInFile": "js/data/Model.js",
             "lineNumbers": [
-                169,
-                179
+                256,
+                277
             ],
-            "definedBy": "js.data.Model",
-            "name": "prepare",
-            "visibility": "public"
-        },
-        {
-            "type": "Method",
-            "parameter": [
-                {
-                    "name": "options"
-                },
-                {
-                    "name": "callback"
-                }
-            ],
-            "annotations": {},
-            "definedInFile": "js/data/Model.js",
-            "lineNumbers": [
-                227,
-                248
-            ],
+            "description": "Removes the model from the DataSource\n",
             "definedBy": "js.data.Model",
             "name": "remove",
             "visibility": "public"
@@ -1341,23 +1437,28 @@
             "type": "Method",
             "parameter": [
                 {
-                    "types": null,
+                    "types": [
+                        "Object"
+                    ],
                     "name": "options",
                     "optional": false
                 },
                 {
-                    "types": null,
+                    "types": [
+                        "Function"
+                    ],
                     "name": "callback",
-                    "optional": false
+                    "optional": false,
+                    "description": "The callback when save has finished"
                 }
             ],
             "annotations": {},
             "definedInFile": "js/data/Model.js",
             "lineNumbers": [
-                82,
-                123
+                83,
+                137
             ],
-            "description": "\npersistent the model over the data-source in which it was created\n",
+            "description": "\nPerstists the model over the DataSource in which it was created\n",
             "definedBy": "js.data.Model",
             "name": "save",
             "visibility": "public"
@@ -1393,8 +1494,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                564,
-                650
+                601,
+                687
             ],
             "description": "Sets new values for attributes and notify about changes\n",
             "returns": {
@@ -1446,8 +1547,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                652,
-                666
+                689,
+                703
             ],
             "definedBy": "js.core.Bindable",
             "name": "setLater",
@@ -1475,8 +1576,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                421,
-                449
+                458,
+                486
             ],
             "description": "Writes attributes back to the source",
             "definedBy": "js.core.Bindable",
@@ -1511,8 +1612,8 @@
             "annotations": {},
             "definedInFile": "js/core/EventDispatcher.js",
             "lineNumbers": [
-                96,
-                157
+                97,
+                160
             ],
             "description": "Triggers a specific event and the * event\n",
             "definedBy": "js.core.EventDispatcher",
@@ -1543,8 +1644,8 @@
             "annotations": {},
             "definedInFile": "js/core/EventDispatcher.js",
             "lineNumbers": [
-                165,
-                180
+                168,
+                183
             ],
             "description": "Unbinds callbacks for events\n",
             "definedBy": "js.core.EventDispatcher",
@@ -1574,8 +1675,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                796,
-                799
+                832,
+                835
             ],
             "description": "Unset attribute on $",
             "returns": {
@@ -1608,10 +1709,10 @@
             "annotations": {},
             "definedInFile": "js/data/Entity.js",
             "lineNumbers": [
-                230,
-                282
+                259,
+                312
             ],
-            "description": "",
+            "description": "Validates the entity.\nIf there are asynchronous validators applied use the callback to get notified when validation has finished.\n",
             "definedBy": "js.data.Entity",
             "name": "validate",
             "visibility": "public"
@@ -1620,12 +1721,17 @@
             "type": "Method",
             "parameter": [
                 {
-                    "types": null,
+                    "types": [
+                        "Object"
+                    ],
                     "name": "options",
-                    "optional": false
+                    "optional": false,
+                    "description": "options for validation and saving"
                 },
                 {
-                    "types": null,
+                    "types": [
+                        "Function"
+                    ],
                     "name": "callback",
                     "optional": false
                 }
@@ -1633,10 +1739,10 @@
             "annotations": {},
             "definedInFile": "js/data/Model.js",
             "lineNumbers": [
-                129,
-                146
+                144,
+                161
             ],
-            "description": "",
+            "description": "Validates the model before saving. If the model is valid it gets saved otherwise it returns an error in the callback.\n",
             "definedBy": "js.data.Model",
             "name": "validateAndSave",
             "visibility": "public"
@@ -1645,18 +1751,27 @@
             "type": "Method",
             "parameter": [
                 {
-                    "name": "entity"
+                    "types": [
+                        "js.data.Entity"
+                    ],
+                    "name": "entity",
+                    "optional": false
                 },
                 {
-                    "name": "callback"
+                    "types": [
+                        "Function"
+                    ],
+                    "name": "callback",
+                    "optional": false
                 }
             ],
             "annotations": {},
             "definedInFile": "js/data/Entity.js",
             "lineNumbers": [
-                322,
-                328
+                376,
+                382
             ],
+            "description": "Validates a sub entity",
             "definedBy": "js.data.Entity",
             "name": "validateSubEntity",
             "visibility": "public"
@@ -1707,10 +1822,11 @@
             "visibility": "public",
             "definedInFile": "js/data/Entity.js",
             "lineNumbers": [
-                36,
-                36
+                49,
+                49
             ],
             "propertyType": "value",
+            "description": "The updated field. Is automatically added to the schema with Date",
             "definedBy": "js.data.Entity"
         },
         "createdField": {
@@ -1718,10 +1834,11 @@
             "visibility": "public",
             "definedInFile": "js/data/Entity.js",
             "lineNumbers": [
-                35,
-                35
+                44,
+                44
             ],
             "propertyType": "value",
+            "description": "The created field. Is automatically added to the schema with Date",
             "definedBy": "js.data.Entity"
         },
         "$isEntity": {
@@ -1729,8 +1846,8 @@
             "visibility": "private",
             "definedInFile": "js/data/Entity.js",
             "lineNumbers": [
-                42,
-                42
+                57,
+                57
             ],
             "propertyType": "value",
             "description": " TODO: merge this together",
@@ -1741,8 +1858,8 @@
             "visibility": "private",
             "definedInFile": "js/data/Entity.js",
             "lineNumbers": [
-                43,
-                43
+                58,
+                58
             ],
             "propertyType": "value",
             "definedBy": "js.data.Entity"
@@ -1752,11 +1869,12 @@
             "visibility": "public",
             "definedInFile": "js/data/Entity.js",
             "lineNumbers": [
-                32,
-                32
+                36,
+                36
             ],
             "propertyType": "complex",
             "value": " []",
+            "description": "An array of validators to apply",
             "definedBy": "js.data.Entity"
         },
         "$context": {
@@ -1764,10 +1882,11 @@
             "visibility": "private",
             "definedInFile": "js/data/Entity.js",
             "lineNumbers": [
-                38,
-                38
+                53,
+                53
             ],
             "propertyType": "value",
+            "description": "The context of the entity",
             "definedBy": "js.data.Entity"
         },
         "$dependentObjectContext": {
@@ -1775,8 +1894,8 @@
             "visibility": "private",
             "definedInFile": "js/data/Entity.js",
             "lineNumbers": [
-                39,
-                39
+                54,
+                54
             ],
             "propertyType": "value",
             "definedBy": "js.data.Entity"

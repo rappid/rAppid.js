@@ -1,11 +1,14 @@
 <schema targetNamespace="srv.filter"
     xmlns="http://www.w3.org/2001/XMLSchema"
-    xmlns:ns1="srv.core"
+    xmlns:ns1="srv.auth"
+    xmlns:ns2="srv.core"
     xmlns:ns="srv.filter">
-    <import namespace="srv.core"/>
+    <import/>
+    <import/>
     <element name="CredentialAuthenticationFilter" type="ns:CredentialAuthenticationFilter"/>
     <element name="SessionAuthenticationFilter" type="ns:SessionAuthenticationFilter"/>
     <element name="SessionFilter" type="ns:SessionFilter"/>
+    <element name="TokenAuthenticationFilter" type="ns:TokenAuthenticationFilter"/>
     <complexType name="CredentialAuthenticationFilter">
         <complexContent>
             <extension base="ns:SessionAuthenticationFilter">
@@ -29,13 +32,19 @@
                 <sequence>
                     <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
                 </sequence>
-                <attribute name="sessionKey" default="authenticationToken"/>
+                <attribute name="sessionKey" default="authenticationToken">
+                    <annotation>
+                        <documentation>
+                        The key under which the authentication token is saved
+                    </documentation>
+                    </annotation>
+                </attribute>
             </extension>
         </complexContent>
     </complexType>
     <complexType name="SessionFilter">
         <complexContent>
-            <extension base="ns1:Filter">
+            <extension base="ns2:Filter">
                 <annotation>
                     <documentation source="http://www.rappidjs.com/#/api/srv.filter.SessionFilter"></documentation>
                 </annotation>
@@ -45,6 +54,19 @@
                 <attribute name="sessionName" default="sessionId"/>
                 <attribute name="sessionId"/>
                 <attribute name="timeout" default="120"/>
+            </extension>
+        </complexContent>
+    </complexType>
+    <complexType name="TokenAuthenticationFilter">
+        <complexContent>
+            <extension base="ns1:AuthenticationFilter">
+                <annotation>
+                    <documentation source="http://www.rappidjs.com/#/api/srv.filter.TokenAuthenticationFilter"></documentation>
+                </annotation>
+                <sequence>
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+                <attribute name="tokenParameter" default="token"/>
             </extension>
         </complexContent>
     </complexType>

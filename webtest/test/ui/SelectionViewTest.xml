@@ -25,4 +25,13 @@
         </js:Template>
     </ui:SelectionView>
 
+    <ui:SelectionView cid="sv5" items="{sv4_items}" tagName="ul" id="sv5">
+        <js:Template name="placeHolder">
+            <li class="empty">Please Choose</li>
+        </js:Template>
+        <js:Template name="item">
+            <li class="{item.id}">{item.value}</li>
+        </js:Template>
+    </ui:SelectionView>
+
 </app:SelectionViewTestClass>

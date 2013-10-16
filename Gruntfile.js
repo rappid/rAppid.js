@@ -139,8 +139,7 @@ module.exports = function (grunt) {
             Path = require("path"),
             Fs = require("fs"),
             mochaError,
-            serverProcess,
-            callbackCalled;
+            server;
 
         flow()
             .seq(function(cb) {
@@ -168,29 +167,17 @@ module.exports = function (grunt) {
                     .seq(function (cb) {
 
                         // start server
-                        serverProcess = childProcess.spawn(__dirname + "/bin/rappidjs", ["server", __dirname + "/test/server/rest", "--environment=test"]);
+                        require(__dirname + "/bin/lib/server.js")({
+                            environment: "test",
+                            serverRoot: __dirname + "/test/server/rest",
+                            documentRoot: __dirname  + "/test/server/public"
+                        }, function(err, instance) {
 
-                        serverProcess.stdout.setEncoding("utf8");
-                        serverProcess.stderr.setEncoding("utf8");
-
-                        serverProcess.stdout.on('data', function (data) {
-
-                            if (/server\sstarted/.test(data) && !callbackCalled) {
-                                !callbackCalled && cb();
-                                callbackCalled = true;
+                            if (!err) {
+                                server = instance;
                             }
 
-                            grunt.log.write(data);
-                        });
-
-                        serverProcess.stderr.on('data', function (data) {
-                            grunt.log.error(data);
-                        });
-
-                        serverProcess.on('close', function (code) {
-                            grunt.log.write('rappidjs server process exited with code ' + code);
-                            !callbackCalled && cb(code || true);
-                            callbackCalled = true;
+                            cb(err);
                         });
 
                     })
@@ -198,7 +185,7 @@ module.exports = function (grunt) {
             })
             .seq(function(cb) {
 
-                require('child_process').exec('mocha -R spec test/server/test/RestApiTest.js', function (err, stdOut, stdErr) {
+                require('child_process').exec('mocha -R spec test/server/test/*', function (err, stdOut, stdErr) {
                     grunt.log.write(stdOut);
                     grunt.log.write(stdErr);
                     mochaError = err;
@@ -211,13 +198,8 @@ module.exports = function (grunt) {
                 flow()
                     .seq(function (cb) {
                         // shutdown server
-
-                        if (serverProcess) {
-                            serverProcess.on('close', function (code, signal) {
-                                cb();
-                            });
-
-                            serverProcess.kill("SIGINT");
+                        if (server) {
+                            server.shutdown(cb);
                         } else {
                             cb();
                         }

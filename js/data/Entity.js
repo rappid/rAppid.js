@@ -24,17 +24,32 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                 this.$entityInitialized = false;
                 this._extendSchema();
 
-                this.callBase(attributes);
+                this.callBase();
             },
-
+            /**
+             * The schema of the entity
+             */
             schema: {},
-
+            /**
+             * An array of validators to apply
+             */
             validators: [],
-
+            /**
+             * The field for the id. Is automatically added to the schema as String
+             */
             idField: "id",
+            /**
+             * The created field. Is automatically added to the schema with Date
+             */
             createdField: false,
-            updatedField: false,
 
+            /**
+             * The updated field. Is automatically added to the schema with Date
+             */
+            updatedField: false,
+            /**
+             * The context of the entity
+             */
             $context: null,
             $dependentObjectContext: null,
 
@@ -42,6 +57,10 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
             $isEntity: true,
             $isDependentObject: true,
 
+            /**
+             * Constructs the schema with the schema definition
+             * @private
+             */
             _extendSchema: function () {
 
                 if (this.factory.schema) {
@@ -63,7 +82,10 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                 var schemaDefaults = {
                     required: true,
                     includeInIndex: false,
-                    _rewritten: true
+                    serverOnly: false,
+                    _rewritten: true,
+                    // if true, sub models get composed and not just linked
+                    compose: false
                 }, schemaObject;
 
                 // add id schema
@@ -71,6 +93,7 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                     this.schema[this.idField] = {
                         type: String,
                         required: false,
+                        serverOnly: false,
                         includeInIndex: true,
                         generated: true
                     };
@@ -80,6 +103,7 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                     this.schema[this.updatedField] = {
                         type: Date,
                         required: false,
+                        serverOnly: false,
                         includeInIndex: true,
                         generated: true
                     };
@@ -90,6 +114,7 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                         type: Date,
                         required: false,
                         includeInIndex: true,
+                        serverOnly: false,
                         generated: true
                     };
                 }
@@ -156,26 +181,21 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
             },
 
             /**
-             * Parses data
-             * Can be overridden to post change parsed data
-             * @param data
-             * @param [action]
-             * @param [options]
+             * Parses the data. Can be overridden to change parsed data.
+             *
+             * @param {Object} data - the data parsed by the processor
+             * @param {String} [action] - the action of the data source ("create", "save", "update" or "delete")
+             * @param {String} [options] - some options
              */
             parse: function (data, action, options) {
-                for (var key in this.initSchema) {
-                    if (this.initSchema.hasOwnProperty(key)) {
-                        this.$$[key] = data[key];
-                    }
-                }
                 return data;
             },
 
             /***
              * Composes the data based on the schema.
              * Can pe used to pre compose the data for the processor
-             * @param action
-             * @param options
+             * @param {String} action - "create", "save", "update" or "delete"
+             * @param {Object} options
              * @return {Object} all data that should be serialized
              */
             compose: function (action, options) {
@@ -187,6 +207,7 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
              */
             clearErrors: function () {
                 this.$errors.clear();
+                this.trigger('isValidChanged', {}, this);
             },
 
             /***
@@ -198,16 +219,22 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                 return this.$errors;
             }.on('isValidChanged'),
 
+            /**
+             * Returns the error for a given field
+             * @param {String} field - the name of the field
+             * @returns {*}
+             */
             fieldError: function (field) {
                 return this.$errors.$[field];
             }.on('isValidChanged'),
 
             /***
+             * Returns true if valid
              *
-             * @return {Boolean} true if valid
+             * @return {Boolean}
              */
-            isValid: function ($) {
-                $ = $ || this.$errors.$;
+            isValid: function () {
+                var $ = this.$errors.$;
                 for (var key in $) {
                     if ($.hasOwnProperty(key)) {
                         if ($[key]) {
@@ -220,11 +247,13 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
             }.on('isValidChanged'),
 
             /***
+             * Validates the entity.
+             * If there are asynchronous validators applied use the callback to get notified when validation has finished.
              *
              * @param {Object} [options]
-             * @param {Object} [options.setErrors=true] -
-             * @param {Object} [options.fields=null] - fields to validate
-             *
+             * @param {Boolean} [options.setErrors = true] - apply errors to entity
+             * @param {Array} [options.fields = null] - fields to validate
+             * @param {Boolean} [options.reset = true] - clears all errors before setting new
              * @param {Function} [callback]
              */
             validate: function (options, callback) {
@@ -237,6 +266,7 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
 
                 _.defaults(options, {
                     setErrors: true,
+                    reset: true,
                     fields: null
                 });
 
@@ -261,7 +291,7 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
 
                 flow()
                     .parEach(validators, function (validator, cb) {
-                        validator.validate(self, function (err, result) {
+                        validator.validate(self, options, function (err, result) {
                             if (!err && result) {
                                 if (result instanceof Validator.Error) {
                                     validationErrors.push(result);
@@ -274,7 +304,7 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                     })
                     .exec(function (err) {
                         if (options.setErrors === true) {
-                            self._setErrors(validationErrors);
+                            self._setErrors(validationErrors, options);
                         }
                         callback && callback(err, validationErrors.length === 0 ? null : validationErrors);
                     });
@@ -293,8 +323,23 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                 this.trigger('isValidChanged');
             },
 
-            _setErrors: function (errors) {
-                this.$errors.clear();
+            /***
+             *
+             * @param {Array} errors
+             * @param {Object} options
+             * @private
+             */
+            _setErrors: function (errors, options) {
+                if (options.fields && options.fields.length) {
+                    var field;
+                    for (var j = 0; j < options.fields.length; j++) {
+                        field = options.fields[j];
+                        this.$errors.unset(field);
+                    }
+                } else {
+                    this.$errors.clear();
+                }
+
 
                 var error;
                 try {
@@ -311,14 +356,23 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                 }
                 this.trigger('isValidChanged');
             },
-
-            error: function (key) {
-                if (key) {
-                    return this.$errors.get(key);
+            /**
+             * Returns the error for a given field
+             * @deprecated
+             * @param {String} field - the name of the field
+             * @returns {*}
+             */
+            error: function (field) {
+                if (field) {
+                    return this.$errors.get(field);
                 }
                 return null;
             },
-
+            /**
+             * Validates a sub entity
+             * @param {js.data.Entity} entity
+             * @param {Function} callback
+             */
             validateSubEntity: function (entity, callback) {
                 if (entity instanceof Entity) {
                     entity.validate(null, callback);
@@ -326,7 +380,6 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                     callback("parameter is not an entity");
                 }
             },
-
             clone: function () {
                 var ret = this.callBase();
                 ret.$context = this.$context;
@@ -347,21 +400,32 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                         }
                     }
                 } else if (value instanceof Entity && !value.$isEntity) {
-                    // dont clone linked models
+                    // don't clone linked models
                     return value;
                 }
 
                 return this.callBase();
             },
-
+            /***
+             * The init method can be used to setup/init an entity asynchronously.
+             * It must be called from outside by hand.
+             *
+             * @param {Function} callback
+             */
             init: function (callback) {
                 callback && callback();
             },
-
+            /**
+             * Returns the value of the idField
+             * @returns {*}
+             */
             identifier: function () {
                 return this.$[this.idField];
             },
-
+            /**
+             * Returns the context model if the context is set
+             * @returns {js.data.Entity}
+             */
             contextModel: function () {
                 return this.$context ? this.$context.$contextModel : null;
             }
@@ -369,7 +433,15 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
 
 
         Entity.SchemaValidator = Validator.inherit('js.data.validator.SchemaValidator', {
-            validate: function (entity, callback) {
+            validate: function (entity, options, callback) {
+                if (options instanceof Function) {
+                    callback = options;
+                    options = {};
+                }
+
+                options = options || {};
+
+
                 var errors = [],
                     subEntities = [],
                     attributes = entity.$,
@@ -381,6 +453,12 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                 try {
                     for (var key in schema) {
                         if (schema.hasOwnProperty(key)) {
+
+                            if (options.fields && options.fields.length > 0) {
+                                if (options.fields.indexOf(key) === -1) {
+                                    continue
+                                }
+                            }
                             value = attributes[key];
                             schemaObject = schema[key];
 
@@ -396,7 +474,7 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                                     key: key,
                                     value: value
                                 });
-                            } else if (value instanceof List && value.isCollection) {
+                            } else if (value instanceof List && !value.isCollection) {
                                 if (value.size() > 0 && value.at(0) instanceof Entity) {
                                     for (var i = 0; i < value.$items.length; i++) {
                                         subEntities.push({
