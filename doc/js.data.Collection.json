@@ -19,8 +19,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                291,
-                300
+                309,
+                318
             ],
             "definedBy": "js.core.Bindable",
             "name": "_bindBus",
@@ -43,8 +43,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                500,
-                526
+                518,
+                544
             ],
             "description": "Returns a copy of the attribute. This method is a hook for further cloning options",
             "private": "",
@@ -75,8 +75,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                782,
-                784
+                800,
+                802
             ],
             "description": "called after attributes has set and some of the has been changed\n",
             "abstract": "",
@@ -91,8 +91,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                687,
-                690
+                705,
+                708
             ],
             "definedBy": "js.core.Bindable",
             "name": "_commitInvalidatedAttributes",
@@ -102,18 +102,33 @@
             "type": "Method",
             "parameter": [
                 {
-                    "name": "query"
+                    "types": [
+                        "js.data.Query"
+                    ],
+                    "name": "query",
+                    "optional": false
                 },
                 {
-                    "name": "options"
+                    "types": [
+                        "Object"
+                    ],
+                    "name": "options",
+                    "optional": false
                 }
             ],
             "annotations": {},
             "definedInFile": "js/data/Collection.js",
             "lineNumbers": [
-                84,
-                91
+                93,
+                100
             ],
+            "description": "This method creates internally a filtered collection",
+            "returns": {
+                "types": [
+                    "js.data.Collection"
+                ]
+            },
+            "private": "",
             "name": "_createFilteredCollection",
             "visibility": "protected"
         },
@@ -121,18 +136,33 @@
             "type": "Method",
             "parameter": [
                 {
-                    "name": "query"
+                    "types": [
+                        "js.data.Query"
+                    ],
+                    "name": "query",
+                    "optional": false
                 },
                 {
-                    "name": "options"
+                    "types": [
+                        "Object"
+                    ],
+                    "name": "options",
+                    "optional": false
                 }
             ],
             "annotations": {},
             "definedInFile": "js/data/Collection.js",
             "lineNumbers": [
-                93,
-                99
+                108,
+                114
             ],
+            "description": "This method creates internally a sorted collection",
+            "returns": {
+                "types": [
+                    "this.factory"
+                ]
+            },
+            "private": "",
             "name": "_createSortedCollection",
             "visibility": "protected"
         },
@@ -202,8 +232,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                532,
-                534
+                550,
+                552
             ],
             "description": "",
             "returns": {
@@ -236,8 +266,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                313,
-                326
+                331,
+                344
             ],
             "definedBy": "js.core.Bindable",
             "name": "_extract",
@@ -258,8 +288,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                543,
-                571
+                561,
+                589
             ],
             "description": "generates a default chain containing the values from this instance and base classes\n",
             "returns": {
@@ -285,8 +315,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                786,
-                795
+                804,
+                813
             ],
             "definedBy": "js.core.Bindable",
             "name": "_hasAll",
@@ -305,8 +335,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                797,
-                806
+                815,
+                824
             ],
             "definedBy": "js.core.Bindable",
             "name": "_hasSome",
@@ -318,8 +348,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                387,
-                398
+                405,
+                416
             ],
             "definedBy": "js.core.Bindable",
             "name": "_initializationComplete",
@@ -331,8 +361,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                195,
-                205
+                213,
+                223
             ],
             "description": "starts the initialization of the `Bindable` if it hasn't initialized yet.\n\nIt calls the following methods:\n\n* initialize();\n* _initializeBindings();\n",
             "private": "",
@@ -346,8 +376,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                331,
-                381
+                349,
+                399
             ],
             "description": "Initialize all Binding and Event attributes",
             "definedBy": "js.core.Bindable",
@@ -360,8 +390,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                383,
-                385
+                401,
+                403
             ],
             "definedBy": "js.core.Bindable",
             "name": "_initializeBindingsBeforeComplete",
@@ -373,8 +403,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                180,
-                183
+                198,
+                201
             ],
             "description": "\ninvokes the `_initialize` method. This method is a hook function and is overwritten by js.core.Component\n",
             "private": "",
@@ -388,8 +418,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                255,
-                288
+                273,
+                306
             ],
             "definedBy": "js.core.Bindable",
             "name": "_inject",
@@ -401,8 +431,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                220,
-                222
+                238,
+                240
             ],
             "description": "\nreturns the chained object defining the required injections\n",
             "returns": {
@@ -472,7 +502,7 @@
             "definedInFile": "js/core/List.js",
             "lineNumbers": [
                 115,
-                124
+                119
             ],
             "definedBy": "js.core.List",
             "name": "_onItemEvent",
@@ -484,8 +514,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                400,
-                402
+                418,
+                420
             ],
             "definedBy": "js.core.Bindable",
             "name": "_postConstruct",
@@ -497,8 +527,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                404,
-                406
+                422,
+                424
             ],
             "definedBy": "js.core.Bindable",
             "name": "_preDestroy",
@@ -510,8 +540,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                237,
-                240
+                255,
+                258
             ],
             "description": "sets up the Bindable or Component. It will inject the required injections and\nalso will bind the application wide `MessageBus` to all methods annotated with the\n`.bus()` method annotation\n\nFor `Components` the setUp method is invoked automatically during the add of the Component.\nFor non `Components`\n\n",
             "private": "",
@@ -528,8 +558,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                250,
-                253
+                268,
+                271
             ],
             "description": "tears down the Bindable or Component. It will remove the injected variables and\nalso will unbind the annotated event handlers from the application wide `MessageBus`\n",
             "private": "",
@@ -546,8 +576,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                302,
-                311
+                320,
+                329
             ],
             "definedBy": "js.core.Bindable",
             "name": "_unbindBus",
@@ -602,8 +632,8 @@
             },
             "definedInFile": "js/core/List.js",
             "lineNumbers": [
-                224,
-                229
+                219,
+                224
             ],
             "description": "Returns item at a specific index",
             "returns": {
@@ -655,8 +685,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                823,
-                825
+                841,
+                843
             ],
             "description": "Clears all attributes",
             "returns": {
@@ -678,8 +708,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                473,
-                493
+                491,
+                511
             ],
             "description": "This method returns a copy of the Object",
             "returns": {
@@ -696,18 +726,27 @@
             "type": "Method",
             "parameter": [
                 {
-                    "name": "options"
+                    "types": [
+                        "Object"
+                    ],
+                    "name": "options",
+                    "optional": false
                 },
                 {
-                    "name": "callback"
+                    "types": [
+                        "Function"
+                    ],
+                    "name": "callback",
+                    "optional": false
                 }
             ],
             "annotations": {},
             "definedInFile": "js/data/Collection.js",
             "lineNumbers": [
-                286,
-                294
+                339,
+                347
             ],
+            "description": "Asynchronous counts the collection. The count is returned in the callback.\nNote: The dataSource must support the countCollection method\n",
             "name": "count",
             "visibility": "public"
         },
@@ -715,15 +754,26 @@
             "type": "Method",
             "parameter": [
                 {
-                    "name": "id"
+                    "types": [
+                        "String"
+                    ],
+                    "name": "id",
+                    "optional": true,
+                    "description": "the id of the item"
                 }
             ],
             "annotations": {},
             "definedInFile": "js/data/Collection.js",
             "lineNumbers": [
-                247,
-                254
+                288,
+                295
             ],
+            "description": "Creates an item with the $modelFactory of the collection.\n\nIn other words. It creates a model for the collection but the model is not added to the collection.\n",
+            "returns": {
+                "types": [
+                    "js.data.Entity"
+                ]
+            },
             "name": "createItem",
             "visibility": "public"
         },
@@ -750,8 +800,8 @@
             "annotations": {},
             "definedInFile": "js/data/Collection.js",
             "lineNumbers": [
-                22,
-                51
+                25,
+                54
             ],
             "description": " read only to determinate if its a collection and prevent circular dependencies",
             "definedBy": "js.core.Base",
@@ -765,8 +815,8 @@
             "annotations": {},
             "definedInFile": "js/data/Collection.js",
             "lineNumbers": [
-                333,
-                337
+                398,
+                402
             ],
             "definedBy": "js.core.EventDispatcher",
             "overwritesMethod": true,
@@ -796,8 +846,8 @@
             "annotations": {},
             "definedInFile": "js/core/List.js",
             "lineNumbers": [
-                235,
-                280
+                230,
+                275
             ],
             "description": "Iterates over all items with given callback",
             "definedBy": "js.core.List",
@@ -845,8 +895,8 @@
             "annotations": {},
             "definedInFile": "js/data/Collection.js",
             "lineNumbers": [
-                143,
-                228
+                173,
+                258
             ],
             "description": "\nWith no options it fetches all pages of the collection. So be careful.\n\nIf you want to fetch a specific page, provide limit and/or offset in the options object.\nThe callback will then return the err object and a page with the size of the provided limit and offset\n",
             "name": "fetch",
@@ -856,21 +906,35 @@
             "type": "Method",
             "parameter": [
                 {
-                    "name": "pageIndex"
+                    "types": [
+                        "Number"
+                    ],
+                    "name": "pageIndex",
+                    "optional": false,
+                    "description": "starts at 0"
                 },
                 {
-                    "name": "options"
+                    "types": [
+                        "Object"
+                    ],
+                    "name": "options",
+                    "optional": false
                 },
                 {
-                    "name": "callback"
+                    "types": [
+                        "Function"
+                    ],
+                    "name": "callback",
+                    "optional": false
                 }
             ],
             "annotations": {},
             "definedInFile": "js/data/Collection.js",
             "lineNumbers": [
-                256,
-                284
+                303,
+                331
             ],
+            "description": "Fetches a page and returns it in the callback\n",
             "name": "fetchPage",
             "visibility": "public"
         },
@@ -888,8 +952,8 @@
             "annotations": {},
             "definedInFile": "js/data/Collection.js",
             "lineNumbers": [
-                58,
-                82
+                61,
+                85
             ],
             "description": "",
             "returns": {
@@ -924,8 +988,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                699,
-                762
+                717,
+                780
             ],
             "description": "evaluates a path to retrieve a value\n",
             "returns": {
@@ -946,8 +1010,8 @@
             "annotations": {},
             "definedInFile": "js/data/Collection.js",
             "lineNumbers": [
-                239,
-                241
+                273,
+                275
             ],
             "name": "getContextForChild",
             "visibility": "public"
@@ -962,8 +1026,8 @@
             "annotations": {},
             "definedInFile": "js/data/Collection.js",
             "lineNumbers": [
-                327,
-                329
+                392,
+                394
             ],
             "name": "getQueryParameters",
             "visibility": "public"
@@ -974,9 +1038,15 @@
             "annotations": {},
             "definedInFile": "js/data/Collection.js",
             "lineNumbers": [
-                129,
-                131
+                159,
+                161
             ],
+            "description": "Returns the original root collection of a query or sorted or filtered collection.\n",
+            "returns": {
+                "types": [
+                    "js.data.Collection"
+                ]
+            },
             "name": "getRoot",
             "visibility": "public"
         },
@@ -990,8 +1060,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                419,
-                428
+                437,
+                446
             ],
             "definedBy": "js.core.Bindable",
             "name": "getScopeForFncName",
@@ -1007,8 +1077,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                408,
-                417
+                426,
+                435
             ],
             "definedBy": "js.core.Bindable",
             "name": "getScopeForKey",
@@ -1024,8 +1094,8 @@
             "annotations": {},
             "definedInFile": "js/data/Collection.js",
             "lineNumbers": [
-                330,
-                332
+                395,
+                397
             ],
             "name": "getSortParameters",
             "visibility": "public"
@@ -1045,8 +1115,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                770,
-                772
+                788,
+                790
             ],
             "description": "determinate if a attribute is available\n",
             "returns": {
@@ -1076,8 +1146,8 @@
             },
             "definedInFile": "js/core/List.js",
             "lineNumbers": [
-                285,
-                296
+                280,
+                291
             ],
             "description": "Checks if item is included in List",
             "returns": {
@@ -1103,8 +1173,8 @@
             "annotations": {},
             "definedInFile": "js/core/List.js",
             "lineNumbers": [
-                148,
-                150
+                143,
+                145
             ],
             "description": "Returns the index of the item",
             "returns": {
@@ -1123,8 +1193,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                210,
-                211
+                228,
+                229
             ],
             "description": "the initialize method is a hook function to add a custom logic during the initiation process.",
             "definedBy": "js.core.Bindable",
@@ -1137,9 +1207,10 @@
             "annotations": {},
             "definedInFile": "js/data/Collection.js",
             "lineNumbers": [
-                296,
-                313
+                356,
+                373
             ],
+            "description": "This method invalidates the page cache of the collection.\nIt also clears all page caches of query collections, that have this collection has root collection.\nAfter the invalidation the $itemsCount is set to NaN and a reset is done. So all listeners are informed of the change.\n\nYou should call this method after removing or adding some item to the collection.\n",
             "name": "invalidatePageCache",
             "visibility": "public"
         },
@@ -1153,8 +1224,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                915,
-                932
+                933,
+                950
             ],
             "definedBy": "js.core.Bindable",
             "name": "isDeepEqual",
@@ -1170,9 +1241,10 @@
             },
             "definedInFile": "js/data/Collection.js",
             "lineNumbers": [
-                319,
-                325
+                384,
+                390
             ],
+            "description": "Returns true if list is empty",
             "definedBy": "js.core.List",
             "overwritesMethod": true,
             "name": "isEmpty",
@@ -1188,8 +1260,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                933,
-                935
+                951,
+                953
             ],
             "definedBy": "js.core.Bindable",
             "name": "isEqual",
@@ -1234,9 +1306,15 @@
             "annotations": {},
             "definedInFile": "js/data/Collection.js",
             "lineNumbers": [
-                230,
-                237
+                264,
+                271
             ],
+            "description": "Returns the number of pages\n",
+            "returns": {
+                "types": [
+                    "*"
+                ]
+            },
             "name": "pageCount",
             "visibility": "public"
         },
@@ -1250,8 +1328,8 @@
             "annotations": {},
             "definedInFile": "js/data/Collection.js",
             "lineNumbers": [
-                243,
-                245
+                277,
+                279
             ],
             "name": "parse",
             "visibility": "public"
@@ -1299,15 +1377,25 @@
             "type": "Method",
             "parameter": [
                 {
-                    "name": "query"
+                    "types": [
+                        "js.data.Query"
+                    ],
+                    "name": "query",
+                    "optional": false
                 }
             ],
             "annotations": {},
             "definedInFile": "js/data/Collection.js",
             "lineNumbers": [
-                125,
-                127
+                150,
+                152
             ],
+            "description": "Returns a query collection\n",
+            "returns": {
+                "types": [
+                    "js.data.Collection"
+                ]
+            },
             "name": "query",
             "visibility": "public"
         },
@@ -1333,8 +1421,8 @@
             "annotations": {},
             "definedInFile": "js/core/List.js",
             "lineNumbers": [
-                130,
-                142
+                125,
+                137
             ],
             "description": "Removes an Array or just one item from the list. Triggers remove events.",
             "definedBy": "js.core.List",
@@ -1362,8 +1450,8 @@
             "annotations": {},
             "definedInFile": "js/core/List.js",
             "lineNumbers": [
-                157,
-                174
+                152,
+                169
             ],
             "description": "Removes one item a specific index and triggers remove event",
             "returns": {
@@ -1397,8 +1485,8 @@
             "annotations": {},
             "definedInFile": "js/core/List.js",
             "lineNumbers": [
-                180,
-                203
+                175,
+                198
             ],
             "description": "Resets the list with the given items and triggers reset event",
             "definedBy": "js.core.List",
@@ -1456,8 +1544,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                583,
-                669
+                601,
+                687
             ],
             "description": "Sets new values for attributes and notify about changes\n",
             "returns": {
@@ -1483,8 +1571,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                671,
-                685
+                689,
+                703
             ],
             "definedBy": "js.core.Bindable",
             "name": "setLater",
@@ -1519,9 +1607,10 @@
             },
             "definedInFile": "js/data/Collection.js",
             "lineNumbers": [
-                315,
-                317
+                378,
+                380
             ],
+            "description": "Returns the $itemsCount of the collection.\n",
             "definedBy": "js.core.List",
             "overwritesMethod": true,
             "name": "size",
@@ -1531,15 +1620,25 @@
             "type": "Method",
             "parameter": [
                 {
-                    "name": "query"
+                    "types": [
+                        "js.data.Query"
+                    ],
+                    "name": "query",
+                    "optional": false
                 }
             ],
             "annotations": {},
             "definedInFile": "js/data/Collection.js",
             "lineNumbers": [
-                101,
-                123
+                121,
+                143
             ],
+            "description": "Returns a sorted query collection\n",
+            "returns": {
+                "types": [
+                    "js.data.Collection"
+                ]
+            },
             "definedBy": "js.core.List",
             "overwritesMethod": true,
             "name": "sort",
@@ -1551,8 +1650,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                440,
-                468
+                458,
+                486
             ],
             "description": "Writes attributes back to the source",
             "definedBy": "js.core.Bindable",
@@ -1573,8 +1672,8 @@
             "annotations": {},
             "definedInFile": "js/core/List.js",
             "lineNumbers": [
-                371,
-                383
+                365,
+                377
             ],
             "description": "Transforms List to an array\nYou can specify a transform fnc",
             "returns": {
@@ -1677,8 +1776,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                814,
-                817
+                832,
+                835
             ],
             "description": "Unset attribute on $",
             "returns": {
@@ -1719,19 +1818,20 @@
             "visibility": "private",
             "definedInFile": "js/data/Collection.js",
             "lineNumbers": [
-                18,
-                18
+                21,
+                21
             ],
             "propertyType": "complex",
-            "value": " Model"
+            "value": " Model",
+            "description": "The model factory for creating items"
         },
         "isCollection": {
             "name": "isCollection",
             "visibility": "public",
             "definedInFile": "js/data/Collection.js",
             "lineNumbers": [
-                20,
-                20
+                23,
+                23
             ],
             "propertyType": "value"
         }

@@ -125,6 +125,8 @@
                 <attribute name="autoStartSession"/>
                 <attribute name="path" default="/"/>
                 <attribute name="route"/>
+                <attribute name="contentType" default="text/plain"/>
+                <attribute name="encoding" default="utf8"/>
             </extension>
         </complexContent>
     </complexType>

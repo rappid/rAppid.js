@@ -115,7 +115,7 @@
             "definedInFile": "js/svg/Svg.js",
             "lineNumbers": [
                 77,
-                180
+                187
             ],
             "name": "loadExternalFont",
             "visibility": "public"
