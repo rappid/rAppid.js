@@ -19,8 +19,8 @@
             "annotations": {},
             "definedInFile": "js/core/Binding.js",
             "lineNumbers": [
-                336,
-                353
+                338,
+                355
             ],
             "description": "This method is called, when the value of the current binding changes.\nIt recreates the the subBinding and triggers the binding",
             "private": "",
@@ -39,8 +39,8 @@
             "annotations": {},
             "definedInFile": "js/core/Binding.js",
             "lineNumbers": [
-                318,
-                330
+                320,
+                332
             ],
             "description": "This method is called, when the a change event of an function binding is triggered\n",
             "private": "",
@@ -53,8 +53,8 @@
             "annotations": {},
             "definedInFile": "js/core/Binding.js",
             "lineNumbers": [
-                229,
-                264
+                231,
+                266
             ],
             "name": "_checkAttributes",
             "visibility": "protected"
@@ -65,8 +65,8 @@
             "annotations": {},
             "definedInFile": "js/core/Binding.js",
             "lineNumbers": [
-                265,
-                302
+                267,
+                304
             ],
             "name": "_createSubBinding",
             "visibility": "protected"
@@ -157,8 +157,8 @@
             "annotations": {},
             "definedInFile": "js/core/Binding.js",
             "lineNumbers": [
-                201,
-                227
+                203,
+                229
             ],
             "name": "_getEventsForFnc",
             "visibility": "protected"
@@ -169,8 +169,8 @@
             "annotations": {},
             "definedInFile": "js/core/Binding.js",
             "lineNumbers": [
-                405,
-                415
+                407,
+                417
             ],
             "description": "Returns an array with values of all function parameters",
             "returns": {
@@ -195,8 +195,8 @@
             "annotations": {},
             "definedInFile": "js/core/Binding.js",
             "lineNumbers": [
-                175,
-                199
+                177,
+                201
             ],
             "name": "_getOnChangeAttributesForFnc",
             "visibility": "protected"
@@ -207,8 +207,8 @@
             "annotations": {},
             "definedInFile": "js/core/Binding.js",
             "lineNumbers": [
-                358,
-                399
+                360,
+                401
             ],
             "description": "Unbinds all events and destroys subBinding...",
             "definedBy": "js.core.EventDispatcher",
@@ -226,8 +226,8 @@
             "annotations": {},
             "definedInFile": "js/core/Binding.js",
             "lineNumbers": [
-                303,
-                311
+                305,
+                313
             ],
             "name": "_revCallback",
             "visibility": "protected"
@@ -254,8 +254,8 @@
             "annotations": {},
             "definedInFile": "js/core/Binding.js",
             "lineNumbers": [
-                493,
-                502
+                495,
+                504
             ],
             "description": "",
             "name": "addTarget",
@@ -311,8 +311,8 @@
             "annotations": {},
             "definedInFile": "js/core/Binding.js",
             "lineNumbers": [
-                524,
-                550
+                526,
+                552
             ],
             "name": "create",
             "visibility": "public"
@@ -375,8 +375,8 @@
             "annotations": {},
             "definedInFile": "js/core/Binding.js",
             "lineNumbers": [
-                452,
-                458
+                454,
+                460
             ],
             "description": "Returns the value in the context of the surrounding bindings",
             "returns": {
@@ -393,8 +393,8 @@
             "annotations": {},
             "definedInFile": "js/core/Binding.js",
             "lineNumbers": [
-                484,
-                486
+                486,
+                488
             ],
             "name": "getTargets",
             "visibility": "public"
@@ -405,8 +405,8 @@
             "annotations": {},
             "definedInFile": "js/core/Binding.js",
             "lineNumbers": [
-                420,
-                442
+                422,
+                444
             ],
             "description": "Returns the transformed value of the binding or null, if the binding path is not present",
             "returns": {
@@ -424,7 +424,7 @@
             "definedInFile": "js/core/Binding.js",
             "lineNumbers": [
                 57,
-                173
+                175
             ],
             "name": "initialize",
             "visibility": "public"
@@ -435,8 +435,8 @@
             "annotations": {},
             "definedInFile": "js/core/Binding.js",
             "lineNumbers": [
-                444,
-                446
+                446,
+                448
             ],
             "name": "invalidateValueCache",
             "visibility": "public"
@@ -496,8 +496,8 @@
             "annotations": {},
             "definedInFile": "js/core/Binding.js",
             "lineNumbers": [
-                508,
-                522
+                510,
+                524
             ],
             "description": "",
             "name": "removeTarget",
@@ -529,8 +529,8 @@
             "annotations": {},
             "definedInFile": "js/core/Binding.js",
             "lineNumbers": [
-                480,
-                482
+                482,
+                484
             ],
             "name": "toString",
             "visibility": "public"
@@ -609,8 +609,8 @@
             "annotations": {},
             "definedInFile": "js/core/Binding.js",
             "lineNumbers": [
-                462,
-                479
+                464,
+                481
             ],
             "description": "This method triggers the binding and syncs the target with the scope",
             "name": "triggerBinding",

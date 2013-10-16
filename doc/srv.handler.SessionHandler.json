@@ -941,8 +941,8 @@
             "annotations": {},
             "definedInFile": "srv/core/Handler.js",
             "lineNumbers": [
-                26,
-                28
+                28,
+                30
             ],
             "definedBy": "srv.core.Handler",
             "name": "_start",
@@ -1299,8 +1299,8 @@
             "annotations": {},
             "definedInFile": "srv/core/Handler.js",
             "lineNumbers": [
-                60,
-                62
+                62,
+                64
             ],
             "description": "returns an handler instance to process the request",
             "returns": {
@@ -1709,8 +1709,8 @@
             "annotations": {},
             "definedInFile": "srv/core/Handler.js",
             "lineNumbers": [
-                21,
-                24
+                23,
+                26
             ],
             "description": "starts the handler",
             "definedBy": "srv.core.Handler",
@@ -1727,8 +1727,8 @@
             "annotations": {},
             "definedInFile": "srv/core/Handler.js",
             "lineNumbers": [
-                30,
-                32
+                32,
+                34
             ],
             "definedBy": "srv.core.Handler",
             "name": "stop",
@@ -1851,6 +1851,32 @@
             "definedBy": "js.core.Bindable",
             "name": "unset",
             "visibility": "public"
+        },
+        {
+            "type": "Method",
+            "parameter": [
+                {
+                    "name": "context"
+                },
+                {
+                    "name": "header"
+                },
+                {
+                    "name": "body"
+                },
+                {
+                    "name": "statusCode"
+                }
+            ],
+            "annotations": {},
+            "definedInFile": "srv/core/Handler.js",
+            "lineNumbers": [
+                75,
+                88
+            ],
+            "definedBy": "srv.core.Handler",
+            "name": "writeResponse",
+            "visibility": "public"
         }
     ],
     "staticMethods": [],
@@ -1896,6 +1922,28 @@
             "lineNumbers": [
                 7,
                 7
+            ],
+            "definedBy": "srv.core.Handler"
+        },
+        "contentType": {
+            "name": "contentType",
+            "defaultType": "value",
+            "visibility": "public",
+            "value": "text/plain",
+            "lineNumbers": [
+                8,
+                8
+            ],
+            "definedBy": "srv.core.Handler"
+        },
+        "encoding": {
+            "name": "encoding",
+            "defaultType": "value",
+            "visibility": "public",
+            "value": "utf8",
+            "lineNumbers": [
+                9,
+                9
             ],
             "definedBy": "srv.core.Handler"
         },

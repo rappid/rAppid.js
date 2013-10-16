@@ -1,18 +1,18 @@
 define(
-    ["js/ui/ItemsView", "js/html/HtmlElement"], function (ItemsView, HtmlElement) {
-        return ItemsView.inherit({
+    ["js/ui/View", "js/html/HtmlElement"], function (View, HtmlElement) {
+        return View.inherit({
             defaults: {
                 tagName: "div",
                 visibleView: null
             },
             ctor: function () {
-                this.$children = [];
+                this.$views = [];
                 this.callBase();
             },
             addChild: function (child) {
                 this.callBase();
                 if (child instanceof HtmlElement) {
-                    this.$children.push(child);
+                    this.$views.push(child);
                 }
             },
             _renderChild: function (child) {
@@ -36,8 +36,8 @@ define(
 
             },
             _renderVisibleIndex: function (index) {
-                if (index > -1 && index < this.$children.length) {
-                    this.set({visibleView: this.$children[index]});
+                if (index > -1 && index < this.$views.length) {
+                    this.set({visibleView: this.$views[index]});
                 } else if (this.$.visibleView) {
                     this.$.visibleView.set({visible: false});
                 }

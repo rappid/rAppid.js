@@ -93,17 +93,22 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
                             this.$events.push({eventType: "change", callback: this._changeCallback});
                         }
 
+                        // TODO: remove this closure
+                        var cb = function () {
+                            self._callback();
+                        };
                         var path;
                         // for paths like .onChange("address.city","some.other.stuff");
                         for (var a = 0; a < fnc._attributes.length; a++) {
                             path = fnc._attributes[a];
                             if (path.indexOf(".") > -1) {
+                                path = Parser.parse(path, 'path');
                                 this.$.bindingCreator.create({
                                     scope: this.$.scope,
                                     path: path,
                                     type: TYPE_NORMAL,
                                     parent: null
-                                }, this, this._callback);
+                                }, this.$.target, cb);
                             }
                         }
 
@@ -122,10 +127,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
                             this.$events.push({eventType: event, callback: this._callback});
                         }
 
-                        // TODO: remove this closure
-                        var cb = function () {
-                            self._callback();
-                        };
+
 
                         var para;
                         this.$parameters = [];
