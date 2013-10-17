@@ -3,24 +3,36 @@ define(
         return View.inherit({
             defaults: {
                 tagName: "div",
-                visibleView: null
+
+                visibleView: null,
+
+                /***
+                 * shows the component with the visible index
+                 *
+                 * @type {Number}
+                 */
+                visibleIndex: null
             },
+
             ctor: function () {
                 this.$views = [];
                 this.callBase();
             },
+
             addChild: function (child) {
                 this.callBase();
                 if (child instanceof HtmlElement) {
                     this.$views.push(child);
                 }
             },
+
             _renderChild: function (child) {
                 if (this.$.visibleView == child) {
                     child.set({visible: true});
                     this.callBase();
                 }
             },
+
             _renderVisibleView: function (child, oldView) {
                 if (oldView) {
                     oldView.set({visible: false});
@@ -35,6 +47,7 @@ define(
                 }
 
             },
+
             _renderVisibleIndex: function (index) {
                 if (index > -1 && index < this.$views.length) {
                     this.set({visibleView: this.$views[index]});
