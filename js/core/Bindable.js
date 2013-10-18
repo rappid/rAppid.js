@@ -428,7 +428,11 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
                     if (this.$.hasOwnProperty(key)) {
                         return this;
                     } else if (this.$parentScope) {
-                        return this.$parentScope.getScopeForKey(key);
+                        if (this.$parentScope.$rootScope === this.$rootScope) {
+                            return this.$parentScope.getScopeForKey(key);
+                        } else if (this.$parentScope.$.hasOwnProperty(key)) {
+                            return this.$parentScope;
+                        }
                     } else {
                         return null;
                     }
@@ -436,10 +440,14 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
 
                 getScopeForFncName: function (fncName) {
                     var fnc = this[fncName];
-                    if (!_.isUndefined(fnc) && _.isFunction(fnc)) {
+                    if (fnc instanceof Function) {
                         return this;
                     } else if (this.$parentScope) {
-                        return this.$parentScope.getScopeForFncName(fncName);
+                        if (this.$parentScope.$rootScope === this.$rootScope) {
+                            return this.$parentScope.getScopeForFncName(fncName);
+                        } else if (this.$parentScope[fncName] instanceof Function) {
+                            return this.$parentScope;
+                        }
                     } else {
                         return null;
                     }

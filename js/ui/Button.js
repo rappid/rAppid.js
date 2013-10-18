@@ -2,6 +2,7 @@ define(["xaml!js/ui/Link", "js/core/Content"], function (Link) {
         return Link.inherit({
             defaults: {
                 'componentClass': 'btn',
+                labelClass: "",
 
                 /***
                  * the type of the button

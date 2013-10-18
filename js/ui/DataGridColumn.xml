@@ -4,6 +4,6 @@
         {data}
     </js:Template>
     <js:Template name="cellContainer">
-        <div class="cell-container" height="{rowHeight}"/>
+        <div class="cell-container" />
     </js:Template>
 </ui:DataGridColumnClass>

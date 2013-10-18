@@ -135,8 +135,8 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
 
                 if (this.$initializing || this.$initialized) {
                     // initialize auto
-                    child.$parent = this;
 
+                    child.$parent = this;
                     if (child.$rootScope && child.$.cid) {
                         // register component by cid in the root scope
                         child.$rootScope.set(child.$.cid, child);

@@ -19,6 +19,35 @@ describe("Component tests", function () {
 
     });
 
+    describe('#internal bindings', function(){
+        it('attribute bindings should not be able to access external scope', function () {
+            var application = window.application;
+            var invalidComponent = application.$templates.invalidComponent.createInstance();
+
+            var exception;
+            try {
+                application.addChild(invalidComponent);
+            } catch (e) {
+                exception = e;
+            }
+            expect(exception).to.exist;
+        });
+
+        it('function bindings should not be able to access external scope ', function(){
+            var application = window.application;
+            var invalidComponent = application.$templates.invalidFunctionComponent.createInstance();
+
+            var exception;
+            try {
+                application.addChild(invalidComponent);
+            } catch (e) {
+                exception = e;
+            }
+            expect(exception).to.exist;
+        })
+
+    });
+
     describe('#attributes', function () {
 
         it('should be configurable from outside', function () {
@@ -30,11 +59,10 @@ describe("Component tests", function () {
 
     describe("#binding attributes", function () {
 
-        it('should be created even it gets overriden by injection', function () {
-
-
+        it('should be created even it gets overwritten by injection', function () {
             var application = window.application;
             var customComponent = application.$.customComponent;
+
 
             application.set('foo', "bar2");
 
@@ -42,5 +70,6 @@ describe("Component tests", function () {
         });
 
     });
+
 
 });
