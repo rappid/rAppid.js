@@ -1,7 +1,7 @@
 <ui:TileListClass xmlns="http://www.w3.org/1999/xhtml"
                      xmlns:ui="js.ui" xmlns:js="js.core" componentClass="tile-list" onkeydown="_onKeyDown">
     <js:Template name="renderer">
-        {$dataItem.data}
+        {item}
     </js:Template>
     <js:Template name="rendererContainer">
         <li selected="{isItemSelected($dataItem.data)}" item="{$dataItem.data}" class="{$dataItem.$status}"/>
