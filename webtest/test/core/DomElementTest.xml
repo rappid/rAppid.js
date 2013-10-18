@@ -3,15 +3,27 @@
 
     <div id="divContainer">
 
-        <js:Content name="123">
-            <div>asd</div>
-        </js:Content>
-
         <div cid="firstDiv" id="firstDiv" visible="true">first div</div>
 
         <div cid="secondDiv" id="secondDiv" visible="false">second div</div>
 
         <div cid="thirdDiv">third div</div>
+
+        <div cid="lastDiv" id="lastDiv" visible="false">last div</div>
+    </div>
+
+    <div id="divContainer2">
+        <js:Content name="123">
+            <div>asd</div>
+        </js:Content>
+
+        <div cid="divA" id="divA" visible="true">div a</div>
+
+        <div cid="divB" id="divB" visible="false">div b</div>
+
+        <div cid="divC">div c</div>
+
+
     </div>
 
 </parent:DomElementTestClass>

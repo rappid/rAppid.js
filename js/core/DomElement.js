@@ -360,13 +360,15 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                             this.$el.appendChild(el);
                             this.$renderedChildren.push(child);
                         } else {
+                            var dec = 0;
                             // decrease the pos by the number of invisible children and elements before
                             for (var i = 0; i < pos && i < this.$children.length; i++) {
                                 var element = this.$children[i];
                                 if (!element.render || !element.$.visible) {
-                                    pos--;
+                                    dec++;
                                 }
                             }
+                            pos -= dec;
                             this.$renderedChildren.splice(pos, 0, child);
                             var childNode = this.$el.childNodes[pos];
                             if (childNode) {
@@ -445,16 +447,7 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                     if (visible) {
                         // calculate the index, where the element should appear
                         var children = this.$renderParent.$children,
-                            index = children.indexOf(this),
-                            i = 0;
-
-                        // decrease it by the non visible children that are before ...
-                        while (i < index) {
-                            if (children[i].render instanceof Function && !children[i].$.visible) {
-                                index--;
-                            }
-                            i++;
-                        }
+                            index = children.indexOf(this);
                         this.$renderParent._renderChild(this, index);
                     } else {
 
