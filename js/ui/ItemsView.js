@@ -17,6 +17,8 @@ define(["js/ui/View", "js/core/Repeat"], function (View, Repeat) {
                 "itemKey": this.$.itemKey,
                 "indexKey": this.$.indexKey
             });
+            repeat.$rootScope = this;
+            repeat.$parentScope = this;
             repeat.$defaultTemplateName = null;
             repeat.addChild(this.$templates.item);
             repeat.bind("on:itemsRendered", this._onItemsRendered, this);

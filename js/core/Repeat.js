@@ -143,6 +143,8 @@ define(["js/core/Component", "js/core/Bindable", "js/core/List"], function (Comp
             attr[this._getIndexKey()] = index;
 
             var virtualParent = this.createComponent(Component, attr);
+            virtualParent.$parentScope = this.$templates.item;
+            virtualParent.$rootScope = this.$templates.item.$rootScope;
             virtualParent._initialize();
             var component = this.$templates.item.createComponents(attr, virtualParent)[0];
             if (component.$classAttributes) {
