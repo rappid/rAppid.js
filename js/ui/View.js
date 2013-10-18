@@ -12,7 +12,7 @@ define(["js/html/HtmlElement", "js/core/Content", "underscore"], function (HtmlE
                 var layout = this.$templates['layout'];
                 // if layout template available...
                 if (layout) {
-                    var children = layout.createComponents({}, this, this);
+                    var children = layout.createComponents({}, this);
                     this._initializeLayoutChildren(children);
                 }
                 return this.callBase();

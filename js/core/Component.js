@@ -489,7 +489,7 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                     }
 
                 } else if (node.nodeType == 3 || node.nodeType == 4) { // Text nodes
-                    instance = this._createTextElement(node, rootScope);
+                    instance = this._createTextElement(node, rootScope, attributes);
                 }
 
                 return instance;
@@ -518,11 +518,11 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                 });
             },
 
-            _createTextElement: function (node, rootScope) {
+            _createTextElement: function (node, rootScope, attributes) {
                 if (TextElementFactory) {
-                    return new TextElementFactory(null, node, this.$stage, this, rootScope, true);
+                    return new TextElementFactory(attributes, node, this.$stage, this, rootScope, true);
                 }
-                var instance = this.$stage.$applicationContext.createInstance('js/core/TextElement', [null, node, this.$stage, this, rootScope, true]);
+                var instance = this.$stage.$applicationContext.createInstance('js/core/TextElement', [attributes, node, this.$stage, this, rootScope, true]);
                 TextElementFactory = instance.factory;
                 return instance;
 
@@ -532,13 +532,13 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
              * Converts all child nodes of a descriptor to instances of Components or TextElement
              * @param descriptor
              */
-            _getChildrenFromDescriptor: function (descriptor, rootScope) {
+            _getChildrenFromDescriptor: function (descriptor, rootScope, attributes) {
                 var childrenFromDescriptor = [], node, component;
 
                 if (descriptor && descriptor.childNodes) {
                     for (var i = 0; i < descriptor.childNodes.length; i++) {
                         node = descriptor.childNodes[i];
-                        component = this._createComponentForNode(node, null, rootScope);
+                        component = this._createComponentForNode(node, _.clone(attributes), rootScope);
                         if (component) {
                             childrenFromDescriptor.push(component);
                         }
@@ -619,23 +619,21 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                 this._childrenInitialized();
             },
 
-            createComponents: function (attributes, parentScope, rootScope) {
-                rootScope = rootScope || this.$rootScope;
+            createComponents: function (attributes, parentScope) {
                 parentScope = parentScope || this.$parentScope;
 
-                var components = this._getChildrenFromDescriptor(this.$descriptor, null, rootScope);
+                var components = this._getChildrenFromDescriptor(this.$descriptor, null, attributes);
 
                 for (var c = 0; c < components.length; c++) {
                     components[c].$createdByTemplate = true;
                     components[c].$parentScope = parentScope;
-                    components[c].set(attributes);
                 }
 
                 return components;
             },
 
-            createInstance: function (attributes, parentScope, rootScope) {
-                var components = this.createComponents(attributes, parentScope, rootScope);
+            createInstance: function (attributes, parentScope) {
+                var components = this.createComponents(attributes, parentScope);
                 return components[0];
             }
         });
