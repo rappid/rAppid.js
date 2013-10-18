@@ -109,9 +109,12 @@ define(['js/ui/VirtualItemsView'], function (VirtualItemsView) {
 
             if (container) {
                 // add all children to it
+                var child;
                 for (var i = 0; i < children.length; i++) {
-                    children[i].$classAttributes.push("item");
-                    container.addChild(children[i]);
+                    child = children[i];
+                    child.$classAttributes = child.$classAttributes || [];
+                    child.$classAttributes.push("item");
+                    container.addChild(child);
 
                 }
                 container.bind('change', function (e) {
