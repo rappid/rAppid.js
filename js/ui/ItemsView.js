@@ -10,20 +10,28 @@ define(["js/ui/View", "js/core/Repeat"], function (View, Repeat) {
 
         $defaultTemplateName: "item",
 
-        _initializationComplete: function () {
-            this.callBase();
+
+        createChildren: function () {
+            var ret = this.callBase() || [];
+
             var repeat = this.createComponent(Repeat, {
                 "items": "{items}",
                 "itemKey": this.$.itemKey,
                 "indexKey": this.$.indexKey
-            });
-            repeat.$rootScope = this;
-            repeat.$parentScope = this;
-            repeat.$defaultTemplateName = null;
-            repeat.addChild(this.$templates.item);
-            repeat.bind("on:itemsRendered", this._onItemsRendered, this);
+            }, null);
+
             this.$repeat = repeat;
-            this.addChild(repeat);
+            repeat.$defaultTemplateName = null;
+            repeat.bind("on:itemsRendered", this._onItemsRendered, this);
+            ret.push(repeat);
+
+            return ret;
+        },
+        addChild: function (child) {
+            if (child instanceof Repeat) {
+                child.addChild(this.$templates.item);
+            }
+            this.callBase();
         },
 
         _onItemsRendered: function () {
