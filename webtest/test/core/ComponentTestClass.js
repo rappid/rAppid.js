@@ -3,11 +3,16 @@ define(["js/core/Application", "js/core/ExternalInterface"], function (Applicati
 
         defaults: {
             name: "application",
-            foo: "bar"
+            foo: "bar",
+            applicationAttribute: "abc"
         },
 
         inject: {
             externalInterface: ExternalInterface
+        },
+
+        someFunction: function(){
+
         },
 
         start: function() {

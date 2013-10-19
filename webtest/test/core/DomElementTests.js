@@ -9,10 +9,12 @@ describe("DomElement tests", function () {
 
     describe("#visible", function () {
 
+
         it("should remove element from DOM in the right order", function () {
+            window.application.$.lastDiv.set('visible', true);
 
             window.application.$.firstDiv.set('visible', false);
-            window.application.$.secondDiv.set('visible',true);
+            window.application.$.secondDiv.set('visible', true);
             window.application.$.firstDiv.set('visible', true);
 
             $expect($("#divContainer").find("div").eq(0)).to.be("#firstDiv");
@@ -25,6 +27,25 @@ describe("DomElement tests", function () {
             $expect($("#divContainer").find("div").eq(1)).to.be("#secondDiv");
 
         });
+
+        it("should remove element from DOM in the right order #2", function () {
+
+            window.application.$.divA.set('visible', false);
+            window.application.$.divB.set('visible', true);
+            window.application.$.divA.set('visible', true);
+
+
+            $expect($("#divContainer2").find("div").eq(0)).to.be("#divA");
+            $expect($("#divContainer2").find("div").eq(1)).to.be("#divB");
+
+            window.application.$.divB.set('visible', false);
+            window.application.$.divB.set('visible', true);
+
+            $expect($("#divContainer2").find("div").eq(0)).to.be("#divA");
+            $expect($("#divContainer2").find("div").eq(1)).to.be("#divB");
+
+        });
+
 
     });
 

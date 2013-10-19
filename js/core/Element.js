@@ -128,7 +128,7 @@ define(["js/core/Bindable", "underscore"], function (Bindable, _) {
              *          TODO none?
              */
             _initialize: function (creationPolicy, withBindings) {
-                if (this.$initialized) {
+                if (this.$initialized || this.$initializing) {
                     return;
                 }
 

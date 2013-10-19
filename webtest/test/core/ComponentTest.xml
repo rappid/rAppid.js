@@ -6,5 +6,14 @@
 
     <app:CustomComponent cid="customComponent" customAttribute="{foo}" injectableAttribute="{foo}"/>
 
+    <js:Template name="invalidComponent">
+        <app:InvalidComponent />
+    </js:Template>
+
+    <js:Template name="invalidFunctionComponent">
+        <app:InvalidFunctionComponent/>
+    </js:Template>
+
+
 
 </app:ComponentTestClass>

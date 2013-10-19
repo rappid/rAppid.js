@@ -13,7 +13,7 @@ define(["js/core/Component"], function (Component) {
             }
 
             if (this.$.i18n) {
-                return this.$.i18n.ts(this.$.scope, error.$.code, error.$.field);
+                return this.$.i18n.ts(this.$.scope, error.$.code, error.$.field) || error.$.message || error;
             } else {
                 return error.$.message || error;
             }

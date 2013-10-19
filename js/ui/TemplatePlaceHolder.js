@@ -24,7 +24,7 @@ define(["js/ui/View"], function (View) {
                 if (!this.$templateChildren) {
                     this.$templateChildren = this.$template.createComponents({
                         item: this.$.item
-                    }, this.$parentScope, this.$rootScope);
+                    }, this.$template.$parentScope);
 
                     var child;
                     for (var i = 0; i < this.$templateChildren.length; i++) {

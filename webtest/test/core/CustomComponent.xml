@@ -2,6 +2,6 @@
                           name="customComponent"
                           xmlns:app="webtest.test.core">
 
-    <js:Component cid="internalComponent" value="{customAttribute}" internalName="{name}"/>
+    <js:Component cid="internalComponent" value="{customAttribute}" internalName="{name}" />
 
 </app:CustomComponentClass>

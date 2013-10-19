@@ -101,19 +101,38 @@ define(['js/ui/VirtualItemsView'], function (VirtualItemsView) {
 
             var ret,
                 container = this._createRenderContainer(attributes, this),
-                children = this.$templates['renderer'].createComponents(null, container);
+                children = this.$templates['renderer'].createComponents({
+                    $dataItem: null,
+                    item: "{$dataItem.data}"
+                });
+
 
             if (container) {
                 // add all children to it
+                var child;
                 for (var i = 0; i < children.length; i++) {
-                    container.addChild(children[i]);
+                    child = children[i];
+                    child.$classAttributes = child.$classAttributes || [];
+                    child.$classAttributes.push("item");
+                    container.addChild(child);
+
                 }
+                container.bind('change', function (e) {
+                    var attributes = e.$,
+                        child;
+                    for (var i = 0; i < children.length; i++) {
+                        child = children[i];
+                        child.set({
+                            $dataItem: attributes.$dataItem || child.$.$dataItem
+                        });
+                    }
+                });
                 ret = container;
             } else {
                 ret = children[0];
             }
 
-            ret && ret.set("position",  "absolute");
+            ret && ret.set("position", "absolute");
 
             return ret;
         },

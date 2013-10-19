@@ -1,0 +1,5 @@
+<js:Component xmlns:js="js.core">
+
+    <js:Component cid="internalComponent" val="{someFunction()}"/>
+
+</js:Component>
