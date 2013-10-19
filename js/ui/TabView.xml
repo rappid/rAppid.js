@@ -4,13 +4,16 @@
     <js:Template name="layout">
         <div class="tab-menu {menuClassName}">
             <ui:SelectionView tagName="ul" cid="tabSelection" items="{tabItems}" class="{tabClassName}"
-                              needsSelection="true" forceSelectable="true" selectedIndex="{{selectedIndex}}" selectedItem="{{selectedTab}}">
+                              needsSelection="true" forceSelectable="true" selectedIndex="{{selectedIndex}}"
+                              selectedItem="{{selectedTab}}">
                 <js:Template name="item">
-                    <ui:TemplatePlaceHolder templateName="tab" enabled="{item.enabled}" class="{item.class}" tagName="li"/>
+                    <ui:TemplatePlaceHolder templateName="tab" enabled="{item.enabled}" class="{item.class}"
+                                            tagName="li"/>
                 </js:Template>
             </ui:SelectionView>
         </div>
-        <ui:SegmentedView cid="tabContent" componentClass="tab-content" class="{contentClassName}" visibleView="{tabSelection.selectedItem}"/>
+        <ui:SegmentedView cid="tabContent" componentClass="tab-content" class="{contentClassName}"
+                          visibleView="{selectedTab}"/>
     </js:Template>
 
     <js:Template name="tab">
