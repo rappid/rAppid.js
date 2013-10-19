@@ -29,6 +29,8 @@ define(
             _renderChild: function (child) {
                 if (this.$.visibleView == child) {
                     child.set({visible: true});
+                    var i = this.$children.indexOf(child);
+                    this.set('visibleIndex', i);
                     this.callBase();
                 }
             },
@@ -49,7 +51,7 @@ define(
             },
 
             _renderVisibleIndex: function (index) {
-                if (index > -1 && index < this.$views.length) {
+                if (index != null && index > -1 && index < this.$views.length) {
                     this.set({visibleView: this.$views[index]});
                 } else if (this.$.visibleView) {
                     this.$.visibleView.set({visible: false});
