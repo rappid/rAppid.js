@@ -88,7 +88,7 @@ describe("#SelectionView", function () {
 
         it('should have first item selected when "needsSelection=true"', function () {
             $expect($("#sv2").find('li.active')).to.have.items(1);
-            expect(view.$.selectedItem).to.be.equal(items.at(0));
+            expect(view.$.selectedItems.at(0)).to.be.equal(items.at(0));
         });
 
         it('should allow deselection when "allowDeselection=true" and "needsSelection="true"', function () {
@@ -145,7 +145,7 @@ describe("#SelectionView", function () {
             $expect($("#sv3").find('li.active')).to.have.items(0);
         });
 
-        it('should set selectedItem to first items if empty list is filled and "needsSelection=true"', function () {
+        it('should set selectedItem to first item if empty list is filled and "needsSelection=true"', function () {
             items.clear();
             expect(view.$.selectedItem).to.be.equal(null);
             $expect($("#sv3").find('li')).to.have.items(0);

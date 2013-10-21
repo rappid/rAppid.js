@@ -137,24 +137,26 @@ define(["js/ui/ItemsView", "js/html/HtmlElement", "underscore", "js/core/List"],
             if (this.$.needsSelection) {
                 var items = this._getItemsArray(this.$.items);
                 if (items && items.length) {
-                    for (var i = 0; i < items.length; i++) {
-                        if (this.$.selectedItem === items[i]) {
-                            return;
+                    if (this.$.multiSelect) {
+                        if (this.$.selectedItems.length === 0) {
+                            this.$.selectedItems.add(items[0]);
                         }
+                    } else {
+                        for (var i = 0; i < items.length; i++) {
+                            if (this.$.selectedItem === items[i]) {
+                                return;
+                            }
+                        }
+                        this.set('selectedItem', items[0]);
                     }
-                    this.set('selectedItem', items[0]);
                 } else {
-                    this.set('selectedItem', null);
+                    if (this.$.multiSelect) {
+                        this.$.selectedItems.clear();
+                    } else {
+                        this.set('selectedItem', null);
+                    }
                 }
             }
-        },
-
-        _commitChangedAttributes: function ($) {
-            if ($.hasOwnProperty("selectedItem") && $["selectedItem"] != null) {
-                this.$.selectedItems.reset([$["selectedItem"]]);
-            }
-
-            this.callBase();
         },
 
         _renderChild: function (child) {
@@ -177,20 +179,27 @@ define(["js/ui/ItemsView", "js/html/HtmlElement", "underscore", "js/core/List"],
             // get item for child, if item is in selectedItems, select child!
             var item = child.get(this._getItemKey());
             if (item) {
-                for (var i = 0; i < this.$.selectedItems.length; i++) {
-                    if (this._areItemsEqual(item, this.$.selectedItems.at(i))) {
-                        child.set({selected: true}, {silent: true});
-                        break;
+                if (this.$.multiSelect) {
+                    for (var i = 0; i < this.$.selectedItems.length; i++) {
+                        if (this._areItemsEqual(item, this.$.selectedItems.at(i))) {
+                            child.set({selected: true}, {silent: true});
+                            break;
+                        }
                     }
-                }
-                if (this._areItemsEqual(item, this.$.selectedItem)) {
-                    child.set({selected: true}, {silent: true});
+                } else {
+                    if (this._areItemsEqual(item, this.$.selectedItem)) {
+                        child.set({selected: true}, {silent: true});
+                    }
                 }
             }
 
 
-            if (this.$.needsSelection && !this.$.selectedItem) {
-                this.set('selectedItem', child.get(this._getItemKey()));
+            if (this.$.needsSelection) {
+                if (!this.$.multiSelect && !this.$.selectedItem) {
+                    this.set('selectedItem', item);
+                } else if (this.$.multiSelect && this.$.selectedItems.length == 0) {
+                    this.$.selectedItems.add(item);
+                }
             }
 
         },
@@ -218,59 +227,64 @@ define(["js/ui/ItemsView", "js/html/HtmlElement", "underscore", "js/core/List"],
         },
 
         _renderSelectedItem: function (item, oldItem) {
-            var comp = this.getComponentForItem(item);
-            if (this.$hasPlaceHolder && item === this.$.placeHolderValue) {
-                comp = this.$placeHolder;
-            }
-            if (comp) {
-                comp.set({selected: true}, {silent: true});
-                var c;
-                if (!this.$.multiSelect) {
-                    for (var i = 0; i < this.$renderedChildren.length; i++) {
-                        c = this.$renderedChildren[i];
-                        if (c != comp && c.$.selected === true) {
-                            c.set({selected: false}, {silent: true});
+            if (!this.$.multiSelect) {
+                var comp = this.getComponentForItem(item);
+                if (this.$hasPlaceHolder && item === this.$.placeHolderValue) {
+                    comp = this.$placeHolder;
+                }
+                if (comp) {
+                    comp.set({selected: true}, {silent: true});
+                    var c;
+                    if (!this.$.multiSelect) {
+                        for (var i = 0; i < this.$renderedChildren.length; i++) {
+                            c = this.$renderedChildren[i];
+                            if (c != comp && c.$.selected === true) {
+                                c.set({selected: false}, {silent: true});
+                            }
                         }
                     }
-                }
-            } else {
-                if (oldItem != null && !this.$.multiSelect) {
-                    comp = this.getComponentForItem(oldItem);
-                    comp && comp.set({selected: false}, {silent: true});
+                } else {
+                    if (oldItem != null) {
+                        comp = this.getComponentForItem(oldItem);
+                        comp && comp.set({selected: false}, {silent: true});
+                    }
                 }
             }
         },
 
         _renderSelectedItems: function (list) {
-            if (list && list.length) {
-                var item,
-                    $renderedItems = this.$repeat.$renderedItems,
-                    selected;
-                for (var i = 0; i < $renderedItems.length; i++) {
-                    item = $renderedItems[i].item;
-                    for (var j = 0; j < list.length; j++) {
-                        selected = this._areItemsEqual(item, list.at(j));
-                        if (selected) {
-                            break;
+            if (this.$.multiSelect) {
+                if (list && list.length) {
+                    var item,
+                        $renderedItems = this.$repeat.$renderedItems,
+                        selected;
+                    for (var i = 0; i < $renderedItems.length; i++) {
+                        item = $renderedItems[i].item;
+                        for (var j = 0; j < list.length; j++) {
+                            selected = this._areItemsEqual(item, list.at(j));
+                            if (selected) {
+                                break;
+                            }
                         }
+                        $renderedItems[i].component.set({selected: selected}, {silent: true});
                     }
-                    $renderedItems[i].component.set({selected: selected}, {silent: true});
+                } else if (this.$placeHolder && this.$.selectedItem == null) {
+                    this.$placeHolder.set({selected: true}, {silent: true});
                 }
-            } else if (this.$placeHolder && this.$.selectedItem == null) {
-                this.$placeHolder.set({selected: true}, {silent: true});
             }
         },
 
         _renderSelectedIndex: function (i, oldIndex) {
-            if (i !== null && i < this.$renderedChildren.length && i > -1) {
-                var c = this.$renderedChildren[i];
-                c.set({selected: true}, {silent: true});
+            if (!this.$.multiSelect) {
+                if (i !== null && i < this.$renderedChildren.length && i > -1) {
+                    var c = this.$renderedChildren[i];
+                    c.set({selected: true}, {silent: true});
+                }
+                if (oldIndex !== null && oldIndex < this.$renderedChildren.length && oldIndex > -1) {
+                    var oc = this.$renderedChildren[oldIndex];
+                    oc.set({selected: false}, {silent: true});
+                }
             }
-            if (oldIndex !== null && oldIndex < this.$renderedChildren.length && oldIndex > -1) {
-                var oc = this.$renderedChildren[oldIndex];
-                oc.set({selected: false}, {silent: true});
-            }
-
         },
 
         _onChildSelected: function (child) {
@@ -302,8 +316,12 @@ define(["js/ui/ItemsView", "js/html/HtmlElement", "underscore", "js/core/List"],
             }
 
             if (!correctSelection) {
-                this.set({selectedViews: selectedChildren, selectedIndex: selectedIndex, selectedItem: selectedItem});
-                this.$.selectedItems.reset(selectedItems);
+                this.set('selectedViews', selectedChildren);
+                if (this.$.multiSelect) {
+                    this.$.selectedItems.reset(selectedItems);
+                } else {
+                    this.set({selectedIndex: selectedIndex, selectedItem: selectedItem});
+                }
             }
         },
 
