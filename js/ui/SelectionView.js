@@ -69,7 +69,7 @@ define(["js/ui/ItemsView", "js/html/HtmlElement", "underscore", "js/core/List"],
         },
 
         _onSelectedItemAdd: function (e) {
-            if(this.isRendered()){
+            if (this.isRendered()) {
                 var item;
                 var $renderedItems = this.$repeat.$renderedItems;
                 for (var i = 0; i < $renderedItems.length; i++) {
@@ -81,20 +81,20 @@ define(["js/ui/ItemsView", "js/html/HtmlElement", "underscore", "js/core/List"],
             }
         },
 
-        _itemRemove: function(e) {
+        _itemRemove: function (e) {
             if (e.$.item === this.$.selectedItem) {
                 this._checkNeedsSelection();
             }
         },
 
-        _itemAdd: function() {
+        _itemAdd: function () {
             if (!this.$.selectedItem) {
                 this._checkNeedsSelection();
             }
         },
 
         _onSelectedItemRemove: function (e) {
-            if(this.isRendered()){
+            if (this.isRendered()) {
 
                 var item;
                 var $renderedItems = this.$repeat.$renderedItems;
@@ -133,7 +133,7 @@ define(["js/ui/ItemsView", "js/html/HtmlElement", "underscore", "js/core/List"],
             this._checkNeedsSelection();
         },
 
-        _checkNeedsSelection: function() {
+        _checkNeedsSelection: function () {
             if (this.$.needsSelection) {
                 var items = this._getItemsArray(this.$.items);
                 if (items && items.length) {
@@ -151,7 +151,7 @@ define(["js/ui/ItemsView", "js/html/HtmlElement", "underscore", "js/core/List"],
 
         _commitChangedAttributes: function ($) {
             if ($.hasOwnProperty("selectedItem") && $["selectedItem"] != null) {
-                this.$.selectedItems.add($["selectedItem"]);
+                this.$.selectedItems.reset([$["selectedItem"]]);
             }
 
             this.callBase();
@@ -178,7 +178,7 @@ define(["js/ui/ItemsView", "js/html/HtmlElement", "underscore", "js/core/List"],
             var item = child.get(this._getItemKey());
             if (item) {
                 for (var i = 0; i < this.$.selectedItems.length; i++) {
-                    if (this._areItemsEqual(item, this.$.selectedItems[i])) {
+                    if (this._areItemsEqual(item, this.$.selectedItems.at(i))) {
                         child.set({selected: true}, {silent: true});
                         break;
                     }
@@ -243,11 +243,18 @@ define(["js/ui/ItemsView", "js/html/HtmlElement", "underscore", "js/core/List"],
 
         _renderSelectedItems: function (list) {
             if (list && list.length) {
-                var item;
-                var $renderedItems = this.$repeat.$renderedItems;
+                var item,
+                    $renderedItems = this.$repeat.$renderedItems,
+                    selected;
                 for (var i = 0; i < $renderedItems.length; i++) {
                     item = $renderedItems[i].item;
-                    $renderedItems[i].component.set({selected: (list.indexOf(item) > -1)}, {silent: true});
+                    for (var j = 0; j < list.length; j++) {
+                        selected = this._areItemsEqual(item, list.at(j));
+                        if (selected) {
+                            break;
+                        }
+                    }
+                    $renderedItems[i].component.set({selected: selected}, {silent: true});
                 }
             } else if (this.$placeHolder && this.$.selectedItem == null) {
                 this.$placeHolder.set({selected: true}, {silent: true});
@@ -305,7 +312,7 @@ define(["js/ui/ItemsView", "js/html/HtmlElement", "underscore", "js/core/List"],
                 if (!itemA || !itemB) {
                     return false;
                 }
-                return itemA.get(this.$.keyPath) === itemB.get(this.$.keyPath);
+                return this.get(itemA, this.$.keyPath) === this.get(itemB, this.$.keyPath);
             } else {
                 return itemA === itemB;
             }
