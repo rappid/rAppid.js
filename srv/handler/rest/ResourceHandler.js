@@ -222,9 +222,7 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
             var self = this,
                 baseUri = context.request.urlInfo.baseUri + this.$restHandler.$.path + "/";
 
-            if (!model.$.href) {
-                model.$.href = baseUri + this._getPathForModel(model);
-            }
+            model.$.href = baseUri + this._getPathForModel(model);
 
             for (var key in model.schema) {
                 if (model.schema.hasOwnProperty(key)) {
