@@ -1,0 +1,13 @@
+<app:TabViewTestClass xmlns:app="webtest.test.ui" xmlns="http://www.w3.org/1999/xhtml" xmlns:js="js.core"
+                      xmlns:ui="js.ui">
+
+    <ui:TabView cid="t1" id="t1">
+        <ui:Tab title="first">
+            first
+        </ui:Tab>
+        <ui:Tab title="second">
+            <div>second</div>
+        </ui:Tab>
+    </ui:TabView>
+
+</app:TabViewTestClass>

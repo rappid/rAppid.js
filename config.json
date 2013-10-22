@@ -34,7 +34,8 @@
         "webtest/test/core/StageTest",
         "webtest/test/html/SelectTest",
         "webtest/test/ui/ItemsViewTest",
-        "webtest/test/ui/SelectionViewTest"
+        "webtest/test/ui/SelectionViewTest",
+        "webtest/test/ui/TabViewTest"
     ],
     "paths": {
         "xaml": "js/plugin/xaml",
