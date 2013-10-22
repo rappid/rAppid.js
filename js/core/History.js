@@ -125,6 +125,15 @@ define(["js/core/Bindable", "flow"], function (Bindable, flow) {
             this.navigate(fragment, false, true, true, callback);
             this.$processUrl = true;
         },
+
+        /**
+         * Navigates back with the browsers history
+         *
+         */
+        back: function(){
+            window.history.back();
+        },
+
         /***
          * Removes all onhaschange listeners or clears polling interval for hash check
          */
