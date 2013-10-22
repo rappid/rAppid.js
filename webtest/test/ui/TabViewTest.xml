@@ -3,10 +3,13 @@
 
     <ui:TabView cid="t1" id="t1">
         <ui:Tab title="first">
-            first
+            <div>{title}</div>
         </ui:Tab>
         <ui:Tab title="second">
-            <div>second</div>
+            <div>{title}</div>
+        </ui:Tab>
+        <ui:Tab title="third" cid="t1-3">
+            <div>{title}</div>
         </ui:Tab>
     </ui:TabView>
 
