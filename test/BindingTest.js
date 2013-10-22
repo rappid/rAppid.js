@@ -224,6 +224,30 @@ describe('js.core.Binding', function () {
 
             m1.get('b').should.equal("goodbye");
         });
+
+        it('should call transform methods', function () {
+            var binding = new C.Binding({
+                scope: model,
+                path: "a",
+                target: target,
+                targetKey: "val",
+                twoWay: true,
+                transform: function (item) {
+                    return item / 10;
+                },
+                transformBack: function (item) {
+                    return item * 10;
+                }});
+
+            target.set('val', 1);
+
+            model.get('a').should.equal(10);
+
+            model.set('a', 100);
+
+            target.get('val').should.equal(10);
+        });
+
     });
 
 
