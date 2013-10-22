@@ -380,6 +380,11 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                     callback("parameter is not an entity");
                 }
             },
+            /**
+             * Clones the entity with all attributes on this.$
+             *
+             * @returns {js.data.Entity}
+             */
             clone: function () {
                 var ret = this.callBase();
                 ret.$context = this.$context;
