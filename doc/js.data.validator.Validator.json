@@ -43,8 +43,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                518,
-                544
+                526,
+                552
             ],
             "description": "Returns a copy of the attribute. This method is a hook for further cloning options",
             "private": "",
@@ -75,8 +75,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                800,
-                802
+                808,
+                810
             ],
             "description": "called after attributes has set and some of the has been changed\n",
             "abstract": "",
@@ -91,8 +91,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                705,
-                708
+                713,
+                716
             ],
             "definedBy": "js.core.Bindable",
             "name": "_commitInvalidatedAttributes",
@@ -234,8 +234,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                550,
-                552
+                558,
+                560
             ],
             "description": "",
             "returns": {
@@ -302,8 +302,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                561,
-                589
+                569,
+                597
             ],
             "description": "generates a default chain containing the values from this instance and base classes\n",
             "returns": {
@@ -341,8 +341,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                804,
-                813
+                812,
+                821
             ],
             "definedBy": "js.core.Bindable",
             "name": "_hasAll",
@@ -361,8 +361,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                815,
-                824
+                823,
+                832
             ],
             "definedBy": "js.core.Bindable",
             "name": "_hasSome",
@@ -649,8 +649,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                841,
-                843
+                849,
+                851
             ],
             "description": "Clears all attributes",
             "returns": {
@@ -672,10 +672,10 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                491,
-                511
+                499,
+                519
             ],
-            "description": "This method returns a copy of the Object",
+            "description": "This method returns a copy of the Object with all attributes on the $",
             "returns": {
                 "types": [
                     "js.core.Bindable"
@@ -758,8 +758,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                717,
-                780
+                725,
+                788
             ],
             "description": "evaluates a path to retrieve a value\n",
             "returns": {
@@ -780,8 +780,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                437,
-                446
+                441,
+                454
             ],
             "definedBy": "js.core.Bindable",
             "name": "getScopeForFncName",
@@ -798,7 +798,7 @@
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
                 426,
-                435
+                439
             ],
             "definedBy": "js.core.Bindable",
             "name": "getScopeForKey",
@@ -819,8 +819,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                788,
-                790
+                796,
+                798
             ],
             "description": "determinate if a attribute is available\n",
             "returns": {
@@ -857,8 +857,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                933,
-                950
+                941,
+                958
             ],
             "definedBy": "js.core.Bindable",
             "name": "isDeepEqual",
@@ -874,8 +874,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                951,
-                953
+                959,
+                961
             ],
             "definedBy": "js.core.Bindable",
             "name": "isEqual",
@@ -965,8 +965,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                601,
-                687
+                609,
+                695
             ],
             "description": "Sets new values for attributes and notify about changes\n",
             "returns": {
@@ -992,8 +992,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                689,
-                703
+                697,
+                711
             ],
             "definedBy": "js.core.Bindable",
             "name": "setLater",
@@ -1005,8 +1005,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                458,
-                486
+                466,
+                494
             ],
             "description": "Writes attributes back to the source",
             "definedBy": "js.core.Bindable",
@@ -1104,8 +1104,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                832,
-                835
+                840,
+                843
             ],
             "description": "Unset attribute on $",
             "returns": {

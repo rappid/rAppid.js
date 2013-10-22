@@ -85,15 +85,17 @@ define(["require", "js/core/Component", "underscore", "moment", "flow"], functio
         },
 
         /**
-         * @param [num] for plural or singular
-         * @param key translation key
-         * @param - replacement for %0
-         * @param - replacement for %1 ...
+         * Translates a key with the given arguments.
+         *
+         * @param {Number} [num] for plural or singular
+         * @param {String} key translation key
+         * @param {String|Number} replacement1 - replacement for %0
+         * @param {String|Number} replacement2 - replacement for %1 ...
          */
-        t: function () {
+        t: function (num, key, replacement1, replacement2) {
 
-            var args = Array.prototype.slice.call(arguments);
-            var key = args.shift(), isPlural;
+            var args = Array.prototype.slice.call(arguments), isPlural;
+            key = args.shift();
             if (_.isNumber(key)) {
                 isPlural = (key !== 1);
                 key = args.shift();
@@ -112,10 +114,14 @@ define(["require", "js/core/Component", "underscore", "moment", "flow"], functio
             return value;
         }.onChange("translations"),
         /***
+         * Does the same as the "t" method but joins two key fragments: key1+"."+key2
          *
-         *
+         * @param {String} key1 - key fragment 1
+         * @param {String} key2 - key fragment 2
+         * @param {String} replacement1 - to replace %0
+         * @param {String} replacement2 - to replace %1
          */
-        ts: function() {
+        ts: function(key1, key2, replacement1, replacement2) {
             var args = Array.prototype.slice.call(arguments),
                 newArgs = [],
                 key = args.shift(),
@@ -144,8 +150,8 @@ define(["require", "js/core/Component", "underscore", "moment", "flow"], functio
         /***
          * Formats a date value to the given format
          *
-         * @attr {Date|Number} value - the value to format
-         * @attr {String} [value] -  the format
+         * @param {Date|Number} value - the value to format
+         * @param {String} [value] -  the format
          */
         f: function (value, format) {
 

@@ -70,8 +70,8 @@
             "annotations": {},
             "definedInFile": "js/core/DomElement.js",
             "lineNumbers": [
-                965,
-                970
+                958,
+                963
             ],
             "definedBy": "js.core.Base",
             "overwritesMethod": true,
@@ -137,8 +137,8 @@
             "annotations": {},
             "definedInFile": "js/core/DomElement.js",
             "lineNumbers": [
-                982,
-                992
+                975,
+                985
             ],
             "definedBy": "js.core.EventDispatcher.Event",
             "overwritesMethod": true,
@@ -184,8 +184,8 @@
             "annotations": {},
             "definedInFile": "js/core/DomElement.js",
             "lineNumbers": [
-                971,
-                981
+                964,
+                974
             ],
             "definedBy": "js.core.EventDispatcher.Event",
             "overwritesMethod": true,

@@ -10,8 +10,8 @@
             "annotations": {},
             "definedInFile": "js/core/DomElement.js",
             "lineNumbers": [
-                1035,
-                1037
+                1028,
+                1030
             ],
             "name": "_createEvent",
             "visibility": "protected"
@@ -82,8 +82,8 @@
             "annotations": {},
             "definedInFile": "js/core/DomElement.js",
             "lineNumbers": [
-                1027,
-                1034
+                1020,
+                1027
             ],
             "name": "_isEventEnabled",
             "visibility": "protected"
@@ -101,8 +101,8 @@
             "annotations": {},
             "definedInFile": "js/core/DomElement.js",
             "lineNumbers": [
-                1013,
-                1016
+                1006,
+                1009
             ],
             "definedBy": "js.core.Base",
             "overwritesMethod": true,
@@ -139,8 +139,8 @@
             "annotations": {},
             "definedInFile": "js/core/DomElement.js",
             "lineNumbers": [
-                1017,
-                1026
+                1010,
+                1019
             ],
             "name": "handleEvent",
             "visibility": "public"
