@@ -4,8 +4,8 @@ define(["js/core/Component", "js/core/Bindable", "js/core/List"], function (Comp
         defaults: {
             /**
              * An array or a List of items
-             * @type Array
-             * @type js.core.List
+             *
+             * @type Array | js.core.List
              */
             items: null,
             /**
@@ -43,7 +43,6 @@ define(["js/core/Component", "js/core/Bindable", "js/core/List"], function (Comp
 
         /***
          * Renders the given items
-         * @param items
          * @private
          */
         _commitChangedAttributes: function ($) {
@@ -52,7 +51,12 @@ define(["js/core/Component", "js/core/Bindable", "js/core/List"], function (Comp
                 this._innerRenderItems(this._getItemsArray($.items));
             }
         },
-
+        /**
+         * Returns an array of the items
+         * @param items
+         * @returns {Array}
+         * @private
+         */
         _getItemsArray: function (items) {
             if (!items) {
                 return [];
@@ -66,7 +70,7 @@ define(["js/core/Component", "js/core/Bindable", "js/core/List"], function (Comp
         /***
          * This method is called when the sort event is fired,
          * It reorders the items in the list
-         * @param [js.core.Event] event
+         * @param {js.core.Event} [event]
          * @private
          */
         _onSort: function (event) {
@@ -287,7 +291,7 @@ define(["js/core/Component", "js/core/Bindable", "js/core/List"], function (Comp
         /**
          * Returns the rendered component to a given item
          * @param item
-         * @return {js/core/Component} component
+         * @return {js.core.Component} component
          */
         getComponentForItem: function (item) {
             var key = this._getKeyForItem(item),
