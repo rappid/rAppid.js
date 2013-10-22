@@ -1594,8 +1594,8 @@
             "annotations": {},
             "definedInFile": "js/core/Module.js",
             "lineNumbers": [
-                29,
-                31
+                30,
+                32
             ],
             "description": "notifies the module that it will be removed from the current module loader\n",
             "private": "",
@@ -1612,8 +1612,8 @@
             "annotations": {},
             "definedInFile": "js/core/Module.js",
             "lineNumbers": [
-                38,
-                48
+                39,
+                49
             ],
             "definedBy": "js.core.Component",
             "overwritesMethod": true,
@@ -2431,8 +2431,8 @@
             "annotations": {},
             "definedInFile": "js/core/Module.js",
             "lineNumbers": [
-                33,
-                36
+                34,
+                37
             ],
             "definedBy": "js.core.DomElement",
             "overwritesMethod": true,
@@ -2595,7 +2595,9 @@
             "type": "Method",
             "parameter": [
                 {
-                    "types": null,
+                    "types": [
+                        "Function"
+                    ],
                     "name": "callback",
                     "optional": false
                 },
@@ -2608,10 +2610,10 @@
             "annotations": {},
             "definedInFile": "js/core/Module.js",
             "lineNumbers": [
-                14,
-                21
+                15,
+                22
             ],
-            "description": "loads the",
+            "description": "Starts the module. The callback tells the module loader when the module is started.\n",
             "name": "start",
             "visibility": "public"
         },

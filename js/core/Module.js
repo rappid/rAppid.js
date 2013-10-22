@@ -7,8 +7,9 @@ define(["js/html/HtmlElement", "js/core/Router", "js/core/Head"], function (Html
         },
 
         /**
-         * loads the
-         * @param callback
+         * Starts the module. The callback tells the module loader when the module is started.
+         *
+         * @param {Function} callback
          * @param [routeContext]
          */
         start: function (callback, routeContext) {
