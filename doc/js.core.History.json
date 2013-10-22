@@ -497,11 +497,24 @@
             "annotations": {},
             "definedInFile": "js/core/History.js",
             "lineNumbers": [
-                160,
-                162
+                169,
+                171
             ],
             "description": "Adds a router to the history instance\n",
             "name": "addRouter",
+            "visibility": "public"
+        },
+        {
+            "type": "Method",
+            "parameter": [],
+            "annotations": {},
+            "definedInFile": "js/core/History.js",
+            "lineNumbers": [
+                133,
+                135
+            ],
+            "description": "Navigates back with the browsers history\n",
+            "name": "back",
             "visibility": "public"
         },
         {
@@ -544,8 +557,8 @@
             "annotations": {},
             "definedInFile": "js/core/History.js",
             "lineNumbers": [
-                168,
-                181
+                177,
+                190
             ],
             "description": "Checks if the current fragment has changed and calls navigate in case it did\n",
             "name": "checkUrl",
@@ -890,8 +903,8 @@
             "annotations": {},
             "definedInFile": "js/core/History.js",
             "lineNumbers": [
-                220,
-                314
+                229,
+                323
             ],
             "description": "Navigates to a fragment",
             "name": "navigate",
@@ -1017,8 +1030,8 @@
             "annotations": {},
             "definedInFile": "js/core/History.js",
             "lineNumbers": [
-                131,
-                153
+                140,
+                162
             ],
             "description": "Removes all onhaschange listeners or clears polling interval for hash check",
             "name": "stop",
@@ -1097,8 +1110,8 @@
             "annotations": {},
             "definedInFile": "js/core/History.js",
             "lineNumbers": [
-                188,
-                210
+                197,
+                219
             ],
             "description": "Triggers a route\n",
             "name": "triggerRoute",
