@@ -28,7 +28,21 @@ define(['js/core/Component', 'srv/core/HttpError', 'srv/auth/Authentication'], f
             callback();
         },
 
+        /**
+         * Method to authenticate a request
+         * @param authenticationRequest
+         * @param callback
+         */
         authenticate: function (authenticationRequest, callback) {
+            throw new Error("Abstract implementation");
+        },
+
+        /**
+         * Method to change authentication data
+         * @param changeAuthenticationRequest
+         * @param callback
+         */
+        changeAuthentication: function(changeAuthenticationRequest, callback){
             throw new Error("Abstract implementation");
         },
 
