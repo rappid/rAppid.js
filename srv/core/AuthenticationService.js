@@ -126,7 +126,7 @@ define(["js/core/Component", "srv/auth/AuthenticationProvider", "flow", "srv/aut
 
             flow()
                 .seq("authentication", function (cb) {
-                    authentication.fetch(null, function (err) {
+                    authentication.fetch({noCache: true}, function (err) {
                         if (!err) {
                             var now = new Date();
                             if (authentication.$.updated.getTime() < now.getTime() - (1000 * self.$.tokenLifeTime)) {
