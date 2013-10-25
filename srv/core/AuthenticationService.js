@@ -251,6 +251,25 @@ define(["js/core/Component", "srv/auth/AuthenticationProvider", "flow", "srv/aut
 
         },
 
+
+        changeAuthenticationByRequest: function (context, changeAuthenticationRequest, callback) {
+
+            var authProvider = this.getAuthenticationProviderForRequest(changeAuthenticationRequest);
+
+            if (authProvider) {
+                flow()
+                    // check authentication request
+                    .seq("authentication", function (cb) {
+                        // change authentication
+                        authProvider.changeAuthentication(changeAuthenticationRequest, cb);
+                    })
+                    .exec(callback)
+            } else {
+                callback(AuthenticationError.NO_PROVIDER_FOUND, null);
+            }
+
+        },
+
         /**
          * Saves an authentication and adds an token to it
          *

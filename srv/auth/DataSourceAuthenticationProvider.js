@@ -90,15 +90,20 @@ define(['srv/auth/AuthenticationProvider', 'srv/auth/Authentication', 'js/data/C
          * @returns {boolean}
          */
         validatePassword: function (password, correctHash) {
-            // validate password length
-            if(password && password.length > this.$.maxPasswordLength){
+            if (!this.validatePasswordLength(password)) {
                 return false;
             }
+
             var elements = correctHash.split(this.$.delimiter);
             if (elements.length === 3) {
                 return (this.createHash(password, elements[0], elements[1]) === correctHash);
             }
             return false;
+        },
+        validatePasswordLength: function (password) {
+            // validate password length
+            return !(!password || password.length > this.$.maxPasswordLength || password.length < 0);
+
         },
         /**
          * Creates an authentication Object which contains all authentication relevant data for an user
@@ -181,6 +186,40 @@ define(['srv/auth/AuthenticationProvider', 'srv/auth/Authentication', 'js/data/C
                     callback(err, null);
                 }
             });
+        },
+
+        changeAuthentication: function (changeAuthenticationRequest, callback) {
+            var self = this,
+                username = changeAuthenticationRequest.get(this.$.usernameField);
+
+            var data = {};
+            data[this.$.usernameField] = username;
+            data.password = changeAuthenticationRequest.get("password");
+
+            var newPassword = changeAuthenticationRequest.get('newPassword');
+
+            flow()
+                // check authentication
+                .seq("authentication", function (cb) {
+                    self.authenticate(changeAuthenticationRequest, cb);
+                })
+                .seq(function () {
+                    if (!self.validatePasswordLength(newPassword)) {
+                        throw "Not a valid password";
+                    }
+                })
+                // fetch user
+                .seq("user", function (cb) {
+                    self.fetchUser(changeAuthenticationRequest, cb)
+                })
+                // create new authentication
+                .seq(function (cb) {
+                    var user = this.vars.user;
+                    var authentication = self.createAuthenticationData(newPassword);
+                    user.set(self.$.authenticationField, authentication);
+                    user.save(null, cb);
+                })
+                .exec(callback);
         },
 
         authenticate: function (authenticationRequest, callback) {
