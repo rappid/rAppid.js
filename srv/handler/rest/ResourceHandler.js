@@ -323,11 +323,14 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
 
                         callback(null);
                     } else {
-                        var statusCode = 404;
-                        if (err === DataSource.ERROR.NOT_FOUND) {
-                            statusCode = 404;
+                        if (!(err instanceof HttpError)) {
+                            var statusCode = 404;
+                            if (err === DataSource.ERROR.NOT_FOUND) {
+                                statusCode = 404;
+                            }
+                            err = new HttpError(err, statusCode);
                         }
-                        callback(new HttpError(err, statusCode));
+                        callback(err);
                     }
 
 
@@ -406,7 +409,12 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
 
                         callback(null);
                     } else {
-                        callback(new HttpError(err, 400));
+                        if (!(err instanceof HttpError)) {
+                            var statusCode = 400;
+                            // TODO: add more error handling
+                            err = new HttpError(err, statusCode);
+                        }
+                        callback(err);
                     }
                 });
         },
@@ -436,7 +444,7 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
                     }
                     self._beforeModelFetch(model, context, cb);
                 })
-                .seq(function(cb){
+                .seq(function (cb) {
                     model.fetch(null, cb);
                 })
                 .seq(function () {
@@ -459,11 +467,14 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
 
                         callback(null);
                     } else {
-                        var statusCode = 500;
-                        if (err === DataSource.ERROR.NOT_FOUND) {
-                            statusCode = 404;
+                        if (!(err instanceof HttpError)) {
+                            var statusCode = 500;
+                            if (err === DataSource.ERROR.NOT_FOUND) {
+                                statusCode = 404;
+                            }
+                            err = new HttpError(err, statusCode);
                         }
-                        callback(new HttpError(err, statusCode));
+                        callback(err);
                     }
 
                 });
@@ -476,7 +487,7 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
          * @param callback
          * @private
          */
-        _beforeModelFetch: function(model, context, callback){
+        _beforeModelFetch: function (model, context, callback) {
             callback && callback();
         },
 
@@ -519,7 +530,7 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
                     }
                 })
                 .seq(function () {
-                    if(!isPatch){
+                    if (!isPatch) {
                         model.clear();
                         model.set(defaults);
                     }
@@ -572,11 +583,14 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
 
                         callback(null);
                     } else {
-                        var statusCode = 400;
-                        if (err === DataSource.ERROR.NOT_FOUND) {
-                            statusCode = 404;
+                        if (!(err instanceof HttpError)) {
+                            var statusCode = 400;
+                            if (err === DataSource.ERROR.NOT_FOUND) {
+                                statusCode = 404;
+                            }
+                            err = new HttpError(err, statusCode);
                         }
-                        callback(new HttpError(err, statusCode));
+                        callback(err);
                     }
                 });
 
@@ -689,11 +703,14 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
 
                         callback(null);
                     } else {
-                        var statusCode = 500;
-                        if (err === DataSource.ERROR.NOT_FOUND) {
-                            statusCode = 404;
+                        if (!(err instanceof HttpError)) {
+                            var statusCode = 500;
+                            if (err === DataSource.ERROR.NOT_FOUND) {
+                                statusCode = 404;
+                            }
+                            err = new HttpError(err, statusCode);
                         }
-                        callback(new HttpError(err, statusCode));
+                        callback(err);
                     }
                 });
         },
