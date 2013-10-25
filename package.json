@@ -1,70 +1,70 @@
 {
-  "name": "rAppid.js",
-  "preferGlobal": "false",
-  "version": "0.7.0",
-  "author": "rAppid <support@rappidjs.com> (http://rappidjs.com)",
-  "contributors": [
-    "Tony Findeisen <tony@rappidjs.com>",
-    "Marcus Krejpowicz <marcus@rappidjs.com>"
-  ],
-  "description": "rAppid.js is a declarative JavaScript web application for rapid web application development. It uses XML to define the structure of applications, modules, components and views and JavaScript for the business logic of the application. The XML (xaml) gets translated to javascript components during runtime which will render itself as HTML5 DOM elements. This enables a rapid development of applications.",
-  "scripts": {
-    "test": "mocha -R spec"
-  },
-  "bin": {
-    "rappidjs": "./bin/rappidjs"
-  },
-  "lib": "js",
-  "serverLib": "srv",
-  "main": "index.js",
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/rappid/rAppid.js.git"
-  },
-  "keywords": [
-    "rAppid",
-    "rAppid.js",
-    "rAppid:js",
-    "RIA",
-    "Rich Internet Application",
-    "MVC",
-    "Model View Controller",
-    "framework",
-    "application",
-    "web",
-    "xaml"
-  ],
-  "dependencies": {
-    "underscore": "latest",
-    "requirejs": "latest",
-    "flow.js": ">=0.2.5",
-    "inherit.js": "latest",
-    "ejs": "latest",
-    "optimist": ">=0.3.4",
-    "colors": "*",
-    "xmlhttprequest": "latest",
-    "xmldom": "0.1.15"
-  },
-  "optionalDependencies": {},
-  "devDependencies": {
-    "saucelabs-tunnel": "*",
-    "saucelabs": "*",
-    "esprima": "latest",
-    "chai": "*",
-    "mocha": "*",
-    "pegjs": "*",
-    "grunt": "~0.4.0",
-    "grunt-contrib-connect": "*",
-    "wd": "*",
-    "supertest": "~0.5.1",
-    "mongodb": "*"
-  },
-  "license": "MIT",
-  "engine": {
-    "node": ">=0.4"
-  },
-  "engines": {
-    "node": "*"
-  },
-  "homepage": "http://rappidjs.com"
+    "name": "rAppid.js",
+    "preferGlobal": "false",
+    "version": "0.7.0",
+    "author": "rAppid <support@rappidjs.com> (http://rappidjs.com)",
+    "contributors": [
+        "Tony Findeisen <tony@rappidjs.com>",
+        "Marcus Krejpowicz <marcus@rappidjs.com>"
+    ],
+    "description": "rAppid.js is a declarative JavaScript web application for rapid web application development. It uses XML to define the structure of applications, modules, components and views and JavaScript for the business logic of the application. The XML (xaml) gets translated to javascript components during runtime which will render itself as HTML5 DOM elements. This enables a rapid development of applications.",
+    "scripts": {
+        "test": "mocha -R spec"
+    },
+    "bin": {
+        "rappidjs": "./bin/rappidjs"
+    },
+    "lib": "js",
+    "serverLib": "srv",
+    "main": "index.js",
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/rappid/rAppid.js.git"
+    },
+    "keywords": [
+        "rAppid",
+        "rAppid.js",
+        "rAppid:js",
+        "RIA",
+        "Rich Internet Application",
+        "MVC",
+        "Model View Controller",
+        "framework",
+        "application",
+        "web",
+        "xaml"
+    ],
+    "dependencies": {
+        "underscore": "latest",
+        "requirejs": "latest",
+        "flow.js": ">=0.2.5",
+        "inherit.js": "latest",
+        "ejs": "latest",
+        "optimist": ">=0.3.4",
+        "colors": "*",
+        "xmlhttprequest": "latest",
+        "xmldom": "0.1.15",
+        "esprima": "latest"
+    },
+    "optionalDependencies": {},
+    "devDependencies": {
+        "saucelabs-tunnel": "*",
+        "saucelabs": "*",
+        "chai": "*",
+        "mocha": "*",
+        "pegjs": "*",
+        "grunt": "~0.4.0",
+        "grunt-contrib-connect": "*",
+        "wd": "*",
+        "supertest": "~0.5.1",
+        "mongodb": "*"
+    },
+    "license": "MIT",
+    "engine": {
+        "node": ">=0.4"
+    },
+    "engines": {
+        "node": "*"
+    },
+    "homepage": "http://rappidjs.com"
 }
