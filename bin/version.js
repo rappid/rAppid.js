@@ -3,13 +3,25 @@ var path = require('path'),
 
 var version = function (args, callback) {
 
-    var argv = require('optimist')(args).argv,
+    var argv = require('optimist')(args)
+            .describe("version", "the version to set")
+            .argv,
+        version = argv.version,
         file = argv._[0] || "package.json";
 
-    console.log(JSON.parse(fs.readFileSync(file)).version);
+    var fileContent = JSON.parse(fs.readFileSync(file));
+
+    if (version) {
+        // set version
+        fileContent.version = version;
+        fs.writeFileSync(file, JSON.stringify(fileContent));
+    }
+
+    console.log(fileContent.version);
+
 };
 
-version.usage = "rappidjs version [package.json]";
+version.usage = "rappidjs version [--version=setversion] [package.json]";
 
 module.exports = version;
 
