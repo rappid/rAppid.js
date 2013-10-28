@@ -622,7 +622,7 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
                         if (schema.hasOwnProperty(schemaKey)) {
                             schemaObject = schema[schemaKey];
                             if (schemaObject.generated) {
-                                var value = self._autoGenerateValue(schemaObject.key, context, model);
+                                var value = self._autoGenerateValue(schemaKey, context, model);
                                 if (!_.isUndefined(value)) {
                                     model.set(schemaKey, value);
                                 }
