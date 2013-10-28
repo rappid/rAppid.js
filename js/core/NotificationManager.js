@@ -24,7 +24,7 @@ define(["js/core/Component", "js/html/HtmlElement"], function (Component, HtmlEl
                 return null;
             }
 
-            var duration = this.$.duration || options;
+            var duration = options.duration || this.$.duration;
 
             var notification = this.$templates[templateName].createInstance(attributes);
 
