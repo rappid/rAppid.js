@@ -108,6 +108,7 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                 }
 
                 this.bind('add:dom', this._onDomAdded, this);
+                this.bind('remove:dom', this._onDomRemoved, this);
             },
 
             /**
@@ -120,6 +121,18 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                     this.$renderedChildren[i].trigger('add:dom', this.$el);
                 }
             },
+
+            /**
+             * This method is called when the element is removed from DOM
+             * @private
+             */
+            _onDomRemoved: function () {
+                this.$addedToDom = false;
+                for (var i = 0; i < this.$renderedChildren.length; i++) {
+                    this.$renderedChildren[i].trigger('remove:dom', this.$el);
+                }
+            },
+
             _inject: function () {
                 this.callBase();
 
@@ -513,12 +526,13 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
 
                     setTimeout(function () {
                         el.removeChild(child.$el);
+                        child.trigger('remove:dom', el);
                     }, time);
                 } else {
                     this.$el.removeChild(child.$el);
+                    child.trigger('remove:dom', child.$el);
                 }
             },
-
 
             _clearRenderedChildren: function () {
                 if (this.isRendered()) {
