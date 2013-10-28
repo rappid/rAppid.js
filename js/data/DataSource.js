@@ -432,7 +432,8 @@ define(["js/core/Component", "js/core/Base", "js/data/Collection", "underscore",
                     schemaDefinition,
                     schemaType,
                     value,
-                    factory;
+                    factory,
+                    newData = {};
 
                 // convert top level properties to Models respective to there schema
                 for (var key in schema) {
@@ -464,7 +465,7 @@ define(["js/core/Component", "js/core/Base", "js/data/Collection", "underscore",
 
                             if (value && value instanceof Array) {
                                 // only create the list if items are there
-                                list = data[key] = new List();
+                                list = newData[key] = new List();
 
                                 for (i = 0; i < value.length; i++) {
 
@@ -493,9 +494,9 @@ define(["js/core/Component", "js/core/Base", "js/data/Collection", "underscore",
                             var contextForChildren = this.$dataSource._getContext(schemaType, model, value);
                             if (contextForChildren) {
                                 if (model.$[key] instanceof Collection) {
-                                    data[key] = model.$[key];
+                                    newData[key] = model.$[key];
                                 } else {
-                                    list = data[key] = contextForChildren.createCollection(schemaType, (value instanceof Object) && !(value instanceof Array) ? value : null);
+                                    list = newData[key] = contextForChildren.createCollection(schemaType, (value instanceof Object) && !(value instanceof Array) ? value : null);
 
                                     list.$parent = contextForChildren.$contextModel;
 
@@ -506,7 +507,7 @@ define(["js/core/Component", "js/core/Base", "js/data/Collection", "underscore",
 
                             }
                         } else if (schemaType === Date && value && !(value instanceof Date)) {
-                            data[key] = moment(value, this.$dataSource.$.dateFormat).toDate();
+                            newData[key] = moment(value, this.$dataSource.$.dateFormat).toDate();
                         } else if (schemaType.classof(Entity) && value) {
                             if (schemaType instanceof TypeResolver) {
                                 factory = schemaType.resolve(value, key);
@@ -518,7 +519,7 @@ define(["js/core/Component", "js/core/Base", "js/data/Collection", "underscore",
                                 throw "Factory for type '" + key + "' isn't an instance of Entity";
                             }
 
-                            data[key] = entity = this.$dataSource._getContext(factory, model, value).createEntity(factory, this._getIdForValue(value, factory));
+                            newData[key] = entity = this.$dataSource._getContext(factory, model, value).createEntity(factory, this._getIdForValue(value, factory));
                             if (entity instanceof Entity && !(entity instanceof Model)) {
                                 entity.$parent = model;
                                 entity.$parentEntity = model;
@@ -529,7 +530,10 @@ define(["js/core/Component", "js/core/Base", "js/data/Collection", "underscore",
                     }
                 }
 
-                return model.parse(data);
+                // add all values that are not defined in schema ...
+                _.defaults(newData, data);
+
+                return model.parse(newData);
             },
 
             _getIdForValue: function (value, factory) {
@@ -562,7 +566,8 @@ define(["js/core/Component", "js/core/Base", "js/data/Collection", "underscore",
                     throw "data has to be an array";
                 }
                 var context,
-                    entity;
+                    entity,
+                    newData = [];
                 for (var i = 0; i < data.length; i++) {
                     var value = data[i];
                     if (!(value instanceof Model)) {
@@ -570,11 +575,11 @@ define(["js/core/Component", "js/core/Base", "js/data/Collection", "underscore",
                         context = this.$dataSource._getContext(collection.$modelFactory, collection, value);
                         entity = context.createEntity(collection.$modelFactory, this._getIdForValue(value, collection.$modelFactory));
                         entity.set(this._parseModel(entity, value, action, options));
-                        data[i] = entity;
+                        newData.push(entity);
                     }
                 }
 
-                return data;
+                return newData;
             },
 
             /**
