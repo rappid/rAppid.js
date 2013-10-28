@@ -91,7 +91,7 @@ define(["js/html/HtmlElement", "underscore", "moment"], function (HtmlElement, _
         },
 
         _renderChecked: function (checked) {
-            this.$el.checked = !!checked;
+            this.$el.checked = checked ? "checked" : false;
         },
 
         _transformValue: function (value) {
