@@ -1,6 +1,6 @@
 define(["js/core/Component", "js/html/HtmlElement"], function (Component, HtmlElement) {
 
-    return Component.inherit('js.core.Component', {
+    return Component.inherit('js.core.NotificationManager', {
 
         defaults: {
             /**
