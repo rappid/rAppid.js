@@ -153,6 +153,14 @@ define(["js/ui/View", 'js/data/Collection', 'js/core/List'], function (View, Col
             },
             _renderOpen: function (open) {
                 if (open) {
+                    if (this.$el.getBoundingClientRect) {
+                        var bottom = this.$el.getBoundingClientRect().bottom;
+                        var dropDownHeight = this.$.dropDownHeight;
+                        var screenHeight = window.innerHeight;
+                        if (bottom + dropDownHeight > screenHeight) {
+                            this.addClass("open-top");
+                        }
+                    }
                     this.addClass('open');
                     this.$.inputField.$el.focus();
                     this.$.inputField.$el.select();
@@ -161,6 +169,7 @@ define(["js/ui/View", 'js/data/Collection', 'js/core/List'], function (View, Col
                     this.$.tileList._updateVisibleItems(true);
                 } else {
                     this.removeClass('open');
+                    this.removeClass("open-top");
                 }
             }
         });
