@@ -1,6 +1,6 @@
 <DataSourceConfiguration xmlns="js.conf">
-    <ResourceConfiguration modelClassName="rest.model.Project" path="projects" upsert="true">
-        <ResourceConfiguration modelClassName="rest.model.IssueType" path="issueTypes" upsert="true"/>
+    <ResourceConfiguration modelClassName="rest.model.Project" path="projects" upsert="true" defaultSorting="+name">
+        <ResourceConfiguration modelClassName="rest.model.IssueType" path="issueTypes" upsert="true" defaultSorting="+created"/>
     </ResourceConfiguration>
     <ResourceConfiguration modelClassName="rest.model.Ticket" path="tickets">
         <ResourceConfiguration modelClassName="rest.model.Comment" path="comments"/>
