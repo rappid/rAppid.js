@@ -382,7 +382,9 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
 
                     model.set(processor.parse(model, payload));
 
-                    model.set('created', new Date());
+                    if(model.createdField){
+                        model.set(model.createdField, new Date());
+                    }
                 })
                 .seq(function (cb) {
                     self._beforeModelSave(model, context, cb);
