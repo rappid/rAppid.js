@@ -263,13 +263,19 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
                 })
                 .seq("query", function (cb) {
                     var query = self.$restHandler.parseQueryForResource(parameters, self);
+                    if (!query.query.sort) {
+                        // use default sorting
+                        var configuration = context.dataSource.getConfigurationForModelClass(this.vars.collection.$modelFactory);
+                        if (configuration && configuration.$.defaultSorting) {
+                            query.sort(configuration.$.defaultSorting);
+                        }
+                    }
                     self._modifyCollectionQuery(query, cb);
                 })
                 .seq("page", function (cb) {
 
                     this.vars.collection = this.vars.collection.query(this.vars.query);
                     var pageSize = context.dataSource.$.collectionPageSize;
-                    options = self._createOptionsForCollectionFetch(context, parameters);
 
                     if (parameters["limit"]) {
                         limit = parseInt(parameters["limit"]);
