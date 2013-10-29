@@ -249,11 +249,18 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
         },
         /**
          * Removes the model from the DataSource
+         * Note: This does NOT remove the model from the collection.
+         * This should be done by invalidating the page cache of the collection
          *
-         * @param {Object} options
-         * @param {Function} callback
+         * @param {Object} [options] - options for remove action
+         * @param {Function} callback - The callback
          */
         remove: function (options, callback) {
+            if (options instanceof Function) {
+                callback = options;
+                options = null;
+            }
+            options = options || {};
             // TODO: handle multiple access
             try {
                 var status = this._status();
