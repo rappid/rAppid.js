@@ -238,7 +238,7 @@ define(["js/core/Component", "srv/auth/AuthenticationProvider", "flow", "srv/aut
                     })
                     // validates and saves user
                     .seq("user", function (cb) {
-                        user.validateAndSave(null, cb)
+                        user.validateAndSave({upsert: true}, cb)
                     })
                     // creates an identity for the user
                     .seq(function (cb) {
