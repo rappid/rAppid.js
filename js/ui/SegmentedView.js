@@ -20,10 +20,10 @@ define(
             },
 
             addChild: function (child) {
-                this.callBase();
                 if (child instanceof HtmlElement) {
                     this.$views.push(child);
                 }
+                this.callBase();
             },
 
             _renderChild: function (child) {
