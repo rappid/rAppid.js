@@ -871,11 +871,22 @@ define(["js/core/Component", "js/core/Base", "js/data/Collection", "underscore",
              * @param {Function} factory
              * @param {String|Number} [id]
              * @param {js.data.DataSource.Context} [context]
-             * @return {js.data.Entity}
+             * @return {js.data.Entity|js.data.Model}
              */
             createEntity: function (factory, id, context) {
                 context = context || this.getContextByProperties();
                 return context.createEntity(factory, id);
+            },
+
+            /***
+             * Create an instance of {js.data.Model}
+             * @param {Function} factory
+             * @param {String|Number} [id]
+             * @param {js.data.DataSource.Context} [context]
+             * @return {js.data.Model}
+             */
+            createModel: function (factory, id, context) {
+                return this.createEntity(factory, id, context);
             },
 
             /***
