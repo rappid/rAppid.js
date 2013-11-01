@@ -19,6 +19,16 @@
             "app": "ui/ItemsViewTest.xml",
             "test": "ui/ItemsViewTests.js",
             "type": "browser"
+        },
+        {
+            "app": "ui/TabViewTest.xml",
+            "test": "ui/TabViewTests.js",
+            "type": "browser"
+        },
+        {
+            "app": "core/DomElementTest.xml",
+            "test": "core/DomElementTests.js",
+            "type": "browser"
         }
     ],
     "core": [
