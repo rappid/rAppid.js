@@ -9,6 +9,7 @@ define(["js/ui/View", 'js/data/Collection', 'js/core/List'], function (View, Col
                 selectedItem: null,
                 searchTerm: "",
                 placeHolder: 'Select Something',
+                searchPlaceHolder: '',
                 queryCreator: null,
                 itemHeight: 30,
                 dropDownHeight: 200

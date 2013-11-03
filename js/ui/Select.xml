@@ -14,7 +14,7 @@
     </a>
     <div class="select-drop" onclick="_onContainerSelect">
         <div class="select-search">
-            <input type="text" cid="inputField" value="{{searchTerm}}" onkeydown="_onKeyDown"/>
+            <input type="text" cid="inputField" value="{{searchTerm}}" onkeydown="_onKeyDown" placeholder="{searchPlaceHolder}"/>
         </div>
         <ui:TileList
                 cid="tileList"
