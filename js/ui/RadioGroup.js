@@ -22,11 +22,15 @@ define(['js/ui/View', 'xaml!js/ui/Radio'], function (View, Radio) {
             child.set("name", this.$.name);
             child.bind("change:checked", this._onRadioSelected, this);
 
+            this.callBase();
+
             if (child.$.checked) {
                 this.set("value", child.$.value);
+            } else if (child.$.value === this.$.value) {
+                child.set("checked", true);
             }
 
-            this.callBase();
+
         },
 
         _commitValue: function (value) {
