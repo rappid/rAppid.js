@@ -1,0 +1,72 @@
+{
+    "methods": [
+        {
+            "type": "Method",
+            "parameter": [
+                {
+                    "name": "context"
+                }
+            ],
+            "annotations": {},
+            "definedInFile": "srv/core/HttpError.js",
+            "lineNumbers": [
+                15,
+                17
+            ],
+            "definedBy": "srv.core.HttpError",
+            "name": "_beforeSend",
+            "visibility": "protected"
+        },
+        {
+            "type": "Method",
+            "parameter": [
+                {
+                    "name": "message"
+                },
+                {
+                    "name": "allowedMethods"
+                },
+                {
+                    "name": "statusText"
+                }
+            ],
+            "annotations": {},
+            "definedInFile": "srv/error/AuthorizationError.js",
+            "lineNumbers": [
+                4,
+                7
+            ],
+            "definedBy": "srv.core.HttpError",
+            "overwritesMethod": true,
+            "name": "ctor",
+            "visibility": "public"
+        },
+        {
+            "type": "Method",
+            "parameter": [],
+            "annotations": {},
+            "definedInFile": "srv/core/HttpError.js",
+            "lineNumbers": [
+                19,
+                28
+            ],
+            "definedBy": "srv.core.HttpError",
+            "name": "toString",
+            "visibility": "public"
+        }
+    ],
+    "staticMethods": [],
+    "defaults": {},
+    "properties": {},
+    "fqClassName": "srv.error.AuthorizationError",
+    "inherit": "srv.core.HttpError",
+    "dependencies": [
+        "srv.core.HttpError"
+    ],
+    "type": "js",
+    "file": "srv/error/AuthorizationError.js",
+    "package": "srv.error",
+    "inheritancePath": [
+        "srv.core.HttpError"
+    ]
+}
