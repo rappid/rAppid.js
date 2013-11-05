@@ -1,0 +1,82 @@
+{
+    "methods": [
+        {
+            "type": "Method",
+            "parameter": [
+                {
+                    "types": [
+                        "Function"
+                    ],
+                    "name": "callback",
+                    "optional": false,
+                    "description": "The callback function"
+                },
+                {
+                    "types": [
+                        "Object"
+                    ],
+                    "name": "scope",
+                    "optional": false,
+                    "description": "The callback scope"
+                },
+                {
+                    "name": "parameters"
+                }
+            ],
+            "annotations": {},
+            "definedInFile": "js/core/Bindable.js",
+            "lineNumbers": [
+                1002,
+                1005
+            ],
+            "name": "ctor",
+            "visibility": "public"
+        },
+        {
+            "type": "Method",
+            "parameter": [
+                {
+                    "types": [
+                        "js.core.EventDispatcher.Event"
+                    ],
+                    "name": "event",
+                    "optional": false
+                },
+                {
+                    "types": [
+                        "Object"
+                    ],
+                    "name": "caller",
+                    "optional": false
+                }
+            ],
+            "annotations": {},
+            "definedInFile": "js/core/Bindable.js",
+            "lineNumbers": [
+                1011,
+                1047
+            ],
+            "name": "trigger",
+            "visibility": "public"
+        }
+    ],
+    "staticMethods": [],
+    "defaults": {},
+    "properties": {},
+    "fqClassName": "js.core.Bindable.EventHandler",
+    "dependencies": [
+        "js.core.Binding",
+        "js.core.BindingCreator",
+        "js.core.EventDispatcher",
+        "js.lib.parser",
+        "underscore"
+    ],
+    "description": " unbind",
+    "see": [
+        "{js.core.MessageBus}",
+        "{js.core.MessageBus}"
+    ],
+    "type": "js",
+    "file": "js/core/Bindable.js",
+    "package": "js.core"
+}

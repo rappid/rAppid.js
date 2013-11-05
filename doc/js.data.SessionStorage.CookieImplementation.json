@@ -1,0 +1,106 @@
+{
+    "methods": [
+        {
+            "type": "Method",
+            "parameter": [
+                {
+                    "name": "sKey"
+                }
+            ],
+            "annotations": {},
+            "definedInFile": "js/data/SessionStorage.js",
+            "lineNumbers": [
+                50,
+                55
+            ],
+            "name": "getItem",
+            "visibility": "public"
+        },
+        {
+            "type": "Method",
+            "parameter": [
+                {
+                    "name": "nKeyId"
+                }
+            ],
+            "annotations": {},
+            "definedInFile": "js/data/SessionStorage.js",
+            "lineNumbers": [
+                57,
+                59
+            ],
+            "name": "key",
+            "visibility": "public"
+        },
+        {
+            "type": "Method",
+            "parameter": [
+                {
+                    "name": "sKey"
+                }
+            ],
+            "annotations": {},
+            "definedInFile": "js/data/SessionStorage.js",
+            "lineNumbers": [
+                75,
+                81
+            ],
+            "name": "removeItem",
+            "visibility": "public"
+        },
+        {
+            "type": "Method",
+            "parameter": [
+                {
+                    "name": "sKey"
+                },
+                {
+                    "name": "sValue"
+                }
+            ],
+            "annotations": {},
+            "definedInFile": "js/data/SessionStorage.js",
+            "lineNumbers": [
+                61,
+                67
+            ],
+            "name": "setItem",
+            "visibility": "public"
+        },
+        {
+            "type": "Method",
+            "parameter": [],
+            "annotations": {},
+            "definedInFile": "js/data/SessionStorage.js",
+            "lineNumbers": [
+                71,
+                73
+            ],
+            "name": "size",
+            "visibility": "public"
+        }
+    ],
+    "staticMethods": [],
+    "defaults": {},
+    "properties": {
+        "length": {
+            "name": "length",
+            "visibility": "public",
+            "definedInFile": "js/data/SessionStorage.js",
+            "lineNumbers": [
+                69,
+                69
+            ],
+            "propertyType": "value"
+        }
+    },
+    "fqClassName": "js.data.SessionStorage.CookieImplementation",
+    "dependencies": [
+        "inherit",
+        "js.core.Component"
+    ],
+    "description": " TODO: implement length as getter",
+    "type": "js",
+    "file": "js/data/SessionStorage.js",
+    "package": "js.data"
+}

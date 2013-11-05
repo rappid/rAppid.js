@@ -1,0 +1,43 @@
+{
+    "methods": [
+        {
+            "type": "Method",
+            "parameter": [
+                {
+                    "name": "message"
+                },
+                {
+                    "name": "errorCode"
+                }
+            ],
+            "annotations": {},
+            "definedInFile": "srv/error/RegistrationError.js",
+            "lineNumbers": [
+                4,
+                10
+            ],
+            "name": "ctor",
+            "visibility": "public"
+        },
+        {
+            "type": "Method",
+            "parameter": [],
+            "annotations": {},
+            "definedInFile": "srv/error/RegistrationError.js",
+            "lineNumbers": [
+                12,
+                21
+            ],
+            "name": "toString",
+            "visibility": "public"
+        }
+    ],
+    "staticMethods": [],
+    "defaults": {},
+    "properties": {},
+    "fqClassName": "srv.error.RegistrationError",
+    "dependencies": [],
+    "type": "js",
+    "file": "srv/error/RegistrationError.js",
+    "package": "srv.error"
+}
