@@ -530,8 +530,8 @@
             },
             "definedInFile": "js/data/Model.js",
             "lineNumbers": [
-                297,
-                303
+                304,
+                310
             ],
             "description": "Returns CREATED if identifier() is set, NEW if identifier is null or undefined and DELETED if identifier is false.",
             "returns": {
@@ -734,8 +734,8 @@
             "annotations": {},
             "definedInFile": "js/data/Model.js",
             "lineNumbers": [
-                325,
-                334
+                332,
+                341
             ],
             "description": "Converts the identifier to the given type in the schema",
             "returns": {
@@ -1171,8 +1171,8 @@
             },
             "definedInFile": "js/data/Model.js",
             "lineNumbers": [
-                316,
-                318
+                323,
+                325
             ],
             "description": "Returns true if status is CREATED",
             "returns": {
@@ -1231,8 +1231,8 @@
             },
             "definedInFile": "js/data/Model.js",
             "lineNumbers": [
-                308,
-                310
+                315,
+                317
             ],
             "description": "Returns true if status is NEW",
             "returns": {
@@ -1350,23 +1350,25 @@
                         "Object"
                     ],
                     "name": "options",
-                    "optional": false
+                    "optional": true,
+                    "description": "options for remove action"
                 },
                 {
                     "types": [
                         "Function"
                     ],
                     "name": "callback",
-                    "optional": false
+                    "optional": false,
+                    "description": "The callback"
                 }
             ],
             "annotations": {},
             "definedInFile": "js/data/Model.js",
             "lineNumbers": [
-                256,
-                277
+                258,
+                284
             ],
-            "description": "Removes the model from the DataSource\n",
+            "description": "Removes the model from the DataSource\nNote: This does NOT remove the model from the collection.\nThis should be done by invalidating the page cache of the collection\n",
             "definedBy": "js.data.Model",
             "name": "remove",
             "visibility": "public"

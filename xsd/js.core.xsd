@@ -17,6 +17,7 @@
     <element name="Injection" type="ns:Injection"/>
     <element name="Module" type="ns:Module"/>
     <element name="ModuleLoader" type="ns:ModuleLoader"/>
+    <element name="NotificationManager" type="ns:NotificationManager"/>
     <element name="PopupManager" type="ns:PopupManager"/>
     <element name="Repeat" type="ns:Repeat"/>
     <element name="Router" type="ns:Router"/>
@@ -168,6 +169,7 @@ The resulting class attributes is the union from class and componentClass of the
                     </documentation>
                     </annotation>
                 </attribute>
+                <attribute name="enabled" default="true"/>
             </extension>
         </complexContent>
     </complexType>
@@ -276,13 +278,54 @@ The resulting class attributes is the union from class and componentClass of the
                 <sequence>
                     <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
                 </sequence>
-                <attribute name="currentModuleName"/>
+                <attribute name="currentModuleName">
+                    <annotation>
+                        <documentation>
+                        The current module name
+                    </documentation>
+                    </annotation>
+                </attribute>
                 <attribute name="tagName" default="div"/>
-                <attribute name="state"/>
+                <attribute name="state">
+                    <annotation>
+                        <documentation>
+                        The current state - is set to "loading" or "loading unloading"
+Is rendered to css className
+                    </documentation>
+                    </annotation>
+                </attribute>
                 <attribute name="router" use="required">
                     <annotation>
                         <documentation>
                         the router used for automatically registering routes from {@link js.conf.ModuleConfiguration}
+
+                    </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+    <complexType name="NotificationManager">
+        <complexContent>
+            <extension base="ns:Component">
+                <annotation>
+                    <documentation source="http://www.rappidjs.com/#/api/js.core.NotificationManager"></documentation>
+                </annotation>
+                <sequence>
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+                <attribute name="duration" default="3">
+                    <annotation>
+                        <documentation>
+                        The duration in seconds
+
+                    </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="containerClass" default="notifications">
+                    <annotation>
+                        <documentation>
+                        The css class for the container, which contains the notifications
 
                     </documentation>
                     </annotation>
@@ -315,6 +358,7 @@ The resulting class attributes is the union from class and componentClass of the
                     <annotation>
                         <documentation>
                         An array or a List of items
+
                     </documentation>
                     </annotation>
                 </attribute>
