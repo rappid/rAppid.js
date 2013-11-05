@@ -285,7 +285,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
                             for (var name in inject) {
                                 if (inject.hasOwnProperty(name)) {
                                     try {
-                                        this.$[name] = injection.getInstance(inject[name]);
+                                        this.set(name, injection.getInstance(inject[name]));
                                     } catch (e) {
 
                                         if (_.isString(e)) {
@@ -752,7 +752,10 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
                             var parameters = pathElement.parameter;
                             for (var i = 0; i < parameters.length; i++) {
                                 var param = parameters[i];
-                                if (_.isObject(param) && param.type && param.path) {
+
+                                if (_.isArray(param)) {
+                                    parameters[i] = this.get(param);
+                                } else if (_.isObject(param) && param.type && param.path) {
                                     parameters[i] = this.get(param.path);
                                 }
                             }
