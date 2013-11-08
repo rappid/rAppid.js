@@ -107,8 +107,8 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                     }
                 }
 
-                this.bind('add:dom', this._onDomAdded, this);
-                this.bind('remove:dom', this._onDomRemoved, this);
+                this.bind('dom:add', this._onDomAdded, this);
+                this.bind('dom:remove', this._onDomRemoved, this);
             },
 
             /**
@@ -118,7 +118,7 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
             _onDomAdded: function () {
                 this.$addedToDom = true;
                 for (var i = 0; i < this.$renderedChildren.length; i++) {
-                    this.$renderedChildren[i].trigger('add:dom', this.$el);
+                    this.$renderedChildren[i].trigger('dom:add', this.$el);
                 }
             },
 
@@ -129,7 +129,7 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
             _onDomRemoved: function () {
                 this.$addedToDom = false;
                 for (var i = 0; i < this.$renderedChildren.length; i++) {
-                    this.$renderedChildren[i].trigger('remove:dom', this.$el);
+                    this.$renderedChildren[i].trigger('dom:remove', this.$el);
                 }
             },
 
@@ -406,7 +406,7 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                         }
 
                         if (this.$addedToDom) {
-                            child.trigger('add:dom', this.$el);
+                            child.trigger('dom:add', this.$el);
                         }
                     } else {
                         this.$invisibleChildMap[child.$cid] = child;
@@ -740,7 +740,7 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                         this.$el.appendChild(child.$el);
                     }
                     if (this.$addedToDom) {
-                        child.trigger('add:dom', this.$el);
+                        child.trigger('dom:add', this.$el);
                     }
                     delete this.$invisibleChildMap[child.$cid];
                 }
