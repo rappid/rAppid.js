@@ -59,7 +59,6 @@
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="enabled" default="true"/>
                 <attribute name="position">
                     <annotation>
                         <documentation>

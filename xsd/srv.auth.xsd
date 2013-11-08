@@ -1,0 +1,140 @@
+<schema targetNamespace="srv.auth"
+    xmlns="http://www.w3.org/2001/XMLSchema"
+    xmlns:ns1="srv.core"
+    xmlns:ns2="js.core"
+    xmlns:ns="srv.auth">
+    <import/>
+    <import/>
+    <element name="AuthenticationFilter" type="ns:AuthenticationFilter"/>
+    <element name="AuthenticationProvider" type="ns:AuthenticationProvider"/>
+    <element name="AuthorizationProvider" type="ns:AuthorizationProvider"/>
+    <element name="DataSourceAuthenticationProvider" type="ns:DataSourceAuthenticationProvider"/>
+    <element name="LDAPAuthenticationProvider" type="ns:LDAPAuthenticationProvider"/>
+    <complexType name="AuthenticationFilter">
+        <complexContent>
+            <extension base="ns1:Filter">
+                <annotation>
+                    <documentation source="http://www.rappidjs.com/#/api/srv.auth.AuthenticationFilter"></documentation>
+                </annotation>
+                <sequence>
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+    <complexType name="AuthenticationProvider">
+        <complexContent>
+            <extension base="ns2:Component">
+                <annotation>
+                    <documentation source="http://www.rappidjs.com/#/api/srv.auth.AuthenticationProvider"></documentation>
+                </annotation>
+                <sequence>
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+                <attribute name="name"/>
+            </extension>
+        </complexContent>
+    </complexType>
+    <complexType name="AuthorizationProvider">
+        <complexContent>
+            <extension base="ns2:Component">
+                <annotation>
+                    <documentation source="http://www.rappidjs.com/#/api/srv.auth.AuthorizationProvider"></documentation>
+                </annotation>
+                <sequence>
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+    <complexType name="DataSourceAuthenticationProvider">
+        <complexContent>
+            <extension base="ns:AuthenticationProvider">
+                <annotation>
+                    <documentation source="http://www.rappidjs.com/#/api/srv.auth.DataSourceAuthenticationProvider"></documentation>
+                </annotation>
+                <sequence>
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+                <attribute name="userModelClassName">
+                    <annotation>
+                        <documentation>
+                        The user model className for fetching the User
+                    </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="dataSource">
+                    <annotation>
+                        <documentation>
+                        The dataSource for the user
+                    </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="algorithm" default="sha1">
+                    <annotation>
+                        <documentation>
+                        The hashing algorithm
+                    </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="delimiter" default=":">
+                    <annotation>
+                        <documentation>
+                        The delimiter for creating the password hash
+                    </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="maxLoginAttempts" default="3">
+                    <annotation>
+                        <documentation>
+                        Maximum login attempts for failed logins
+NULL is unlimited
+                    </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="blockTime" default="3600">
+                    <annotation>
+                        <documentation>
+                        Block time in seconds
+                    </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="usernameField" default="username">
+                    <annotation>
+                        <documentation>
+                        The field for fetching the user
+                    </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="maxPasswordLength" default="60">
+                    <annotation>
+                        <documentation>
+                        Max. length of passwords
+                    </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="authenticationField" default="authentication">
+                    <annotation>
+                        <documentation>
+                        The field which contains the authentication data in a user
+                    </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+    <complexType name="LDAPAuthenticationProvider">
+        <complexContent>
+            <extension base="ns:AuthenticationProvider">
+                <annotation>
+                    <documentation source="http://www.rappidjs.com/#/api/srv.auth.LDAPAuthenticationProvider"></documentation>
+                </annotation>
+                <sequence>
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+                <attribute name="host"/>
+                <attribute name="dnTemplate" default="uid=%username%"/>
+            </extension>
+        </complexContent>
+    </complexType>
+</schema>

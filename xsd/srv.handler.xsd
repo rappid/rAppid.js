@@ -6,7 +6,7 @@
     <element name="AuthenticationHandler" type="ns:AuthenticationHandler"/>
     <element name="ExceptionHandler" type="ns:ExceptionHandler"/>
     <element name="NodeRenderingHandler" type="ns:NodeRenderingHandler"/>
-    <element name="SessionHandler" type="ns:SessionHandler"/>
+    <element name="RegistrationHandler" type="ns:RegistrationHandler"/>
     <element name="RestHandler" type="ns:RestHandler"/>
     <element name="StaticFileHandler" type="ns:StaticFileHandler"/>
     <complexType name="AuthenticationHandler">
@@ -65,15 +65,16 @@
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="SessionHandler">
+    <complexType name="RegistrationHandler">
         <complexContent>
             <extension base="ns1:Handler">
                 <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/srv.handler.SessionHandler"></documentation>
+                    <documentation source="http://www.rappidjs.com/#/api/srv.handler.RegistrationHandler"></documentation>
                 </annotation>
                 <sequence>
                     <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
                 </sequence>
+                <attribute name="regEx"/>
                 <attribute name="userPath" default="/api/users"/>
             </extension>
         </complexContent>

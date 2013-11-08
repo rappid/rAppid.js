@@ -71,6 +71,7 @@
                 <sequence>
                     <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
                 </sequence>
+                <attribute name="rows" default="2"/>
                 <attribute name="value"/>
                 <attribute name="size" default="large"/>
                 <attribute name="placeholder"/>

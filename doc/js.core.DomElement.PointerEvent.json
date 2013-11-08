@@ -70,8 +70,8 @@
             "annotations": {},
             "definedInFile": "js/core/DomElement.js",
             "lineNumbers": [
-                992,
-                1000
+                1006,
+                1014
             ],
             "definedBy": "js.core.Base",
             "overwritesMethod": true,

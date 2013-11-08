@@ -10,6 +10,7 @@
     <element name="LocalStorageDataSource" type="ns:LocalStorageDataSource"/>
     <element name="PagedDataView" type="ns:PagedDataView"/>
     <element name="RestDataSource" type="ns:RestDataSource"/>
+    <element name="SessionStorage" type="ns:SessionStorage"/>
     <complexType name="DataSource">
         <complexContent>
             <extension base="ns1:Component">
@@ -160,6 +161,20 @@ Set's the default collection page size for fetching collection
                     </documentation>
                     </annotation>
                 </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+    <complexType name="SessionStorage">
+        <complexContent>
+            <extension base="ns1:Component">
+                <annotation>
+                    <documentation source="http://www.rappidjs.com/#/api/js.data.SessionStorage">
+                                Session Storage implementation
+                            </documentation>
+                </annotation>
+                <sequence>
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
             </extension>
         </complexContent>
     </complexType>

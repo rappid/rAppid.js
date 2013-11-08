@@ -47,6 +47,8 @@
     <element name="Select" type="ns:Select"/>
     <element name="SelectClass" type="ns:SelectClass"/>
     <element name="SelectionView" type="ns:SelectionView"/>
+    <element name="Slider" type="ns:Slider"/>
+    <element name="SliderClass" type="ns:SliderClass"/>
     <element name="SplitButton" type="ns:SplitButton"/>
     <element name="SplitButtonClass" type="ns:SplitButtonClass"/>
     <element name="Tab" type="ns:Tab"/>
@@ -70,6 +72,7 @@
                 <sequence>
                     <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
                 </sequence>
+                <attribute name="labelClass"/>
                 <attribute name="type">
                     <annotation>
                         <documentation>
@@ -489,6 +492,8 @@
                 <attribute name="label"/>
                 <attribute name="inputId"/>
                 <attribute name="error"/>
+                <attribute name="required"/>
+                <attribute name="requiredClass" default="required"/>
             </extension>
         </complexContent>
     </complexType>
@@ -504,6 +509,8 @@
                 <attribute name="label"/>
                 <attribute name="inputId"/>
                 <attribute name="error"/>
+                <attribute name="required"/>
+                <attribute name="requiredClass" default="required"/>
             </extension>
         </complexContent>
     </complexType>
@@ -722,7 +729,7 @@ is specified but a protocol for the href (e.g. http://) if will use external by 
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="buttonClass">
+                <attribute name="buttonClass" default="btn">
                     <annotation>
                         <documentation>
                         The class of the inner link element
@@ -789,7 +796,7 @@ is specified but a protocol for the href (e.g. http://) if will use external by 
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="buttonClass">
+                <attribute name="buttonClass" default="btn">
                     <annotation>
                         <documentation>
                         The class of the inner link element
@@ -961,7 +968,7 @@ is specified but a protocol for the href (e.g. http://) if will use external by 
     </complexType>
     <complexType name="SegmentedView">
         <complexContent>
-            <extension base="ns:ItemsView">
+            <extension base="ns:View">
                 <annotation>
                     <documentation source="http://www.rappidjs.com/#/api/js.ui.SegmentedView"></documentation>
                 </annotation>
@@ -969,6 +976,14 @@ is specified but a protocol for the href (e.g. http://) if will use external by 
                     <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
                 </sequence>
                 <attribute name="visibleView"/>
+                <attribute name="visibleIndex">
+                    <annotation>
+                        <documentation>
+                        shows the component with the visible index
+
+                    </documentation>
+                    </annotation>
+                </attribute>
             </extension>
         </complexContent>
     </complexType>
@@ -985,6 +1000,7 @@ is specified but a protocol for the href (e.g. http://) if will use external by 
                 <attribute name="selectedItem"/>
                 <attribute name="searchTerm"/>
                 <attribute name="placeHolder" default="Select Something"/>
+                <attribute name="searchPlaceHolder"/>
                 <attribute name="queryCreator"/>
                 <attribute name="itemHeight" default="30"/>
                 <attribute name="dropDownHeight" default="200"/>
@@ -1004,6 +1020,7 @@ is specified but a protocol for the href (e.g. http://) if will use external by 
                 <attribute name="selectedItem"/>
                 <attribute name="searchTerm"/>
                 <attribute name="placeHolder" default="Select Something"/>
+                <attribute name="searchPlaceHolder"/>
                 <attribute name="queryCreator"/>
                 <attribute name="itemHeight" default="30"/>
                 <attribute name="dropDownHeight" default="200"/>
@@ -1092,6 +1109,133 @@ Default is false
                     </documentation>
                     </annotation>
                 </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+    <complexType name="Slider">
+        <complexContent>
+            <extension base="ns:SliderClass">
+                <annotation>
+                    <documentation source="http://www.rappidjs.com/#/api/js.ui.Slider"></documentation>
+                </annotation>
+                <sequence>
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+                <attribute name="min" default="1">
+                    <annotation>
+                        <documentation>
+                        The minimum value
+                    </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="max" default="100">
+                    <annotation>
+                        <documentation>
+                        The maximum value
+                    </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="step" default="1">
+                    <annotation>
+                        <documentation>
+                        The step size which the handler should move
+                    </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="range">
+                    <annotation>
+                        <documentation>
+                        If range is true two handles will be shown
+                    </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="value" default="1">
+                    <annotation>
+                        <documentation>
+                        The current value
+                    </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="startValue" default="1">
+                    <annotation>
+                        <documentation>
+                        The current start value, only used when range is set to true
+                    </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="orientation">
+                    <annotation>
+                        <documentation>
+                        The orientation of the slider.
+Possible values are "horizontal" and "vertical"
+
+                    </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+    <complexType name="SliderClass">
+        <complexContent>
+            <extension base="ns:View">
+                <annotation>
+                    <documentation source="http://www.rappidjs.com/#/api/js.ui.SliderClass"></documentation>
+                </annotation>
+                <sequence>
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+                <attribute name="min" default="1">
+                    <annotation>
+                        <documentation>
+                        The minimum value
+                    </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="max" default="100">
+                    <annotation>
+                        <documentation>
+                        The maximum value
+                    </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="step" default="1">
+                    <annotation>
+                        <documentation>
+                        The step size which the handler should move
+                    </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="range">
+                    <annotation>
+                        <documentation>
+                        If range is true two handles will be shown
+                    </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="value" default="1">
+                    <annotation>
+                        <documentation>
+                        The current value
+                    </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="startValue" default="1">
+                    <annotation>
+                        <documentation>
+                        The current start value, only used when range is set to true
+                    </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="orientation">
+                    <annotation>
+                        <documentation>
+                        The orientation of the slider.
+Possible values are "horizontal" and "vertical"
+
+                    </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="oninput" default="_onInputHandler" type="string"/>
             </extension>
         </complexContent>
     </complexType>

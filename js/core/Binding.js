@@ -108,7 +108,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
                                     path: path,
                                     type: TYPE_NORMAL,
                                     parent: null
-                                }, this.$.target, cb);
+                                }, this.$.scope, cb);
                             }
                         }
 
