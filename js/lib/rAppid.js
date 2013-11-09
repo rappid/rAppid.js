@@ -602,7 +602,8 @@ if (typeof requirejs !== "undefined") {
     ApplicationContext.prototype.ajax = function (url, options, callback) {
 
         if (!(/^http.*$/.test(url)) && this.$config.applicationUrl) {
-            url = this.$config.applicationUrl + '/' + url;
+            // replace leading "/" in url
+            url = this.$config.applicationUrl + '/' + url.replace(/^\//,"");
         }
 
         rAppid.ajax(url, options, callback);
