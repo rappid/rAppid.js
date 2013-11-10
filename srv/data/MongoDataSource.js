@@ -129,12 +129,15 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
         },
 
         _getIdForValue: function (value, factory) {
-
+            var id;
             if (factory.classof && factory.classof(Model)) {
-                return value[factory.prototype.idField];
+                id = value[factory.prototype.idField];
+                if(id !== undefined){
+                    return id;
+                }
             }
 
-            var id = this.callBase();
+            id = this.callBase();
 
             if (id === undefined && value[ID_KEY] instanceof MongoDb.ObjectID) {
                 id = value[ID_KEY].toHexString();
