@@ -1100,7 +1100,7 @@ define(["js/core/Component", "js/core/Base", "js/data/Collection", "underscore",
                 return JSON.parse(text);
             },
             getContentType: function () {
-                return "application/json";
+                return "application/json; charset=UTF-8";
             }
         });
 
