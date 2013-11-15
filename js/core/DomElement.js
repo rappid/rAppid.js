@@ -526,11 +526,11 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
 
                     setTimeout(function () {
                         el.removeChild(child.$el);
-                        child.trigger('remove:dom', el);
+                        child.trigger('dom:remove', el);
                     }, time);
                 } else {
                     this.$el.removeChild(child.$el);
-                    child.trigger('remove:dom', child.$el);
+                    child.trigger('dom:remove', child.$el);
                 }
             },
 
