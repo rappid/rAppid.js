@@ -296,8 +296,6 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
                     } else if (nScope instanceof Object) {
                         // we have a object which is not bindable
                         this.$jsonObject = nScope;
-                    } else if (_.isString(nScope)) {
-                        this.$jsonObject = nScope;
                     }
 
                 }
