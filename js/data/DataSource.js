@@ -819,6 +819,9 @@ define(["js/core/Component", "js/core/Base", "js/data/Collection", "underscore",
                                 context = context.$contextModel.$context;
 
                             }
+                            if(context){
+                                return context;
+                            }
                         }
                     }
                 }
