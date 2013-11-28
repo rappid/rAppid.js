@@ -474,7 +474,7 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                                 errors.push(this._createError("isUndefinedError", key + " is required", key));
                             } else if (value && !this._isValidType(value, schemaObject.type)) {
                                 errors.push(this._createError("wrongTypeError", key + " is from wrong type", key));
-                            } else if (value instanceof Entity) {
+                            } else if (value instanceof Entity && value.$isEntity) {
                                 subEntities.push({
                                     key: key,
                                     value: value
