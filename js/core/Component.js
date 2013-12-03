@@ -532,6 +532,8 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
             /***
              * Converts all child nodes of a descriptor to instances of Components or TextElement
              * @param descriptor
+             * @param attributes
+             * @param rootScope
              */
             _getChildrenFromDescriptor: function (descriptor, rootScope, attributes) {
                 var childrenFromDescriptor = [], node, component;
