@@ -7,8 +7,8 @@ describe("#ItemsView", function () {
                 that.have.items(window.application.$.items.size());
 
 
-            window.application.$.items.each(function(item, index){
-                $expect($("#simple").find('li').eq(index)).to.have.attr('class', ""+item.id).and.to.have.text(item.value);
+            window.application.$.items.each(function (item, index) {
+                $expect($("#simple").find('li').eq(index)).to.have.attr('class', "" + item.id).and.to.have.text(item.value);
             });
 
         });
@@ -18,13 +18,13 @@ describe("#ItemsView", function () {
             value = "H",
             id = 4;
 
-        it('should render item at specific index', function(){
+        it('should render item at specific index', function () {
 
 
             window.application.addItemAt({
                 id: id,
                 value: value
-            },index);
+            }, index);
 
             $expect("#simple").to.have.children("li").
                 that.have.items(window.application.$.items.size());
@@ -34,23 +34,23 @@ describe("#ItemsView", function () {
             });
         });
 
-        it('should remove item from DOM at specific index', function(){
+        it('should remove item from DOM at specific index', function () {
 
             window.application.removeItemAt(index);
 
             $expect("#simple").to.have.children("li").
                 that.have.items(2);
 
-            $expect($("#simple").find('li').eq(index)).to.not.have.attr('class',""+id).and.to.not.have.text(value);
+            $expect($("#simple").find('li').eq(index)).to.not.have.attr('class', "" + id).and.to.not.have.text(value);
         });
 
-        it('should remove all items from DOM on reset', function(){
+        it('should remove all items from DOM on reset', function () {
             window.application.resetItems();
 
             $expect("#simple").to.be.empty();
         });
 
-        it.skip('should rerender on sort', function(){
+        it.skip('should rerender on sort', function () {
             // TODO: implement tests
         });
 
@@ -64,6 +64,19 @@ describe("#ItemsView", function () {
         });
 
     });
+
+    describe('#cidTemplate', function () {
+
+        it('should register child elements with cid in the loop scope', function () {
+
+            $expect('#withCid').to.exist().and.to.have.children('div').that.have.items(2);
+            window.application.$.cidTemplateItems.each(function (item, index) {
+                $expect($("#withCid").find('div.inner-container').eq(index)).to.have.text(item.value);
+            });
+
+        });
+
+    })
 
 
 });

@@ -78,7 +78,7 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                 enabled: true
             },
 
-            ctor: function (attributes, descriptor, systemManager, parentScope, rootScope) {
+            ctor: function (attributes, descriptor, systemManager, parentScope, rootScope, cidScope) {
                 this.$addedToDom = false;
                 this.$renderMap = {};
                 this.$children = [];
