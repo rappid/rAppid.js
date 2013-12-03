@@ -62,6 +62,7 @@ define(["js/ui/View"], function (View) {
                             if (childView) {
                                 childView.$parentScope = this.$parentScope;
                                 childView.$rootScope = this.$rootScope;
+                                childView.$cidScope = this.$cidScope;
                                 this.$viewMap[key] = childView;
                             }
                         }

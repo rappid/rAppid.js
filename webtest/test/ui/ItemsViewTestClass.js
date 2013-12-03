@@ -27,6 +27,15 @@ define(["js/core/Application", "js/core/List"], function (Application, List) {
                     value: "B"
                 }
             ]));
+
+            this.set('cidTemplateItems', new List([
+                {
+                    value: "A"
+                },
+                {
+                    value: "B"
+                }
+            ]));
         },
         addItemAt: function (item, index) {
             this.$.items.add(item, {index: index});

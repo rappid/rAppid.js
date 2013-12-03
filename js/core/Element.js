@@ -29,7 +29,7 @@ define(["js/core/Bindable", "underscore"], function (Bindable, _) {
         }
 
         var Element = Bindable.inherit("js.core.Element", {
-            ctor: function (attributes, descriptor, stage, parentScope, rootScope, evaluateBindingsInCtor) {
+            ctor: function (attributes, descriptor, stage, parentScope, rootScope, cidScope, evaluateBindingsInCtor) {
                 attributes = attributes || {};
 
                 if (!descriptor) {
@@ -37,11 +37,15 @@ define(["js/core/Bindable", "underscore"], function (Bindable, _) {
                     if (!rootScope) {
                         rootScope = this;
                     }
+                    if (!cidScope) {
+                        cidScope = this;
+                    }
                 }
                 this.$stage = stage;
                 this.$descriptor = descriptor;
                 this.$parentScope = parentScope || null;
                 this.$rootScope = rootScope || null;
+                this.$cidScope = cidScope || null;
                 this.$attributesNamespace = this.$attributesNamespace || {};
 
                 this.callBase(attributes, evaluateBindingsInCtor);
@@ -55,7 +59,7 @@ define(["js/core/Bindable", "underscore"], function (Bindable, _) {
 
             },
 
-            _getAttributesFromDescriptor: function (descriptor, rootScope) {
+            _getAttributesFromDescriptor: function (descriptor, rootScope, cidScope) {
 
                 this.$attributesNamespace = this.$attributesNamespace || {};
 
@@ -74,7 +78,7 @@ define(["js/core/Bindable", "underscore"], function (Bindable, _) {
                                 handled = false;
 
                             if (prefix === "function:") {
-                                var fnc = rootScope[node.value];
+                                var fnc = cidScope[node.value] || rootScope[node.value];
                                 if (!fnc) {
                                     throw new Error("Cannot find referenced function '" + node.value + "' in scope.");
                                 }

@@ -50,8 +50,8 @@
     ],
     "c": [
         {
-            "app": "ui/TabViewTest.xml",
-            "test": "ui/TabViewTests.js",
+            "app": "ui/ItemsViewTest.xml",
+            "test": "ui/ItemsViewTests.js",
             "type": "browser"
         }
     ],

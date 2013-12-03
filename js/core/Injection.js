@@ -6,7 +6,7 @@ define(["js/core/Component", "underscore"], function (Component, _) {
     }
 
     return Component.inherit("js.core.Injection", {
-        ctor: function (attributes, descriptor, stage, parentScope, rootScope) {
+        ctor: function (attributes, descriptor, stage, parentScope, rootScope, cidScope) {
 
             if (!stage.$injection) {
                 this.$singletonInstanceCache = [];
