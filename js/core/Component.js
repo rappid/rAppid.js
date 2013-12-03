@@ -459,6 +459,7 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
              * Create {@link Component} for DOM Node with given attributes
              * @param {DOM} node
              * @param [attributes] for new Component
+             * @param rootScope
              */
             _createComponentForNode: function (node, attributes, rootScope, cidScope) {
                 if (!node) {
