@@ -253,7 +253,10 @@ var build = function (args, callback) {
     }, function (err) {
         writeBackConfig();
 
+        console.log("Something went wrong during optimizing:");
         console.log(err);
+
+        process.exit(1);
     });
 };
 
