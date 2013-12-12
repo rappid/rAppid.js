@@ -31,6 +31,7 @@ define(["js/html/HtmlElement", "js/core/Bus", "js/core/WindowManager", "js/core/
             this.$applicationContext = applicationContext;
             this.$applicationFactory = null;
             this.$document = document;
+            this.$decorators = {};
             this.$window = window;
             this.$bus = new Bus(this);
             this.$externalInterface = new ExternalInterface(this);

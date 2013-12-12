@@ -158,6 +158,17 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                         this._addTemplate(child);
                     } else if (child instanceof Component.Configuration) {
                         this._addConfiguration(child);
+                    } else if (child instanceof Component.Decorator) {
+                        this._addDecorator(child);
+                    }
+
+                    for (var attr in this.$stage.$decorators) {
+                        if (this.$stage.$decorators.hasOwnProperty(attr)) {
+                            var decorator = this.$stage.$decorators[attr];
+                            if (decorator.isResponsibleForComponent(child)) {
+                                decorator.decorateComponent(child);
+                            }
+                        }
                     }
                 } else {
                     this.$unitializedChildren = this.$unitializedChildren || [];
@@ -202,6 +213,14 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
 
             _addConfiguration: function (config) {
                 this.$configurations.push(config);
+            },
+
+            _addDecorator: function (decorator) {
+                if (decorator.$.attribute) {
+                    this.$stage.$decorators[decorator.$.attribute] = decorator;
+                } else {
+                    this.log("Decorator without attribute defined", "warn");
+                }
             },
 
             /***
@@ -702,6 +721,21 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                     }
                 }
                 return children;
+            }
+        });
+
+        Component.Decorator = Component.inherit('js.core.Decorator', {
+            defaults: {
+                attribute: ""
+            },
+            isResponsibleForComponent: function (component) {
+                return component.$.hasOwnProperty(this.$.attribute);
+            },
+            decorateComponent: function (component) {
+                throw "Abstract method";
+            },
+            undecorateComponent: function(component){
+                throw "Abstract method";
             }
         });
 
