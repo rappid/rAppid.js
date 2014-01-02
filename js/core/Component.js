@@ -534,6 +534,7 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
              * @param descriptor
              * @param attributes
              * @param rootScope
+             * @param cidScope
              */
             _getChildrenFromDescriptor: function (descriptor, rootScope, attributes, cidScope) {
                 var childrenFromDescriptor = [], node, component;
