@@ -65,6 +65,8 @@ define(['js/core/Bindable', 'js/core/Base'], function (Bindable, Base) {
                 callbackInvoked = false,
                 condition = this.$.condition || defaultConditionFnc;
 
+            // TODO: why do we have a condition variable here?
+
             if (!this._validationRequired(entity)) {
                 internalCallback(null);
                 return;
