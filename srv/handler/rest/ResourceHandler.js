@@ -650,6 +650,9 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
 
             flow()
                 .parEach(schema, function (schemaObject, cb) {
+
+                    // FIXME: entities with linked models aren't validated
+
                     var linkedModel = model.$[schemaObject._key];
                     if (linkedModel instanceof Model) {
                         // replace with exists?
