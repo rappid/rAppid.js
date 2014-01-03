@@ -65,14 +65,15 @@ define(['js/core/Bindable', 'js/core/Base'], function (Bindable, Base) {
                 callbackInvoked = false,
                 condition = this.$.condition || defaultConditionFnc;
 
+            // TODO: why do we have a condition variable here?
+
             if (!this._validationRequired(entity)) {
                 internalCallback(null);
                 return;
             }
 
             try {
-                // TOOD: make validate sync
-                internalCallback(null, this._validate(entity));
+                internalCallback(null, this._validate(entity, options));
             } catch(e) {
                 internalCallback(e);
             }
@@ -102,10 +103,11 @@ define(['js/core/Bindable', 'js/core/Base'], function (Bindable, Base) {
         /***
          * performs a synchronous validation
          * @param {js.data.Entity} entity
+         * @param options
          * @abstract
          * @private
          */
-        _validate: function (entity) {
+        _validate: function (entity, options) {
             throw new Error("abstract method _validate from Validator");
         },
 

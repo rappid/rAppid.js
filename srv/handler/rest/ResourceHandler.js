@@ -1,4 +1,4 @@
-define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'js/data/Collection', 'js/data/DataSource', 'js/data/Model', 'underscore', 'js/core/List', 'js/data/Query'], function (Component, HttpError, flow, require, JSON, Collection, DataSource, Model, _, List, Query) {
+define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'js/data/Collection', 'js/data/DataSource', 'js/data/Model', 'underscore', 'js/core/List', 'js/data/Entity', 'js/data/validator/Validator'], function (Component, HttpError, flow, require, JSON, Collection, DataSource, Model, _, List, Entity, Validator) {
 
     return Component.inherit('srv.handler.rest.ResourceHandler', {
         defaults: {
@@ -6,6 +6,17 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
             defaultSortField: null,
             defaultSortOrder: null
         },
+
+        ctor: function() {
+            this._extendValidators();
+
+            this.callBase();
+        },
+
+        /**
+         * An array of server side validators to apply
+         */
+        validators: [],
 
         $collectionMethodMap: {
             GET: "_index",
@@ -25,6 +36,33 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
 
             this.$resourceConfiguration = configuration;
             this.$parentResource = parentResource;
+        },
+
+        _extendValidators: function () {
+
+            if (this.factory.validators) {
+                this.validators = this.factory.validators;
+                return;
+            }
+
+            var base = this.base;
+
+            while (base.factory.classof(Entity)) {
+                var baseValidator = base.validators;
+
+                for (var i = 0; i < baseValidator.length; i++) {
+                    var validator = baseValidator[i];
+
+                    if (_.indexOf(this.validators, validator) === -1) {
+                        this.validators.push(validator);
+                    }
+                }
+
+                base = base.base;
+            }
+
+            this.factory.validators = this.validators;
+
         },
 
         _isCollectionResource: function () {
@@ -646,24 +684,43 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
 
         _validate: function (model, context, callback) {
 
-            var schema = model.schema;
+            var validators = this.validators,
+                self = this;
 
             flow()
-                .parEach(schema, function (schemaObject, cb) {
-                    var linkedModel = model.$[schemaObject._key];
-                    if (linkedModel instanceof Model) {
-                        // replace with exists?
-                        linkedModel.fetch(null, function (err) {
-                            var key = schemaObject._key;
-                            if (err && err === DataSource.ERROR.NOT_FOUND) {
-                                cb(new HttpError(key + " not found", 400));
+                .par(function(cb) {
+                    flow()
+                        .parEach(validators, function(validator, cb) {
+                            validator.validate(model, {
+                                resourceHandler: self
+                            }, function(err, result) {
+                                // error or validation error result -> error
+                                cb(err || (result instanceof Array) || (result instanceof Validator.Error));
+                            });
+                        })
+                        .exec(cb);
+                }, function(cb) {
+                    flow()
+                        .parEach(model.schema, function (schemaObject, cb) {
+
+                            // FIXME: entities with linked models aren't validated
+
+                            var linkedModel = model.$[schemaObject._key];
+                            if (linkedModel instanceof Model) {
+                                // replace with exists?
+                                linkedModel.fetch(null, function (err) {
+                                    var key = schemaObject._key;
+                                    if (err && err === DataSource.ERROR.NOT_FOUND) {
+                                        cb(new HttpError(key + " not found", 400));
+                                    } else {
+                                        cb(err);
+                                    }
+                                });
                             } else {
-                                cb(err);
+                                cb();
                             }
-                        });
-                    } else {
-                        cb();
-                    }
+                        })
+                        .exec(cb);
                 })
                 .exec(callback);
 
