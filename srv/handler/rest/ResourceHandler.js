@@ -382,9 +382,15 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
 
                     model.set(processor.parse(model, payload));
 
-                    if(model.createdField){
+                    if (model.createdField) {
                         model.set(model.createdField, new Date());
                     }
+                })
+                .seq(function () {
+                    self._generateAutoValues(model);
+                })
+                .seq(function (cb) {
+                    self._validate(model, context, cb);
                 })
                 .seq(function (cb) {
                     self._beforeModelSave(model, context, cb);
@@ -557,6 +563,12 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
                         model.set(model.idField, model.factory.prototype.convertIdentifier(self.$resourceId));
                     }
                 })
+                .seq(function () {
+                    self._generateAutoValues(model);
+                })
+                .seq(function (cb) {
+                    self._validate(model, context, cb);
+                })
                 .seq(function (cb) {
                     self._beforeModelSave(model, context, cb);
                 })
@@ -612,61 +624,51 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
             }
         },
 
-        /**
-         *
-         * @param model
-         * @param context
-         * @param callback
-         * @private
-         */
-        _beforeModelSave: function (model, context, callback) {
+        _generateAutoValues: function (model, context) {
             var schema = model.schema,
-                schemaObject,
                 self = this;
 
-            flow()
-                .seq(function () {
-                    for (var schemaKey in schema) {
-                        if (schema.hasOwnProperty(schemaKey)) {
-                            schemaObject = schema[schemaKey];
-                            if (schemaObject.generated) {
-                                var value = self._autoGenerateValue(schemaKey, context, model);
-                                if (!_.isUndefined(value)) {
-                                    model.set(schemaKey, value);
-                                }
-                            }
+            var schemaObject;
+
+            for (var schemaKey in schema) {
+                if (schema.hasOwnProperty(schemaKey)) {
+                    schemaObject = schema[schemaKey];
+                    if (schemaObject.generated) {
+                        var value = self._autoGenerateValue(schemaKey, context, model);
+                        if (!_.isUndefined(value)) {
+                            model.set(schemaKey, value);
                         }
                     }
+                }
+            }
 
-                })
-                // check linked models -> TODO: move to validate
-                .seq(function (cb) {
-                    flow()
-                        .parEach(schema, function (schemaObject, cb) {
-                            var linkedModel = model.$[schemaObject._key];
-                            if (linkedModel instanceof Model) {
-                                if (linkedModel) {
-                                    // replace with exists?
-                                    linkedModel.fetch(null, function (err) {
-                                        var key = schemaObject._key;
-                                        if (err && err === DataSource.ERROR.NOT_FOUND) {
-                                            cb(new HttpError(key + " not found", 400));
-                                        } else {
-                                            cb(err);
-                                        }
-                                    });
-                                } else {
-                                    cb();
-                                }
+        },
+
+        _validate: function (model, context, callback) {
+
+            var schema = model.schema;
+
+            flow()
+                .parEach(schema, function (schemaObject, cb) {
+                    var linkedModel = model.$[schemaObject._key];
+                    if (linkedModel instanceof Model) {
+                        // replace with exists?
+                        linkedModel.fetch(null, function (err) {
+                            var key = schemaObject._key;
+                            if (err && err === DataSource.ERROR.NOT_FOUND) {
+                                cb(new HttpError(key + " not found", 400));
                             } else {
-                                cb();
+                                cb(err);
                             }
-
-                        })
-                        .exec(cb);
+                        });
+                    } else {
+                        cb();
+                    }
                 })
                 .exec(callback);
+
         },
+
         /***
          *
          * @param context
@@ -722,6 +724,18 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
                     }
                 });
         },
+
+        /**
+         *
+         * @param model
+         * @param context
+         * @param callback
+         * @private
+         */
+        _beforeModelSave: function (model, context, callback) {
+            callback && callback();
+        },
+
         _beforeModelCreate: function (model, context, callback) {
             callback && callback();
         },

@@ -1,4 +1,3 @@
-
 define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
 
     var HTML_Namespace = "http://www.w3.org/1999/xhtml",
@@ -305,7 +304,7 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
                 }
 
 
-                if (camelCaseKey in this.$el.style) {
+                if (this.$el.style && camelCaseKey in this.$el.style) {
                     if (value != null) {
                         if (this.$stage.$browser.isIE) {
                             // IE doesn't update style immediately with setProperty(), so we use style[key] = value
@@ -353,7 +352,7 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
                 }
             }
 
-            return _.indexOf(this.$excludedStyleAttributes, key) === -1 && this.$el && (key in this.$el.style || (supportedCssProperties && _.indexOf(supportedCssProperties, key) !== -1));
+            return _.indexOf(this.$excludedStyleAttributes, key) === -1 && this.$el && ((this.$el.style && key in this.$el.style) || (supportedCssProperties && _.indexOf(supportedCssProperties, key) !== -1));
 
         }
     });
