@@ -44,7 +44,7 @@
         "flow": "js/lib/flow",
         "Query": "js/lib/query/query",
         "inherit": "js/lib/inherit",
-        "underscore": "js/lib/underscore",
+        "underscore": "js/lib/lodash",
         "moment": "js/lib/moment",
         "JSON": "js/lib/json2.js",
         "RestConditionParser": "srv/lib/RestConditionParser"
