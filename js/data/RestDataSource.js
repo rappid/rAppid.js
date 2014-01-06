@@ -290,7 +290,7 @@ define(["js/data/DataSource", "js/data/Model", "underscore", "flow", "JSON", "js
 
             flow()
                 .seq("xhr", function (cb) {
-                    _.defaults(headers, (options || {}).headers, this.getHeaderParameters(RestDataSource.METHOD.GET, model));
+                    _.defaults(headers, (options || {}).headers, self.getHeaderParameters(RestDataSource.METHOD.GET, model));
                     // send request
                     self.$stage.$applicationContext.ajax(url, {
                         type: RestDataSource.METHOD.GET,
@@ -531,7 +531,7 @@ define(["js/data/DataSource", "js/data/Model", "underscore", "flow", "JSON", "js
                     // get queryParameter
                     var params = _.defaults(model.$context.getQueryParameters(),
                         self.getQueryParameters(method, model));
-                    _.defaults(headers, (options || {}).headers, this.getHeaderParameters(method, model));
+                    _.defaults(headers, (options || {}).headers, self.getHeaderParameters(method, model));
 
                     method = self._getHttpMethod(method);
 
