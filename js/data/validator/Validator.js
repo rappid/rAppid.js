@@ -1,9 +1,5 @@
 define(['js/core/Bindable', 'js/core/Base'], function (Bindable, Base) {
 
-    var defaultConditionFnc = function(){
-        return true;
-    };
-
     var Validator = Bindable.inherit('js.data.validator.Validator', {
 
         $validatorCache: {},
@@ -23,12 +19,7 @@ define(['js/core/Bindable', 'js/core/Base'], function (Bindable, Base) {
              * the error message displayed for the user
              * @type String
              */
-            errorMessage: null,
-            /***
-             * a compare function used for validation
-             * @type Function
-             */
-            condition: null
+            errorMessage: null
         },
 
         ctor: function () {
@@ -62,10 +53,7 @@ define(['js/core/Bindable', 'js/core/Base'], function (Bindable, Base) {
             options = options || {};
 
             var self = this,
-                callbackInvoked = false,
-                condition = this.$.condition || defaultConditionFnc;
-
-            // TODO: why do we have a condition variable here?
+                callbackInvoked = false;
 
             if (!this._validationRequired(entity)) {
                 internalCallback(null);

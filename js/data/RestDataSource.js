@@ -166,6 +166,15 @@ define(["js/data/DataSource", "js/data/Model", "underscore", "flow", "JSON", "js
 
             return params;
         },
+        /**
+         * Returns the header parameter for a request
+         * @param {String} method - PUT, POST, DELETE OR GET
+         * @param {js.data.Model|js.data.Collection} resource - A model or a collection
+         * @returns {Object}
+         */
+        getHeaderParameters: function(method, resource){
+            return {};
+        },
 
         getQueryComposer: function () {
             return RestQueryComposer.RestQueryComposer;
@@ -277,12 +286,16 @@ define(["js/data/DataSource", "js/data/Model", "underscore", "flow", "JSON", "js
                 params.timestamp = (new Date().getTime());
             }
 
+            var headers = {};
+
             flow()
                 .seq("xhr", function (cb) {
+                    _.defaults(headers, (options || {}).headers, this.getHeaderParameters(RestDataSource.METHOD.GET, model));
                     // send request
                     self.$stage.$applicationContext.ajax(url, {
                         type: RestDataSource.METHOD.GET,
-                        queryParameter: params
+                        queryParameter: params,
+                        headers: headers
                     }, cb);
                 })
                 .seq(function (cb) {
@@ -514,10 +527,11 @@ define(["js/data/DataSource", "js/data/Model", "underscore", "flow", "JSON", "js
                 .seq(function (cb) {
                     // create url
                     var url = self._buildUriForResource(model);
-
+                    var headers = {};
                     // get queryParameter
                     var params = _.defaults(model.$context.getQueryParameters(),
                         self.getQueryParameters(method, model));
+                    _.defaults(headers, (options || {}).headers, this.getHeaderParameters(method, model));
 
                     method = self._getHttpMethod(method);
 
@@ -531,6 +545,7 @@ define(["js/data/DataSource", "js/data/Model", "underscore", "flow", "JSON", "js
                         type: method,
                         queryParameter: params,
                         data: payload,
+                        headers: headers,
                         xhrCreated: options.xhrCreated,
                         xhrBeforeSend: options.xhrBeforeSend,
                         contentType: formatProcessor.getContentType()
@@ -594,9 +609,11 @@ define(["js/data/DataSource", "js/data/Model", "underscore", "flow", "JSON", "js
                 return;
             }
 
-            var params = {};
+            var params = {},
+                headers = {};
 
             _.defaults(params, (options || {}).params, this.getQueryParameters(RestDataSource.METHOD.GET, collectionPage.$collection));
+            _.defaults(headers, (options || {}).headers, this.getHeaderParameters(RestDataSource.METHOD.GET, collectionPage.$collection));
             _.extend(params, this._getPagingParameterForCollectionPage(collectionPage));
 
             if (options.noCache) {
@@ -619,7 +636,8 @@ define(["js/data/DataSource", "js/data/Model", "underscore", "flow", "JSON", "js
             // send request
             this.$stage.$applicationContext.ajax(url, {
                 type: RestDataSource.METHOD.GET,
-                queryParameter: params
+                queryParameter: params,
+                headers: headers
             }, function (err, xhr) {
                 if (!err && (xhr.status == 200 || xhr.status == 304)) {
                     // find formatProcessor that matches the content-type
@@ -727,9 +745,14 @@ define(["js/data/DataSource", "js/data/Model", "underscore", "flow", "JSON", "js
 
             method = this._getHttpMethod(method);
 
+            var headers = {};
+
+            _.defaults(headers, (options || {}).headers, this.getHeaderParameters(RestDataSource.METHOD.DELETE, model));
+
             this.$stage.$applicationContext.ajax(url, {
                 type: method,
-                queryParameter: params
+                queryParameter: params,
+                headers: headers
             }, function (err, xhr) {
                 if (!err && (xhr.status == 200 || xhr.status == 304 || xhr.status == 202 || xhr.status == 204)) {
                     callback(null, model);
