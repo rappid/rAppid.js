@@ -151,7 +151,7 @@ define(["require", "js/html/HtmlElement", "js/ui/ContentPlaceHolder", "js/core/M
                         self._clearContentPlaceHolders();
 
                         self.set('currentModuleName', moduleName);
-                        var contentPlaceHolders = self.getContentPlaceHolders();
+                        var contentPlaceHolders = self.getContentPlaceHolders("external");
 
                         // set content
                         for (var i = 0; i < contentPlaceHolders.length; i++) {
@@ -271,7 +271,7 @@ define(["require", "js/html/HtmlElement", "js/ui/ContentPlaceHolder", "js/core/M
 
             _clearContentPlaceHolders: function () {
 
-                var contentPlaceHolders = this.getContentPlaceHolders();
+                var contentPlaceHolders = this.getContentPlaceHolders("external");
 
                 // set content
                 for (var i = 0; i < contentPlaceHolders.length; i++) {
