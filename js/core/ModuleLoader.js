@@ -304,21 +304,5 @@ define(["require", "js/html/HtmlElement", "js/ui/ContentPlaceHolder", "js/core/M
             }
         });
 
-        ModuleLoader.findContentPlaceHolders = function (component) {
-            var ret = [];
-
-            for (var i = 0; i < component.$children.length; i++) {
-                var child = component.$children[i];
-                if (child instanceof ContentPlaceHolder) {
-                    ret.push(child);
-                } else {
-                    ret.concat(ModuleLoader.findContentPlaceHolders(child));
-                }
-            }
-
-            return ret;
-
-        };
-
         return ModuleLoader;
     });
