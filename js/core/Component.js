@@ -258,11 +258,12 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
 
                 var desc;
 
-                function addChildren(childrenFromDescriptor) {
+                function addChildren(childrenFromDescriptor, fromDescriptor) {
 
                     // don't add children with the same descriptor twice
                     for (var j = 0; j < childrenFromDescriptor.length; j++) {
                         child = childrenFromDescriptor[j];
+                        child.$fromDescriptor = fromDescriptor;
 
                         if (child.$createdByTemplate || _.indexOf(addedDescriptors, child.$descriptor) === -1) {
                             children.push(child);
@@ -275,7 +276,7 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
 
                 for (var d = 0; d < this.$internalDescriptors.length; d++) {
                     desc = this.$internalDescriptors[d];
-                    addChildren(this._getChildrenFromDescriptor(desc, this, null, this));
+                    addChildren(this._getChildrenFromDescriptor(desc, this, null, this), "intern");
                 }
 
                 var externalDescriptorChildren;
@@ -343,11 +344,11 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
 
                 }
 
-                addChildren(externalDescriptorChildren);
+                addChildren(externalDescriptorChildren, "external");
 
                 var extraChildren = this.createChildren();
                 if (extraChildren) {
-                    addChildren(extraChildren);
+                    addChildren(extraChildren, "extra");
                 }
 
                 this._initializeChildren(children);
