@@ -52,19 +52,21 @@ define(["js/core/Component", "underscore"], function (Component, _) {
                 }
 
                 // instance not found -> go thought the factories
-                for (var f = 0; f < this.$factories.length; f++) {
-                    var factory = this.$factories[f];
+                for (var key in this.$factories) {
+                    if (this.$factories.hasOwnProperty(key)) {
+                        var factory = this.$factories[key];
 
-                    if (factoryInheritsFrom(factory.factory, type)) {
-                        // create instance
-                        instance = new factory.factory();
+                        if (factoryInheritsFrom(factory.factory, type)) {
+                            // create instance
+                            instance = new factory.factory();
 
-                        if (instance instanceof type) {
-                            if (factory.singleton) {
-                                this.addInstance(instance);
+                            if (instance instanceof type) {
+                                if (factory.singleton) {
+                                    this.addInstance(instance);
+                                }
+
+                                return instance;
                             }
-
-                            return instance;
                         }
                     }
                 }
