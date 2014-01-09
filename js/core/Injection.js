@@ -42,31 +42,32 @@ define(["js/core/Component", "underscore"], function (Component, _) {
                     return this.$singletonInstanceCache[type];
                 }
             } else {
-                // go to the singleton instance and look for requested instance
-                for (var i = 0; i < this.$singletonInstanceCache.length; i++) {
-                    instance = this.$singletonInstanceCache[i];
 
-                    if (instance instanceof type) {
-                        return instance;
+                // go to the singleton instance and look for requested instance
+                for (var key in  this.$singletonInstanceCache) {
+                    if (this.$singletonInstanceCache.hasOwnProperty(key)) {
+                        instance = this.$singletonInstanceCache[key];
+
+                        if (instance instanceof type) {
+                            return instance;
+                        }
                     }
                 }
 
                 // instance not found -> go thought the factories
-                for (var key in this.$factories) {
-                    if (this.$factories.hasOwnProperty(key)) {
-                        var factory = this.$factories[key];
+                for (var f = 0; f < this.$factories.length; f++) {
+                    var factory = this.$factories[f];
 
-                        if (factoryInheritsFrom(factory.factory, type)) {
-                            // create instance
-                            instance = new factory.factory();
+                    if (factoryInheritsFrom(factory.factory, type)) {
+                        // create instance
+                        instance = new factory.factory();
 
-                            if (instance instanceof type) {
-                                if (factory.singleton) {
-                                    this.addInstance(instance);
-                                }
-
-                                return instance;
+                        if (instance instanceof type) {
+                            if (factory.singleton) {
+                                this.addInstance(instance);
                             }
+
+                            return instance;
                         }
                     }
                 }
