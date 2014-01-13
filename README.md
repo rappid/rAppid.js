@@ -76,8 +76,31 @@ The rAppid.js server is a modular architecture web server based on nodejs.
 * Authentication & Authorization System
 * Session support
 
-## Need help or want to contribute?
+## How to contribute?
 
-If you have any problems with the framework or want to contribute feel free to contact us (support@rappidjs.com).
+After cloning the repository, run `npm install` to install all dependencies.
+
+### How to run tests?
+
+There are three types of tests
+
+All tests that can be run browser independently are started with
+
+    mocha -R spec
+
+Webtests that used to run in the browser are run on the *sauce labs* cloud
+server. You need to make an account on https://saucelabs.com to run these
+tests.
+
+    grunt webtest-saucelabs --force
+
+To test the server component of the framework, run
+
+    grunt server-tests"
+
+If you have any trouble regarding contribution, feel free to drop us a line.
+
+## Need help?
+
+If you have any problems with the framework feel free to contact us (support@rappidjs.com).
 Follow [@rappidjs](https://twitter.com/rappidjs) on twitter to keep up with the latest news.
-
