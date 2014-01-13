@@ -16,18 +16,20 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
              * @param {Boolean} [evaluateBindingsInCtor] - default false
              */
             ctor: function (attributes, descriptor, stage, parentScope, rootScope, cidScope, evaluateBindingsInCtor) {
+
                 this.$eventDefinitions = [];
                 this.$internalDescriptors = [];
                 this.$xamlDefaults = {};
                 this.$xamlAttributes = {};
 
-                var current = this, last;
+                var current = this,
+                    lastDescriptor;
                 while (current) {
-                    if (current._$descriptor && last != current) {
+                    if (current._$descriptor && lastDescriptor != current._$descriptor) {
                         this._cleanUpDescriptor(current._$descriptor);
                         this.$internalDescriptors.unshift(current._$descriptor);
-
                         _.defaults(this.$xamlDefaults, this._getAttributesFromDescriptor(current._$descriptor, rootScope, cidScope));
+                        lastDescriptor = current._$descriptor;
                     }
                     current = current.base;
                 }
