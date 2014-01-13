@@ -307,25 +307,53 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
 
 
                 _bindBus: function () {
-                    for (var f in this) {
-                        var fn = this[f];
-                        if (fn instanceof Function && fn._busEvents) {
-                            for (var i = 0; i < fn._busEvents.length; i++) {
+                    var fn;
+                    if (!this.factory.__busListeners) {
+                        this.factory.__busListeners = [];
+                        for (var f in this) {
+                            fn = this[f];
+                            if (fn instanceof Function && fn._busEvents) {
+                                for (var i = 0; i < fn._busEvents.length; i++) {
+                                    this.$stage.$bus.bind(fn._busEvents[i], fn, this);
+                                }
+                                this.factory.__busListeners.push(f);
+                            }
+                        }
+                    } else if (!!this.factory.__busListeners.length) {
+                        var j = 0,
+                            busListeners = this.factory.__busListeners;
+                        while (j < busListeners.length) {
+                            fn = this[busListeners[j++]];
+                            for (i = 0; i < fn._busEvents.length; i++) {
                                 this.$stage.$bus.bind(fn._busEvents[i], fn, this);
                             }
                         }
+
                     }
                 },
 
                 _unbindBus: function () {
-                    for (var f in this) {
-                        var fn = this[f];
-                        if (fn instanceof Function && fn._busEvents) {
-                            for (var i = 0; i < fn._busEvents.length; i++) {
+                    if (!this.factory.__busListeners) {
+                        for (var f in this) {
+                            var fn = this[f];
+                            if (fn instanceof Function && fn._busEvents) {
+                                for (var i = 0; i < fn._busEvents.length; i++) {
+                                    this.$stage.$bus.unbind(fn._busEvents[i], fn, this);
+                                }
+                            }
+                        }
+                    } else if (!!this.factory.__busListeners.length) {
+                        var j = 0,
+                            busListeners = this.factory.__busListeners;
+                        while (j < busListeners.length) {
+                            fn = this[busListeners[j++]];
+                            for (i = 0; i < fn._busEvents.length; i++) {
                                 this.$stage.$bus.unbind(fn._busEvents[i], fn, this);
                             }
                         }
+
                     }
+
                 },
 
                 _extract: function () {
