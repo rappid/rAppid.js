@@ -433,7 +433,7 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                 for (var i = 0; i < this.validators.length; i++) {
                     validator = this.validators[i];
                     if (options.fields && options.fields.length > 0) {
-                        if (options.fields.indexOf(validator.$.field) > -1) {
+                        if (options.fields.indexOf(validator.$.field) > -1 || validator.$.field == null) {
                             validators.push(validator);
                         }
                     } else {
