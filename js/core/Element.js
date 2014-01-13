@@ -8,22 +8,21 @@ define(["js/core/Bindable", "underscore"], function (Bindable, _) {
 
         function stringToPrimitive(str) {
             // if it's a string
-            if (str && _.isString(str)) {
-
-                var num = Number(str);
-                if (!isNaN(num)) {
-                    return num;
-                }
+            if (typeof(str) === "string") {
 
                 if (str === "true") {
                     return true;
                 } else if (str === "false") {
                     return false;
-                }
-
-                if (str === "null") {
+                } else if (str === "null") {
                     return null;
                 }
+
+                var num = parseFloat(str);
+                if (!isNaN(num)) {
+                    return num;
+                }
+
             }
             return str;
         }
