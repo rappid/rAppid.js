@@ -87,6 +87,7 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                 this.$renderedChildren = [];
                 this.$contentChildren = [];
                 this.$domEventHandler = {};
+                this.factory.$domNodeAttributeCache = this.factory.$domNodeAttributeCache || {};
                 // go inherit tree up and search for descriptors
                 var current = this;
                 while (current) {
@@ -225,7 +226,7 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                 return ret;
             },
 
-            getContentPlaceHolders: function () {
+            getContentPlaceHolders: function (from) {
 
                 if (!ContentPlaceHolder) {
                     ContentPlaceHolder = require('js/ui/ContentPlaceHolder');
@@ -237,10 +238,10 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                 for (var i = 0; i < this.$children.length; i++) {
                     child = this.$children[i];
 
-                    if (ContentPlaceHolder && child instanceof ContentPlaceHolder) {
+                    if (ContentPlaceHolder && child instanceof ContentPlaceHolder && (!from || child.$fromDescriptor === from)) {
                         ret.push(child);
                     } else if (child instanceof DomElement) {
-                        ret = ret.concat(child.getContentPlaceHolders());
+                        ret = ret.concat(child.getContentPlaceHolders(from));
                     }
                 }
 
@@ -611,21 +612,29 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
              * @private
              */
             _isDOMNodeAttribute: function (key) {
-                var cAttr;
+                if(this.factory.$domNodeAttributeCache.hasOwnProperty(key)){
+                    return this.factory.$domNodeAttributeCache[key];
+                }
+                var cAttr,
+                    ret = true;
                 for (var i = 0; i < this.$classAttributes.length; i++) {
                     cAttr = this.$classAttributes[i];
                     if (cAttr instanceof RegExp) {
                         if (cAttr.test(key)) {
-                            return false;
+                            ret = false;
+                            break;
                         }
                     } else {
                         if (cAttr == key) {
-                            return false;
+                            ret =  false;
+                            break;
                         }
                     }
                 }
 
-                return true;
+                this.factory.$domNodeAttributeCache[key] = ret;
+
+                return ret;
             },
 
             /***

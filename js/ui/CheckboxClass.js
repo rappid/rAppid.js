@@ -6,9 +6,12 @@ define(['js/ui/View'], function (View) {
             checked: false,
             value: null,
             label: "",
-            name: null
+            name: null,
+
+            selected: "{checked}"
         },
-        _renderLabel: function (label, oldLabel) {
+
+        _renderLabel: function (label) {
             if (label) {
                 this._renderTemplateToPlaceHolder('label', 'label', {$label: label});
             }

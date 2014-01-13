@@ -42,12 +42,15 @@ define(["js/core/Component", "underscore"], function (Component, _) {
                     return this.$singletonInstanceCache[type];
                 }
             } else {
-                // go to the singleton instance and look for requested instance
-                for (var i = 0; i < this.$singletonInstanceCache.length; i++) {
-                    instance = this.$singletonInstanceCache[i];
 
-                    if (instance instanceof type) {
-                        return instance;
+                // go to the singleton instance and look for requested instance
+                for (var key in  this.$singletonInstanceCache) {
+                    if (this.$singletonInstanceCache.hasOwnProperty(key)) {
+                        instance = this.$singletonInstanceCache[key];
+
+                        if (instance instanceof type) {
+                            return instance;
+                        }
                     }
                 }
 

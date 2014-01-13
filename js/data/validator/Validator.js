@@ -1,9 +1,5 @@
 define(['js/core/Bindable', 'js/core/Base'], function (Bindable, Base) {
 
-    var defaultConditionFnc = function(){
-        return true;
-    };
-
     var Validator = Bindable.inherit('js.data.validator.Validator', {
 
         $validatorCache: {},
@@ -23,12 +19,7 @@ define(['js/core/Bindable', 'js/core/Base'], function (Bindable, Base) {
              * the error message displayed for the user
              * @type String
              */
-            errorMessage: null,
-            /***
-             * a compare function used for validation
-             * @type Function
-             */
-            condition: null
+            errorMessage: null
         },
 
         ctor: function () {
@@ -62,8 +53,7 @@ define(['js/core/Bindable', 'js/core/Base'], function (Bindable, Base) {
             options = options || {};
 
             var self = this,
-                callbackInvoked = false,
-                condition = this.$.condition || defaultConditionFnc;
+                callbackInvoked = false;
 
             if (!this._validationRequired(entity)) {
                 internalCallback(null);
@@ -71,8 +61,7 @@ define(['js/core/Bindable', 'js/core/Base'], function (Bindable, Base) {
             }
 
             try {
-                // TOOD: make validate sync
-                internalCallback(null, this._validate(entity));
+                internalCallback(null, this._validate(entity, options));
             } catch(e) {
                 internalCallback(e);
             }
@@ -102,10 +91,11 @@ define(['js/core/Bindable', 'js/core/Base'], function (Bindable, Base) {
         /***
          * performs a synchronous validation
          * @param {js.data.Entity} entity
+         * @param options
          * @abstract
          * @private
          */
-        _validate: function (entity) {
+        _validate: function (entity, options) {
             throw new Error("abstract method _validate from Validator");
         },
 
