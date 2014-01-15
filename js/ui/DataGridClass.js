@@ -76,10 +76,6 @@ define(['js/ui/View', 'xaml!js/ui/DataGridColumn', 'js/core/List', 'underscore',
             this.set('sortQuery', sortQuery);
         },
 
-        innerWidth: function () {
-
-        },
-
         _data: function () {
             var data = this.$.data;
             if (data instanceof Collection) {
