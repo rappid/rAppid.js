@@ -15,7 +15,6 @@
         "js/ui/ProgressBar",
         "js/ui/Radio",
         "js/ui/ScrollView",
-        "js/ui/Scrollable",
         "js/ui/Select",
         "js/ui/Slider",
         "js/ui/SplitButton",
