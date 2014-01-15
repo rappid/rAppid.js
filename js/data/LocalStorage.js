@@ -23,7 +23,7 @@ define(['js/core/Component' , 'inherit'], function (Component, inherit) {
                     }
                 }
 
-                window.localStorage = window.localStorage || new LocalStorage.CookieImplementation(document);
+                this.$implementation = this.$implementation || new LocalStorage.CookieImplementation(document);
 
             } else {
                 this.$implementation = new LocalStorage.ObjectImplementation();
