@@ -11,7 +11,7 @@ define(["require", "js/html/HtmlElement", "js/ui/ContentPlaceHolder", "js/core/M
                 /**
                  * The current module
                  */
-                $currentModule: null,
+                currentModule: null,
 
                 tagName: 'div',
                 /**
@@ -111,7 +111,7 @@ define(["require", "js/html/HtmlElement", "js/ui/ContentPlaceHolder", "js/core/M
                 flow()
                     .seq(function (cb) {
 
-                        var currentModule = self.$.$currentModule;
+                        var currentModule = self.$.currentModule;
                         if (currentModule) {
                             currentModule._unload(cb);
                         } else {
@@ -163,7 +163,7 @@ define(["require", "js/html/HtmlElement", "js/ui/ContentPlaceHolder", "js/core/M
                     .exec(function (err) {
                         self.set({
                             state: err ? 'error' : null,
-                            $currentModule: moduleInstance
+                            currentModule: moduleInstance
                         });
 
                         if (callback) {
