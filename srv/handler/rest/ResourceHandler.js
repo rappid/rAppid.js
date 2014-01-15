@@ -700,27 +700,31 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
                         })
                         .exec(cb);
                 }, function(cb) {
-                    flow()
-                        .parEach(model.schema, function (schemaObject, cb) {
 
-                            // FIXME: entities with linked models aren't validated
+                    function checkEntityForLinkedModels(entity, cb){
+                         flow()
+                             .parEach(entity.schema, function(schemaObject, cb){
+                                 var linkedModel = entity.$[schemaObject._key];
+                                 if (linkedModel instanceof Model) {
+                                     // replace with exists?
+                                     linkedModel.fetch(null, function (err) {
+                                         var key = schemaObject._key;
+                                         if (err && err === DataSource.ERROR.NOT_FOUND) {
+                                             cb(new HttpError(key + " not found", 400));
+                                         } else {
+                                             cb(err);
+                                         }
+                                     });
+                                 } else if (linkedModel instanceof Entity) {
+                                     checkEntityForLinkedModels(linkedModel, cb);
+                                 } else {
+                                     cb();
+                                 }
+                             })
+                             .exec(cb)
+                    }
 
-                            var linkedModel = model.$[schemaObject._key];
-                            if (linkedModel instanceof Model) {
-                                // replace with exists?
-                                linkedModel.fetch(null, function (err) {
-                                    var key = schemaObject._key;
-                                    if (err && err === DataSource.ERROR.NOT_FOUND) {
-                                        cb(new HttpError(key + " not found", 400));
-                                    } else {
-                                        cb(err);
-                                    }
-                                });
-                            } else {
-                                cb();
-                            }
-                        })
-                        .exec(cb);
+                    checkEntityForLinkedModels(model, cb);
                 })
                 .exec(callback);
 
