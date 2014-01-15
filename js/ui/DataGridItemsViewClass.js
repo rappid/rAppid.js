@@ -10,6 +10,7 @@ define(['js/ui/VirtualItemsView', 'xaml!js/ui/DataGridColumn', 'js/core/List', '
             columns: List,
             _cols: 1,
             _itemWidth: null,
+            innerTableWidth: "{$table.width}",
             data: null,
             prefetchItemCount: 3
         },
