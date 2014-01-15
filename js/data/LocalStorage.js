@@ -15,7 +15,7 @@ define(['js/core/Component' , 'inherit'], function (Component, inherit) {
                 var window = this.$stage.$window,
                     document = this.$stage.$document;
 
-                if (window.localStorage) {
+                if ("localStorage" in window) {
                     try {
                         this.$implementation = window.localStorage;
                     } catch (e) {
