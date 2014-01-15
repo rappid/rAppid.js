@@ -23,7 +23,11 @@ define(['js/html/HtmlElement'], function (HtmlElement) {
                         return;
                     }
                     e.preventDefault();
-                    history.navigate(this.plainHref());
+
+                    if (this.$.href) {
+                        history.navigate(this.plainHref());
+                    }
+
                 }, this);
             }
 

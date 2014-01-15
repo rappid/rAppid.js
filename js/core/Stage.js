@@ -72,28 +72,43 @@ define(["js/html/HtmlElement", "js/core/Bus", "js/core/WindowManager", "js/core/
          * @private
          */
         _createBrowserObject: function() {
+
+            function getVendorPrefix() {
+                if ('WebkitTransition' in s) return "webkit";
+                if ('MozTransition' in s) return "Moz";
+                if ('msTransition' in s) return "MS";
+                if ('OTransition' in s) return "o";
+                return "";
+            }
+
             var browser = {};
 
             browser.isBrowser = this.runsInBrowser();
 
             if (this.runsInBrowser()) {
                 var window = this.$window,
-                    document = window.document,
-                    body = document.body || document.getElementsByTagName("body")[0];
+                    document = this.$document,
+                    body = document.body || document.getElementsByTagName("body")[0],
+                    navigator,s;
 
-                browser.hasTouch = "ontouchend" in window;
-                browser.has3D = ('WebKitCSSMatrix' in window && 'm11' in new WebKitCSSMatrix());
-                browser.msPointerEnabled = "msPointerEnabled" in window.navigator;
+                if (window) {
+                    browser.hasTouch = "ontouchend" in window;
+                    browser.has3D = ('WebKitCSSMatrix' in window && 'm11' in new WebKitCSSMatrix());
+                    browser.msPointerEnabled = "msPointerEnabled" in window.navigator;
 
-                var div = document.createElement("div");
-                div.setAttribute("style", "position: absolute; height: 100vh; width: 100vw");
-                body.appendChild(div);
+                    var div = document.createElement("div");
+                    div.setAttribute("style", "position: absolute; height: 100vh; width: 100vw");
+                    body.appendChild(div);
 
-                browser.supportViewPortRelativeSize = (window.innerWidth === div.offsetWidth);
+                    browser.supportViewPortRelativeSize = (window.innerWidth === div.offsetWidth);
 
-                body.removeChild(div);
+                    body.removeChild(div);
 
-                var navigator = window.navigator;
+                    navigator = window.navigator;
+
+                    s = window.document.createElement('div').style;
+                }
+
 
                 if (navigator) {
 
@@ -144,27 +159,18 @@ define(["js/html/HtmlElement", "js/core/Bus", "js/core/WindowManager", "js/core/
                     }
                 }
 
-                var s = window.document.createElement('div').style;
 
-                browser.supportsTransition = 'transition' in s ||
-                    'WebkitTransition' in s ||
-                    'MozTransition' in s ||
-                    'msTransition' in s ||
-                    'OTransition' in s;
+                if (s) {
+                    browser.supportsTransition = 'transition' in s ||
+                        'WebkitTransition' in s ||
+                        'MozTransition' in s ||
+                        'msTransition' in s ||
+                        'OTransition' in s;
 
-
-                function getVendorPrefix(){
-                    if('WebkitTransition' in s) return "webkit";
-                    if ('MozTransition' in s) return "Moz";
-                    if ('msTransition' in s) return "MS";
-                    if ('OTransition' in s) return "o";
-                    return "";
+                    browser.vendorPrefix = getVendorPrefix();
                 }
 
-                browser.vendorPrefix = getVendorPrefix();
             }
-
-
 
             return browser;
 
