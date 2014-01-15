@@ -16,10 +16,15 @@ define(['js/core/Component' , 'inherit'], function (Component, inherit) {
                     document = this.$stage.$document;
 
                 if (window.localStorage) {
-                    this.$implementation = window.localStorage;
-                } else {
-                    this.$implementation = new LocalStorage.CookieImplementation(document);
+                    try {
+                        this.$implementation = window.localStorage;
+                    } catch (e) {
+                        typeof console !== "undefined" && console.log(e);
+                    }
                 }
+
+                window.localStorage = window.localStorage || new LocalStorage.CookieImplementation(document);
+
             } else {
                 this.$implementation = new LocalStorage.ObjectImplementation();
             }
