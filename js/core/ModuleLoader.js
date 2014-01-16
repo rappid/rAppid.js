@@ -2,7 +2,6 @@ define(["require", "js/html/HtmlElement", "js/ui/ContentPlaceHolder", "js/core/M
     function (require, HtmlElement, ContentPlaceHolder, Module, _, ModuleConfiguration, flow) {
         var ModuleLoader = HtmlElement.inherit("js.core.ModuleLoader", {
 
-            $classAttributes: ['router', 'currentModuleName', 'state'],
             defaults: {
                 /**
                  * The current module name
@@ -31,6 +30,8 @@ define(["require", "js/html/HtmlElement", "js/ui/ContentPlaceHolder", "js/core/M
                  */
                 router: null
             },
+
+            $classAttributes: ['router' ,'currentModule', 'currentModuleName', 'state'],
 
             ctor: function (attributes) {
                 this.callBase();
