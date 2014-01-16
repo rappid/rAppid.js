@@ -18,7 +18,7 @@ define(["js/core/Bindable", "underscore"], function (Bindable, _) {
                     return null;
                 }
 
-                var num = parseFloat(str);
+                var num = Number(str);
                 if (!isNaN(num)) {
                     return num;
                 }
