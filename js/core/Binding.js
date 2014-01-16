@@ -394,7 +394,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
 
             bindingsDestroyed++;
             if (bindingsDestroyed === 500) {
-                if (typeof(CollectGarbage) == "function") {
+                if (typeof(CollectGarbage) === "function") {
                     CollectGarbage();
                 }
                 bindingsDestroyed = 0;
