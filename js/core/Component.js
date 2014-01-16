@@ -1,6 +1,6 @@
-define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable", "js/core/EventDispatcher", "underscore"],
+define(["require", "js/core/Element", "js/core/TextElement", "underscore"],
 
-    function (require, Element, TextElement, Bindable, EventDispatcher, _) {
+    function (require, Element, TextElement, _) {
 
         var FactoryCache = {},
             TextElementFactory,
