@@ -273,6 +273,33 @@ define(["js/core/EventDispatcher", "js/core/Bindable", "underscore"], function (
 
             return r;
         },
+
+        find: function (fnc, scope) {
+            scope = scope || this;
+            var b = false,
+                error,
+                items = this.$items,
+                length = items.length;
+
+            for (var i = 0; i < length; i++) {
+                try {
+                    b = fnc.call(scope, items[i], i, this.$items);
+                } catch (e) {
+                    error = e;
+                    b = true;
+                }
+                if (b === true) {
+                    break;
+                }
+            }
+
+            if (error) {
+                throw error;
+            }
+
+            return i < length ? items[i] : null;
+        },
+
         /**
          * Checks if item is included in List
          * @return {Boolean}
