@@ -772,22 +772,26 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
                         path = Parser.parse(key, "path");
                     }
 
-                    var pathElement, val;
+                    var pathElement, val,
+                        parameters, fnc,
+                        newParameters;
                     for (var j = 0; scope && j < path.length; j++) {
                         pathElement = path[j];
                         if (pathElement.type == "fnc") {
-                            var fnc = scope[pathElement.name];
-                            var parameters = pathElement.parameter;
+                            fnc = scope[pathElement.name];
+                            parameters = pathElement.parameter;
+                            newParameters = [];
                             for (var i = 0; i < parameters.length; i++) {
                                 var param = parameters[i];
 
                                 if (_.isArray(param)) {
-                                    parameters[i] = this.get(param);
+                                    param = this.get(param);
                                 } else if (_.isObject(param) && param.type && param.path) {
-                                    parameters[i] = this.get(param.path);
+                                    param = this.get(param.path);
                                 }
+                                newParameters.push(param);
                             }
-                            scope = fnc.apply(scope, parameters);
+                            scope = fnc.apply(scope, newParameters);
                         } else if (pathElement.type == "var") {
                             if (scope instanceof Bindable) {
                                 if (path.length - 1 === j) {

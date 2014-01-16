@@ -141,21 +141,24 @@ define(['js/core/EventDispatcher', 'js/lib/parser', 'js/core/Binding', 'undersco
                     return binding;
 
                 } else {
-                    var par;
+                    var par,
+                        newPath = [];
 
                     function resolvePath(scope, path) {
-                        resolveParameter(path);
-                        return scope.get(path);
+                        return scope.get(resolveParameter(path));
                     }
 
                     function resolveParameter(path) {
                         var pathElement,
                             first,
-                            scope;
+                            scope,
+                            newPath = [],
+                            parameter = [];
                         for (var i = 0; i < path.length; i++) {
                             pathElement = path[i];
                             if (_.isObject(pathElement)) {
                                 if (pathElement.type === "fnc") {
+                                    parameter = [];
                                     for (var j = 0; j < pathElement.parameter.length; j++) {
                                         par = pathElement.parameter[j];
                                         // if it's a path
@@ -168,19 +171,26 @@ define(['js/core/EventDispatcher', 'js/lib/parser', 'js/core/Binding', 'undersco
                                                 scope = searchScope.getScopeForKey(first.name);
                                             }
                                             if (scope) {
-                                                pathElement.parameter[j] = resolvePath(scope, par);
+                                                par = resolvePath(scope, par);
                                             }
-
                                         }
+                                        parameter.push(par);
                                     }
+
                                 }
+                                newPath.push({
+                                    index: pathElement.index,
+                                    type: pathElement.type,
+                                    name: pathElement.name,
+                                    parameter: parameter
+                                })
                             }
                         }
+
+                        return newPath;
                     }
 
-                    resolveParameter(bindingDef.path);
-
-                    return scope.get(bindingDef.path);
+                    return scope.get(resolveParameter(bindingDef.path));
                 }
             } else {
                 throw new Error("Couldn't find scope for " + pathElement.name);
