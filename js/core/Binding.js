@@ -20,6 +20,12 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
     var bindingsDestroyed = 0,
         undefined;
 
+    var TYPE_FNC = "fnc";
+    var TYPE_VAR = "var";
+    var TYPE_NORMAL = "normal";
+    var TYPE_STATIC = "static";
+    var TYPE_TWOWAY = "twoWay";
+
     var Bindable;
     var Binding = EventDispatcher.inherit("js.core.Binding",
         /** @lends Binding */
@@ -550,11 +556,11 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
             }
         });
 
-    var TYPE_FNC = Binding.TYPE_FNC = "fnc";
-    var TYPE_VAR = Binding.TYPE_VAR = "var";
-    var TYPE_NORMAL = Binding.TYPE_NORMAL = "normal";
-    var TYPE_STATIC = Binding.TYPE_STATIC = "static";
-    var TYPE_TWOWAY = Binding.TYPE_TWOWAY = "twoWay";
+    Binding.TYPE_FNC = TYPE_FNC;
+    Binding.TYPE_VAR = TYPE_VAR;
+    Binding.TYPE_NORMAL = TYPE_NORMAL;
+    Binding.TYPE_STATIC = TYPE_STATIC;
+    Binding.TYPE_TWOWAY = TYPE_TWOWAY;
 
     Binding.contextToString = function (context) {
         var str = "", el;
