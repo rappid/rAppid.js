@@ -1,7 +1,10 @@
 define(["inherit"], function(inherit){
 
     var cid = 0,
-        emptyCallback = function() {};
+        emptyCallback = function() {},
+        NONE = 0,
+        LOADING = 1,
+        LOADED = 2;
 
     var Base = inherit.Base.inherit("js.core.Base",{
 
@@ -111,6 +114,42 @@ define(["inherit"], function(inherit){
                 delete self.$debounceTimeoutMap[cacheId];
                 fnc.apply(scope, parameters);
             }, delay);
+        },
+
+        synchronizeFunctionCall: function(fnc, cacheId, callback, scope) {
+
+            var self = this;
+
+            this.$synchronizeCache = this.$synchronizeCache || {};
+            var obj = this.$synchronizeCache[cacheId] = this.$synchronizeCache[cacheId] || {
+                state: 0,
+                result: null,
+                error: null,
+                callbacks: []
+            };
+
+            if (obj.state === LOADED) {
+                callback && callback(obj.error, obj.result);
+            } else if (obj.state === LOADING) {
+                obj.callbacks.push(callback);
+            } else {
+                obj.callbacks.push(callback);
+                obj.state = LOADING;
+                fnc.call(scope, function(err, result) {
+                    obj.state = LOADED;
+                    obj.error = err;
+                    obj.result = result;
+
+                    for (var i = 0; i < obj.callbacks.length; i++) {
+                        try {
+                            obj.callbacks[i](err, result);
+                        } catch (e) {
+                            self.log(e, Base.LOGLEVEL.ERROR);
+                        }
+                    }
+                });
+            }
+
         }
 
     });
