@@ -289,7 +289,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
                                     } catch (e) {
 
                                         if (_.isString(e)) {
-                                            e = new Error(e + " for key '" + name + "'");
+                                            e = new Error(e + " for key '" + name + "' in class '" + this.constructor.name + "'");
                                         }
 
                                         throw e;
