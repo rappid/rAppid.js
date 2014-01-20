@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <ui:DataGridClass xmlns="http://www.w3.org/1999/xhtml" xmlns:js="js.core" xmlns:ui="js.ui" class="data-grid">
-    <table cid="$head" class="data-grid-head" margin-bottom="0" width="{innerWidth()}">
+    <table cid="$head" class="data-grid-head" margin-bottom="0">
         <ui:ItemsView items="{$columns}" itemKey="column" tagName="tr">
             <js:Template name="item">
                 <th width="{column.width}" onclick="_handleColumnClick">

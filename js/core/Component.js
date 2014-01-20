@@ -1,6 +1,6 @@
-define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable", "js/core/EventDispatcher", "underscore"],
+define(["require", "js/core/Element", "js/core/TextElement", "underscore"],
 
-    function (require, Element, TextElement, Bindable, EventDispatcher, _) {
+    function (require, Element, TextElement, _) {
 
         var FactoryCache = {},
             TextElementFactory,
@@ -179,7 +179,7 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                     this.$children.splice(index, 1);
                 }
 
-                if (index != -1) {
+                if (index !== -1) {
                     this.$configurations.splice(index, 1);
                 }
 
@@ -216,7 +216,7 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                 var tpl = this.$templates[name];
                 if (tpl) {
                     return tpl;
-                } else if (this.$parent && this.$parent != this) {
+                } else if (this.$parent && this.$parent !== this) {
                     return this.$parent.getTemplate(name);
                 } else {
                     return null;
@@ -237,11 +237,9 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
             _initializeAttributes: function (attributes) {
                 this.callBase();
 
-                if (this.$creationPolicy != "full") {
-                    if (attributes.hasOwnProperty("creationPolicy")) {
+                if (this.$creationPolicy !== "full" && (attributes.hasOwnProperty("creationPolicy"))) {
                         this.$creationPolicy = attributes.creationPolicy;
                         delete attributes.creationPolicy;
-                    }
                 }
 
             },
@@ -413,7 +411,7 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
              */
             _isComponentEvent: function (event) {
                 for (var i = 0; i < this.events.length; i++) {
-                    if (event == this.events[i]) {
+                    if (event === this.events[i]) {
                         return true;
                     }
                 }
@@ -477,7 +475,7 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
 
                 var instance = null;
 
-                if (node.nodeType == 1) { // Elements
+                if (node.nodeType === 1) { // Elements
                     var namespaceURI = node.namespaceURI,
                         localName = this._localNameFromDomNode(node),
                         cacheKey = namespaceURI + ":" + localName,
@@ -492,7 +490,8 @@ define(["require", "js/core/Element", "js/core/TextElement", "js/core/Bindable",
                         FactoryCache[cacheKey] = instance.factory;
                     }
 
-                } else if (node.nodeType == 3 || node.nodeType == 4) { // Text nodes
+                } else if (node.nodeType === 3 || node.nodeType === 4) {
+                    // Text nodes
                     instance = this._createTextElement(node, rootScope, cidScope, attributes);
                 }
 

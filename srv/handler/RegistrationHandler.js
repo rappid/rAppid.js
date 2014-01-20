@@ -24,8 +24,7 @@ define(['srv/core/Handler', 'srv/auth/AuthenticationFilter', 'srv/core/HttpError
 
         handleRequest: function (context, callback) {
 
-            var pathName = context.request.urlInfo.pathname,
-                method = this._getRequestMethod(context);
+            var method = this._getRequestMethod(context);
 
             if (method === "POST") {
                 var registrationRequest = this._createRegistrationRequest(context),

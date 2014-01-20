@@ -114,9 +114,21 @@ define(["js/core/Bindable", "underscore"], function (Bindable, _) {
                  */
                 creationPolicy: "auto"
             },
-            _initializeEventAttributes: function(attribute){
 
+            /***
+             * initializes all attributes handling events
+             *
+             * @param attributes
+             * @private
+             */
+            _initializeEventAttributes: function(attributes){
             },
+
+            /***
+             * initializes the attributes
+             * @param attributes
+             * @private
+             */
             _initializeAttributes: function (attributes) {
             },
 
@@ -126,6 +138,7 @@ define(["js/core/Bindable", "underscore"], function (Bindable, _) {
             /**
              *
              * @param creationPolicy
+             * @param withBindings
              *          auto - do not overwrite (default),
              *          all - create all children
              *          TODO none?

@@ -1,5 +1,5 @@
-define(['require', 'srv/core/Handler', 'flow', 'fs', 'path', 'srv/core/HttpError', 'json!srv/conf/mime.types.json', 'underscore'],
-    function (require, Handler, flow, Fs, Path, HttpError, MimeTypes, _) {
+define(['require', 'srv/core/Handler', 'flow', 'fs', 'path', 'srv/core/HttpError', 'json!srv/conf/mime.types.json'],
+    function (require, Handler, flow, Fs, Path, HttpError, MimeTypes) {
 
         Fs.exists = Fs.exists || Path.exists;
         return Handler.inherit('srv.core.StaticFileHandler', {
