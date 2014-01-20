@@ -230,64 +230,44 @@ define(["js/core/EventDispatcher", "js/core/Bindable", "underscore"], function (
         each: function (fnc, scope) {
             scope = scope || this;
 
-            if (scope['break']) {
-                throw "each would overwrite break";
-            }
-
-            if (scope['return']) {
-                throw "each would overwrite return";
-            }
-
-            var b = false,
-                r,
-                error;
-
-            scope['break'] = function () {
-                b = true;
-            };
-
-            scope['return'] = function (value) {
-                b = true;
-                r = value;
-            };
-
             for (var i = 0; i < this.$items.length; i++) {
-                try {
-                    fnc.call(scope, this.$items[i], i, this.$items);
-                } catch (e) {
-                    error = e;
-                    b = true;
-                }
+                fnc.call(scope, this.$items[i], i, this.$items);
+            }
+        },
+        /**
+         * Iterates over all items with the function.
+         * Returns the element when the function returns true.
+         *
+         * @param {Function} fnc Function to execute on each value in the list
+         * @param {Object} scope The this object
+         * @returns {*}
+         */
+        find: function (fnc, scope) {
+            scope = scope || this;
+            var b = false,
+                items = this.$items,
+                length = items.length;
 
-                if (b) {
+            for (var i = 0; i < length; i++) {
+                b = fnc.call(scope, items[i], i, this.$items);
+                if (b === true) {
                     break;
                 }
             }
 
-            scope['break'] = undefined;
-            scope['return'] = undefined;
-
-            if (error) {
-                throw error;
-            }
-
-            return r;
+            return i < length ? items[i] : null;
         },
+
         /**
          * Checks if item is included in List
          * @return {Boolean}
          */
         includes: function (item) {
-            var ret = this.each(function (innerItem) {
-                if (innerItem === item) {
-                    this["return"](true);
-                }
-            });
-            if (ret) {
-                return ret;
-            } else {
-                return false;
-            }
+            return _.contains(this.$items, item);
+        }.on('*'),
+
+        contains: function(item){
+            return _.contains(this.$items, item);
         }.on('*'),
 
         /**

@@ -2,7 +2,6 @@ define(["require", "js/html/HtmlElement", "js/ui/ContentPlaceHolder", "js/core/M
     function (require, HtmlElement, ContentPlaceHolder, Module, _, ModuleConfiguration, flow) {
         var ModuleLoader = HtmlElement.inherit("js.core.ModuleLoader", {
 
-            $classAttributes: ['router', 'currentModuleName', 'state'],
             defaults: {
                 /**
                  * The current module name
@@ -11,7 +10,7 @@ define(["require", "js/html/HtmlElement", "js/ui/ContentPlaceHolder", "js/core/M
                 /**
                  * The current module
                  */
-                $currentModule: null,
+                currentModule: null,
 
                 tagName: 'div',
                 /**
@@ -31,6 +30,8 @@ define(["require", "js/html/HtmlElement", "js/ui/ContentPlaceHolder", "js/core/M
                  */
                 router: null
             },
+
+            $classAttributes: ['router' ,'currentModule', 'currentModuleName', 'state'],
 
             ctor: function (attributes) {
                 this.callBase();
@@ -111,7 +112,7 @@ define(["require", "js/html/HtmlElement", "js/ui/ContentPlaceHolder", "js/core/M
                 flow()
                     .seq(function (cb) {
 
-                        var currentModule = self.$.$currentModule;
+                        var currentModule = self.$.currentModule;
                         if (currentModule) {
                             currentModule._unload(cb);
                         } else {
@@ -151,7 +152,7 @@ define(["require", "js/html/HtmlElement", "js/ui/ContentPlaceHolder", "js/core/M
                         self._clearContentPlaceHolders();
 
                         self.set('currentModuleName', moduleName);
-                        var contentPlaceHolders = self.getContentPlaceHolders();
+                        var contentPlaceHolders = self.getContentPlaceHolders("external");
 
                         // set content
                         for (var i = 0; i < contentPlaceHolders.length; i++) {
@@ -163,7 +164,7 @@ define(["require", "js/html/HtmlElement", "js/ui/ContentPlaceHolder", "js/core/M
                     .exec(function (err) {
                         self.set({
                             state: err ? 'error' : null,
-                            $currentModule: moduleInstance
+                            currentModule: moduleInstance
                         });
 
                         if (callback) {
@@ -271,7 +272,7 @@ define(["require", "js/html/HtmlElement", "js/ui/ContentPlaceHolder", "js/core/M
 
             _clearContentPlaceHolders: function () {
 
-                var contentPlaceHolders = this.getContentPlaceHolders();
+                var contentPlaceHolders = this.getContentPlaceHolders("external");
 
                 // set content
                 for (var i = 0; i < contentPlaceHolders.length; i++) {
@@ -303,22 +304,6 @@ define(["require", "js/html/HtmlElement", "js/ui/ContentPlaceHolder", "js/core/M
                 state && this.addClass(state);
             }
         });
-
-        ModuleLoader.findContentPlaceHolders = function (component) {
-            var ret = [];
-
-            for (var i = 0; i < component.$children.length; i++) {
-                var child = component.$children[i];
-                if (child instanceof ContentPlaceHolder) {
-                    ret.push(child);
-                } else {
-                    ret.concat(ModuleLoader.findContentPlaceHolders(child));
-                }
-            }
-
-            return ret;
-
-        };
 
         return ModuleLoader;
     });

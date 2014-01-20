@@ -8,28 +8,27 @@ define(["js/core/Bindable", "underscore"], function (Bindable, _) {
 
         function stringToPrimitive(str) {
             // if it's a string
-            if (str && _.isString(str)) {
+            if (typeof(str) === "string") {
+
+                if (str === "true") {
+                    return true;
+                } else if (str === "false") {
+                    return false;
+                } else if (str === "null") {
+                    return null;
+                }
 
                 var num = Number(str);
                 if (!isNaN(num)) {
                     return num;
                 }
 
-                if (str === "true") {
-                    return true;
-                } else if (str === "false") {
-                    return false;
-                }
-
-                if (str === "null") {
-                    return null;
-                }
             }
             return str;
         }
 
         var Element = Bindable.inherit("js.core.Element", {
-            ctor: function (attributes, descriptor, stage, parentScope, rootScope, evaluateBindingsInCtor) {
+            ctor: function (attributes, descriptor, stage, parentScope, rootScope, cidScope, evaluateBindingsInCtor) {
                 attributes = attributes || {};
 
                 if (!descriptor) {
@@ -37,11 +36,15 @@ define(["js/core/Bindable", "underscore"], function (Bindable, _) {
                     if (!rootScope) {
                         rootScope = this;
                     }
+                    if (!cidScope) {
+                        cidScope = this;
+                    }
                 }
                 this.$stage = stage;
                 this.$descriptor = descriptor;
                 this.$parentScope = parentScope || null;
                 this.$rootScope = rootScope || null;
+                this.$cidScope = cidScope || null;
                 this.$attributesNamespace = this.$attributesNamespace || {};
 
                 this.callBase(attributes, evaluateBindingsInCtor);
@@ -55,7 +58,7 @@ define(["js/core/Bindable", "underscore"], function (Bindable, _) {
 
             },
 
-            _getAttributesFromDescriptor: function (descriptor, rootScope) {
+            _getAttributesFromDescriptor: function (descriptor, rootScope, cidScope) {
 
                 this.$attributesNamespace = this.$attributesNamespace || {};
 
@@ -74,7 +77,7 @@ define(["js/core/Bindable", "underscore"], function (Bindable, _) {
                                 handled = false;
 
                             if (prefix === "function:") {
-                                var fnc = rootScope[node.value];
+                                var fnc = cidScope[node.value] || rootScope[node.value];
                                 if (!fnc) {
                                     throw new Error("Cannot find referenced function '" + node.value + "' in scope.");
                                 }
@@ -111,9 +114,21 @@ define(["js/core/Bindable", "underscore"], function (Bindable, _) {
                  */
                 creationPolicy: "auto"
             },
-            _initializeEventAttributes: function(attribute){
 
+            /***
+             * initializes all attributes handling events
+             *
+             * @param attributes
+             * @private
+             */
+            _initializeEventAttributes: function(attributes){
             },
+
+            /***
+             * initializes the attributes
+             * @param attributes
+             * @private
+             */
             _initializeAttributes: function (attributes) {
             },
 
@@ -123,6 +138,7 @@ define(["js/core/Bindable", "underscore"], function (Bindable, _) {
             /**
              *
              * @param creationPolicy
+             * @param withBindings
              *          auto - do not overwrite (default),
              *          all - create all children
              *          TODO none?

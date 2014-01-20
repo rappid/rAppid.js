@@ -819,9 +819,16 @@ define(["js/core/Component", "js/core/Base", "js/data/Collection", "underscore",
                                 context = context.$contextModel.$context;
 
                             }
+                            // the requestor is not a descendant of the child and the child is not a descendant of the requestor
+                            // so if the requestor is not a Model and not a Collection we return the last context
+                            if (!(requestor instanceof Model) && !(requestor instanceof Collection)) {
+                                return context;
+                            }
                         }
                     }
                 }
+                // the requestor is not a descendant of the child and the child is not a descendant of the requestor
+                // and the requestor is a Model or a Collection
                 if (requestor) {
                     return requestor.$context;
                 }
@@ -1100,7 +1107,7 @@ define(["js/core/Component", "js/core/Base", "js/data/Collection", "underscore",
                 return JSON.parse(text);
             },
             getContentType: function () {
-                return "application/json";
+                return "application/json; charset=UTF-8";
             }
         });
 

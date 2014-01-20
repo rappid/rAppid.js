@@ -1,4 +1,4 @@
-define(["js/core/Window", "js/html/HtmlElement", "js/lib/extension", "underscore", "require", "flow", "js/core/Bindable"], function (Window, HtmlElement, Extension, _, require, flow, Bindable) {
+define(["js/core/Window", "js/html/HtmlElement", "js/lib/extension", "underscore", "require", "flow"], function (Window, HtmlElement, Extension, _, require, flow) { //NOSONAR
 
     /***
      * @summary An application is a Window, which gets bootstrapped and started by rAppid.js and is attached to the WindowManager.

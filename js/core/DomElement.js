@@ -78,7 +78,7 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                 enabled: true
             },
 
-            ctor: function (attributes, descriptor, systemManager, parentScope, rootScope) {
+            ctor: function (attributes, descriptor, systemManager, parentScope, rootScope, cidScope) {
                 this.$addedToDom = false;
                 this.$renderMap = {};
                 this.$children = [];
@@ -87,6 +87,7 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                 this.$renderedChildren = [];
                 this.$contentChildren = [];
                 this.$domEventHandler = {};
+                this.factory.$domNodeAttributeCache = this.factory.$domNodeAttributeCache || {};
                 // go inherit tree up and search for descriptors
                 var current = this;
                 while (current) {
@@ -107,8 +108,8 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                     }
                 }
 
-                this.bind('add:dom', this._onDomAdded, this);
-                this.bind('remove:dom', this._onDomRemoved, this);
+                this.bind('dom:add', this._onDomAdded, this);
+                this.bind('dom:remove', this._onDomRemoved, this);
             },
 
             /**
@@ -118,7 +119,7 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
             _onDomAdded: function () {
                 this.$addedToDom = true;
                 for (var i = 0; i < this.$renderedChildren.length; i++) {
-                    this.$renderedChildren[i].trigger('add:dom', this.$el);
+                    this.$renderedChildren[i].trigger('dom:add', this.$el);
                 }
             },
 
@@ -129,7 +130,7 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
             _onDomRemoved: function () {
                 this.$addedToDom = false;
                 for (var i = 0; i < this.$renderedChildren.length; i++) {
-                    this.$renderedChildren[i].trigger('remove:dom', this.$el);
+                    this.$renderedChildren[i].trigger('dom:remove', this.$el);
                 }
             },
 
@@ -225,7 +226,7 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                 return ret;
             },
 
-            getContentPlaceHolders: function () {
+            getContentPlaceHolders: function (from) {
 
                 if (!ContentPlaceHolder) {
                     ContentPlaceHolder = require('js/ui/ContentPlaceHolder');
@@ -237,10 +238,10 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                 for (var i = 0; i < this.$children.length; i++) {
                     child = this.$children[i];
 
-                    if (ContentPlaceHolder && child instanceof ContentPlaceHolder) {
+                    if (ContentPlaceHolder && child instanceof ContentPlaceHolder && (!from || child.$fromDescriptor === from)) {
                         ret.push(child);
                     } else if (child instanceof DomElement) {
-                        ret = ret.concat(child.getContentPlaceHolders());
+                        ret = ret.concat(child.getContentPlaceHolders(from));
                     }
                 }
 
@@ -406,7 +407,7 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                         }
 
                         if (this.$addedToDom) {
-                            child.trigger('add:dom', this.$el);
+                            child.trigger('dom:add', this.$el);
                         }
                     } else {
                         this.$invisibleChildMap[child.$cid] = child;
@@ -526,11 +527,11 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
 
                     setTimeout(function () {
                         el.removeChild(child.$el);
-                        child.trigger('remove:dom', el);
+                        child.trigger('dom:remove', el);
                     }, time);
                 } else {
                     this.$el.removeChild(child.$el);
-                    child.trigger('remove:dom', child.$el);
+                    child.trigger('dom:remove', child.$el);
                 }
             },
 
@@ -611,21 +612,29 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
              * @private
              */
             _isDOMNodeAttribute: function (key) {
-                var cAttr;
+                if(this.factory.$domNodeAttributeCache.hasOwnProperty(key)){
+                    return this.factory.$domNodeAttributeCache[key];
+                }
+                var cAttr,
+                    ret = true;
                 for (var i = 0; i < this.$classAttributes.length; i++) {
                     cAttr = this.$classAttributes[i];
                     if (cAttr instanceof RegExp) {
                         if (cAttr.test(key)) {
-                            return false;
+                            ret = false;
+                            break;
                         }
                     } else {
                         if (cAttr == key) {
-                            return false;
+                            ret =  false;
+                            break;
                         }
                     }
                 }
 
-                return true;
+                this.factory.$domNodeAttributeCache[key] = ret;
+
+                return ret;
             },
 
             /***
@@ -740,7 +749,7 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                         this.$el.appendChild(child.$el);
                     }
                     if (this.$addedToDom) {
-                        child.trigger('add:dom', this.$el);
+                        child.trigger('dom:add', this.$el);
                     }
                     delete this.$invisibleChildMap[child.$cid];
                 }

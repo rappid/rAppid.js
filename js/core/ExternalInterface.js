@@ -25,6 +25,8 @@ define(["js/core/Base"], function(Base) {
                 return callback.apply(scope, args);
             };
 
+            scopedCallback._async = callback._async;
+
             this.$interface[functionName] = scopedCallback;
 
             if (this.runsInBrowser() && this.$stage && this.$stage.$el) {

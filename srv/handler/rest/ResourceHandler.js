@@ -1,4 +1,4 @@
-define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'js/data/Collection', 'js/data/DataSource', 'js/data/Model', 'underscore', 'js/core/List', 'js/data/Query'], function (Component, HttpError, flow, require, JSON, Collection, DataSource, Model, _, List, Query) {
+define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'js/data/Collection', 'js/data/DataSource', 'js/data/Model', 'underscore', 'js/core/List', 'js/data/Entity', 'js/data/validator/Validator'], function (Component, HttpError, flow, require, JSON, Collection, DataSource, Model, _, List, Entity, Validator) {
 
     return Component.inherit('srv.handler.rest.ResourceHandler', {
         defaults: {
@@ -6,6 +6,17 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
             defaultSortField: null,
             defaultSortOrder: null
         },
+
+        ctor: function() {
+            this._extendValidators();
+
+            this.callBase();
+        },
+
+        /**
+         * An array of server side validators to apply
+         */
+        validators: [],
 
         $collectionMethodMap: {
             GET: "_index",
@@ -25,6 +36,33 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
 
             this.$resourceConfiguration = configuration;
             this.$parentResource = parentResource;
+        },
+
+        _extendValidators: function () {
+
+            if (this.factory.validators) {
+                this.validators = this.factory.validators;
+                return;
+            }
+
+            var base = this.base;
+
+            while (base.factory.classof(Entity)) {
+                var baseValidator = base.validators;
+
+                for (var i = 0; i < baseValidator.length; i++) {
+                    var validator = baseValidator[i];
+
+                    if (_.indexOf(this.validators, validator) === -1) {
+                        this.validators.push(validator);
+                    }
+                }
+
+                base = base.base;
+            }
+
+            this.factory.validators = this.validators;
+
         },
 
         _isCollectionResource: function () {
@@ -382,9 +420,15 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
 
                     model.set(processor.parse(model, payload));
 
-                    if(model.createdField){
+                    if (model.createdField) {
                         model.set(model.createdField, new Date());
                     }
+                })
+                .seq(function () {
+                    self._generateAutoValues(model);
+                })
+                .seq(function (cb) {
+                    self._validate(model, context, cb);
                 })
                 .seq(function (cb) {
                     self._beforeModelSave(model, context, cb);
@@ -557,6 +601,12 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
                         model.set(model.idField, model.factory.prototype.convertIdentifier(self.$resourceId));
                     }
                 })
+                .seq(function () {
+                    self._generateAutoValues(model);
+                })
+                .seq(function (cb) {
+                    self._validate(model, context, cb);
+                })
                 .seq(function (cb) {
                     self._beforeModelSave(model, context, cb);
                 })
@@ -612,61 +662,74 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
             }
         },
 
-        /**
-         *
-         * @param model
-         * @param context
-         * @param callback
-         * @private
-         */
-        _beforeModelSave: function (model, context, callback) {
+        _generateAutoValues: function (model, context) {
             var schema = model.schema,
-                schemaObject,
+                self = this;
+
+            var schemaObject;
+
+            for (var schemaKey in schema) {
+                if (schema.hasOwnProperty(schemaKey)) {
+                    schemaObject = schema[schemaKey];
+                    if (schemaObject.generated) {
+                        var value = self._autoGenerateValue(schemaKey, context, model);
+                        if (!_.isUndefined(value)) {
+                            model.set(schemaKey, value);
+                        }
+                    }
+                }
+            }
+
+        },
+
+        _validate: function (model, context, callback) {
+
+            var validators = this.validators,
                 self = this;
 
             flow()
-                .seq(function () {
-                    for (var schemaKey in schema) {
-                        if (schema.hasOwnProperty(schemaKey)) {
-                            schemaObject = schema[schemaKey];
-                            if (schemaObject.generated) {
-                                var value = self._autoGenerateValue(schemaKey, context, model);
-                                if (!_.isUndefined(value)) {
-                                    model.set(schemaKey, value);
-                                }
-                            }
-                        }
-                    }
-
-                })
-                // check linked models -> TODO: move to validate
-                .seq(function (cb) {
+                .par(function(cb) {
                     flow()
-                        .parEach(schema, function (schemaObject, cb) {
-                            var linkedModel = model.$[schemaObject._key];
-                            if (linkedModel instanceof Model) {
-                                if (linkedModel) {
-                                    // replace with exists?
-                                    linkedModel.fetch(null, function (err) {
-                                        var key = schemaObject._key;
-                                        if (err && err === DataSource.ERROR.NOT_FOUND) {
-                                            cb(new HttpError(key + " not found", 400));
-                                        } else {
-                                            cb(err);
-                                        }
-                                    });
-                                } else {
-                                    cb();
-                                }
-                            } else {
-                                cb();
-                            }
-
+                        .parEach(validators, function(validator, cb) {
+                            validator.validate(model, {
+                                resourceHandler: self
+                            }, function(err, result) {
+                                // error or validation error result -> error
+                                cb(err || (result instanceof Array) || (result instanceof Validator.Error));
+                            });
                         })
                         .exec(cb);
+                }, function(cb) {
+
+                    function checkEntityForLinkedModels(entity, cb){
+                         flow()
+                             .parEach(entity.schema, function(schemaObject, cb){
+                                 var linkedModel = entity.$[schemaObject._key];
+                                 if (linkedModel instanceof Model) {
+                                     // replace with exists?
+                                     linkedModel.fetch(null, function (err) {
+                                         var key = schemaObject._key;
+                                         if (err && err === DataSource.ERROR.NOT_FOUND) {
+                                             cb(new HttpError(key + " not found", 400));
+                                         } else {
+                                             cb(err);
+                                         }
+                                     });
+                                 } else if (linkedModel instanceof Entity) {
+                                     checkEntityForLinkedModels(linkedModel, cb);
+                                 } else {
+                                     cb();
+                                 }
+                             })
+                             .exec(cb)
+                    }
+
+                    checkEntityForLinkedModels(model, cb);
                 })
                 .exec(callback);
+
         },
+
         /***
          *
          * @param context
@@ -722,6 +785,18 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
                     }
                 });
         },
+
+        /**
+         *
+         * @param model
+         * @param context
+         * @param callback
+         * @private
+         */
+        _beforeModelSave: function (model, context, callback) {
+            callback && callback();
+        },
+
         _beforeModelCreate: function (model, context, callback) {
             callback && callback();
         },

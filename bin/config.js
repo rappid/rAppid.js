@@ -129,7 +129,7 @@ function findFiles(dir, exclude_dirs, types, dept) {
 }
 
 config.usage =  "rappidjs config [file:=config.json]\n" +
-                "\tcreates or update the given config.json file to incluce all xaml classes";
+                "\tcreates or update the given config.json file to include all xaml classes";
 
 module.exports = config;
 

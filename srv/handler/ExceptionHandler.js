@@ -9,6 +9,8 @@ define(['srv/core/Handler', 'srv/core/HttpError', 'underscore'], function(Handle
             }
 
             this.exception = exception;
+
+            this.callBase();
         },
 
         isResponsibleForRequest: function() {

@@ -285,11 +285,11 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
                             for (var name in inject) {
                                 if (inject.hasOwnProperty(name)) {
                                     try {
-                                        this.$[name] = injection.getInstance(inject[name]);
+                                        this.set(name, injection.getInstance(inject[name]));
                                     } catch (e) {
 
                                         if (_.isString(e)) {
-                                            e = new Error(e + " for key '" + name + "'");
+                                            e = new Error(e + " for key '" + name + "' in class '" + this.constructor.name + "'");
                                         }
 
                                         throw e;
@@ -307,25 +307,53 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
 
 
                 _bindBus: function () {
-                    for (var f in this) {
-                        var fn = this[f];
-                        if (fn instanceof Function && fn._busEvents) {
-                            for (var i = 0; i < fn._busEvents.length; i++) {
+                    var fn;
+                    if (!this.factory.__busListeners) {
+                        this.factory.__busListeners = [];
+                        for (var f in this) {
+                            fn = this[f];
+                            if (fn instanceof Function && fn._busEvents) {
+                                for (var i = 0; i < fn._busEvents.length; i++) {
+                                    this.$stage.$bus.bind(fn._busEvents[i], fn, this);
+                                }
+                                this.factory.__busListeners.push(f);
+                            }
+                        }
+                    } else if (!!this.factory.__busListeners.length) {
+                        var j = 0,
+                            busListeners = this.factory.__busListeners;
+                        while (j < busListeners.length) {
+                            fn = this[busListeners[j++]];
+                            for (i = 0; i < fn._busEvents.length; i++) {
                                 this.$stage.$bus.bind(fn._busEvents[i], fn, this);
                             }
                         }
+
                     }
                 },
 
                 _unbindBus: function () {
-                    for (var f in this) {
-                        var fn = this[f];
-                        if (fn instanceof Function && fn._busEvents) {
-                            for (var i = 0; i < fn._busEvents.length; i++) {
+                    if (!this.factory.__busListeners) {
+                        for (var f in this) {
+                            var fn = this[f];
+                            if (fn instanceof Function && fn._busEvents) {
+                                for (var i = 0; i < fn._busEvents.length; i++) {
+                                    this.$stage.$bus.unbind(fn._busEvents[i], fn, this);
+                                }
+                            }
+                        }
+                    } else if (!!this.factory.__busListeners.length) {
+                        var j = 0,
+                            busListeners = this.factory.__busListeners;
+                        while (j < busListeners.length) {
+                            fn = this[busListeners[j++]];
+                            for (i = 0; i < fn._busEvents.length; i++) {
                                 this.$stage.$bus.unbind(fn._busEvents[i], fn, this);
                             }
                         }
+
                     }
+
                 },
 
                 _extract: function () {
@@ -744,19 +772,26 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
                         path = Parser.parse(key, "path");
                     }
 
-                    var pathElement, val;
+                    var pathElement, val,
+                        parameters, fnc,
+                        newParameters;
                     for (var j = 0; scope && j < path.length; j++) {
                         pathElement = path[j];
                         if (pathElement.type == "fnc") {
-                            var fnc = scope[pathElement.name];
-                            var parameters = pathElement.parameter;
+                            fnc = scope[pathElement.name];
+                            parameters = pathElement.parameter;
+                            newParameters = [];
                             for (var i = 0; i < parameters.length; i++) {
                                 var param = parameters[i];
-                                if (_.isObject(param) && param.type && param.path) {
-                                    parameters[i] = this.get(param.path);
+
+                                if (_.isArray(param)) {
+                                    param = this.get(param);
+                                } else if (_.isObject(param) && param.type && param.path) {
+                                    param = this.get(param.path);
                                 }
+                                newParameters.push(param);
                             }
-                            scope = fnc.apply(scope, parameters);
+                            scope = fnc.apply(scope, newParameters);
                         } else if (pathElement.type == "var") {
                             if (scope instanceof Bindable) {
                                 if (path.length - 1 === j) {

@@ -44,7 +44,7 @@ define(["js/core/Component", "js/html/HtmlElement"], function (Component, HtmlEl
 
             options = options || {};
 
-            var duration = options.duration || this.$.duration;
+            var duration = options.hasOwnProperty("duration") ? options.duration : this.$.duration;
 
             var notification = this.$templates[templateName].createInstance(attributes || {});
 
@@ -60,10 +60,11 @@ define(["js/core/Component", "js/html/HtmlElement"], function (Component, HtmlEl
             };
             this.$notifications.push(notification);
 
-            setTimeout(function () {
-                self.closeNotification(notification);
-            }, duration * 1000);
-
+            if (duration) {
+                setTimeout(function () {
+                    self.closeNotification(notification);
+                }, duration * 1000);
+            }
 
             return notification;
         },

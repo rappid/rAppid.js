@@ -28,7 +28,7 @@ var optimizeConfig = {
     nodeRequire: require,
     findNestedDependencies: false,
     optimizeAllPluginResources: true,
-    preserveLicenseComments: false,
+    preserveLicenseComments: true,
     //If using UglifyJS for script optimization, these config options can be
     //used to pass configuration values to UglifyJS.
     //See https://github.com/mishoo/UglifyJS for the possible values.
@@ -253,7 +253,10 @@ var build = function (args, callback) {
     }, function (err) {
         writeBackConfig();
 
+        console.log("Something went wrong during optimizing:");
         console.log(err);
+
+        process.exit(1);
     });
 };
 

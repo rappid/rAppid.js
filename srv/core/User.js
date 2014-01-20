@@ -18,24 +18,14 @@ define(["js/core/Bindable", "js/core/List", "flow", "srv/auth/AuthorizationReque
         },
 
         getAuthenticationByProviderName: function (providerName) {
-            var ret = null;
-            this.$.authentications.each(function (auth) {
-                if (auth.$.provider === providerName) {
-                    ret = auth;
-                    this["break"]();
-                }
+            return this.$.authentications.find(function (auth) {
+                return auth.$.provider === providerName;
             });
-
-            return ret;
         },
 
         isAnonymous: function () {
             return this.$.authentications.isEmpty();
         },
-//
-//        addAuthorisationRequest: function (data, filter) {
-//            this.$authenticationRequests.push(new Identity.AuthenticationRequest(data, filter));
-//        },
 
         loadAuthentications: function (callback) {
 

@@ -1,5 +1,8 @@
 define(['js/core/EventDispatcher', 'js/lib/parser', 'js/core/Binding', 'underscore'], function (EventDispatcher, Parser, Binding, _) {
 
+    var bindingRegEx = /\{/,
+        bindingParserCache = {};
+
     function findTransformFunction(path, scope) {
         var pathElement = path[0];
         if (pathElement.type == Binding.TYPE_FNC) {
@@ -138,21 +141,24 @@ define(['js/core/EventDispatcher', 'js/lib/parser', 'js/core/Binding', 'undersco
                     return binding;
 
                 } else {
-                    var par;
+                    var par,
+                        newPath = [];
 
                     function resolvePath(scope, path) {
-                        resolveParameter(path);
-                        return scope.get(path);
+                        return scope.get(resolveParameter(path));
                     }
 
                     function resolveParameter(path) {
                         var pathElement,
                             first,
-                            scope;
+                            scope,
+                            newPath = [],
+                            parameter = [];
                         for (var i = 0; i < path.length; i++) {
                             pathElement = path[i];
                             if (_.isObject(pathElement)) {
                                 if (pathElement.type === "fnc") {
+                                    parameter = [];
                                     for (var j = 0; j < pathElement.parameter.length; j++) {
                                         par = pathElement.parameter[j];
                                         // if it's a path
@@ -165,19 +171,26 @@ define(['js/core/EventDispatcher', 'js/lib/parser', 'js/core/Binding', 'undersco
                                                 scope = searchScope.getScopeForKey(first.name);
                                             }
                                             if (scope) {
-                                                pathElement.parameter[j] = resolvePath(scope, par);
+                                                par = resolvePath(scope, par);
                                             }
-
                                         }
+                                        parameter.push(par);
                                     }
+
                                 }
+                                newPath.push({
+                                    index: pathElement.index,
+                                    type: pathElement.type,
+                                    name: pathElement.name,
+                                    parameter: parameter
+                                })
                             }
                         }
+
+                        return newPath;
                     }
 
-                    resolveParameter(bindingDef.path);
-
-                    return scope.get(bindingDef.path);
+                    return scope.get(resolveParameter(bindingDef.path));
                 }
             } else {
                 throw new Error("Couldn't find scope for " + pathElement.name);
@@ -201,15 +214,16 @@ define(['js/core/EventDispatcher', 'js/lib/parser', 'js/core/Binding', 'undersco
             bindingDefinitions = bindingDefinitions || this.parse(text);
 
             var binding,
-                bindings = [];
+                bindings = [],
+                ret = [];
 
             for (var i = 0; i < bindingDefinitions.length; i++) {
                 var bindingDef = bindingDefinitions[i];
                 if (bindingDef.length) {
-                    bindingDefinitions[i] = bindingDef;
+                    ret.push(bindingDef);
                 } else {
                     try {
-                        binding = this.create(bindingDef, scope, attrKey, bindingDefinitions);
+                        binding = this.create(bindingDef, scope, attrKey, ret);
                     } catch (e) {
                         throw new Error("Create binding for '" + text + "'. " + e.message);
                     }
@@ -219,18 +233,18 @@ define(['js/core/EventDispatcher', 'js/lib/parser', 'js/core/Binding', 'undersco
                         scope.$bindings[attrKey] = scope.$bindings[attrKey] || [];
                         scope.$bindings[attrKey].push(binding);
                     }
-                    bindingDefinitions[i] = binding;
+                    ret.push(binding);
                 }
 
             }
 
             if (bindings.length > 0) {
                 return bindings[0].getContextValue();
-            } else if (bindingDefinitions.length > 0) {
-                if (bindingDefinitions.length === 1) {
-                    return bindingDefinitions[0];
+            } else if (ret.length > 0) {
+                if (ret.length === 1) {
+                    return ret[0];
                 }
-                return Binding.contextToString(bindingDefinitions);
+                return Binding.contextToString(ret);
             } else {
                 return text;
             }
@@ -239,7 +253,12 @@ define(['js/core/EventDispatcher', 'js/lib/parser', 'js/core/Binding', 'undersco
 
         parse: function (text) {
             if (_.isString(text)) {
-                return Parser.parse(text, "text");
+                if(bindingParserCache[text]){
+                    return bindingParserCache[text];
+                }
+                var ret = Parser.parse(text, "text");
+                bindingParserCache[text] = ret;
+                return ret;
             }
         },
 

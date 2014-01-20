@@ -133,6 +133,24 @@ describe('js.core.List', function () {
         });
     });
 
+
+    describe('#each', function () {
+        it('should iterate over each item', function (done) {
+
+            var items = [1, 2, 3, 4, 5];
+
+            list.reset(items);
+
+            list.each(function(item, index){
+                expect(items[index]).to.eql(item);
+            });
+
+            done();
+        });
+
+    });
+
+
     describe('#removeAt', function () {
         it('should remove one item at a specific index', function () {
             var index = 1;

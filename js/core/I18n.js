@@ -123,7 +123,7 @@ define(["require", "js/core/Component", "underscore", "moment", "flow"], functio
          */
         ts: function(key1, key2, replacement1, replacement2) {
             var args = Array.prototype.slice.call(arguments),
-                newArgs = [],
+                newArgs,
                 key = args.shift(),
                 num;
 

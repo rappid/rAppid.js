@@ -11,4 +11,11 @@
         <div>{item.value}</div>
     </ui:ItemsView>
 
+    <ui:ItemsView cid="cidTemplate" items="{woTemplateItems}" id="withCid">
+        <div>
+            <div cid="innerEl" class="{item.value}"/>
+            <div class="inner-container">{innerEl.class}</div>
+        </div>
+    </ui:ItemsView>
+
 </app:ItemsViewTestClass>

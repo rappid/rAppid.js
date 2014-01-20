@@ -1,5 +1,5 @@
-define(['require', 'srv/core/Handler', 'flow', 'fs', 'path', 'srv/core/HttpError', 'json!srv/conf/mime.types.json', 'underscore'],
-    function (require, Handler, flow, Fs, Path, HttpError, MimeTypes, _) {
+define(['require', 'srv/core/Handler', 'flow', 'fs', 'path', 'srv/core/HttpError', 'json!srv/conf/mime.types.json'],
+    function (require, Handler, flow, Fs, Path, HttpError, MimeTypes) {
 
         Fs.exists = Fs.exists || Path.exists;
         return Handler.inherit('srv.core.StaticFileHandler', {
@@ -35,10 +35,19 @@ define(['require', 'srv/core/Handler', 'flow', 'fs', 'path', 'srv/core/HttpError
                     .seq("path", function () {
                         var documentRoot = self.$.documentRoot;
 
-                        var pathName = context.request.urlInfo.pathname;
+                        var pathName = context.request.urlInfo.pathname,
+                            relativePath = self.$.path;
 
-                        if (pathName === '/') {
-                            pathName = self.$.indexFile;
+                        if (pathName.indexOf(relativePath) !== 0) {
+                            callback(new Error("Handler path '" + relativePath + "' not at start of " + pathName));
+                            return;
+                        }
+
+                        pathName = pathName.substring(relativePath.length) || "/";
+
+
+                        if (/\/$/.test(pathName)) {
+                            pathName += self.$.indexFile;
                         }
 
                         var path = Path.resolve(Path.join(documentRoot, pathName));

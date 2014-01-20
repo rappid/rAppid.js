@@ -8,7 +8,7 @@
         </ui:DataGridRow>
     </js:Template>
     <div cid="$scrollContainer" position="relative">
-        <table cid="$table" componentClass="table" onkeydown="_onKeyDown" tabindex="1">
+        <table cid="$table" componentClass="table" onkeydown="_onKeyDown" tabindex="1" widthUpdatePolicy="in">
             <thead display="none">
                 <ui:ItemsView items="{columns}" tagName="tr" itemKey="column">
                     <js:Template name="item">
