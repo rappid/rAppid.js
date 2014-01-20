@@ -6,8 +6,8 @@
             "annotations": {},
             "definedInFile": "js/data/LocalStorage.js",
             "lineNumbers": [
-                108,
-                110
+                113,
+                115
             ],
             "name": "clear",
             "visibility": "public"
@@ -18,8 +18,8 @@
             "annotations": {},
             "definedInFile": "js/data/LocalStorage.js",
             "lineNumbers": [
-                92,
-                94
+                97,
+                99
             ],
             "name": "ctor",
             "visibility": "public"
@@ -34,8 +34,8 @@
             "annotations": {},
             "definedInFile": "js/data/LocalStorage.js",
             "lineNumbers": [
-                96,
-                98
+                101,
+                103
             ],
             "name": "getItem",
             "visibility": "public"
@@ -50,8 +50,8 @@
             "annotations": {},
             "definedInFile": "js/data/LocalStorage.js",
             "lineNumbers": [
-                104,
-                106
+                109,
+                111
             ],
             "name": "removeItem",
             "visibility": "public"
@@ -69,8 +69,8 @@
             "annotations": {},
             "definedInFile": "js/data/LocalStorage.js",
             "lineNumbers": [
-                100,
-                102
+                105,
+                107
             ],
             "name": "setItem",
             "visibility": "public"

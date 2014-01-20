@@ -4,6 +4,7 @@
     xmlns:ns="js.conf">
     <import/>
     <element name="DataSourceConfiguration" type="ns:DataSourceConfiguration"/>
+    <element name="InjectionConfiguration" type="ns:InjectionConfiguration"/>
     <element name="ModuleConfiguration" type="ns:ModuleConfiguration"/>
     <element name="ResourceConfiguration" type="ns:ResourceConfiguration"/>
     <element name="RouteConfiguration" type="ns:RouteConfiguration"/>
@@ -16,6 +17,41 @@
                 <sequence>
                     <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
                 </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+    <complexType name="InjectionConfiguration">
+        <complexContent>
+            <extension base="ns1:Configuration">
+                <annotation>
+                    <documentation source="http://www.rappidjs.com/#/api/js.conf.InjectionConfiguration"></documentation>
+                </annotation>
+                <sequence>
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+                <attribute name="type">
+                    <annotation>
+                        <documentation>
+                        the type of the injection type
+                    </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="factory">
+                    <annotation>
+                        <documentation>
+                        the factory that will be injected. If no factory is given the
+factory will be automatically required
+
+                    </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="singleton" default="true">
+                    <annotation>
+                        <documentation>
+                        add instance to singleton cache?
+                    </documentation>
+                    </annotation>
+                </attribute>
             </extension>
         </complexContent>
     </complexType>

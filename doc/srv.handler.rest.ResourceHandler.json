@@ -6,8 +6,8 @@
             "annotations": {},
             "definedInFile": "js/core/Component.js",
             "lineNumbers": [
-                94,
-                96
+                96,
+                98
             ],
             "description": "Returns the ENVIRONMENT object",
             "returns": {
@@ -25,8 +25,8 @@
             "annotations": {},
             "definedInFile": "js/core/Component.js",
             "lineNumbers": [
-                102,
-                104
+                104,
+                106
             ],
             "description": "Returns the start parameter of the application",
             "returns": {
@@ -48,8 +48,8 @@
             "annotations": {},
             "definedInFile": "js/core/Component.js",
             "lineNumbers": [
-                204,
-                206
+                205,
+                207
             ],
             "definedBy": "js.core.Component",
             "name": "_addConfiguration",
@@ -65,8 +65,8 @@
             "annotations": {},
             "definedInFile": "js/core/Component.js",
             "lineNumbers": [
-                197,
-                202
+                198,
+                203
             ],
             "definedBy": "js.core.Component",
             "name": "_addTemplate",
@@ -88,8 +88,8 @@
             "annotations": {},
             "definedInFile": "srv/handler/rest/ResourceHandler.js",
             "lineNumbers": [
-                733,
-                735
+                808,
+                810
             ],
             "name": "_afterModelCreate",
             "visibility": "protected"
@@ -110,8 +110,8 @@
             "annotations": {},
             "definedInFile": "srv/handler/rest/ResourceHandler.js",
             "lineNumbers": [
-                745,
-                747
+                820,
+                822
             ],
             "name": "_afterModelRemove",
             "visibility": "protected"
@@ -132,8 +132,8 @@
             "annotations": {},
             "definedInFile": "srv/handler/rest/ResourceHandler.js",
             "lineNumbers": [
-                739,
-                741
+                814,
+                816
             ],
             "name": "_afterModelSave",
             "visibility": "protected"
@@ -154,8 +154,8 @@
             "annotations": {},
             "definedInFile": "srv/handler/rest/ResourceHandler.js",
             "lineNumbers": [
-                736,
-                738
+                811,
+                813
             ],
             "name": "_afterModelUpdate",
             "visibility": "protected"
@@ -176,8 +176,8 @@
             "annotations": {},
             "definedInFile": "srv/handler/rest/ResourceHandler.js",
             "lineNumbers": [
-                607,
-                613
+                657,
+                663
             ],
             "name": "_autoGenerateValue",
             "visibility": "protected"
@@ -211,8 +211,8 @@
             "annotations": {},
             "definedInFile": "srv/handler/rest/ResourceHandler.js",
             "lineNumbers": [
-                725,
-                727
+                800,
+                802
             ],
             "name": "_beforeModelCreate",
             "visibility": "protected"
@@ -239,8 +239,8 @@
             "annotations": {},
             "definedInFile": "srv/handler/rest/ResourceHandler.js",
             "lineNumbers": [
-                498,
-                500
+                542,
+                544
             ],
             "description": "Get's called before a model fetch",
             "private": "",
@@ -263,8 +263,8 @@
             "annotations": {},
             "definedInFile": "srv/handler/rest/ResourceHandler.js",
             "lineNumbers": [
-                742,
-                744
+                817,
+                819
             ],
             "name": "_beforeModelRemove",
             "visibility": "protected"
@@ -291,8 +291,8 @@
             "annotations": {},
             "definedInFile": "srv/handler/rest/ResourceHandler.js",
             "lineNumbers": [
-                622,
-                669
+                796,
+                798
             ],
             "description": "",
             "private": "",
@@ -315,8 +315,8 @@
             "annotations": {},
             "definedInFile": "srv/handler/rest/ResourceHandler.js",
             "lineNumbers": [
-                729,
-                731
+                804,
+                806
             ],
             "name": "_beforeModelUpdate",
             "visibility": "protected"
@@ -328,7 +328,7 @@
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
                 309,
-                318
+                333
             ],
             "definedBy": "js.core.Bindable",
             "name": "_bindBus",
@@ -340,8 +340,8 @@
             "annotations": {},
             "definedInFile": "js/core/Component.js",
             "lineNumbers": [
-                554,
-                556
+                560,
+                562
             ],
             "private": "This method is called after all children are initialized",
             "definedBy": "js.core.Component",
@@ -382,8 +382,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                526,
-                552
+                554,
+                580
             ],
             "description": "Returns a copy of the attribute. This method is a hook for further cloning options",
             "private": "",
@@ -414,8 +414,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                808,
-                810
+                843,
+                845
             ],
             "description": "called after attributes has set and some of the has been changed\n",
             "abstract": "",
@@ -430,8 +430,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                713,
-                716
+                741,
+                744
             ],
             "definedBy": "js.core.Bindable",
             "name": "_commitInvalidatedAttributes",
@@ -454,8 +454,8 @@
             "annotations": {},
             "definedInFile": "srv/handler/rest/ResourceHandler.js",
             "lineNumbers": [
-                361,
-                428
+                399,
+                472
             ],
             "description": "",
             "private": "",
@@ -479,14 +479,19 @@
                     "description": "for new Component"
                 },
                 {
-                    "name": "rootScope"
+                    "types": null,
+                    "name": "rootScope",
+                    "optional": false
+                },
+                {
+                    "name": "cidScope"
                 }
             ],
             "annotations": {},
             "definedInFile": "js/core/Component.js",
             "lineNumbers": [
-                464,
-                496
+                465,
+                499
             ],
             "description": "Create {@link Component} for DOM Node with given attributes",
             "definedBy": "js.core.Component",
@@ -506,8 +511,8 @@
             "annotations": {},
             "definedInFile": "srv/handler/rest/ResourceHandler.js",
             "lineNumbers": [
-                188,
-                203
+                226,
+                241
             ],
             "name": "_createOptionsForCollectionFetch",
             "visibility": "protected"
@@ -525,8 +530,8 @@
             "annotations": {},
             "definedInFile": "srv/handler/rest/ResourceHandler.js",
             "lineNumbers": [
-                204,
-                217
+                242,
+                255
             ],
             "name": "_createSortStatement",
             "visibility": "protected"
@@ -541,14 +546,17 @@
                     "name": "rootScope"
                 },
                 {
+                    "name": "cidScope"
+                },
+                {
                     "name": "attributes"
                 }
             ],
             "annotations": {},
             "definedInFile": "js/core/Component.js",
             "lineNumbers": [
-                521,
-                529
+                524,
+                532
             ],
             "definedBy": "js.core.Component",
             "name": "_createTextElement",
@@ -567,8 +575,8 @@
             "annotations": {},
             "definedInFile": "srv/handler/rest/ResourceHandler.js",
             "lineNumbers": [
-                218,
-                220
+                256,
+                258
             ],
             "name": "_createWhereStatement",
             "visibility": "protected"
@@ -624,8 +632,8 @@
             "annotations": {},
             "definedInFile": "js/core/Base.js",
             "lineNumbers": [
-                80,
-                114
+                83,
+                117
             ],
             "description": "",
             "private": "",
@@ -639,8 +647,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                558,
-                560
+                586,
+                588
             ],
             "description": "",
             "returns": {
@@ -671,8 +679,8 @@
             "annotations": {},
             "definedInFile": "srv/handler/rest/ResourceHandler.js",
             "lineNumbers": [
-                676,
-                724
+                739,
+                787
             ],
             "description": "",
             "private": "",
@@ -696,10 +704,22 @@
             "type": "Method",
             "parameter": [],
             "annotations": {},
+            "definedInFile": "srv/handler/rest/ResourceHandler.js",
+            "lineNumbers": [
+                41,
+                66
+            ],
+            "name": "_extendValidators",
+            "visibility": "protected"
+        },
+        {
+            "type": "Method",
+            "parameter": [],
+            "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                331,
-                344
+                359,
+                372
             ],
             "definedBy": "js.core.Bindable",
             "name": "_extract",
@@ -718,8 +738,8 @@
             "annotations": {},
             "definedInFile": "srv/handler/rest/ResourceHandler.js",
             "lineNumbers": [
-                221,
-                245
+                259,
+                283
             ],
             "name": "_fetchAllHrefsForModel",
             "visibility": "protected"
@@ -753,8 +773,8 @@
             "annotations": {},
             "definedInFile": "srv/handler/rest/ResourceHandler.js",
             "lineNumbers": [
-                135,
-                165
+                173,
+                203
             ],
             "description": "Returns a collection for this resource in the right context",
             "returns": {
@@ -764,6 +784,25 @@
             },
             "private": "",
             "name": "_findCollection",
+            "visibility": "protected"
+        },
+        {
+            "type": "Method",
+            "parameter": [
+                {
+                    "name": "model"
+                },
+                {
+                    "name": "context"
+                }
+            ],
+            "annotations": {},
+            "definedInFile": "srv/handler/rest/ResourceHandler.js",
+            "lineNumbers": [
+                665,
+                683
+            ],
+            "name": "_generateAutoValues",
             "visibility": "protected"
         },
         {
@@ -781,8 +820,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                569,
-                597
+                597,
+                625
             ],
             "description": "generates a default chain containing the values from this instance and base classes\n",
             "returns": {
@@ -803,13 +842,16 @@
                 },
                 {
                     "name": "rootScope"
+                },
+                {
+                    "name": "cidScope"
                 }
             ],
             "annotations": {},
             "definedInFile": "js/core/Element.js",
             "lineNumbers": [
-                58,
-                102
+                61,
+                105
             ],
             "definedBy": "js.core.Element",
             "name": "_getAttributesFromDescriptor",
@@ -824,17 +866,26 @@
                     "optional": false
                 },
                 {
-                    "name": "rootScope"
+                    "types": null,
+                    "name": "rootScope",
+                    "optional": false
                 },
                 {
-                    "name": "attributes"
+                    "types": null,
+                    "name": "attributes",
+                    "optional": false
+                },
+                {
+                    "types": null,
+                    "name": "cidScope",
+                    "optional": false
                 }
             ],
             "annotations": {},
             "definedInFile": "js/core/Component.js",
             "lineNumbers": [
-                535,
-                549
+                541,
+                555
             ],
             "description": "Converts all child nodes of a descriptor to instances of Components or TextElement",
             "definedBy": "js.core.Component",
@@ -851,8 +902,8 @@
             "annotations": {},
             "definedInFile": "srv/handler/rest/ResourceHandler.js",
             "lineNumbers": [
-                502,
-                507
+                546,
+                551
             ],
             "name": "_getCompositionOptions",
             "visibility": "protected"
@@ -901,8 +952,8 @@
             "annotations": {},
             "definedInFile": "js/core/Element.js",
             "lineNumbers": [
-                103,
-                105
+                106,
+                108
             ],
             "definedBy": "js.core.Element",
             "name": "_getLocalNameFromNode",
@@ -914,8 +965,8 @@
             "annotations": {},
             "definedInFile": "srv/handler/rest/ResourceHandler.js",
             "lineNumbers": [
-                184,
-                186
+                222,
+                224
             ],
             "name": "_getModelFactory",
             "visibility": "protected"
@@ -933,8 +984,8 @@
             "annotations": {},
             "definedInFile": "srv/handler/rest/ResourceHandler.js",
             "lineNumbers": [
-                50,
-                69
+                88,
+                107
             ],
             "name": "_getPathForModel",
             "visibility": "protected"
@@ -953,8 +1004,8 @@
             "annotations": {},
             "definedInFile": "srv/handler/rest/ResourceHandler.js",
             "lineNumbers": [
-                174,
-                182
+                212,
+                220
             ],
             "description": "determinate the request method from the request\n",
             "returns": {
@@ -977,8 +1028,8 @@
             "annotations": {},
             "definedInFile": "js/core/Element.js",
             "lineNumbers": [
-                171,
-                184
+                187,
+                200
             ],
             "definedBy": "js.core.Element",
             "name": "_getTextContentFromDescriptor",
@@ -997,8 +1048,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                812,
-                821
+                847,
+                856
             ],
             "definedBy": "js.core.Bindable",
             "name": "_hasAll",
@@ -1017,8 +1068,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                823,
-                832
+                858,
+                867
             ],
             "definedBy": "js.core.Bindable",
             "name": "_hasSome",
@@ -1041,8 +1092,8 @@
             "annotations": {},
             "definedInFile": "srv/handler/rest/ResourceHandler.js",
             "lineNumbers": [
-                252,
-                344
+                290,
+                382
             ],
             "description": "",
             "private": "",
@@ -1055,8 +1106,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                405,
-                416
+                433,
+                444
             ],
             "definedBy": "js.core.Bindable",
             "name": "_initializationComplete",
@@ -1081,15 +1132,19 @@
             "type": "Method",
             "parameter": [
                 {
-                    "name": "attributes"
+                    "types": null,
+                    "name": "attributes",
+                    "optional": false
                 }
             ],
             "annotations": {},
             "definedInFile": "js/core/Element.js",
             "lineNumbers": [
-                117,
-                118
+                132,
+                133
             ],
+            "description": "initializes the attributes",
+            "private": "",
             "definedBy": "js.core.Element",
             "name": "_initializeAttributes",
             "visibility": "protected"
@@ -1100,8 +1155,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                349,
-                399
+                377,
+                427
             ],
             "description": "Initialize all Binding and Event attributes",
             "definedBy": "js.core.Bindable",
@@ -1114,8 +1169,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                401,
-                403
+                429,
+                431
             ],
             "definedBy": "js.core.Bindable",
             "name": "_initializeBindingsBeforeComplete",
@@ -1131,8 +1186,8 @@
             "annotations": {},
             "definedInFile": "js/core/Component.js",
             "lineNumbers": [
-                225,
-                230
+                226,
+                231
             ],
             "definedBy": "js.core.Component",
             "name": "_initializeChildren",
@@ -1144,8 +1199,8 @@
             "annotations": {},
             "definedInFile": "js/core/Element.js",
             "lineNumbers": [
-                120,
-                121
+                135,
+                136
             ],
             "definedBy": "js.core.Element",
             "name": "_initializeDescriptors",
@@ -1155,15 +1210,19 @@
             "type": "Method",
             "parameter": [
                 {
-                    "name": "attribute"
+                    "types": null,
+                    "name": "attributes",
+                    "optional": false
                 }
             ],
             "annotations": {},
             "definedInFile": "js/core/Element.js",
             "lineNumbers": [
-                114,
-                116
+                124,
+                125
             ],
+            "description": "initializes all attributes handling events\n",
+            "private": "",
             "definedBy": "js.core.Element",
             "name": "_initializeEventAttributes",
             "visibility": "protected"
@@ -1255,8 +1314,8 @@
             "annotations": {},
             "definedInFile": "srv/handler/rest/ResourceHandler.js",
             "lineNumbers": [
-                30,
-                32
+                68,
+                70
             ],
             "name": "_isCollectionResource",
             "visibility": "protected"
@@ -1344,8 +1403,8 @@
             "annotations": {},
             "definedInFile": "js/core/Component.js",
             "lineNumbers": [
-                569,
-                584
+                575,
+                590
             ],
             "description": "determinate the local-name of a DomNode\n",
             "definedBy": "js.core.Component",
@@ -1369,8 +1428,8 @@
             "annotations": {},
             "definedInFile": "srv/handler/rest/ResourceHandler.js",
             "lineNumbers": [
-                351,
-                353
+                389,
+                391
             ],
             "description": "Hook for modifying the collection query",
             "private": "",
@@ -1383,8 +1442,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                418,
-                420
+                446,
+                448
             ],
             "definedBy": "js.core.Bindable",
             "name": "_postConstruct",
@@ -1396,8 +1455,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                422,
-                424
+                450,
+                452
             ],
             "definedBy": "js.core.Bindable",
             "name": "_preDestroy",
@@ -1409,8 +1468,8 @@
             "annotations": {},
             "definedInFile": "js/core/Element.js",
             "lineNumbers": [
-                167,
-                169
+                183,
+                185
             ],
             "definedBy": "js.core.Element",
             "name": "_preinitialize",
@@ -1451,8 +1510,8 @@
             "annotations": {},
             "definedInFile": "srv/handler/rest/ResourceHandler.js",
             "lineNumbers": [
-                436,
-                489
+                480,
+                533
             ],
             "description": "",
             "private": "",
@@ -1483,8 +1542,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                320,
-                329
+                335,
+                357
             ],
             "definedBy": "js.core.Bindable",
             "name": "_unbindBus",
@@ -1507,12 +1566,34 @@
             "annotations": {},
             "definedInFile": "srv/handler/rest/ResourceHandler.js",
             "lineNumbers": [
-                515,
-                605
+                559,
+                655
             ],
             "description": "",
             "private": "",
             "name": "_update",
+            "visibility": "protected"
+        },
+        {
+            "type": "Method",
+            "parameter": [
+                {
+                    "name": "model"
+                },
+                {
+                    "name": "context"
+                },
+                {
+                    "name": "callback"
+                }
+            ],
+            "annotations": {},
+            "definedInFile": "srv/handler/rest/ResourceHandler.js",
+            "lineNumbers": [
+                685,
+                731
+            ],
+            "name": "_validate",
             "visibility": "protected"
         },
         {
@@ -1532,8 +1613,8 @@
             "annotations": {},
             "definedInFile": "js/core/Component.js",
             "lineNumbers": [
-                131,
-                167
+                133,
+                168
             ],
             "description": "adds a children",
             "definedBy": "js.core.Component",
@@ -1550,8 +1631,8 @@
             "annotations": {},
             "definedInFile": "js/core/Component.js",
             "lineNumbers": [
-                586,
-                594
+                592,
+                600
             ],
             "definedBy": "js.core.Component",
             "name": "baseUrl",
@@ -1597,8 +1678,8 @@
             "annotations": {},
             "definedInFile": "js/core/Component.js",
             "lineNumbers": [
-                110,
-                112
+                112,
+                114
             ],
             "description": "provides access to the MessageBus",
             "returns": {
@@ -1616,8 +1697,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                849,
-                851
+                884,
+                886
             ],
             "description": "Clears all attributes",
             "returns": {
@@ -1639,8 +1720,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                499,
-                519
+                527,
+                547
             ],
             "description": "This method returns a copy of the Object with all attributes on the $",
             "returns": {
@@ -1669,8 +1750,8 @@
             "annotations": {},
             "definedInFile": "js/core/Component.js",
             "lineNumbers": [
-                514,
-                519
+                517,
+                522
             ],
             "definedBy": "js.core.Component",
             "name": "createBinding",
@@ -1716,8 +1797,8 @@
             "annotations": {},
             "definedInFile": "js/core/Component.js",
             "lineNumbers": [
-                505,
-                512
+                508,
+                515
             ],
             "description": "",
             "returns": {
@@ -1733,12 +1814,13 @@
             "type": "Method",
             "parameter": [],
             "annotations": {},
-            "definedInFile": "js/core/Base.js",
+            "definedInFile": "srv/handler/rest/ResourceHandler.js",
             "lineNumbers": [
-                8,
+                10,
                 14
             ],
             "definedBy": "js.core.Base",
+            "overwritesMethod": true,
             "name": "ctor",
             "visibility": "public"
         },
@@ -1762,8 +1844,8 @@
             "annotations": {},
             "definedInFile": "js/core/Base.js",
             "lineNumbers": [
-                37,
-                39
+                40,
+                42
             ],
             "description": "this is an empty function doing nothing. It can be used as fallback if a method requires a\ncallback function, which hasn't been passed.\n\n```\nfunction myFunction(callback) {\ncallback = callback || this.emptyCallback;\n}\n```\n",
             "returns": {
@@ -1786,8 +1868,8 @@
             "annotations": {},
             "definedInFile": "js/core/Element.js",
             "lineNumbers": [
-                156,
-                165
+                172,
+                181
             ],
             "definedBy": "js.core.Element",
             "name": "find",
@@ -1817,8 +1899,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                725,
-                788
+                753,
+                823
             ],
             "description": "evaluates a path to retrieve a value\n",
             "returns": {
@@ -1842,22 +1924,10 @@
             "annotations": {},
             "definedInFile": "srv/handler/rest/ResourceHandler.js",
             "lineNumbers": [
-                76,
-                82
+                114,
+                120
             ],
             "name": "getDataSource",
-            "visibility": "public"
-        },
-        {
-            "type": "Method",
-            "parameter": [],
-            "annotations": {},
-            "definedInFile": "srv/handler/rest/ResourceHandler.js",
-            "lineNumbers": [
-                34,
-                36
-            ],
-            "name": "getPath",
             "visibility": "public"
         },
         {
@@ -1869,6 +1939,18 @@
                 72,
                 74
             ],
+            "name": "getPath",
+            "visibility": "public"
+        },
+        {
+            "type": "Method",
+            "parameter": [],
+            "annotations": {},
+            "definedInFile": "srv/handler/rest/ResourceHandler.js",
+            "lineNumbers": [
+                110,
+                112
+            ],
             "name": "getResourceHandlerInstance",
             "visibility": "public"
         },
@@ -1878,8 +1960,8 @@
             "annotations": {},
             "definedInFile": "srv/handler/rest/ResourceHandler.js",
             "lineNumbers": [
-                38,
-                44
+                76,
+                82
             ],
             "name": "getRootResource",
             "visibility": "public"
@@ -1894,8 +1976,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                441,
-                454
+                469,
+                482
             ],
             "definedBy": "js.core.Bindable",
             "name": "getScopeForFncName",
@@ -1911,8 +1993,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                426,
-                439
+                454,
+                467
             ],
             "definedBy": "js.core.Bindable",
             "name": "getScopeForKey",
@@ -1932,8 +2014,8 @@
             "annotations": {},
             "definedInFile": "js/core/Component.js",
             "lineNumbers": [
-                214,
-                223
+                215,
+                224
             ],
             "description": "Goes up the tree and searches for a template component with the given name.\nReturns null if no template was found.",
             "returns": {
@@ -1958,8 +2040,8 @@
             "annotations": {},
             "definedInFile": "srv/handler/rest/ResourceHandler.js",
             "lineNumbers": [
-                84,
-                126
+                122,
+                164
             ],
             "name": "handleRequest",
             "visibility": "public"
@@ -1979,8 +2061,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                796,
-                798
+                831,
+                833
             ],
             "description": "determinate if a attribute is available\n",
             "returns": {
@@ -2012,8 +2094,8 @@
             "annotations": {},
             "definedInFile": "srv/handler/rest/ResourceHandler.js",
             "lineNumbers": [
-                22,
-                28
+                33,
+                39
             ],
             "name": "init",
             "visibility": "public"
@@ -2042,8 +2124,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                941,
-                958
+                976,
+                993
             ],
             "definedBy": "js.core.Bindable",
             "name": "isDeepEqual",
@@ -2059,8 +2141,8 @@
             "annotations": {},
             "definedInFile": "js/core/Element.js",
             "lineNumbers": [
-                193,
-                195
+                209,
+                211
             ],
             "definedBy": "js.core.Element",
             "name": "isDefined",
@@ -2076,8 +2158,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                959,
-                961
+                994,
+                996
             ],
             "definedBy": "js.core.Bindable",
             "name": "isEqual",
@@ -2093,8 +2175,8 @@
             "annotations": {},
             "definedInFile": "srv/handler/rest/ResourceHandler.js",
             "lineNumbers": [
-                46,
-                48
+                84,
+                86
             ],
             "name": "isResponsibleForModel",
             "visibility": "public"
@@ -2124,8 +2206,8 @@
             "annotations": {},
             "definedInFile": "js/core/Base.js",
             "lineNumbers": [
-                47,
-                68
+                50,
+                71
             ],
             "description": "logs messages to configured logging functions\n",
             "definedBy": "js.core.Base",
@@ -2144,8 +2226,8 @@
             "annotations": {},
             "definedInFile": "js/core/Element.js",
             "lineNumbers": [
-                190,
-                192
+                206,
+                208
             ],
             "description": "Binding helper to negate a Boolean value",
             "returns": {
@@ -2163,8 +2245,8 @@
             "annotations": {},
             "definedInFile": "js/core/Component.js",
             "lineNumbers": [
-                191,
-                195
+                192,
+                196
             ],
             "definedBy": "js.core.Component",
             "name": "removeAllChildren",
@@ -2180,8 +2262,8 @@
             "annotations": {},
             "definedInFile": "js/core/Component.js",
             "lineNumbers": [
-                169,
-                189
+                170,
+                190
             ],
             "definedBy": "js.core.Component",
             "name": "removeChild",
@@ -2193,8 +2275,8 @@
             "annotations": {},
             "definedInFile": "js/core/Base.js",
             "lineNumbers": [
-                21,
-                23
+                24,
+                26
             ],
             "description": "determinate if the application runs in the browser or on node\n",
             "returns": {
@@ -2238,8 +2320,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                609,
-                695
+                637,
+                723
             ],
             "description": "Sets new values for attributes and notify about changes\n",
             "returns": {
@@ -2265,8 +2347,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                697,
-                711
+                725,
+                739
             ],
             "definedBy": "js.core.Bindable",
             "name": "setLater",
@@ -2278,12 +2360,38 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                466,
-                494
+                494,
+                522
             ],
             "description": "Writes attributes back to the source",
             "definedBy": "js.core.Bindable",
             "name": "sync",
+            "visibility": "public"
+        },
+        {
+            "type": "Method",
+            "parameter": [
+                {
+                    "name": "fnc"
+                },
+                {
+                    "name": "cacheId"
+                },
+                {
+                    "name": "callback"
+                },
+                {
+                    "name": "scope"
+                }
+            ],
+            "annotations": {},
+            "definedInFile": "js/core/Base.js",
+            "lineNumbers": [
+                119,
+                153
+            ],
+            "definedBy": "js.core.Base",
+            "name": "synchronizeFunctionCall",
             "visibility": "public"
         },
         {
@@ -2377,8 +2485,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                840,
-                843
+                875,
+                878
             ],
             "description": "Unset attribute on $",
             "returns": {
@@ -2428,8 +2536,8 @@
             "defaultType": "factory",
             "visibility": "public",
             "lineNumbers": [
-                67,
-                67
+                69,
+                69
             ],
             "description": "the cid is a unique identifier for the component within a xaml class. \\\nThe corresponding component will be automatically added to the $ of the instance of the xaml class.\n",
             "types": [
@@ -2443,8 +2551,8 @@
             "visibility": "public",
             "value": "auto",
             "lineNumbers": [
-                112,
-                112
+                115,
+                115
             ],
             "description": "Decides if the initialization of the component is started automatically or manually by the application",
             "types": [
@@ -2454,13 +2562,25 @@
         }
     },
     "properties": {
+        "validators": {
+            "name": "validators",
+            "visibility": "public",
+            "definedInFile": "srv/handler/rest/ResourceHandler.js",
+            "lineNumbers": [
+                19,
+                19
+            ],
+            "propertyType": "complex",
+            "value": " []",
+            "description": "An array of server side validators to apply"
+        },
         "$collectionMethodMap": {
             "name": "$collectionMethodMap",
             "visibility": "private",
             "definedInFile": "srv/handler/rest/ResourceHandler.js",
             "lineNumbers": [
-                10,
-                13
+                21,
+                24
             ],
             "propertyType": "complex",
             "value": " {\n            GET: \"_index\",\n            POST: \"_create\"\n        }"
@@ -2470,8 +2590,8 @@
             "visibility": "private",
             "definedInFile": "srv/handler/rest/ResourceHandler.js",
             "lineNumbers": [
-                15,
-                20
+                26,
+                31
             ],
             "propertyType": "complex",
             "value": " {\n            GET: \"_show\",\n            PUT: \"_update\",\n            PATCH: \"_update\",\n            DELETE: \"_delete\"\n        }"
@@ -2481,8 +2601,8 @@
             "visibility": "private",
             "definedInFile": "js/core/Component.js",
             "lineNumbers": [
-                70,
-                70
+                72,
+                72
             ],
             "propertyType": "value",
             "definedBy": "js.core.Component"
@@ -2492,8 +2612,8 @@
             "visibility": "private",
             "definedInFile": "js/core/Component.js",
             "lineNumbers": [
-                75,
-                75
+                77,
+                77
             ],
             "propertyType": "value",
             "description": "if set all children from the descriptor will be placed into a\njs.core.Content block with the name of $defaultContentName",
@@ -2504,8 +2624,8 @@
             "visibility": "private",
             "definedInFile": "js/core/Component.js",
             "lineNumbers": [
-                77,
-                77
+                79,
+                79
             ],
             "propertyType": "value",
             "definedBy": "js.core.Component"
@@ -2520,8 +2640,9 @@
         "js.core.List",
         "js.data.Collection",
         "js.data.DataSource",
+        "js.data.Entity",
         "js.data.Model",
-        "js.data.Query",
+        "js.data.validator.Validator",
         "require",
         "srv.core.HttpError",
         "underscore"

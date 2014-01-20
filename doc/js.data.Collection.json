@@ -20,7 +20,7 @@
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
                 309,
-                318
+                333
             ],
             "definedBy": "js.core.Bindable",
             "name": "_bindBus",
@@ -43,8 +43,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                526,
-                552
+                554,
+                580
             ],
             "description": "Returns a copy of the attribute. This method is a hook for further cloning options",
             "private": "",
@@ -75,8 +75,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                808,
-                810
+                843,
+                845
             ],
             "description": "called after attributes has set and some of the has been changed\n",
             "abstract": "",
@@ -91,8 +91,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                713,
-                716
+                741,
+                744
             ],
             "definedBy": "js.core.Bindable",
             "name": "_commitInvalidatedAttributes",
@@ -217,8 +217,8 @@
             "annotations": {},
             "definedInFile": "js/core/Base.js",
             "lineNumbers": [
-                80,
-                114
+                83,
+                117
             ],
             "description": "",
             "private": "",
@@ -232,8 +232,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                558,
-                560
+                586,
+                588
             ],
             "description": "",
             "returns": {
@@ -266,8 +266,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                331,
-                344
+                359,
+                372
             ],
             "definedBy": "js.core.Bindable",
             "name": "_extract",
@@ -288,8 +288,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                569,
-                597
+                597,
+                625
             ],
             "description": "generates a default chain containing the values from this instance and base classes\n",
             "returns": {
@@ -315,8 +315,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                812,
-                821
+                847,
+                856
             ],
             "definedBy": "js.core.Bindable",
             "name": "_hasAll",
@@ -335,8 +335,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                823,
-                832
+                858,
+                867
             ],
             "definedBy": "js.core.Bindable",
             "name": "_hasSome",
@@ -348,8 +348,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                405,
-                416
+                433,
+                444
             ],
             "definedBy": "js.core.Bindable",
             "name": "_initializationComplete",
@@ -376,8 +376,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                349,
-                399
+                377,
+                427
             ],
             "description": "Initialize all Binding and Event attributes",
             "definedBy": "js.core.Bindable",
@@ -390,8 +390,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                401,
-                403
+                429,
+                431
             ],
             "definedBy": "js.core.Bindable",
             "name": "_initializeBindingsBeforeComplete",
@@ -514,8 +514,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                418,
-                420
+                446,
+                448
             ],
             "definedBy": "js.core.Bindable",
             "name": "_postConstruct",
@@ -527,8 +527,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                422,
-                424
+                450,
+                452
             ],
             "definedBy": "js.core.Bindable",
             "name": "_preDestroy",
@@ -576,8 +576,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                320,
-                329
+                335,
+                357
             ],
             "definedBy": "js.core.Bindable",
             "name": "_unbindBus",
@@ -685,8 +685,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                849,
-                851
+                884,
+                886
             ],
             "description": "Clears all attributes",
             "returns": {
@@ -708,8 +708,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                499,
-                519
+                527,
+                547
             ],
             "description": "This method returns a copy of the Object with all attributes on the $",
             "returns": {
@@ -720,6 +720,30 @@
             },
             "definedBy": "js.core.Bindable",
             "name": "clone",
+            "visibility": "public"
+        },
+        {
+            "type": "Method",
+            "parameter": [
+                {
+                    "name": "item"
+                }
+            ],
+            "annotations": {
+                "on": [
+                    [
+                        "this",
+                        "*"
+                    ]
+                ]
+            },
+            "definedInFile": "js/core/List.js",
+            "lineNumbers": [
+                269,
+                271
+            ],
+            "definedBy": "js.core.List",
+            "name": "contains",
             "visibility": "public"
         },
         {
@@ -847,7 +871,7 @@
             "definedInFile": "js/core/List.js",
             "lineNumbers": [
                 230,
-                275
+                236
             ],
             "description": "Iterates over all items with given callback",
             "definedBy": "js.core.List",
@@ -860,8 +884,8 @@
             "annotations": {},
             "definedInFile": "js/core/Base.js",
             "lineNumbers": [
-                37,
-                39
+                40,
+                42
             ],
             "description": "this is an empty function doing nothing. It can be used as fallback if a method requires a\ncallback function, which hasn't been passed.\n\n```\nfunction myFunction(callback) {\ncallback = callback || this.emptyCallback;\n}\n```\n",
             "returns": {
@@ -969,6 +993,42 @@
             "parameter": [
                 {
                     "types": [
+                        "Function"
+                    ],
+                    "name": "fnc",
+                    "optional": false,
+                    "description": "Function to execute on each value in the list"
+                },
+                {
+                    "types": [
+                        "Object"
+                    ],
+                    "name": "scope",
+                    "optional": false,
+                    "description": "The this object"
+                }
+            ],
+            "annotations": {},
+            "definedInFile": "js/core/List.js",
+            "lineNumbers": [
+                245,
+                259
+            ],
+            "description": "Iterates over all items with the function.\nReturns the element when the function returns true.\n",
+            "returns": {
+                "types": [
+                    "*"
+                ]
+            },
+            "definedBy": "js.core.List",
+            "name": "find",
+            "visibility": "public"
+        },
+        {
+            "type": "Method",
+            "parameter": [
+                {
+                    "types": [
                         "Object"
                     ],
                     "name": "scope",
@@ -988,8 +1048,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                725,
-                788
+                753,
+                823
             ],
             "description": "evaluates a path to retrieve a value\n",
             "returns": {
@@ -1060,8 +1120,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                441,
-                454
+                469,
+                482
             ],
             "definedBy": "js.core.Bindable",
             "name": "getScopeForFncName",
@@ -1077,8 +1137,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                426,
-                439
+                454,
+                467
             ],
             "definedBy": "js.core.Bindable",
             "name": "getScopeForKey",
@@ -1115,8 +1175,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                796,
-                798
+                831,
+                833
             ],
             "description": "determinate if a attribute is available\n",
             "returns": {
@@ -1146,8 +1206,8 @@
             },
             "definedInFile": "js/core/List.js",
             "lineNumbers": [
-                280,
-                291
+                265,
+                267
             ],
             "description": "Checks if item is included in List",
             "returns": {
@@ -1224,8 +1284,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                941,
-                958
+                976,
+                993
             ],
             "definedBy": "js.core.Bindable",
             "name": "isDeepEqual",
@@ -1260,8 +1320,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                959,
-                961
+                994,
+                996
             ],
             "definedBy": "js.core.Bindable",
             "name": "isEqual",
@@ -1292,8 +1352,8 @@
             "annotations": {},
             "definedInFile": "js/core/Base.js",
             "lineNumbers": [
-                47,
-                68
+                50,
+                71
             ],
             "description": "logs messages to configured logging functions\n",
             "definedBy": "js.core.Base",
@@ -1499,8 +1559,8 @@
             "annotations": {},
             "definedInFile": "js/core/Base.js",
             "lineNumbers": [
-                21,
-                23
+                24,
+                26
             ],
             "description": "determinate if the application runs in the browser or on node\n",
             "returns": {
@@ -1544,8 +1604,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                609,
-                695
+                637,
+                723
             ],
             "description": "Sets new values for attributes and notify about changes\n",
             "returns": {
@@ -1571,8 +1631,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                697,
-                711
+                725,
+                739
             ],
             "definedBy": "js.core.Bindable",
             "name": "setLater",
@@ -1650,12 +1710,38 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                466,
-                494
+                494,
+                522
             ],
             "description": "Writes attributes back to the source",
             "definedBy": "js.core.Bindable",
             "name": "sync",
+            "visibility": "public"
+        },
+        {
+            "type": "Method",
+            "parameter": [
+                {
+                    "name": "fnc"
+                },
+                {
+                    "name": "cacheId"
+                },
+                {
+                    "name": "callback"
+                },
+                {
+                    "name": "scope"
+                }
+            ],
+            "annotations": {},
+            "definedInFile": "js/core/Base.js",
+            "lineNumbers": [
+                119,
+                153
+            ],
+            "definedBy": "js.core.Base",
+            "name": "synchronizeFunctionCall",
             "visibility": "public"
         },
         {
@@ -1672,8 +1758,8 @@
             "annotations": {},
             "definedInFile": "js/core/List.js",
             "lineNumbers": [
-                365,
-                377
+                345,
+                357
             ],
             "description": "Transforms List to an array\nYou can specify a transform fnc",
             "returns": {
@@ -1776,8 +1862,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                840,
-                843
+                875,
+                878
             ],
             "description": "Unset attribute on $",
             "returns": {

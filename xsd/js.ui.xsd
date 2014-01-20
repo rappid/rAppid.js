@@ -42,7 +42,7 @@
     <element name="RadioGroup" type="ns:RadioGroup"/>
     <element name="ScrollView" type="ns:ScrollView"/>
     <element name="ScrollViewClass" type="ns:ScrollViewClass"/>
-    <element name="Scrollable" type="ns:Scrollable"/>
+    <element name="ScrollableClass" type="ns:ScrollableClass"/>
     <element name="SegmentedView" type="ns:SegmentedView"/>
     <element name="Select" type="ns:Select"/>
     <element name="SelectClass" type="ns:SelectClass"/>
@@ -376,6 +376,7 @@
                     <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
                 </sequence>
                 <attribute name="columns"/>
+                <attribute name="innerTableWidth" default="{$table.width}"/>
             </extension>
         </complexContent>
     </complexType>
@@ -389,6 +390,7 @@
                     <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
                 </sequence>
                 <attribute name="columns"/>
+                <attribute name="innerTableWidth" default="{$table.width}"/>
             </extension>
         </complexContent>
     </complexType>
@@ -954,15 +956,22 @@ is specified but a protocol for the href (e.g. http://) if will use external by 
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="Scrollable">
+    <complexType name="ScrollableClass">
         <complexContent>
             <extension base="ns:View">
                 <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.ui.Scrollable"></documentation>
+                    <documentation source="http://www.rappidjs.com/#/api/js.ui.ScrollableClass"></documentation>
                 </annotation>
                 <sequence>
                     <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
                 </sequence>
+                <attribute name="direction" default="vertical"/>
+                <attribute name="size" default="100"/>
+                <attribute name="itemsSize" default="100"/>
+                <attribute name="totalCount" default="12"/>
+                <attribute name="scrollPaneSize"/>
+                <attribute name="itemsPerPage" default="1"/>
+                <attribute name="page"/>
             </extension>
         </complexContent>
     </complexType>

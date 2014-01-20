@@ -374,25 +374,6 @@
             "type": "Method",
             "parameter": [
                 {
-                    "name": "item"
-                },
-                {
-                    "name": "index"
-                }
-            ],
-            "annotations": {},
-            "definedInFile": "js/data/FilterDataView.js",
-            "lineNumbers": [
-                46,
-                51
-            ],
-            "name": "_filterItem",
-            "visibility": "protected"
-        },
-        {
-            "type": "Method",
-            "parameter": [
-                {
                     "types": [
                         "String"
                     ],
@@ -796,24 +777,6 @@
             "type": "Method",
             "parameter": [
                 {
-                    "name": "items"
-                }
-            ],
-            "annotations": {},
-            "definedInFile": "js/data/FilterDataView.js",
-            "lineNumbers": [
-                36,
-                45
-            ],
-            "definedBy": "js.data.DataView",
-            "overwritesMethod": true,
-            "name": "_innerReset",
-            "visibility": "protected"
-        },
-        {
-            "type": "Method",
-            "parameter": [
-                {
                     "types": null,
                     "name": "event",
                     "optional": false
@@ -899,102 +862,6 @@
             "description": "determinate the local-name of a DomNode\n",
             "definedBy": "js.core.Component",
             "name": "_localNameFromDomNode",
-            "visibility": "protected"
-        },
-        {
-            "type": "Method",
-            "parameter": [],
-            "annotations": {},
-            "definedInFile": "js/data/FilterDataView.js",
-            "lineNumbers": [
-                15,
-                17
-            ],
-            "name": "_onFilterChanged",
-            "visibility": "protected"
-        },
-        {
-            "type": "Method",
-            "parameter": [
-                {
-                    "name": "e"
-                }
-            ],
-            "annotations": {},
-            "definedInFile": "js/data/FilterDataView.js",
-            "lineNumbers": [
-                18,
-                23
-            ],
-            "name": "_onItemAdded",
-            "visibility": "protected"
-        },
-        {
-            "type": "Method",
-            "parameter": [
-                {
-                    "name": "e"
-                }
-            ],
-            "annotations": {},
-            "definedInFile": "js/data/FilterDataView.js",
-            "lineNumbers": [
-                27,
-                35
-            ],
-            "definedBy": "js.data.DataView",
-            "overwritesMethod": true,
-            "name": "_onItemChanged",
-            "visibility": "protected"
-        },
-        {
-            "type": "Method",
-            "parameter": [
-                {
-                    "name": "e"
-                }
-            ],
-            "annotations": {},
-            "definedInFile": "js/data/FilterDataView.js",
-            "lineNumbers": [
-                24,
-                26
-            ],
-            "name": "_onItemRemoved",
-            "visibility": "protected"
-        },
-        {
-            "type": "Method",
-            "parameter": [
-                {
-                    "name": "e"
-                }
-            ],
-            "annotations": {},
-            "definedInFile": "js/data/DataView.js",
-            "lineNumbers": [
-                38,
-                40
-            ],
-            "definedBy": "js.data.DataView",
-            "name": "_onReset",
-            "visibility": "protected"
-        },
-        {
-            "type": "Method",
-            "parameter": [
-                {
-                    "name": "e"
-                }
-            ],
-            "annotations": {},
-            "definedInFile": "js/data/DataView.js",
-            "lineNumbers": [
-                41,
-                43
-            ],
-            "definedBy": "js.data.DataView",
-            "name": "_onSort",
             "visibility": "protected"
         },
         {
@@ -1403,6 +1270,48 @@
             "type": "Method",
             "parameter": [
                 {
+                    "types": [
+                        "String"
+                    ],
+                    "name": "key",
+                    "optional": false
+                },
+                {
+                    "types": [
+                        "String"
+                    ],
+                    "name": "value",
+                    "optional": false
+                },
+                {
+                    "types": [
+                        "Boolean"
+                    ],
+                    "name": "recursive",
+                    "optional": true,
+                    "defaultValue": "true"
+                }
+            ],
+            "annotations": {},
+            "definedInFile": "js/core/Component.js",
+            "lineNumbers": [
+                656,
+                685
+            ],
+            "description": "",
+            "returns": {
+                "types": [
+                    "*"
+                ]
+            },
+            "definedBy": "js.conf.Configuration",
+            "name": "getConfigurationByKeyValue",
+            "visibility": "public"
+        },
+        {
+            "type": "Method",
+            "parameter": [
+                {
                     "name": "fncName"
                 }
             ],
@@ -1493,13 +1402,13 @@
             "type": "Method",
             "parameter": [],
             "annotations": {},
-            "definedInFile": "js/data/FilterDataView.js",
+            "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                11,
-                14
+                228,
+                229
             ],
+            "description": "the initialize method is a hook function to add a custom logic during the initiation process.",
             "definedBy": "js.core.Bindable",
-            "overwritesMethod": true,
             "name": "initialize",
             "visibility": "public"
         },
@@ -1874,27 +1783,47 @@
     ],
     "staticMethods": [],
     "defaults": {
-        "baseList": {
-            "name": "baseList",
+        "type": {
+            "name": "type",
             "defaultType": "value",
             "visibility": "public",
             "value": null,
             "lineNumbers": [
-                12,
-                12
+                11,
+                11
             ],
-            "definedBy": "js.data.DataView"
+            "description": "the type of the injection type",
+            "types": [
+                "String"
+            ]
         },
-        "list": {
-            "name": "list",
+        "factory": {
+            "name": "factory",
             "defaultType": "value",
             "visibility": "public",
             "value": null,
             "lineNumbers": [
-                13,
-                13
+                19,
+                19
             ],
-            "definedBy": "js.data.DataView"
+            "description": "the factory that will be injected. If no factory is given the\nfactory will be automatically required\n",
+            "types": [
+                "Function"
+            ]
+        },
+        "singleton": {
+            "name": "singleton",
+            "defaultType": "value",
+            "visibility": "public",
+            "value": true,
+            "lineNumbers": [
+                25,
+                25
+            ],
+            "description": "add instance to singleton cache?",
+            "types": [
+                "Boolean"
+            ]
         },
         "cid": {
             "name": "cid",
@@ -1962,17 +1891,16 @@
             "definedBy": "js.core.Component"
         }
     },
-    "fqClassName": "js.data.FilterDataView",
-    "inherit": "js.data.DataView",
+    "fqClassName": "js.conf.InjectionConfiguration",
+    "inherit": "js.conf.Configuration",
     "dependencies": [
-        "js.data.DataView",
-        "underscore"
+        "js.conf.Configuration"
     ],
     "type": "js",
-    "file": "js/data/FilterDataView.js",
-    "package": "js.data",
+    "file": "js/conf/InjectionConfiguration.js",
+    "package": "js.conf",
     "inheritancePath": [
-        "js.data.DataView",
+        "js.conf.Configuration",
         "js.core.Component",
         "js.core.Element",
         "js.core.Bindable",

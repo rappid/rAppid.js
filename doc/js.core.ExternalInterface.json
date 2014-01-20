@@ -51,8 +51,8 @@
             "annotations": {},
             "definedInFile": "js/core/Base.js",
             "lineNumbers": [
-                80,
-                114
+                83,
+                117
             ],
             "description": "",
             "private": "",
@@ -70,8 +70,8 @@
             "annotations": {},
             "definedInFile": "js/core/ExternalInterface.js",
             "lineNumbers": [
-                36,
-                42
+                38,
+                44
             ],
             "name": "_stageRendered",
             "visibility": "protected"
@@ -93,7 +93,7 @@
             "definedInFile": "js/core/ExternalInterface.js",
             "lineNumbers": [
                 22,
-                34
+                36
             ],
             "name": "addCallback",
             "visibility": "public"
@@ -122,8 +122,8 @@
             "annotations": {},
             "definedInFile": "js/core/Base.js",
             "lineNumbers": [
-                37,
-                39
+                40,
+                42
             ],
             "description": "this is an empty function doing nothing. It can be used as fallback if a method requires a\ncallback function, which hasn't been passed.\n\n```\nfunction myFunction(callback) {\ncallback = callback || this.emptyCallback;\n}\n```\n",
             "returns": {
@@ -161,8 +161,8 @@
             "annotations": {},
             "definedInFile": "js/core/Base.js",
             "lineNumbers": [
-                47,
-                68
+                50,
+                71
             ],
             "description": "logs messages to configured logging functions\n",
             "definedBy": "js.core.Base",
@@ -175,8 +175,8 @@
             "annotations": {},
             "definedInFile": "js/core/Base.js",
             "lineNumbers": [
-                21,
-                23
+                24,
+                26
             ],
             "description": "determinate if the application runs in the browser or on node\n",
             "returns": {
@@ -187,6 +187,32 @@
             },
             "definedBy": "js.core.Base",
             "name": "runsInBrowser",
+            "visibility": "public"
+        },
+        {
+            "type": "Method",
+            "parameter": [
+                {
+                    "name": "fnc"
+                },
+                {
+                    "name": "cacheId"
+                },
+                {
+                    "name": "callback"
+                },
+                {
+                    "name": "scope"
+                }
+            ],
+            "annotations": {},
+            "definedInFile": "js/core/Base.js",
+            "lineNumbers": [
+                119,
+                153
+            ],
+            "definedBy": "js.core.Base",
+            "name": "synchronizeFunctionCall",
             "visibility": "public"
         }
     ],

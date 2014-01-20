@@ -285,6 +285,13 @@ The resulting class attributes is the union from class and componentClass of the
                     </documentation>
                     </annotation>
                 </attribute>
+                <attribute name="currentModule">
+                    <annotation>
+                        <documentation>
+                        The current module
+                    </documentation>
+                    </annotation>
+                </attribute>
                 <attribute name="tagName" default="div"/>
                 <attribute name="state">
                     <annotation>
