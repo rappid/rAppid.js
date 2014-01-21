@@ -37,7 +37,9 @@ define(['js/ui/View', 'xaml!js/ui/Radio'], function (View, Radio) {
             var children = this.getViewChildren();
             for (var i = 0; i < children.length; i++) {
                 var child = children[i];
-                if (child.$.value === value) {
+                if(value == null){
+                    child.set("checked", false);
+                } else if(child.$.value === value) {
                     child.set("checked", true);
                 }
             }
