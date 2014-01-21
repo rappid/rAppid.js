@@ -283,10 +283,11 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore", "js/da
          * In other words. It creates a model for the collection but the model is not added to the collection.
          *
          * @param {String} [id] - the id of the item
+         * @param {Function} [modelFactory]
          * @returns {js.data.Entity}
          */
-        createItem: function (id) {
-            var item = this.getContextForChild(this.$modelFactory).createEntity(this.$modelFactory, id);
+        createItem: function (id, modelFactory) {
+            var item = this.getContextForChild(this.$modelFactory).createEntity(modelFactory || this.$modelFactory, id);
 
             item.$parent = this.$parent;
             item.$collection = this;
