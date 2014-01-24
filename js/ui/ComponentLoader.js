@@ -7,6 +7,7 @@ define(["js/ui/View", "require"], function(View, require) {
             error: null,
             load: true,
 
+            instance: null,
             loading: false,
             componentClass: "component-loader {class()}"
         },
@@ -52,7 +53,9 @@ define(["js/ui/View", "require"], function(View, require) {
                     }
                 }
 
-                self.addChild(self.createComponent(Factory, attributes));
+                var instance = self.createComponent(Factory, attributes);
+                self.addChild(instance);
+                self.set("instance", instance);
 
             }, function(e) {
                 self.set({
