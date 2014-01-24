@@ -1,4 +1,4 @@
-define(['js/ui/View'], function(View) {
+define(['js/ui/View'], function (View) {
 
     return View.inherit('js.core.Window', {
 
@@ -12,26 +12,31 @@ define(['js/ui/View'], function(View) {
             "on:backdropClick"
         ],
 
-        ctor: function() {
+        ctor: function () {
             this.callBase();
 
             this.bind("on:backdropClick", this._onbackdropClick, this);
         },
 
-        _onbackdropClick: function(e) {
+        _onbackdropClick: function (e) {
             if (this.$.closeOnBackdrop) {
                 this.close();
             }
         },
 
         /***
-         * shows the window by adding it to the WindowManager
+         * Shows the window by adding it to the WindowManager. You can pass a callback for closing of the window.
+         *
+         * The callback has the following signature.
+         *
+         * function(err, window, status){...}
+         *
          * @param {Function} [callback]  - the callback which is called when the window gets closed.
          * @param {Boolean} [modal=false]
          *
          * @see js.core.WindowManager
          */
-        show: function(callback, modal) {
+        show: function (callback, modal) {
             this.$stage.$windowManager.show(this, callback, modal);
         },
         /***
@@ -39,7 +44,7 @@ define(['js/ui/View'], function(View) {
          *
          * @param {Function} [callback] - the callback which is called when the window gets closed
          */
-        showModal: function(callback) {
+        showModal: function (callback) {
             this.show(callback, true);
         },
         /**
@@ -47,7 +52,7 @@ define(['js/ui/View'], function(View) {
          *
          * @param state
          */
-        close: function(state) {
+        close: function (state) {
             this.trigger('close', state);
         },
         /**
