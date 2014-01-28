@@ -47,7 +47,7 @@ define(["js/core/Component", "js/core/Bindable", "js/core/List"], function (Comp
          */
         _commitChangedAttributes: function ($) {
             this.callBase($);
-            if ($.items) {
+            if ($.hasOwnProperty("items")) {
                 this._innerRenderItems(this._getItemsArray($.items));
             }
         },
