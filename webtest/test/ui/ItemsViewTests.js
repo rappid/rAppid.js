@@ -50,6 +50,19 @@ describe("#ItemsView", function () {
             $expect("#simple").to.be.empty();
         });
 
+        it('should remove all items from DOM when setting items to null', function () {
+            window.application.addItemAt({
+                id: "2",
+                value: "HALLO"
+            }, index);
+
+            $expect("#simple").not.to.be.empty();
+
+            window.application.set('items', null);
+
+            $expect('#simple').to.be.empty();
+        });
+
         it.skip('should rerender on sort', function () {
             // TODO: implement tests
         });
