@@ -6,6 +6,9 @@ define(["js/core/Component", "js/html/HtmlElement"], function (Component, HtmlEl
             position: "absolute",
             manager: null
         },
+
+        $classAttributes: ["manager"],
+
         hide: function () {
             this.$.manager && this.$.manager.hideTooltip(this);
         }
