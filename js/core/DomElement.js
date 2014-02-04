@@ -40,7 +40,8 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                 /^xmlns/,
                 /^on/,
                 "cid",
-                /^_/ // private attributes
+                /^_/, // private attributes,
+                'animationClass'
             ],
 
             defaults: {
@@ -519,6 +520,10 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                 var el = this.$el;
                 // animation stuff
                 if (child.$.animationClass) {
+                    var addAnimationClass = child.$.animationClass + "-add";
+                    if (child.hasClass(addAnimationClass)) {
+                        child.removeClass(addAnimationClass);
+                    }
                     var animationClass = child.$.animationClass + "-remove";
                     child.addClass(animationClass);
 
@@ -531,7 +536,7 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                     }, time);
                 } else {
                     this.$el.removeChild(child.$el);
-                    child.trigger('dom:remove', child.$el);
+                    child.trigger('dom:remove', this.$el);
                 }
             },
 
@@ -612,7 +617,7 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
              * @private
              */
             _isDOMNodeAttribute: function (key) {
-                if(this.factory.$domNodeAttributeCache.hasOwnProperty(key)){
+                if (this.factory.$domNodeAttributeCache.hasOwnProperty(key)) {
                     return this.factory.$domNodeAttributeCache[key];
                 }
                 var cAttr,
@@ -626,7 +631,7 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                         }
                     } else {
                         if (cAttr == key) {
-                            ret =  false;
+                            ret = false;
                             break;
                         }
                     }
