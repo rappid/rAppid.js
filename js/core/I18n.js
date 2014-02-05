@@ -26,14 +26,21 @@ define(["require", "js/core/Component", "underscore", "moment", "flow"], functio
              * Decides wether to load momentjs for date formatting and parsing
              * @type Boolean
              */
-            loadMomentJs: true
+            loadMomentJs: true,
+
+            /***
+             * determinate if the locale will be loaded automatically during initialization
+             */
+            loadLocaleDuringInitialization: true
         },
+
         /***
          * Inside the initialize method loadLocale is called
          */
         initialize: function () {
             this.callBase();
-            this.loadLocale(this.$.locale);
+
+            this.$.loadLocaleDuringInitialization && this.loadLocale(this.$.locale);
         },
         _commitChangedAttributes: function (attributes) {
             if (attributes.locale) {
