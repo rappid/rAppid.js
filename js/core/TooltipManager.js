@@ -6,6 +6,9 @@ define(["js/core/Component", "js/html/HtmlElement"], function (Component, HtmlEl
             position: "absolute",
             manager: null
         },
+
+        $classAttributes: ["manager"],
+
         hide: function () {
             this.$.manager && this.$.manager.hideTooltip(this);
         }
@@ -76,6 +79,13 @@ define(["js/core/Component", "js/html/HtmlElement"], function (Component, HtmlEl
 
                     var templateInstance = this.$templates[templateName].createInstance(attributes || {});
 
+                    templateInstance.$classAttributes = templateInstance.$classAttributes || [];
+                    // add class attributes
+                    for (var key in attributes) {
+                        if (attributes.hasOwnProperty(key)) {
+                            templateInstance.$classAttributes.push(key);
+                        }
+                    }
                     // add template instance
                     tooltip.addChild(templateInstance);
                     tooltip.bind('dom:remove', function () {
