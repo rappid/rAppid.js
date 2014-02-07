@@ -9,7 +9,10 @@ define(['js/html/HtmlElement'], function (HtmlElement) {
         defaults: {
             tagName: 'a',
             target: null,
-            href: null
+            href: null,
+
+            createHistoryEntry: true,
+            triggerRoute: true
         },
 
         _initializationComplete: function () {
@@ -25,7 +28,7 @@ define(['js/html/HtmlElement'], function (HtmlElement) {
                     e.preventDefault();
 
                     if (this.$.href) {
-                        history.navigate(this.plainHref());
+                        history.navigate(this.plainHref(), this.$.createHistoryEntry, this.$.triggerRoute);
                     }
 
                 }, this);
