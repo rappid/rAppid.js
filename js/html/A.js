@@ -15,6 +15,8 @@ define(['js/html/HtmlElement'], function (HtmlElement) {
             triggerRoute: true
         },
 
+        $classAttributes: ["createHistoryEntry", "triggerRoute"],
+
         _initializationComplete: function () {
             this.callBase();
 
