@@ -26,7 +26,7 @@ define(["js/ui/View", "require"], function(View, require) {
             }
         },
 
-        _load: function() {
+        _load: function(callback) {
 
             var self = this;
 
@@ -40,13 +40,16 @@ define(["js/ui/View", "require"], function(View, require) {
 
                 var attributes = {};
                 for (var key in self.$) {
+                    //noinspection JSUnfilteredForInLoop
                     if (!self.factory.prototype.defaults.hasOwnProperty(key)) {
-
+                        //noinspection JSUnfilteredForInLoop
                         if (self.$bindingAttributes.hasOwnProperty(key)) {
                             // pass the binding attribute
+                            //noinspection JSUnfilteredForInLoop
                             attributes[key] = self.$bindingAttributes[key].value;
                         } else {
                             // direct value
+                            //noinspection JSUnfilteredForInLoop
                             attributes[key] = self.$[key];
                         }
 
@@ -55,13 +58,20 @@ define(["js/ui/View", "require"], function(View, require) {
 
                 var instance = self.createComponent(Factory, attributes);
                 self.addChild(instance);
-                self.set("instance", instance);
+                self.set({
+                    instance: instance,
+                    loading: false
+                });
+
+                callback && callback(null, instance);
 
             }, function(e) {
                 self.set({
                     error: e,
                     loading: false
                 });
+
+                callback && callback(e);
             });
 
         }
