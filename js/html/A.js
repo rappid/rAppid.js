@@ -48,16 +48,15 @@ define(['js/html/HtmlElement'], function (HtmlElement) {
 
             if (!(this.$.target === "external" || externalLink.test(href) || this.$.target === "_blank")) {
 
-                var plainHref = this.plainHref();
-                href = "#/" + plainHref;
 
                 if (!this.runsInBrowser()) {
                     // node rendering -> hash bang url
                     href = href.replace(hashBankUrl, "#!$1");
-                } else if (this.$stage.$history.$.useState) {
-                    // we use push state methods -> show plain href
-                    // but register a click handler which will perform a push state
-                    href = plainHref;
+                } else if (!this.$stage.$history.$.useState) {
+
+                    var plainHref = this.plainHref();
+                    href = "#/" + plainHref;
+
                 }
             }
 
