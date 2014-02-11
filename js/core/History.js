@@ -40,8 +40,6 @@ define(["js/core/Bindable", "flow"], function (Bindable, flow) {
             baseUrl: "/"
         },
 
-        // TODO: make this bindable so that i can call this.fragment.triggerChange()
-
         /***
          * @Bindable
          * @return {String}
@@ -203,18 +201,23 @@ define(["js/core/Bindable", "flow"], function (Bindable, flow) {
             }
 
             if (routeExecutionStack.length === 0) {
-                this.log("no route for '" + fragment + "' found.");
-                // no route found but
-                if (callback) {
-                    // execute callback
-                    callback();
-                }
+                this.routeNotFound(fragment, callback);
             } else {
                 flow()
                     .seqEach(routeExecutionStack, function(routingFunction, cb){
                         routingFunction(cb);
                     })
                     .exec(callback);
+            }
+        },
+
+        routeNotFound: function(fragment, callback) {
+            this.log("no route for '" + fragment + "' found.");
+            // no route found but
+
+            if (callback) {
+                // execute callback
+                callback();
             }
         },
 
