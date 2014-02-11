@@ -61,7 +61,8 @@ define(["require", "js/html/HtmlElement", "js/ui/ContentPlaceHolder", "js/core/M
                     name: null,
                     moduleClass: null,
                     route: null,
-                    attributes: null
+                    attributes: null,
+                    relative: false
                 });
 
                 if (!module.name) {
@@ -103,12 +104,14 @@ define(["require", "js/html/HtmlElement", "js/ui/ContentPlaceHolder", "js/core/M
              * @param {Function} callback - the callback function
              * @param {Object} routeContext - the route context
              * @param {Object} [cachedInstance]
+             * @param {String} [fragment] - relative fragment
              * @private
              */
-            _startModule: function (moduleName, moduleInstance, callback, routeContext, cachedInstance) {
+            _startModule: function (moduleName, moduleInstance, callback, routeContext, cachedInstance, fragment) {
 
                 var self = this;
 
+                //noinspection JSValidateTypes
                 flow()
                     .seq(function (cb) {
 
@@ -132,7 +135,7 @@ define(["require", "js/html/HtmlElement", "js/ui/ContentPlaceHolder", "js/core/M
                                     var routeExecutionStack = [];
 
                                     for (var i = 0; i < moduleInstance.$routers.length; i++) {
-                                        routeExecutionStack = routeExecutionStack.concat(moduleInstance.$routers[i].generateRoutingStack(routeContext.fragment));
+                                        routeExecutionStack = routeExecutionStack.concat(moduleInstance.$routers[i].generateRoutingStack(fragment || routeContext.fragment));
                                     }
 
                                     flow()
@@ -204,7 +207,7 @@ define(["require", "js/html/HtmlElement", "js/ui/ContentPlaceHolder", "js/core/M
                     }
                 } else {
 
-
+                    //noinspection JSValidateTypes
                     flow()
                         .seq(function () {
                             self.set('currentModuleName', null);
@@ -217,8 +220,14 @@ define(["require", "js/html/HtmlElement", "js/ui/ContentPlaceHolder", "js/core/M
                             self._clearContentPlaceHolders();
                             self.$lastModuleName = self.$.currentModuleName;
 
+                            var relativeFragment;
+
+                            if (module.relative) {
+                                relativeFragment = routeContext.params[0];
+                            }
+
                             if (self.$moduleCache.hasOwnProperty(module.name)) {
-                                self._startModule(module.name, self.$moduleCache[module.name], cb, routeContext, true);
+                                self._startModule(module.name, self.$moduleCache[module.name], cb, routeContext, true, relativeFragment);
                             } else {
 
                                 // load module
@@ -236,7 +245,7 @@ define(["require", "js/html/HtmlElement", "js/ui/ContentPlaceHolder", "js/core/M
                                         // cache instance
                                         self.$moduleCache[module.name] = moduleInstance;
 
-                                        self._startModule(module.name, moduleInstance, cb, routeContext, false);
+                                        self._startModule(module.name, moduleInstance, cb, routeContext, false, relativeFragment);
 
                                     } else {
                                         cb(new Error("Module '" + module.moduleClass + "' isn't an instance of js.core.Module"));

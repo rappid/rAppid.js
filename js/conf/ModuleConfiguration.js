@@ -27,7 +27,9 @@ define(["js/conf/Configuration"], function (Configuration) {
             /***
              *
              */
-            attributes: null
+            attributes: null,
+
+            relative: false
         }
     });
 });
