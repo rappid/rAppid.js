@@ -529,7 +529,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
                 clone: function (options) {
                     var ret = {};
                     options = options || {};
-                    this._generateDefaultsChain();
+
                     for (var key in this.$) {
                         if (this.$.hasOwnProperty(key)) {
                             if (options.exclude) {
