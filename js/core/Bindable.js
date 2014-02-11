@@ -522,6 +522,8 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
                 },
                 /***
                  * This method returns a copy of the Object with all attributes on the $
+                 *
+                 * @param {Object} options
                  * @return {js.core.Bindable} a fresh copy of the Bindable
                  */
                 clone: function (options) {
