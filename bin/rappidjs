@@ -39,6 +39,7 @@ if (allCmds.indexOf(cmd) !== -1) {
         if (err && err !== true) {
             console.log("Error executing command '" + cmd + "'");
             console.log("\t", err);
+            process.exit(1);
         }
 
         if (err) {
