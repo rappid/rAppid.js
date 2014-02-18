@@ -16,7 +16,7 @@ define(["require", "js/html/HtmlElement", "js/ui/ContentPlaceHolder", "js/core/M
                 /**
                  * The css class of the component
                  */
-                componentClass: "module-loader",
+                componentClass: "module-loader module-{currentModuleName}",
                 /**
                  * The current state - is set to "loading" or "loading unloading"
                  * Is rendered to css className
