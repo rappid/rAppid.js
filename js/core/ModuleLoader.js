@@ -222,12 +222,14 @@ define(["require", "js/html/HtmlElement", "js/ui/ContentPlaceHolder", "js/core/M
 
                             var relativeFragment;
 
-                            if (module.relative) {
+                            var relative = module.relative;
+
+                            if (relative) {
                                 relativeFragment = routeContext.params[0];
                             }
 
                             if (self.$moduleCache.hasOwnProperty(module.name)) {
-                                self._startModule(module.name, self.$moduleCache[module.name], cb, routeContext, true, relativeFragment);
+                                self._startModule(module.name, self.$moduleCache[module.name], cb, routeContext, !relative, relativeFragment);
                             } else {
 
                                 // load module
