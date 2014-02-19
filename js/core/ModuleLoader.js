@@ -115,6 +115,8 @@ define(["require", "js/html/HtmlElement", "js/ui/ContentPlaceHolder", "js/core/M
                 flow()
                     .seq(function (cb) {
 
+                        self.$moduleInstance = moduleInstance;
+
                         var currentModule = self.$.currentModule;
                         if (currentModule) {
                             currentModule._unload(cb);
@@ -152,23 +154,29 @@ define(["require", "js/html/HtmlElement", "js/ui/ContentPlaceHolder", "js/core/M
                         }, routeContext);
                     })
                     .seq(function () {
-                        self._clearContentPlaceHolders();
+                        if (moduleInstance === self.$moduleInstance) {
+                            self._clearContentPlaceHolders();
 
-                        self.set('currentModuleName', moduleName);
-                        var contentPlaceHolders = self.getContentPlaceHolders("external");
+                            self.set('currentModuleName', moduleName);
+                            var contentPlaceHolders = self.getContentPlaceHolders("external");
 
-                        // set content
-                        for (var i = 0; i < contentPlaceHolders.length; i++) {
-                            var contentPlaceHolder = contentPlaceHolders[i];
-                            contentPlaceHolder.set("content", moduleInstance.findContent(contentPlaceHolder.$.name));
+                            // set content
+                            for (var i = 0; i < contentPlaceHolders.length; i++) {
+                                var contentPlaceHolder = contentPlaceHolders[i];
+                                contentPlaceHolder.set("content", moduleInstance.findContent(contentPlaceHolder.$.name));
+                            }
                         }
 
                     })
                     .exec(function (err) {
+                        var moduleInstance = self.$moduleInstance;
+
                         self.set({
                             state: err ? 'error' : null,
                             currentModule: moduleInstance
                         });
+
+                        self.$moduleInstance = null;
 
                         if (callback) {
                             callback(err, moduleInstance);
