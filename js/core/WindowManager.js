@@ -56,7 +56,7 @@ define(['js/html/HtmlElement', 'underscore', 'require', 'js/core/Window'], funct
             if (modal) {
                 child = this.createComponent(HtmlElement, {
                     tagName: 'div',
-                    componentClass: 'modal'
+                    componentClass: 'modal modal-container'
                 });
 
                 var backdrop = this.createComponent(HtmlElement, {
@@ -70,7 +70,14 @@ define(['js/html/HtmlElement', 'underscore', 'require', 'js/core/Window'], funct
                     window.trigger("on:backdropClick");
                 });
 
-                child.addChild(window);
+                var container = this.createComponent(HtmlElement, {
+                    tagName: 'div',
+                    'class': 'dialog-container'
+                });
+
+                container.addChild(window);
+
+                child.addChild(container);
 
                 window.set('windowClass', 'modal window');
 
