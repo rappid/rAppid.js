@@ -8,7 +8,8 @@ define(["js/core/Window"], function (Window) {
             closable: true,
             size: "normal",
             tabindex: -1,
-            componentClass: "dialog {size}"
+            componentClass: "dialog {size} {name}",
+            name: ""
         },
 
         $keyHandlers: {
