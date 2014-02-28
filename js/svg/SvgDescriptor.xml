@@ -13,7 +13,7 @@
         </font-face>
     </js:Template>
 
-    <g cid="hidden"  />
+    <g cid="hidden" translateX="-1000" translateY="-1000" />
 
 </svg:SvgClass>
 
