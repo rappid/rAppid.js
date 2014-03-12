@@ -782,14 +782,24 @@ define(["js/core/Component", "js/core/Base", "js/data/Collection", "underscore",
             getContextForChild: function (childFactory, requestor) {
                 if (childFactory) {
                     var configuration,
-                        key;
+                        requestorConfiguration;
 
-                    if (childFactory.classof(Model)) {
-                        configuration = this.getConfigurationForModelClass(childFactory);
-                    } else if (childFactory.classof(Collection)) {
-                        configuration = this.getConfigurationForModelClass(childFactory.prototype.$modelFactory);
+                    if (requestor) {
+                        var factory = requestor.factory;
+                        if (factory.classof(Model)) {
+                            requestorConfiguration = this.getConfigurationForModelClass(factory);
+                        } else if (factory.classof(Collection)) {
+                            requestorConfiguration = this.getConfigurationForCollectionClassName(factory.prototype.$modelFactory);
+                        }
                     }
 
+                    var baseConfiguration = requestorConfiguration || this;
+
+                    if (childFactory.classof(Model)) {
+                        configuration = baseConfiguration.getConfigurationForModelClass(childFactory);
+                    } else if (childFactory.classof(Collection)) {
+                        configuration = baseConfiguration.getConfigurationForModelClass(childFactory.prototype.$modelFactory);
+                    }
 
                     if (configuration) {
 
