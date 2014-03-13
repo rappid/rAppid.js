@@ -3,7 +3,7 @@ define(["js/data/DataView", "js/core/List", "js/data/Collection", "flow", "under
     return DataView.inherit("js.data.PagedDataView", {
 
 
-        ctor: function() {
+        ctor: function () {
             this.callBase();
             this.$execId = 0;
         },
@@ -15,7 +15,7 @@ define(["js/data/DataView", "js/core/List", "js/data/Collection", "flow", "under
             pageSize: 20
         },
 
-        initialize: function() {
+        initialize: function () {
             this.set('list', new List());
             this.bind('baseList', 'add', this.hasNextPage.trigger);
             this.callBase();
@@ -47,14 +47,12 @@ define(["js/data/DataView", "js/core/List", "js/data/Collection", "flow", "under
                 this.$.list.clear();
 
                 var pageIndex = attributes.page || this.$.page;
-                if (pageIndex) {
+                if (pageIndex != null) {
                     // and show the current page
                     this.showPage(pageIndex, null, true);
                 }
 
-            }
-
-            if (attributes.hasOwnProperty("page") && attributes.page && !this.$loadingPage) {
+            } else if (attributes.hasOwnProperty("page") && !this.$loadingPage) {
                 this.showPage(attributes.page, null, attributes.page !== this.$previousAttributes.page);
             }
 
@@ -67,22 +65,22 @@ define(["js/data/DataView", "js/core/List", "js/data/Collection", "flow", "under
          */
         showPage: function (pageIndex, callback, noPageCheck) {
 
-            if(this.$loadingPage) {
-                if(callback){
+            if (this.$loadingPage) {
+                if (callback) {
                     callback();
                 }
                 return;
             }
             var self = this;
 
-            function cb(err){
-                if(callback){
+            function cb(err) {
+                if (callback) {
                     callback(err);
                 }
                 self.$loadingPage = false;
             }
 
-            if(this.hasPage(pageIndex)){
+            if (this.hasPage(pageIndex)) {
                 this.$loadingPage = true;
 
                 var i;
@@ -122,7 +120,6 @@ define(["js/data/DataView", "js/core/List", "js/data/Collection", "flow", "under
                     }
 
 
-
                     flow()
                         .seq("execId", function () {
                             return ++self.$execId;
@@ -137,6 +134,9 @@ define(["js/data/DataView", "js/core/List", "js/data/Collection", "flow", "under
                                 for (i = collectionStartPage; i <= collectionEndPage; i++) {
                                     items = items.concat(results[i].$items);
                                 }
+
+                                self._calculatePageCount();
+
 
                                 var viewStartIndex = self._pageIndexToItemIndex(pageIndex, self.$.pageSize);
                                 viewStartIndex -= collectionStartPage * collectionPageSize;
@@ -153,6 +153,7 @@ define(["js/data/DataView", "js/core/List", "js/data/Collection", "flow", "under
                         });
 
                 } else {
+                    self._calculatePageCount();
                     self.set('page', pageIndex);
                     cb();
                 }
@@ -162,22 +163,33 @@ define(["js/data/DataView", "js/core/List", "js/data/Collection", "flow", "under
 
         },
 
-        hasPreviousPage: function(){
+        _calculatePageCount: function () {
+            var pageCount = 0;
+            if (this.$.baseList) {
+                pageCount = Math.floor(this.$.baseList.size() / this.$.pageSize);
+            }
+
+            this.set('pageCount', pageCount);
+
+        },
+
+        hasPreviousPage: function () {
             return this.$.page > 0;
         }.onChange('page'),
-        hasPage: function(pageIndex){
-            if(this.$.baseList){
-                if(this.$.baseList instanceof Collection){
+
+        hasPage: function (pageIndex) {
+            if (this.$.baseList) {
+                if (this.$.baseList instanceof Collection) {
                     return _.isUndefined(this.$.baseList.$.$itemsCount) || this.$.baseList.$.$itemsCount > (pageIndex) * this.$.pageSize;
-                }else{
+                } else {
                     return this.$.baseList.size() > (pageIndex) * this.$.pageSize;
                 }
             }
             return false;
         },
-        hasNextPage: function(){
+        hasNextPage: function () {
             return this.hasPage(this.$.page + 1);
-        }.onChange('page','pageSize', 'baseList'),
+        }.onChange('page', 'pageSize', 'baseList'),
         previousPageIndex: function () {
             return Math.max((this.$.page || 0) - 1, 0);
         }.onChange('page'),
@@ -187,7 +199,7 @@ define(["js/data/DataView", "js/core/List", "js/data/Collection", "flow", "under
             return (this.$.page || 0) + 1;
         }.onChange('page'),
 
-        currentPageIndex: function() {
+        currentPageIndex: function () {
             return (this.$.page || 0);
         }.onChange('page'),
 
@@ -208,7 +220,7 @@ define(["js/data/DataView", "js/core/List", "js/data/Collection", "flow", "under
             pageSize = pageSize || this.$.pageSize;
             return Math.floor(itemIndex / pageSize);
         },
-        destroy: function(){
+        destroy: function () {
             this.unbind('baseList', 'add', this.hasNextPage.trigger);
             this.callBase();
         }
