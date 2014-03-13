@@ -866,13 +866,13 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                 }
             },
 
-            bindDomEvent: function (type, cb) {
+            bindDomEvent: function (type, cb, useCapture) {
+                useCapture = !!useCapture;
                 type = this._mapDOMEventType(type);
 
                 if (this.$el.addEventListener) {
-                    this.$el.addEventListener(type, cb, false);
-
-                } else if (this.$el.attachEvent) {
+                    this.$el.addEventListener(type, cb, useCapture);
+                } else if (this.$el.attachEvent && !useCapture) {
                     var callback = cb;
                     if (cb instanceof DomElement.EventHandler) {
                         callback = cb._handleEvent = function (e) {
@@ -882,12 +882,13 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                     this.$el.attachEvent("on" + type, callback);
                 }
             },
-            unbindDomEvent: function (type, cb) {
+            unbindDomEvent: function (type, cb, useCapture) {
+                useCapture = !!useCapture;
                 type = this._mapDOMEventType(type);
 
                 if (this.$el.removeEventListener) {
-                    this.$el.removeEventListener(type, cb, false);
-                } else if (this.$el.detachEvent) {
+                    this.$el.removeEventListener(type, cb, useCapture);
+                } else if (this.$el.detachEvent && !useCapture) {
                     var callback = cb;
                     if (cb instanceof DomElement.EventHandler) {
                         callback = cb._handleEvent;
