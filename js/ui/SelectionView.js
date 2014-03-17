@@ -254,19 +254,19 @@ define(["js/ui/ItemsView", "js/html/HtmlElement", "underscore", "js/core/List"],
 
         _renderSelectedItems: function (list) {
             if (this.$.multiSelect) {
-                if (list && list.length) {
-                    var item,
-                        $renderedItems = this.$repeat.$renderedItems,
+                if (list) {
+                    var child,
                         selected;
-                    for (var i = 0; i < $renderedItems.length; i++) {
-                        item = $renderedItems[i].item;
+
+                    for (var i = 0; i < this.$renderedChildren.length; i++) {
+                        child = this.$renderedChildren[i];
                         for (var j = 0; j < list.length; j++) {
-                            selected = this._areItemsEqual(item, list.at(j));
+                            selected = this._areItemsEqual(child.get(this._getItemKey()), list.at(j));
                             if (selected) {
                                 break;
                             }
                         }
-                        $renderedItems[i].component.set({selected: selected}, {silent: true});
+                        child.set({selected: selected}, {silent: true});
                     }
                 } else if (this.$placeHolder && this.$.selectedItem == null) {
                     this.$placeHolder.set({selected: true}, {silent: true});
