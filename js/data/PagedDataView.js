@@ -158,6 +158,7 @@ define(["js/data/DataView", "js/core/List", "js/data/Collection", "flow", "under
                     cb();
                 }
             } else {
+                this._calculatePageCount();
                 cb();
             }
 
