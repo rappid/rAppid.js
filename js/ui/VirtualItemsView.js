@@ -1,6 +1,7 @@
 define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 'underscore'], function (View, Bindable, List, Collection, _) {
     var SELECTION_MODE_NONE = 'none',
         SELECTION_MODE_MULTI = 'multi',
+        SELECTION_MODE_MUTLI_ALT = 'alt',
         SELECTION_MODE_SINGLE = 'single',
 
         SCROLL_DIRECTION_VERTICAL = "vertical",
@@ -43,7 +44,7 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
                 fetchWithFullData: false,
 
                 $dataAdapter: null,
-                selectionMode: 'multi',
+                selectionMode: SELECTION_MODE_MULTI,
                 selectedItems: List,
 
                 hoverItem: null
@@ -579,13 +580,19 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
              * @private
              */
             _selectItem: function (index, shiftDown, metaKey) {
-                if (this.$.selectionMode === SELECTION_MODE_NONE) {
-                    return;
+
+                switch (this.$.selectionMode) {
+                    case SELECTION_MODE_NONE:
+                        return;
+                    case SELECTION_MODE_SINGLE:
+                        shiftDown = false;
+                        metaKey = false;
+                        break;
+                    case SELECTION_MODE_MUTLI_ALT:
+                        metaKey = true;
+                        break;
                 }
-                if (this.$.selectionMode === SELECTION_MODE_SINGLE) {
-                    shiftDown = false;
-                    metaKey = false;
-                }
+
                 if (!metaKey) {
                     this._clearSelection();
                 }
