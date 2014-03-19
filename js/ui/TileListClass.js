@@ -75,8 +75,6 @@ define(['js/ui/VirtualItemsView'], function (VirtualItemsView) {
         _commitScrollBarSize: function (scrollBarSize) {
             if (scrollBarSize == AUTO) {
                 /**
-                 * TODO: make it browser specific
-                 *
                  * Safari 3    15
                  * Firefox 3   17
                  * Chrome 2    17
@@ -84,7 +82,15 @@ define(['js/ui/VirtualItemsView'], function (VirtualItemsView) {
                  * Internet Explorer 7    17
                  * Internet Explorer 6    17
                  */
-                this.set('_scrollBarSize', 20, {silent: true});
+                var browser = this.$stage.$browser,
+                    size = 20;
+                if (browser.isMobile) {
+                    size = 5;
+                } else if (browser.os == "mac") {
+                    size = 10;
+                }
+
+                this.set('_scrollBarSize', size, {silent: true});
             } else if (!isNaN(scrollBarSize)) {
                 this.set('_scrollBarSize', scrollBarSize, {silent: true});
             }
