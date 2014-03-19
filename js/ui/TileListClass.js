@@ -100,6 +100,8 @@ define(['js/ui/VirtualItemsView'], function (VirtualItemsView) {
                     height = this.$.height,
                     horizontalGap = this.$.horizontalGap,
                     verticalGap = this.$.verticalGap,
+                    topPadding = this.$.topPadding,
+                    leftPadding = this.$.leftPadding,
                     itemWidth = this.$.itemWidth,
                     itemHeight = this.$.itemHeight,
                     aspectRatio = this.$.aspectRatio,
@@ -111,8 +113,8 @@ define(['js/ui/VirtualItemsView'], function (VirtualItemsView) {
                     if (cols === AUTO) {
 
                         if (itemWidth === AUTO) {
-                            var minCols = (width - horizontalGap ) / (this.$.minItemSize + horizontalGap);
-                            var maxCols = (width - horizontalGap ) / (this.$.maxItemSize + horizontalGap);
+                            var minCols = (width - scrollBarSize - leftPadding - horizontalGap ) / (this.$.minItemSize + horizontalGap);
+                            var maxCols = (width - scrollBarSize - leftPadding - horizontalGap ) / (this.$.maxItemSize + horizontalGap);
                             cols = Math.round((minCols + maxCols) / 2);
                         } else {
                             cols = Math.floor((width - horizontalGap) / (itemWidth + horizontalGap));
@@ -120,7 +122,7 @@ define(['js/ui/VirtualItemsView'], function (VirtualItemsView) {
                     }
 
                     if (itemWidth === AUTO) {
-                        itemWidth = Math.floor(((width - scrollBarSize) - (cols - 1) * horizontalGap) / cols);
+                        itemWidth = Math.floor(((width - scrollBarSize - leftPadding) - (cols - 1) * horizontalGap) / cols);
                     }
 
                     if (itemHeight === AUTO) {
@@ -129,11 +131,11 @@ define(['js/ui/VirtualItemsView'], function (VirtualItemsView) {
                 } else if (height != null && this.$.scrollDirection === VirtualItemsView.SCROLL_DIRECTION_HORIZONTAL) {
                     if (rows === AUTO) {
                         if (itemHeight === AUTO) {
-                            var minRows = (height - verticalGap ) / (this.$.minItemSize + verticalGap);
-                            var maxRows = (height - verticalGap ) / (this.$.maxItemSize + verticalGap);
+                            var minRows = (height - scrollBarSize - topPadding - verticalGap ) / (this.$.minItemSize + verticalGap);
+                            var maxRows = (height - scrollBarSize - leftPadding - verticalGap ) / (this.$.maxItemSize + verticalGap);
                             rows = Math.round((minRows + maxRows) / 2);
                         } else {
-                            rows = Math.floor((height - horizontalGap) / (itemHeight + verticalGap));
+                            rows = Math.floor((height - horizontalGap - topPadding) / (itemHeight + verticalGap));
                         }
                     }
 

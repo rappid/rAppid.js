@@ -47,6 +47,20 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
                 selectionMode: SELECTION_MODE_MULTI,
                 selectedItems: List,
 
+                /**
+                 * Top padding for scroll container
+                 *
+                 * @type Number
+                 *
+                 */
+                topPadding: 0,
+                /**
+                 * Left Padding for scroll container
+                 *
+                 * @type Number
+                 */
+                leftPadding: 0,
+
                 hoverItem: null
             },
 
@@ -161,6 +175,7 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
                 });
 
                 var indexFromPoint = this.getIndexFromPoint(localPoint.x, localPoint.y);
+                console.log(indexFromPoint);
                 var item = dataAdapter.getItemAt(indexFromPoint);
 
                 if (item) {
@@ -434,13 +449,16 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
                 if (isNaN(count)) {
                     return null;
                 }
-                var size = {};
+                var size = {},
+                    topPadding = this.$.topPadding,
+                    leftPadding = this.$.leftPadding;
+
                 if (this.$.scrollDirection === SCROLL_DIRECTION_VERTICAL) {
                     var item_rows = Math.ceil(count / this.$._cols);
-                    size.height = item_rows * (this.$._itemHeight + this.$.verticalGap);
+                    size.height = item_rows * (this.$._itemHeight + this.$.verticalGap) + topPadding;
                 } else if (this.$.scrollDirection === SCROLL_DIRECTION_HORIZONTAL) {
                     var item_cols = Math.ceil(count / this.$._rows);
-                    size.width = item_cols * (this.$._itemWidth + this.$.horizontalGap);
+                    size.width = item_cols * (this.$._itemWidth + this.$.horizontalGap) + leftPadding;
                 }
 
                 return size;
@@ -457,8 +475,8 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
                 x += (this.$.horizontalGap) * 0.5;
                 y += (this.$.verticalGap) * 0.5;
 
-                col = this.$._cols === 1 ? 0 : Math.floor(x / (this.$._itemWidth + this.$.horizontalGap));
-                row = this.$._rows === 1 ? 0 : Math.floor(y / (this.$._itemHeight + this.$.verticalGap));
+                col = this.$._cols === 1 ? 0 : Math.floor((x - this.$.leftPadding) / (this.$._itemWidth + this.$.horizontalGap));
+                row = this.$._rows === 1 ? 0 : Math.floor((y - this.$.topPadding) / (this.$._itemHeight + this.$.verticalGap));
 
                 if (this.$.scrollDirection === SCROLL_DIRECTION_VERTICAL) {
                     return row * this.$._cols + col;
@@ -469,7 +487,9 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
             },
 
             getPointFromIndex: function (index) {
-                var row, col;
+                var row, col,
+                    topPadding = this.$.topPadding || 0,
+                    leftPadding = this.$.leftPadding || 0;
                 if (this.$.scrollDirection === SCROLL_DIRECTION_VERTICAL) {
                     row = Math.floor(index / this.$._cols);
                     col = index % this.$._cols;
@@ -479,8 +499,8 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
                 }
 
                 return {
-                    x: col * (this.$._itemWidth + this.$.horizontalGap),
-                    y: row * (this.$._itemHeight + this.$.verticalGap)
+                    x: leftPadding + col * (this.$._itemWidth + this.$.horizontalGap),
+                    y: topPadding + row * (this.$._itemHeight + this.$.verticalGap)
                 };
 
 
