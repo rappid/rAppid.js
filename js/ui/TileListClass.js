@@ -7,24 +7,87 @@ define(['js/ui/VirtualItemsView'], function (VirtualItemsView) {
         defaults: {
             heightUpdatePolicy: 'both',
             widthUpdatePolicy: 'both',
+
             width: null,
+            /**
+             * Extra class for the scroll container
+             * @type String
+             */
             scrollContainerClass: "",
 
+            /**
+             * The minimum size (width|height) of an item.
+             * @type Number
+             */
             minItemSize: 100,
+            /**
+             * The maximal size (width|height) of an item.
+             * @type Number
+             */
             maxItemSize: 150,
 
+            /**
+             * The width of an item. Default is "auto"
+             */
             itemWidth: AUTO,
+            /**
+             * The height of an item. Default is "auto"
+             * @type Number
+             */
             itemHeight: AUTO,
 
+            /**
+             * The number of rows
+             * @type Number
+             */
             rows: AUTO,
+            /**
+             * The number of cols
+             * @type Number
+             */
             cols: AUTO,
 
-            // calculates itemHeight, itemWidth if set to AUTO depending on the scrollDirection
+            /**
+             * calculates itemHeight, itemWidth if set to AUTO depending on the scrollDirection
+             *
+             * @type Number
+             */
             aspectRatio: 1,
 
             horizontalGap: 10,
-            verticalGap: 10
+            /**
+             * The vertical gap between the items
+             * @type Number
+             */
+            verticalGap: 10,
+            /**
+             * The scrollBarSize is used to add a padding for the scrollbar so that it doesn't hide the items
+             *
+             * @type Number|String
+             * */
 
+            scrollBarSize: AUTO,
+
+            _scrollBarSize: 0
+
+        },
+
+        _commitScrollBarSize: function (scrollBarSize) {
+            if (scrollBarSize == AUTO) {
+                /**
+                 * TODO: make it browser specific
+                 *
+                 * Safari 3    15
+                 * Firefox 3   17
+                 * Chrome 2    17
+                 * Opera 9    17
+                 * Internet Explorer 7    17
+                 * Internet Explorer 6    17
+                 */
+                this.set('_scrollBarSize', 20, {silent: true});
+            } else if (!isNaN(scrollBarSize)) {
+                this.set('_scrollBarSize', scrollBarSize, {silent: true});
+            }
         },
 
         _commitChangedAttributes: function ($) {
@@ -40,9 +103,10 @@ define(['js/ui/VirtualItemsView'], function (VirtualItemsView) {
                     itemWidth = this.$.itemWidth,
                     itemHeight = this.$.itemHeight,
                     aspectRatio = this.$.aspectRatio,
+                    scrollBarSize = this.$._scrollBarSize || 0,
                     setValues = true;
 
-                if (this.$.scrollDirection === VirtualItemsView.SCROLL_DIRECTION_VERTICAL) {
+                if (width != null && this.$.scrollDirection === VirtualItemsView.SCROLL_DIRECTION_VERTICAL) {
 
                     if (cols === AUTO) {
 
@@ -56,13 +120,13 @@ define(['js/ui/VirtualItemsView'], function (VirtualItemsView) {
                     }
 
                     if (itemWidth === AUTO) {
-                        itemWidth = Math.floor((width - (cols - 1) * horizontalGap) / cols);
+                        itemWidth = Math.floor(((width - scrollBarSize) - (cols - 1) * horizontalGap) / cols);
                     }
 
                     if (itemHeight === AUTO) {
                         itemHeight = itemWidth * aspectRatio;
                     }
-                } else if (this.$.scrollDirection === VirtualItemsView.SCROLL_DIRECTION_HORIZONTAL) {
+                } else if (height != null && this.$.scrollDirection === VirtualItemsView.SCROLL_DIRECTION_HORIZONTAL) {
                     if (rows === AUTO) {
                         if (itemHeight === AUTO) {
                             var minRows = (height - verticalGap ) / (this.$.minItemSize + verticalGap);
@@ -74,7 +138,7 @@ define(['js/ui/VirtualItemsView'], function (VirtualItemsView) {
                     }
 
                     if (itemHeight === AUTO) {
-                        itemHeight = Math.floor((height - (rows - 1) * verticalGap) / rows);
+                        itemHeight = Math.floor(((height - scrollBarSize) - (rows - 1) * verticalGap) / rows);
                     }
 
                     if (itemWidth === AUTO) {
