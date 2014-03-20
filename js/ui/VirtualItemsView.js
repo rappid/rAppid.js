@@ -175,7 +175,6 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
                 });
 
                 var indexFromPoint = this.getIndexFromPoint(localPoint.x, localPoint.y);
-                console.log(indexFromPoint);
                 var item = dataAdapter.getItemAt(indexFromPoint);
 
                 if (item) {
