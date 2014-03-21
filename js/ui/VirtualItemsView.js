@@ -110,7 +110,7 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
 
             _isWebkitAndTouch: function () {
                 var window = this.$stage.$window;
-                return this.runsInB_rowser() && window && window.hasOwnProperty("ontouchend") && /AppleWebKit/i.test(window.navigator.userAgent);
+                return this.runsInBrowser() && window && window.hasOwnProperty("ontouchend") && /AppleWebKit/i.test(window.navigator.userAgent);
             },
 
             _initializeRenderer: function ($el) {
