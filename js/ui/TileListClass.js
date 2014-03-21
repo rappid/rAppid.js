@@ -85,7 +85,7 @@ define(['js/ui/VirtualItemsView'], function (VirtualItemsView) {
                 var browser = this.$stage.$browser,
                     size = 20;
                 if (browser.isMobile) {
-                    size = 5;
+                    size = 0;
                 } else if (browser.os == "mac") {
                     size = 10;
                 }
