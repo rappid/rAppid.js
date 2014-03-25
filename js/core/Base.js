@@ -147,6 +147,8 @@ define(["inherit"], function(inherit){
                             self.log(e, Base.LOGLEVEL.ERROR);
                         }
                     }
+
+                    obj.callbacks = [];
                 });
             }
 
