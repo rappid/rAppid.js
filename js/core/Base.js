@@ -131,9 +131,9 @@ define(["inherit"], function(inherit){
             if (obj.state === LOADED) {
                 callback && callback(obj.error, obj.result);
             } else if (obj.state === LOADING) {
-                obj.callbacks.push(callback);
+                callback && obj.callbacks.push(callback);
             } else {
-                obj.callbacks.push(callback);
+                callback && obj.callbacks.push(callback);
                 obj.state = LOADING;
                 fnc.call(scope, function(err, result) {
                     obj.state = LOADED;
