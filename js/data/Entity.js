@@ -318,7 +318,7 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                 }
 
 
-                return this.$context.$dataSource.getContextForChild(childFactory, this);
+                return this.$context.$dataSource.getContextForChild(childFactory, this.$isEntity ? this.$context.$contextModel : this);
             },
 
             /**
