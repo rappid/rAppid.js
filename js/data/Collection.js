@@ -400,6 +400,13 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore", "js/da
             // TODO: remove destroyed query collections from cache
 
             this.callBase();
+        },
+
+        clone: function () {
+            var ret = this.callBase();
+            ret.$context = this.$context;
+            ret.$parent = this.$parent;
+            return ret;
         }
     });
 
