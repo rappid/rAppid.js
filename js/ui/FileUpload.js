@@ -10,6 +10,16 @@ define(['js/html/HtmlElement'], function(HtmlElement) {
             accept: null
         },
 
+        ctor: function() {
+            this.callBase();
+
+            this.bind("on:click", function() {
+                if (this.$el) {
+                    this.$el.vaue = '';
+                }
+            }, this);
+        },
+
         _renderMultiSelect: function(multiSelect) {
             var multiple = "multiple";
             !multiSelect && this.$el.removeAttribute(multiple);
