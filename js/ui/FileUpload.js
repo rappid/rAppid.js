@@ -15,7 +15,7 @@ define(['js/html/HtmlElement'], function(HtmlElement) {
 
             this.bind("on:click", function() {
                 if (this.$el) {
-                    this.$el.vaue = '';
+                    this.$el.value = '';
                 }
             }, this);
         },
