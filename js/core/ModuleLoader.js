@@ -134,10 +134,11 @@ define(["require", "js/html/HtmlElement", "js/ui/ContentPlaceHolder", "js/core/M
                             } else {
                                 if (routeContext) {
                                     // fresh instance with maybe new routers -> exec routes for new router
-                                    var routeExecutionStack = [];
+                                    var routeExecutionStack = [],
+                                        relativeFragment = (!fragment && fragment !== "") ? routeContext.fragment : fragment;
 
                                     for (var i = 0; i < moduleInstance.$routers.length; i++) {
-                                        routeExecutionStack = routeExecutionStack.concat(moduleInstance.$routers[i].generateRoutingStack(fragment || routeContext.fragment));
+                                        routeExecutionStack = routeExecutionStack.concat(moduleInstance.$routers[i].generateRoutingStack(relativeFragment));
                                     }
 
                                     flow()
