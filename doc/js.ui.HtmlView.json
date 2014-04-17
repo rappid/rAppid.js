@@ -525,36 +525,15 @@
         },
         {
             "type": "Method",
-            "parameter": [
-                {
-                    "types": null,
-                    "name": "descriptor",
-                    "optional": false
-                },
-                {
-                    "types": null,
-                    "name": "rootScope",
-                    "optional": false
-                },
-                {
-                    "types": null,
-                    "name": "attributes",
-                    "optional": false
-                },
-                {
-                    "types": null,
-                    "name": "cidScope",
-                    "optional": false
-                }
-            ],
+            "parameter": [],
             "annotations": {},
-            "definedInFile": "js/core/Component.js",
+            "definedInFile": "js/ui/HtmlView.js",
             "lineNumbers": [
-                541,
-                555
+                13,
+                15
             ],
-            "description": "Converts all child nodes of a descriptor to instances of Components or TextElement",
             "definedBy": "js.core.Component",
+            "overwritesMethod": true,
             "name": "_getChildrenFromDescriptor",
             "visibility": "protected"
         },
@@ -641,50 +620,6 @@
         },
         {
             "type": "Method",
-            "parameter": [],
-            "annotations": {},
-            "definedInFile": "js/ui/SliderClass.js",
-            "lineNumbers": [
-                95,
-                101
-            ],
-            "name": "_getMaxValue",
-            "visibility": "protected"
-        },
-        {
-            "type": "Method",
-            "parameter": [
-                {
-                    "name": "handle"
-                }
-            ],
-            "annotations": {},
-            "definedInFile": "js/ui/SliderClass.js",
-            "lineNumbers": [
-                74,
-                83
-            ],
-            "name": "_getMaxValueForHandle",
-            "visibility": "protected"
-        },
-        {
-            "type": "Method",
-            "parameter": [
-                {
-                    "name": "handle"
-                }
-            ],
-            "annotations": {},
-            "definedInFile": "js/ui/SliderClass.js",
-            "lineNumbers": [
-                85,
-                93
-            ],
-            "name": "_getMinValueForHandle",
-            "visibility": "protected"
-        },
-        {
-            "type": "Method",
             "parameter": [
                 {
                     "name": "child"
@@ -715,73 +650,6 @@
             ],
             "definedBy": "js.core.Element",
             "name": "_getTextContentFromDescriptor",
-            "visibility": "protected"
-        },
-        {
-            "type": "Method",
-            "parameter": [
-                {
-                    "name": "event"
-                },
-                {
-                    "name": "handleId"
-                }
-            ],
-            "annotations": {},
-            "definedInFile": "js/ui/SliderClass.js",
-            "lineNumbers": [
-                52,
-                72
-            ],
-            "name": "_handleDown",
-            "visibility": "protected"
-        },
-        {
-            "type": "Method",
-            "parameter": [
-                {
-                    "name": "e"
-                }
-            ],
-            "annotations": {},
-            "definedInFile": "js/ui/SliderClass.js",
-            "lineNumbers": [
-                145,
-                165
-            ],
-            "name": "_handleKeyDown",
-            "visibility": "protected"
-        },
-        {
-            "type": "Method",
-            "parameter": [
-                {
-                    "name": "e"
-                }
-            ],
-            "annotations": {},
-            "definedInFile": "js/ui/SliderClass.js",
-            "lineNumbers": [
-                103,
-                143
-            ],
-            "name": "_handleWindowMove",
-            "visibility": "protected"
-        },
-        {
-            "type": "Method",
-            "parameter": [
-                {
-                    "name": "e"
-                }
-            ],
-            "annotations": {},
-            "definedInFile": "js/ui/SliderClass.js",
-            "lineNumbers": [
-                215,
-                220
-            ],
-            "name": "_handleWindowUp",
             "visibility": "protected"
         },
         {
@@ -1240,13 +1108,14 @@
             "type": "Method",
             "parameter": [],
             "annotations": {},
-            "definedInFile": "js/ui/SliderClass.js",
+            "definedInFile": "js/core/DomElement.js",
             "lineNumbers": [
-                177,
-                182
+                120,
+                125
             ],
+            "description": "This method is called when the stage or the parent is added to the DOM",
+            "private": "",
             "definedBy": "js.core.DomElement",
-            "overwritesMethod": true,
             "name": "_onDomAdded",
             "visibility": "protected"
         },
@@ -1400,18 +1269,15 @@
         },
         {
             "type": "Method",
-            "parameter": [
-                {
-                    "name": "children"
-                }
-            ],
+            "parameter": [],
             "annotations": {},
-            "definedInFile": "js/core/DomElement.js",
+            "definedInFile": "js/ui/HtmlView.js",
             "lineNumbers": [
-                331,
-                338
+                25,
+                26
             ],
             "definedBy": "js.core.DomElement",
+            "overwritesMethod": true,
             "name": "_renderChildren",
             "visibility": "protected"
         },
@@ -1457,18 +1323,15 @@
         },
         {
             "type": "Method",
-            "parameter": [
-                {
-                    "name": "children"
-                }
-            ],
+            "parameter": [],
             "annotations": {},
-            "definedInFile": "js/core/DomElement.js",
+            "definedInFile": "js/ui/HtmlView.js",
             "lineNumbers": [
-                355,
-                365
+                28,
+                29
             ],
             "definedBy": "js.core.DomElement",
+            "overwritesMethod": true,
             "name": "_renderContentChildren",
             "visibility": "protected"
         },
@@ -1536,6 +1399,22 @@
             "type": "Method",
             "parameter": [
                 {
+                    "name": "html"
+                }
+            ],
+            "annotations": {},
+            "definedInFile": "js/ui/HtmlView.js",
+            "lineNumbers": [
+                31,
+                34
+            ],
+            "name": "_renderHtml",
+            "visibility": "protected"
+        },
+        {
+            "type": "Method",
+            "parameter": [
+                {
                     "name": "id"
                 }
             ],
@@ -1567,25 +1446,6 @@
             ],
             "definedBy": "js.ui.View",
             "name": "_renderLayoutClass",
-            "visibility": "protected"
-        },
-        {
-            "type": "Method",
-            "parameter": [
-                {
-                    "name": "orientation"
-                },
-                {
-                    "name": "old"
-                }
-            ],
-            "annotations": {},
-            "definedInFile": "js/ui/SliderClass.js",
-            "lineNumbers": [
-                184,
-                187
-            ],
-            "name": "_renderOrientation",
             "visibility": "protected"
         },
         {
@@ -1660,22 +1520,6 @@
             "type": "Method",
             "parameter": [
                 {
-                    "name": "value"
-                }
-            ],
-            "annotations": {},
-            "definedInFile": "js/ui/SliderClass.js",
-            "lineNumbers": [
-                171,
-                175
-            ],
-            "name": "_renderStartValue",
-            "visibility": "protected"
-        },
-        {
-            "type": "Method",
-            "parameter": [
-                {
                     "name": "templateName"
                 },
                 {
@@ -1693,22 +1537,6 @@
             ],
             "definedBy": "js.ui.View",
             "name": "_renderTemplateToPlaceHolder",
-            "visibility": "protected"
-        },
-        {
-            "type": "Method",
-            "parameter": [
-                {
-                    "name": "value"
-                }
-            ],
-            "annotations": {},
-            "definedInFile": "js/ui/SliderClass.js",
-            "lineNumbers": [
-                167,
-                169
-            ],
-            "name": "_renderValue",
             "visibility": "protected"
         },
         {
@@ -1858,25 +1686,6 @@
             ],
             "definedBy": "js.core.Bindable",
             "name": "_unbindBus",
-            "visibility": "protected"
-        },
-        {
-            "type": "Method",
-            "parameter": [
-                {
-                    "name": "handle"
-                },
-                {
-                    "name": "v"
-                }
-            ],
-            "annotations": {},
-            "definedInFile": "js/ui/SliderClass.js",
-            "lineNumbers": [
-                189,
-                213
-            ],
-            "name": "_updateHandle",
             "visibility": "protected"
         },
         {
@@ -2719,12 +2528,13 @@
             "type": "Method",
             "parameter": [],
             "annotations": {},
-            "definedInFile": "js/core/DomElement.js",
+            "definedInFile": "js/ui/HtmlView.js",
             "lineNumbers": [
-                279,
-                308
+                17,
+                23
             ],
             "definedBy": "js.core.DomElement",
+            "overwritesMethod": true,
             "name": "render",
             "visibility": "public"
         },
@@ -3050,123 +2860,16 @@
     ],
     "staticMethods": [],
     "defaults": {
-        "componentClass": {
-            "name": "componentClass",
+        "html": {
+            "name": "html",
             "defaultType": "value",
             "visibility": "public",
-            "value": "slider",
+            "value": null,
             "lineNumbers": [
                 10,
                 10
             ],
-            "definedBy": "js.core.DomElement",
-            "overwrites": true
-        },
-        "position": {
-            "name": "position",
-            "defaultType": "value",
-            "visibility": "public",
-            "value": "relative",
-            "lineNumbers": [
-                11,
-                11
-            ],
-            "definedBy": "js.html.HtmlElement",
-            "overwrites": true
-        },
-        "min": {
-            "name": "min",
-            "defaultType": "value",
-            "visibility": "public",
-            "value": 1,
-            "lineNumbers": [
-                16,
-                16
-            ],
-            "description": "The minimum value",
-            "types": [
-                "Number"
-            ]
-        },
-        "max": {
-            "name": "max",
-            "defaultType": "value",
-            "visibility": "public",
-            "value": 100,
-            "lineNumbers": [
-                21,
-                21
-            ],
-            "description": "The maximum value",
-            "types": [
-                "Number"
-            ]
-        },
-        "step": {
-            "name": "step",
-            "defaultType": "value",
-            "visibility": "public",
-            "value": 1,
-            "lineNumbers": [
-                26,
-                26
-            ],
-            "description": "The step size which the handler should move",
-            "types": [
-                "Number"
-            ]
-        },
-        "range": {
-            "name": "range",
-            "defaultType": "value",
-            "visibility": "public",
-            "value": false,
-            "lineNumbers": [
-                31,
-                31
-            ],
-            "description": "If range is true two handles will be shown",
-            "types": [
-                "Boolean"
-            ]
-        },
-        "value": {
-            "name": "value",
-            "defaultType": "value",
-            "visibility": "public",
-            "value": 1,
-            "lineNumbers": [
-                36,
-                36
-            ],
-            "description": "The current value",
-            "types": [
-                "Number"
-            ]
-        },
-        "startValue": {
-            "name": "startValue",
-            "defaultType": "value",
-            "visibility": "public",
-            "value": 1,
-            "lineNumbers": [
-                41,
-                41
-            ],
-            "description": "The current start value, only used when range is set to true",
-            "types": [
-                "Number"
-            ]
-        },
-        "orientation": {
-            "name": "orientation",
-            "defaultType": "factory",
-            "visibility": "public",
-            "lineNumbers": [
-                48,
-                48
-            ],
-            "description": "The orientation of the slider.\nPossible values are \"horizontal\" and \"vertical\"\n",
+            "description": "the html to render",
             "types": [
                 "String"
             ]
@@ -3226,6 +2929,21 @@
             ],
             "definedBy": "js.html.HtmlElement"
         },
+        "position": {
+            "name": "position",
+            "defaultType": "value",
+            "visibility": "public",
+            "value": null,
+            "lineNumbers": [
+                81,
+                81
+            ],
+            "description": "Possible values: \"absolute\", \"relative\"",
+            "types": [
+                "String"
+            ],
+            "definedBy": "js.html.HtmlElement"
+        },
         "heightUpdatePolicy": {
             "name": "heightUpdatePolicy",
             "defaultType": "value",
@@ -3266,6 +2984,21 @@
                 55
             ],
             "description": "sets the class for the Component.\nThe resulting class attributes is the union from class and componentClass of the Element.\n",
+            "types": [
+                "String"
+            ],
+            "definedBy": "js.core.DomElement"
+        },
+        "componentClass": {
+            "name": "componentClass",
+            "defaultType": "value",
+            "visibility": "public",
+            "value": null,
+            "lineNumbers": [
+                63,
+                63
+            ],
+            "description": "sets the componentClass for the Component.\nThe resulting class attributes is the union from class and componentClass of the Element.\n",
             "types": [
                 "String"
             ],
@@ -3435,24 +3168,13 @@
             "definedBy": "js.core.Component"
         }
     },
-    "events": {
-        "input": {
-            "type": "Event",
-            "name": "input",
-            "visibility": "public",
-            "lineNumbers": [
-                50,
-                50
-            ]
-        }
-    },
-    "fqClassName": "js.ui.SliderClass",
+    "fqClassName": "js.ui.HtmlView",
     "inherit": "js.ui.View",
     "dependencies": [
         "js.ui.View"
     ],
     "type": "js",
-    "file": "js/ui/SliderClass.js",
+    "file": "js/ui/HtmlView.js",
     "package": "js.ui",
     "inheritancePath": [
         "js.ui.View",

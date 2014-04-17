@@ -23,6 +23,8 @@
                 <attribute name="tagName" default="a"/>
                 <attribute name="target"/>
                 <attribute name="href"/>
+                <attribute name="createHistoryEntry" default="true"/>
+                <attribute name="triggerRoute" default="true"/>
             </extension>
         </complexContent>
     </complexType>

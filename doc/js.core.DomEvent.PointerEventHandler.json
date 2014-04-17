@@ -10,8 +10,8 @@
             "annotations": {},
             "definedInFile": "js/core/DomElement.js",
             "lineNumbers": [
-                1060,
-                1062
+                1066,
+                1068
             ],
             "name": "_createEvent",
             "visibility": "protected"

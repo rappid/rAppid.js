@@ -88,8 +88,8 @@
             "annotations": {},
             "definedInFile": "js/data/DataSource.js",
             "lineNumbers": [
-                989,
-                991
+                999,
+                1001
             ],
             "name": "_afterModelSave",
             "visibility": "protected"
@@ -123,8 +123,8 @@
             "annotations": {},
             "definedInFile": "js/data/DataSource.js",
             "lineNumbers": [
-                979,
-                981
+                989,
+                991
             ],
             "name": "_beforeModelSave",
             "visibility": "protected"
@@ -190,8 +190,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                554,
-                580
+                556,
+                582
             ],
             "description": "Returns a copy of the attribute. This method is a hook for further cloning options",
             "private": "",
@@ -222,8 +222,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                843,
-                845
+                845,
+                847
             ],
             "description": "called after attributes has set and some of the has been changed\n",
             "abstract": "",
@@ -238,8 +238,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                741,
-                744
+                743,
+                746
             ],
             "definedBy": "js.core.Bindable",
             "name": "_commitInvalidatedAttributes",
@@ -373,8 +373,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                586,
-                588
+                588,
+                590
             ],
             "description": "",
             "returns": {
@@ -429,8 +429,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                597,
-                625
+                599,
+                627
             ],
             "description": "generates a default chain containing the values from this instance and base classes\n",
             "returns": {
@@ -517,8 +517,8 @@
             "annotations": {},
             "definedInFile": "js/data/DataSource.js",
             "lineNumbers": [
-                1072,
-                1083
+                1082,
+                1093
             ],
             "name": "_getContext",
             "visibility": "protected"
@@ -604,8 +604,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                847,
-                856
+                849,
+                858
             ],
             "definedBy": "js.core.Bindable",
             "name": "_hasAll",
@@ -624,8 +624,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                858,
-                867
+                860,
+                869
             ],
             "definedBy": "js.core.Bindable",
             "name": "_hasSome",
@@ -985,8 +985,8 @@
             "annotations": {},
             "definedInFile": "js/data/DataSource.js",
             "lineNumbers": [
-                983,
-                987
+                993,
+                997
             ],
             "name": "_saveModel",
             "visibility": "protected"
@@ -1037,8 +1037,8 @@
             "annotations": {},
             "definedInFile": "js/data/DataSource.js",
             "lineNumbers": [
-                1085,
-                1087
+                1095,
+                1097
             ],
             "name": "_translateQueryObject",
             "visibility": "protected"
@@ -1169,8 +1169,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                884,
-                886
+                886,
+                888
             ],
             "description": "Clears all attributes",
             "returns": {
@@ -1188,8 +1188,8 @@
             "annotations": {},
             "definedInFile": "js/data/DataSource.js",
             "lineNumbers": [
-                1066,
-                1070
+                1076,
+                1080
             ],
             "definedBy": "js.core.Bindable",
             "overwritesMethod": true,
@@ -1231,8 +1231,8 @@
             "annotations": {},
             "definedInFile": "js/data/DataSource.js",
             "lineNumbers": [
-                950,
-                952
+                960,
+                962
             ],
             "name": "countCollection",
             "visibility": "public"
@@ -1302,8 +1302,8 @@
             "annotations": {},
             "definedInFile": "js/data/DataSource.js",
             "lineNumbers": [
-                906,
-                910
+                916,
+                920
             ],
             "description": "Creates a collection by a given factory in a caching context",
             "returns": {
@@ -1378,8 +1378,8 @@
             "annotations": {},
             "definedInFile": "js/data/DataSource.js",
             "lineNumbers": [
-                872,
-                874
+                882,
+                884
             ],
             "description": "Creates a context with the given properties",
             "returns": {
@@ -1419,8 +1419,8 @@
             "annotations": {},
             "definedInFile": "js/data/DataSource.js",
             "lineNumbers": [
-                883,
-                886
+                893,
+                896
             ],
             "description": "Create an instance of {js.data.Entity}",
             "returns": {
@@ -1461,8 +1461,8 @@
             "annotations": {},
             "definedInFile": "js/data/DataSource.js",
             "lineNumbers": [
-                895,
-                897
+                905,
+                907
             ],
             "description": "Create an instance of {js.data.Model}",
             "returns": {
@@ -1562,8 +1562,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                753,
-                823
+                755,
+                825
             ],
             "description": "evaluates a path to retrieve a value\n",
             "returns": {
@@ -1642,8 +1642,8 @@
             "annotations": {},
             "definedInFile": "js/data/DataSource.js",
             "lineNumbers": [
-                846,
-                856
+                856,
+                866
             ],
             "description": "Returns the context for a properties object",
             "returns": {
@@ -1677,7 +1677,7 @@
             "definedInFile": "js/data/DataSource.js",
             "lineNumbers": [
                 782,
-                837
+                847
             ],
             "description": "",
             "returns": {
@@ -1702,8 +1702,8 @@
             "annotations": {},
             "definedInFile": "js/data/DataSource.js",
             "lineNumbers": [
-                1062,
-                1064
+                1072,
+                1074
             ],
             "description": "Returns the format processor",
             "returns": {
@@ -1735,8 +1735,8 @@
             "annotations": {},
             "definedInFile": "js/data/DataSource.js",
             "lineNumbers": [
-                1048,
-                1055
+                1058,
+                1065
             ],
             "description": "Returns the correct processor for a collection\n",
             "returns": {
@@ -1769,8 +1769,8 @@
             "annotations": {},
             "definedInFile": "js/data/DataSource.js",
             "lineNumbers": [
-                1012,
-                1019
+                1022,
+                1029
             ],
             "description": "Returns the correct processor for model\n",
             "returns": {
@@ -1799,8 +1799,8 @@
             "annotations": {},
             "definedInFile": "js/data/DataSource.js",
             "lineNumbers": [
-                1028,
-                1039
+                1038,
+                1049
             ],
             "description": "Returns the correct processor for model class\n",
             "returns": {
@@ -1888,8 +1888,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                831,
-                833
+                833,
+                835
             ],
             "description": "determinate if a attribute is available\n",
             "returns": {
@@ -1950,8 +1950,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                976,
-                993
+                978,
+                995
             ],
             "definedBy": "js.core.Bindable",
             "name": "isDeepEqual",
@@ -1984,8 +1984,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                994,
-                996
+                996,
+                998
             ],
             "definedBy": "js.core.Bindable",
             "name": "isEqual",
@@ -2019,8 +2019,8 @@
             "annotations": {},
             "definedInFile": "js/data/DataSource.js",
             "lineNumbers": [
-                944,
-                948
+                954,
+                958
             ],
             "description": "Same as loadModel, but for a collection page",
             "name": "loadCollectionPage",
@@ -2054,8 +2054,8 @@
             "annotations": {},
             "definedInFile": "js/data/DataSource.js",
             "lineNumbers": [
-                932,
-                936
+                942,
+                946
             ],
             "description": "Loads the data for a given model. (abstract)\nThis method is called by model.fetch()",
             "name": "loadModel",
@@ -2199,8 +2199,8 @@
             "annotations": {},
             "definedInFile": "js/data/DataSource.js",
             "lineNumbers": [
-                999,
-                1003
+                1009,
+                1013
             ],
             "description": "Removes a model",
             "name": "removeModel",
@@ -2243,8 +2243,8 @@
             "annotations": {},
             "definedInFile": "js/data/DataSource.js",
             "lineNumbers": [
-                919,
-                923
+                929,
+                933
             ],
             "description": "resolve references to models and collections",
             "name": "resolveReferences",
@@ -2256,8 +2256,8 @@
             "annotations": {},
             "definedInFile": "js/data/DataSource.js",
             "lineNumbers": [
-                862,
-                864
+                872,
+                874
             ],
             "description": "Returns the root context of the data source",
             "returns": {
@@ -2317,8 +2317,8 @@
             "annotations": {},
             "definedInFile": "js/data/DataSource.js",
             "lineNumbers": [
-                960,
-                977
+                970,
+                987
             ],
             "description": "Saves a model",
             "name": "saveModel",
@@ -2355,8 +2355,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                637,
-                723
+                639,
+                725
             ],
             "description": "Sets new values for attributes and notify about changes\n",
             "returns": {
@@ -2382,8 +2382,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                725,
-                739
+                727,
+                741
             ],
             "definedBy": "js.core.Bindable",
             "name": "setLater",
@@ -2423,7 +2423,7 @@
             "definedInFile": "js/core/Base.js",
             "lineNumbers": [
                 119,
-                153
+                155
             ],
             "definedBy": "js.core.Base",
             "name": "synchronizeFunctionCall",
@@ -2520,8 +2520,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                875,
-                878
+                877,
+                880
             ],
             "description": "Unset attribute on $",
             "returns": {
@@ -2618,6 +2618,7 @@
                 700,
                 700
             ],
+            "value": "null",
             "propertyType": "value"
         },
         "$errorAttribute": {
@@ -2628,6 +2629,7 @@
                 72,
                 72
             ],
+            "value": "null",
             "propertyType": "value",
             "definedBy": "js.core.Component"
         },
@@ -2639,6 +2641,7 @@
                 77,
                 77
             ],
+            "value": "null",
             "propertyType": "value",
             "description": "if set all children from the descriptor will be placed into a\njs.core.Content block with the name of $defaultContentName",
             "definedBy": "js.core.Component"
@@ -2651,6 +2654,7 @@
                 79,
                 79
             ],
+            "value": "null",
             "propertyType": "value",
             "definedBy": "js.core.Component"
         }

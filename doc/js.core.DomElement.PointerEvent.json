@@ -70,8 +70,8 @@
             "annotations": {},
             "definedInFile": "js/core/DomElement.js",
             "lineNumbers": [
-                1015,
-                1023
+                1021,
+                1029
             ],
             "definedBy": "js.core.Base",
             "overwritesMethod": true,
@@ -212,7 +212,7 @@
             "definedInFile": "js/core/Base.js",
             "lineNumbers": [
                 119,
-                153
+                155
             ],
             "definedBy": "js.core.Base",
             "name": "synchronizeFunctionCall",

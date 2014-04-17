@@ -11,6 +11,7 @@
     <element name="CheckboxClass" type="ns:CheckboxClass"/>
     <element name="ColorPicker" type="ns:ColorPicker"/>
     <element name="ColorPickerClass" type="ns:ColorPickerClass"/>
+    <element name="ComponentLoader" type="ns:ComponentLoader"/>
     <element name="ContentPlaceHolder" type="ns:ContentPlaceHolder"/>
     <element name="DataGrid" type="ns:DataGrid"/>
     <element name="DataGridClass" type="ns:DataGridClass"/>
@@ -28,7 +29,7 @@
     <element name="Field" type="ns:Field"/>
     <element name="FieldClass" type="ns:FieldClass"/>
     <element name="FileUpload" type="ns:FileUpload"/>
-    <element name="HTMLView" type="ns:HTMLView"/>
+    <element name="HtmlView" type="ns:HtmlView"/>
     <element name="ItemsView" type="ns:ItemsView"/>
     <element name="Link" type="ns:Link"/>
     <element name="LinkClass" type="ns:LinkClass"/>
@@ -153,6 +154,23 @@
                 <attribute name="color"/>
                 <attribute name="paletteSize" default="300"/>
                 <attribute name="oncolorSelect" default="_onColorSelectHandler" type="string"/>
+            </extension>
+        </complexContent>
+    </complexType>
+    <complexType name="ComponentLoader">
+        <complexContent>
+            <extension base="ns:View">
+                <annotation>
+                    <documentation source="http://www.rappidjs.com/#/api/js.ui.ComponentLoader"></documentation>
+                </annotation>
+                <sequence>
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+                <attribute name="type"/>
+                <attribute name="error"/>
+                <attribute name="load" default="true"/>
+                <attribute name="instance"/>
+                <attribute name="loading"/>
             </extension>
         </complexContent>
     </complexType>
@@ -463,6 +481,7 @@
                 <attribute name="closable" default="true"/>
                 <attribute name="size" default="normal"/>
                 <attribute name="tabindex"/>
+                <attribute name="name"/>
             </extension>
         </complexContent>
     </complexType>
@@ -479,6 +498,7 @@
                 <attribute name="closable" default="true"/>
                 <attribute name="size" default="normal"/>
                 <attribute name="tabindex"/>
+                <attribute name="name"/>
             </extension>
         </complexContent>
     </complexType>
@@ -532,11 +552,11 @@
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="HTMLView">
+    <complexType name="HtmlView">
         <complexContent>
             <extension base="ns:View">
                 <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.ui.HTMLView"></documentation>
+                    <documentation source="http://www.rappidjs.com/#/api/js.ui.HtmlView"></documentation>
                 </annotation>
                 <sequence>
                     <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
@@ -1367,17 +1387,68 @@ Possible values are "horizontal" and "vertical"
                     <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
                 </sequence>
                 <attribute name="onkeydown" default="_onKeyDown"/>
-                <attribute name="scrollContainerClass"/>
-                <attribute name="minItemSize" default="100"/>
-                <attribute name="maxItemSize" default="150"/>
-                <attribute name="itemWidth"/>
-                <attribute name="itemHeight"/>
-                <attribute name="rows"/>
-                <attribute name="cols"/>
+                <attribute name="scrollContainerClass">
+                    <annotation>
+                        <documentation>
+                        Extra class for the scroll container
+                    </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="minItemSize" default="100">
+                    <annotation>
+                        <documentation>
+                        The minimum size (width|height) of an item.
+                    </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="maxItemSize" default="150">
+                    <annotation>
+                        <documentation>
+                        The maximal size (width|height) of an item.
+                    </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="itemWidth">
+                    <annotation>
+                        <documentation>
+                        The width of an item. Default is "auto"
+                    </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="itemHeight">
+                    <annotation>
+                        <documentation>
+                        The height of an item. Default is "auto"
+                    </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="rows">
+                    <annotation>
+                        <documentation>
+                        The number of rows
+                    </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="cols">
+                    <annotation>
+                        <documentation>
+                        The number of cols
+                    </documentation>
+                    </annotation>
+                </attribute>
                 <attribute name="aspectRatio" default="1">
                     <annotation>
                         <documentation>
-                         calculates itemHeight, itemWidth if set to AUTO depending on the scrollDirection
+                        calculates itemHeight, itemWidth if set to AUTO depending on the scrollDirection
+
+                    </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="scrollBarSize">
+                    <annotation>
+                        <documentation>
+                        The scrollBarSize is used to add a padding for the scrollbar so that it doesn't hide the items
+
                     </documentation>
                     </annotation>
                 </attribute>
@@ -1393,17 +1464,68 @@ Possible values are "horizontal" and "vertical"
                 <sequence>
                     <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
                 </sequence>
-                <attribute name="scrollContainerClass"/>
-                <attribute name="minItemSize" default="100"/>
-                <attribute name="maxItemSize" default="150"/>
-                <attribute name="itemWidth"/>
-                <attribute name="itemHeight"/>
-                <attribute name="rows"/>
-                <attribute name="cols"/>
+                <attribute name="scrollContainerClass">
+                    <annotation>
+                        <documentation>
+                        Extra class for the scroll container
+                    </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="minItemSize" default="100">
+                    <annotation>
+                        <documentation>
+                        The minimum size (width|height) of an item.
+                    </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="maxItemSize" default="150">
+                    <annotation>
+                        <documentation>
+                        The maximal size (width|height) of an item.
+                    </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="itemWidth">
+                    <annotation>
+                        <documentation>
+                        The width of an item. Default is "auto"
+                    </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="itemHeight">
+                    <annotation>
+                        <documentation>
+                        The height of an item. Default is "auto"
+                    </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="rows">
+                    <annotation>
+                        <documentation>
+                        The number of rows
+                    </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="cols">
+                    <annotation>
+                        <documentation>
+                        The number of cols
+                    </documentation>
+                    </annotation>
+                </attribute>
                 <attribute name="aspectRatio" default="1">
                     <annotation>
                         <documentation>
-                         calculates itemHeight, itemWidth if set to AUTO depending on the scrollDirection
+                        calculates itemHeight, itemWidth if set to AUTO depending on the scrollDirection
+
+                    </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="scrollBarSize">
+                    <annotation>
+                        <documentation>
+                        The scrollBarSize is used to add a padding for the scrollbar so that it doesn't hide the items
+
                     </documentation>
                     </annotation>
                 </attribute>
@@ -1498,8 +1620,24 @@ Possible values are "horizontal" and "vertical"
                 <attribute name="prefetchItemCount"/>
                 <attribute name="fetchPageDelay" default="500"/>
                 <attribute name="fetchWithFullData"/>
-                <attribute name="selectionMode" default="multi"/>
+                <attribute name="selectionMode"/>
                 <attribute name="selectedItems"/>
+                <attribute name="topPadding">
+                    <annotation>
+                        <documentation>
+                        Top padding for scroll container
+
+                    </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="leftPadding">
+                    <annotation>
+                        <documentation>
+                        Left Padding for scroll container
+
+                    </documentation>
+                    </annotation>
+                </attribute>
                 <attribute name="hoverItem"/>
                 <attribute name="onitemClick" default="_onItemClickHandler" type="string"/>
                 <attribute name="onitemDblClick" default="_onItemDblClickHandler" type="string"/>

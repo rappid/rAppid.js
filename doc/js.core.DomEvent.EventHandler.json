@@ -10,8 +10,8 @@
             "annotations": {},
             "definedInFile": "js/core/DomElement.js",
             "lineNumbers": [
-                1051,
-                1053
+                1057,
+                1059
             ],
             "name": "_createEvent",
             "visibility": "protected"
@@ -82,8 +82,8 @@
             "annotations": {},
             "definedInFile": "js/core/DomElement.js",
             "lineNumbers": [
-                1043,
-                1050
+                1049,
+                1056
             ],
             "name": "_isEventEnabled",
             "visibility": "protected"
@@ -101,8 +101,8 @@
             "annotations": {},
             "definedInFile": "js/core/DomElement.js",
             "lineNumbers": [
-                1029,
-                1032
+                1035,
+                1038
             ],
             "definedBy": "js.core.Base",
             "overwritesMethod": true,
@@ -139,8 +139,8 @@
             "annotations": {},
             "definedInFile": "js/core/DomElement.js",
             "lineNumbers": [
-                1033,
-                1042
+                1039,
+                1048
             ],
             "name": "handleEvent",
             "visibility": "public"
@@ -218,7 +218,7 @@
             "definedInFile": "js/core/Base.js",
             "lineNumbers": [
                 119,
-                153
+                155
             ],
             "definedBy": "js.core.Base",
             "name": "synchronizeFunctionCall",

@@ -43,8 +43,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                554,
-                580
+                556,
+                582
             ],
             "description": "Returns a copy of the attribute. This method is a hook for further cloning options",
             "private": "",
@@ -75,8 +75,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                843,
-                845
+                845,
+                847
             ],
             "description": "called after attributes has set and some of the has been changed\n",
             "abstract": "",
@@ -91,8 +91,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                741,
-                744
+                743,
+                746
             ],
             "definedBy": "js.core.Bindable",
             "name": "_commitInvalidatedAttributes",
@@ -232,8 +232,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                586,
-                588
+                588,
+                590
             ],
             "description": "",
             "returns": {
@@ -288,8 +288,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                597,
-                625
+                599,
+                627
             ],
             "description": "generates a default chain containing the values from this instance and base classes\n",
             "returns": {
@@ -315,8 +315,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                847,
-                856
+                849,
+                858
             ],
             "definedBy": "js.core.Bindable",
             "name": "_hasAll",
@@ -335,8 +335,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                858,
-                867
+                860,
+                869
             ],
             "definedBy": "js.core.Bindable",
             "name": "_hasSome",
@@ -685,8 +685,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                884,
-                886
+                886,
+                888
             ],
             "description": "Clears all attributes",
             "returns": {
@@ -700,25 +700,15 @@
         },
         {
             "type": "Method",
-            "parameter": [
-                {
-                    "name": "options"
-                }
-            ],
+            "parameter": [],
             "annotations": {},
-            "definedInFile": "js/core/Bindable.js",
+            "definedInFile": "js/data/Collection.js",
             "lineNumbers": [
-                527,
-                547
+                405,
+                410
             ],
-            "description": "This method returns a copy of the Object with all attributes on the $",
-            "returns": {
-                "types": [
-                    "js.core.Bindable"
-                ],
-                "description": "a fresh copy of the Bindable"
-            },
             "definedBy": "js.core.Bindable",
+            "overwritesMethod": true,
             "name": "clone",
             "visibility": "public"
         },
@@ -767,8 +757,8 @@
             "annotations": {},
             "definedInFile": "js/data/Collection.js",
             "lineNumbers": [
-                339,
-                347
+                340,
+                348
             ],
             "description": "Asynchronous counts the collection. The count is returned in the callback.\nNote: The dataSource must support the countCollection method\n",
             "name": "count",
@@ -784,13 +774,20 @@
                     "name": "id",
                     "optional": true,
                     "description": "the id of the item"
+                },
+                {
+                    "types": [
+                        "Function"
+                    ],
+                    "name": "modelFactory",
+                    "optional": true
                 }
             ],
             "annotations": {},
             "definedInFile": "js/data/Collection.js",
             "lineNumbers": [
-                288,
-                295
+                289,
+                296
             ],
             "description": "Creates an item with the $modelFactory of the collection.\n\nIn other words. It creates a model for the collection but the model is not added to the collection.\n",
             "returns": {
@@ -839,8 +836,8 @@
             "annotations": {},
             "definedInFile": "js/data/Collection.js",
             "lineNumbers": [
-                398,
-                402
+                399,
+                403
             ],
             "definedBy": "js.core.EventDispatcher",
             "overwritesMethod": true,
@@ -955,8 +952,8 @@
             "annotations": {},
             "definedInFile": "js/data/Collection.js",
             "lineNumbers": [
-                303,
-                331
+                304,
+                332
             ],
             "description": "Fetches a page and returns it in the callback\n",
             "name": "fetchPage",
@@ -1048,8 +1045,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                753,
-                823
+                755,
+                825
             ],
             "description": "evaluates a path to retrieve a value\n",
             "returns": {
@@ -1086,8 +1083,8 @@
             "annotations": {},
             "definedInFile": "js/data/Collection.js",
             "lineNumbers": [
-                392,
-                394
+                393,
+                395
             ],
             "name": "getQueryParameters",
             "visibility": "public"
@@ -1154,8 +1151,8 @@
             "annotations": {},
             "definedInFile": "js/data/Collection.js",
             "lineNumbers": [
-                395,
-                397
+                396,
+                398
             ],
             "name": "getSortParameters",
             "visibility": "public"
@@ -1175,8 +1172,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                831,
-                833
+                833,
+                835
             ],
             "description": "determinate if a attribute is available\n",
             "returns": {
@@ -1267,8 +1264,8 @@
             "annotations": {},
             "definedInFile": "js/data/Collection.js",
             "lineNumbers": [
-                356,
-                373
+                357,
+                374
             ],
             "description": "This method invalidates the page cache of the collection.\nIt also clears all page caches of query collections, that have this collection has root collection.\nAfter the invalidation the $itemsCount is set to NaN and a reset is done. So all listeners are informed of the change.\n\nYou should call this method after removing or adding some item to the collection.\n",
             "name": "invalidatePageCache",
@@ -1284,8 +1281,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                976,
-                993
+                978,
+                995
             ],
             "definedBy": "js.core.Bindable",
             "name": "isDeepEqual",
@@ -1301,8 +1298,8 @@
             },
             "definedInFile": "js/data/Collection.js",
             "lineNumbers": [
-                384,
-                390
+                385,
+                391
             ],
             "description": "Returns true if list is empty",
             "definedBy": "js.core.List",
@@ -1320,8 +1317,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                994,
-                996
+                996,
+                998
             ],
             "definedBy": "js.core.Bindable",
             "name": "isEqual",
@@ -1604,8 +1601,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                637,
-                723
+                639,
+                725
             ],
             "description": "Sets new values for attributes and notify about changes\n",
             "returns": {
@@ -1631,8 +1628,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                725,
-                739
+                727,
+                741
             ],
             "definedBy": "js.core.Bindable",
             "name": "setLater",
@@ -1667,8 +1664,8 @@
             },
             "definedInFile": "js/data/Collection.js",
             "lineNumbers": [
-                378,
-                380
+                379,
+                381
             ],
             "description": "Returns the $itemsCount of the collection.\n",
             "definedBy": "js.core.List",
@@ -1738,7 +1735,7 @@
             "definedInFile": "js/core/Base.js",
             "lineNumbers": [
                 119,
-                153
+                155
             ],
             "definedBy": "js.core.Base",
             "name": "synchronizeFunctionCall",
@@ -1862,8 +1859,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                875,
-                878
+                877,
+                880
             ],
             "description": "Unset attribute on $",
             "returns": {
@@ -1919,6 +1916,7 @@
                 23,
                 23
             ],
+            "value": "true",
             "propertyType": "value"
         }
     },

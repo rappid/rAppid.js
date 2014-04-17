@@ -22,6 +22,7 @@
     <element name="Repeat" type="ns:Repeat"/>
     <element name="Router" type="ns:Router"/>
     <element name="Stage" type="ns:Stage"/>
+    <element name="TooltipManager" type="ns:TooltipManager"/>
     <element name="Window" type="ns:Window"/>
     <element name="WindowManager" type="ns:WindowManager"/>
     <complexType name="Application">
@@ -242,6 +243,13 @@ The resulting class attributes is the union from class and componentClass of the
                     </documentation>
                     </annotation>
                 </attribute>
+                <attribute name="loadLocaleDuringInitialization" default="true">
+                    <annotation>
+                        <documentation>
+                        determinate if the locale will be loaded automatically during initialization
+                    </documentation>
+                    </annotation>
+                </attribute>
             </extension>
         </complexContent>
     </complexType>
@@ -421,6 +429,39 @@ If it's not set the default === comparison is used.
                     <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
                 </sequence>
                 <attribute name="tagName" default="div"/>
+            </extension>
+        </complexContent>
+    </complexType>
+    <complexType name="TooltipManager">
+        <complexContent>
+            <extension base="ns:Component">
+                <annotation>
+                    <documentation source="http://www.rappidjs.com/#/api/js.core.TooltipManager"></documentation>
+                </annotation>
+                <sequence>
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+                <attribute name="containerClass" default="tooltips">
+                    <annotation>
+                        <documentation>
+                        The css class of the TooltipManager container
+                    </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="animationClass">
+                    <annotation>
+                        <documentation>
+                        The animation class which should be added for show and hide
+                    </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="duration">
+                    <annotation>
+                        <documentation>
+                        default duration for auto-hide in ms
+                    </documentation>
+                    </annotation>
+                </attribute>
             </extension>
         </complexContent>
     </complexType>

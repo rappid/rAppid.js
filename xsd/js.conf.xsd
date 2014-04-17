@@ -89,6 +89,7 @@ or the ModuleLoader.loadModule method is invoked manually.
                     </annotation>
                 </attribute>
                 <attribute name="attributes"/>
+                <attribute name="relative"/>
             </extension>
         </complexContent>
     </complexType>

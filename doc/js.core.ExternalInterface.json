@@ -209,7 +209,7 @@
             "definedInFile": "js/core/Base.js",
             "lineNumbers": [
                 119,
-                153
+                155
             ],
             "definedBy": "js.core.Base",
             "name": "synchronizeFunctionCall",

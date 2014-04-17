@@ -146,8 +146,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                554,
-                580
+                556,
+                582
             ],
             "description": "Returns a copy of the attribute. This method is a hook for further cloning options",
             "private": "",
@@ -178,8 +178,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                843,
-                845
+                845,
+                847
             ],
             "description": "called after attributes has set and some of the has been changed\n",
             "abstract": "",
@@ -194,8 +194,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                741,
-                744
+                743,
+                746
             ],
             "definedBy": "js.core.Bindable",
             "name": "_commitInvalidatedAttributes",
@@ -329,8 +329,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                586,
-                588
+                588,
+                590
             ],
             "description": "",
             "returns": {
@@ -385,8 +385,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                597,
-                625
+                599,
+                627
             ],
             "description": "generates a default chain containing the values from this instance and base classes\n",
             "returns": {
@@ -550,8 +550,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                847,
-                856
+                849,
+                858
             ],
             "definedBy": "js.core.Bindable",
             "name": "_hasAll",
@@ -570,8 +570,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                858,
-                867
+                860,
+                869
             ],
             "definedBy": "js.core.Bindable",
             "name": "_hasSome",
@@ -1099,8 +1099,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                884,
-                886
+                886,
+                888
             ],
             "description": "Clears all attributes",
             "returns": {
@@ -1116,16 +1116,20 @@
             "type": "Method",
             "parameter": [
                 {
-                    "name": "options"
+                    "types": [
+                        "Object"
+                    ],
+                    "name": "options",
+                    "optional": false
                 }
             ],
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                527,
-                547
+                529,
+                549
             ],
-            "description": "This method returns a copy of the Object with all attributes on the $",
+            "description": "This method returns a copy of the Object with all attributes on the $\n",
             "returns": {
                 "types": [
                     "js.core.Bindable"
@@ -1300,8 +1304,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                753,
-                823
+                755,
+                825
             ],
             "description": "evaluates a path to retrieve a value\n",
             "returns": {
@@ -1408,8 +1412,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                831,
-                833
+                833,
+                835
             ],
             "description": "determinate if a attribute is available\n",
             "returns": {
@@ -1446,8 +1450,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                976,
-                993
+                978,
+                995
             ],
             "definedBy": "js.core.Bindable",
             "name": "isDeepEqual",
@@ -1480,8 +1484,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                994,
-                996
+                996,
+                998
             ],
             "definedBy": "js.core.Bindable",
             "name": "isEqual",
@@ -1626,8 +1630,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                637,
-                723
+                639,
+                725
             ],
             "description": "Sets new values for attributes and notify about changes\n",
             "returns": {
@@ -1653,8 +1657,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                725,
-                739
+                727,
+                741
             ],
             "definedBy": "js.core.Bindable",
             "name": "setLater",
@@ -1739,7 +1743,7 @@
             "definedInFile": "js/core/Base.js",
             "lineNumbers": [
                 119,
-                153
+                155
             ],
             "definedBy": "js.core.Base",
             "name": "synchronizeFunctionCall",
@@ -1836,8 +1840,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                875,
-                878
+                877,
+                880
             ],
             "description": "Unset attribute on $",
             "returns": {
@@ -1933,6 +1937,7 @@
                 37,
                 37
             ],
+            "value": "\"https\"",
             "propertyType": "value"
         },
         "$errorAttribute": {
@@ -1943,6 +1948,7 @@
                 72,
                 72
             ],
+            "value": "null",
             "propertyType": "value",
             "definedBy": "js.core.Component"
         },
@@ -1954,6 +1960,7 @@
                 77,
                 77
             ],
+            "value": "null",
             "propertyType": "value",
             "description": "if set all children from the descriptor will be placed into a\njs.core.Content block with the name of $defaultContentName",
             "definedBy": "js.core.Component"
@@ -1966,6 +1973,7 @@
                 79,
                 79
             ],
+            "value": "null",
             "propertyType": "value",
             "definedBy": "js.core.Component"
         }

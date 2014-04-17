@@ -26,8 +26,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                1037,
-                1040
+                1039,
+                1042
             ],
             "name": "ctor",
             "visibility": "public"
@@ -53,8 +53,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                1046,
-                1082
+                1048,
+                1084
             ],
             "name": "trigger",
             "visibility": "public"

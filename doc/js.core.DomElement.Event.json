@@ -70,8 +70,8 @@
             "annotations": {},
             "definedInFile": "js/core/DomElement.js",
             "lineNumbers": [
-                981,
-                986
+                987,
+                992
             ],
             "definedBy": "js.core.Base",
             "overwritesMethod": true,
@@ -137,8 +137,8 @@
             "annotations": {},
             "definedInFile": "js/core/DomElement.js",
             "lineNumbers": [
-                998,
-                1008
+                1004,
+                1014
             ],
             "definedBy": "js.core.EventDispatcher.Event",
             "overwritesMethod": true,
@@ -184,8 +184,8 @@
             "annotations": {},
             "definedInFile": "js/core/DomElement.js",
             "lineNumbers": [
-                987,
-                997
+                993,
+                1003
             ],
             "definedBy": "js.core.EventDispatcher.Event",
             "overwritesMethod": true,
@@ -212,7 +212,7 @@
             "definedInFile": "js/core/Base.js",
             "lineNumbers": [
                 119,
-                153
+                155
             ],
             "definedBy": "js.core.Base",
             "name": "synchronizeFunctionCall",

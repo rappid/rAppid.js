@@ -23,8 +23,8 @@
             "visibility": "public",
             "value": null,
             "lineNumbers": [
-                62,
-                62
+                63,
+                63
             ],
             "description": "sets the componentClass for the Component.\nThe resulting class attributes is the union from class and componentClass of the Element.\n",
             "types": [
@@ -71,8 +71,8 @@
             "visibility": "public",
             "value": true,
             "lineNumbers": [
-                78,
-                78
+                79,
+                79
             ],
             "types": [
                 "Boolean"
@@ -207,8 +207,8 @@
             "visibility": "public",
             "value": null,
             "lineNumbers": [
-                54,
-                54
+                55,
+                55
             ],
             "description": "sets the class for the Component.\nThe resulting class attributes is the union from class and componentClass of the Element.\n",
             "types": [
@@ -222,8 +222,8 @@
             "visibility": "public",
             "value": null,
             "lineNumbers": [
-                67,
-                67
+                68,
+                68
             ],
             "description": "",
             "definedBy": "js.core.DomElement"
@@ -234,8 +234,8 @@
             "visibility": "public",
             "value": true,
             "lineNumbers": [
-                73,
-                73
+                74,
+                74
             ],
             "description": "sets the visibility of an component. If the value is false the component is removed from the DOM.\n",
             "types": [
@@ -382,8 +382,8 @@
             "annotations": {},
             "definedInFile": "js/core/DomElement.js",
             "lineNumbers": [
-                317,
-                324
+                318,
+                325
             ],
             "definedBy": "js.core.DomElement",
             "name": "_bindDomEvents",
@@ -399,8 +399,8 @@
             "annotations": {},
             "definedInFile": "js/core/DomElement.js",
             "lineNumbers": [
-                418,
-                445
+                419,
+                446
             ],
             "definedBy": "js.core.DomElement",
             "name": "_calculationAnimationDuration",
@@ -443,8 +443,8 @@
             "annotations": {},
             "definedInFile": "js/core/DomElement.js",
             "lineNumbers": [
-                538,
-                547
+                543,
+                552
             ],
             "definedBy": "js.core.DomElement",
             "name": "_clearRenderedChildren",
@@ -467,8 +467,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                554,
-                580
+                556,
+                582
             ],
             "description": "Returns a copy of the attribute. This method is a hook for further cloning options",
             "private": "",
@@ -499,8 +499,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                843,
-                845
+                845,
+                847
             ],
             "description": "called after attributes has set and some of the has been changed\n",
             "abstract": "",
@@ -515,8 +515,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                741,
-                744
+                743,
+                746
             ],
             "definedBy": "js.core.Bindable",
             "name": "_commitInvalidatedAttributes",
@@ -532,8 +532,8 @@
             "annotations": {},
             "definedInFile": "js/core/DomElement.js",
             "lineNumbers": [
-                459,
-                470
+                460,
+                471
             ],
             "definedBy": "js.core.DomElement",
             "name": "_commitVisible",
@@ -585,8 +585,8 @@
             "annotations": {},
             "definedInFile": "js/core/DomElement.js",
             "lineNumbers": [
-                774,
-                779
+                779,
+                784
             ],
             "definedBy": "js.core.DomElement",
             "name": "_createDOMEventHandler",
@@ -605,8 +605,8 @@
             "annotations": {},
             "definedInFile": "js/core/DomElement.js",
             "lineNumbers": [
-                309,
-                315
+                310,
+                316
             ],
             "definedBy": "js.core.DomElement",
             "name": "_createDomElement",
@@ -704,8 +704,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                586,
-                588
+                588,
+                590
             ],
             "description": "",
             "returns": {
@@ -760,8 +760,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                597,
-                625
+                599,
+                627
             ],
             "description": "generates a default chain containing the values from this instance and base classes\n",
             "returns": {
@@ -872,8 +872,8 @@
             "annotations": {},
             "definedInFile": "js/core/DomElement.js",
             "lineNumbers": [
-                955,
-                963
+                961,
+                969
             ],
             "definedBy": "js.core.DomElement",
             "name": "_getHtmlTag",
@@ -889,8 +889,8 @@
             "annotations": {},
             "definedInFile": "js/core/DomElement.js",
             "lineNumbers": [
-                549,
-                561
+                554,
+                566
             ],
             "definedBy": "js.core.DomElement",
             "name": "_getIndexOfPlaceHolder",
@@ -923,8 +923,8 @@
             "annotations": {},
             "definedInFile": "js/core/DomElement.js",
             "lineNumbers": [
-                757,
-                773
+                762,
+                778
             ],
             "definedBy": "js.core.DomElement",
             "name": "_getNextVisibleChild",
@@ -960,8 +960,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                847,
-                856
+                849,
+                858
             ],
             "definedBy": "js.core.Bindable",
             "name": "_hasAll",
@@ -980,8 +980,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                858,
-                867
+                860,
+                869
             ],
             "definedBy": "js.core.Bindable",
             "name": "_hasSome",
@@ -1156,8 +1156,8 @@
             "annotations": {},
             "definedInFile": "js/core/DomElement.js",
             "lineNumbers": [
-                326,
-                328
+                327,
+                329
             ],
             "definedBy": "js.core.DomElement",
             "name": "_initializeRenderer",
@@ -1239,8 +1239,8 @@
             "annotations": {},
             "definedInFile": "js/core/DomElement.js",
             "lineNumbers": [
-                515,
-                536
+                516,
+                541
             ],
             "definedBy": "js.core.DomElement",
             "name": "_internalRemoveChild",
@@ -1280,8 +1280,8 @@
             "annotations": {},
             "definedInFile": "js/core/DomElement.js",
             "lineNumbers": [
-                614,
-                638
+                619,
+                643
             ],
             "description": "Returns wether a attribute key is a dom attribute or not\nTherefor it looks in the $classAttributes array.",
             "returns": {
@@ -1392,8 +1392,8 @@
             "annotations": {},
             "definedInFile": "js/core/DomElement.js",
             "lineNumbers": [
-                895,
-                906
+                901,
+                912
             ],
             "definedBy": "js.core.DomElement",
             "name": "_mapDOMEventType",
@@ -1405,8 +1405,8 @@
             "annotations": {},
             "definedInFile": "js/core/DomElement.js",
             "lineNumbers": [
-                119,
-                124
+                120,
+                125
             ],
             "description": "This method is called when the stage or the parent is added to the DOM",
             "private": "",
@@ -1420,8 +1420,8 @@
             "annotations": {},
             "definedInFile": "js/core/DomElement.js",
             "lineNumbers": [
-                130,
-                135
+                131,
+                136
             ],
             "description": "This method is called when the element is removed from DOM",
             "private": "",
@@ -1478,8 +1478,8 @@
             "annotations": {},
             "definedInFile": "js/core/DomElement.js",
             "lineNumbers": [
-                500,
-                513
+                501,
+                514
             ],
             "definedBy": "js.core.DomElement",
             "name": "_removeRenderedChild",
@@ -1518,8 +1518,8 @@
             "annotations": {},
             "definedInFile": "js/core/DomElement.js",
             "lineNumbers": [
-                577,
-                599
+                582,
+                604
             ],
             "definedBy": "js.core.DomElement",
             "name": "_renderAttribute",
@@ -1538,8 +1538,8 @@
             "annotations": {},
             "definedInFile": "js/core/DomElement.js",
             "lineNumbers": [
-                601,
-                605
+                606,
+                610
             ],
             "definedBy": "js.core.DomElement",
             "name": "_renderAttributeInternal",
@@ -1555,8 +1555,8 @@
             "annotations": {},
             "definedInFile": "js/core/DomElement.js",
             "lineNumbers": [
-                567,
-                575
+                572,
+                580
             ],
             "definedBy": "js.core.DomElement",
             "name": "_renderAttributes",
@@ -1575,8 +1575,8 @@
             "annotations": {},
             "definedInFile": "js/core/DomElement.js",
             "lineNumbers": [
-                366,
-                416
+                367,
+                417
             ],
             "definedBy": "js.core.DomElement",
             "name": "_renderChild",
@@ -1592,8 +1592,8 @@
             "annotations": {},
             "definedInFile": "js/core/DomElement.js",
             "lineNumbers": [
-                330,
-                337
+                331,
+                338
             ],
             "definedBy": "js.core.DomElement",
             "name": "_renderChildren",
@@ -1612,8 +1612,8 @@
             "annotations": {},
             "definedInFile": "js/core/DomElement.js",
             "lineNumbers": [
-                490,
-                498
+                491,
+                499
             ],
             "definedBy": "js.core.DomElement",
             "name": "_renderClass",
@@ -1632,8 +1632,8 @@
             "annotations": {},
             "definedInFile": "js/core/DomElement.js",
             "lineNumbers": [
-                481,
-                488
+                482,
+                489
             ],
             "definedBy": "js.core.DomElement",
             "name": "_renderComponentClass",
@@ -1649,8 +1649,8 @@
             "annotations": {},
             "definedInFile": "js/core/DomElement.js",
             "lineNumbers": [
-                354,
-                364
+                355,
+                365
             ],
             "definedBy": "js.core.DomElement",
             "name": "_renderContentChildren",
@@ -1666,8 +1666,8 @@
             "annotations": {},
             "definedInFile": "js/core/DomElement.js",
             "lineNumbers": [
-                339,
-                352
+                340,
+                353
             ],
             "definedBy": "js.core.DomElement",
             "name": "_renderEnabled",
@@ -1829,8 +1829,8 @@
             "annotations": {},
             "definedInFile": "js/core/DomElement.js",
             "lineNumbers": [
-                451,
-                457
+                452,
+                458
             ],
             "description": "",
             "private": "",
@@ -1871,8 +1871,8 @@
             "annotations": {},
             "definedInFile": "js/core/DomElement.js",
             "lineNumbers": [
-                472,
-                480
+                473,
+                481
             ],
             "definedBy": "js.core.DomElement",
             "name": "_renderVisible",
@@ -1952,8 +1952,8 @@
             "annotations": {},
             "definedInFile": "js/core/DomElement.js",
             "lineNumbers": [
-                648,
-                664
+                653,
+                669
             ],
             "description": "sets the attribute as part of the rendering cycle on the element\n",
             "private": "",
@@ -2045,8 +2045,8 @@
             "annotations": {},
             "definedInFile": "js/core/DomElement.js",
             "lineNumbers": [
-                816,
-                836
+                821,
+                841
             ],
             "definedBy": "js.core.DomElement",
             "name": "addClass",
@@ -2111,13 +2111,16 @@
                 },
                 {
                     "name": "cb"
+                },
+                {
+                    "name": "useCapture"
                 }
             ],
             "annotations": {},
             "definedInFile": "js/core/DomElement.js",
             "lineNumbers": [
-                864,
-                879
+                869,
+                884
             ],
             "definedBy": "js.core.DomElement",
             "name": "bindDomEvent",
@@ -2129,8 +2132,8 @@
             "annotations": {},
             "definedInFile": "js/core/DomElement.js",
             "lineNumbers": [
-                715,
-                719
+                720,
+                724
             ],
             "definedBy": "js.core.DomElement",
             "name": "bringToFront",
@@ -2175,8 +2178,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                884,
-                886
+                886,
+                888
             ],
             "description": "Clears all attributes",
             "returns": {
@@ -2192,16 +2195,20 @@
             "type": "Method",
             "parameter": [
                 {
-                    "name": "options"
+                    "types": [
+                        "Object"
+                    ],
+                    "name": "options",
+                    "optional": false
                 }
             ],
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                527,
-                547
+                529,
+                549
             ],
-            "description": "This method returns a copy of the Object with all attributes on the $",
+            "description": "This method returns a copy of the Object with all attributes on the $\n",
             "returns": {
                 "types": [
                     "js.core.Bindable"
@@ -2325,8 +2332,8 @@
             "annotations": {},
             "definedInFile": "js/core/DomElement.js",
             "lineNumbers": [
-                687,
-                689
+                692,
+                694
             ],
             "definedBy": "js.core.DomElement",
             "name": "dom",
@@ -2379,8 +2386,8 @@
             "annotations": {},
             "definedInFile": "js/core/DomElement.js",
             "lineNumbers": [
-                252,
-                276
+                253,
+                277
             ],
             "definedBy": "js.core.DomElement",
             "name": "findContent",
@@ -2392,8 +2399,8 @@
             "annotations": {},
             "definedInFile": "js/core/DomElement.js",
             "lineNumbers": [
-                908,
-                912
+                914,
+                918
             ],
             "definedBy": "js.core.DomElement",
             "name": "focus",
@@ -2423,8 +2430,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                753,
-                823
+                755,
+                825
             ],
             "description": "evaluates a path to retrieve a value\n",
             "returns": {
@@ -2445,8 +2452,8 @@
             "annotations": {},
             "definedInFile": "js/core/DomElement.js",
             "lineNumbers": [
-                229,
-                250
+                230,
+                251
             ],
             "definedBy": "js.core.DomElement",
             "name": "getContentPlaceHolders",
@@ -2479,8 +2486,8 @@
             "annotations": {},
             "definedInFile": "js/core/DomElement.js",
             "lineNumbers": [
-                191,
-                211
+                192,
+                212
             ],
             "definedBy": "js.core.DomElement",
             "name": "getPlaceHolder",
@@ -2553,8 +2560,8 @@
             "annotations": {},
             "definedInFile": "js/core/DomElement.js",
             "lineNumbers": [
-                219,
-                227
+                220,
+                228
             ],
             "definedBy": "js.core.DomElement",
             "name": "getViewChildren",
@@ -2570,8 +2577,8 @@
             "annotations": {},
             "definedInFile": "js/core/DomElement.js",
             "lineNumbers": [
-                935,
-                953
+                941,
+                959
             ],
             "definedBy": "js.core.DomElement",
             "name": "globalToLocal",
@@ -2592,8 +2599,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                831,
-                833
+                833,
+                835
             ],
             "description": "determinate if a attribute is available\n",
             "returns": {
@@ -2616,8 +2623,8 @@
             "annotations": {},
             "definedInFile": "js/core/DomElement.js",
             "lineNumbers": [
-                812,
-                814
+                817,
+                819
             ],
             "definedBy": "js.core.DomElement",
             "name": "hasClass",
@@ -2636,8 +2643,8 @@
             },
             "definedInFile": "js/core/DomElement.js",
             "lineNumbers": [
-                680,
-                686
+                685,
+                691
             ],
             "definedBy": "js.core.DomElement",
             "name": "html",
@@ -2667,8 +2674,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                976,
-                993
+                978,
+                995
             ],
             "definedBy": "js.core.Bindable",
             "name": "isDeepEqual",
@@ -2701,8 +2708,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                994,
-                996
+                996,
+                998
             ],
             "definedBy": "js.core.Bindable",
             "name": "isEqual",
@@ -2714,8 +2721,8 @@
             "annotations": {},
             "definedInFile": "js/core/DomElement.js",
             "lineNumbers": [
-                563,
-                565
+                568,
+                570
             ],
             "definedBy": "js.core.DomElement",
             "name": "isRendered",
@@ -2731,8 +2738,8 @@
             "annotations": {},
             "definedInFile": "js/core/DomElement.js",
             "lineNumbers": [
-                914,
-                933
+                920,
+                939
             ],
             "definedBy": "js.core.DomElement",
             "name": "localToGlobal",
@@ -2802,8 +2809,8 @@
             "annotations": {},
             "definedInFile": "js/core/DomElement.js",
             "lineNumbers": [
-                213,
-                217
+                214,
+                218
             ],
             "definedBy": "js.core.DomElement",
             "name": "remove",
@@ -2849,8 +2856,8 @@
             "annotations": {},
             "definedInFile": "js/core/DomElement.js",
             "lineNumbers": [
-                838,
-                862
+                843,
+                867
             ],
             "definedBy": "js.core.DomElement",
             "name": "removeClass",
@@ -2862,8 +2869,8 @@
             "annotations": {},
             "definedInFile": "js/core/DomElement.js",
             "lineNumbers": [
-                278,
-                307
+                279,
+                308
             ],
             "definedBy": "js.core.DomElement",
             "name": "render",
@@ -2895,8 +2902,8 @@
             "annotations": {},
             "definedInFile": "js/core/DomElement.js",
             "lineNumbers": [
-                720,
-                724
+                725,
+                729
             ],
             "definedBy": "js.core.DomElement",
             "name": "sendToBack",
@@ -2933,8 +2940,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                637,
-                723
+                639,
+                725
             ],
             "description": "Sets new values for attributes and notify about changes\n",
             "returns": {
@@ -2960,8 +2967,8 @@
             "annotations": {},
             "definedInFile": "js/core/DomElement.js",
             "lineNumbers": [
-                690,
-                713
+                695,
+                718
             ],
             "definedBy": "js.core.DomElement",
             "name": "setChildIndex",
@@ -2977,8 +2984,8 @@
             "annotations": {},
             "definedInFile": "js/core/DomElement.js",
             "lineNumbers": [
-                725,
-                736
+                730,
+                741
             ],
             "definedBy": "js.core.DomElement",
             "name": "setChildInvisible",
@@ -2994,8 +3001,8 @@
             "annotations": {},
             "definedInFile": "js/core/DomElement.js",
             "lineNumbers": [
-                737,
-                756
+                742,
+                761
             ],
             "definedBy": "js.core.DomElement",
             "name": "setChildVisible",
@@ -3014,8 +3021,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                725,
-                739
+                727,
+                741
             ],
             "definedBy": "js.core.Bindable",
             "name": "setLater",
@@ -3055,7 +3062,7 @@
             "definedInFile": "js/core/Base.js",
             "lineNumbers": [
                 119,
-                153
+                155
             ],
             "definedBy": "js.core.Base",
             "name": "synchronizeFunctionCall",
@@ -3137,13 +3144,16 @@
                 },
                 {
                     "name": "cb"
+                },
+                {
+                    "name": "useCapture"
                 }
             ],
             "annotations": {},
             "definedInFile": "js/core/DomElement.js",
             "lineNumbers": [
-                880,
-                893
+                885,
+                899
             ],
             "definedBy": "js.core.DomElement",
             "name": "unbindDomEvent",
@@ -3172,8 +3182,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                875,
-                878
+                877,
+                880
             ],
             "description": "Unset attribute on $",
             "returns": {
