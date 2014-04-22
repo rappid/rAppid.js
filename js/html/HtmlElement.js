@@ -344,7 +344,8 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
                 if (document && window) {
                     var body = document.body || document.getElementsByName("body")[0] || document.getElementsByName("html")[0];
                     if (body) {
-                        var styles = window.getComputedStyle(body, null);
+                        // can return null in FF see https://bugzilla.mozilla.org/show_bug.cgi?id=548397
+                        var styles = window.getComputedStyle(body, null) || [];
                         for (var i = 0; i < styles.length; i++) {
                             supportedCssProperties.push(styles[i]);
                         }
