@@ -73,6 +73,11 @@ define(["js/core/Bindable", "underscore"], function (Bindable, _) {
                         if(node.nodeName.indexOf("xmlns") !== 0){
                             localName = this._getLocalNameFromNode(node);
 
+                            // fixes IE9+ issue with XML parsing checked get's parsed as CHECKED
+                            if (localName === "CHECKED") {
+                                localName = "checked";
+                            }
+
                             var prefix = prefixMap[node.namespaceURI],
                                 handled = false;
 
