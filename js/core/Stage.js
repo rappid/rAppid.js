@@ -147,6 +147,9 @@ define(["js/html/HtmlElement", "js/core/Bus", "js/core/WindowManager", "js/core/
                         browserName = "ie ie" + browserName[1];
                         browser.name = browserName;
                         browser.isIE = true;
+                    } else if ("ActiveXObject" in window) {
+                        browser.isIE = true;
+                        browser.name = "ie ie11";
                     } else {
                         browser.isIE = false;
                     }
