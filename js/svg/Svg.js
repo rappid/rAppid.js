@@ -97,7 +97,7 @@ define(['xaml!js/svg/SvgDescriptor', "js/svg/SvgElement", 'js/core/Base'], funct
                     style.setAttribute("type", "text/css");
 
                     var srcAttribute = "";
-                    if(src.indexOf(".woff") > -1){
+                    if (src.indexOf(".woff") > -1) {
                         srcAttribute = "url('" + src + "') format('woff');";
                     } else {
                         srcAttribute = "url('" + src + "') ;";
@@ -133,11 +133,13 @@ define(['xaml!js/svg/SvgDescriptor', "js/svg/SvgElement", 'js/core/Base'], funct
                 var maxChecks = 500,
                     originalBox,
                     current;
+
                 setTimeout(function () {
                     text.setAttribute("font-family", "__ABCDE__");  // set to undefined font and measure
-                    try{
+                    try {
                         originalBox = text.getBBox();
-                    } catch(e){}
+                    } catch (e) {
+                    }
 
                     text.setAttribute("font-family", fontFamily); // set to loading font / first undefined
                     setTimeout(checkFontLoaded, 0);
@@ -186,9 +188,7 @@ define(['xaml!js/svg/SvgDescriptor', "js/svg/SvgElement", 'js/core/Base'], funct
 
         }
 
-    })
-    ;
+    });
 
     return Svg;
-})
-;
+});
