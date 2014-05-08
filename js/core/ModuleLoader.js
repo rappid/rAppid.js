@@ -1,6 +1,9 @@
 define(["require", "js/html/HtmlElement", "js/ui/ContentPlaceHolder", "js/core/Module", "underscore", "js/conf/ModuleConfiguration", "flow"],
     function (require, HtmlElement, ContentPlaceHolder, Module, _, ModuleConfiguration, flow) {
-        var ModuleLoader = HtmlElement.inherit("js.core.ModuleLoader", {
+
+        var undefined;
+
+        return HtmlElement.inherit("js.core.ModuleLoader", {
 
             defaults: {
                 /**
@@ -31,7 +34,7 @@ define(["require", "js/html/HtmlElement", "js/ui/ContentPlaceHolder", "js/core/M
                 router: null
             },
 
-            $classAttributes: ['router' ,'currentModule', 'currentModuleName', 'state'],
+            $classAttributes: ['router' , 'currentModule', 'currentModuleName', 'state'],
 
             ctor: function (attributes) {
                 this.callBase();
@@ -104,10 +107,9 @@ define(["require", "js/html/HtmlElement", "js/ui/ContentPlaceHolder", "js/core/M
              * @param {Function} callback - the callback function
              * @param {Object} routeContext - the route context
              * @param {Object} [cachedInstance]
-             * @param {String} [fragment] - relative fragment
              * @private
              */
-            _startModule: function (moduleName, moduleInstance, callback, routeContext, cachedInstance, fragment) {
+            _startModule: function (moduleName, moduleInstance, callback, routeContext, cachedInstance) {
 
                 var self = this;
 
@@ -124,7 +126,7 @@ define(["require", "js/html/HtmlElement", "js/ui/ContentPlaceHolder", "js/core/M
                             cb();
                         }
                     })
-                    .seq(function(cb) {
+                    .seq(function (cb) {
 
                         // start module
                         moduleInstance.start(function (err) {
@@ -134,11 +136,14 @@ define(["require", "js/html/HtmlElement", "js/ui/ContentPlaceHolder", "js/core/M
                             } else {
                                 if (routeContext) {
                                     // fresh instance with maybe new routers -> exec routes for new router
-                                    var routeExecutionStack = [],
-                                        relativeFragment = (!fragment && fragment !== "") ? routeContext.fragment : fragment;
+                                    var routeExecutionStack = [];
 
                                     for (var i = 0; i < moduleInstance.$routers.length; i++) {
-                                        routeExecutionStack = routeExecutionStack.concat(moduleInstance.$routers[i].generateRoutingStack(relativeFragment));
+                                        var router = moduleInstance.$routers[i];
+
+                                        router.set("module", moduleInstance);
+
+                                        routeExecutionStack = routeExecutionStack.concat(router.generateRoutingStack(routeContext.fragment));
                                     }
 
                                     flow()
@@ -231,14 +236,22 @@ define(["require", "js/html/HtmlElement", "js/ui/ContentPlaceHolder", "js/core/M
 
                             var relativeFragment;
 
-                            var relative = module.relative;
+                            var relative = module.relative,
+                                moduleBase = "";
 
                             if (relative) {
                                 relativeFragment = routeContext.params[0];
+
+                                if (relativeFragment !== undefined) {
+                                    moduleBase = routeContext.fragment.substr(0, routeContext.fragment.length - relativeFragment.length);
+                                }
                             }
 
                             if (self.$moduleCache.hasOwnProperty(module.name)) {
-                                self._startModule(module.name, self.$moduleCache[module.name], cb, routeContext, !relative, relativeFragment);
+                                var moduleInstance = self.$moduleCache[module.name];
+                                moduleInstance.set("base", moduleBase);
+
+                                self._startModule(module.name, moduleInstance, cb, routeContext, !relative);
                             } else {
 
                                 // load module
@@ -255,8 +268,9 @@ define(["require", "js/html/HtmlElement", "js/ui/ContentPlaceHolder", "js/core/M
 
                                         // cache instance
                                         self.$moduleCache[module.name] = moduleInstance;
+                                        moduleInstance.set("base", moduleBase);
 
-                                        self._startModule(module.name, moduleInstance, cb, routeContext, false, relativeFragment);
+                                        self._startModule(module.name, moduleInstance, cb, routeContext, false);
 
                                     } else {
                                         cb(new Error("Module '" + module.moduleClass + "' isn't an instance of js.core.Module"));
@@ -324,6 +338,4 @@ define(["require", "js/html/HtmlElement", "js/ui/ContentPlaceHolder", "js/core/M
                 state && this.addClass(state);
             }
         });
-
-        return ModuleLoader;
     });

@@ -6,6 +6,10 @@ define(["js/html/HtmlElement", "js/core/Router", "js/core/Head"], function (Html
             this.$routers = [];
         },
 
+        defaults: {
+            base: ""
+        },
+
         /**
          * Starts the module. The callback tells the module loader when the module is started.
          *

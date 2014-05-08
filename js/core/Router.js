@@ -10,6 +10,10 @@ define(["js/core/Component", "underscore", "js/conf/RouteConfiguration"],
                 this.callBase();
             },
 
+            defaults: {
+                module: null
+            },
+
             initialize: function () {
                 this.callBase();
 
@@ -82,7 +86,12 @@ define(["js/core/Component", "underscore", "js/conf/RouteConfiguration"],
 
                 var delegates = [],
                     rootScope = this.$rootScope,
-                    self = this;
+                    self = this,
+                    base = this.get("module.base") || "";
+
+                if (base) {
+                    fragment = fragment.substr(base.length);
+                }
 
                 function addDelegate(route, params) {
 
