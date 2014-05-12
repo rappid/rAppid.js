@@ -32,11 +32,20 @@ define(["js/core/Component", "js/core/List" , "underscore"], function (Component
 
             this.callBase();
         },
+
+        _onItemAdded: function (e) {
+            // abstract
+        },
+
+        _onItemRemoved: function(e) {
+            // abstract
+        },
+
         _onItemChanged: function () {
             // TODO: implement
         },
         _onReset: function (e) {
-            this._innerReset(e.items);
+            this._innerReset(e.$.items);
         },
         _onSort: function (e) {
             this.$.list.sort(e.sortFnc);
