@@ -632,7 +632,12 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
                 for (var i = startIndex; i <= endIndex; i++) {
                     item = this.$.$dataAdapter.getItemAt(i);
 
-                    id = this.getSelectionKeyForItem(item.$.data);
+                    id = null;
+
+                    if (item) {
+                        this.getSelectionKeyForItem(item.$.data)
+                    }
+
                     if (id) {
                         if (metaKey && this.$selectionMap[id]) {
                             delete this.$selectionMap[id];
