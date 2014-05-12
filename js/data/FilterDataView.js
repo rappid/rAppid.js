@@ -16,9 +16,9 @@ define(["js/data/DataView", "underscore"], function (DataView, _) {
             this._innerReset(this.$.baseList.$items);
         },
         _onItemAdded: function (e) {
-            var ret = this._filterItem(e.$.item, e.index);
+            var ret = this._filterItem(e.$.item, e.$.index);
             if (ret === true) {
-                this.$.list.add(e.$.item, e.index);
+                this.$.list.add(e.$.item, e.$.index);
             }
         },
         _onItemRemoved: function (e) {
