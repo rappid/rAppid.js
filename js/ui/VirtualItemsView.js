@@ -142,16 +142,16 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
                 var self = this;
 
                 this.bindDomEvent('scroll', scroll);
-//                this.bindDomEvent("mousemove", function (e) {
-//                    self._mouseMove(e);
-//                });
-//                this.bindDomEvent("mouseout", function (e) {
-//                    if (self.$.hoverItem) {
-//                        self.trigger("on:itemMouseOut", null, self.$.hoverItem);
-//                    }
-//
-//                    self.set('hoverItem', null);
-//                });
+                this.bindDomEvent("mousemove", function (e) {
+                    self._mouseMove(e);
+                });
+                this.bindDomEvent("mouseout", function (e) {
+                    if (self.$.hoverItem) {
+                        self.trigger("on:itemMouseOut", null, self.$.hoverItem);
+                    }
+
+                    self.set('hoverItem', null);
+                });
 
                 function scroll(e) {
                     self.set({
