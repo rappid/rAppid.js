@@ -1,5 +1,11 @@
 define(["js/ui/View", "js/core/Content", "js/ui/Button", "underscore"], function (View, Content, Button, _) {
 
+    var CLOSE_BEHAVIOR = {
+        OTHER: "other",             // closes other menu buttons
+        NON_PARENT: "nonParent",    // closes other menu buttons but not the parents
+        NONE: "none"                // closes no other menu buttons
+    };
+
     return View.inherit("js.ui.MenuButtonClass", {
         defaults: {
             /***
@@ -46,7 +52,9 @@ define(["js/ui/View", "js/core/Content", "js/ui/Button", "underscore"], function
              *
              * @type String
              */
-            iconLabel: ""
+            iconLabel: "",
+
+            closeBehavior: CLOSE_BEHAVIOR.OTHER
 
         },
         $defaultContentName: 'menu',
@@ -82,11 +90,32 @@ define(["js/ui/View", "js/core/Content", "js/ui/Button", "underscore"], function
 
         _renderMenuVisible: function (visible) {
             if (visible === true) {
-                for (var i = 0; i < this.$instances.length; i++) {
-                    if (this.$instances[i] != this) {
-                        this.$instances[i].set({menuVisible: false});
+
+                var closeBehavior = this.$.closeBehavior;
+                if (closeBehavior !== CLOSE_BEHAVIOR.NONE) {
+                    for (var i = 0; i < this.$instances.length; i++) {
+                        var instance = this.$instances[i],
+                            close = (instance !== this && instance.$.menuVisible === true);
+
+                        if (close && closeBehavior === CLOSE_BEHAVIOR.NON_PARENT) {
+                            // check that the instance is not a parent
+                            var parent = this.$parent;
+                            while (parent) {
+                                if (parent === instance) {
+                                    close = false;
+                                    break;
+                                }
+
+                                parent = parent.$parent;
+                            }
+                        }
+
+                        if (close) {
+                            instance.set({menuVisible: false});
+                        }
                     }
                 }
+
                 this.addClass('open');
             } else {
                 this.removeClass('open');
