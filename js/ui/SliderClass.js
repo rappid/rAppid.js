@@ -101,13 +101,21 @@ define(["js/ui/View", 'js/data/Collection', 'js/core/List'], function (View) {
             },
 
             _handleWindowMove: function (e) {
+                e.preventDefault && e.preventDefault();
                 if (this.$currentHandle) {
+
                     var pos,
                         range,
                         max,
                         min,
                         v;
+
+                    if (e.changedTouches) {
+                        e = e.changedTouches[0];
+                    }
+
                     pos = this.globalToLocal({x: e.pageX, y: e.pageY});
+
 
                     range = this.$.max - this.$.min;
                     max = this._getMaxValueForHandle(this.$currentHandle);
