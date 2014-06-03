@@ -175,7 +175,6 @@ define(["js/ui/View", "js/core/List"], function (View, List) {
         getHtmlForItem: function (term) {
             var ret = "";
             var originalSearch = this.$.search;
-            console.log(originalSearch);
             if (originalSearch) {
                 var l = originalSearch.toLowerCase().trim(),
                     t = term.toLowerCase(),
