@@ -919,6 +919,12 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                 }
             },
 
+            blur: function () {
+                if (this.isRendered()) {
+                    this.$el.blur();
+                }
+            },
+
             localToGlobal: function (point) {
                 point = point || {
                     x: 0,
