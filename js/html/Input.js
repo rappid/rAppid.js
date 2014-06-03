@@ -1,4 +1,4 @@
-define(["js/html/HtmlElement", "underscore", "moment"], function (HtmlElement, _, moment) {
+define(["js/html/HtmlElement", "underscore"], function (HtmlElement, _) {
     var radioNameCache = {},
         undefined;
 
@@ -68,7 +68,7 @@ define(["js/html/HtmlElement", "underscore", "moment"], function (HtmlElement, _
             if (String(value) !== this.$el.value) {
                 if (this.$.type === "date") {
                     if (value instanceof Date) {
-                        value = moment(value).format("YYYY-MM-DD");
+                        value = value.toLocaleString();
                     }
                 }
 
