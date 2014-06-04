@@ -29,7 +29,7 @@ define(["js/ui/View", "js/core/List"], function (View, List) {
 
             maxItems: 5,
 
-            showAutoCompletion: false,
+            _showAutoSuggestion: false,
 
             /***
              * @codeBehind
@@ -40,14 +40,14 @@ define(["js/ui/View", "js/core/List"], function (View, List) {
         events: ["on:suggestionClick"],
 
         _commitSearch: function (search) {
+            if (!search) {
+                this.clearSuggestions();
+                return;
+            }
             if (!this.$.selectedSuggestion) {
                 var self = this,
                     maxItems = this.$.maxItems;
 
-                if (!search) {
-                    this.$.suggestions.reset();
-                    return;
-                }
 
 
                 this._debounceFunctionCall(function (search) {
@@ -155,8 +155,15 @@ define(["js/ui/View", "js/core/List"], function (View, List) {
             return suggestion;
         },
 
-        toggleAutoCompletion: function (visible) {
-            this.set('showAutoCompletion', visible);
+        _toggleSuggestionBox: function (visible) {
+            if (visible) {
+                this.set('_showAutoSuggestion', visible);
+            } else {
+                var self = this;
+                setTimeout(function () {
+                    self.set('_showAutoSuggestion', visible);
+                }, 100);
+            }
         },
 
         selectNext: function () {
@@ -208,7 +215,11 @@ define(["js/ui/View", "js/core/List"], function (View, List) {
         },
         _emptyClass: function () {
             return !this.$.suggestions || !this.$.suggestions.size() ? "empty" : "";
-        }.onChange('suggestions.size()')
+        }.onChange('suggestions.size()'),
+
+        _openStateClass: function () {
+            return this.$._showAutoSuggestion ? "open" : "";
+        }.onChange("_showAutoSuggestion")
 
     });
 });
