@@ -1,0 +1,21 @@
+<ui:AutoSuggestionBoxClass xmlns:ui="js.ui" xmlns="http://www.w3.org/1999/xhtml" xmlns:js="js.core">
+    <input type="{type}" value="{{search}}" cid="input" placeholder="{placeholder}" class="{inputClass}"
+           onkeyup="_handleKeyUp" onkeydown="_handleKeyDown"
+           onfocus="_toggleSuggestionBox(true)"
+           onblur="_toggleSuggestionBox(false)"
+           autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+    <ui:SelectionView items="{suggestions}" tagName="ul"
+                      class="auto-suggestion-list {_emptyClass()} {_openStateClass()}"
+                      cid="suggestionList" selectedItem="{{selectedSuggestion}}">
+        <js:Template name="item">
+            <ui:TemplatePlaceHolder templateName="proposal" tagName="li" onclick="_handleSuggestionClick"/>
+        </js:Template>
+    </ui:SelectionView>
+
+    <js:Template name="proposal">
+        <div>
+            <ui:HtmlView html="{getHtmlForItem(${item})}"/>
+        </div>
+    </js:Template>
+
+</ui:AutoSuggestionBoxClass>

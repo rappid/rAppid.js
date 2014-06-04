@@ -90,6 +90,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
                     var fnc = scope[fncName],
                         events = [];
 
+                    fnc._paths = this._getOnChangePathsForFnc(scope, fnc);
                     fnc._attributes = this._getOnChangeAttributesForFnc(scope, fnc);
 
                     if (fnc._attributes && fnc._attributes.length > 0) {
@@ -103,17 +104,16 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
                     };
                     var path;
                     // for paths like .onChange("address.city","some.other.stuff");
-                    for (var a = 0; a < fnc._attributes.length; a++) {
-                        path = fnc._attributes[a];
-                        if (path.indexOf(".") > -1) {
-                            path = Parser.parse(path, 'path');
-                            this.$.bindingCreator.create({
-                                scope: this.$.scope,
-                                path: path,
-                                type: TYPE_NORMAL,
-                                parent: null
-                            }, this.$.scope, cb);
-                        }
+                    for (var a = 0; a < fnc._paths.length; a++) {
+                        path = fnc._paths[a];
+                        path = Parser.parse(path, 'path');
+                        this.$.bindingCreator.create({
+                            scope: this.$.scope,
+                            path: path,
+                            type: TYPE_NORMAL,
+                            parent: null
+                        }, this.$.scope, cb);
+
                     }
 
                     fnc._events = this._getEventsForFnc(scope, fnc);
@@ -175,6 +175,21 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
             }
 
             this._createSubBinding();
+        },
+
+        _getOnChangePathsForFnc: function (scope, fnc) {
+            var ret = [];
+            if (fnc._attributes && fnc._attributes.length > 0) {
+                var attr;
+                for (var x = 0; x < fnc._attributes.length; x++) {
+                    attr = fnc._attributes[x];
+                    if (attr.indexOf(".") > -1) {
+                        ret.push(attr);
+                    }
+                }
+            }
+            return ret;
+
         },
 
         _getOnChangeAttributesForFnc: function (scope, fnc) {
