@@ -99,6 +99,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
                     this.callBase(null);
 
                     this.$ = {};
+                    this.$injected = {};
                     this.$bindingAttributes = {};
 
                     this.$invalidatedProperties = {};
@@ -285,7 +286,9 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
                             for (var name in inject) {
                                 if (inject.hasOwnProperty(name)) {
                                     try {
-                                        this.set(name, injection.getInstance(inject[name]));
+                                        var instance = injection.getInstance(inject[name]);
+                                        this.set(name, instance);
+                                        this.$injected[name] = instance;
                                     } catch (e) {
 
                                         if (_.isString(e)) {
@@ -365,6 +368,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
                         for (var name in inject) {
                             if (inject.hasOwnProperty(name)) {
                                 this.$[name] = null;
+                                delete this.$injected[name];
                             }
                         }
                     }
@@ -975,14 +979,24 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
                     this.callBase();
                 },
 
-                isDeepEqual: function (b) {
+                isDeepEqual: function (b, keys) {
                     if (!b) {
                         return false;
                     }
-                    if (_.size(this.$) !== _.size(b.$)) {
+                    if (!keys && (_.size(this.$) - _.size(this.$injected)) !== (_.size(b.$) - _.size(b.$injected))) {
                         return false;
                     }
                     for (var key in this.$) {
+                        if (keys && _.indexOf(keys, key) === -1) {
+                            // key not needed to check
+                            continue;
+                        }
+
+                        if (this.$injected.hasOwnProperty(key)) {
+                            // don't compare injected keys
+                            continue;
+                        }
+
                         if (this.$.hasOwnProperty(key) && b.$.hasOwnProperty(key)) {
                             if (!isDeepEqual(this.$[key], b.$[key])) {
                                 return false;
