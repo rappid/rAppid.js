@@ -65,21 +65,22 @@ define(['xaml!js/svg/SvgDescriptor', "js/svg/SvgElement", 'js/core/Base'], funct
 
     });
 
+    var GlobalFontCache = {};
+
     Svg.FontManager = Base.inherit("js.svg.Svg.FontManager", {
 
         ctor: function (svg) {
             this.$svg = svg;
-            this.$fontCache = {};
-
             this.callBase();
         },
 
         loadExternalFont: function (fontFamily, src, callback) {
             var svg = this.$svg;
 
-            var cache = this.$fontCache[fontFamily];
+            var font = GlobalFontCache[fontFamily];
+            var isSvgFont = src.indexOf(".svg") > -1;
 
-            if (!cache) {
+            if (!font) {
 
                 var text = svg.$stage.$document.createElementNS(SvgElement.SVG_NAMESPACE, "text");
                 text.textContent = "SvgFontMeasurer";
@@ -115,15 +116,16 @@ define(['xaml!js/svg/SvgDescriptor', "js/svg/SvgElement", 'js/core/Base'], funct
 
                     head.appendChild(style);
 
+
                 } else if (src.indexOf(".svg") > -1) {
-                    var font = svg.$templates["external-font"].createInstance({
+                    var fontElement = svg.$templates["external-font"].createInstance({
                         $fontFamily: fontFamily,
                         $src: src
                     });
-                    svg.$.defs.addChild(font);
+                    svg.$.defs.addChild(fontElement);
                 }
 
-                cache = this.$fontCache[fontFamily] = {
+                font = GlobalFontCache[fontFamily] = {
 //                    font: font,
                     loaded: false,
                     callbacks: [callback]
@@ -158,13 +160,13 @@ define(['xaml!js/svg/SvgDescriptor', "js/svg/SvgElement", 'js/core/Base'], funct
                             // same check later
                             setTimeout(checkFontLoaded, 100);
                         } else {
-                            cache.loaded = true;
+                            font.loaded = true;
                             hidden.removeChild(text);
 
                             setTimeout(function () {
-                                for (var i = 0; i < cache.callbacks.length; i++) {
+                                for (var i = 0; i < font.callbacks.length; i++) {
                                     try {
-                                        cache.callbacks[i] && cache.callbacks[i]();
+                                        font.callbacks[i] && font.callbacks[i]();
                                     } catch (e) {
                                         // invoke callbacks
                                     }
@@ -177,11 +179,19 @@ define(['xaml!js/svg/SvgDescriptor', "js/svg/SvgElement", 'js/core/Base'], funct
 
             } else {
 
-                if (cache.loaded) {
+                if (font.loaded) {
+
+                    if (isSvgFont) {
+                        svg.$.defs.addChild(svg.$templates["external-font"].createInstance({
+                            $fontFamily: fontFamily,
+                            $src: src
+                        }));
+
+                    }
                     callback && callback();
                 }
                 else {
-                    cache.callbacks.push(callback);
+                    font.callbacks.push(callback);
                 }
 
             }
