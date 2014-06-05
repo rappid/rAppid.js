@@ -1,4 +1,4 @@
-define(["require", "js/core/Component", "underscore", "moment", "flow"], function (require, Component, _, moment, flow) {
+define(["require", "js/core/Component", "underscore", "flow"], function (require, Component, _, flow) {
     return Component.inherit("js.core.I18n", {
         defaults: {
             /***
@@ -22,11 +22,6 @@ define(["require", "js/core/Component", "underscore", "moment", "flow"], functio
              * @type Object
              */
             translations: {},
-            /***
-             * Decides wether to load momentjs for date formatting and parsing
-             * @type Boolean
-             */
-            loadMomentJs: true,
 
             /***
              * determinate if the locale will be loaded automatically during initialization
@@ -62,32 +57,15 @@ define(["require", "js/core/Component", "underscore", "moment", "flow"], functio
                 return;
             }
 
-            flow()
-                .par(function (cb) {
-                    require(['json!' + self.$.path + '/' + self.$.locale], function (translations) {
-                        self.set({
-                            translations: translations
-                        });
-                        cb();
-                    }, function(err) {
-                        self.log(err, 'error');
-                        cb();
-                    });
-                }, function (cb) {
-                    if (self.$.loadMomentJs) {
-                        require([self.$.path + "/" + self.$.locale], function () {
-                            self.trigger("localeChanged");
-                            cb();
-                        }, function (err) {
-                            self.log(err, 'error');
-                            cb();
-                        });
-                    } else {
-                        cb();
-                    }
-                })
-                .exec(callback);
-
+            require(['json!' + self.$.path + '/' + self.$.locale], function (translations) {
+                self.set({
+                    translations: translations
+                });
+                callback && callback();
+            }, function (err) {
+                self.log(err, 'error');
+                callback && callback(err);
+            });
 
         },
 
@@ -128,13 +106,13 @@ define(["require", "js/core/Component", "underscore", "moment", "flow"], functio
          * @param {String} replacement1 - to replace %0
          * @param {String} replacement2 - to replace %1
          */
-        ts: function(key1, key2, replacement1, replacement2) {
+        ts: function (key1, key2, replacement1, replacement2) {
             var args = Array.prototype.slice.call(arguments),
                 newArgs,
                 key = args.shift(),
                 num;
 
-            if(!args.length || args[0] == null){
+            if (!args.length || args[0] == null) {
                 return "";
             }
 
@@ -152,25 +130,7 @@ define(["require", "js/core/Component", "underscore", "moment", "flow"], functio
 
             return this.t.apply(this, newArgs);
 
-        }.onChange("translations"),
+        }.onChange("translations")
 
-        /***
-         * Formats a date value to the given format
-         *
-         * @param {Date|Number} value - the value to format
-         * @param {String} [value] -  the format
-         */
-        f: function (value, format) {
-
-            if (value instanceof Date) {
-                format = format || "LLL";
-                return moment(value).format(format);
-            } else if (value instanceof moment) {
-                format = format || "LLL";
-                return value.format(format);
-            }
-
-            return value;
-        }.on("localeChanged")
     });
 });
