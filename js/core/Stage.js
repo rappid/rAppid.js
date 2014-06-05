@@ -1,9 +1,9 @@
 define(["js/html/HtmlElement", "js/core/Bus", "js/core/WindowManager", "js/core/ExternalInterface", "js/core/ErrorProvider"], function (HtmlElement, Bus, WindowManager, ExternalInterface, ErrorProvider) {
 
     var browserClassMap = {
-        "hasTouch" : ["touch","no-touch"],
-        "supportsTransition" : ["transition","no-transition"],
-        "isMobile" : ["mobile","desktop"],
+        "hasTouch": ["touch", "no-touch"],
+        "supportsTransition": ["transition", "no-transition"],
+        "isMobile": ["mobile", "desktop"],
         "supportViewPortRelativeSize": ["vs-support", "no-vs-support"]
     };
 
@@ -15,9 +15,9 @@ define(["js/html/HtmlElement", "js/core/Bus", "js/core/WindowManager", "js/core/
      */
     return HtmlElement.inherit("js.core.Stage", {
         $containerOrder: {
-            'windows' : 0,
+            'windows': 0,
             'popups': 1,
-            'tooltips' : 2
+            'tooltips': 2
         },
 
         defaults: {
@@ -25,7 +25,7 @@ define(["js/html/HtmlElement", "js/core/Bus", "js/core/WindowManager", "js/core/
             componentClass: 'stage'
         },
 
-        ctor: function(requireJsContext, applicationContext, document, window){
+        ctor: function (requireJsContext, applicationContext, document, window) {
 
             this.$requirejsContext = requireJsContext;
             this.$applicationContext = applicationContext;
@@ -46,7 +46,7 @@ define(["js/html/HtmlElement", "js/core/Bus", "js/core/WindowManager", "js/core/
 
         },
 
-        _addInjectionFactories: function(injection) {
+        _addInjectionFactories: function (injection) {
             injection.addFactory({
                 type: "js.core.ErrorProvider",
                 factory: ErrorProvider,
@@ -71,7 +71,7 @@ define(["js/html/HtmlElement", "js/core/Bus", "js/core/WindowManager", "js/core/
          * @returns {Object}
          * @private
          */
-        _createBrowserObject: function() {
+        _createBrowserObject: function () {
 
             function getVendorPrefix() {
                 if ('WebkitTransition' in s) return "webkit";
@@ -89,20 +89,12 @@ define(["js/html/HtmlElement", "js/core/Bus", "js/core/WindowManager", "js/core/
                 var window = this.$window,
                     document = this.$document,
                     body = document.body || document.getElementsByTagName("body")[0],
-                    navigator,s;
+                    navigator, s;
 
                 if (window) {
                     browser.hasTouch = "ontouchend" in window;
                     browser.has3D = ('WebKitCSSMatrix' in window && 'm11' in new WebKitCSSMatrix());
                     browser.msPointerEnabled = "msPointerEnabled" in window.navigator;
-
-                    var div = document.createElement("div");
-                    div.setAttribute("style", "position: absolute; height: 100vh; width: 100vw");
-                    body.appendChild(div);
-
-                    browser.supportViewPortRelativeSize = (window.innerWidth === div.offsetWidth);
-
-                    body.removeChild(div);
 
                     navigator = window.navigator;
 
@@ -185,16 +177,16 @@ define(["js/html/HtmlElement", "js/core/Bus", "js/core/WindowManager", "js/core/
          * @param {Object} browser
          * @private
          */
-        _annotateBrowserInformation: function(browser){
+        _annotateBrowserInformation: function (browser) {
             var classes = ["stage"], value;
 
-            for(var key in browser){
-                if(browser.hasOwnProperty(key)){
+            for (var key in browser) {
+                if (browser.hasOwnProperty(key)) {
 
                     value = browser[key];
 
-                    if(typeof(value) === "boolean"){
-                        if (browserClassMap.hasOwnProperty(key)){
+                    if (typeof(value) === "boolean") {
+                        if (browserClassMap.hasOwnProperty(key)) {
                             classes.push(browserClassMap[key][value ? 0 : 1]);
                         } else if (key === 'isIOS' && value) {
                             classes.push('ios');
@@ -213,7 +205,7 @@ define(["js/html/HtmlElement", "js/core/Bus", "js/core/WindowManager", "js/core/
             this.set('componentClass', classes.join(" "));
         },
 
-        _getIOSVersion : function () {
+        _getIOSVersion: function () {
             var iOSVersionRegexp = this.$window.navigator.userAgent.match(/OS ([0-9]+)(?:_[0-9])* like Mac OS/);
 
             if (iOSVersionRegexp && iOSVersionRegexp.length > 0) {
@@ -228,7 +220,7 @@ define(["js/html/HtmlElement", "js/core/Bus", "js/core/WindowManager", "js/core/
          *
          * @returns {Array}
          */
-        createChildren: function() {
+        createChildren: function () {
 
             this.$windowManager = this.createComponent(WindowManager);
             return [this.$windowManager];
@@ -240,7 +232,7 @@ define(["js/html/HtmlElement", "js/core/Bus", "js/core/WindowManager", "js/core/
          * @param {HTMLElement} target - the render target
          * @returns {HTMLElement}
          */
-        render: function(target){
+        render: function (target) {
             var dom = this.callBase(null);
 
             if (this.$externalInterface) {
@@ -261,8 +253,8 @@ define(["js/html/HtmlElement", "js/core/Bus", "js/core/WindowManager", "js/core/
          * @param elementId
          * @returns {*}
          */
-        createWindow: function(elementId){
-            return this.createHtmlElement(elementId,"windows");
+        createWindow: function (elementId) {
+            return this.createHtmlElement(elementId, "windows");
         },
         /**
          * Creates a tooltip window for the stage with an ID
@@ -270,7 +262,7 @@ define(["js/html/HtmlElement", "js/core/Bus", "js/core/WindowManager", "js/core/
          * @param tooltipId
          * @returns {*}
          */
-        createTooltip: function(tooltipId){
+        createTooltip: function (tooltipId) {
             return this.createHtmlElement(tooltipId, "tooltips");
         },
         /***
@@ -281,20 +273,20 @@ define(["js/html/HtmlElement", "js/core/Bus", "js/core/WindowManager", "js/core/
          * @param {String} containerId
          * @returns {HTMLElement}
          */
-        createHtmlElement: function(elementId, containerId){
+        createHtmlElement: function (elementId, containerId) {
             var container = this.$containers[containerId];
-            if(!container){
+            if (!container) {
                 // TODO: remove this shit
-                container = this.createContainer({'class' : containerId + "-container"});
+                container = this.createContainer({'class': containerId + "-container"});
                 this.$containers[containerId] = container;
                 this.addChild(container);
-                if(this.$containerOrder[containerId]){
+                if (this.$containerOrder[containerId]) {
                     container.setChildIndex(this.$containerOrder[containerId]);
                 }
             }
 
             var element = this.$elements[containerId + "_" + elementId];
-            if(!element){
+            if (!element) {
                 element = this.createContainer({});
                 container.addChild(element);
             }
@@ -307,12 +299,12 @@ define(["js/html/HtmlElement", "js/core/Bus", "js/core/WindowManager", "js/core/
          * @param {Object} attributes - the attribute set
          * @returns {js.core.HtmlElement}
          */
-        createContainer: function(attributes){
+        createContainer: function (attributes) {
             attributes = attributes || {};
             return this.$stage.$applicationContext.createInstance(HtmlElement, [attributes, null, this.$stage, this, this]);
         },
 
-        destroy: function(){
+        destroy: function () {
             this.callBase();
 
             this.$requirejsContext = null;
