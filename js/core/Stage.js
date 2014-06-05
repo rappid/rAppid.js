@@ -98,6 +98,15 @@ define(["js/html/HtmlElement", "js/core/Bus", "js/core/WindowManager", "js/core/
 
                     navigator = window.navigator;
 
+                    var div = document.createElement("div");
+                    div.setAttribute("style", "position: absolute; height: 100vh; width: 100vw;");
+                    body.appendChild(div);
+
+                    browser.supportViewPortRelativeSize = (window.innerWidth === div.offsetWidth);
+
+                    body.removeChild(div);
+
+
                     s = window.document.createElement('div').style;
                 }
 
