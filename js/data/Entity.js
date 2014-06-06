@@ -310,7 +310,7 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                             this.$dependentObjectContext = this.$parentEntity.$dependentObjectContext;
                         } else {
                             // create a new non-cached context for dependent objects
-                            this.$dependentObjectContext = this.$context.$dataSource.createContext(this);
+                            this.$dependentObjectContext = this.$context.$dataSource.createContext(this, null, this.$context);
                         }
                     }
 
@@ -318,7 +318,7 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                 }
 
 
-                return this.$context.$dataSource.getContextForChild(childFactory, this.$isEntity ? this.$context.$contextModel : this);
+                return this.$context.$dataSource.getContextForChild(childFactory, this.$isDependentObject ? this.$context.$contextModel : this);
             },
 
             /**

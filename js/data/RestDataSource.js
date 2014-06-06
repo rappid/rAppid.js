@@ -210,7 +210,7 @@ define(["js/data/DataSource", "js/data/Model", "underscore", "flow", "JSON", "js
 
                 var path = this.getPathComponentsForModelClass(model.factory);
                 if (path) {
-                    if (!model.isNew()) {
+                    if (!model.isNew() && !model.$isDependentObject) {
                         path.push(model.identifier());
                     }
 

@@ -508,8 +508,9 @@ define(["js/core/Component", "js/core/Base", "js/data/Collection", "underscore",
                             }
                         } else if (schemaType === Date && value && !(value instanceof Date)) {
                             newData[key] = moment(value, this.$dataSource.$.dateFormat).toDate();
-                        } else if (schemaType.classof(Entity) && value) {
-                            if (schemaType instanceof TypeResolver) {
+                        } else if (schemaType.classof(Entity)) {
+                            var id;
+                            if (value && schemaType instanceof TypeResolver) {
                                 factory = schemaType.resolve(value, key);
                             } else {
                                 factory = schemaType || Entity;
@@ -519,12 +520,20 @@ define(["js/core/Component", "js/core/Base", "js/data/Collection", "underscore",
                                 throw "Factory for type '" + key + "' isn't an instance of Entity";
                             }
 
-                            newData[key] = entity = this.$dataSource._getContext(factory, model, value).createEntity(factory, this._getIdForValue(value, factory));
-                            if (entity instanceof Entity && !(entity instanceof Model)) {
-                                entity.$parent = model;
-                                entity.$parentEntity = model;
+                            if (factory.classof(Model) && factory.prototype.$isDependentObject) {
+                                id = key;
+                                value = value || {};
+                            } else if (value) {
+                                id = this._getIdForValue(value, factory);
                             }
-                            entity.set(this._parseModel(entity, value, action, options));
+                            if (value) {
+                                newData[key] = entity = this.$dataSource._getContext(factory, model, value).createEntity(factory, id);
+                                if (entity instanceof Entity && !(entity instanceof Model)) {
+                                    entity.$parent = model;
+                                    entity.$parentEntity = model;
+                                }
+                                entity.set(this._parseModel(entity, value, action, options));
+                            }
 
                         }
                     }
