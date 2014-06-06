@@ -56,18 +56,6 @@ define(["js/ui/View", "js/html/Input", "js/html/Select", "js/html/TextArea", 'js
                 }
             }
 
-            if (this.$firstInput && !/radio|checkobox/i.test(this.$firstInput.$.type)) {
-                // only for input that are not radio or checkobox and select and textareas
-                var self = this;
-                this.$firstInput.bind('on:focus', function () {
-                    self.set('selected', true);
-                });
-                this.$firstInput.bind('on:blur', function () {
-                    self.set('selected', false);
-                });
-
-            }
-
         },
 
         focusFirstInput: function () {
