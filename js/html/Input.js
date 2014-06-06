@@ -160,7 +160,9 @@ define(["js/html/HtmlElement", "underscore"], function (HtmlElement, _) {
                     this.__focusHandler = function () {
                         self.set('focused', true);
                         self.removeClass('placeholder');
-                        self.$el.value = '';
+                        if (!self.$.value) {
+                            self.$el.value = '';
+                        }
 
                     };
                     this.bindDomEvent("focus", this.__focusHandler);
