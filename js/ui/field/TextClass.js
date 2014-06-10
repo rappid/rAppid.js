@@ -5,6 +5,7 @@ define(["xaml!js/ui/Field"], function (Field) {
             type: "text",
             value: "",
             size: "large",
+            fieldName: "",
             placeholder: ""
         },
 
