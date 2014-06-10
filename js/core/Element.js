@@ -10,7 +10,10 @@ define(["js/core/Bindable", "underscore"], function (Bindable, _) {
             // if it's a string
             if (typeof(str) === "string") {
 
-                if (str === "true") {
+
+                if (str === "") {
+                    return str;
+                } else if (str === "true") {
                     return true;
                 } else if (str === "false") {
                     return false;
