@@ -452,6 +452,8 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
                     this.$originalValue = this.$.scope.get(this.$.key.name);
                 } else if (this.$jsonObject && !_.isString(this.$jsonObject)) {
                     this.$originalValue = this.$.scope.get(this.$jsonObject, this.$.path.slice(1));
+                } else {
+                    this.$originalValue = this.$.scope.get(this.$.path);
                 }
                 this.$cachedValue = this.transform.call(this.transformScope, this.$originalValue);
                 return this.$cachedValue;

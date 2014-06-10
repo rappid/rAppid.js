@@ -781,47 +781,51 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
                     var pathElement, val,
                         parameters, fnc,
                         newParameters;
-                    for (var j = 0; scope && j < path.length; j++) {
-                        pathElement = path[j];
-                        if (pathElement.type == "fnc") {
-                            fnc = scope[pathElement.name];
-                            parameters = pathElement.parameter;
-                            newParameters = [];
-                            for (var i = 0; i < parameters.length; i++) {
-                                var param = parameters[i];
+                    for (var j = 0; j < path.length; j++) {
+                        if (scope == null) {
+                            return undefined;
+                        } else {
+                            pathElement = path[j];
+                            if (pathElement.type == "fnc") {
+                                fnc = scope[pathElement.name];
+                                parameters = pathElement.parameter;
+                                newParameters = [];
+                                for (var i = 0; i < parameters.length; i++) {
+                                    var param = parameters[i];
 
-                                if (_.isArray(param)) {
-                                    param = this.get(param);
-                                } else if (_.isObject(param) && param.type && param.path) {
-                                    param = this.get(param.path);
-                                }
-                                newParameters.push(param);
-                            }
-                            scope = fnc.apply(scope, newParameters);
-                        } else if (pathElement.type == "var") {
-                            if (scope instanceof Bindable) {
-                                if (path.length - 1 === j) {
-                                    val = scope.$[pathElement.name];
-                                    if (_.isUndefined(val)) {
-                                        val = scope[pathElement.name];
+                                    if (_.isArray(param)) {
+                                        param = this.get(param);
+                                    } else if (_.isObject(param) && param.type && param.path) {
+                                        param = this.get(param.path);
                                     }
-                                    scope = val;
-                                } else {
-                                    scope = scope.get(pathElement.name);
+                                    newParameters.push(param);
                                 }
+                                scope = fnc.apply(scope, newParameters);
+                            } else if (pathElement.type == "var") {
+                                if (scope instanceof Bindable) {
+                                    if (path.length - 1 === j) {
+                                        val = scope.$[pathElement.name];
+                                        if (_.isUndefined(val)) {
+                                            val = scope[pathElement.name];
+                                        }
+                                        scope = val;
+                                    } else {
+                                        scope = scope.get(pathElement.name);
+                                    }
 
-                            } else {
-                                scope = scope[pathElement.name];
+                                } else {
+                                    scope = scope[pathElement.name];
+                                }
                             }
-                        }
 
-                        if (scope && pathElement.index !== '') {
-                            // if it's an array
-                            if (_.isArray(scope)) {
-                                scope = scope[pathElement.index];
-                                // if it's a list
-                            } else if (scope.at) {
-                                scope = scope.at(pathElement.index);
+                            if (scope && pathElement.index !== '') {
+                                // if it's an array
+                                if (_.isArray(scope)) {
+                                    scope = scope[pathElement.index];
+                                    // if it's a list
+                                } else if (scope.at) {
+                                    scope = scope.at(pathElement.index);
+                                }
                             }
                         }
                     }

@@ -104,6 +104,19 @@ describe('js.core.Bindable', function () {
             val.should.eql('zoo');
         });
 
+        it('#undefined when path not exists', function () {
+            var input = {
+                foo: {
+                    bar: null
+                }
+            };
+
+            var val = b.get(input, "foo.bar.doo");
+            expect(val).to.eql(undefined);
+
+            expect(b.get(input, "foo.bar")).to.eql(null);
+        });
+
         it('#long path not exists', function () {
             var input = {
                 foo: {
