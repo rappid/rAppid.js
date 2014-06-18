@@ -549,6 +549,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
                     }
                     var b = new this.factory(ret);
                     b._$source = this;
+                    b.$injected = this.$injected;
                     return b;
                 },
                 /**
