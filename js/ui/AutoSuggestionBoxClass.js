@@ -162,7 +162,7 @@ define(["js/ui/View", "js/core/List"], function (View, List) {
                 var self = this;
                 setTimeout(function () {
                     self.set('_showAutoSuggestion', visible);
-                }, 100);
+                }, 300);
             }
         },
 
