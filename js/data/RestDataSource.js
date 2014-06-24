@@ -196,7 +196,7 @@ define(["js/data/DataSource", "js/data/Model", "underscore", "flow", "JSON", "js
         getPathComponentsForResource: function (resource) {
 
             if (resource instanceof Collection) {
-                return this.getPathComponentsForModelClass(resource.$modelFactory);
+                return this.getPathComponentsForModelClass(resource.$modelFactory, resource.$context);
             } else if (resource instanceof Model) {
                 return this.getPathComponentsForModel(resource);
             }
@@ -207,8 +207,7 @@ define(["js/data/DataSource", "js/data/Model", "underscore", "flow", "JSON", "js
         getPathComponentsForModel: function (model) {
 
             if (model) {
-
-                var path = this.getPathComponentsForModelClass(model.factory);
+                var path = this.getPathComponentsForModelClass(model.factory, model.$context);
                 if (path) {
                     if (!model.isNew() && !model.$isDependentObject) {
                         path.push(model.identifier());
@@ -222,10 +221,22 @@ define(["js/data/DataSource", "js/data/Model", "underscore", "flow", "JSON", "js
             return null;
         },
 
-        getPathComponentsForModelClass: function (modelClass) {
+        getPathComponentsForModelClass: function (modelClass, context) {
 
             if (modelClass) {
-                var config = this.$dataSourceConfiguration.getConfigurationForModelClass(modelClass);
+                var baseConfig = this.$dataSourceConfiguration;
+                if (context) {
+                    var parents = [];
+                    while (context.$contextModel) {
+                        parents.push(context.$contextModel);
+                        context = context.$contextModel.$context;
+                    }
+                    while (parents.length) {
+                        baseConfig = baseConfig.getConfigurationForModelClass(parents.pop().factory);
+                    }
+                }
+
+                var config = baseConfig.getConfigurationForModelClass(modelClass);
 
                 if (config) {
 
@@ -595,8 +606,12 @@ define(["js/data/DataSource", "js/data/Model", "underscore", "flow", "JSON", "js
 
         loadCollectionPage: function (collectionPage, options, callback) {
 
-            var rootCollection = collectionPage.getRoot();
-            var config = this.$dataSourceConfiguration.getConfigurationForModelClass(rootCollection.$modelFactory);
+            var rootCollection = collectionPage.getRoot(),
+                baseConfig = this.$dataSourceConfiguration;
+            if (rootCollection.$context && rootCollection.$context.$contextModel) {
+                baseConfig = baseConfig.getConfigurationForModelClass(rootCollection.$context.$contextModel.factory);
+            }
+            var config = baseConfig.getConfigurationForModelClass(rootCollection.$modelFactory);
 
             if (!config) {
                 throw new Error("Couldn't find path config for " + rootCollection.$modelFactory.prototype.constructor.name);
@@ -792,7 +807,7 @@ define(["js/data/DataSource", "js/data/Model", "underscore", "flow", "JSON", "js
                 throw new Error("ContextModel missing for non-root-Context");
             }
 
-            var configuration = this.$dataSource.getConfigurationForModelClass(this.$contextModel.factory);
+            var configuration = this.$dataSource.getConfigurationForModelClass(this.$contextModel.factory, this);
             path.push(configuration.$.path, this.$contextModel.identifier());
 
             return path;
