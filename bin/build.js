@@ -100,7 +100,8 @@ var build = function (args, callback) {
         return;
     }
 
-    var config = JSON.parse(fs.readFileSync(configPath));
+    var configContent = fs.readFileSync(configPath);
+    var config = JSON.parse(configContent);
     var buildConfig = JSON.parse(fs.readFileSync(buildConfigPath));
 
     for (var configKey in optimizeConfig) {
@@ -223,11 +224,7 @@ var build = function (args, callback) {
     fs.writeFileSync(configPath, JSON.stringify(config));
 
     var writeBackConfig = function () {
-        // write back normal config
-        delete config['optimizedXAML'];
-        config.baseUrl = realBaseUrl;
-
-        fs.writeFileSync(configPath, JSON.stringify(config));
+        fs.writeFileSync(configPath, configContent);
     };
 
     // start optimizing
