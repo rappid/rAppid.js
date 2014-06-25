@@ -106,7 +106,7 @@ var build = function (args, callback) {
 
     for (var configKey in optimizeConfig) {
         if (optimizeConfig.hasOwnProperty(configKey) && buildConfig.hasOwnProperty(configKey)) {
-            optimizeConfig[configKey] = buildConfig[configKey];
+            optimizeConfig[configKey] = _.clone(buildConfig[configKey]);
         }
     }
 
@@ -166,7 +166,7 @@ var build = function (args, callback) {
             moduleConfig.exclude = [mainModule];
         }
 
-        moduleConfig.include.push(realModuleName);
+            moduleConfig.include.push(realModuleName);
 
         if (isXamlClass) {
             config.optimizedXAML.push(moduleConfig.name);
@@ -174,6 +174,32 @@ var build = function (args, callback) {
 
         optimizeConfig.modules.push(moduleConfig);
     });
+
+    var addPaths = {};
+
+    (buildConfig.packages || []).forEach(function(pac) {
+        var packageConfig = {
+            name: pac.name,
+            create: true,
+            include: pac.include || []
+        };
+
+        packageConfig.include.forEach(function(include) {
+            include = include.replace(/^xaml!/, "");
+
+            // remove library from xaml classes
+            var ix = config.xamlClasses.indexOf(include);
+            if (ix || ix === 0) {
+                xamlClasses.splice(ix, 1);
+            }
+
+            addPaths[include] = pac.name;
+
+        });
+
+        optimizeConfig.modules.push(packageConfig);
+    });
+
 
     optimizeConfig.xamlClasses = config.xamlClasses;
 
@@ -188,6 +214,8 @@ var build = function (args, callback) {
             }
         }
     }
+
+    _.extend(config.paths, addPaths);
 
     optimizeConfig.paths["requireLib"] = "js/lib/require";
 
