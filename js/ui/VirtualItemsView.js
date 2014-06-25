@@ -59,9 +59,7 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
                  *
                  * @type Number
                  */
-                leftPadding: 0,
-
-                hoverItem: null
+                leftPadding: 0
             },
 
             events: ["on:itemClick", "on:itemDblClick", "on:itemMouseOver", "on:itemMouseOut"],
@@ -142,18 +140,8 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
                 var self = this;
 
                 this.bindDomEvent('scroll', scroll);
-                this.bindDomEvent("mousemove", function (e) {
-                    self._mouseMove(e);
-                });
-                this.bindDomEvent("mouseout", function (e) {
-                    if (self.$.hoverItem) {
-                        self.trigger("on:itemMouseOut", null, self.$.hoverItem);
-                    }
 
-                    self.set('hoverItem', null);
-                });
-
-                function scroll(e) {
+                function scroll() {
                     self.set({
                         scrollTop: self.$el.scrollTop,
                         scrollLeft: self.$el.scrollLeft
@@ -179,20 +167,6 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
 
                 if (item) {
                     item = item.$.data;
-                }
-
-                if (item === this.$.hoverItem) {
-                    return;
-                }
-
-                if (this.$.hoverItem) {
-                    this.trigger("on:itemMouseOut", null, this.$.hoverItem);
-                }
-
-                this.set('hoverItem', item);
-
-                if (item) {
-                    this.trigger("on:itemMouseOver", null, this.$.hoverItem);
                 }
             },
 
