@@ -4,7 +4,8 @@ define(["xaml!js/ui/Field"], function (Field) {
         defaults: {
             value: "",
             size: "large",
-            placeholder: ""
+            placeholder: "",
+            maxLength: 0
         },
 
         $classAttributes: ['size', 'type'],
