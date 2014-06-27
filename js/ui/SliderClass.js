@@ -126,7 +126,9 @@ define(["js/ui/View", 'js/data/Collection', 'js/core/List'], function (View) {
                     } else {
                         v = ((this.$el.offsetHeight - pos.y) / this.$el.offsetHeight) * range;
                     }
-                    v = Math.round(v);
+
+                    v = Math.round(v / this.$.step) * this.$.step;
+
                     v += this.$.min;
 
                     var r = (v + this.$.min) % this.$.step;
