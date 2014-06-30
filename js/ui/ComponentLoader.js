@@ -26,9 +26,29 @@ define(["js/ui/View", "require"], function(View, require) {
             }
         },
 
-        _load: function(callback) {
+        clear: function() {
+            this.set({
+                instance: null,
+                loading: false,
+                error: null
+            });
+        },
+
+        _load: function(type, callback) {
 
             var self = this;
+
+            if (arguments[0] instanceof Function) {
+                callback = type;
+                type = null;
+            }
+
+            type = type || this.$.type;
+
+            if (!type) {
+                callback && callback("No type specified");
+                return;
+            }
 
             if (this.$.loading) {
                 return;
@@ -36,7 +56,7 @@ define(["js/ui/View", "require"], function(View, require) {
 
             this.set("loading", true);
 
-            require([this.$stage.$applicationContext.getFqClassName(this.$.type)], function(Factory) {
+            require([this.$stage.$applicationContext.getFqClassName(type)], function(Factory) {
 
                 var attributes = {};
                 for (var key in self.$) {
