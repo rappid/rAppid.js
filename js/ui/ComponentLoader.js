@@ -27,6 +27,12 @@ define(["js/ui/View", "require"], function(View, require) {
         },
 
         clear: function() {
+
+            var instance = this.$.instance;
+            if (instance) {
+                this.removeChild(instance);
+            }
+
             this.set({
                 instance: null,
                 loading: false,
