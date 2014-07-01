@@ -12,9 +12,7 @@ define(['js/ui/View'], function (View) {
         },
 
         _renderLabel: function (label) {
-            if (label) {
-                this._renderTemplateToPlaceHolder('label', 'label', {$label: label});
-            }
+            this._renderTemplateToPlaceHolder('label', 'label', {$label: label || ""});
         }
     });
 });
