@@ -121,8 +121,11 @@ define(["require", "js/core/Component", "underscore", "flow"], function (require
                 key = args.shift();
             }
 
-            // key = scope + "." + key
-            key += "." + args.shift();
+            var add = args.shift();
+            if (add) {
+                // key = scope + "." + key
+                key += "." + add;
+            }
 
             newArgs = num ? [num] : [];
             newArgs.push(key);
