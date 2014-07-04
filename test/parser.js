@@ -32,7 +32,7 @@ describe('parser test', function () {
 
         it('should not parse an invalid var name', function (done) {
             // todo: complete the list
-            var invalidNames = ["123asd", "-asd", "asd()", ".asdasd", "asd|asd"];
+            var invalidNames = ["123asd", "-asd", "asd()", ".asdasd", "asd|asd", "asd\nsda", "asdasd  asdasd", " asdasd "];
             var parsed, RULE = {startRule: "varName"};
             flow().seqEach(invalidNames,
                 function (name, cb) {
@@ -169,6 +169,16 @@ describe('parser test', function () {
             expect(parsed.index).to.be.equal(null);
         });
 
+        it('should parse a function with nested functions as parameters', function (done) {
+            try {
+                C.Parser.parse("fnc('asd' , base.foo() )", RULE);
+                done();
+            } catch (e) {
+                done(e);
+            }
+
+        })
+
     });
 
     describe('#parse parameter', function () {
@@ -234,6 +244,10 @@ describe('parser test', function () {
                 done();
             }
         });
+
+        it('should parse a function with spaces', function () {
+            should.exist(C.Parser.parse("myFnc()", RULE));
+        })
     });
 
     describe('#parse parameterArray', function () {
@@ -272,9 +286,22 @@ describe('parser test', function () {
                 C.Parser.parse(string, RULE);
                 done();
             } catch (e) {
-                done("should parse a , separated list with spaces");
+                done("should parse a , separated list with line breaks");
+            }
+        });
+
+
+        it('should parse a parameter list with nested functions', function (done) {
+            var string = "fncA(), fncB(), fncC(), a, b";
+
+            try {
+                C.Parser.parse(string, RULE);
+                done();
+            } catch (e) {
+                done("should parse a , separated list with nested functions");
             }
         })
+
 
     });
 
