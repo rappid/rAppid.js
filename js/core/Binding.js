@@ -1,10 +1,11 @@
 define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (EventDispatcher, Parser, _) {
 
-    var TYPE_FNC = "fnc";
-    var TYPE_VAR = "var";
-    var TYPE_NORMAL = "normal";
-    var TYPE_STATIC = "static";
-    var TYPE_TWOWAY = "twoWay";
+    var TYPE_FNC = "fnc",
+        TYPE_VAR = "var",
+        TYPE_NORMAL = "normal",
+        TYPE_STATIC = "static",
+        TYPE_TWOWAY = "twoWay",
+        RULE_PATH = {startRule: 'path'};
 
     /**
      * Returns false if path includes function
@@ -69,7 +70,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
             }
             var scope = this.$.scope;
             if (_.isString(this.$.path)) {
-                this.$.path = Parser.parse(this.$.path, 'path');
+                this.$.path = Parser.parse(this.$.path, RULE_PATH);
             }
             // split up first key
             this.$.key = this.$.path[0];
@@ -106,7 +107,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
                     // for paths like .onChange("address.city","some.other.stuff");
                     for (var a = 0; a < fnc._paths.length; a++) {
                         path = fnc._paths[a];
-                        path = Parser.parse(path, 'path');
+                        path = Parser.parse(path, RULE_PATH);
                         this.$.bindingCreator.create({
                             scope: this.$.scope,
                             path: path,

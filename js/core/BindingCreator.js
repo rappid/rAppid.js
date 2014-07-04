@@ -1,7 +1,9 @@
 define(['js/core/EventDispatcher', 'js/lib/parser', 'js/core/Binding', 'underscore'], function (EventDispatcher, Parser, Binding, _) {
 
     var bindingRegEx = /\{/,
-        bindingParserCache = {};
+        bindingParserCache = {},
+        RULE_TEXT = {startRule: "text"},
+        RULE_PATH = {startRule: "path"};
 
     function findTransformFunction(path, scope) {
         var pathElement = path[0];
@@ -253,17 +255,27 @@ define(['js/core/EventDispatcher', 'js/lib/parser', 'js/core/Binding', 'undersco
 
         parse: function (text) {
             if (_.isString(text)) {
-                if(bindingParserCache[text]){
+                if (bindingParserCache[text]) {
                     return bindingParserCache[text];
                 }
-                var ret = Parser.parse(text, "text");
+                try {
+                    var ret = Parser.parse(text, RULE_TEXT);
+                } catch (e) {
+                    e.message = e.message || "" + "\n for text: " + text;
+                    throw e;
+                }
                 bindingParserCache[text] = ret;
                 return ret;
             }
         },
 
         parsePath: function (text) {
-            return Parser.parse(text, "path");
+            try {
+                return Parser.parse(text, RULE_PATH);
+            } catch (e) {
+                e.message = e.message || "" + "\n for text: " + text;
+                throw e;
+            }
         },
         containsBindingDefinition: function (bindingDefinitions) {
 

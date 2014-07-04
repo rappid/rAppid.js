@@ -3,7 +3,9 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
 
         var bindingCreator,
             Bindable,
-            EventBindable;
+            EventBindable,
+            RULE_PATH = {startRule: "path"},
+            RULE_EVENT_HANDLER = {startRule: "eventHandler"};
 
         // global invalidation timer
         var globalInvalidationQueue = (function () {
@@ -776,7 +778,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
                     } else if (_.isObject(key)) {
                         path = [key];
                     } else {
-                        path = Parser.parse(key, "path");
+                        path = Parser.parse(key, RULE_PATH);
                     }
 
                     var pathElement, val,
@@ -819,7 +821,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
                                 }
                             }
 
-                            if (scope && pathElement.index !== '') {
+                            if (scope && pathElement.index != null) {
                                 // if it's an array
                                 if (_.isArray(scope)) {
                                     scope = scope[pathElement.index];
@@ -914,7 +916,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
                             var fncString = event;
                             event = path;
                             var parameters;
-                            var eventBinding = Parser.parse(fncString, "eventHandler");
+                            var eventBinding = Parser.parse(fncString, RULE_EVENT_HANDLER);
                             if (eventBinding.type === "fnc") {
                                 parameters = eventBinding.parameter;
                             }

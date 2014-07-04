@@ -1,12 +1,14 @@
-var should = require('chai').should(),
+var chai = require('chai'),
+    should = require('chai').should(),
     testRunner = require('..').TestRunner.setup(),
+    expect = chai.expect,
     flow = require('flow.js').flow;
 var C = {};
 
 
 describe('parser test', function () {
 
-    before(function(done) {
+    before(function (done) {
         testRunner.requireClasses({
             Parser: "js/lib/parser"
         }, C, done);
@@ -14,15 +16,15 @@ describe('parser test', function () {
 
     describe("#parse varName", function () {
 
-        it('should parse valid var names', function(done){
+        it('should parse valid var names', function (done) {
             var validNames = ["asd", "a123", "$asd", "_asd", "a_", "Abc"];
-            var parsed, RULE = "varName";
+            var parsed, RULE = {startRule: "varName"};
             flow().seqEach(validNames,
                 function (name, cb) {
                     try {
                         parsed = C.Parser.parse(name, RULE);
                         cb();
-                    } catch(e) {
+                    } catch (e) {
                         cb(e);
                     }
                 }).exec(done);
@@ -31,13 +33,13 @@ describe('parser test', function () {
         it('should not parse an invalid var name', function (done) {
             // todo: complete the list
             var invalidNames = ["123asd", "-asd", "asd()", ".asdasd", "asd|asd"];
-            var parsed, RULE = "varName";
+            var parsed, RULE = {startRule: "varName"};
             flow().seqEach(invalidNames,
                 function (name, cb) {
                     try {
                         parsed = C.Parser.parse(name, RULE);
                         cb(name + " should be an invalid varname");
-                    } catch(e) {
+                    } catch (e) {
                         cb();
                     }
                 }).exec(done);
@@ -45,7 +47,7 @@ describe('parser test', function () {
     });
 
     describe('#parse number', function () {
-        var RULE = "number", parsed;
+        var RULE = {startRule: "number"}, parsed;
 
         it('should parse a number', function () {
             var number = 6;
@@ -65,7 +67,7 @@ describe('parser test', function () {
     });
 
     describe('#parse float', function () {
-        var RULE = "float", parsed;
+        var RULE = {startRule: "float"}, parsed;
 
         it('should parse a float', function () {
             var number = 6.4;
@@ -84,21 +86,21 @@ describe('parser test', function () {
         })
     });
 
-    describe('#parse index', function() {
-       var RULE = "index", parsed;
+    describe('#parse index', function () {
+        var RULE = {startRule: "index"}, parsed;
 
-        it('should return a number', function(){
+        it('should return a number', function () {
             var index = 6;
-            var indexDef = "["+index+"]";
+            var indexDef = "[" + index + "]";
 
-            parsed = C.Parser.parse(indexDef,RULE);
+            parsed = C.Parser.parse(indexDef, RULE);
             parsed.should.equal(index);
         })
     });
 
     describe('#parse var', function () {
 
-        var RULE = "var", parsed;
+        var RULE = {startRule: "var"}, parsed;
 
         it('should return a object with name and type', function () {
             var varName = "a";
@@ -106,7 +108,7 @@ describe('parser test', function () {
             parsed = C.Parser.parse(varName, RULE);
             parsed.type.should.equal('var');
             parsed.name.should.equal(varName);
-            parsed.index.should.equal('');
+            expect(parsed.index).to.be.equal(null);
         });
 
         it('should return a object with name, type and index', function () {
@@ -120,12 +122,12 @@ describe('parser test', function () {
             parsed.index.should.equal(index);
         });
 
-        it('should not parse var ""', function(done){
+        it('should not parse var ""', function (done) {
             var varName = "";
 
-            try{
-                parsed  = C.Parser.parse(varName, RULE);
-            }catch(e){
+            try {
+                parsed = C.Parser.parse(varName, RULE);
+            } catch (e) {
                 done();
             }
         })
@@ -133,7 +135,7 @@ describe('parser test', function () {
     });
 
     describe('#parse fnc', function () {
-        var RULE = "fnc", parsed;
+        var RULE = {startRule: "fnc"}, parsed;
 
         it('should return a object with name, type and parameter', function () {
             var fncName = "abc";
@@ -142,7 +144,7 @@ describe('parser test', function () {
             parsed.type.should.equal('fnc');
             parsed.name.should.equal(fncName);
             parsed.parameter.length.should.equal(0);
-            parsed.index.should.equal('');
+            expect(parsed.index).to.be.equal(null);
         });
 
         it('should return a object with name, type, parameter and index', function () {
@@ -164,13 +166,13 @@ describe('parser test', function () {
             parsed.type.should.equal('fnc');
             parsed.name.should.equal(fncName);
             parsed.parameter.length.should.equal(3);
-            parsed.index.should.equal('');
+            expect(parsed.index).to.be.equal(null);
         });
 
     });
 
     describe('#parse parameter', function () {
-        var parsed, RULE = "parameter";
+        var parsed, RULE = {startRule: "parameter"};
         it('should parse a single escaped string', function () {
             var string = "myString";
             var def = "'" + string + "'";
@@ -228,14 +230,14 @@ describe('parser test', function () {
             try {
                 C.Parser.parse("{{abc}}", RULE);
                 done("TwoWay binding should not be parsed by path parser");
-            } catch(e) {
+            } catch (e) {
                 done();
             }
         });
     });
 
     describe('#parse parameterArray', function () {
-        var RULE = "parameterArray";
+        var RULE = {startRule: "parameterArray"};
 
         it("should parse an empty parameter list", function () {
             var string = "";
@@ -247,9 +249,9 @@ describe('parser test', function () {
             C.Parser.parse(string, RULE).length.should.equal(1);
         });
 
-        it("should parse a , separated parameter list", function(){
+        it("should parse a , separated parameter list", function () {
             var string = "'',123213,binding,null";
-            C.Parser.parse(string,RULE).length.should.equal(4);
+            C.Parser.parse(string, RULE).length.should.equal(4);
         });
 
         it("should parse a , separated parameter list with spaces", function (done) {
@@ -258,16 +260,27 @@ describe('parser test', function () {
             try {
                 C.Parser.parse(string, RULE);
                 done();
-            } catch(e) {
+            } catch (e) {
                 done("should parse a , separated list with spaces");
             }
         });
 
+        it('should parse parameter list with line breaks', function (done) {
+            var string = "'abc' \n  , \n  123213  , \nbinding\n";
+
+            try {
+                C.Parser.parse(string, RULE);
+                done();
+            } catch (e) {
+                done("should parse a , separated list with spaces");
+            }
+        })
+
     });
 
 
-        describe('#parse path', function () {
-        var RULE = "path";
+    describe('#parse path', function () {
+        var RULE = {startRule: "path"};
 
         it('should parse a path of varNames', function () {
             var path = ["a", "b"];
@@ -281,8 +294,8 @@ describe('parser test', function () {
             parsed[1].name.should.equal("b");
         });
 
-        it('should parse an index def', function(){
-           var path = ["[1]","[2]"];
+        it('should parse an index def', function () {
+            var path = ["[1]", "[2]"];
             var parsed = C.Parser.parse(path.join("."), RULE);
 
             parsed.length.should.equal(path.length);
@@ -308,10 +321,10 @@ describe('parser test', function () {
     });
 
     describe('#parse binding', function () {
-        var RULE = "binding", parsed, NORMAL = "normal";
+        var RULE = {startRule: "binding"}, parsed, NORMAL = "normal";
 
-        it('should parse a binding like {asd}', function(){
-            parsed = C.Parser.parse('{asd}',RULE);
+        it('should parse a binding like {asd}', function () {
+            parsed = C.Parser.parse('{asd}', RULE);
             parsed.type.should.equal(NORMAL);
             parsed.path.length.should.equal(1);
         });
@@ -325,7 +338,7 @@ describe('parser test', function () {
     });
 
     describe('#parse two way binding', function () {
-        var RULE = "twoWayBinding", parsed, TWOWAY = "twoWay";
+        var RULE = {startRule: "twoWayBinding"}, parsed, TWOWAY = "twoWay";
 
         it('should parse a binding like {asd}', function () {
             parsed = C.Parser.parse('{{asd}}', RULE);
@@ -333,12 +346,18 @@ describe('parser test', function () {
             parsed.path.length.should.equal(1);
         });
 
+        it('should parse a binding like with linebreaks', function () {
+            parsed = C.Parser.parse('\n {{asd}} \n', RULE);
+            parsed.type.should.equal(TWOWAY);
+            parsed.path.length.should.equal(1);
+        });
+
     });
 
-    describe('#parse static binding', function(){
-        var RULE = "staticBinding", parsed;
+    describe('#parse static binding', function () {
+        var RULE = {startRule: "staticBinding"}, parsed;
 
-        it('should parse a binding like ${asd}', function() {
+        it('should parse a binding like ${asd}', function () {
             parsed = C.Parser.parse('${asd}', RULE);
             parsed.type.should.equal('static');
             parsed.path.length.should.equal(1);
@@ -346,9 +365,9 @@ describe('parser test', function () {
 
     });
 
-    describe('#parse text', function() {
+    describe('#parse text', function () {
 
-        var RULE = "text", parsed;
+        var RULE = {startRule: "text"}, parsed;
 
 
         it('should return an array of char if only text', function () {
@@ -404,7 +423,7 @@ describe('parser test', function () {
             try {
                 C.Parser.parse(text, RULE);
                 done('should not parse a text with mixed twoWay and normal bindings');
-            } catch(e) {
+            } catch (e) {
                 done();
             }
         });
