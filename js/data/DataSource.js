@@ -984,14 +984,14 @@ define(["js/core/Component", "js/core/Base", "js/data/Collection", "underscore",
                     .seq(function (cb) {
                         self._beforeModelSave(model, options, cb);
                     })
-                    .seq(function (cb) {
+                    .seq("result", function (cb) {
                         self._saveModel(model, options, cb);
                     })
                     .seq(function (cb) {
-                        self._afterModelSave(model, options, cb);
+                        self._afterModelSave(this.vars.result || model, options, cb);
                     })
-                    .exec(function (err) {
-                        callback && callback(err, model, options);
+                    .exec(function (err, results) {
+                        callback && callback(err, results.result || model, options);
                     });
             },
 

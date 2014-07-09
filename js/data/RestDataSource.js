@@ -172,7 +172,7 @@ define(["js/data/DataSource", "js/data/Model", "underscore", "flow", "JSON", "js
          * @param {js.data.Model|js.data.Collection} resource - A model or a collection
          * @returns {Object}
          */
-        getHeaderParameters: function(method, resource){
+        getHeaderParameters: function (method, resource) {
             return {};
         },
 
@@ -425,6 +425,27 @@ define(["js/data/DataSource", "js/data/Model", "underscore", "flow", "JSON", "js
             }
         },
 
+        _handleResultSuccess: function (request, xhr, cb) {
+            var model = request.model;
+
+            var resultType = model.resultType;
+
+
+            try {
+                if (resultType) {
+                    var result = model.createEntity(resultType);
+                    this._parseModelPayload(xhr, result, request.options);
+
+                    cb(null, result);
+                } else {
+                    cb("No Result Type defined");
+                }
+            } catch (e) {
+                cb(e);
+            }
+
+        },
+
         _getContext: function (factory, parent, data) {
             if (this.$.determinateContextAttribute) {
 
@@ -535,7 +556,7 @@ define(["js/data/DataSource", "js/data/Model", "underscore", "flow", "JSON", "js
                 .seq(function (cb) {
                     processor.saveSubModels(model, options, cb);
                 })
-                .seq(function (cb) {
+                .seq("result", function (cb) {
                     // create url
                     var url = self._buildUriForResource(model);
                     var headers = {};
@@ -571,7 +592,9 @@ define(["js/data/DataSource", "js/data/Model", "underscore", "flow", "JSON", "js
                                 options: options
                             };
 
-                            if (action === DataSource.ACTION.CREATE && xhr.status === 201) {
+                            if (action === DataSource.ACTION.CREATE && model.resultType && xhr.status === 200) {
+                                self._handleResultSuccess(request, xhr, cb);
+                            } else if (action === DataSource.ACTION.CREATE && xhr.status === 201) {
                                 self.handleCreationSuccess(request, xhr, cb);
                             } else if (action === DataSource.ACTION.UPDATE && xhr.status === 200) {
                                 self.handleUpdateSuccess(request, xhr, cb);
@@ -584,8 +607,8 @@ define(["js/data/DataSource", "js/data/Model", "underscore", "flow", "JSON", "js
 
                     });
                 })
-                .exec(function (err) {
-                    callback && callback(err, model, options);
+                .exec(function (err, results) {
+                    callback && callback(err, results.result || model, options);
                 });
 
 

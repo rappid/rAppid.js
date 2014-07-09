@@ -61,6 +61,13 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
          * @type String
          */
         createdField: "created",
+
+        /**
+         * This field defines the type / class which should be used for the http response after a post returns with payload
+         * The default is null
+         * @type Function
+         */
+        resultType: null,
         /***
          * Private field to determinate if the class is Entity or Model
          * @type Boolean
@@ -100,17 +107,17 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
                 try {
                     var status = this._status();
                     if (status === STATE.NEW || status === STATE.CREATED) {
-                        this.$context.$dataSource.saveModel(this, options, function (err) {
+                        this.$context.$dataSource.saveModel(this, options, function (err, result) {
                             self._save.state = err ? SAVESTATE.ERROR : SAVESTATE.CREATED;
 
                             if (!err && self.$collection && options.invalidatePageCache) {
                                 self.$collection.invalidatePageCache();
                             }
 
-                            callback && callback(err, self, options);
+                            callback && callback(err, result, options);
 
                             _.each(self._save.callbacks, function (cb) {
-                                cb.call(self, err, self);
+                                cb.call(self, err, result);
                             });
 
                             self._save.callbacks = [];
