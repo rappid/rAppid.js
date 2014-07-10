@@ -9,6 +9,22 @@ define(["xaml!js/ui/Field"], function (Field) {
             placeholder: ""
         },
 
-        $defaultContentName: "additionalControls"
+        $defaultContentName: "additionalControls",
+
+        _renderAttributes: function ($) {
+            this.callBase($);
+
+            var $firstInput = this.$firstInput.$el;
+            if ($firstInput) {
+                // sets all attributes that are supported by the input field to it
+                var changes = {};
+                for (var k in $) {
+                    if ($.hasOwnProperty(k) && k in $firstInput) {
+                        changes[k] = $[k];
+                    }
+                }
+                this.$firstInput.set(changes);
+            }
+        }
     });
 });
