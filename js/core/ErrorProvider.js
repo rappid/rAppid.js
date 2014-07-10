@@ -13,7 +13,15 @@ define(["js/core/Component"], function (Component) {
             }
 
             if (this.$.i18n) {
-                return this.$.i18n.ts(this.$.scope, error.$.code, error.$.field) || error.$.message || error;
+                var p = [error.$.code],
+                    s = this.$.scope;
+                if (s) {
+                    p.unshift(s);
+                }
+                if (error.$.field) {
+                    p.push(error.$.field);
+                }
+                return this.$.i18n.t(p.join(".")) || error.$.message || error;
             } else {
                 return error.$.message || error;
             }
