@@ -155,8 +155,12 @@ if (typeof requirejs !== "undefined") {
                             //TODO: have a look at xamlClasses
                             var parts = xamlApplication.exec(mainClass);
                             if (parts) {
-                                // mainClass is xaml
-                                mainClass = "xaml!" + parts[2];
+                                if (/\.js$/.test(mainClass)) {
+                                    mainClass = parts[2];
+                                } else {
+                                    // mainClass is xaml
+                                    mainClass = "xaml!" + parts[2];
+                                }
                             } else {
                                 // mainClass is javascript factory
                                 mainClass = mainClass.replace(/\./g, "/");
