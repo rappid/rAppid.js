@@ -20,6 +20,10 @@ define(["xaml!js/ui/Field"], function (Field) {
                 var changes = {};
                 for (var k in $) {
                     if ($.hasOwnProperty(k) && k in $firstInput) {
+                        // special handling of required field
+                        if (k == "required" && !$[k]) {
+                            continue;
+                        }
                         changes[k] = $[k];
                     }
                 }
