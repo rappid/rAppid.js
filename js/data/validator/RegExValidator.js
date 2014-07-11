@@ -3,7 +3,8 @@ define(['js/data/validator/Validator', 'underscore'], function (Validator, _) {
     return Validator.inherit('js.data.validator.RegExValidator', {
         defaults: {
             errorCode: 'regExError',
-            regEx: null
+            regEx: null,
+            inverse: false
         },
 
         ctor: function () {
@@ -26,7 +27,13 @@ define(['js/data/validator/Validator', 'underscore'], function (Validator, _) {
                 required = schemaDefinition ? schemaDefinition.required : true;
 
             if (_.isString(value) && (required && value.length || !required)) {
-                if (!this.$.regEx.test(value)) {
+                var ok = this.$.regEx.test(value);
+
+                if (this.$.inverse) {
+                    ok = !ok;
+                }
+
+                if (!ok) {
                     return this._createFieldError();
                 }
             }
