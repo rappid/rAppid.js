@@ -54,8 +54,9 @@ define(["js/ui/View", "js/core/Content", "js/ui/Button", "underscore"], function
              */
             iconLabel: "",
 
-            closeBehavior: CLOSE_BEHAVIOR.OTHER
+            closeBehavior: CLOSE_BEHAVIOR.OTHER,
 
+            tabIndex: null
         },
         $defaultContentName: 'menu',
 
