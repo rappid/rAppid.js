@@ -19,11 +19,8 @@ define(["xaml!js/ui/Field"], function (Field) {
                 // sets all attributes that are supported by the input field to it
                 var changes = {};
                 for (var k in $) {
-                    if ($.hasOwnProperty(k) && k in $firstInput) {
-                        // special handling of default fields
-                        if (this.defaults.hasOwnProperty(k)) {
-                            continue;
-                        }
+                    // special handling of default fields
+                    if ($.hasOwnProperty(k) && k in $firstInput && !this.defaults.hasOwnProperty(k)) {
                         changes[k] = $[k];
                     }
                 }
