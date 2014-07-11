@@ -194,6 +194,8 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                     return;
                 }
 
+                this.validators = this.validators || [];
+
                 var base = this.base;
 
                 while (base.factory.classof(Entity)) {
