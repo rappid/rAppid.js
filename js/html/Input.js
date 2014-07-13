@@ -68,10 +68,13 @@ define(["js/html/HtmlElement", "underscore"], function (HtmlElement, _) {
             if (String(value) !== this.$el.value) {
                 if (this.$.type === "date") {
                     if (value instanceof Date) {
-                        value = value.toLocaleString();
+                        var m = value.getMonth() + 1;
+                        m = m < 10 ? "0" + m : m;
+                        var d = value.getDate();
+                        d = d < 10 ? "0" + d : d;
+                        value = [value.getFullYear(), m, d].join("-");
                     }
                 }
-
                 this.$el.value = value;
             }
         },
