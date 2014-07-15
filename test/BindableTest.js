@@ -200,13 +200,33 @@ describe('js.core.Bindable', function () {
             should.not.exist(val);
         });
 
+        it('should work with string numbers as key', function (done) {
+
+            try {
+                b.get("1");
+                done();
+            } catch (e) {
+                done("key as number does not work");
+            }
+        });
+
+        it('should not work with real numbers as key', function (done) {
+
+            try {
+                b.get(1);
+                done("key as number was accepted");
+            } catch (e) {
+                done();
+            }
+        });
+
     });
 
-    describe('bind', function(){
+    describe('bind', function () {
 
         var bindable;
 
-        it('#should bind to event and trigger callback on scope', function(done){
+        it('#should bind to event and trigger callback on scope', function (done) {
 
             bindable = new C.Bindable({
                 foo: "bar"
@@ -214,7 +234,7 @@ describe('js.core.Bindable', function () {
 
             var scope = {};
 
-            bindable.bind('change', function(){
+            bindable.bind('change', function () {
 
                 expect(scope).to.equal(this);
 
@@ -222,10 +242,10 @@ describe('js.core.Bindable', function () {
 
             }, scope);
 
-            bindable.set('foo',"newValue");
+            bindable.set('foo', "newValue");
         });
 
-        it('#should bind to event behind a path', function(done){
+        it('#should bind to event behind a path', function (done) {
 
             bindable = new C.Bindable({
                 nested: new C.Bindable({
@@ -235,36 +255,36 @@ describe('js.core.Bindable', function () {
 
             var scope = {};
 
-            bindable.bind('nested','change', function(){
+            bindable.bind('nested', 'change', function () {
 
                 expect(scope).to.equal(this);
                 done();
 
-            },scope);
+            }, scope);
 
             bindable.$.nested.set('foo', "newValue");
         });
 
-        it('#should bind to an event with a function name', function(done){
+        it('#should bind to an event with a function name', function (done) {
 
             var bindable = new C.Bindable({
                 foo: "bar"
             });
 
             var scope = {
-                callback: function(){
+                callback: function () {
                     expect(this).to.equal(scope);
                     done();
                 }
             };
 
-            bindable.bind('change',"callback()", scope);
+            bindable.bind('change', "callback()", scope);
 
             bindable.set('foo', "newValue");
 
         });
 
-        it('#should bind to an event with a function name and parameters', function(done){
+        it('#should bind to an event with a function name and parameters', function (done) {
             var bindable = new C.Bindable({
                 foo: "bar",
                 foo2: "bar2"
@@ -387,7 +407,7 @@ describe('js.core.Bindable', function () {
         });
 
         it('#should remove unset attributes from source', function () {
-            copy.set('person',null,{unset: true});
+            copy.set('person', null, {unset: true});
             copy.set('nested', null, {unset: true});
 
             copy.sync();
@@ -396,10 +416,10 @@ describe('js.core.Bindable', function () {
             expect(original.$.nested).not.to.exist;
         });
 
-        it('#should replace nested Bindable if they are new', function(){
+        it('#should replace nested Bindable if they are new', function () {
             // create new Bindable
-            copy.set('nested',new C.Bindable({
-                street : 'A',
+            copy.set('nested', new C.Bindable({
+                street: 'A',
                 city: 'B'
             }));
 
@@ -426,7 +446,7 @@ describe('js.core.Bindable', function () {
         });
     });
 
-    describe('#isDeepEqual', function(){
+    describe('#isDeepEqual', function () {
         var original, nestedBindable, copy;
         beforeEach(function () {
             nestedBindable = new C.Bindable({
@@ -454,7 +474,7 @@ describe('js.core.Bindable', function () {
             expect(original.isDeepEqual(copy)).to.equal(true);
         });
 
-        it('#modified clone with same values should be equal', function(){
+        it('#modified clone with same values should be equal', function () {
             copy.set("arr", [
                 nestedBindable.clone(),
                 "ab",
@@ -465,13 +485,13 @@ describe('js.core.Bindable', function () {
             expect(original.isDeepEqual(copy)).to.equal(true);
         });
 
-        it('#modified clone should not equal', function(){
-            copy.set('number',312);
+        it('#modified clone should not equal', function () {
+            copy.set('number', 312);
             expect(original.isDeepEqual(copy)).to.equal(false);
         });
     });
 
-    describe('#destroy', function(){
+    describe('#destroy', function () {
 
         var bindable;
 
@@ -482,9 +502,9 @@ describe('js.core.Bindable', function () {
             });
         });
 
-        it('should trigger destroy event', function(done){
+        it('should trigger destroy event', function (done) {
             var destroyed = false;
-            bindable.bind('destroy', function(){
+            bindable.bind('destroy', function () {
                 destroyed = true;
                 done();
             });
@@ -493,22 +513,22 @@ describe('js.core.Bindable', function () {
             expect(destroyed).to.equal(true);
         });
 
-        it('should remove all event listeners', function(){
+        it('should remove all event listeners', function () {
 
             var triggered = false;
 
-            bindable.bind('change', function(){
+            bindable.bind('change', function () {
                 triggered = true;
             });
 
             bindable.destroy();
 
-            bindable.set('street','New Street');
+            bindable.set('street', 'New Street');
 
             expect(triggered).to.equal(false);
         });
 
-        it('should destroy all event bindables', function(){
+        it('should destroy all event bindables', function () {
 
             bindable.set('person', new C.Bindable({
                 name: "Max"
@@ -516,24 +536,24 @@ describe('js.core.Bindable', function () {
 
             var triggered = 0;
 
-            bindable.bind('person','change', function(){
+            bindable.bind('person', 'change', function () {
                 triggered++;
             });
 
-            bindable.$.person.set('name','Peter');
+            bindable.$.person.set('name', 'Peter');
 
             expect(triggered).to.be.equal(1);
 
             bindable.destroy();
 
-            bindable.$.person.set('name','Max');
+            bindable.$.person.set('name', 'Max');
 
             expect(triggered).to.be.equal(1);
         });
 
     });
 
-    describe('#_initialize', function(){
+    describe('#_initialize', function () {
 
         var bindable;
 
@@ -541,15 +561,15 @@ describe('js.core.Bindable', function () {
 
         });
 
-        it('should initialize bindings in defaults when flag is set', function(){
+        it('should initialize bindings in defaults when flag is set', function () {
             var ExtendedBindable = C.Bindable.inherit({
                 defaults: {
                     firstName: "Peter",
                     lastName: "Mustermann"
                 },
-                fullName: function(){
+                fullName: function () {
                     return this.$.firstName + " " + this.$.lastName;
-                }.onChange('firstName','lastName')
+                }.onChange('firstName', 'lastName')
             });
 
             bindable = new C.Bindable({
@@ -578,12 +598,12 @@ describe('js.core.Bindable', function () {
                     foo: "bar"
                 },
 
-                ctor: function() {
+                ctor: function () {
                     this.data = [];
                     this.callBase();
                 },
 
-                _commitFoo: function(value, oldValue) {
+                _commitFoo: function (value, oldValue) {
                     this.data.push({
                         value: value,
                         oldValue: oldValue

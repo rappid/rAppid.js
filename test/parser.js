@@ -32,7 +32,7 @@ describe('parser test', function () {
 
         it('should not parse an invalid var name', function (done) {
             // todo: complete the list
-            var invalidNames = ["123asd", "-asd", "asd()", ".asdasd", "asd|asd", "asd\nsda", "asdasd  asdasd", " asdasd "];
+            var invalidNames = ["asd()", ".asdasd", "asd|asd", "asd\nsda", "asdasd  asdasd", " asdasd "];
             var parsed, RULE = {startRule: "varName"};
             flow().seqEach(invalidNames,
                 function (name, cb) {
