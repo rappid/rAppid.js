@@ -4,7 +4,9 @@ define(['js/data/validator/Validator', 'underscore'], function (Validator, _) {
         defaults: {
             errorCode: 'regExError',
             regEx: null,
-            inverse: false
+            inverse: false,
+            replaceRegEx: null,
+            replaceValue: ""
         },
 
         ctor: function () {
@@ -27,6 +29,12 @@ define(['js/data/validator/Validator', 'underscore'], function (Validator, _) {
                 required = schemaDefinition ? schemaDefinition.required : true;
 
             if (_.isString(value) && (required && value.length || !required)) {
+
+                var replaceRegEx = this.$.replaceRegEx;
+                if (replaceRegEx) {
+                    value = value.replace(replaceRegEx, this.$.replaceValue);
+                }
+
                 var ok = this.$.regEx.test(value);
 
                 if (this.$.inverse) {
