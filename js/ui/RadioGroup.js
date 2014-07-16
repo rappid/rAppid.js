@@ -34,13 +34,24 @@ define(['js/ui/View', 'xaml!js/ui/Radio'], function (View, Radio) {
         },
 
         _commitValue: function (value) {
-            var children = this.getViewChildren();
-            for (var i = 0; i < children.length; i++) {
-                var child = children[i];
+            var children = this.getViewChildren(),
+                found = false,
+                child, i;
+            for (i = 0; i < children.length; i++) {
+                child = children[i];
                 if(value == null){
                     child.set("checked", false);
+                    found = true;
                 } else if(child.$.value === value) {
                     child.set("checked", true);
+                    found = true;
+                }
+            }
+
+            if (!found) {
+                for (i = 0; i < children.length; i++) {
+                    child = children[i];
+                    child.set("checked", false);
                 }
             }
         },
