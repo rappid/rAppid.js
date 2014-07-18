@@ -275,14 +275,13 @@ define(["js/core/Component", "js/core/Bindable", "js/core/List"], function (Comp
         _removeRenderedItem: function (item) {
             var ri,
                 key = this._getKeyForItem(item),
-                comp,
                 list = this.$renderedItems;
             if (key) {
                 list = this.$renderedItemsMap[key];
             }
             for (var i = 0; i < list.length; i++) {
                 ri = list[i];
-                if (ri.item === item) {
+                if (key || ri.item === item) {
                     this.$parent.removeChild(ri.component);
                     list.splice(i, 1);
                     ri.component.destroy();
@@ -305,7 +304,7 @@ define(["js/core/Component", "js/core/Bindable", "js/core/List"], function (Comp
                 var ri;
                 for (var i = 0; i < list.length; i++) {
                     ri = list[i];
-                    if (ri.item === item) {
+                    if (key || ri.item === item) {
                         return ri.component;
                     }
                 }

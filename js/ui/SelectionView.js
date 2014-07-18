@@ -68,6 +68,12 @@ define(["js/ui/ItemsView", "js/html/HtmlElement", "underscore", "js/core/List"],
             this.bind('items', 'add', this._itemAdd, this);
         },
 
+        _commitKeyPath: function (keyPath) {
+            if (this.$repeat) {
+                this.$repeat.set('keyPath', keyPath);
+            }
+        },
+
         _onSelectedItemAdd: function (e) {
             if (this.isRendered()) {
                 var item;
