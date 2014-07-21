@@ -379,13 +379,15 @@ define(["js/core/Component", "js/core/Base", "js/data/Collection", "underscore",
                         schemaDefinition = entity.schema[key];
                         schemaType = schemaDefinition.type;
 
-                        var value = this._getCompositionValue(data[key], key, action, options, entity);
+
+                        var value;
+                        if (data[key] && schemaDefinition.isReference && schemaType.classof && schemaType.classof(Entity) && !schemaType.classof(Model)) {
+                            value = {};
+                            value[schemaType.prototype.idField] = data[key].identifier();
+                        } else {
+                            value = this._getCompositionValue(data[key], key, action, options, entity);
+                        }
                         if (value !== undefined) {
-                            if (value && schemaDefinition.isReference && schemaType.classof && schemaType.classof(Entity) && !schemaType.classof(Model)) {
-                                var identifier = value[schemaType.prototype.idField];
-                                value = {};
-                                value[schemaType.prototype.idField] = identifier;
-                            }
                             ret[this._getReferenceKey(key, schemaType)] = value;
                         }
                     }
