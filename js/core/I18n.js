@@ -89,7 +89,12 @@ define(["require", "js/core/Component", "underscore", "flow"], function (require
                 key += "_plural";
             }
 
-            var value = this.$.translations[key] || this.get(this.$.translations, key) || "";
+            try {
+                var value = this.$.translations[key] || this.get(this.$.translations, key) || "";
+            } catch (e) {
+                this.log("translation key '" + key + "' is not valid", "error");
+            }
+
 
             for (var i = 0; i < args.length; i++) {
                 // replace, placeholder
