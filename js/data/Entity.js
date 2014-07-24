@@ -309,10 +309,10 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
 
                         if (this.$parentEntity) {
                             // entity itself lives inside a model
-                            this.$dependentObjectContext = this.$parentEntity.$dependentObjectContext;
+                            this.$dependentObjectContext = this.$parentEntity._createDependentObjectCache();
                         } else {
                             // create a new non-cached context for dependent objects
-                            this.$dependentObjectContext = this.$context.$dataSource.createContext(this, null, this.$context);
+                            this.$dependentObjectContext = this._createDependentObjectCache()
                         }
                     }
 
@@ -321,6 +321,16 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
 
 
                 return this.$context.$dataSource.getContextForChild(childFactory, this.$isDependentObject ? this.$context.$contextModel : this);
+            },
+
+            _createDependentObjectCache: function() {
+
+                if (!this.$dependentObjectContext) {
+                    this.$dependentObjectContext = this.$context.$dataSource.createContext(this, null, this.$context);
+                }
+
+                return this.$dependentObjectContext;
+
             },
 
             /**
