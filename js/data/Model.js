@@ -1,4 +1,4 @@
-define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entity, List, flow, _) {
+define(["js/data/Entity", "js/core/List", "flow", "underscore", "js/error/ValidationError"], function (Entity, List, flow, _, ValidationError) {
 
     var FETCHSTATE = {
         CREATED: 0,
@@ -159,7 +159,7 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore"], function (Entit
                     if (self.isValid()) {
                         self.save(options, cb);
                     } else {
-                        cb("Model is not valid!");
+                        cb(new ValidationError("Model is not valid!", "INVALID_MODEL", "", self));
                     }
                 })
                 .exec(function (err) {
