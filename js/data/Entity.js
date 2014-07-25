@@ -124,6 +124,9 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                 if (type && type.isCollection) {
                     return false;
                 }
+                if (_.isString(value)) {
+                    value = value.trim();
+                }
                 return (!(this.runsInBrowser() && schemaObject.generated)) && (value === undefined || value === null || value === "");
             },
 
