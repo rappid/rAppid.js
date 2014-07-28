@@ -85,7 +85,7 @@ define(['js/core/Bindable', 'js/core/Base'], function (Bindable, Base) {
          * @private
          */
         _validationRequired: function(entity) {
-            return !(this.$.field && !entity.$[this.$.field] && !entity.schema[this.$.field].required);
+            return !(this.$.field && !entity.schema[this.$.field].required && !entity.getTransformedValue(this.$.field));
         },
 
         /***

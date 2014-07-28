@@ -17,6 +17,24 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
             }.on('change')
         });
 
+        var FieldTransformer = Bindable.inherit('js.data.Entity.FieldTransformer', {
+            defaults: {
+                fields: null
+            },
+
+            transformValue: function (field, value, schemaObject) {
+                var fields = this.$.fields;
+                if (!fields || fields.length === 0 || (!!fields.length && fields.indexOf(field))) {
+                    return this._transformValue(field, value, schemaObject);
+                }
+                return value;
+            },
+            _transformValue: function (field, value, schemaObject) {
+                return value;
+            }
+
+        });
+
         var SchemaValidator = Validator.inherit('js.data.validator.SchemaValidator', {
             validate: function (entity, options, callback) {
                 if (options instanceof Function) {
@@ -44,7 +62,7 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                                     continue
                                 }
                             }
-                            value = attributes[key];
+                            value = entity.getTransformedValue(key);
                             schemaObject = schema[key];
 
                             type = schemaObject.type;
@@ -124,9 +142,6 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                 if (type && type.isCollection) {
                     return false;
                 }
-                if (_.isString(value)) {
-                    value = value.trim();
-                }
                 return (!(this.runsInBrowser() && schemaObject.generated)) && (value === undefined || value === null || value === "");
             },
 
@@ -153,6 +168,7 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                 this.$entityInitialized = false;
 
                 this._extendValidators();
+                this._extendTransformers();
                 this._extendSchema();
 
                 this.callBase();
@@ -167,6 +183,9 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
             validators: [
                 new SchemaValidator()
             ],
+
+            // An Array of field transformers
+            transformers: [],
             /**
              * The field for the id. Is automatically added to the schema as String
              */
@@ -218,6 +237,35 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                 this.factory.validators = this.validators;
 
             },
+
+            _extendTransformers: function () {
+
+                if (this.factory.transformers) {
+                    this.transformers = this.factory.transformers;
+                    return;
+                }
+
+                this.transformers = this.transformers || [];
+
+                var base = this.base;
+
+                while (base.factory.classof(Entity)) {
+                    var baseTransformer = base.transformers;
+
+                    for (var i = 0; i < baseTransformer.length; i++) {
+                        var transformer = baseTransformer[i];
+
+                        if (_.indexOf(this.transformers, transformer) === -1) {
+                            this.transformers.push(transformer);
+                        }
+                    }
+
+                    base = base.base;
+                }
+
+                this.factory.transformers = this.transformers;
+            },
+
 
             /**
              * Constructs the schema with the schema definition
@@ -326,7 +374,28 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                 return this.$context.$dataSource.getContextForChild(childFactory, this.$isDependentObject ? this.$context.$contextModel : this);
             },
 
-            _createDependentObjectCache: function() {
+            getTransformedValue: function (key, scope) {
+                var value = this.get(key, scope);
+                if (key && this.schema[key]) {
+                    for (var i = 0; i < this.transformers.length; i++) {
+                        value = this.transformers[i].transformValue(key, value, this.schema[key]);
+                    }
+                }
+                return value;
+            },
+
+            transformValues: function () {
+                var ret = {};
+                for (var k in this.schema) {
+                    if (this.schema.hasOwnProperty(k)) {
+                        ret[k] = this.getTransformedValue(k);
+                    }
+                }
+
+                this.set(ret);
+            },
+
+            _createDependentObjectCache: function () {
 
                 if (!this.$dependentObjectContext) {
                     this.$dependentObjectContext = this.$context.$dataSource.createContext(this, null, this.$context);
@@ -371,7 +440,13 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
              * @return {Object} all data that should be serialized
              */
             compose: function (action, options) {
-                return _.clone(this.$);
+                var ret = {};
+                for (var k in this.$) {
+                    if (this.$.hasOwnProperty(k)) {
+                        ret[k] = this.getTransformedValue(k);
+                    }
+                }
+                return ret;
             },
 
             /***
@@ -607,6 +682,7 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
 
 
         Entity.SchemaValidator = SchemaValidator;
+        Entity.FieldTransformer = FieldTransformer;
 
         return Entity;
 
