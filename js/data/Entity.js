@@ -374,6 +374,13 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                 return this.$context.$dataSource.getContextForChild(childFactory, this.$isDependentObject ? this.$context.$contextModel : this);
             },
 
+            /**
+             * Returns the transformed value of a field
+             *
+             * @param {String} key
+             * @param {Object|js.core.Bindable} [scope]
+             * @returns {*}
+             */
             getTransformedValue: function (key, scope) {
                 var value = this.get(key, scope);
                 if (key && this.schema[key]) {
@@ -384,7 +391,21 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                 return value;
             },
 
-            transformValues: function () {
+            /**
+             * Transforms one value and sets it on the entity
+             *
+             * @param {String} field
+             * @param {Object} [options]
+             */
+            transformValue: function (field, options) {
+                this.set(field, this.getTransformedValue(field), options);
+            },
+
+            /**
+             * Transforms all values defined in the schema
+             * @param {Object} [options]
+             */
+            transformValues: function (options) {
                 var ret = {};
                 for (var k in this.schema) {
                     if (this.schema.hasOwnProperty(k)) {
@@ -392,7 +413,7 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                     }
                 }
 
-                this.set(ret);
+                this.set(ret, options);
             },
 
             _createDependentObjectCache: function () {
