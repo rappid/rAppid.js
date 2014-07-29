@@ -149,7 +149,9 @@ define(["js/ui/View", "js/core/Content", "js/ui/Button", "underscore"], function
             });
 
             this.dom(this.$stage.$document).bindDomEvent('click', function (e) {
-                self.set({menuVisible: false});
+                if (e.which === 1) {
+                    self.set({menuVisible: false});
+                }
             });
 
         },
