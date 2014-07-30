@@ -868,6 +868,7 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
 
             bindDomEvent: function (type, cb, useCapture) {
                 useCapture = !!useCapture;
+                var originalType = type;
                 type = this._mapDOMEventType(type);
 
                 if (this.$el.addEventListener) {
@@ -881,9 +882,14 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                     }
                     this.$el.attachEvent("on" + type, callback);
                 }
+                // register a click listener for the case the device supports mouse and touch (e.g. chrome under windows 8 metro)
+                if (/pointer/.test(originalType) && /touch/.test(type)) {
+                    this.bindDomEvent(pointerToMouseMap[originalType], cb, useCapture);
+                }
             },
             unbindDomEvent: function (type, cb, useCapture) {
                 useCapture = !!useCapture;
+                var originalType = type;
                 type = this._mapDOMEventType(type);
 
                 if (this.$el.removeEventListener) {
@@ -895,6 +901,10 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                     }
 
                     this.$el.detachEvent("on" + type, callback);
+                }
+                // unregister click listener for the case the device supports mouse and touch (e.g. chrome under windows 8 metro)
+                if (/pointer/.test(originalType) && /touch/.test(type)) {
+                    this.unbindDomEvent(pointerToMouseMap[originalType], cb, useCapture);
                 }
             },
 
