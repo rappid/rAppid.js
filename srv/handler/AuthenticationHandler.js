@@ -72,23 +72,27 @@ define(['srv/core/Handler', 'srv/core/AuthenticationService', 'srv/core/HttpErro
 
                                 response.end();
                             } else {
-                                var statusCode = 500;
-                                switch (err) {
-                                    case AuthenticationError.WRONG_USERNAME_OR_PASSWORD:
-                                        statusCode = 401;
-                                        break;
-                                    case AuthenticationError.AUTHENTICATION_EXPIRED:
-                                        statusCode = 400;
-                                        break;
-                                    case AuthenticationError.NO_IDENTITY_FOUND:
-                                        statusCode = 301;
-                                        break;
-                                    case AuthenticationError.TOO_MANY_WRONG_ATTEMPTS:
-                                        statusCode = 400;
-                                        break;
+
+                                if (!err instanceof AuthenticationError) {
+                                    var statusCode = 500;
+                                    switch (err) {
+                                        case AuthenticationError.WRONG_USERNAME_OR_PASSWORD:
+                                            statusCode = 401;
+                                            break;
+                                        case AuthenticationError.AUTHENTICATION_EXPIRED:
+                                            statusCode = 400;
+                                            break;
+                                        case AuthenticationError.NO_IDENTITY_FOUND:
+                                            statusCode = 301;
+                                            break;
+                                        case AuthenticationError.TOO_MANY_WRONG_ATTEMPTS:
+                                            statusCode = 400;
+                                            break;
+                                    }
+
+                                    err = new HttpError(err.errorCode, statusCode)
                                 }
 
-                                err = new HttpError(err.errorCode, statusCode)
                             }
                             callback(err);
                         });
