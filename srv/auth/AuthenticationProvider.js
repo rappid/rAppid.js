@@ -3,7 +3,8 @@ define(['js/core/Component', 'srv/core/HttpError', 'srv/auth/Authentication'], f
     return Component.inherit('srv.auth.AuthenticationProvider', {
 
         defaults: {
-            name: null
+            name: null,
+            defaultProvider: false
         },
 
         _initializationComplete: function () {
@@ -52,7 +53,7 @@ define(['js/core/Component', 'srv/core/HttpError', 'srv/auth/Authentication'], f
          * @returns {boolean}
          */
         isResponsibleForAuthenticationRequest: function (authenticationRequest) {
-            return authenticationRequest.$.provider === this.$.name;
+            return authenticationRequest.$.provider === this.$.name || (this.$.defaultProvider === true);
         },
 
         /**
