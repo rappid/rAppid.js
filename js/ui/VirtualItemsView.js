@@ -609,7 +609,7 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
                     id = null;
 
                     if (item) {
-                        this.getSelectionKeyForItem(item.$.data)
+                        id = this.getSelectionKeyForItem(item.$.data)
                     }
 
                     if (id) {
