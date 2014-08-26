@@ -131,7 +131,7 @@ describe('Registration, Authentication & Authorization', function () {
                             email: email,
                             password: "wrongsecret"
                         })
-                        .expect(400)
+                        .expect(401)
                         .end(done);
                 });
 
