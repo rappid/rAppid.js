@@ -1,5 +1,5 @@
 define(["js/core/Component", "moment"], function (Component, moment) {
-    return Component.inherit("js.core.I18n", {
+    return Component.inherit("js.core.DateFormatter", {
         defaults: {
             /**
              * The default locale
