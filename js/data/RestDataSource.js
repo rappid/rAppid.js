@@ -66,6 +66,9 @@ define(["js/data/DataSource", "js/data/Model", "underscore", "flow", "JSON", "js
              * @type Boolean
              */
             determinateContextAttribute: "href",
+
+            determinateContextByGateway: true,
+
             /**
              * If true the returned payload of a POST get's parsed and written back in the Model
              * @type Boolean
@@ -96,6 +99,7 @@ define(["js/data/DataSource", "js/data/Model", "underscore", "flow", "JSON", "js
         },
 
         ctor: function () {
+            this.$endPointCache = {};
             this.callBase();
         },
 
@@ -460,22 +464,48 @@ define(["js/data/DataSource", "js/data/Model", "underscore", "flow", "JSON", "js
                         context = this.root(),
                         contextFactory,
                         id,
-                        pathElement;
+                        pathElement, endPoint, gatewayComponents;
 
+                    var href = data[this.$.determinateContextAttribute],
+                        match = /(http(s)?:\/\/.+?)\//i.exec(href),
+                        gateway = null;
 
-                    if (!this.$cachedEndpoint) {
-                        var href = data[this.$.determinateContextAttribute];
-                        path = href.replace(/(http(s)?:\/\/.+?)\//i, "");
-                        this.$cachedEndpoint = href.substring(0, href.length - path.length);
-                        components = path.split("/");
-
-                        while (!this.$dataSourceConfiguration.getConfigurationByKeyValue("path", components[0])) {
-                            this.$cachedEndpoint += components.shift() + "/";
-                        }
-                    } else {
-                        path = data[this.$.determinateContextAttribute].replace(this.$cachedEndpoint, "");
-                        components = path.split("/");
+                    if (this.$.determinateContextByGateway === true) {
+                        gateway = this.$.gateway;
                     }
+
+                    if (match) {
+                        endPoint = match[1];
+
+                        if (!gateway) {
+
+                            path = href.substr(endPoint.length + 1);
+
+                            if (this.$endPointCache.hasOwnProperty(endPoint)) {
+                                gateway = this.$endPointCache[endPoint];
+                            } else {
+
+                                components = path.split("/");
+                                gatewayComponents = [];
+
+                                while (components.length) {
+                                    var pathComponent = components.shift();
+
+                                    if (this.$dataSourceConfiguration.getConfigurationByKeyValue("path", pathComponent)) {
+                                        gateway = "/" + gatewayComponents.join("/");
+                                        this.$endPointCache[endPoint] = gateway;
+                                        break;
+                                    }
+
+                                    gatewayComponents.push(pathComponent);
+                                }
+                            }
+                        }
+                    }
+
+                    gateway = gateway || "";
+                    path = href.substr((endPoint || "").length + gateway.length + 1);
+                    components = path.split("/");
 
                     for (var i = 0; i < components.length - 2; i = i + 2) {
                         pathElement = components[i];
