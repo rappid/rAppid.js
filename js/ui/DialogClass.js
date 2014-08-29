@@ -12,6 +12,10 @@ define(["js/core/Window"], function (Window) {
             name: ""
         },
 
+        events: [
+            "on:closeButton"
+        ],
+
         $keyHandlers: {
             27: "closeDialog",
             13: "confirmDialog"
@@ -58,6 +62,7 @@ define(["js/core/Window"], function (Window) {
          * @param e
          */
         closeDialog: function (e) {
+            this.trigger("on:closeButton");
             this.close();
         },
 
