@@ -143,8 +143,8 @@
             "annotations": {},
             "definedInFile": "js/core/BindingCreator.js",
             "lineNumbers": [
-                268,
-                279
+                280,
+                291
             ],
             "name": "containsBindingDefinition",
             "visibility": "public"
@@ -180,8 +180,8 @@
             "annotations": {},
             "definedInFile": "js/core/BindingCreator.js",
             "lineNumbers": [
-                58,
-                199
+                60,
+                201
             ],
             "description": "",
             "returns": {
@@ -266,8 +266,8 @@
             "annotations": {},
             "definedInFile": "js/core/BindingCreator.js",
             "lineNumbers": [
-                209,
-                252
+                211,
+                254
             ],
             "description": "",
             "returns": {
@@ -321,8 +321,8 @@
             "annotations": {},
             "definedInFile": "js/core/BindingCreator.js",
             "lineNumbers": [
-                254,
-                263
+                256,
+                270
             ],
             "name": "parse",
             "visibility": "public"
@@ -337,8 +337,8 @@
             "annotations": {},
             "definedInFile": "js/core/BindingCreator.js",
             "lineNumbers": [
-                265,
-                267
+                272,
+                279
             ],
             "name": "parsePath",
             "visibility": "public"

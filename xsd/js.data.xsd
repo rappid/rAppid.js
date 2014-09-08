@@ -49,6 +49,7 @@
                 <sequence>
                     <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
                 </sequence>
+                <attribute name="filterFnc"/>
             </extension>
         </complexContent>
     </complexType>
@@ -125,6 +126,7 @@ If needed, the gateway of the REST API
                     </documentation>
                     </annotation>
                 </attribute>
+                <attribute name="determinateContextByGateway" default="true"/>
                 <attribute name="parsePayloadOnCreate" default="true">
                     <annotation>
                         <documentation>

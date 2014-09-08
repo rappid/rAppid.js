@@ -252,6 +252,41 @@
             "type": "Method",
             "parameter": [
                 {
+                    "name": "search"
+                }
+            ],
+            "annotations": {},
+            "definedInFile": "js/ui/AutoSuggestionBoxClass.js",
+            "lineNumbers": [
+                42,
+                66
+            ],
+            "name": "_commitSearch",
+            "visibility": "protected"
+        },
+        {
+            "type": "Method",
+            "parameter": [
+                {
+                    "name": "suggestion"
+                },
+                {
+                    "name": "old"
+                }
+            ],
+            "annotations": {},
+            "definedInFile": "js/ui/AutoSuggestionBoxClass.js",
+            "lineNumbers": [
+                140,
+                152
+            ],
+            "name": "_commitSelectedSuggestion",
+            "visibility": "protected"
+        },
+        {
+            "type": "Method",
+            "parameter": [
+                {
                     "name": "visible"
                 }
             ],
@@ -461,6 +496,22 @@
         {
             "type": "Method",
             "parameter": [],
+            "annotations": {
+                "onChange": [
+                    "suggestions.size()"
+                ]
+            },
+            "definedInFile": "js/ui/AutoSuggestionBoxClass.js",
+            "lineNumbers": [
+                216,
+                218
+            ],
+            "name": "_emptyClass",
+            "visibility": "protected"
+        },
+        {
+            "type": "Method",
+            "parameter": [],
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
@@ -624,32 +675,6 @@
         },
         {
             "type": "Method",
-            "parameter": [],
-            "annotations": {},
-            "definedInFile": "js/ui/ItemsView.js",
-            "lineNumbers": [
-                41,
-                43
-            ],
-            "definedBy": "js.ui.ItemsView",
-            "name": "_getItemKey",
-            "visibility": "protected"
-        },
-        {
-            "type": "Method",
-            "parameter": [],
-            "annotations": {},
-            "definedInFile": "js/ui/ItemsView.js",
-            "lineNumbers": [
-                44,
-                46
-            ],
-            "definedBy": "js.ui.ItemsView",
-            "name": "_getItemsArray",
-            "visibility": "protected"
-        },
-        {
-            "type": "Method",
             "parameter": [
                 {
                     "name": "node"
@@ -697,6 +722,70 @@
             ],
             "definedBy": "js.core.Element",
             "name": "_getTextContentFromDescriptor",
+            "visibility": "protected"
+        },
+        {
+            "type": "Method",
+            "parameter": [
+                {
+                    "name": "suggestion"
+                }
+            ],
+            "annotations": {},
+            "definedInFile": "js/ui/AutoSuggestionBoxClass.js",
+            "lineNumbers": [
+                154,
+                156
+            ],
+            "name": "_getTextForSuggestion",
+            "visibility": "protected"
+        },
+        {
+            "type": "Method",
+            "parameter": [
+                {
+                    "name": "e"
+                }
+            ],
+            "annotations": {},
+            "definedInFile": "js/ui/AutoSuggestionBoxClass.js",
+            "lineNumbers": [
+                87,
+                108
+            ],
+            "name": "_handleKeyDown",
+            "visibility": "protected"
+        },
+        {
+            "type": "Method",
+            "parameter": [
+                {
+                    "name": "e"
+                }
+            ],
+            "annotations": {},
+            "definedInFile": "js/ui/AutoSuggestionBoxClass.js",
+            "lineNumbers": [
+                116,
+                131
+            ],
+            "name": "_handleKeyUp",
+            "visibility": "protected"
+        },
+        {
+            "type": "Method",
+            "parameter": [
+                {
+                    "name": "e"
+                }
+            ],
+            "annotations": {},
+            "definedInFile": "js/ui/AutoSuggestionBoxClass.js",
+            "lineNumbers": [
+                133,
+                138
+            ],
+            "name": "_handleSuggestionClick",
             "visibility": "protected"
         },
         {
@@ -1184,14 +1273,17 @@
         {
             "type": "Method",
             "parameter": [],
-            "annotations": {},
-            "definedInFile": "js/ui/ItemsView.js",
+            "annotations": {
+                "onChange": [
+                    "_showAutoSuggestion"
+                ]
+            },
+            "definedInFile": "js/ui/AutoSuggestionBoxClass.js",
             "lineNumbers": [
-                37,
-                39
+                220,
+                222
             ],
-            "definedBy": "js.ui.ItemsView",
-            "name": "_onItemsRendered",
+            "name": "_openStateClass",
             "visibility": "protected"
         },
         {
@@ -1608,15 +1700,23 @@
         },
         {
             "type": "Method",
-            "parameter": [],
-            "annotations": {},
-            "definedInFile": "js/ui/DataGridRow.js",
-            "lineNumbers": [
-                9,
-                11
+            "parameter": [
+                {
+                    "types": null,
+                    "name": "width",
+                    "optional": false,
+                    "description": "the width in pixel if not a string"
+                }
             ],
+            "annotations": {},
+            "definedInFile": "js/html/HtmlElement.js",
+            "lineNumbers": [
+                211,
+                218
+            ],
+            "description": "renders the width of the element if the update-policy allows out-going",
+            "private": "",
             "definedBy": "js.html.HtmlElement",
-            "overwritesMethod": true,
             "name": "_renderWidth",
             "visibility": "protected"
         },
@@ -1639,6 +1739,33 @@
             "private": "",
             "definedBy": "js.html.HtmlElement",
             "name": "_renderWidthUpdatePolicy",
+            "visibility": "protected"
+        },
+        {
+            "type": "Method",
+            "parameter": [
+                {
+                    "types": null,
+                    "name": "search",
+                    "optional": false
+                },
+                {
+                    "types": null,
+                    "name": "callback",
+                    "optional": false,
+                    "description": "function(err, resultsAsArray)"
+                }
+            ],
+            "annotations": {},
+            "definedInFile": "js/ui/AutoSuggestionBoxClass.js",
+            "lineNumbers": [
+                83,
+                85
+            ],
+            "description": "",
+            "private": "",
+            "abstract": "",
+            "name": "_search",
             "visibility": "protected"
         },
         {
@@ -1715,6 +1842,22 @@
             ],
             "definedBy": "js.core.Bindable",
             "name": "_tearDown",
+            "visibility": "protected"
+        },
+        {
+            "type": "Method",
+            "parameter": [
+                {
+                    "name": "visible"
+                }
+            ],
+            "annotations": {},
+            "definedInFile": "js/ui/AutoSuggestionBoxClass.js",
+            "lineNumbers": [
+                158,
+                167
+            ],
+            "name": "_toggleSuggestionBox",
             "visibility": "protected"
         },
         {
@@ -1850,12 +1993,13 @@
             "type": "Method",
             "parameter": [],
             "annotations": {},
-            "definedInFile": "js/core/DomElement.js",
+            "definedInFile": "js/ui/AutoSuggestionBoxClass.js",
             "lineNumbers": [
-                932,
-                936
+                68,
+                70
             ],
             "definedBy": "js.core.DomElement",
+            "overwritesMethod": true,
             "name": "blur",
             "visibility": "public"
         },
@@ -1922,6 +2066,18 @@
             },
             "definedBy": "js.core.Bindable",
             "name": "clear",
+            "visibility": "public"
+        },
+        {
+            "type": "Method",
+            "parameter": [],
+            "annotations": {},
+            "definedInFile": "js/ui/AutoSuggestionBoxClass.js",
+            "lineNumbers": [
+                110,
+                114
+            ],
+            "name": "clearSuggestions",
             "visibility": "public"
         },
         {
@@ -2130,12 +2286,13 @@
             "type": "Method",
             "parameter": [],
             "annotations": {},
-            "definedInFile": "js/core/DomElement.js",
+            "definedInFile": "js/ui/AutoSuggestionBoxClass.js",
             "lineNumbers": [
-                926,
-                930
+                72,
+                74
             ],
             "definedBy": "js.core.DomElement",
+            "overwritesMethod": true,
             "name": "focus",
             "visibility": "public"
         },
@@ -2177,19 +2334,6 @@
         },
         {
             "type": "Method",
-            "parameter": [],
-            "annotations": {},
-            "definedInFile": "js/ui/ItemsView.js",
-            "lineNumbers": [
-                47,
-                49
-            ],
-            "definedBy": "js.ui.ItemsView",
-            "name": "getComponentForItem",
-            "visibility": "public"
-        },
-        {
-            "type": "Method",
             "parameter": [
                 {
                     "name": "from"
@@ -2203,6 +2347,34 @@
             ],
             "definedBy": "js.core.DomElement",
             "name": "getContentPlaceHolders",
+            "visibility": "public"
+        },
+        {
+            "type": "Method",
+            "parameter": [
+                {
+                    "name": "term"
+                }
+            ],
+            "annotations": {},
+            "definedInFile": "js/ui/AutoSuggestionBoxClass.js",
+            "lineNumbers": [
+                182,
+                198
+            ],
+            "name": "getHtmlForItem",
+            "visibility": "public"
+        },
+        {
+            "type": "Method",
+            "parameter": [],
+            "annotations": {},
+            "definedInFile": "js/ui/AutoSuggestionBoxClass.js",
+            "lineNumbers": [
+                200,
+                202
+            ],
+            "name": "getOtherPart",
             "visibility": "public"
         },
         {
@@ -2632,6 +2804,30 @@
             "type": "Method",
             "parameter": [],
             "annotations": {},
+            "definedInFile": "js/ui/AutoSuggestionBoxClass.js",
+            "lineNumbers": [
+                169,
+                180
+            ],
+            "name": "selectNext",
+            "visibility": "public"
+        },
+        {
+            "type": "Method",
+            "parameter": [],
+            "annotations": {},
+            "definedInFile": "js/ui/AutoSuggestionBoxClass.js",
+            "lineNumbers": [
+                204,
+                215
+            ],
+            "name": "selectPrevious",
+            "visibility": "public"
+        },
+        {
+            "type": "Method",
+            "parameter": [],
+            "annotations": {},
             "definedInFile": "js/core/DomElement.js",
             "lineNumbers": [
                 725,
@@ -2930,61 +3126,127 @@
     ],
     "staticMethods": [],
     "defaults": {
-        "tagName": {
-            "name": "tagName",
+        "componentClass": {
+            "name": "componentClass",
             "defaultType": "value",
             "visibility": "public",
-            "value": "tr",
+            "value": "auto-suggestion-box",
             "lineNumbers": [
-                5,
-                5
+                14,
+                14
             ],
-            "definedBy": "js.ui.View",
+            "definedBy": "js.core.DomElement",
             "overwrites": true
         },
-        "itemKey": {
-            "name": "itemKey",
-            "defaultType": "value",
-            "visibility": "public",
-            "value": "column",
-            "lineNumbers": [
-                6,
-                6
-            ],
-            "definedBy": "js.ui.ItemsView",
-            "overwrites": true
-        },
-        "item": {
-            "name": "item",
-            "defaultType": "value",
-            "visibility": "public",
-            "value": "{$dataItem.data}",
-            "lineNumbers": [
-                7,
-                7
-            ]
-        },
-        "items": {
-            "name": "items",
+        "search": {
+            "name": "search",
             "defaultType": "value",
             "visibility": "public",
             "value": null,
             "lineNumbers": [
-                6,
-                6
-            ],
-            "definedBy": "js.ui.ItemsView"
+                16,
+                16
+            ]
         },
-        "indexKey": {
-            "name": "indexKey",
+        "type": {
+            "name": "type",
             "defaultType": "value",
             "visibility": "public",
-            "value": "index",
+            "value": "text",
             "lineNumbers": [
-                8,
-                8
+                18,
+                18
+            ]
+        },
+        "suggestions": {
+            "name": "suggestions",
+            "defaultType": "factory",
+            "visibility": "public",
+            "lineNumbers": [
+                20,
+                20
+            ]
+        },
+        "invalidationTime": {
+            "name": "invalidationTime",
+            "defaultType": "value",
+            "visibility": "public",
+            "value": 250,
+            "lineNumbers": [
+                22,
+                22
+            ]
+        },
+        "placeholder": {
+            "name": "placeholder",
+            "defaultType": "value",
+            "visibility": "public",
+            "value": null,
+            "lineNumbers": [
+                24,
+                24
+            ]
+        },
+        "selectedSuggestion": {
+            "name": "selectedSuggestion",
+            "defaultType": "value",
+            "visibility": "public",
+            "value": null,
+            "lineNumbers": [
+                26,
+                26
+            ]
+        },
+        "inputClass": {
+            "name": "inputClass",
+            "defaultType": "value",
+            "visibility": "public",
+            "value": null,
+            "lineNumbers": [
+                28,
+                28
+            ]
+        },
+        "maxItems": {
+            "name": "maxItems",
+            "defaultType": "value",
+            "visibility": "public",
+            "value": 5,
+            "lineNumbers": [
+                30,
+                30
+            ]
+        },
+        "_showAutoSuggestion": {
+            "name": "_showAutoSuggestion",
+            "defaultType": "value",
+            "visibility": "private",
+            "value": false,
+            "lineNumbers": [
+                32,
+                32
+            ]
+        },
+        "input": {
+            "name": "input",
+            "defaultType": "value",
+            "visibility": "public",
+            "value": null,
+            "lineNumbers": [
+                37,
+                37
+            ]
+        },
+        "tagName": {
+            "name": "tagName",
+            "defaultType": "value",
+            "visibility": "public",
+            "value": "div",
+            "lineNumbers": [
+                4,
+                4
             ],
-            "definedBy": "js.ui.ItemsView"
+            "definedBy": "js.ui.View"
         },
         "selected": {
             "name": "selected",
@@ -3090,21 +3352,6 @@
             ],
             "definedBy": "js.core.DomElement"
         },
-        "componentClass": {
-            "name": "componentClass",
-            "defaultType": "value",
-            "visibility": "public",
-            "value": null,
-            "lineNumbers": [
-                63,
-                63
-            ],
-            "description": "sets the componentClass for the Component.\nThe resulting class attributes is the union from class and componentClass of the Element.\n",
-            "types": [
-                "String"
-            ],
-            "definedBy": "js.core.DomElement"
-        },
         "animationClass": {
             "name": "animationClass",
             "defaultType": "value",
@@ -3177,18 +3424,6 @@
         }
     },
     "properties": {
-        "$defaultTemplateName": {
-            "name": "$defaultTemplateName",
-            "visibility": "private",
-            "definedInFile": "js/core/Component.js",
-            "lineNumbers": [
-                79,
-                79
-            ],
-            "value": "null",
-            "propertyType": "value",
-            "definedBy": "js.core.Component"
-        },
         "$domAttributes": {
             "name": "$domAttributes",
             "visibility": "private",
@@ -3267,18 +3502,41 @@
             "propertyType": "value",
             "description": "if set all children from the descriptor will be placed into a\njs.core.Content block with the name of $defaultContentName",
             "definedBy": "js.core.Component"
+        },
+        "$defaultTemplateName": {
+            "name": "$defaultTemplateName",
+            "visibility": "private",
+            "definedInFile": "js/core/Component.js",
+            "lineNumbers": [
+                79,
+                79
+            ],
+            "value": "null",
+            "propertyType": "value",
+            "definedBy": "js.core.Component"
         }
     },
-    "fqClassName": "js.ui.DataGridRow",
-    "inherit": "js.ui.ItemsView",
+    "events": {
+        "suggestionClick": {
+            "type": "Event",
+            "name": "suggestionClick",
+            "visibility": "public",
+            "lineNumbers": [
+                40,
+                40
+            ]
+        }
+    },
+    "fqClassName": "js.ui.AutoCompleteBoxClass",
+    "inherit": "js.ui.View",
     "dependencies": [
-        "js.ui.ItemsView"
+        "js.core.List",
+        "js.ui.View"
     ],
     "type": "js",
-    "file": "js/ui/DataGridRow.js",
+    "file": "js/ui/AutoSuggestionBoxClass.js",
     "package": "js.ui",
     "inheritancePath": [
-        "js.ui.ItemsView",
         "js.ui.View",
         "js.html.HtmlElement",
         "js.core.DomElement",

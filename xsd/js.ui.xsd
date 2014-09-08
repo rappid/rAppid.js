@@ -5,6 +5,7 @@
     xmlns:ns="js.ui">
     <import/>
     <import/>
+    <element name="AutoCompleteBoxClass" type="ns:AutoCompleteBoxClass"/>
     <element name="Button" type="ns:Button"/>
     <element name="ButtonGroup" type="ns:ButtonGroup"/>
     <element name="Checkbox" type="ns:Checkbox"/>
@@ -64,6 +65,28 @@
     <element name="View" type="ns:View"/>
     <element name="VirtualItemsView" type="ns:VirtualItemsView"/>
     <element name="VirtualScrollView" type="ns:VirtualScrollView"/>
+    <complexType name="AutoCompleteBoxClass">
+        <complexContent>
+            <extension base="ns:View">
+                <annotation>
+                    <documentation source="http://www.rappidjs.com/#/api/js.ui.AutoCompleteBoxClass"></documentation>
+                </annotation>
+                <sequence>
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+                <attribute name="search"/>
+                <attribute name="type" default="text"/>
+                <attribute name="suggestions"/>
+                <attribute name="invalidationTime" default="250"/>
+                <attribute name="placeholder"/>
+                <attribute name="selectedSuggestion"/>
+                <attribute name="inputClass"/>
+                <attribute name="maxItems" default="5"/>
+                <attribute name="input"/>
+                <attribute name="onsuggestionClick" default="_onSuggestionClickHandler" type="string"/>
+            </extension>
+        </complexContent>
+    </complexType>
     <complexType name="Button">
         <complexContent>
             <extension base="ns:Link">
@@ -499,6 +522,7 @@
                 <attribute name="size" default="normal"/>
                 <attribute name="tabindex"/>
                 <attribute name="name"/>
+                <attribute name="oncloseButton" default="_onCloseButtonHandler" type="string"/>
             </extension>
         </complexContent>
     </complexType>
@@ -515,6 +539,7 @@
                 <attribute name="inputId"/>
                 <attribute name="error"/>
                 <attribute name="required"/>
+                <attribute name="focused"/>
                 <attribute name="requiredClass" default="required"/>
             </extension>
         </complexContent>
@@ -532,6 +557,7 @@
                 <attribute name="inputId"/>
                 <attribute name="error"/>
                 <attribute name="required"/>
+                <attribute name="focused"/>
                 <attribute name="requiredClass" default="required"/>
             </extension>
         </complexContent>
@@ -774,6 +800,8 @@ is specified but a protocol for the href (e.g. http://) if will use external by 
                     </documentation>
                     </annotation>
                 </attribute>
+                <attribute name="closeBehavior"/>
+                <attribute name="tabIndex"/>
             </extension>
         </complexContent>
     </complexType>
@@ -781,7 +809,11 @@ is specified but a protocol for the href (e.g. http://) if will use external by 
         <complexContent>
             <extension base="ns:View">
                 <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.ui.MenuButtonClass"></documentation>
+                    <documentation source="http://www.rappidjs.com/#/api/js.ui.MenuButtonClass">
+                                 closes other menu buttons
+ closes other menu buttons but not the parents
+ closes no other menu buttons
+                            </documentation>
                 </annotation>
                 <sequence>
                     <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
@@ -841,6 +873,8 @@ is specified but a protocol for the href (e.g. http://) if will use external by 
                     </documentation>
                     </annotation>
                 </attribute>
+                <attribute name="closeBehavior"/>
+                <attribute name="tabIndex"/>
             </extension>
         </complexContent>
     </complexType>
@@ -1638,7 +1672,6 @@ Possible values are "horizontal" and "vertical"
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="hoverItem"/>
                 <attribute name="onitemClick" default="_onItemClickHandler" type="string"/>
                 <attribute name="onitemDblClick" default="_onItemDblClickHandler" type="string"/>
                 <attribute name="onitemMouseOver" default="_onItemMouseOverHandler" type="string"/>

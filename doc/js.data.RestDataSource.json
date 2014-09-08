@@ -88,8 +88,8 @@
             "annotations": {},
             "definedInFile": "js/data/DataSource.js",
             "lineNumbers": [
-                999,
-                1001
+                1010,
+                1012
             ],
             "definedBy": "js.data.DataSource",
             "name": "_afterModelSave",
@@ -124,8 +124,8 @@
             "annotations": {},
             "definedInFile": "js/data/DataSource.js",
             "lineNumbers": [
-                989,
-                991
+                1000,
+                1002
             ],
             "definedBy": "js.data.DataSource",
             "name": "_beforeModelSave",
@@ -137,8 +137,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                309,
-                333
+                314,
+                338
             ],
             "definedBy": "js.core.Bindable",
             "name": "_bindBus",
@@ -157,8 +157,8 @@
             "annotations": {},
             "definedInFile": "js/data/RestDataSource.js",
             "lineNumbers": [
-                242,
-                263
+                257,
+                278
             ],
             "name": "_buildUriForResource",
             "visibility": "protected"
@@ -211,8 +211,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                556,
-                582
+                563,
+                589
             ],
             "description": "Returns a copy of the attribute. This method is a hook for further cloning options",
             "private": "",
@@ -243,8 +243,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                845,
-                847
+                856,
+                858
             ],
             "description": "called after attributes has set and some of the has been changed\n",
             "abstract": "",
@@ -259,8 +259,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                743,
-                746
+                750,
+                753
             ],
             "definedBy": "js.core.Bindable",
             "name": "_commitInvalidatedAttributes",
@@ -312,8 +312,8 @@
             "annotations": {},
             "definedInFile": "js/data/RestDataSource.js",
             "lineNumbers": [
-                703,
-                718
+                771,
+                786
             ],
             "name": "_createSortParameter",
             "visibility": "protected"
@@ -410,8 +410,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                588,
-                590
+                595,
+                597
             ],
             "description": "",
             "returns": {
@@ -444,8 +444,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                359,
-                372
+                364,
+                378
             ],
             "definedBy": "js.core.Bindable",
             "name": "_extract",
@@ -466,8 +466,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                599,
-                627
+                606,
+                634
             ],
             "description": "generates a default chain containing the values from this instance and base classes\n",
             "returns": {
@@ -496,8 +496,8 @@
             "annotations": {},
             "definedInFile": "js/core/Element.js",
             "lineNumbers": [
-                61,
-                105
+                64,
+                113
             ],
             "definedBy": "js.core.Element",
             "name": "_getAttributesFromDescriptor",
@@ -554,8 +554,8 @@
             "annotations": {},
             "definedInFile": "js/data/RestDataSource.js",
             "lineNumbers": [
-                417,
-                473
+                453,
+                535
             ],
             "definedBy": "js.data.DataSource",
             "overwritesMethod": true,
@@ -606,8 +606,8 @@
             "annotations": {},
             "definedInFile": "js/data/RestDataSource.js",
             "lineNumbers": [
-                184,
-                193
+                188,
+                197
             ],
             "name": "_getHttpMethod",
             "visibility": "protected"
@@ -622,8 +622,8 @@
             "annotations": {},
             "definedInFile": "js/core/Element.js",
             "lineNumbers": [
-                106,
-                108
+                114,
+                116
             ],
             "definedBy": "js.core.Element",
             "name": "_getLocalNameFromNode",
@@ -639,8 +639,8 @@
             "annotations": {},
             "definedInFile": "js/data/RestDataSource.js",
             "lineNumbers": [
-                720,
-                730
+                788,
+                798
             ],
             "name": "_getPagingParameterForCollectionPage",
             "visibility": "protected"
@@ -655,11 +655,33 @@
             "annotations": {},
             "definedInFile": "js/core/Element.js",
             "lineNumbers": [
-                187,
-                200
+                195,
+                208
             ],
             "definedBy": "js.core.Element",
             "name": "_getTextContentFromDescriptor",
+            "visibility": "protected"
+        },
+        {
+            "type": "Method",
+            "parameter": [
+                {
+                    "name": "request"
+                },
+                {
+                    "name": "xhr"
+                },
+                {
+                    "name": "cb"
+                }
+            ],
+            "annotations": {},
+            "definedInFile": "js/data/RestDataSource.js",
+            "lineNumbers": [
+                432,
+                451
+            ],
+            "name": "_handleResultSuccess",
             "visibility": "protected"
         },
         {
@@ -677,31 +699,11 @@
             "annotations": {},
             "definedInFile": "js/data/RestDataSource.js",
             "lineNumbers": [
-                697,
-                701
+                765,
+                769
             ],
             "description": "",
             "name": "_handleXHRError",
-            "visibility": "protected"
-        },
-        {
-            "type": "Method",
-            "parameter": [
-                {
-                    "name": "attributes"
-                },
-                {
-                    "name": "search"
-                }
-            ],
-            "annotations": {},
-            "definedInFile": "js/core/Bindable.js",
-            "lineNumbers": [
-                849,
-                858
-            ],
-            "definedBy": "js.core.Bindable",
-            "name": "_hasAll",
             "visibility": "protected"
         },
         {
@@ -721,6 +723,26 @@
                 869
             ],
             "definedBy": "js.core.Bindable",
+            "name": "_hasAll",
+            "visibility": "protected"
+        },
+        {
+            "type": "Method",
+            "parameter": [
+                {
+                    "name": "attributes"
+                },
+                {
+                    "name": "search"
+                }
+            ],
+            "annotations": {},
+            "definedInFile": "js/core/Bindable.js",
+            "lineNumbers": [
+                871,
+                880
+            ],
+            "definedBy": "js.core.Bindable",
             "name": "_hasSome",
             "visibility": "protected"
         },
@@ -730,8 +752,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                433,
-                444
+                439,
+                450
             ],
             "definedBy": "js.core.Bindable",
             "name": "_initializationComplete",
@@ -743,8 +765,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                213,
-                223
+                216,
+                226
             ],
             "description": "starts the initialization of the `Bindable` if it hasn't initialized yet.\n\nIt calls the following methods:\n\n* initialize();\n* _initializeBindings();\n",
             "private": "",
@@ -764,8 +786,8 @@
             "annotations": {},
             "definedInFile": "js/core/Element.js",
             "lineNumbers": [
-                132,
-                133
+                140,
+                141
             ],
             "description": "initializes the attributes",
             "private": "",
@@ -779,8 +801,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                377,
-                427
+                383,
+                433
             ],
             "description": "Initialize all Binding and Event attributes",
             "definedBy": "js.core.Bindable",
@@ -793,8 +815,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                429,
-                431
+                435,
+                437
             ],
             "definedBy": "js.core.Bindable",
             "name": "_initializeBindingsBeforeComplete",
@@ -823,8 +845,8 @@
             "annotations": {},
             "definedInFile": "js/core/Element.js",
             "lineNumbers": [
-                135,
-                136
+                143,
+                144
             ],
             "definedBy": "js.core.Element",
             "name": "_initializeDescriptors",
@@ -842,8 +864,8 @@
             "annotations": {},
             "definedInFile": "js/core/Element.js",
             "lineNumbers": [
-                124,
-                125
+                132,
+                133
             ],
             "description": "initializes all attributes handling events\n",
             "private": "",
@@ -857,8 +879,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                198,
-                201
+                201,
+                204
             ],
             "description": "\ninvokes the `_initialize` method. This method is a hook function and is overwritten by js.core.Component\n",
             "private": "",
@@ -892,8 +914,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                273,
-                306
+                276,
+                311
             ],
             "definedBy": "js.core.Bindable",
             "name": "_inject",
@@ -905,8 +927,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                238,
-                240
+                241,
+                243
             ],
             "description": "\nreturns the chained object defining the required injections\n",
             "returns": {
@@ -1039,8 +1061,8 @@
             "annotations": {},
             "definedInFile": "js/data/RestDataSource.js",
             "lineNumbers": [
-                328,
-                348
+                343,
+                363
             ],
             "name": "_parseModelPayload",
             "visibility": "protected"
@@ -1051,8 +1073,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                446,
-                448
+                452,
+                454
             ],
             "definedBy": "js.core.Bindable",
             "name": "_postConstruct",
@@ -1064,8 +1086,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                450,
-                452
+                456,
+                458
             ],
             "definedBy": "js.core.Bindable",
             "name": "_preDestroy",
@@ -1077,8 +1099,8 @@
             "annotations": {},
             "definedInFile": "js/core/Element.js",
             "lineNumbers": [
-                183,
-                185
+                191,
+                193
             ],
             "definedBy": "js.core.Element",
             "name": "_preinitialize",
@@ -1097,8 +1119,8 @@
             "annotations": {},
             "definedInFile": "js/data/RestDataSource.js",
             "lineNumbers": [
-                265,
-                267
+                280,
+                282
             ],
             "name": "_resourcePathToUri",
             "visibility": "protected"
@@ -1119,8 +1141,8 @@
             "annotations": {},
             "definedInFile": "js/data/RestDataSource.js",
             "lineNumbers": [
-                507,
-                581
+                569,
+                645
             ],
             "definedBy": "js.data.DataSource",
             "overwritesMethod": true,
@@ -1133,8 +1155,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                255,
-                258
+                258,
+                261
             ],
             "description": "sets up the Bindable or Component. It will inject the required injections and\nalso will bind the application wide `MessageBus` to all methods annotated with the\n`.bus()` method annotation\n\nFor `Components` the setUp method is invoked automatically during the add of the Component.\nFor non `Components`\n\n",
             "private": "",
@@ -1151,8 +1173,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                268,
-                271
+                271,
+                274
             ],
             "description": "tears down the Bindable or Component. It will remove the injected variables and\nalso will unbind the annotated event handlers from the application wide `MessageBus`\n",
             "private": "",
@@ -1173,8 +1195,8 @@
             "annotations": {},
             "definedInFile": "js/data/DataSource.js",
             "lineNumbers": [
-                1095,
-                1097
+                1106,
+                1108
             ],
             "definedBy": "js.data.DataSource",
             "name": "_translateQueryObject",
@@ -1186,8 +1208,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                335,
-                357
+                340,
+                362
             ],
             "definedBy": "js.core.Bindable",
             "name": "_unbindBus",
@@ -1199,8 +1221,8 @@
             "annotations": {},
             "definedInFile": "js/data/RestDataSource.js",
             "lineNumbers": [
-                116,
-                120
+                120,
+                124
             ],
             "definedBy": "js.data.DataSource",
             "overwritesMethod": true,
@@ -1308,8 +1330,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                886,
-                888
+                897,
+                899
             ],
             "description": "Clears all attributes",
             "returns": {
@@ -1335,8 +1357,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                529,
-                549
+                535,
+                556
             ],
             "description": "This method returns a copy of the Object with all attributes on the $\n",
             "returns": {
@@ -1362,8 +1384,8 @@
             "annotations": {},
             "definedInFile": "js/data/DataSource.js",
             "lineNumbers": [
-                733,
-                737
+                744,
+                748
             ],
             "definedBy": "js.data.DataSource",
             "name": "composeModel",
@@ -1385,8 +1407,8 @@
             "annotations": {},
             "definedInFile": "js/data/DataSource.js",
             "lineNumbers": [
-                960,
-                962
+                971,
+                973
             ],
             "definedBy": "js.data.DataSource",
             "name": "countCollection",
@@ -1457,8 +1479,8 @@
             "annotations": {},
             "definedInFile": "js/data/DataSource.js",
             "lineNumbers": [
-                916,
-                920
+                927,
+                931
             ],
             "description": "Creates a collection by a given factory in a caching context",
             "returns": {
@@ -1530,8 +1552,8 @@
             "annotations": {},
             "definedInFile": "js/data/RestDataSource.js",
             "lineNumbers": [
-                138,
-                140
+                142,
+                144
             ],
             "description": "creates the context as RestContext\n",
             "returns": {
@@ -1573,8 +1595,8 @@
             "annotations": {},
             "definedInFile": "js/data/DataSource.js",
             "lineNumbers": [
-                893,
-                896
+                904,
+                907
             ],
             "description": "Create an instance of {js.data.Entity}",
             "returns": {
@@ -1616,8 +1638,8 @@
             "annotations": {},
             "definedInFile": "js/data/DataSource.js",
             "lineNumbers": [
-                905,
-                907
+                916,
+                918
             ],
             "description": "Create an instance of {js.data.Model}",
             "returns": {
@@ -1635,8 +1657,8 @@
             "annotations": {},
             "definedInFile": "js/data/RestDataSource.js",
             "lineNumbers": [
-                98,
-                100
+                101,
+                104
             ],
             "definedBy": "js.core.Base",
             "overwritesMethod": true,
@@ -1690,8 +1712,8 @@
             "annotations": {},
             "definedInFile": "js/data/RestDataSource.js",
             "lineNumbers": [
-                497,
-                505
+                559,
+                567
             ],
             "name": "extractIdFromLocation",
             "visibility": "public"
@@ -1715,8 +1737,8 @@
             "annotations": {},
             "definedInFile": "js/data/RestDataSource.js",
             "lineNumbers": [
-                586,
-                594
+                650,
+                658
             ],
             "name": "extractListData",
             "visibility": "public"
@@ -1740,8 +1762,8 @@
             "annotations": {},
             "definedInFile": "js/data/RestDataSource.js",
             "lineNumbers": [
-                582,
-                584
+                646,
+                648
             ],
             "name": "extractListMetaData",
             "visibility": "public"
@@ -1756,8 +1778,8 @@
             "annotations": {},
             "definedInFile": "js/core/Element.js",
             "lineNumbers": [
-                172,
-                181
+                180,
+                189
             ],
             "definedBy": "js.core.Element",
             "name": "find",
@@ -1787,8 +1809,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                755,
-                825
+                762,
+                836
             ],
             "description": "evaluates a path to retrieve a value\n",
             "returns": {
@@ -1811,8 +1833,8 @@
             "annotations": {},
             "definedInFile": "js/data/DataSource.js",
             "lineNumbers": [
-                773,
-                775
+                784,
+                786
             ],
             "description": "Returns the configuration for a collectionclass name",
             "returns": {
@@ -1834,8 +1856,8 @@
             "annotations": {},
             "definedInFile": "js/data/DataSource.js",
             "lineNumbers": [
-                764,
-                766
+                775,
+                777
             ],
             "definedBy": "js.data.DataSource",
             "name": "getConfigurationForModelClass",
@@ -1869,8 +1891,8 @@
             "annotations": {},
             "definedInFile": "js/data/DataSource.js",
             "lineNumbers": [
-                856,
-                866
+                867,
+                877
             ],
             "description": "Returns the context for a properties object",
             "returns": {
@@ -1904,8 +1926,8 @@
             "annotations": {},
             "definedInFile": "js/data/DataSource.js",
             "lineNumbers": [
-                782,
-                847
+                793,
+                858
             ],
             "description": "",
             "returns": {
@@ -1931,8 +1953,8 @@
             "annotations": {},
             "definedInFile": "js/data/DataSource.js",
             "lineNumbers": [
-                1072,
-                1074
+                1083,
+                1085
             ],
             "description": "Returns the format processor",
             "returns": {
@@ -1954,8 +1976,8 @@
             "annotations": {},
             "definedInFile": "js/data/RestDataSource.js",
             "lineNumbers": [
-                766,
-                775
+                834,
+                843
             ],
             "name": "getFormatProcessorForContentType",
             "visibility": "public"
@@ -1984,8 +2006,8 @@
             "annotations": {},
             "definedInFile": "js/data/RestDataSource.js",
             "lineNumbers": [
-                175,
-                177
+                179,
+                181
             ],
             "description": "Returns the header parameter for a request",
             "returns": {
@@ -2006,8 +2028,8 @@
             "annotations": {},
             "definedInFile": "js/data/RestDataSource.js",
             "lineNumbers": [
-                207,
-                223
+                211,
+                226
             ],
             "name": "getPathComponentsForModel",
             "visibility": "public"
@@ -2017,13 +2039,16 @@
             "parameter": [
                 {
                     "name": "modelClass"
+                },
+                {
+                    "name": "context"
                 }
             ],
             "annotations": {},
             "definedInFile": "js/data/RestDataSource.js",
             "lineNumbers": [
-                225,
-                240
+                228,
+                255
             ],
             "name": "getPathComponentsForModelClass",
             "visibility": "public"
@@ -2038,8 +2063,8 @@
             "annotations": {},
             "definedInFile": "js/data/RestDataSource.js",
             "lineNumbers": [
-                196,
-                205
+                200,
+                209
             ],
             "name": "getPathComponentsForResource",
             "visibility": "public"
@@ -2065,8 +2090,8 @@
             "annotations": {},
             "definedInFile": "js/data/DataSource.js",
             "lineNumbers": [
-                1058,
-                1065
+                1069,
+                1076
             ],
             "description": "Returns the correct processor for a collection\n",
             "returns": {
@@ -2100,8 +2125,8 @@
             "annotations": {},
             "definedInFile": "js/data/DataSource.js",
             "lineNumbers": [
-                1022,
-                1029
+                1033,
+                1040
             ],
             "description": "Returns the correct processor for model\n",
             "returns": {
@@ -2131,8 +2156,8 @@
             "annotations": {},
             "definedInFile": "js/data/DataSource.js",
             "lineNumbers": [
-                1038,
-                1049
+                1049,
+                1060
             ],
             "description": "Returns the correct processor for model class\n",
             "returns": {
@@ -2151,8 +2176,8 @@
             "annotations": {},
             "definedInFile": "js/data/RestDataSource.js",
             "lineNumbers": [
-                179,
-                181
+                183,
+                185
             ],
             "name": "getQueryComposer",
             "visibility": "public"
@@ -2176,8 +2201,8 @@
             "annotations": {},
             "definedInFile": "js/data/RestDataSource.js",
             "lineNumbers": [
-                148,
-                168
+                152,
+                172
             ],
             "description": "global query parameter for each REST action",
             "returns": {
@@ -2198,8 +2223,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                469,
-                482
+                475,
+                488
             ],
             "definedBy": "js.core.Bindable",
             "name": "getScopeForFncName",
@@ -2215,8 +2240,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                454,
-                467
+                460,
+                473
             ],
             "definedBy": "js.core.Bindable",
             "name": "getScopeForKey",
@@ -2269,8 +2294,8 @@
             "annotations": {},
             "definedInFile": "js/data/RestDataSource.js",
             "lineNumbers": [
-                359,
-                415
+                374,
+                430
             ],
             "description": "",
             "name": "handleCreationSuccess",
@@ -2296,8 +2321,8 @@
             "annotations": {},
             "definedInFile": "js/data/RestDataSource.js",
             "lineNumbers": [
-                484,
-                495
+                546,
+                557
             ],
             "description": "",
             "name": "handleUpdateSuccess",
@@ -2318,8 +2343,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                833,
-                835
+                844,
+                846
             ],
             "description": "determinate if a attribute is available\n",
             "returns": {
@@ -2338,8 +2363,8 @@
             "annotations": {},
             "definedInFile": "js/data/RestDataSource.js",
             "lineNumbers": [
-                104,
-                114
+                108,
+                118
             ],
             "definedBy": "js.core.Bindable",
             "overwritesMethod": true,
@@ -2352,8 +2377,8 @@
             "annotations": {},
             "definedInFile": "js/data/RestDataSource.js",
             "lineNumbers": [
-                122,
-                129
+                126,
+                133
             ],
             "definedBy": "js.data.DataSource",
             "overwritesMethod": true,
@@ -2366,8 +2391,8 @@
             "annotations": {},
             "definedInFile": "js/data/DataSource.js",
             "lineNumbers": [
-                722,
-                731
+                733,
+                742
             ],
             "definedBy": "js.data.DataSource",
             "name": "initializeProcessors",
@@ -2378,13 +2403,16 @@
             "parameter": [
                 {
                     "name": "b"
+                },
+                {
+                    "name": "keys"
                 }
             ],
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                978,
-                995
+                989,
+                1016
             ],
             "definedBy": "js.core.Bindable",
             "name": "isDeepEqual",
@@ -2400,8 +2428,8 @@
             "annotations": {},
             "definedInFile": "js/core/Element.js",
             "lineNumbers": [
-                209,
-                211
+                217,
+                219
             ],
             "definedBy": "js.core.Element",
             "name": "isDefined",
@@ -2417,8 +2445,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                996,
-                998
+                1017,
+                1019
             ],
             "definedBy": "js.core.Bindable",
             "name": "isEqual",
@@ -2448,8 +2476,8 @@
             "annotations": {},
             "definedInFile": "js/data/RestDataSource.js",
             "lineNumbers": [
-                596,
-                687
+                660,
+                755
             ],
             "definedBy": "js.data.DataSource",
             "overwritesMethod": true,
@@ -2479,8 +2507,8 @@
             "annotations": {},
             "definedInFile": "js/data/RestDataSource.js",
             "lineNumbers": [
-                275,
-                326
+                290,
+                341
             ],
             "description": "",
             "definedBy": "js.data.DataSource",
@@ -2533,8 +2561,8 @@
             "annotations": {},
             "definedInFile": "js/core/Element.js",
             "lineNumbers": [
-                206,
-                208
+                214,
+                216
             ],
             "description": "Binding helper to negate a Boolean value",
             "returns": {
@@ -2562,8 +2590,8 @@
             "annotations": {},
             "definedInFile": "js/data/DataSource.js",
             "lineNumbers": [
-                739,
-                744
+                750,
+                755
             ],
             "definedBy": "js.data.DataSource",
             "name": "parseModel",
@@ -2627,8 +2655,8 @@
             "annotations": {},
             "definedInFile": "js/data/RestDataSource.js",
             "lineNumbers": [
-                732,
-                765
+                800,
+                833
             ],
             "definedBy": "js.data.DataSource",
             "overwritesMethod": true,
@@ -2672,8 +2700,8 @@
             "annotations": {},
             "definedInFile": "js/data/DataSource.js",
             "lineNumbers": [
-                929,
-                933
+                940,
+                944
             ],
             "description": "resolve references to models and collections",
             "definedBy": "js.data.DataSource",
@@ -2686,8 +2714,8 @@
             "annotations": {},
             "definedInFile": "js/data/DataSource.js",
             "lineNumbers": [
-                872,
-                874
+                883,
+                885
             ],
             "description": "Returns the root context of the data source",
             "returns": {
@@ -2748,8 +2776,8 @@
             "annotations": {},
             "definedInFile": "js/data/DataSource.js",
             "lineNumbers": [
-                970,
-                987
+                981,
+                998
             ],
             "description": "Saves a model",
             "definedBy": "js.data.DataSource",
@@ -2787,8 +2815,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                639,
-                725
+                646,
+                732
             ],
             "description": "Sets new values for attributes and notify about changes\n",
             "returns": {
@@ -2814,8 +2842,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                727,
-                741
+                734,
+                748
             ],
             "definedBy": "js.core.Bindable",
             "name": "setLater",
@@ -2827,8 +2855,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                494,
-                522
+                500,
+                528
             ],
             "description": "Writes attributes back to the source",
             "definedBy": "js.core.Bindable",
@@ -2952,8 +2980,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                877,
-                880
+                888,
+                891
             ],
             "description": "Unset attribute on $",
             "returns": {
@@ -3010,14 +3038,24 @@
                 "Boolean"
             ]
         },
+        "determinateContextByGateway": {
+            "name": "determinateContextByGateway",
+            "defaultType": "value",
+            "visibility": "public",
+            "value": true,
+            "lineNumbers": [
+                70,
+                70
+            ]
+        },
         "parsePayloadOnCreate": {
             "name": "parsePayloadOnCreate",
             "defaultType": "value",
             "visibility": "public",
             "value": true,
             "lineNumbers": [
-                73,
-                73
+                76,
+                76
             ],
             "description": "If true the returned payload of a POST get's parsed and written back in the Model",
             "types": [
@@ -3030,8 +3068,8 @@
             "visibility": "public",
             "value": true,
             "lineNumbers": [
-                78,
-                78
+                81,
+                81
             ],
             "description": "If true the returned payload of a PUT get's parsed and written back in the Model",
             "types": [
@@ -3044,8 +3082,8 @@
             "visibility": "public",
             "value": false,
             "lineNumbers": [
-                83,
-                83
+                86,
+                86
             ],
             "description": "Sends the used HTTP method as a query parameter and uses the POST method",
             "types": [
@@ -3058,8 +3096,8 @@
             "visibility": "public",
             "value": 100,
             "lineNumbers": [
-                89,
-                89
+                92,
+                92
             ],
             "description": "\nSet's the default collection page size for fetching collection",
             "types": [
@@ -3072,8 +3110,8 @@
             "visibility": "public",
             "value": null,
             "lineNumbers": [
-                95,
-                95
+                98,
+                98
             ],
             "description": "a suffix like `.json` to add to each request",
             "types": [
@@ -3086,8 +3124,8 @@
             "visibility": "public",
             "value": "YYYY-MM-DDTHH:mm:ssZ",
             "lineNumbers": [
-                703,
-                703
+                714,
+                714
             ],
             "definedBy": "js.data.DataSource"
         },
@@ -3111,8 +3149,8 @@
             "visibility": "public",
             "value": "auto",
             "lineNumbers": [
-                115,
-                115
+                123,
+                123
             ],
             "description": "Decides if the initialization of the component is started automatically or manually by the application",
             "types": [
@@ -3127,8 +3165,8 @@
             "visibility": "private",
             "definedInFile": "js/data/RestDataSource.js",
             "lineNumbers": [
-                102,
-                102
+                106,
+                106
             ],
             "propertyType": "complex",
             "value": " RestDataProcessor",
@@ -3140,8 +3178,8 @@
             "visibility": "private",
             "definedInFile": "js/data/DataSource.js",
             "lineNumbers": [
-                697,
-                697
+                708,
+                708
             ],
             "propertyType": "complex",
             "value": " {}",
@@ -3152,8 +3190,8 @@
             "visibility": "private",
             "definedInFile": "js/data/DataSource.js",
             "lineNumbers": [
-                698,
-                698
+                709,
+                709
             ],
             "propertyType": "complex",
             "value": " Entity",
@@ -3164,8 +3202,8 @@
             "visibility": "private",
             "definedInFile": "js/data/DataSource.js",
             "lineNumbers": [
-                700,
-                700
+                711,
+                711
             ],
             "value": "null",
             "propertyType": "value",

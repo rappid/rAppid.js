@@ -26,8 +26,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                1039,
-                1042
+                1060,
+                1063
             ],
             "name": "ctor",
             "visibility": "public"
@@ -53,8 +53,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                1048,
-                1084
+                1069,
+                1105
             ],
             "name": "trigger",
             "visibility": "public"
@@ -71,7 +71,7 @@
         "js.lib.parser",
         "underscore"
     ],
-    "description": " unbind",
+    "description": " unbind\n key not needed to check\n don't compare injected keys",
     "see": [
         "{js.core.MessageBus}",
         "{js.core.MessageBus}"

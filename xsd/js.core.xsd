@@ -10,6 +10,7 @@
     <element name="Template" type="ns:Template"/>
     <element name="Configuration" type="ns:Configuration"/>
     <element name="Content" type="ns:Content"/>
+    <element name="DateFormatter" type="ns:DateFormatter"/>
     <element name="DomElement" type="ns:DomElement"/>
     <element name="ErrorProvider" type="ns:ErrorProvider"/>
     <element name="Head" type="ns:Head"/>
@@ -130,6 +131,26 @@ children.
             </extension>
         </complexContent>
     </complexType>
+    <complexType name="DateFormatter">
+        <complexContent>
+            <extension base="ns:Component">
+                <annotation>
+                    <documentation source="http://www.rappidjs.com/#/api/js.core.DateFormatter"></documentation>
+                </annotation>
+                <sequence>
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+                <attribute name="locale">
+                    <annotation>
+                        <documentation>
+                        The default locale
+
+                    </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
     <complexType name="DomElement">
         <complexContent>
             <extension base="ns:Component">
@@ -138,6 +159,8 @@ children.
                                  first set empty -> needed for Chrome
  then remove -> needed for firefox
  IMPORTANT: use setAttribute otherwise the css classes won't be set on SVG elements
+ register a click listener for the case the device supports mouse and touch (e.g. chrome under windows 8 metro)
+ unregister click listener for the case the device supports mouse and touch (e.g. chrome under windows 8 metro)
                             </documentation>
                 </annotation>
                 <sequence>
@@ -236,13 +259,6 @@ The resulting class attributes is the union from class and componentClass of the
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="loadMomentJs" default="true">
-                    <annotation>
-                        <documentation>
-                        Decides wether to load momentjs for date formatting and parsing
-                    </documentation>
-                    </annotation>
-                </attribute>
                 <attribute name="loadLocaleDuringInitialization" default="true">
                     <annotation>
                         <documentation>
@@ -274,6 +290,7 @@ The resulting class attributes is the union from class and componentClass of the
                 <sequence>
                     <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
                 </sequence>
+                <attribute name="base"/>
             </extension>
         </complexContent>
     </complexType>
@@ -412,6 +429,7 @@ If it's not set the default === comparison is used.
                 <sequence>
                     <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
                 </sequence>
+                <attribute name="module"/>
             </extension>
         </complexContent>
     </complexType>

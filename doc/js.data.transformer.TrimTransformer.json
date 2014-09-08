@@ -1,0 +1,37 @@
+{
+    "methods": [
+        {
+            "type": "Method",
+            "parameter": [
+                {
+                    "name": "field"
+                },
+                {
+                    "name": "value"
+                },
+                {
+                    "name": "schemaObject"
+                }
+            ],
+            "annotations": {},
+            "definedInFile": "js/data/transformer/TrimTransformer.js",
+            "lineNumbers": [
+                4,
+                11
+            ],
+            "name": "_transformValue",
+            "visibility": "protected"
+        }
+    ],
+    "staticMethods": [],
+    "defaults": {},
+    "properties": {},
+    "fqClassName": "js.data.transformer.TrimTransformer",
+    "dependencies": [
+        "js.data.Entity",
+        "underscore"
+    ],
+    "type": "js",
+    "file": "js/data/transformer/TrimTransformer.js",
+    "package": "js.data.transformer"
+}

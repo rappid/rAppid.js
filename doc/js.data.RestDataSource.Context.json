@@ -16,8 +16,8 @@
             "annotations": {},
             "definedInFile": "js/data/RestDataSource.js",
             "lineNumbers": [
-                802,
-                809
+                870,
+                877
             ],
             "name": "createCollection",
             "visibility": "public"
@@ -28,8 +28,8 @@
             "annotations": {},
             "definedInFile": "js/data/RestDataSource.js",
             "lineNumbers": [
-                781,
-                800
+                849,
+                868
             ],
             "name": "getPathComponents",
             "visibility": "public"
@@ -40,8 +40,8 @@
             "annotations": {},
             "definedInFile": "js/data/RestDataSource.js",
             "lineNumbers": [
-                811,
-                813
+                879,
+                881
             ],
             "name": "getQueryParameters",
             "visibility": "public"

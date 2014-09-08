@@ -70,7 +70,7 @@
             "annotations": {},
             "definedInFile": "js/svg/Svg.js",
             "lineNumbers": [
-                70,
+                72,
                 75
             ],
             "definedBy": "js.core.Base",
@@ -115,7 +115,7 @@
             "definedInFile": "js/svg/Svg.js",
             "lineNumbers": [
                 77,
-                187
+                199
             ],
             "name": "loadExternalFont",
             "visibility": "public"

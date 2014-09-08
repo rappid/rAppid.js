@@ -58,6 +58,7 @@
                 <attribute name="type" default="text"/>
                 <attribute name="value"/>
                 <attribute name="size" default="large"/>
+                <attribute name="fieldName"/>
                 <attribute name="placeholder"/>
             </extension>
         </complexContent>
@@ -75,6 +76,7 @@
                 <attribute name="value"/>
                 <attribute name="size" default="large"/>
                 <attribute name="placeholder"/>
+                <attribute name="maxLength"/>
             </extension>
         </complexContent>
     </complexType>
@@ -90,6 +92,7 @@
                 <attribute name="value"/>
                 <attribute name="size" default="large"/>
                 <attribute name="placeholder"/>
+                <attribute name="maxLength"/>
             </extension>
         </complexContent>
     </complexType>
@@ -105,6 +108,7 @@
                 <attribute name="type" default="text"/>
                 <attribute name="value"/>
                 <attribute name="size" default="large"/>
+                <attribute name="fieldName"/>
                 <attribute name="placeholder"/>
             </extension>
         </complexContent>

@@ -1,0 +1,16 @@
+{
+    "fqClassName": "js.ui.AutoSuggestionBox",
+    "dependencies": [
+        "js.ui.AutoSuggestionBoxClass"
+    ],
+    "type": "xml",
+    "inherit": "js.ui.AutoSuggestionBoxClass",
+    "defaults": {},
+    "methods": [],
+    "file": "js/ui/AutoSuggestionBox.xml",
+    "package": "js.ui",
+    "inheritancePath": [
+        "js.ui.AutoSuggestionBoxClass"
+    ],
+    "staticMethods": []
+}

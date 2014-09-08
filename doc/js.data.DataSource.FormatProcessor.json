@@ -83,8 +83,8 @@
             "annotations": {},
             "definedInFile": "js/data/DataSource.js",
             "lineNumbers": [
-                1104,
-                1106
+                1115,
+                1117
             ],
             "name": "deserialize",
             "visibility": "public"
@@ -115,8 +115,8 @@
             "annotations": {},
             "definedInFile": "js/data/DataSource.js",
             "lineNumbers": [
-                1107,
-                1109
+                1118,
+                1120
             ],
             "name": "getContentType",
             "visibility": "public"
@@ -184,8 +184,8 @@
             "annotations": {},
             "definedInFile": "js/data/DataSource.js",
             "lineNumbers": [
-                1101,
-                1103
+                1112,
+                1114
             ],
             "name": "serialize",
             "visibility": "public"

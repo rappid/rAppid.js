@@ -19,8 +19,8 @@
             "annotations": {},
             "definedInFile": "js/core/Binding.js",
             "lineNumbers": [
-                339,
-                356
+                355,
+                372
             ],
             "description": "This method is called, when the value of the current binding changes.\nIt recreates the the subBinding and triggers the binding",
             "private": "",
@@ -39,8 +39,8 @@
             "annotations": {},
             "definedInFile": "js/core/Binding.js",
             "lineNumbers": [
-                321,
-                333
+                337,
+                349
             ],
             "description": "This method is called, when the a change event of an function binding is triggered\n",
             "private": "",
@@ -53,8 +53,8 @@
             "annotations": {},
             "definedInFile": "js/core/Binding.js",
             "lineNumbers": [
-                234,
-                269
+                250,
+                285
             ],
             "name": "_checkAttributes",
             "visibility": "protected"
@@ -65,8 +65,8 @@
             "annotations": {},
             "definedInFile": "js/core/Binding.js",
             "lineNumbers": [
-                270,
-                305
+                286,
+                321
             ],
             "name": "_createSubBinding",
             "visibility": "protected"
@@ -157,8 +157,8 @@
             "annotations": {},
             "definedInFile": "js/core/Binding.js",
             "lineNumbers": [
-                206,
-                232
+                222,
+                248
             ],
             "name": "_getEventsForFnc",
             "visibility": "protected"
@@ -169,8 +169,8 @@
             "annotations": {},
             "definedInFile": "js/core/Binding.js",
             "lineNumbers": [
-                408,
-                418
+                424,
+                434
             ],
             "description": "Returns an array with values of all function parameters",
             "returns": {
@@ -195,10 +195,29 @@
             "annotations": {},
             "definedInFile": "js/core/Binding.js",
             "lineNumbers": [
-                180,
-                204
+                196,
+                220
             ],
             "name": "_getOnChangeAttributesForFnc",
+            "visibility": "protected"
+        },
+        {
+            "type": "Method",
+            "parameter": [
+                {
+                    "name": "scope"
+                },
+                {
+                    "name": "fnc"
+                }
+            ],
+            "annotations": {},
+            "definedInFile": "js/core/Binding.js",
+            "lineNumbers": [
+                181,
+                194
+            ],
+            "name": "_getOnChangePathsForFnc",
             "visibility": "protected"
         },
         {
@@ -207,8 +226,8 @@
             "annotations": {},
             "definedInFile": "js/core/Binding.js",
             "lineNumbers": [
-                361,
-                402
+                377,
+                418
             ],
             "description": "Unbinds all events and destroys subBinding...",
             "definedBy": "js.core.EventDispatcher",
@@ -226,8 +245,8 @@
             "annotations": {},
             "definedInFile": "js/core/Binding.js",
             "lineNumbers": [
-                306,
-                314
+                322,
+                330
             ],
             "name": "_revCallback",
             "visibility": "protected"
@@ -254,8 +273,8 @@
             "annotations": {},
             "definedInFile": "js/core/Binding.js",
             "lineNumbers": [
-                496,
-                505
+                514,
+                523
             ],
             "description": "",
             "name": "addTarget",
@@ -311,8 +330,8 @@
             "annotations": {},
             "definedInFile": "js/core/Binding.js",
             "lineNumbers": [
-                527,
-                553
+                545,
+                571
             ],
             "name": "create",
             "visibility": "public"
@@ -327,8 +346,8 @@
             "annotations": {},
             "definedInFile": "js/core/Binding.js",
             "lineNumbers": [
-                37,
-                51
+                38,
+                52
             ],
             "definedBy": "js.core.Base",
             "overwritesMethod": true,
@@ -375,8 +394,8 @@
             "annotations": {},
             "definedInFile": "js/core/Binding.js",
             "lineNumbers": [
-                455,
-                461
+                473,
+                479
             ],
             "description": "Returns the value in the context of the surrounding bindings",
             "returns": {
@@ -393,8 +412,8 @@
             "annotations": {},
             "definedInFile": "js/core/Binding.js",
             "lineNumbers": [
-                487,
-                489
+                505,
+                507
             ],
             "name": "getTargets",
             "visibility": "public"
@@ -405,8 +424,8 @@
             "annotations": {},
             "definedInFile": "js/core/Binding.js",
             "lineNumbers": [
-                423,
-                445
+                439,
+                463
             ],
             "description": "Returns the transformed value of the binding or null, if the binding path is not present",
             "returns": {
@@ -423,8 +442,8 @@
             "annotations": {},
             "definedInFile": "js/core/Binding.js",
             "lineNumbers": [
-                61,
-                178
+                62,
+                179
             ],
             "name": "initialize",
             "visibility": "public"
@@ -435,8 +454,8 @@
             "annotations": {},
             "definedInFile": "js/core/Binding.js",
             "lineNumbers": [
-                447,
-                449
+                465,
+                467
             ],
             "name": "invalidateValueCache",
             "visibility": "public"
@@ -496,8 +515,8 @@
             "annotations": {},
             "definedInFile": "js/core/Binding.js",
             "lineNumbers": [
-                511,
-                525
+                529,
+                543
             ],
             "description": "",
             "name": "removeTarget",
@@ -555,8 +574,8 @@
             "annotations": {},
             "definedInFile": "js/core/Binding.js",
             "lineNumbers": [
-                483,
-                485
+                501,
+                503
             ],
             "name": "toString",
             "visibility": "public"
@@ -571,8 +590,8 @@
             "annotations": {},
             "definedInFile": "js/core/Binding.js",
             "lineNumbers": [
-                53,
-                55
+                54,
+                56
             ],
             "name": "transform",
             "visibility": "public"
@@ -587,8 +606,8 @@
             "annotations": {},
             "definedInFile": "js/core/Binding.js",
             "lineNumbers": [
-                57,
-                59
+                58,
+                60
             ],
             "name": "transformBack",
             "visibility": "public"
@@ -635,8 +654,8 @@
             "annotations": {},
             "definedInFile": "js/core/Binding.js",
             "lineNumbers": [
-                465,
-                482
+                483,
+                500
             ],
             "description": "This method triggers the binding and syncs the target with the scope",
             "name": "triggerBinding",
@@ -683,8 +702,8 @@
             "visibility": "public",
             "value": "change",
             "lineNumbers": [
-                32,
-                32
+                33,
+                33
             ]
         },
         "path": {
@@ -693,8 +712,8 @@
             "visibility": "public",
             "value": null,
             "lineNumbers": [
-                33,
-                33
+                34,
+                34
             ]
         },
         "twoWay": {
@@ -703,8 +722,8 @@
             "visibility": "public",
             "value": false,
             "lineNumbers": [
-                34,
-                34
+                35,
+                35
             ]
         }
     },
