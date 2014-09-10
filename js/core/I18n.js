@@ -98,7 +98,7 @@ define(["require", "js/core/Component", "underscore", "flow"], function (require
 
             for (var i = 0; i < args.length; i++) {
                 // replace, placeholder
-                value = value.split("%" + i).join(args[i]);
+                value = value.split("%" + i).join(args[i] || "");
             }
 
             return value;
