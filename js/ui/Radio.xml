@@ -1,7 +1,8 @@
 <ui:Checkbox xmlns="http://www.w3.org/1999/xhtml" xmlns:js="js.core" xmlns:ui="js.ui" tagName="label"
              componentClass="radio">
     <js:Template name="layout">
-        <input type="radio" name="{name}" checked="{{checked}}" value="{{value}}" enabled="{enabled}"/>
+        <input type="radio" name="{name}" checked="{{checked}}" value="{getInputValue()}" id="{inputId}"
+               enabled="{enabled}"/>
         <ui:PlaceHolder name="label"/>
     </js:Template>
 </ui:Checkbox>

@@ -7,12 +7,16 @@ define(['js/ui/View'], function (View) {
             value: null,
             label: "",
             name: null,
-
+            inputValue: null,
+            inputId: null,
             selected: "{checked}"
         },
 
         _renderLabel: function (label) {
             this._renderTemplateToPlaceHolder('label', 'label', {$label: label || ""});
-        }
+        },
+        getInputValue: function () {
+            return this.$.inputValue != null ? this.$.inputValue : this.$.value;
+        }.onChange('value', 'displayValue')
     });
 });
