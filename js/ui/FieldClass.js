@@ -81,6 +81,10 @@ define(["js/ui/View", "js/html/Input", "js/html/Select", "js/html/TextArea", 'js
             }
         },
 
+        _renderInputId: function (inputId) {
+            this.$firstInput && this.$firstInput.set('id', inputId);
+        },
+
         findFirstInput: function (child) {
             if (child instanceof Input || child instanceof Select || child instanceof TextArea) {
                 return child;
