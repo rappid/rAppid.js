@@ -95,7 +95,11 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                     err = e || true;
                 }
 
-                var self = this;
+                var self = this,
+                    subOptions = {
+                        setErrors: options.setErrors,
+                        reset: options.reset
+                    };
 
                 flow()
                     .seq(function () {
@@ -104,7 +108,7 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                         }
                     })
                     .seqEach(subEntities, function (subEntity, cb) {
-                        entity.validateSubEntity(subEntity.value, function (err, results) {
+                        entity.validateSubEntity(subEntity.value, subOptions, function (err, results) {
                             if (results) {
                                 errors.push(self._createError("associationError", subEntity.key + " is not valid", subEntity.key));
                             }
@@ -636,11 +640,12 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
             /**
              * Validates a sub entity
              * @param {js.data.Entity} entity
+             * @param {Object} options
              * @param {Function} callback
              */
-            validateSubEntity: function (entity, callback) {
+            validateSubEntity: function (entity, options, callback) {
                 if (entity instanceof Entity) {
-                    entity.validate(null, callback);
+                    entity.validate(options, callback);
                 } else {
                     callback("parameter is not an entity");
                 }
