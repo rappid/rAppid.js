@@ -388,7 +388,7 @@ define(["js/data/DataSource", "js/data/Model", "underscore", "flow", "JSON", "js
 
                 if (location) {
 
-                    if (self.$.parsePayloadOnCreate) {
+                    if (self._parsePayloadOnCreate(request, xhr)) {
                         self._parseModelPayload(xhr, model, request.options);
                     }
 
@@ -547,13 +547,37 @@ define(["js/data/DataSource", "js/data/Model", "underscore", "flow", "JSON", "js
 
             var model = request.model;
 
-            if (this.$.parsePayloadOnUpdate) {
+            if (this._parsePayloadOnUpdate(request, xhr)) {
                 this._parseModelPayload(xhr, model, request.options);
             }
 
             if (callback) {
                 callback(null, model, request.options);
             }
+        },
+
+
+        /***
+         * @hook
+         * @param request
+         * @param xhr
+         * @returns {Boolean}
+         * @private
+         */
+        _parsePayloadOnCreate: function(request, xhr) {
+            return this.$.parsePayloadOnCreate;
+        },
+
+
+        /***
+         * @hook
+         * @param request
+         * @param xhr
+         * @returns {Boolean}
+         * @private
+         */
+        _parsePayloadOnUpdate: function(request, xhr) {
+            return this.$.parsePayloadOnUpdate;
         },
 
         extractIdFromLocation: function (location, request) {
