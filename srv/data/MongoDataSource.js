@@ -375,7 +375,7 @@ define(['js/data/DataSource', 'mongodb', 'js/data/Model', 'flow', 'underscore', 
             if (where.$and) {
                 where.$and.push(addWhere);
             } else {
-                _.extend(addWhere, where);
+                _.extend(where, addWhere);
             }
 
             var offset = collectionPage.$offset;
