@@ -7,7 +7,7 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
             defaultSortOrder: null
         },
 
-        ctor: function() {
+        ctor: function () {
             this._extendValidators();
 
             this.callBase();
@@ -88,19 +88,24 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
         _getPathForModel: function (model, context) {
             var dataSource = this.getDataSource(context, this);
 
-            var configuration = dataSource.getConfigurationForModelClass(model.factory);
-
-            if (!configuration) {
-                throw new Error("No configuration found for " + model.constructor.name);
+            var contextModels = [],
+                modelContext = model.$context;
+            while (modelContext && modelContext.$contextModel) {
+                contextModels.unshift(modelContext.$contextModel);
+                modelContext = modelContext.$contextModel.$context;
             }
+            contextModels.push(model);
 
-            var path = [configuration.$.path, model.identifier()];
-            var parentModel = model.$context.$contextModel,
-                parentConfiguration = configuration.$parent;
-            while (parentModel) {
-                path.unshift(parentConfiguration.$.path, parentModel.identifier());
-                parentModel = parentModel.$context.$contextModel;
-                parentConfiguration = parentConfiguration.$parent;
+            var path = [],
+                config = dataSource,
+                contextModel;
+            while (contextModels.length) {
+                contextModel = contextModels.shift();
+                config = config.getConfigurationForModelClass(contextModel.factory);
+                if (!config) {
+                    throw new Error("No configuration found for " + contextModel.constructor.name);
+                }
+                path.push(config.$.path, contextModel.identifier());
             }
 
             return encodeURI(path.join("/"));
@@ -688,40 +693,40 @@ define(['js/core/Component', 'srv/core/HttpError', 'flow', 'require', 'JSON', 'j
                 self = this;
 
             flow()
-                .par(function(cb) {
+                .par(function (cb) {
                     flow()
-                        .parEach(validators, function(validator, cb) {
+                        .parEach(validators, function (validator, cb) {
                             validator.validate(model, {
                                 resourceHandler: self
-                            }, function(err, result) {
+                            }, function (err, result) {
                                 // error or validation error result -> error
                                 cb(err || (result instanceof Array) || (result instanceof Validator.Error));
                             });
                         })
                         .exec(cb);
-                }, function(cb) {
+                }, function (cb) {
 
-                    function checkEntityForLinkedModels(entity, cb){
-                         flow()
-                             .parEach(entity.schema, function(schemaObject, cb){
-                                 var linkedModel = entity.$[schemaObject._key];
-                                 if (linkedModel instanceof Model) {
-                                     // replace with exists?
-                                     linkedModel.fetch(null, function (err) {
-                                         var key = schemaObject._key;
-                                         if (err && err === DataSource.ERROR.NOT_FOUND) {
-                                             cb(new HttpError(key + " not found", 400));
-                                         } else {
-                                             cb(err);
-                                         }
-                                     });
-                                 } else if (linkedModel instanceof Entity) {
-                                     checkEntityForLinkedModels(linkedModel, cb);
-                                 } else {
-                                     cb();
-                                 }
-                             })
-                             .exec(cb)
+                    function checkEntityForLinkedModels(entity, cb) {
+                        flow()
+                            .parEach(entity.schema, function (schemaObject, cb) {
+                                var linkedModel = entity.$[schemaObject._key];
+                                if (linkedModel instanceof Model) {
+                                    // replace with exists?
+                                    linkedModel.fetch(null, function (err) {
+                                        var key = schemaObject._key;
+                                        if (err && err === DataSource.ERROR.NOT_FOUND) {
+                                            cb(new HttpError(key + " not found", 400));
+                                        } else {
+                                            cb(err);
+                                        }
+                                    });
+                                } else if (linkedModel instanceof Entity) {
+                                    checkEntityForLinkedModels(linkedModel, cb);
+                                } else {
+                                    cb();
+                                }
+                            })
+                            .exec(cb)
                     }
 
                     checkEntityForLinkedModels(model, cb);
