@@ -791,70 +791,53 @@ define(["js/core/Component", "js/core/Base", "js/data/Collection", "underscore",
              * @return {*}
              */
             getContextForChild: function (childFactory, requestor) {
+                var context;
                 if (childFactory) {
+
                     var configuration,
-                        requestorConfiguration;
+                        requestorConfiguration,
+                        baseConfiguration = this,
+                        isModel = childFactory.classof(Model);
+
+                    context = this.root();
 
                     if (requestor) {
+                        // find configuration of requestor
                         var factory = requestor.factory;
                         if (factory.classof(Model)) {
                             requestorConfiguration = this.getConfigurationForModelClass(factory);
                         } else if (factory.classof(Collection)) {
                             requestorConfiguration = this.getConfigurationForCollectionClassName(factory.prototype.$modelFactory);
                         }
-                    }
-
-                    var baseConfiguration = requestorConfiguration || this;
-
-                    if (childFactory.classof(Model)) {
-                        configuration = baseConfiguration.getConfigurationForModelClass(childFactory);
-                    } else if (childFactory.classof(Collection)) {
-                        configuration = baseConfiguration.getConfigurationForModelClass(childFactory.prototype.$modelFactory);
-                    }
-
-                    if (configuration) {
-
-                        if (requestor) {
-                            var parentConfiguration = configuration;
-                            do {
-                                parentConfiguration = parentConfiguration.$parent;
-
-                                if (!(parentConfiguration instanceof ResourceConfiguration)) {
-                                    break;
-                                }
-
-                                if (parentConfiguration.$.modelClassName === requestor.constructor.name) {
-                                    // childFactory is configured as descendant of the requestor
-                                    // so the childFactory will be created in the context of the requestor
-                                    return this.getContextByProperties(requestor, null, requestor.$context);
-                                }
-
-                            } while (parentConfiguration.$parent);
-
-                            var context = requestor.$context;
-                            // check if the requestor is descendant of the child
-                            while (context && context.$contextModel) {
-                                if (context.$contextModel.constructor.name === configuration.$.modelClassName) {
-                                    return context.$contextModel.$context;
-                                }
-                                context = context.$contextModel.$context;
-
+                        if (requestorConfiguration) {
+                            context = this.getContextByProperties(requestor, null, requestor.$context);
+                            baseConfiguration = requestorConfiguration;
+                        }
+                        while (baseConfiguration.$parent && context) {
+                            if (isModel) {
+                                configuration = baseConfiguration.getConfigurationForModelClass(childFactory);
+                            } else {
+                                configuration = baseConfiguration.getConfigurationForModelClass(childFactory.prototype.$modelFactory);
                             }
-                            // the requestor is not a descendant of the child and the child is not a descendant of the requestor
-                            // so if the requestor is not a Model and not a Collection we return the last context
-                            if (!(requestor instanceof Model) && !(requestor instanceof Collection)) {
-                                return context;
+                            if (configuration) {
+                                // found context
+                                break;
+                            } else {
+                                context = context.$contextModel ? context.$contextModel.$context : null;
+                                baseConfiguration = baseConfiguration.$parent;
                             }
                         }
                     }
                 }
-                // the requestor is not a descendant of the child and the child is not a descendant of the requestor
-                // and the requestor is a Model or a Collection
-                if (requestor) {
-                    return requestor.$context;
+                return context || this.root();
+            },
+
+            generateCacheKeyForContext: function (childFactory) {
+                var factory = childFactory;
+                if (childFactory.classof(Collection)) {
+                    factory = childFactory.prototype.$modelFactory;
                 }
-                // childFactory isn't descendant of the requestor, so return the root context
-                return this.root();
+                return factory.prototype.constructor.name;
             },
 
             /***
