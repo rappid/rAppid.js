@@ -802,13 +802,26 @@ define(["js/core/Component", "js/core/Base", "js/data/Collection", "underscore",
                     context = this.root();
 
                     if (requestor) {
-                        // find configuration of requestor
+                        var requestorContext = requestor.$context,
+                            contextStack = [];
+                        // find correct configuration of requestor
+                        while (requestorContext.$contextModel) {
+                            contextStack.push(requestorContext);
+                            requestorContext = requestorContext.$contextModel.$context;
+                        }
+                        var rootConfiguration = this,
+                            rootContext;
+                        while (contextStack.length > 0 && rootConfiguration) {
+                            rootContext = contextStack.pop();
+                            rootConfiguration = rootConfiguration.getConfigurationForModelClass(rootContext.$contextModel.factory);
+                        }
                         var factory = requestor.factory;
                         if (factory.classof(Model)) {
-                            requestorConfiguration = this.getConfigurationForModelClass(factory);
+                            requestorConfiguration = rootConfiguration.getConfigurationForModelClass(factory);
                         } else if (factory.classof(Collection)) {
-                            requestorConfiguration = this.getConfigurationForCollectionClassName(factory.prototype.$modelFactory);
+                            requestorConfiguration = rootConfiguration.getConfigurationForCollectionClassName(factory.prototype.$modelFactory);
                         }
+                        // starting from the requestors configuration, find correct context of the childFactory
                         if (requestorConfiguration) {
                             context = this.getContextByProperties(requestor, null, requestor.$context);
                             baseConfiguration = requestorConfiguration;
