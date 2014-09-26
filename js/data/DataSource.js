@@ -497,14 +497,13 @@ define(["js/core/Component", "js/core/Base", "js/data/Collection", "underscore",
                             if (contextForChildren) {
                                 if (model.$[key] instanceof Collection) {
                                     newData[key] = model.$[key];
+                                    list = model.$[key];
                                 } else {
                                     list = newData[key] = contextForChildren.createCollection(schemaType, (value instanceof Object) && !(value instanceof Array) ? value : null);
-
                                     list.$parent = contextForChildren.$contextModel;
-
-                                    if (value && value instanceof Array) {
-                                        list.reset(this.parseCollection(list, value, action, options));
-                                    }
+                                }
+                                if (value && value instanceof Array) {
+                                    list.reset(this.parseCollection(list, value, action, options));
                                 }
 
                             }
