@@ -121,7 +121,7 @@ define(["js/html/HtmlElement", "underscore"], function (HtmlElement, _) {
         _bindDomEvents: function () {
 
             var self = this;
-            if (_.include(["text", "password", "date", "number"], this.$.type)) {
+            if (_.include(["text", "password", "date", "number", "email"], this.$.type)) {
                 if (this.$.type === "date" || this.$.type === "number") {
                     this.$.updateOnEvent = "change";
                 }
