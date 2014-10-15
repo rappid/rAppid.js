@@ -24,7 +24,11 @@ define(["js/html/HtmlElement", "js/core/TextElement", "js/core/BindingCreator"],
                 if (value === null || value === undefined) {
                     value = "";
                 }
-                this.$el.value = String(value);
+                value = String(value);
+                if (this.$el.value != value) {
+                    this.$el.value = value;
+                }
+
             },
             _bindDomEvents: function () {
                 this.callBase();
