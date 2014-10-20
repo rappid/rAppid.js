@@ -580,7 +580,8 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
             },
 
             _renderAttribute: function (key, attr) {
-                var method = this.$renderMap[key];
+                var renderMethods = this.factory.$renderMethods || {};
+                var method = renderMethods[key];
                 var prev = this.$previousAttributes[key];
 
                 if (_.isUndefined(method)) {
@@ -594,7 +595,8 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                         method = false;
                     }
 
-                    this.$renderMap[key] = method;
+                    renderMethods[key] = method;
+                    this.factory.$renderMethods = renderMethods;
                 }
                 if (method !== false) {
                     method.call(this, attr, prev);
