@@ -130,9 +130,9 @@ define(["js/html/HtmlElement", "js/core/Bus", "js/core/WindowManager", "js/core/
                             linux: "linux",
                             x11: "unix"
                         }[os[0].toLowerCase()];
-
-                        browser.os = os;
                     }
+
+                    browser.os = os || "";
 
                     var browserName = /(firefox)|(chrome)|(safari)/i.exec(userAgent);
                     if (browserName) {
