@@ -6,7 +6,8 @@ define(["js/core/Bindable", "underscore"], function (Bindable, _) {
                 "type:function": "function:"
             },
             idCounter = 1,
-            descriptorAttributeCache = {};
+            descriptorAttributeCache = {},
+            attributeCacheKey = "_data-desc-id";
 
         function stringToPrimitive(str) {
             // if it's a string
@@ -70,13 +71,9 @@ define(["js/core/Bindable", "underscore"], function (Bindable, _) {
                 var attributes = {};
                 if (descriptor && descriptor.attributes) {
 
-                    var cacheKey = "_data-rappid-id",
-                        cacheId = descriptor.getAttribute(cacheKey);
-                    if (!cacheId) {
-                        cacheId = ++idCounter;
-                        descriptor.setAttribute(cacheKey, cacheId);
-                    } else {
-                        return descriptorAttributeCache["" + cacheId];
+                    var cacheId = descriptor.getAttribute(attributeCacheKey);
+                    if (cacheId && descriptorAttributeCache[cacheId]) {
+                        return descriptorAttributeCache[cacheId];
                     }
                     var node, localName;
 
@@ -117,7 +114,8 @@ define(["js/core/Bindable", "underscore"], function (Bindable, _) {
                         }
 
                     }
-
+                    cacheId = ++idCounter;
+                    descriptor.setAttribute(attributeCacheKey, cacheId);
                     descriptorAttributeCache["" + cacheId] = attributes;
                 }
 
