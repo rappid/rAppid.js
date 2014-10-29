@@ -644,13 +644,13 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
                  * @return {js.core.Bindable} this
                  */
                 set: function (key, value, options) {
-                    var attributes = {};
 
                     if (_.isNumber(key)) {
                         key = String(key);
                     }
 
                     if (_.isString(key)) {
+                        var attributes = {};
                         attributes[key] = value;
                     } else {
                         options = value;
@@ -697,15 +697,16 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
                         }
                     }
 
+                    var commitMethod;
                     if (changedAttributesCount) {
                         for (key in changedAttributes) {
                             if (changedAttributes.hasOwnProperty(key)) {
-                                var commitMethodName = '_commit' + key.charAt(0).toUpperCase() + key.substr(1);
+                                commitMethod = this['_commit' + key.charAt(0).toUpperCase() + key.substr(1)];
 
-                                if (this[commitMethodName] instanceof Function) {
+                                if (commitMethod instanceof Function) {
                                     // call method
 
-                                    if (this[commitMethodName](now[key], this.$previousAttributes[key], options) === false) {
+                                    if (commitMethod.call(this, now[key], this.$previousAttributes[key], options) === false) {
                                         // false returned rollback
                                         changedAttributesCount--;
                                         now[key] = this.$previousAttributes[key];
