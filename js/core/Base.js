@@ -4,7 +4,8 @@ define(["inherit"], function(inherit){
         emptyCallback = function() {},
         NONE = 0,
         LOADING = 1,
-        LOADED = 2;
+        LOADED = 2,
+        ERROR = 3;
 
     var Base = inherit.Base.inherit("js.core.Base",{
 
@@ -136,7 +137,7 @@ define(["inherit"], function(inherit){
                 callback && obj.callbacks.push(callback);
                 obj.state = LOADING;
                 fnc.call(scope, function(err, result) {
-                    obj.state = LOADED;
+                    obj.state = err ? ERROR : LOADED;
                     obj.error = err;
                     obj.result = result;
 
