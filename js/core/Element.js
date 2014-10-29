@@ -4,7 +4,9 @@ define(["js/core/Bindable", "underscore"], function (Bindable, _) {
             prefixMap = {
                 "type:eventHandler": "eventHandler:",
                 "type:function": "function:"
-            };
+            },
+            idCounter = 1,
+            descriptorAttributeCache = {};
 
         function stringToPrimitive(str) {
             // if it's a string
@@ -66,14 +68,22 @@ define(["js/core/Bindable", "underscore"], function (Bindable, _) {
                 this.$attributesNamespace = this.$attributesNamespace || {};
 
                 var attributes = {};
-
                 if (descriptor && descriptor.attributes) {
+
+                    var cacheKey = "_data-rappid-id",
+                        cacheId = descriptor.getAttribute(cacheKey);
+                    if (!cacheId) {
+                        cacheId = ++idCounter;
+                        descriptor.setAttribute(cacheKey, cacheId);
+                    } else {
+                        return descriptorAttributeCache["" + cacheId];
+                    }
                     var node, localName;
 
                     for (var a = 0; a < descriptor.attributes.length; a++) {
                         node = descriptor.attributes[a];
                         // don't add xmlns attributes
-                        if(node.nodeName.indexOf("xmlns") !== 0){
+                        if (node.nodeName.indexOf("xmlns") !== 0) {
                             localName = this._getLocalNameFromNode(node);
 
                             // fixes IE9+ issue with XML parsing checked get's parsed as CHECKED
@@ -107,11 +117,14 @@ define(["js/core/Bindable", "underscore"], function (Bindable, _) {
                         }
 
                     }
+
+                    descriptorAttributeCache["" + cacheId] = attributes;
                 }
+
 
                 return attributes;
             },
-            _getLocalNameFromNode: function(node){
+            _getLocalNameFromNode: function (node) {
                 return node.localName ? node.localName : node.nodeName.split(":").pop();
             },
 
@@ -129,7 +142,7 @@ define(["js/core/Bindable", "underscore"], function (Bindable, _) {
              * @param attributes
              * @private
              */
-            _initializeEventAttributes: function(attributes){
+            _initializeEventAttributes: function (attributes) {
             },
 
             /***
@@ -211,15 +224,15 @@ define(["js/core/Bindable", "underscore"], function (Bindable, _) {
              * @param value
              * @return {Boolean}
              */
-            not: function(value){
+            not: function (value) {
                 return !value;
             },
-            isDefined: function(value){
+            isDefined: function (value) {
                 return !_.isUndefined(value);
             }
         });
 
-        Element.xmlStringToDom = function(xmlString) {
+        Element.xmlStringToDom = function (xmlString) {
 
             if (window && window.DOMParser) {
                 return (new DOMParser()).parseFromString(xmlString, "text/xml").documentElement;
