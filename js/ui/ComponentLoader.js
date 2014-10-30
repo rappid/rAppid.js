@@ -83,6 +83,9 @@ define(["js/ui/View", "require"], function(View, require) {
                 }
 
                 var instance = self.createComponent(Factory, attributes);
+                // use event definitions
+                instance.$eventDefinitions = self.$eventDefinitions;
+
                 self.addChild(instance);
                 self.set({
                     instance: instance,
