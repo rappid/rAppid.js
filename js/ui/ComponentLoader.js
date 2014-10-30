@@ -1,4 +1,4 @@
-define(["js/ui/View", "require"], function(View, require) {
+define(["js/ui/View", "require"], function (View, require) {
 
     return View.inherit("js.ui.ComponentLoader", {
 
@@ -9,10 +9,11 @@ define(["js/ui/View", "require"], function(View, require) {
 
             instance: null,
             loading: false,
-            componentClass: "component-loader {class()}"
+            componentClass: "component-loader {class()}",
+            mediaQuery: null
         },
 
-        "class": function() {
+        "class": function () {
             return [
                 this.$.loading ? "loading" : "",
                 this.$.error ? "error" : ""
@@ -20,13 +21,13 @@ define(["js/ui/View", "require"], function(View, require) {
 
         }.onChange("loading", "error"),
 
-        _renderLoad: function(load) {
+        _renderLoad: function (load) {
             if (load) {
                 this._load();
             }
         },
 
-        clear: function() {
+        clear: function () {
 
             var instance = this.$.instance;
             if (instance) {
@@ -40,7 +41,16 @@ define(["js/ui/View", "require"], function(View, require) {
             });
         },
 
-        _load: function(type, callback) {
+        _matchesMediaQuery: function () {
+            var w = this.$stage.$window;
+            return !this.$.mediaQuery || w && w.matchMedia && w.matchMedia(this.$.mediaQuery).matches
+        },
+
+        _load: function (type, callback) {
+
+            if (!this._matchesMediaQuery()) {
+                return;
+            }
 
             var self = this;
 
@@ -62,7 +72,7 @@ define(["js/ui/View", "require"], function(View, require) {
 
             this.set("loading", true);
 
-            require([this.$stage.$applicationContext.getFqClassName(type)], function(Factory) {
+            require([this.$stage.$applicationContext.getFqClassName(type)], function (Factory) {
 
                 var attributes = {};
                 for (var key in self.$) {
@@ -94,7 +104,7 @@ define(["js/ui/View", "require"], function(View, require) {
 
                 callback && callback(null, instance);
 
-            }, function(e) {
+            }, function (e) {
                 self.set({
                     error: e,
                     loading: false
