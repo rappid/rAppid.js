@@ -42,8 +42,23 @@ define(["js/ui/View", "require"], function (View, require) {
         },
 
         _matchesMediaQuery: function () {
+
+            var mediaQuery = this.$.mediaQuery;
+
+            if (!mediaQuery) {
+                return true;
+            }
+
             var w = this.$stage.$window;
-            return !this.$.mediaQuery || w && w.matchMedia && w.matchMedia(this.$.mediaQuery).matches
+
+            if (w && w.matchMedia) {
+                var match = w.matchMedia(mediaQuery);
+                if (match && !match.matches) {
+                    return false;
+                }
+            }
+
+            return true;
         },
 
         _load: function (type, callback) {
