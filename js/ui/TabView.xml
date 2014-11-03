@@ -7,7 +7,7 @@
                               needsSelection="true" forceSelectable="true" selectedIndex="{{selectedIndex}}"
                               selectedItem="{{selectedTab}}">
                 <js:Template name="item">
-                    <ui:TemplatePlaceHolder templateName="tab" enabled="{item.enabled}" class="{item.class}"
+                    <ui:TemplatePlaceHolder templateName="tab" enabled="{item.enabled}" class="{item.tabClass}"
                                             tagName="li"/>
                 </js:Template>
             </ui:SelectionView>
