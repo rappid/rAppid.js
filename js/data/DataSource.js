@@ -29,6 +29,10 @@ define(["js/core/Component", "js/core/Base", "js/data/Collection", "underscore",
                     this.$cache[Context.generateCacheIdFromEntity(entity)] = entity;
                 },
 
+                removeEntityFromCache: function (entity) {
+                    this.$cache[Context.generateCacheIdFromEntity(entity)] = void 0;
+                },
+
                 /**
                  * Adds a collection to the cache
                  * @param {js.data.Collection} collection
