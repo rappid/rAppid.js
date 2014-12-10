@@ -116,8 +116,15 @@ define(["inherit"], function(inherit){
                 fnc.apply(scope, parameters);
             }, delay);
         },
-
-        synchronizeFunctionCall: function(fnc, cacheId, callback, scope) {
+        /**
+         *
+         * @param fnc - the function to synchronize
+         * @param cacheId - the cacheId for the fnc call
+         * @param callback - the callback to be called in the fnc
+         * @param scope - the fnc scope
+         * @param clear  - if you want to clear the cache after all callbacks are called
+         */
+        synchronizeFunctionCall: function (fnc, cacheId, callback, scope, clear) {
 
             var self = this;
 
@@ -137,6 +144,10 @@ define(["inherit"], function(inherit){
                 callback && obj.callbacks.push(callback);
                 obj.state = LOADING;
                 fnc.call(scope, function(err, result) {
+                    if (clear) {
+                        delete self.$synchronizeCache[cacheId];
+                    }
+
                     obj.state = err ? ERROR : LOADED;
                     obj.error = err;
                     obj.result = result;
