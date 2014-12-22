@@ -141,13 +141,6 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
                 this.callBase();
                 var self = this;
 
-                this.bindDomEvent('scroll', scroll);
-
-                if (this.$.preventOuterScrolling) {
-                    this.bindDomEvent("DOMMouseScroll", mouseWheel, false);
-                    this.bindDomEvent('mousewheel', mouseWheel, false);
-                }
-
                 function mouseWheel(event) {
 
                     var delta = 0;
@@ -178,6 +171,13 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
                         scrollTop: self.$el.scrollTop,
                         scrollLeft: self.$el.scrollLeft
                     });
+                }
+
+                this.bindDomEvent('scroll', scroll);
+
+                if (this.$.preventOuterScrolling) {
+                    this.bindDomEvent("DOMMouseScroll", mouseWheel, false);
+                    this.bindDomEvent('mousewheel', mouseWheel, false);
                 }
             },
 
