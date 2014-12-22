@@ -341,7 +341,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
             }
 
             for (var i = 0; i < this.$.fnc._attributes.length; i++) {
-                if (!_.isUndefined(event.$[this.$.fnc._attributes[i]])) {
+                if (event.$.hasOwnProperty(this.$.fnc._attributes[i])) {
                     this._callback();
                     return;
                 }
