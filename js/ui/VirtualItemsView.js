@@ -47,6 +47,8 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
                 selectionMode: SELECTION_MODE_MULTI,
                 selectedItems: List,
 
+                preventOuterScrolling: false,
+
                 /**
                  * Top padding for scroll container
                  *
@@ -140,6 +142,36 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
                 var self = this;
 
                 this.bindDomEvent('scroll', scroll);
+
+                if (this.$.preventOuterScrolling) {
+                    this.bindDomEvent("DOMMouseScroll", mouseWheel, false);
+                    this.bindDomEvent('mousewheel', mouseWheel, false);
+                }
+
+                function mouseWheel(event) {
+
+                    var delta = 0;
+                    if (!event) /* For IE. */
+                        event = self.$stage.$window.event;
+                    if (event.wheelDelta) { /* IE/Opera. */
+                        delta = event.wheelDelta / 120;
+                    } else if (event.detail) { /** Mozilla case. */
+                        /** In Mozilla, sign of delta is different than in IE.
+                         * Also, delta is multiple of 3.
+                         */
+                        delta = -event.detail / 3;
+                    }
+
+                    var scrollTop = self.$el.scrollTop,
+                        height = self.$el.offsetHeight,
+                        scrollHeight = self.$el.scrollHeight;
+
+                    var d = delta;
+
+                    if ((scrollTop >= (scrollHeight - height) && d < 0) || (scrollTop <= 0 && d > 0)) {
+                        event.preventDefault();
+                    }
+                }
 
                 function scroll() {
                     self.set({
