@@ -189,13 +189,13 @@ define(['js/ui/VirtualItemsView'], function (VirtualItemsView) {
                     container.addChild(child);
 
                 }
-                container.bind('change', function (e) {
-                    var attributes = e.$,
+                container.bind('change:$dataItem', function (e) {
+                    var dataItem = e.$,
                         child;
                     for (var i = 0; i < children.length; i++) {
                         child = children[i];
                         child.set({
-                            $dataItem: attributes.$dataItem || child.$.$dataItem
+                            $dataItem: dataItem
                         });
                     }
                 });
