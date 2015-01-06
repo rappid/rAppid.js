@@ -47,7 +47,14 @@ define(["js/ui/View"], function (View) {
              *
              * @type String
              */
-            iconLabel: ""
+            iconLabel: "",
+
+            /***
+             * the title of the link
+             *
+             * @type String
+             */
+            title: null
         },
 
         _renderIconClass: function (iconClass) {
@@ -59,16 +66,6 @@ define(["js/ui/View"], function (View) {
                     placeHolder.clear();
                 }
             }
-        },
-
-        _renderLabel: function (label) {
-            if (!this.$.title) {
-                this._renderTitle(label);
-            }
-        },
-
-        _renderTitle: function (title) {
-            this._setAttribute("title", title);
         },
 
         _renderTarget: function (target) {
