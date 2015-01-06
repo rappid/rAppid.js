@@ -3,7 +3,7 @@ define(["js/html/HtmlElement", "js/core/Content", "underscore"], function (HtmlE
             defaults: {
                 tagName: "div"
             },
-            $domAttributes: ['class', 'id', 'style', 'tabindex', 'name'],
+            $domAttributes: ['class', 'id', 'style', 'tabindex', 'name' ,'draggable', 'title'],
             render: function () {
                 if (this.isRendered()) {
                     return this.$el;
