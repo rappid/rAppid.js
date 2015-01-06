@@ -56,7 +56,9 @@ define(["js/ui/View", "js/core/Content", "js/ui/Button", "underscore"], function
 
             closeBehavior: CLOSE_BEHAVIOR.OTHER,
 
-            tabIndex: null
+            tabIndex: null,
+
+            title: null
         },
         $defaultContentName: 'menu',
 
