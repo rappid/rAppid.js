@@ -28,7 +28,7 @@ define(["js/ui/View"], function (View) {
             defaults: {
                 tagName: "span"
             },
-            _getChildrenFromDescriptor: function (descriptor) {
+            _getChildrenFromDescriptor: function () {
                 return [];
             },
             _renderChildren: function () {
@@ -37,8 +37,24 @@ define(["js/ui/View"], function (View) {
             _renderContentChildren: function () {
 
             },
+
+            _getNodeForIndex: function (index) {
+                if (this.$descriptor.childNodes.length > index) {
+                    return this.$descriptor.childNodes[index];
+                } else if (this.$internalDescriptors.length) {
+                    var descr;
+                    for (var i = 0; i < this.$internalDescriptors.length; i++) {
+                        descr = this.$internalDescriptors[i];
+                        if (descr.childNodes.length > index) {
+                            return descr.childNodes[index];
+                        }
+                    }
+                }
+                return null;
+            },
+
             _renderString: function (string, oldString) {
-                for(var k = 0; k < this.$el.childNodes.length; k++){
+                for (var k = 0; k < this.$el.childNodes.length; k++) {
                     this.$el.removeChild(this.$el.childNodes[k]);
                 }
                 if (string) {
@@ -58,7 +74,7 @@ define(["js/ui/View"], function (View) {
                         var key = ph.index + ":" + i;
                         var childView = this.$viewMap[key];
                         if (!childView) {
-                            childView = this._createComponentForNode(this.$descriptor.childNodes[ph.index]);
+                            childView = this._createComponentForNode(this._getNodeForIndex(ph.index));
                             if (childView) {
                                 childView.$parentScope = this.$parentScope;
                                 childView.$rootScope = this.$rootScope;
