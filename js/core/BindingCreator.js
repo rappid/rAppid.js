@@ -26,8 +26,7 @@ define(['js/core/EventDispatcher', 'js/lib/parser', 'js/core/Binding', 'undersco
         return false;
     }
 
-    var bindingCache = {},
-        idCounter = 0;
+    var idCounter = 0;
 
     function pathToString(path) {
         if (path instanceof Array) {
@@ -46,7 +45,6 @@ define(['js/core/EventDispatcher', 'js/lib/parser', 'js/core/Binding', 'undersco
         }
     }
 
-
     return EventDispatcher.inherit('js.core.BindingCreator', {
 
         /***
@@ -58,7 +56,6 @@ define(['js/core/EventDispatcher', 'js/lib/parser', 'js/core/Binding', 'undersco
          * @return {*}
          */
         create: function (bindingDef, targetScope, attrKey, context) {
-
             var path = bindingDef.path;
             var pathElement = path[0];
 
@@ -81,18 +78,7 @@ define(['js/core/EventDispatcher', 'js/lib/parser', 'js/core/Binding', 'undersco
                         cb = attrKey;
                     }
 
-                    var twoWay = (bindingDef.type == Binding.TYPE_TWOWAY),
-                        cacheId,
-                        cacheBinding = !cb && !twoWay && context && context.length === 1 && (context[0] instanceof Object);
-
-                    if (cacheBinding) {
-                        cacheId = pathToString(bindingDef.path) + "_" + scope.$cid + "_" + (bindingDef.transform ? bindingDef.transform.join(".") : "") + "_" + (bindingDef.transformBack ? bindingDef.transformBack.join(".") : "");
-                        if (bindingCache[cacheId]) {
-                            bindingCache[cacheId].addTarget(targetScope, attrKey);
-                            return bindingCache[cacheId];
-                        }
-                    }
-
+                    var twoWay = (bindingDef.type == Binding.TYPE_TWOWAY);
 
                     var options = {
                         scope: scope,
@@ -132,16 +118,7 @@ define(['js/core/EventDispatcher', 'js/lib/parser', 'js/core/Binding', 'undersco
                         options.targetKey = attrKey;
                     }
 
-                    var binding = new Binding(options);
-                    if (cacheBinding) {
-                        binding.bind('destroy', function () {
-                            delete bindingCache[cacheId];
-                        });
-                        bindingCache[cacheId] = binding;
-                    }
-
-                    return binding;
-
+                    return new Binding(options);
                 } else {
                     var par,
                         newPath = [];
