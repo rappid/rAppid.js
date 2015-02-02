@@ -65,9 +65,6 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
             this.$events = [];
             this.$subBinding = null;
 
-            if (!this.$.rootScope) {
-                this.$.rootScope = this;
-            }
             var scope = this.$.scope;
             if (_.isString(this.$.path)) {
                 this.$.path = Parser.parse(this.$.path, RULE_PATH);
@@ -296,12 +293,12 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
                 // get value for first child
                 if (nScope instanceof Bindable) {
                     // init new binding, which triggers this binding
+
                     this.$subBinding = new Binding({
                         scope: nScope,
                         path: this.$.path.slice(1),
                         target: this.$.target,
                         targetKey: this.$.targetKey,
-                        rootScope: this.$.rootScope,
                         callback: this.$.callback,
                         context: this.$.context,
                         twoWay: this.$.twoWay,
