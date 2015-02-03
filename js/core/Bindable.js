@@ -546,10 +546,15 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
                                     }
                                 }
                             }
-                            ret[key] = this._cloneAttribute(this.$[key], key);
+                            if (this.$bindings.hasOwnProperty(key) && this.factory.prototype.defaults.hasOwnProperty(key)) {
+                                ret[key] = this.factory.prototype.defaults[key];
+                            } else {
+                                ret[key] = this._cloneAttribute(this.$[key], key);
+                            }
+
                         }
                     }
-                    var b = new this.factory(ret);
+                    var b = new this.factory(ret, true);
                     b._$source = this;
                     b.$injected = this.$injected;
                     return b;

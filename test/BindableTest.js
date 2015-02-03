@@ -379,6 +379,26 @@ describe('js.core.Bindable', function () {
             expect(copy.$.nested.$.street).to.exist.and.to.be.equal(original.$.nested.$.street);
             expect(copy.$.nested.$.city).to.exist.and.to.be.equal(original.$.nested.$.city);
         });
+
+        it('#should clone binding attributes and evaluate them', function () {
+            var nestedBindable = new C.Bindable({
+                street: 'Street 1',
+                city: 'City 1'
+            });
+            var original = new C.Bindable({
+                nested: nestedBindable,
+                street: '{nested.street}'
+            });
+
+
+            var copy = original.clone();
+            expect(copy.$.street).to.be.equal(copy.get('nested.street'));
+
+            var newStreet = "new street";
+            copy.get('nested').set('street', newStreet);
+            expect(copy.$.street).to.be.equal(copy.get('nested.street'));
+        });
+
     });
 
 

@@ -167,7 +167,7 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
 
         var Entity = Bindable.inherit('js.data.Entity', {
 
-            ctor: function (attributes) {
+            ctor: function () {
                 this.$errors = new ValidationErrors();
                 this.$entityInitialized = false;
 

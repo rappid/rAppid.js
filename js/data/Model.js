@@ -20,7 +20,7 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore", "js/error/Valida
 
     var Model = Entity.inherit("js.data.Model", {
 
-        ctor: function (attributes) {
+        ctor: function (attributes, evaluateBindingsInCtor) {
 
             // stores the current fetch state
             this._fetch = {
@@ -33,7 +33,7 @@ define(["js/data/Entity", "js/core/List", "flow", "underscore", "js/error/Valida
                 state: SAVESTATE.CREATED
             };
 
-            this.callBase(attributes);
+            this.callBase(attributes, evaluateBindingsInCtor);
         },
 
         schema: {
