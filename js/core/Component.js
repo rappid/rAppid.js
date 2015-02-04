@@ -26,7 +26,6 @@ define(["require", "js/core/Element", "js/core/TextElement", "underscore"],
                     lastDescriptor;
                 while (current) {
                     if (current._$descriptor && lastDescriptor != current._$descriptor) {
-                        this._cleanUpDescriptor(current._$descriptor);
                         this.$internalDescriptors.unshift(current._$descriptor);
                         _.defaults(this.$xamlDefaults, this._getAttributesFromDescriptor(current._$descriptor, rootScope, cidScope));
                         lastDescriptor = current._$descriptor;
@@ -45,7 +44,6 @@ define(["require", "js/core/Element", "js/core/TextElement", "underscore"],
                 }
 
                 if (descriptor) {
-                    this._cleanUpDescriptor(descriptor);
                     this.$xamlAttributes = this._getAttributesFromDescriptor(descriptor, rootScope, cidScope);
                 }
 
@@ -621,7 +619,6 @@ define(["require", "js/core/Element", "js/core/TextElement", "underscore"],
             },
 
             _initializeDescriptors: function () {
-                this._cleanUpDescriptor(this.$descriptor);
                 this._childrenInitialized();
             },
 

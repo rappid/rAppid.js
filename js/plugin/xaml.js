@@ -96,6 +96,24 @@ define([], function () {
         return ret;
     }
 
+    function cleanUpDescriptor(desc) {
+        if (desc && desc.childNodes) {
+            var node, text;
+            // remove empty text nodes
+            for (var i = desc.childNodes.length - 1; i >= 0; i--) {
+                node = desc.childNodes[i];
+                if (node.nodeType === 3) {
+                    text = node.textContent || node.text || node.data;
+                    if (!text || text.trim().length === 0) {
+                        desc.removeChild(node);
+                    }
+                } else {
+                    cleanUpDescriptor(node);
+                }
+            }
+        }
+    }
+
     if ((typeof window !== "undefined" && window.navigator && window.document) || typeof importScripts !== "undefined") {
         // Browser action
         createXhr = function () {
@@ -206,10 +224,12 @@ define([], function () {
 
                     if (!err && xml) {
 
-                        // require all dependencies
+                        cleanUpDescriptor(xml.documentElement);
 
+                        // require all dependencies
                         var dependencies = findDependencies(xml.documentElement,
                             config.namespaceMap, config.xamlClasses, config.rewriteMap, "xaml!" + name);
+
 
                         if (config.isBuild) {
                             dependencies.splice(1, 0, "js/core/Element");
