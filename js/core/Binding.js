@@ -581,7 +581,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "underscore"], function (Eve
             if (el instanceof Binding) {
                 el = el.getValue();
             }
-            if (el !== null && typeof(el) !== "undefined") {
+            if (el != null) {
                 str += el;
             }
         }
