@@ -127,14 +127,21 @@ define(["js/html/HtmlElement", "underscore"], function (HtmlElement, _) {
                 }
                 // fix for IE
                 if (this.$.updateOnEvent === "input" && "onpropertychange" in this.$el) {
-                    this.bindDomEvent("keyup", function (e) {
+                    this.bindDomEvent("keyup", function () {
                         self.set('value', self._transformValue(self.$el.value));
                     });
                 } else {
-                    this.bindDomEvent(this.$.updateOnEvent, function (e) {
+                    this.bindDomEvent(this.$.updateOnEvent, function () {
                         self.set('value', self._transformValue(self.$el.value));
                     });
                 }
+                // this is needed to make sure the component has the same value as the input field
+                this.bindDomEvent("blur", function () {
+                    var transformedValue = self._transformValue(self.$el.value);
+                    if (transformedValue !== self.$.value) {
+                        self.set('value', transformedValue);
+                    }
+                });
 
             } else if (this.$.type === "checkbox" || this.$.type === "radio") {
                 this.bindDomEvent('click', function (e) {
