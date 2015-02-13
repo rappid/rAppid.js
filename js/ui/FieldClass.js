@@ -12,7 +12,8 @@ define(["js/ui/View", "js/html/Input", "js/html/Select", "js/html/TextArea", 'js
             error: null,
             required: false,
             focused: false,
-            requiredClass: "required"
+            requiredClass: "required",
+            initializeInvisibleChildren: true
         },
 
         inject: {

@@ -14,8 +14,8 @@ define(["xaml!js/ui/Field"], function (Field) {
         _renderAttributes: function ($) {
             this.callBase($);
 
-            var $firstInput = this.$firstInput.$el;
-            if ($firstInput) {
+            if (this.$firstInput && this.$firstInput.$el) {
+                var $firstInput = this.$firstInput.$el;
                 // sets all attributes that are supported by the input field to it
                 var changes = {};
                 for (var k in $) {

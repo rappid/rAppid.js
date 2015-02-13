@@ -695,6 +695,9 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                     this._initializeChildren(this._$invisibleChildren);
                     this._$invisibleChildren = null;
                     this._initializeBindingsBeforeComplete();
+                    if (this.isRendered()) {
+                        this._renderContentChildren(this.$contentChildren);
+                    }
                 }
             },
             _innerDestroy: function () {
