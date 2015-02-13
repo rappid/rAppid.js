@@ -74,6 +74,13 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                 visible: true,
 
                 /**
+                 * if true the children are initialized even when the element is not visible
+                 *
+                 * @type {Boolean}
+                 */
+                initializeInvisibleChildren: false,
+
+                /**
                  * @type Boolean
                  */
                 enabled: true
@@ -179,6 +186,15 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
 
                 }
             },
+
+            _initializeChildren: function (children) {
+                if (this.$.initializeInvisibleChildren || this.$.visible) {
+                    this.callBase();
+                } else {
+                    this._$invisibleChildren = children;
+                }
+            },
+
 
             removeChild: function (child) {
                 this.callBase();
@@ -674,6 +690,11 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
             _commitChangedAttributes: function (attributes) {
                 if (this.isRendered()) {
                     this._renderAttributes(attributes);
+                }
+                if (attributes.hasOwnProperty("visible") && attributes.visible && this._$invisibleChildren) {
+                    this._initializeChildren(this._$invisibleChildren);
+                    this._$invisibleChildren = null;
+                    this._initializeBindingsBeforeComplete();
                 }
             },
             _innerDestroy: function () {
