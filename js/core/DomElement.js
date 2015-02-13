@@ -41,7 +41,8 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                 /^on/,
                 "cid",
                 /^_/, // private attributes,
-                'animationClass'
+                'animationClass',
+                'initializeInvisibleChildren'
             ],
 
             defaults: {
