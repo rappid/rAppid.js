@@ -221,6 +221,8 @@ var build = function (args, callback) {
 
     optimizeConfig.dir = buildConfig.targetDir || optimizeConfig.dir;
 
+    optimizeConfig.removeSpaces = buildConfig.removeSpaces || false;
+
     var versionDir,
         version = argv.v || null;
 
