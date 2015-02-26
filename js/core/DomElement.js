@@ -474,19 +474,6 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                 }
             },
 
-            _commitVisible: function (visible) {
-                if (this.$renderParent && !this.isRendered()) {
-                    if (visible) {
-                        // calculate the index, where the element should appear
-                        var children = this.$renderParent.$children,
-                            index = children.indexOf(this);
-                        this.$renderParent._renderChild(this, index);
-                    } else {
-
-                    }
-                }
-            },
-
             _renderVisible: function (visible) {
                 if (this.$renderParent) {
                     if (visible) {
@@ -692,12 +679,22 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                 if (this.isRendered()) {
                     this._renderAttributes(attributes);
                 }
-                if (attributes.hasOwnProperty("visible") && attributes.visible && this._$invisibleChildren) {
-                    this._initializeChildren(this._$invisibleChildren);
-                    this._$invisibleChildren = null;
-                    this._initializeBindingsBeforeComplete();
-                    if (this.isRendered()) {
-                        this._renderContentChildren(this.$contentChildren);
+                if (attributes.hasOwnProperty("visible") && attributes.visible) {
+                    if (this._$invisibleChildren) {
+                        this._initializeChildren(this._$invisibleChildren);
+                        this._$invisibleChildren = null;
+                        this._initializeBindingsBeforeComplete();
+                        if (this.isRendered()) {
+                            this._renderContentChildren(this.$contentChildren);
+                        }
+                    }
+                    if (this.$renderParent && !this.isRendered()) {
+                        if (attributes.visible) {
+                            // calculate the index, where the element should appear
+                            var children = this.$renderParent.$children,
+                                index = children.indexOf(this);
+                            this.$renderParent._renderChild(this, index);
+                        }
                     }
                 }
             },
