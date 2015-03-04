@@ -306,12 +306,7 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
 
                 if (this.$el.style && camelCaseKey in this.$el.style) {
                     if (value != null) {
-                        if (this.$stage.$browser.isIE) {
-                            // IE doesn't update style immediately with setProperty(), so we use style[key] = value
-                            this.$el.style[dashKey] = value;
-                        } else {
-                            this.$el.style.setProperty(dashKey, value, null);
-                        }
+                        this.$el.style[dashKey] = value;
                     } else {
                         if(this.$el.style.setProperty){
                             this.$el.style.removeProperty(dashKey);
