@@ -7,17 +7,17 @@ define(['js/core/Bindable', 'js/core/Base'], function (Bindable, Base) {
         defaults: {
             /***
              * the field of the entity to validate
-             * @type String
+             * @type {string}
              */
             field: null,
             /***
              * the error code for this validation error
-             * @type String
+             * @type {number}
              */
             errorCode: 'isInvalid',
             /***
              * the error message displayed for the user
-             * @type String
+             * @type {string}
              */
             errorMessage: null
         },
@@ -108,9 +108,9 @@ define(['js/core/Bindable', 'js/core/Base'], function (Bindable, Base) {
         },
         /***
          * Creates an Validation Error object with a code, message and a field
-         * @param {String} code
-         * @param {String} message
-         * @param {String} field
+         * @param {number} code
+         * @param {string} message
+         * @param {string} field
          * @returns {js.data.validator.Validator.Error}
          * @private
          */
@@ -124,7 +124,7 @@ define(['js/core/Bindable', 'js/core/Base'], function (Bindable, Base) {
         /***
          * Create a field error
          *
-         * @param {String} [field] - the field
+         * @param {string} [field] - the field
          * @returns {js.data.validator.Validator.Error} an error instance
          * @private
          */
