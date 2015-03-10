@@ -308,7 +308,7 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
                     if (value != null) {
                         this.$el.style[dashKey] = value;
                         if (this.$el.style.setProperty) {
-                            this.$el.style.setProperty(dashKey, value, "important");
+                            this.$el.style.setProperty(dashKey, value, null);
                         }
                     } else {
                         if(this.$el.style.setProperty){
