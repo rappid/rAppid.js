@@ -307,6 +307,9 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
                 if (this.$el.style && camelCaseKey in this.$el.style) {
                     if (value != null) {
                         this.$el.style[dashKey] = value;
+                        if (this.$el.style.setProperty) {
+                            this.$el.style.setProperty(dashKey, value, "important");
+                        }
                     } else {
                         if(this.$el.style.setProperty){
                             this.$el.style.removeProperty(dashKey);
