@@ -304,20 +304,21 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
                 }
 
 
-                if (this.$el.style && camelCaseKey in this.$el.style) {
+                var style = this.$el.style;
+                if (style && camelCaseKey in style) {
                     if (value != null) {
                         // value needs to be set as string otherwise IE9
                         // will throw an exception for negative values like -12
                         value = "" + value;
-                        this.$el.style[dashKey] = value;
-                        if (this.$el.style.setProperty) {
-                            this.$el.style.setProperty(dashKey, value, null);
+                        style[dashKey] = value;
+                        if (style.setProperty) {
+                            style.setProperty(dashKey, value, null);
                         }
                     } else {
-                        if (this.$el.style.setProperty) {
-                            this.$el.style.removeProperty(dashKey);
+                        if (style.setProperty) {
+                            style.removeProperty(dashKey);
                         } else {
-                            this.$el.style.removeAttribute(dashKey);
+                            style.removeAttribute(dashKey);
                         }
                     }
                 }
