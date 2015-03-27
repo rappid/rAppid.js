@@ -140,7 +140,7 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
         /**
          * Checks if the element has the correct width and height according to the width and height update policy
          */
-        checkSizePolicies: function(){
+        checkSizePolicies: function () {
             checkSizePolicy(this, this.$.widthUpdatePolicy, 'width');
             checkSizePolicy(this, this.$.heightUpdatePolicy, 'height');
         },
@@ -306,12 +306,15 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
 
                 if (this.$el.style && camelCaseKey in this.$el.style) {
                     if (value != null) {
+                        // value needs to be set as string otherwise IE9
+                        // will throw an exception for negative values like -12
+                        value = "" + value;
                         this.$el.style[dashKey] = value;
                         if (this.$el.style.setProperty) {
                             this.$el.style.setProperty(dashKey, value, null);
                         }
                     } else {
-                        if(this.$el.style.setProperty){
+                        if (this.$el.style.setProperty) {
                             this.$el.style.removeProperty(dashKey);
                         } else {
                             this.$el.style.removeAttribute(dashKey);
