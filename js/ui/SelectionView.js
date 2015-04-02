@@ -227,8 +227,10 @@ define(["js/ui/ItemsView", "js/html/HtmlElement", "underscore", "js/core/List"],
                 attr[this._getItemKey()] = placeHolderValue;
                 attr["selected"] = this.$.selectedItem === placeHolderValue;
                 this.$placeHolder = this.$templates.placeHolder.createInstance(attr);
-
                 this.addChild(this.$placeHolder, {childIndex: 0});
+                if (this.$placeHolder.isRendered()) {
+                    this.$placeHolder.$el.selected = attr["selected"];
+                }
             }
         },
 
