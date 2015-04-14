@@ -244,7 +244,7 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
 
             if (policy === POLICY_OUT || policy === POLICY_BOTH) {
                 if (value != null && value !== undefined) {
-                    this.$el.style[name] = value;
+                    this.$el.style[name] = "" + value;
                 }
             }
 
@@ -311,7 +311,7 @@ define(['js/core/DomElement', 'underscore'], function (DomElement, _) {
                         // will throw an exception for negative values like -12
                         value = "" + value;
                         style[dashKey] = value;
-                        if (style.setProperty) {
+                        if (!this.$stage.$browser.isIE && style.setProperty) {
                             style.setProperty(dashKey, value, null);
                         }
                     } else {
