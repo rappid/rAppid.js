@@ -147,9 +147,10 @@ define(["js/data/DataSource", "js/data/Model", "underscore", "flow", "JSON", "js
          * global query parameter for each REST action
          * @param action {String} Rest action [GET, PUT, DELETE, POST]
          * @param resource {js.data.Model|js.data.Collection} model or collection which gets loaded
+         * @param options {Object} options for the request
          * @return {Object}
          */
-        getQueryParameters: function (action, resource) {
+        getQueryParameters: function (action, resource, options) {
 
             var params = {};
 
@@ -295,7 +296,7 @@ define(["js/data/DataSource", "js/data/Model", "underscore", "flow", "JSON", "js
 
             // get queryParameter
             var params = _.defaults(model.$context.getQueryParameters(),
-                this.getQueryParameters(RestDataSource.METHOD.GET, model));
+                this.getQueryParameters(RestDataSource.METHOD.GET, model, options));
 
             if (options.noCache) {
                 params.timestamp = (new Date().getTime());
