@@ -1,7 +1,7 @@
 {
   "name": "rAppid.js",
   "preferGlobal": "false",
-  "version": "0.9.0",
+  "version": "0.10.0",
   "author": "rAppid <support@rappidjs.com> (http://rappidjs.com)",
   "contributors": [
     "Tony Findeisen <tony@rappidjs.com>",
