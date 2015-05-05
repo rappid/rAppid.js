@@ -3,6 +3,7 @@ node_js:
   - "0.10"
 before_script:
   - "npm install -g grunt-cli"
+  - "until nc -z localhost 27017; do echo Waiting for MongoDB; sleep 1; done"
 script:
   - "mocha -R spec"
   - "grunt webtest-saucelabs --force"
