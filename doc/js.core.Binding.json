@@ -19,8 +19,8 @@
             "annotations": {},
             "definedInFile": "js/core/Binding.js",
             "lineNumbers": [
-                355,
-                372
+                352,
+                369
             ],
             "description": "This method is called, when the value of the current binding changes.\nIt recreates the the subBinding and triggers the binding",
             "private": "",
@@ -39,8 +39,8 @@
             "annotations": {},
             "definedInFile": "js/core/Binding.js",
             "lineNumbers": [
-                337,
-                349
+                334,
+                346
             ],
             "description": "This method is called, when the a change event of an function binding is triggered\n",
             "private": "",
@@ -53,8 +53,8 @@
             "annotations": {},
             "definedInFile": "js/core/Binding.js",
             "lineNumbers": [
-                250,
-                285
+                247,
+                282
             ],
             "name": "_checkAttributes",
             "visibility": "protected"
@@ -65,8 +65,8 @@
             "annotations": {},
             "definedInFile": "js/core/Binding.js",
             "lineNumbers": [
-                286,
-                321
+                283,
+                318
             ],
             "name": "_createSubBinding",
             "visibility": "protected"
@@ -122,8 +122,8 @@
             "annotations": {},
             "definedInFile": "js/core/Base.js",
             "lineNumbers": [
-                83,
-                117
+                84,
+                118
             ],
             "description": "",
             "private": "",
@@ -157,8 +157,8 @@
             "annotations": {},
             "definedInFile": "js/core/Binding.js",
             "lineNumbers": [
-                222,
-                248
+                219,
+                245
             ],
             "name": "_getEventsForFnc",
             "visibility": "protected"
@@ -169,8 +169,8 @@
             "annotations": {},
             "definedInFile": "js/core/Binding.js",
             "lineNumbers": [
-                424,
-                434
+                421,
+                431
             ],
             "description": "Returns an array with values of all function parameters",
             "returns": {
@@ -195,8 +195,8 @@
             "annotations": {},
             "definedInFile": "js/core/Binding.js",
             "lineNumbers": [
-                196,
-                220
+                193,
+                217
             ],
             "name": "_getOnChangeAttributesForFnc",
             "visibility": "protected"
@@ -214,8 +214,8 @@
             "annotations": {},
             "definedInFile": "js/core/Binding.js",
             "lineNumbers": [
-                181,
-                194
+                178,
+                191
             ],
             "name": "_getOnChangePathsForFnc",
             "visibility": "protected"
@@ -226,8 +226,8 @@
             "annotations": {},
             "definedInFile": "js/core/Binding.js",
             "lineNumbers": [
-                377,
-                418
+                374,
+                415
             ],
             "description": "Unbinds all events and destroys subBinding...",
             "definedBy": "js.core.EventDispatcher",
@@ -245,8 +245,8 @@
             "annotations": {},
             "definedInFile": "js/core/Binding.js",
             "lineNumbers": [
-                322,
-                330
+                319,
+                327
             ],
             "name": "_revCallback",
             "visibility": "protected"
@@ -273,8 +273,8 @@
             "annotations": {},
             "definedInFile": "js/core/Binding.js",
             "lineNumbers": [
-                514,
-                523
+                511,
+                520
             ],
             "description": "",
             "name": "addTarget",
@@ -330,8 +330,8 @@
             "annotations": {},
             "definedInFile": "js/core/Binding.js",
             "lineNumbers": [
-                545,
-                571
+                542,
+                568
             ],
             "name": "create",
             "visibility": "public"
@@ -374,8 +374,8 @@
             "annotations": {},
             "definedInFile": "js/core/Base.js",
             "lineNumbers": [
-                40,
-                42
+                41,
+                43
             ],
             "description": "this is an empty function doing nothing. It can be used as fallback if a method requires a\ncallback function, which hasn't been passed.\n\n```\nfunction myFunction(callback) {\ncallback = callback || this.emptyCallback;\n}\n```\n",
             "returns": {
@@ -394,8 +394,8 @@
             "annotations": {},
             "definedInFile": "js/core/Binding.js",
             "lineNumbers": [
-                473,
-                479
+                470,
+                476
             ],
             "description": "Returns the value in the context of the surrounding bindings",
             "returns": {
@@ -412,8 +412,8 @@
             "annotations": {},
             "definedInFile": "js/core/Binding.js",
             "lineNumbers": [
-                505,
-                507
+                502,
+                504
             ],
             "name": "getTargets",
             "visibility": "public"
@@ -424,8 +424,8 @@
             "annotations": {},
             "definedInFile": "js/core/Binding.js",
             "lineNumbers": [
-                439,
-                463
+                436,
+                460
             ],
             "description": "Returns the transformed value of the binding or null, if the binding path is not present",
             "returns": {
@@ -443,7 +443,7 @@
             "definedInFile": "js/core/Binding.js",
             "lineNumbers": [
                 62,
-                179
+                176
             ],
             "name": "initialize",
             "visibility": "public"
@@ -454,8 +454,8 @@
             "annotations": {},
             "definedInFile": "js/core/Binding.js",
             "lineNumbers": [
-                465,
-                467
+                462,
+                464
             ],
             "name": "invalidateValueCache",
             "visibility": "public"
@@ -485,8 +485,8 @@
             "annotations": {},
             "definedInFile": "js/core/Base.js",
             "lineNumbers": [
-                50,
-                71
+                51,
+                72
             ],
             "description": "logs messages to configured logging functions\n",
             "definedBy": "js.core.Base",
@@ -515,8 +515,8 @@
             "annotations": {},
             "definedInFile": "js/core/Binding.js",
             "lineNumbers": [
-                529,
-                543
+                526,
+                540
             ],
             "description": "",
             "name": "removeTarget",
@@ -528,8 +528,8 @@
             "annotations": {},
             "definedInFile": "js/core/Base.js",
             "lineNumbers": [
-                24,
-                26
+                25,
+                27
             ],
             "description": "determinate if the application runs in the browser or on node\n",
             "returns": {
@@ -546,24 +546,43 @@
             "type": "Method",
             "parameter": [
                 {
-                    "name": "fnc"
+                    "types": null,
+                    "name": "fnc",
+                    "optional": false,
+                    "description": "the function to synchronize"
                 },
                 {
-                    "name": "cacheId"
+                    "types": null,
+                    "name": "cacheId",
+                    "optional": false,
+                    "description": "the cacheId for the fnc call"
                 },
                 {
-                    "name": "callback"
+                    "types": null,
+                    "name": "callback",
+                    "optional": false,
+                    "description": "the callback to be called in the fnc"
                 },
                 {
-                    "name": "scope"
+                    "types": null,
+                    "name": "scope",
+                    "optional": false,
+                    "description": "the fnc scope"
+                },
+                {
+                    "types": null,
+                    "name": "clear",
+                    "optional": false,
+                    "description": "if you want to clear the cache after all callbacks are called"
                 }
             ],
             "annotations": {},
             "definedInFile": "js/core/Base.js",
             "lineNumbers": [
-                119,
-                155
+                127,
+                167
             ],
+            "description": "",
             "definedBy": "js.core.Base",
             "name": "synchronizeFunctionCall",
             "visibility": "public"
@@ -574,8 +593,8 @@
             "annotations": {},
             "definedInFile": "js/core/Binding.js",
             "lineNumbers": [
-                501,
-                503
+                498,
+                500
             ],
             "name": "toString",
             "visibility": "public"
@@ -654,8 +673,8 @@
             "annotations": {},
             "definedInFile": "js/core/Binding.js",
             "lineNumbers": [
-                483,
-                500
+                480,
+                497
             ],
             "description": "This method triggers the binding and syncs the target with the scope",
             "name": "triggerBinding",

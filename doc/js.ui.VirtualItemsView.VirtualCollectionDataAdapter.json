@@ -6,8 +6,8 @@
             "annotations": {},
             "definedInFile": "js/ui/VirtualItemsView.js",
             "lineNumbers": [
-                802,
-                809
+                834,
+                841
             ],
             "name": "_onReset",
             "visibility": "protected"
@@ -22,8 +22,8 @@
             "annotations": {},
             "definedInFile": "js/ui/VirtualItemsView.js",
             "lineNumbers": [
-                784,
-                801
+                816,
+                833
             ],
             "name": "ctor",
             "visibility": "public"
@@ -38,8 +38,8 @@
             "annotations": {},
             "definedInFile": "js/ui/VirtualItemsView.js",
             "lineNumbers": [
-                810,
-                902
+                842,
+                934
             ],
             "name": "getItemAt",
             "visibility": "public"
@@ -54,8 +54,8 @@
             "annotations": {},
             "definedInFile": "js/ui/VirtualItemsView.js",
             "lineNumbers": [
-                913,
-                919
+                945,
+                951
             ],
             "name": "query",
             "visibility": "public"
@@ -73,8 +73,8 @@
             },
             "definedInFile": "js/ui/VirtualItemsView.js",
             "lineNumbers": [
-                924,
-                926
+                956,
+                958
             ],
             "returns": {
                 "types": [
@@ -95,8 +95,8 @@
             "annotations": {},
             "definedInFile": "js/ui/VirtualItemsView.js",
             "lineNumbers": [
-                904,
-                911
+                936,
+                943
             ],
             "name": "sort",
             "visibility": "public"

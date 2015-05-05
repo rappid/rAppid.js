@@ -43,8 +43,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                563,
-                589
+                568,
+                594
             ],
             "description": "Returns a copy of the attribute. This method is a hook for further cloning options",
             "private": "",
@@ -75,8 +75,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                856,
-                858
+                862,
+                864
             ],
             "description": "called after attributes has set and some of the has been changed\n",
             "abstract": "",
@@ -91,8 +91,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                750,
-                753
+                756,
+                759
             ],
             "definedBy": "js.core.Bindable",
             "name": "_commitInvalidatedAttributes",
@@ -104,8 +104,8 @@
             "annotations": {},
             "definedInFile": "js/data/Entity.js",
             "lineNumbers": [
-                419,
-                427
+                425,
+                433
             ],
             "definedBy": "js.data.Entity",
             "name": "_createDependentObjectCache",
@@ -162,8 +162,8 @@
             "annotations": {},
             "definedInFile": "js/core/Base.js",
             "lineNumbers": [
-                83,
-                117
+                84,
+                118
             ],
             "description": "",
             "private": "",
@@ -177,8 +177,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                595,
-                597
+                600,
+                602
             ],
             "description": "",
             "returns": {
@@ -211,8 +211,8 @@
             "annotations": {},
             "definedInFile": "js/data/Entity.js",
             "lineNumbers": [
-                274,
-                348
+                278,
+                354
             ],
             "description": "Constructs the schema with the schema definition",
             "private": "",
@@ -226,8 +226,8 @@
             "annotations": {},
             "definedInFile": "js/data/Entity.js",
             "lineNumbers": [
-                241,
-                267
+                245,
+                271
             ],
             "definedBy": "js.data.Entity",
             "name": "_extendTransformers",
@@ -239,8 +239,8 @@
             "annotations": {},
             "definedInFile": "js/data/Entity.js",
             "lineNumbers": [
-                212,
-                239
+                216,
+                243
             ],
             "definedBy": "js.data.Entity",
             "name": "_extendValidators",
@@ -274,8 +274,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                606,
-                634
+                611,
+                639
             ],
             "description": "generates a default chain containing the values from this instance and base classes\n",
             "returns": {
@@ -301,8 +301,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                860,
-                869
+                866,
+                875
             ],
             "definedBy": "js.core.Bindable",
             "name": "_hasAll",
@@ -321,8 +321,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                871,
-                880
+                877,
+                886
             ],
             "definedBy": "js.core.Bindable",
             "name": "_hasSome",
@@ -454,8 +454,8 @@
             "annotations": {},
             "definedInFile": "js/data/Entity.js",
             "lineNumbers": [
-                441,
-                443
+                447,
+                449
             ],
             "definedBy": "js.data.Entity",
             "name": "_isChildFactoryDependentObject",
@@ -500,8 +500,8 @@
             "annotations": {},
             "definedInFile": "js/data/Entity.js",
             "lineNumbers": [
-                580,
-                589
+                586,
+                595
             ],
             "description": " TODO: combine _setError and _setErrors",
             "definedBy": "js.data.Entity",
@@ -529,8 +529,8 @@
             "annotations": {},
             "definedInFile": "js/data/Entity.js",
             "lineNumbers": [
-                597,
-                623
+                603,
+                629
             ],
             "description": "",
             "private": "",
@@ -652,8 +652,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                897,
-                899
+                903,
+                905
             ],
             "description": "Clears all attributes",
             "returns": {
@@ -671,8 +671,8 @@
             "annotations": {},
             "definedInFile": "js/data/Entity.js",
             "lineNumbers": [
-                476,
-                479
+                482,
+                485
             ],
             "description": "Clears all errors",
             "definedBy": "js.data.Entity",
@@ -694,7 +694,7 @@
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
                 535,
-                556
+                561
             ],
             "description": "This method returns a copy of the Object with all attributes on the $\n",
             "returns": {
@@ -744,8 +744,8 @@
             "annotations": {},
             "definedInFile": "js/data/Entity.js",
             "lineNumbers": [
-                699,
-                701
+                706,
+                708
             ],
             "description": "Returns the context model if the context is set",
             "returns": {
@@ -806,8 +806,8 @@
             "annotations": {},
             "definedInFile": "js/data/Entity.js",
             "lineNumbers": [
-                435,
-                439
+                441,
+                445
             ],
             "description": "Creates an entity in the context of the given entity",
             "returns": {
@@ -829,6 +829,14 @@
                     ],
                     "optional": true,
                     "description": "the default attributes which will be set during instantiation"
+                },
+                {
+                    "name": "evaluateBindingsInCtor",
+                    "types": [
+                        "Boolean"
+                    ],
+                    "optional": true,
+                    "description": "decides if bindings should be evaluated in ctor or not"
                 }
             ],
             "annotations": {},
@@ -862,8 +870,8 @@
             "annotations": {},
             "definedInFile": "js/core/Base.js",
             "lineNumbers": [
-                40,
-                42
+                41,
+                43
             ],
             "description": "this is an empty function doing nothing. It can be used as fallback if a method requires a\ncallback function, which hasn't been passed.\n\n```\nfunction myFunction(callback) {\ncallback = callback || this.emptyCallback;\n}\n```\n",
             "returns": {
@@ -891,8 +899,8 @@
             "annotations": {},
             "definedInFile": "js/data/Entity.js",
             "lineNumbers": [
-                630,
-                635
+                636,
+                641
             ],
             "description": "Returns the error for a given field",
             "deprecated": "",
@@ -918,8 +926,8 @@
             },
             "definedInFile": "js/data/Entity.js",
             "lineNumbers": [
-                486,
-                488
+                492,
+                494
             ],
             "description": "Returns the errors of the entity",
             "returns": {
@@ -982,8 +990,8 @@
             },
             "definedInFile": "js/data/Entity.js",
             "lineNumbers": [
-                495,
-                497
+                501,
+                503
             ],
             "description": "Returns the error for a given field",
             "returns": {
@@ -1019,8 +1027,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                762,
-                836
+                768,
+                842
             ],
             "description": "evaluates a path to retrieve a value\n",
             "returns": {
@@ -1071,8 +1079,8 @@
             "annotations": {},
             "definedInFile": "js/data/Entity.js",
             "lineNumbers": [
-                355,
-                375
+                361,
+                381
             ],
             "description": "Returns the correct context for a child factory",
             "returns": {
@@ -1140,8 +1148,8 @@
             "annotations": {},
             "definedInFile": "js/data/Entity.js",
             "lineNumbers": [
-                384,
-                392
+                390,
+                398
             ],
             "description": "Returns the transformed value of a field\n",
             "returns": {
@@ -1168,8 +1176,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                844,
-                846
+                850,
+                852
             ],
             "description": "determinate if a attribute is available\n",
             "returns": {
@@ -1188,8 +1196,8 @@
             "annotations": {},
             "definedInFile": "js/data/Entity.js",
             "lineNumbers": [
-                692,
-                694
+                699,
+                701
             ],
             "description": "Returns the value of the idField",
             "returns": {
@@ -1215,8 +1223,8 @@
             "annotations": {},
             "definedInFile": "js/data/Entity.js",
             "lineNumbers": [
-                685,
-                687
+                692,
+                694
             ],
             "description": "The init method can be used to setup/init an entity asynchronously.\nIt must be called from outside by hand.\n",
             "definedBy": "js.data.Entity",
@@ -1275,8 +1283,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                989,
-                1016
+                995,
+                1022
             ],
             "definedBy": "js.core.Bindable",
             "name": "isDeepEqual",
@@ -1292,8 +1300,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                1017,
-                1019
+                1023,
+                1025
             ],
             "definedBy": "js.core.Bindable",
             "name": "isEqual",
@@ -1337,8 +1345,8 @@
             },
             "definedInFile": "js/data/Entity.js",
             "lineNumbers": [
-                504,
-                515
+                510,
+                521
             ],
             "description": "Returns true if valid\n",
             "returns": {
@@ -1375,8 +1383,8 @@
             "annotations": {},
             "definedInFile": "js/core/Base.js",
             "lineNumbers": [
-                50,
-                71
+                51,
+                72
             ],
             "description": "logs messages to configured logging functions\n",
             "definedBy": "js.core.Base",
@@ -1414,8 +1422,8 @@
             "annotations": {},
             "definedInFile": "js/data/Entity.js",
             "lineNumbers": [
-                452,
-                454
+                458,
+                460
             ],
             "description": "Parses the data. Can be overridden to change parsed data.\n",
             "definedBy": "js.data.Entity",
@@ -1458,8 +1466,8 @@
             "annotations": {},
             "definedInFile": "js/core/Base.js",
             "lineNumbers": [
-                24,
-                26
+                25,
+                27
             ],
             "description": "determinate if the application runs in the browser or on node\n",
             "returns": {
@@ -1532,8 +1540,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                646,
-                732
+                651,
+                738
             ],
             "description": "Sets new values for attributes and notify about changes\n",
             "returns": {
@@ -1559,8 +1567,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                734,
-                748
+                740,
+                754
             ],
             "definedBy": "js.core.Bindable",
             "name": "setLater",
@@ -1584,24 +1592,43 @@
             "type": "Method",
             "parameter": [
                 {
-                    "name": "fnc"
+                    "types": null,
+                    "name": "fnc",
+                    "optional": false,
+                    "description": "the function to synchronize"
                 },
                 {
-                    "name": "cacheId"
+                    "types": null,
+                    "name": "cacheId",
+                    "optional": false,
+                    "description": "the cacheId for the fnc call"
                 },
                 {
-                    "name": "callback"
+                    "types": null,
+                    "name": "callback",
+                    "optional": false,
+                    "description": "the callback to be called in the fnc"
                 },
                 {
-                    "name": "scope"
+                    "types": null,
+                    "name": "scope",
+                    "optional": false,
+                    "description": "the fnc scope"
+                },
+                {
+                    "types": null,
+                    "name": "clear",
+                    "optional": false,
+                    "description": "if you want to clear the cache after all callbacks are called"
                 }
             ],
             "annotations": {},
             "definedInFile": "js/core/Base.js",
             "lineNumbers": [
-                119,
-                155
+                127,
+                167
             ],
+            "description": "",
             "definedBy": "js.core.Base",
             "name": "synchronizeFunctionCall",
             "visibility": "public"
@@ -1627,8 +1654,8 @@
             "annotations": {},
             "definedInFile": "js/data/Entity.js",
             "lineNumbers": [
-                400,
-                402
+                406,
+                408
             ],
             "description": "Transforms one value and sets it on the entity\n",
             "definedBy": "js.data.Entity",
@@ -1649,8 +1676,8 @@
             "annotations": {},
             "definedInFile": "js/data/Entity.js",
             "lineNumbers": [
-                408,
-                417
+                414,
+                423
             ],
             "description": "Transforms all values defined in the schema",
             "definedBy": "js.data.Entity",
@@ -1748,8 +1775,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                888,
-                891
+                894,
+                897
             ],
             "description": "Unset attribute on $",
             "returns": {
@@ -1782,8 +1809,8 @@
             "annotations": {},
             "definedInFile": "js/data/Entity.js",
             "lineNumbers": [
-                527,
-                577
+                533,
+                583
             ],
             "description": "Validates the entity.\nIf there are asynchronous validators applied use the callback to get notified when validation has finished.\n",
             "definedBy": "js.data.Entity",
@@ -1956,8 +1983,8 @@
             "visibility": "public",
             "definedInFile": "js/data/Entity.js",
             "lineNumbers": [
-                183,
-                185
+                187,
+                189
             ],
             "propertyType": "complex",
             "value": " [\n                new SchemaValidator()\n            ]",
@@ -1969,8 +1996,8 @@
             "visibility": "public",
             "definedInFile": "js/data/Entity.js",
             "lineNumbers": [
-                188,
-                188
+                192,
+                192
             ],
             "propertyType": "complex",
             "value": " []",
@@ -1982,8 +2009,8 @@
             "visibility": "public",
             "definedInFile": "js/data/Entity.js",
             "lineNumbers": [
-                192,
-                192
+                196,
+                196
             ],
             "value": "\"id\"",
             "propertyType": "value",
@@ -1995,8 +2022,8 @@
             "visibility": "private",
             "definedInFile": "js/data/Entity.js",
             "lineNumbers": [
-                205,
-                205
+                209,
+                209
             ],
             "value": "null",
             "propertyType": "value",
@@ -2008,8 +2035,8 @@
             "visibility": "private",
             "definedInFile": "js/data/Entity.js",
             "lineNumbers": [
-                206,
-                206
+                210,
+                210
             ],
             "value": "null",
             "propertyType": "value",

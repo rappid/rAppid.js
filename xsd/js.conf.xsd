@@ -1,53 +1,53 @@
-<schema targetNamespace="js.conf"
+<schema targetNamespace="js.conf" initializeInvisibleChildren="false"
     xmlns="http://www.w3.org/2001/XMLSchema"
     xmlns:ns1="js.core"
     xmlns:ns="js.conf">
-    <import/>
-    <element name="DataSourceConfiguration" type="ns:DataSourceConfiguration"/>
-    <element name="InjectionConfiguration" type="ns:InjectionConfiguration"/>
-    <element name="ModuleConfiguration" type="ns:ModuleConfiguration"/>
-    <element name="ResourceConfiguration" type="ns:ResourceConfiguration"/>
-    <element name="RouteConfiguration" type="ns:RouteConfiguration"/>
-    <complexType name="DataSourceConfiguration">
-        <complexContent>
-            <extension base="ns:ResourceConfiguration">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.conf.DataSourceConfiguration"></documentation>
+    <import initializeInvisibleChildren="false"/>
+    <element name="DataSourceConfiguration" type="ns:DataSourceConfiguration" initializeInvisibleChildren="false"/>
+    <element name="InjectionConfiguration" type="ns:InjectionConfiguration" initializeInvisibleChildren="false"/>
+    <element name="ModuleConfiguration" type="ns:ModuleConfiguration" initializeInvisibleChildren="false"/>
+    <element name="ResourceConfiguration" type="ns:ResourceConfiguration" initializeInvisibleChildren="false"/>
+    <element name="RouteConfiguration" type="ns:RouteConfiguration" initializeInvisibleChildren="false"/>
+    <complexType name="DataSourceConfiguration" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns:ResourceConfiguration" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/js.conf.DataSourceConfiguration" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="InjectionConfiguration">
-        <complexContent>
-            <extension base="ns1:Configuration">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.conf.InjectionConfiguration"></documentation>
+    <complexType name="InjectionConfiguration" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns1:Configuration" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/js.conf.InjectionConfiguration" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
-                <attribute name="type">
-                    <annotation>
-                        <documentation>
+                <attribute name="type" initializeInvisibleChildren="false">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         the type of the injection type
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="factory">
-                    <annotation>
-                        <documentation>
+                <attribute name="factory" initializeInvisibleChildren="false">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         the factory that will be injected. If no factory is given the
 factory will be automatically required
 
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="singleton" default="true">
-                    <annotation>
-                        <documentation>
+                <attribute name="singleton" initializeInvisibleChildren="false" default="true">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         add instance to singleton cache?
                     </documentation>
                     </annotation>
@@ -55,81 +55,81 @@ factory will be automatically required
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="ModuleConfiguration">
-        <complexContent>
-            <extension base="ns1:Configuration">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.conf.ModuleConfiguration"></documentation>
+    <complexType name="ModuleConfiguration" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns1:Configuration" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/js.conf.ModuleConfiguration" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
-                <attribute name="route">
-                    <annotation>
-                        <documentation>
+                <attribute name="route" initializeInvisibleChildren="false">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         a regular expression that will activate the module if the route matches
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="name" use="required">
-                    <annotation>
-                        <documentation>
+                <attribute name="name" initializeInvisibleChildren="false" use="required">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         a unique name of the module so the ModuleLoader can determinate if a Module has been already loaded
 or is currently active
 
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="moduleClass" use="required">
-                    <annotation>
-                        <documentation>
+                <attribute name="moduleClass" initializeInvisibleChildren="false" use="required">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         the full qualified name (e.g. app.module.MyModule) of the module to be loaded if the route is executed
 or the ModuleLoader.loadModule method is invoked manually.
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="attributes"/>
-                <attribute name="relative"/>
+                <attribute name="attributes" initializeInvisibleChildren="false"/>
+                <attribute name="relative" initializeInvisibleChildren="false"/>
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="ResourceConfiguration">
-        <complexContent>
-            <extension base="ns1:Configuration">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.conf.ResourceConfiguration"></documentation>
+    <complexType name="ResourceConfiguration" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns1:Configuration" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/js.conf.ResourceConfiguration" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
-                <attribute name="resourceHandler">
-                    <annotation>
-                        <documentation>
+                <attribute name="resourceHandler" initializeInvisibleChildren="false">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         a custom resource handler to handle this request
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="modelClassName" use="required">
-                    <annotation>
-                        <documentation>
+                <attribute name="modelClassName" initializeInvisibleChildren="false" use="required">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         the full qualified class name of the model used for operating on this resource
 
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="path" use="required">
-                    <annotation>
-                        <documentation>
+                <attribute name="path" initializeInvisibleChildren="false" use="required">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         the rest path used for access and save the model data. Keep in mind that
 ResourceConfiguration can be nested to have a context save environment.
 
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="collectionClassName"/>
-                <attribute name="processor">
-                    <annotation>
-                        <documentation>
+                <attribute name="collectionClassName" initializeInvisibleChildren="false"/>
+                <attribute name="processor" initializeInvisibleChildren="false">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         the name of the optional processor mapped with the $processors property of the RestDataSource
 
                     </documentation>
@@ -138,25 +138,25 @@ ResourceConfiguration can be nested to have a context save environment.
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="RouteConfiguration">
-        <complexContent>
-            <extension base="ns1:Configuration">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.conf.RouteConfiguration"></documentation>
+    <complexType name="RouteConfiguration" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns1:Configuration" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/js.conf.RouteConfiguration" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
-                <attribute name="name">
-                    <annotation>
-                        <documentation>
+                <attribute name="name" initializeInvisibleChildren="false">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         the name of the route. The name is just used for easier debugging reasons.
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="route" use="required">
-                    <annotation>
-                        <documentation>
+                <attribute name="route" initializeInvisibleChildren="false" use="required">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         a regular expression defining the route for matching the fragment. The starting #/ fragment is stripped from
 the fragment.
 
@@ -166,9 +166,9 @@ second parameter as the first parameter of the event handler is always the route
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="onexec" default="_onExecHandler" type="string">
-                    <annotation>
-                        <documentation>
+                <attribute name="onexec" initializeInvisibleChildren="false" default="_onExecHandler" type="string">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         the exec event is dispatched if the route matches the fragment. The event handler is invoked with the routeContext as
 first parameter followed by parameters for each matched group of the regular expression.
 

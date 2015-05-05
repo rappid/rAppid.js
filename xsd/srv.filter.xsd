@@ -1,40 +1,40 @@
-<schema targetNamespace="srv.filter"
+<schema targetNamespace="srv.filter" initializeInvisibleChildren="false"
     xmlns="http://www.w3.org/2001/XMLSchema"
     xmlns:ns1="srv.auth"
     xmlns:ns2="srv.core"
     xmlns:ns="srv.filter">
-    <import/>
-    <import/>
-    <element name="CredentialAuthenticationFilter" type="ns:CredentialAuthenticationFilter"/>
-    <element name="SessionAuthenticationFilter" type="ns:SessionAuthenticationFilter"/>
-    <element name="SessionFilter" type="ns:SessionFilter"/>
-    <element name="TokenAuthenticationFilter" type="ns:TokenAuthenticationFilter"/>
-    <complexType name="CredentialAuthenticationFilter">
-        <complexContent>
-            <extension base="ns:SessionAuthenticationFilter">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/srv.filter.CredentialAuthenticationFilter"></documentation>
+    <import initializeInvisibleChildren="false"/>
+    <import initializeInvisibleChildren="false"/>
+    <element name="CredentialAuthenticationFilter" type="ns:CredentialAuthenticationFilter" initializeInvisibleChildren="false"/>
+    <element name="SessionAuthenticationFilter" type="ns:SessionAuthenticationFilter" initializeInvisibleChildren="false"/>
+    <element name="SessionFilter" type="ns:SessionFilter" initializeInvisibleChildren="false"/>
+    <element name="TokenAuthenticationFilter" type="ns:TokenAuthenticationFilter" initializeInvisibleChildren="false"/>
+    <complexType name="CredentialAuthenticationFilter" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns:SessionAuthenticationFilter" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/srv.filter.CredentialAuthenticationFilter" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
-                <attribute name="usernameParameter" default="username"/>
-                <attribute name="passwordParameter" default="password"/>
+                <attribute name="usernameParameter" initializeInvisibleChildren="false" default="username"/>
+                <attribute name="passwordParameter" initializeInvisibleChildren="false" default="password"/>
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="SessionAuthenticationFilter">
-        <complexContent>
-            <extension base="ns1:AuthenticationFilter">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/srv.filter.SessionAuthenticationFilter"></documentation>
+    <complexType name="SessionAuthenticationFilter" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns1:AuthenticationFilter" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/srv.filter.SessionAuthenticationFilter" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
-                <attribute name="sessionKey" default="authenticationToken">
-                    <annotation>
-                        <documentation>
+                <attribute name="sessionKey" initializeInvisibleChildren="false" default="authenticationToken">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         The key under which the authentication token is saved
                     </documentation>
                     </annotation>
@@ -42,31 +42,31 @@
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="SessionFilter">
-        <complexContent>
-            <extension base="ns2:Filter">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/srv.filter.SessionFilter"></documentation>
+    <complexType name="SessionFilter" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns2:Filter" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/srv.filter.SessionFilter" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
-                <attribute name="sessionName" default="sessionId"/>
-                <attribute name="sessionId"/>
-                <attribute name="timeout" default="120"/>
+                <attribute name="sessionName" initializeInvisibleChildren="false" default="sessionId"/>
+                <attribute name="sessionId" initializeInvisibleChildren="false"/>
+                <attribute name="timeout" initializeInvisibleChildren="false" default="120"/>
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="TokenAuthenticationFilter">
-        <complexContent>
-            <extension base="ns1:AuthenticationFilter">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/srv.filter.TokenAuthenticationFilter"></documentation>
+    <complexType name="TokenAuthenticationFilter" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns1:AuthenticationFilter" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/srv.filter.TokenAuthenticationFilter" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
-                <attribute name="tokenParameter" default="token"/>
+                <attribute name="tokenParameter" initializeInvisibleChildren="false" default="token"/>
             </extension>
         </complexContent>
     </complexType>

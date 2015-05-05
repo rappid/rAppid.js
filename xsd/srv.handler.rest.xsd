@@ -1,36 +1,36 @@
-<schema targetNamespace="srv.handler.rest"
+<schema targetNamespace="srv.handler.rest" initializeInvisibleChildren="false"
     xmlns="http://www.w3.org/2001/XMLSchema"
     xmlns:ns1="js.core"
     xmlns:ns="srv.handler.rest">
-    <import/>
-    <element name="DataSourceSwitchResourceHandler" type="ns:DataSourceSwitchResourceHandler"/>
-    <element name="ResourceHandler" type="ns:ResourceHandler"/>
-    <complexType name="DataSourceSwitchResourceHandler">
-        <complexContent>
-            <extension base="ns:ResourceHandler">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/srv.handler.rest.DataSourceSwitchResourceHandler"></documentation>
+    <import initializeInvisibleChildren="false"/>
+    <element name="DataSourceSwitchResourceHandler" type="ns:DataSourceSwitchResourceHandler" initializeInvisibleChildren="false"/>
+    <element name="ResourceHandler" type="ns:ResourceHandler" initializeInvisibleChildren="false"/>
+    <complexType name="DataSourceSwitchResourceHandler" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns:ResourceHandler" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/srv.handler.rest.DataSourceSwitchResourceHandler" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
-                <attribute name="prefix"/>
-                <attribute name="suffix"/>
+                <attribute name="prefix" initializeInvisibleChildren="false"/>
+                <attribute name="suffix" initializeInvisibleChildren="false"/>
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="ResourceHandler">
-        <complexContent>
-            <extension base="ns1:Component">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/srv.handler.rest.ResourceHandler"></documentation>
+    <complexType name="ResourceHandler" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns1:Component" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/srv.handler.rest.ResourceHandler" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
-                <attribute name="autoStartSession" default="true"/>
-                <attribute name="defaultSortField"/>
-                <attribute name="defaultSortOrder"/>
+                <attribute name="autoStartSession" initializeInvisibleChildren="false" default="true"/>
+                <attribute name="defaultSortField" initializeInvisibleChildren="false"/>
+                <attribute name="defaultSortOrder" initializeInvisibleChildren="false"/>
             </extension>
         </complexContent>
     </complexType>

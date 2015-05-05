@@ -1,115 +1,115 @@
-<schema targetNamespace="js.ui.field"
+<schema targetNamespace="js.ui.field" initializeInvisibleChildren="false"
     xmlns="http://www.w3.org/2001/XMLSchema"
     xmlns:ns1="js.ui"
     xmlns:ns="js.ui.field">
-    <import/>
-    <element name="Password" type="ns:Password"/>
-    <element name="RadioGroup" type="ns:RadioGroup"/>
-    <element name="RadioGroupClass" type="ns:RadioGroupClass"/>
-    <element name="Text" type="ns:Text"/>
-    <element name="TextArea" type="ns:TextArea"/>
-    <element name="TextAreaClass" type="ns:TextAreaClass"/>
-    <element name="TextClass" type="ns:TextClass"/>
-    <complexType name="Password">
-        <complexContent>
-            <extension base="ns:Text">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.ui.field.Password"></documentation>
+    <import initializeInvisibleChildren="false"/>
+    <element name="Password" type="ns:Password" initializeInvisibleChildren="false"/>
+    <element name="RadioGroup" type="ns:RadioGroup" initializeInvisibleChildren="false"/>
+    <element name="RadioGroupClass" type="ns:RadioGroupClass" initializeInvisibleChildren="false"/>
+    <element name="Text" type="ns:Text" initializeInvisibleChildren="false"/>
+    <element name="TextArea" type="ns:TextArea" initializeInvisibleChildren="false"/>
+    <element name="TextAreaClass" type="ns:TextAreaClass" initializeInvisibleChildren="false"/>
+    <element name="TextClass" type="ns:TextClass" initializeInvisibleChildren="false"/>
+    <complexType name="Password" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns:Text" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/js.ui.field.Password" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="RadioGroup">
-        <complexContent>
-            <extension base="ns:RadioGroupClass">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.ui.field.RadioGroup"></documentation>
+    <complexType name="RadioGroup" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns:RadioGroupClass" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/js.ui.field.RadioGroup" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="RadioGroupClass">
-        <complexContent>
-            <extension base="ns1:Field">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.ui.field.RadioGroupClass"></documentation>
+    <complexType name="RadioGroupClass" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns1:Field" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/js.ui.field.RadioGroupClass" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="Text">
-        <complexContent>
-            <extension base="ns:TextClass">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.ui.field.Text"></documentation>
+    <complexType name="Text" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns:TextClass" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/js.ui.field.Text" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
-                <attribute name="type" default="text"/>
-                <attribute name="value"/>
-                <attribute name="size" default="large"/>
-                <attribute name="fieldName"/>
-                <attribute name="placeholder"/>
+                <attribute name="type" initializeInvisibleChildren="false" default="text"/>
+                <attribute name="value" initializeInvisibleChildren="false"/>
+                <attribute name="size" initializeInvisibleChildren="false" default="large"/>
+                <attribute name="fieldName" initializeInvisibleChildren="false"/>
+                <attribute name="placeholder" initializeInvisibleChildren="false"/>
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="TextArea">
-        <complexContent>
-            <extension base="ns:TextAreaClass">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.ui.field.TextArea"></documentation>
+    <complexType name="TextArea" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns:TextAreaClass" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/js.ui.field.TextArea" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
-                <attribute name="rows" default="2"/>
-                <attribute name="value"/>
-                <attribute name="size" default="large"/>
-                <attribute name="placeholder"/>
-                <attribute name="maxLength"/>
+                <attribute name="rows" initializeInvisibleChildren="false" default="2"/>
+                <attribute name="value" initializeInvisibleChildren="false"/>
+                <attribute name="size" initializeInvisibleChildren="false" default="large"/>
+                <attribute name="placeholder" initializeInvisibleChildren="false"/>
+                <attribute name="maxLength" initializeInvisibleChildren="false"/>
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="TextAreaClass">
-        <complexContent>
-            <extension base="ns1:Field">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.ui.field.TextAreaClass"></documentation>
+    <complexType name="TextAreaClass" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns1:Field" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/js.ui.field.TextAreaClass" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
-                <attribute name="value"/>
-                <attribute name="size" default="large"/>
-                <attribute name="placeholder"/>
-                <attribute name="maxLength"/>
+                <attribute name="value" initializeInvisibleChildren="false"/>
+                <attribute name="size" initializeInvisibleChildren="false" default="large"/>
+                <attribute name="placeholder" initializeInvisibleChildren="false"/>
+                <attribute name="maxLength" initializeInvisibleChildren="false"/>
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="TextClass">
-        <complexContent>
-            <extension base="ns1:Field">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.ui.field.TextClass"></documentation>
+    <complexType name="TextClass" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns1:Field" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/js.ui.field.TextClass" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
-                <attribute name="type" default="text"/>
-                <attribute name="value"/>
-                <attribute name="size" default="large"/>
-                <attribute name="fieldName"/>
-                <attribute name="placeholder"/>
+                <attribute name="type" initializeInvisibleChildren="false" default="text"/>
+                <attribute name="value" initializeInvisibleChildren="false"/>
+                <attribute name="size" initializeInvisibleChildren="false" default="large"/>
+                <attribute name="fieldName" initializeInvisibleChildren="false"/>
+                <attribute name="placeholder" initializeInvisibleChildren="false"/>
             </extension>
         </complexContent>
     </complexType>

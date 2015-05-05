@@ -1,122 +1,122 @@
-<schema targetNamespace="srv.auth"
+<schema targetNamespace="srv.auth" initializeInvisibleChildren="false"
     xmlns="http://www.w3.org/2001/XMLSchema"
     xmlns:ns1="srv.core"
     xmlns:ns2="js.core"
     xmlns:ns="srv.auth">
-    <import/>
-    <import/>
-    <element name="AuthenticationFilter" type="ns:AuthenticationFilter"/>
-    <element name="AuthenticationProvider" type="ns:AuthenticationProvider"/>
-    <element name="AuthorizationProvider" type="ns:AuthorizationProvider"/>
-    <element name="DataSourceAuthenticationProvider" type="ns:DataSourceAuthenticationProvider"/>
-    <element name="LDAPAuthenticationProvider" type="ns:LDAPAuthenticationProvider"/>
-    <complexType name="AuthenticationFilter">
-        <complexContent>
-            <extension base="ns1:Filter">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/srv.auth.AuthenticationFilter"></documentation>
+    <import initializeInvisibleChildren="false"/>
+    <import initializeInvisibleChildren="false"/>
+    <element name="AuthenticationFilter" type="ns:AuthenticationFilter" initializeInvisibleChildren="false"/>
+    <element name="AuthenticationProvider" type="ns:AuthenticationProvider" initializeInvisibleChildren="false"/>
+    <element name="AuthorizationProvider" type="ns:AuthorizationProvider" initializeInvisibleChildren="false"/>
+    <element name="DataSourceAuthenticationProvider" type="ns:DataSourceAuthenticationProvider" initializeInvisibleChildren="false"/>
+    <element name="LDAPAuthenticationProvider" type="ns:LDAPAuthenticationProvider" initializeInvisibleChildren="false"/>
+    <complexType name="AuthenticationFilter" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns1:Filter" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/srv.auth.AuthenticationFilter" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="AuthenticationProvider">
-        <complexContent>
-            <extension base="ns2:Component">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/srv.auth.AuthenticationProvider"></documentation>
+    <complexType name="AuthenticationProvider" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns2:Component" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/srv.auth.AuthenticationProvider" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
-                <attribute name="name"/>
-                <attribute name="defaultProvider"/>
+                <attribute name="name" initializeInvisibleChildren="false"/>
+                <attribute name="defaultProvider" initializeInvisibleChildren="false"/>
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="AuthorizationProvider">
-        <complexContent>
-            <extension base="ns2:Component">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/srv.auth.AuthorizationProvider"></documentation>
+    <complexType name="AuthorizationProvider" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns2:Component" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/srv.auth.AuthorizationProvider" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="DataSourceAuthenticationProvider">
-        <complexContent>
-            <extension base="ns:AuthenticationProvider">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/srv.auth.DataSourceAuthenticationProvider"></documentation>
+    <complexType name="DataSourceAuthenticationProvider" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns:AuthenticationProvider" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/srv.auth.DataSourceAuthenticationProvider" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
-                <attribute name="userModelClassName">
-                    <annotation>
-                        <documentation>
+                <attribute name="userModelClassName" initializeInvisibleChildren="false">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         The user model className for fetching the User
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="dataSource">
-                    <annotation>
-                        <documentation>
+                <attribute name="dataSource" initializeInvisibleChildren="false">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         The dataSource for the user
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="algorithm" default="sha1">
-                    <annotation>
-                        <documentation>
+                <attribute name="algorithm" initializeInvisibleChildren="false" default="sha1">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         The hashing algorithm
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="delimiter" default=":">
-                    <annotation>
-                        <documentation>
+                <attribute name="delimiter" initializeInvisibleChildren="false" default=":">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         The delimiter for creating the password hash
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="maxLoginAttempts" default="3">
-                    <annotation>
-                        <documentation>
+                <attribute name="maxLoginAttempts" initializeInvisibleChildren="false" default="3">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         Maximum login attempts for failed logins
 NULL is unlimited
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="blockTime" default="3600">
-                    <annotation>
-                        <documentation>
+                <attribute name="blockTime" initializeInvisibleChildren="false" default="3600">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         Block time in seconds
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="usernameField" default="username">
-                    <annotation>
-                        <documentation>
+                <attribute name="usernameField" initializeInvisibleChildren="false" default="username">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         The field for fetching the user
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="maxPasswordLength" default="60">
-                    <annotation>
-                        <documentation>
+                <attribute name="maxPasswordLength" initializeInvisibleChildren="false" default="60">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         Max. length of passwords
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="authenticationField" default="authentication">
-                    <annotation>
-                        <documentation>
+                <attribute name="authenticationField" initializeInvisibleChildren="false" default="authentication">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         The field which contains the authentication data in a user
                     </documentation>
                     </annotation>
@@ -124,17 +124,17 @@ NULL is unlimited
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="LDAPAuthenticationProvider">
-        <complexContent>
-            <extension base="ns:AuthenticationProvider">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/srv.auth.LDAPAuthenticationProvider"></documentation>
+    <complexType name="LDAPAuthenticationProvider" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns:AuthenticationProvider" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/srv.auth.LDAPAuthenticationProvider" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
-                <attribute name="host"/>
-                <attribute name="dnTemplate" default="uid=%username%"/>
+                <attribute name="host" initializeInvisibleChildren="false"/>
+                <attribute name="dnTemplate" initializeInvisibleChildren="false" default="uid=%username%"/>
             </extension>
         </complexContent>
     </complexType>

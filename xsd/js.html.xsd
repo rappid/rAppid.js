@@ -1,76 +1,76 @@
-<schema targetNamespace="js.html"
+<schema targetNamespace="js.html" initializeInvisibleChildren="false"
     xmlns="http://www.w3.org/2001/XMLSchema"
     xmlns:ns1="js.core"
     xmlns:ns2="js.ui"
     xmlns:ns="js.html">
-    <import/>
-    <import/>
-    <element name="A" type="ns:A"/>
-    <element name="HtmlElement" type="ns:HtmlElement"/>
-    <element name="Input" type="ns:Input"/>
-    <element name="Option" type="ns:Option"/>
-    <element name="Select" type="ns:Select"/>
-    <element name="TextArea" type="ns:TextArea"/>
-    <complexType name="A">
-        <complexContent>
-            <extension base="ns:HtmlElement">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.html.A"></documentation>
+    <import initializeInvisibleChildren="false"/>
+    <import initializeInvisibleChildren="false"/>
+    <element name="A" type="ns:A" initializeInvisibleChildren="false"/>
+    <element name="HtmlElement" type="ns:HtmlElement" initializeInvisibleChildren="false"/>
+    <element name="Input" type="ns:Input" initializeInvisibleChildren="false"/>
+    <element name="Option" type="ns:Option" initializeInvisibleChildren="false"/>
+    <element name="Select" type="ns:Select" initializeInvisibleChildren="false"/>
+    <element name="TextArea" type="ns:TextArea" initializeInvisibleChildren="false"/>
+    <complexType name="A" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns:HtmlElement" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/js.html.A" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
-                <attribute name="tagName" default="a"/>
-                <attribute name="target"/>
-                <attribute name="href"/>
-                <attribute name="createHistoryEntry" default="true"/>
-                <attribute name="triggerRoute" default="true"/>
+                <attribute name="tagName" initializeInvisibleChildren="false" default="a"/>
+                <attribute name="target" initializeInvisibleChildren="false"/>
+                <attribute name="href" initializeInvisibleChildren="false"/>
+                <attribute name="createHistoryEntry" initializeInvisibleChildren="false" default="true"/>
+                <attribute name="triggerRoute" initializeInvisibleChildren="false" default="true"/>
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="HtmlElement">
-        <complexContent>
-            <extension base="ns1:DomElement">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.html.HtmlElement">
+    <complexType name="HtmlElement" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns1:DomElement" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/js.html.HtmlElement" initializeInvisibleChildren="false">
                                 Represents a HTML Element in the DOM
                             </documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
-                <attribute name="selected">
-                    <annotation>
-                        <documentation>
+                <attribute name="selected" initializeInvisibleChildren="false">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         If not null, false or undefined the "active" CSS class is added
 
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="selectable">
-                    <annotation>
-                        <documentation>
+                <attribute name="selectable" initializeInvisibleChildren="false">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         If not null, false or undefined a click will set the element to selected
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="namespace">
-                    <annotation>
-                        <documentation>
+                <attribute name="namespace" initializeInvisibleChildren="false">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         the target namespace for the HTMLElement
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="position">
-                    <annotation>
-                        <documentation>
+                <attribute name="position" initializeInvisibleChildren="false">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         Possible values: "absolute", "relative"
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="heightUpdatePolicy" default="out">
-                    <annotation>
-                        <documentation>
+                <attribute name="heightUpdatePolicy" initializeInvisibleChildren="false" default="out">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         
 The heightUpdatePolicy configures whether the height of the component is
 updated when the DOM node height changes or if the DOM node height is updated
@@ -85,9 +85,9 @@ when the component height changes.
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="widthUpdatePolicy" default="out">
-                    <annotation>
-                        <documentation>
+                <attribute name="widthUpdatePolicy" initializeInvisibleChildren="false" default="out">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         
 The widthUpdatePolicy configures whether the width of the component is
 updated when the DOM node width changes or if the DOM node width is updated
@@ -105,32 +105,32 @@ when the component width changes.
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="Input">
-        <complexContent>
-            <extension base="ns:HtmlElement">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.html.Input"></documentation>
+    <complexType name="Input" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns:HtmlElement" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/js.html.Input" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
-                <attribute name="type" default="text">
-                    <annotation>
-                        <documentation>
+                <attribute name="type" initializeInvisibleChildren="false" default="text">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         the type of the input element
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="checked">
-                    <annotation>
-                        <documentation>
+                <attribute name="checked" initializeInvisibleChildren="false">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         the checked state for radio buttons and checkboxes
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="updateOnEvent" default="input">
-                    <annotation>
-                        <documentation>
+                <attribute name="updateOnEvent" initializeInvisibleChildren="false" default="input">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         the event on which the bound value will be updated
                     </documentation>
                     </annotation>
@@ -138,40 +138,41 @@ when the component width changes.
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="Option">
-        <complexContent>
-            <extension base="ns:HtmlElement">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.html.Option"></documentation>
+    <complexType name="Option" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns:HtmlElement" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/js.html.Option" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="Select">
-        <complexContent>
-            <extension base="ns2:SelectionView">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.html.Select"></documentation>
+    <complexType name="Select" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns2:SelectionView" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/js.html.Select" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
+                <attribute name="enableAutoFillCheck" initializeInvisibleChildren="false" default="true"/>
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="TextArea">
-        <complexContent>
-            <extension base="ns:HtmlElement">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.html.TextArea"></documentation>
+    <complexType name="TextArea" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns:HtmlElement" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/js.html.TextArea" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
-                <attribute name="updateOnEvent" default="change"/>
+                <attribute name="updateOnEvent" initializeInvisibleChildren="false" default="change"/>
             </extension>
         </complexContent>
     </complexType>

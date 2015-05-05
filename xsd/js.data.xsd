@@ -1,164 +1,164 @@
-<schema targetNamespace="js.data"
+<schema targetNamespace="js.data" initializeInvisibleChildren="false"
     xmlns="http://www.w3.org/2001/XMLSchema"
     xmlns:ns1="js.core"
     xmlns:ns="js.data">
-    <import/>
-    <element name="DataSource" type="ns:DataSource"/>
-    <element name="DataView" type="ns:DataView"/>
-    <element name="FilterDataView" type="ns:FilterDataView"/>
-    <element name="LocalStorage" type="ns:LocalStorage"/>
-    <element name="LocalStorageDataSource" type="ns:LocalStorageDataSource"/>
-    <element name="PagedDataView" type="ns:PagedDataView"/>
-    <element name="RestDataSource" type="ns:RestDataSource"/>
-    <element name="SessionStorage" type="ns:SessionStorage"/>
-    <complexType name="DataSource">
-        <complexContent>
-            <extension base="ns1:Component">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.data.DataSource">
+    <import initializeInvisibleChildren="false"/>
+    <element name="DataSource" type="ns:DataSource" initializeInvisibleChildren="false"/>
+    <element name="DataView" type="ns:DataView" initializeInvisibleChildren="false"/>
+    <element name="FilterDataView" type="ns:FilterDataView" initializeInvisibleChildren="false"/>
+    <element name="LocalStorage" type="ns:LocalStorage" initializeInvisibleChildren="false"/>
+    <element name="LocalStorageDataSource" type="ns:LocalStorageDataSource" initializeInvisibleChildren="false"/>
+    <element name="PagedDataView" type="ns:PagedDataView" initializeInvisibleChildren="false"/>
+    <element name="RestDataSource" type="ns:RestDataSource" initializeInvisibleChildren="false"/>
+    <element name="SessionStorage" type="ns:SessionStorage" initializeInvisibleChildren="false"/>
+    <complexType name="DataSource" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns1:Component" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/js.data.DataSource" initializeInvisibleChildren="false">
                                  already in list
                             </documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
-                <attribute name="dateFormat" default="YYYY-MM-DDTHH:mm:ssZ"/>
+                <attribute name="dateFormat" initializeInvisibleChildren="false" default="YYYY-MM-DDTHH:mm:ssZ"/>
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="DataView">
-        <complexContent>
-            <extension base="ns1:Component">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.data.DataView"></documentation>
+    <complexType name="DataView" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns1:Component" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/js.data.DataView" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
-                <attribute name="baseList"/>
-                <attribute name="list"/>
+                <attribute name="baseList" initializeInvisibleChildren="false"/>
+                <attribute name="list" initializeInvisibleChildren="false"/>
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="FilterDataView">
-        <complexContent>
-            <extension base="ns:DataView">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.data.FilterDataView"></documentation>
+    <complexType name="FilterDataView" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns:DataView" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/js.data.FilterDataView" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
-                <attribute name="filterFnc"/>
+                <attribute name="filterFnc" initializeInvisibleChildren="false"/>
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="LocalStorage">
-        <complexContent>
-            <extension base="ns1:Component">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.data.LocalStorage">
+    <complexType name="LocalStorage" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns1:Component" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/js.data.LocalStorage" initializeInvisibleChildren="false">
                                 Local Storage implementation
                             </documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="LocalStorageDataSource">
-        <complexContent>
-            <extension base="ns:DataSource">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.data.LocalStorageDataSource"></documentation>
+    <complexType name="LocalStorageDataSource" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns:DataSource" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/js.data.LocalStorageDataSource" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
-                <attribute name="name" default="default"/>
+                <attribute name="name" initializeInvisibleChildren="false" default="default"/>
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="PagedDataView">
-        <complexContent>
-            <extension base="ns:DataView">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.data.PagedDataView"></documentation>
+    <complexType name="PagedDataView" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns:DataView" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/js.data.PagedDataView" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
-                <attribute name="page"/>
-                <attribute name="pageCount"/>
-                <attribute name="pageSize" default="20"/>
+                <attribute name="page" initializeInvisibleChildren="false"/>
+                <attribute name="pageCount" initializeInvisibleChildren="false"/>
+                <attribute name="pageSize" initializeInvisibleChildren="false" default="20"/>
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="RestDataSource">
-        <complexContent>
-            <extension base="ns:DataSource">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.data.RestDataSource"></documentation>
+    <complexType name="RestDataSource" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns:DataSource" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/js.data.RestDataSource" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
-                <attribute name="endPoint">
-                    <annotation>
-                        <documentation>
+                <attribute name="endPoint" initializeInvisibleChildren="false">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         The endPoint of the REST API
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="gateway">
-                    <annotation>
-                        <documentation>
+                <attribute name="gateway" initializeInvisibleChildren="false">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         
 If needed, the gateway of the REST API
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="determinateContextAttribute" default="href">
-                    <annotation>
-                        <documentation>
+                <attribute name="determinateContextAttribute" initializeInvisibleChildren="false" default="href">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         Tells the RestDataSource which attribute field to use for context determination of the fetched resources
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="determinateContextByGateway" default="true"/>
-                <attribute name="parsePayloadOnCreate" default="true">
-                    <annotation>
-                        <documentation>
+                <attribute name="determinateContextByGateway" initializeInvisibleChildren="false" default="true"/>
+                <attribute name="parsePayloadOnCreate" initializeInvisibleChildren="false" default="true">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         If true the returned payload of a POST get's parsed and written back in the Model
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="parsePayloadOnUpdate" default="true">
-                    <annotation>
-                        <documentation>
+                <attribute name="parsePayloadOnUpdate" initializeInvisibleChildren="false" default="true">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         If true the returned payload of a PUT get's parsed and written back in the Model
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="useSafeHttpMethods">
-                    <annotation>
-                        <documentation>
+                <attribute name="useSafeHttpMethods" initializeInvisibleChildren="false">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         Sends the used HTTP method as a query parameter and uses the POST method
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="collectionPageSize" default="100">
-                    <annotation>
-                        <documentation>
+                <attribute name="collectionPageSize" initializeInvisibleChildren="false" default="100">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         
 Set's the default collection page size for fetching collection
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="suffix">
-                    <annotation>
-                        <documentation>
+                <attribute name="suffix" initializeInvisibleChildren="false">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         a suffix like `.json` to add to each request
                     </documentation>
                     </annotation>
@@ -166,16 +166,16 @@ Set's the default collection page size for fetching collection
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="SessionStorage">
-        <complexContent>
-            <extension base="ns1:Component">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.data.SessionStorage">
+    <complexType name="SessionStorage" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns1:Component" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/js.data.SessionStorage" initializeInvisibleChildren="false">
                                 Session Storage implementation
                             </documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
             </extension>
         </complexContent>

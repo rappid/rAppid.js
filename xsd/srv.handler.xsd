@@ -1,110 +1,110 @@
-<schema targetNamespace="srv.handler"
+<schema targetNamespace="srv.handler" initializeInvisibleChildren="false"
     xmlns="http://www.w3.org/2001/XMLSchema"
     xmlns:ns1="srv.core"
     xmlns:ns="srv.handler">
-    <import/>
-    <element name="AuthenticationHandler" type="ns:AuthenticationHandler"/>
-    <element name="ExceptionHandler" type="ns:ExceptionHandler"/>
-    <element name="NodeRenderingHandler" type="ns:NodeRenderingHandler"/>
-    <element name="RegistrationHandler" type="ns:RegistrationHandler"/>
-    <element name="RestHandler" type="ns:RestHandler"/>
-    <element name="StaticFileHandler" type="ns:StaticFileHandler"/>
-    <complexType name="AuthenticationHandler">
-        <complexContent>
-            <extension base="ns1:Handler">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/srv.handler.AuthenticationHandler"></documentation>
+    <import initializeInvisibleChildren="false"/>
+    <element name="AuthenticationHandler" type="ns:AuthenticationHandler" initializeInvisibleChildren="false"/>
+    <element name="ExceptionHandler" type="ns:ExceptionHandler" initializeInvisibleChildren="false"/>
+    <element name="NodeRenderingHandler" type="ns:NodeRenderingHandler" initializeInvisibleChildren="false"/>
+    <element name="RegistrationHandler" type="ns:RegistrationHandler" initializeInvisibleChildren="false"/>
+    <element name="RestHandler" type="ns:RestHandler" initializeInvisibleChildren="false"/>
+    <element name="StaticFileHandler" type="ns:StaticFileHandler" initializeInvisibleChildren="false"/>
+    <complexType name="AuthenticationHandler" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns1:Handler" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/srv.handler.AuthenticationHandler" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="ExceptionHandler">
-        <complexContent>
-            <extension base="ns1:Handler">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/srv.handler.ExceptionHandler"></documentation>
+    <complexType name="ExceptionHandler" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns1:Handler" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/srv.handler.ExceptionHandler" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="NodeRenderingHandler">
-        <complexContent>
-            <extension base="ns1:Handler">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/srv.handler.NodeRenderingHandler"></documentation>
+    <complexType name="NodeRenderingHandler" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns1:Handler" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/srv.handler.NodeRenderingHandler" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
-                <attribute name="applicationUrl">
-                    <annotation>
-                        <documentation>
+                <attribute name="applicationUrl" initializeInvisibleChildren="false">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                          used for making ajax relative ajax requests - null indicates that it is hosted on this server
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="applicationDirectory">
-                    <annotation>
-                        <documentation>
+                <attribute name="applicationDirectory" initializeInvisibleChildren="false">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                          the document root will be used by default
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="options"/>
-                <attribute name="application" default="app/App.xml"/>
-                <attribute name="indexFile" default="index.html"/>
-                <attribute name="config" default="config.json"/>
-                <attribute name="usePackageVersion"/>
-                <attribute name="defaultStartParameter"/>
+                <attribute name="options" initializeInvisibleChildren="false"/>
+                <attribute name="application" initializeInvisibleChildren="false" default="app/App.xml"/>
+                <attribute name="indexFile" initializeInvisibleChildren="false" default="index.html"/>
+                <attribute name="config" initializeInvisibleChildren="false" default="config.json"/>
+                <attribute name="usePackageVersion" initializeInvisibleChildren="false"/>
+                <attribute name="defaultStartParameter" initializeInvisibleChildren="false"/>
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="RegistrationHandler">
-        <complexContent>
-            <extension base="ns1:Handler">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/srv.handler.RegistrationHandler"></documentation>
+    <complexType name="RegistrationHandler" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns1:Handler" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/srv.handler.RegistrationHandler" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
-                <attribute name="regEx"/>
-                <attribute name="userPath" default="/api/users"/>
+                <attribute name="regEx" initializeInvisibleChildren="false"/>
+                <attribute name="userPath" initializeInvisibleChildren="false" default="/api/users"/>
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="RestHandler">
-        <complexContent>
-            <extension base="ns1:Handler">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/srv.core.RestHandler">
+    <complexType name="RestHandler" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns1:Handler" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/srv.core.RestHandler" initializeInvisibleChildren="false">
                                  here we have a combined id
                             </documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="StaticFileHandler">
-        <complexContent>
-            <extension base="ns1:Handler">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/srv.core.StaticFileHandler"></documentation>
+    <complexType name="StaticFileHandler" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns1:Handler" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/srv.core.StaticFileHandler" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
-                <attribute name="documentRoot"/>
-                <attribute name="indexFile" default="index.html"/>
-                <attribute name="defaultContentType" default="text/plain"/>
+                <attribute name="documentRoot" initializeInvisibleChildren="false"/>
+                <attribute name="indexFile" initializeInvisibleChildren="false" default="index.html"/>
+                <attribute name="defaultContentType" initializeInvisibleChildren="false" default="text/plain"/>
             </extension>
         </complexContent>
     </complexType>

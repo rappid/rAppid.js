@@ -1,26 +1,26 @@
-<schema targetNamespace="js.svg"
+<schema targetNamespace="js.svg" initializeInvisibleChildren="false"
     xmlns="http://www.w3.org/2001/XMLSchema"
     xmlns:ns1="js.core"
     xmlns:ns="js.svg">
-    <import/>
-    <element name="SvgElement" type="ns:SvgElement"/>
-    <complexType name="SvgElement">
-        <complexContent>
-            <extension base="ns1:DomElement">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.svg.SvgElement"></documentation>
+    <import initializeInvisibleChildren="false"/>
+    <element name="SvgElement" type="ns:SvgElement" initializeInvisibleChildren="false"/>
+    <complexType name="SvgElement" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns1:DomElement" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/js.svg.SvgElement" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
-                <attribute name="transformations"/>
-                <attribute name="translateX"/>
-                <attribute name="translateY"/>
-                <attribute name="scaleX"/>
-                <attribute name="scaleY"/>
-                <attribute name="rotation"/>
-                <attribute name="rotationX"/>
-                <attribute name="rotationY"/>
+                <attribute name="transformations" initializeInvisibleChildren="false"/>
+                <attribute name="translateX" initializeInvisibleChildren="false"/>
+                <attribute name="translateY" initializeInvisibleChildren="false"/>
+                <attribute name="scaleX" initializeInvisibleChildren="false"/>
+                <attribute name="scaleY" initializeInvisibleChildren="false"/>
+                <attribute name="rotation" initializeInvisibleChildren="false"/>
+                <attribute name="rotationX" initializeInvisibleChildren="false"/>
+                <attribute name="rotationY" initializeInvisibleChildren="false"/>
             </extension>
         </complexContent>
     </complexType>

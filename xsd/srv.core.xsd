@@ -1,51 +1,51 @@
-<schema targetNamespace="srv.core"
+<schema targetNamespace="srv.core" initializeInvisibleChildren="false"
     xmlns="http://www.w3.org/2001/XMLSchema"
     xmlns:ns1="js.core"
     xmlns:ns="srv.core">
-    <import/>
-    <element name="AuthenticationService" type="ns:AuthenticationService"/>
-    <element name="AuthorizationService" type="ns:AuthorizationService"/>
-    <element name="EndPoint" type="ns:EndPoint"/>
-    <element name="EndPoints" type="ns:EndPoints"/>
-    <element name="Filter" type="ns:Filter"/>
-    <element name="Filters" type="ns:Filters"/>
-    <element name="Handler" type="ns:Handler"/>
-    <element name="Handlers" type="ns:Handlers"/>
-    <element name="IdentityService" type="ns:IdentityService"/>
-    <element name="Server" type="ns:Server"/>
-    <complexType name="AuthenticationService">
-        <complexContent>
-            <extension base="ns1:Component">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/srv.core.AuthenticationService"></documentation>
+    <import initializeInvisibleChildren="false"/>
+    <element name="AuthenticationService" type="ns:AuthenticationService" initializeInvisibleChildren="false"/>
+    <element name="AuthorizationService" type="ns:AuthorizationService" initializeInvisibleChildren="false"/>
+    <element name="EndPoint" type="ns:EndPoint" initializeInvisibleChildren="false"/>
+    <element name="EndPoints" type="ns:EndPoints" initializeInvisibleChildren="false"/>
+    <element name="Filter" type="ns:Filter" initializeInvisibleChildren="false"/>
+    <element name="Filters" type="ns:Filters" initializeInvisibleChildren="false"/>
+    <element name="Handler" type="ns:Handler" initializeInvisibleChildren="false"/>
+    <element name="Handlers" type="ns:Handlers" initializeInvisibleChildren="false"/>
+    <element name="IdentityService" type="ns:IdentityService" initializeInvisibleChildren="false"/>
+    <element name="Server" type="ns:Server" initializeInvisibleChildren="false"/>
+    <complexType name="AuthenticationService" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns1:Component" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/srv.core.AuthenticationService" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
-                <attribute name="dataSource">
-                    <annotation>
-                        <documentation>
+                <attribute name="dataSource" initializeInvisibleChildren="false">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         The data source where to store the token
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="userDataSource">
-                    <annotation>
-                        <documentation>
+                <attribute name="userDataSource" initializeInvisibleChildren="false">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         The data source which contains the user
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="userModelClassName">
-                    <annotation>
-                        <documentation>
+                <attribute name="userModelClassName" initializeInvisibleChildren="false">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         The User mmodel class name
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="tokenLifeTime" default="600">
-                    <annotation>
-                        <documentation>
+                <attribute name="tokenLifeTime" initializeInvisibleChildren="false" default="600">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         Token life time in seconds
                     </documentation>
                     </annotation>
@@ -53,116 +53,116 @@
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="AuthorizationService">
-        <complexContent>
-            <extension base="ns1:Component">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/srv.core.AuthorizationService"></documentation>
+    <complexType name="AuthorizationService" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns1:Component" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/srv.core.AuthorizationService" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="EndPoint">
-        <complexContent>
-            <extension base="ns1:Component">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/srv.core.EndPoint"></documentation>
+    <complexType name="EndPoint" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns1:Component" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/srv.core.EndPoint" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="EndPoints">
-        <complexContent>
-            <extension base="ns1:Component">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/srv.core.EndPoints"></documentation>
+    <complexType name="EndPoints" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns1:Component" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/srv.core.EndPoints" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="Filter">
-        <complexContent>
-            <extension base="ns1:Component">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/srv.core.Filter"></documentation>
+    <complexType name="Filter" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns1:Component" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/srv.core.Filter" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="Filters">
-        <complexContent>
-            <extension base="ns1:Component">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/srv.core.Filters"></documentation>
+    <complexType name="Filters" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns1:Component" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/srv.core.Filters" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="Handler">
-        <complexContent>
-            <extension base="ns1:Component">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/srv.core.Handler"></documentation>
+    <complexType name="Handler" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns1:Component" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/srv.core.Handler" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
-                <attribute name="autoStartSession"/>
-                <attribute name="path" default="/"/>
-                <attribute name="route"/>
+                <attribute name="autoStartSession" initializeInvisibleChildren="false"/>
+                <attribute name="path" initializeInvisibleChildren="false" default="/"/>
+                <attribute name="route" initializeInvisibleChildren="false"/>
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="Handlers">
-        <complexContent>
-            <extension base="ns1:Component">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/srv.core.Handlers"></documentation>
+    <complexType name="Handlers" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns1:Component" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/srv.core.Handlers" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="IdentityService">
-        <complexContent>
-            <extension base="ns1:Component">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/srv.core.IdentityService"></documentation>
+    <complexType name="IdentityService" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns1:Component" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/srv.core.IdentityService" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
-                <attribute name="dataSource"/>
+                <attribute name="dataSource" initializeInvisibleChildren="false"/>
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="Server">
-        <complexContent>
-            <extension base="ns1:Component">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/srv.core.Server"></documentation>
+    <complexType name="Server" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns1:Component" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/srv.core.Server" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
-                <attribute name="serverSessionClassName"/>
+                <attribute name="serverSessionClassName" initializeInvisibleChildren="false"/>
             </extension>
         </complexContent>
     </complexType>

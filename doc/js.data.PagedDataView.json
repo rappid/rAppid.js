@@ -6,8 +6,8 @@
             "annotations": {},
             "definedInFile": "js/core/Component.js",
             "lineNumbers": [
-                96,
-                98
+                94,
+                96
             ],
             "description": "Returns the ENVIRONMENT object",
             "returns": {
@@ -25,8 +25,8 @@
             "annotations": {},
             "definedInFile": "js/core/Component.js",
             "lineNumbers": [
-                104,
-                106
+                102,
+                104
             ],
             "description": "Returns the start parameter of the application",
             "returns": {
@@ -48,8 +48,8 @@
             "annotations": {},
             "definedInFile": "js/core/Component.js",
             "lineNumbers": [
-                205,
-                207
+                203,
+                205
             ],
             "definedBy": "js.core.Component",
             "name": "_addConfiguration",
@@ -65,8 +65,8 @@
             "annotations": {},
             "definedInFile": "js/core/Component.js",
             "lineNumbers": [
-                198,
-                203
+                196,
+                201
             ],
             "definedBy": "js.core.Component",
             "name": "_addTemplate",
@@ -116,8 +116,8 @@
             "annotations": {},
             "definedInFile": "js/core/Component.js",
             "lineNumbers": [
-                560,
-                562
+                558,
+                560
             ],
             "private": "This method is called after all children are initialized",
             "definedBy": "js.core.Component",
@@ -134,8 +134,8 @@
             "annotations": {},
             "definedInFile": "js/core/Component.js",
             "lineNumbers": [
-                372,
-                389
+                370,
+                387
             ],
             "definedBy": "js.core.Component",
             "name": "_cleanUpDescriptor",
@@ -158,8 +158,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                563,
-                589
+                568,
+                594
             ],
             "description": "Returns a copy of the attribute. This method is a hook for further cloning options",
             "private": "",
@@ -196,8 +196,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                750,
-                753
+                756,
+                759
             ],
             "definedBy": "js.core.Bindable",
             "name": "_commitInvalidatedAttributes",
@@ -231,8 +231,8 @@
             "annotations": {},
             "definedInFile": "js/core/Component.js",
             "lineNumbers": [
-                465,
-                499
+                463,
+                497
             ],
             "description": "Create {@link Component} for DOM Node with given attributes",
             "definedBy": "js.core.Component",
@@ -258,8 +258,8 @@
             "annotations": {},
             "definedInFile": "js/core/Component.js",
             "lineNumbers": [
-                524,
-                532
+                522,
+                530
             ],
             "definedBy": "js.core.Component",
             "name": "_createTextElement",
@@ -316,8 +316,8 @@
             "annotations": {},
             "definedInFile": "js/core/Base.js",
             "lineNumbers": [
-                83,
-                117
+                84,
+                118
             ],
             "description": "",
             "private": "",
@@ -331,8 +331,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                595,
-                597
+                600,
+                602
             ],
             "description": "",
             "returns": {
@@ -387,8 +387,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                606,
-                634
+                611,
+                639
             ],
             "description": "generates a default chain containing the values from this instance and base classes\n",
             "returns": {
@@ -417,8 +417,8 @@
             "annotations": {},
             "definedInFile": "js/core/Element.js",
             "lineNumbers": [
-                64,
-                113
+                67,
+                124
             ],
             "definedBy": "js.core.Element",
             "name": "_getAttributesFromDescriptor",
@@ -451,8 +451,8 @@
             "annotations": {},
             "definedInFile": "js/core/Component.js",
             "lineNumbers": [
-                541,
-                555
+                539,
+                553
             ],
             "description": "Converts all child nodes of a descriptor to instances of Components or TextElement",
             "definedBy": "js.core.Component",
@@ -469,8 +469,8 @@
             "annotations": {},
             "definedInFile": "js/core/Component.js",
             "lineNumbers": [
-                404,
-                406
+                402,
+                404
             ],
             "definedBy": "js.core.Component",
             "name": "_getEventName",
@@ -486,8 +486,8 @@
             "annotations": {},
             "definedInFile": "js/core/Component.js",
             "lineNumbers": [
-                421,
-                424
+                419,
+                422
             ],
             "definedBy": "js.core.Component",
             "name": "_getEventTypeForAttribute",
@@ -503,8 +503,8 @@
             "annotations": {},
             "definedInFile": "js/core/Element.js",
             "lineNumbers": [
-                114,
-                116
+                125,
+                127
             ],
             "definedBy": "js.core.Element",
             "name": "_getLocalNameFromNode",
@@ -520,8 +520,8 @@
             "annotations": {},
             "definedInFile": "js/core/Element.js",
             "lineNumbers": [
-                195,
-                208
+                206,
+                219
             ],
             "definedBy": "js.core.Element",
             "name": "_getTextContentFromDescriptor",
@@ -540,8 +540,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                860,
-                869
+                866,
+                875
             ],
             "definedBy": "js.core.Bindable",
             "name": "_hasAll",
@@ -560,8 +560,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                871,
-                880
+                877,
+                886
             ],
             "definedBy": "js.core.Bindable",
             "name": "_hasSome",
@@ -607,8 +607,8 @@
             "annotations": {},
             "definedInFile": "js/core/Element.js",
             "lineNumbers": [
-                140,
-                141
+                151,
+                152
             ],
             "description": "initializes the attributes",
             "private": "",
@@ -653,8 +653,8 @@
             "annotations": {},
             "definedInFile": "js/core/Component.js",
             "lineNumbers": [
-                226,
-                231
+                224,
+                229
             ],
             "definedBy": "js.core.Component",
             "name": "_initializeChildren",
@@ -666,8 +666,8 @@
             "annotations": {},
             "definedInFile": "js/core/Element.js",
             "lineNumbers": [
-                143,
-                144
+                154,
+                155
             ],
             "definedBy": "js.core.Element",
             "name": "_initializeDescriptors",
@@ -685,8 +685,8 @@
             "annotations": {},
             "definedInFile": "js/core/Element.js",
             "lineNumbers": [
-                132,
-                133
+                143,
+                144
             ],
             "description": "initializes all attributes handling events\n",
             "private": "",
@@ -722,8 +722,8 @@
             "annotations": {},
             "definedInFile": "js/core/Component.js",
             "lineNumbers": [
-                426,
-                456
+                424,
+                454
             ],
             "definedBy": "js.core.Component",
             "name": "_initializeXamlEventAttributes",
@@ -804,8 +804,8 @@
             "annotations": {},
             "definedInFile": "js/core/Component.js",
             "lineNumbers": [
-                412,
-                419
+                410,
+                417
             ],
             "description": "Returns true if event is defined in Component event list",
             "definedBy": "js.core.Component",
@@ -822,8 +822,8 @@
             "annotations": {},
             "definedInFile": "js/core/Component.js",
             "lineNumbers": [
-                391,
-                393
+                389,
+                391
             ],
             "definedBy": "js.core.Component",
             "name": "_isEventAttribute",
@@ -839,8 +839,8 @@
             "annotations": {},
             "definedInFile": "js/core/Component.js",
             "lineNumbers": [
-                396,
-                398
+                394,
+                396
             ],
             "definedBy": "js.core.Component",
             "name": "_isFunctionAttribute",
@@ -856,8 +856,8 @@
             "annotations": {},
             "definedInFile": "js/core/Component.js",
             "lineNumbers": [
-                400,
-                402
+                398,
+                400
             ],
             "definedBy": "js.core.Component",
             "name": "_isXamlEventAttribute",
@@ -894,8 +894,8 @@
             "annotations": {},
             "definedInFile": "js/core/Component.js",
             "lineNumbers": [
-                575,
-                590
+                573,
+                588
             ],
             "description": "determinate the local-name of a DomNode\n",
             "definedBy": "js.core.Component",
@@ -1034,8 +1034,8 @@
             "annotations": {},
             "definedInFile": "js/core/Element.js",
             "lineNumbers": [
-                191,
-                193
+                202,
+                204
             ],
             "definedBy": "js.core.Element",
             "name": "_preinitialize",
@@ -1107,8 +1107,8 @@
             "annotations": {},
             "definedInFile": "js/core/Component.js",
             "lineNumbers": [
-                133,
-                168
+                131,
+                166
             ],
             "description": "adds a children",
             "definedBy": "js.core.Component",
@@ -1125,8 +1125,8 @@
             "annotations": {},
             "definedInFile": "js/core/Component.js",
             "lineNumbers": [
-                592,
-                600
+                590,
+                598
             ],
             "definedBy": "js.core.Component",
             "name": "baseUrl",
@@ -1172,8 +1172,8 @@
             "annotations": {},
             "definedInFile": "js/core/Component.js",
             "lineNumbers": [
-                112,
-                114
+                110,
+                112
             ],
             "description": "provides access to the MessageBus",
             "returns": {
@@ -1191,8 +1191,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                897,
-                899
+                903,
+                905
             ],
             "description": "Clears all attributes",
             "returns": {
@@ -1219,7 +1219,7 @@
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
                 535,
-                556
+                561
             ],
             "description": "This method returns a copy of the Object with all attributes on the $\n",
             "returns": {
@@ -1248,8 +1248,8 @@
             "annotations": {},
             "definedInFile": "js/core/Component.js",
             "lineNumbers": [
-                517,
-                522
+                515,
+                520
             ],
             "definedBy": "js.core.Component",
             "name": "createBinding",
@@ -1261,8 +1261,8 @@
             "annotations": {},
             "definedInFile": "js/core/Component.js",
             "lineNumbers": [
-                362,
-                370
+                360,
+                368
             ],
             "definedBy": "js.core.Component",
             "name": "createChildren",
@@ -1295,8 +1295,8 @@
             "annotations": {},
             "definedInFile": "js/core/Component.js",
             "lineNumbers": [
-                508,
-                515
+                506,
+                513
             ],
             "description": "",
             "returns": {
@@ -1358,8 +1358,8 @@
             "annotations": {},
             "definedInFile": "js/core/Base.js",
             "lineNumbers": [
-                40,
-                42
+                41,
+                43
             ],
             "description": "this is an empty function doing nothing. It can be used as fallback if a method requires a\ncallback function, which hasn't been passed.\n\n```\nfunction myFunction(callback) {\ncallback = callback || this.emptyCallback;\n}\n```\n",
             "returns": {
@@ -1382,8 +1382,8 @@
             "annotations": {},
             "definedInFile": "js/core/Element.js",
             "lineNumbers": [
-                180,
-                189
+                191,
+                200
             ],
             "definedBy": "js.core.Element",
             "name": "find",
@@ -1413,8 +1413,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                762,
-                836
+                768,
+                842
             ],
             "description": "evaluates a path to retrieve a value\n",
             "returns": {
@@ -1473,8 +1473,8 @@
             "annotations": {},
             "definedInFile": "js/core/Component.js",
             "lineNumbers": [
-                215,
-                224
+                213,
+                222
             ],
             "description": "Goes up the tree and searches for a template component with the given name.\nReturns null if no template was found.",
             "returns": {
@@ -1501,8 +1501,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                844,
-                846
+                850,
+                852
             ],
             "description": "determinate if a attribute is available\n",
             "returns": {
@@ -1592,8 +1592,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                989,
-                1016
+                995,
+                1022
             ],
             "definedBy": "js.core.Bindable",
             "name": "isDeepEqual",
@@ -1609,8 +1609,8 @@
             "annotations": {},
             "definedInFile": "js/core/Element.js",
             "lineNumbers": [
-                217,
-                219
+                228,
+                230
             ],
             "definedBy": "js.core.Element",
             "name": "isDefined",
@@ -1626,8 +1626,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                1017,
-                1019
+                1023,
+                1025
             ],
             "definedBy": "js.core.Bindable",
             "name": "isEqual",
@@ -1658,8 +1658,8 @@
             "annotations": {},
             "definedInFile": "js/core/Base.js",
             "lineNumbers": [
-                50,
-                71
+                51,
+                72
             ],
             "description": "logs messages to configured logging functions\n",
             "definedBy": "js.core.Base",
@@ -1710,8 +1710,8 @@
             "annotations": {},
             "definedInFile": "js/core/Element.js",
             "lineNumbers": [
-                214,
-                216
+                225,
+                227
             ],
             "description": "Binding helper to negate a Boolean value",
             "returns": {
@@ -1761,8 +1761,8 @@
             "annotations": {},
             "definedInFile": "js/core/Component.js",
             "lineNumbers": [
-                192,
-                196
+                190,
+                194
             ],
             "definedBy": "js.core.Component",
             "name": "removeAllChildren",
@@ -1778,8 +1778,8 @@
             "annotations": {},
             "definedInFile": "js/core/Component.js",
             "lineNumbers": [
-                170,
-                190
+                168,
+                188
             ],
             "definedBy": "js.core.Component",
             "name": "removeChild",
@@ -1791,8 +1791,8 @@
             "annotations": {},
             "definedInFile": "js/core/Base.js",
             "lineNumbers": [
-                24,
-                26
+                25,
+                27
             ],
             "description": "determinate if the application runs in the browser or on node\n",
             "returns": {
@@ -1836,8 +1836,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                646,
-                732
+                651,
+                738
             ],
             "description": "Sets new values for attributes and notify about changes\n",
             "returns": {
@@ -1863,8 +1863,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                734,
-                748
+                740,
+                754
             ],
             "definedBy": "js.core.Bindable",
             "name": "setLater",
@@ -1920,24 +1920,43 @@
             "type": "Method",
             "parameter": [
                 {
-                    "name": "fnc"
+                    "types": null,
+                    "name": "fnc",
+                    "optional": false,
+                    "description": "the function to synchronize"
                 },
                 {
-                    "name": "cacheId"
+                    "types": null,
+                    "name": "cacheId",
+                    "optional": false,
+                    "description": "the cacheId for the fnc call"
                 },
                 {
-                    "name": "callback"
+                    "types": null,
+                    "name": "callback",
+                    "optional": false,
+                    "description": "the callback to be called in the fnc"
                 },
                 {
-                    "name": "scope"
+                    "types": null,
+                    "name": "scope",
+                    "optional": false,
+                    "description": "the fnc scope"
+                },
+                {
+                    "types": null,
+                    "name": "clear",
+                    "optional": false,
+                    "description": "if you want to clear the cache after all callbacks are called"
                 }
             ],
             "annotations": {},
             "definedInFile": "js/core/Base.js",
             "lineNumbers": [
-                119,
-                155
+                127,
+                167
             ],
+            "description": "",
             "definedBy": "js.core.Base",
             "name": "synchronizeFunctionCall",
             "visibility": "public"
@@ -2033,8 +2052,8 @@
             "annotations": {},
             "definedInFile": "js/core/Bindable.js",
             "lineNumbers": [
-                888,
-                891
+                894,
+                897
             ],
             "description": "Unset attribute on $",
             "returns": {
@@ -2107,8 +2126,8 @@
             "defaultType": "factory",
             "visibility": "public",
             "lineNumbers": [
-                69,
-                69
+                67,
+                67
             ],
             "description": "the cid is a unique identifier for the component within a xaml class. \\\nThe corresponding component will be automatically added to the $ of the instance of the xaml class.\n",
             "types": [
@@ -2122,8 +2141,8 @@
             "visibility": "public",
             "value": "auto",
             "lineNumbers": [
-                123,
-                123
+                134,
+                134
             ],
             "description": "Decides if the initialization of the component is started automatically or manually by the application",
             "types": [
@@ -2138,8 +2157,8 @@
             "visibility": "private",
             "definedInFile": "js/core/Component.js",
             "lineNumbers": [
-                72,
-                72
+                70,
+                70
             ],
             "value": "null",
             "propertyType": "value",
@@ -2150,8 +2169,8 @@
             "visibility": "private",
             "definedInFile": "js/core/Component.js",
             "lineNumbers": [
-                77,
-                77
+                75,
+                75
             ],
             "value": "null",
             "propertyType": "value",
@@ -2163,8 +2182,8 @@
             "visibility": "private",
             "definedInFile": "js/core/Component.js",
             "lineNumbers": [
-                79,
-                79
+                77,
+                77
             ],
             "value": "null",
             "propertyType": "value",

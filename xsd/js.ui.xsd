@@ -1,105 +1,105 @@
-<schema targetNamespace="js.ui"
+<schema targetNamespace="js.ui" initializeInvisibleChildren="false"
     xmlns="http://www.w3.org/2001/XMLSchema"
     xmlns:ns1="js.core"
     xmlns:ns2="js.html"
     xmlns:ns="js.ui">
-    <import/>
-    <import/>
-    <element name="AutoCompleteBoxClass" type="ns:AutoCompleteBoxClass"/>
-    <element name="Button" type="ns:Button"/>
-    <element name="ButtonGroup" type="ns:ButtonGroup"/>
-    <element name="Checkbox" type="ns:Checkbox"/>
-    <element name="CheckboxClass" type="ns:CheckboxClass"/>
-    <element name="ColorPicker" type="ns:ColorPicker"/>
-    <element name="ColorPickerClass" type="ns:ColorPickerClass"/>
-    <element name="ComponentLoader" type="ns:ComponentLoader"/>
-    <element name="ContentPlaceHolder" type="ns:ContentPlaceHolder"/>
-    <element name="DataGrid" type="ns:DataGrid"/>
-    <element name="DataGridClass" type="ns:DataGridClass"/>
-    <element name="DataGridColumn" type="ns:DataGridColumn"/>
-    <element name="DataGridColumnClass" type="ns:DataGridColumnClass"/>
-    <element name="DataGridDateColumn" type="ns:DataGridDateColumn"/>
-    <element name="DataGridItemsView" type="ns:DataGridItemsView"/>
-    <element name="DataGridItemsViewClass" type="ns:DataGridItemsViewClass"/>
-    <element name="DataGridRow" type="ns:DataGridRow"/>
-    <element name="DataItemRenderer" type="ns:DataItemRenderer"/>
-    <element name="DatePicker" type="ns:DatePicker"/>
-    <element name="DatePickerClass" type="ns:DatePickerClass"/>
-    <element name="Dialog" type="ns:Dialog"/>
-    <element name="DialogClass" type="ns:DialogClass"/>
-    <element name="Field" type="ns:Field"/>
-    <element name="FieldClass" type="ns:FieldClass"/>
-    <element name="FileUpload" type="ns:FileUpload"/>
-    <element name="HtmlView" type="ns:HtmlView"/>
-    <element name="ItemsView" type="ns:ItemsView"/>
-    <element name="Link" type="ns:Link"/>
-    <element name="LinkClass" type="ns:LinkClass"/>
-    <element name="ListView" type="ns:ListView"/>
-    <element name="MenuButton" type="ns:MenuButton"/>
-    <element name="MenuButtonClass" type="ns:MenuButtonClass"/>
-    <element name="PlaceHolder" type="ns:PlaceHolder"/>
-    <element name="ProgressBar" type="ns:ProgressBar"/>
-    <element name="ProgressBarClass" type="ns:ProgressBarClass"/>
-    <element name="Radio" type="ns:Radio"/>
-    <element name="RadioGroup" type="ns:RadioGroup"/>
-    <element name="ScrollView" type="ns:ScrollView"/>
-    <element name="ScrollViewClass" type="ns:ScrollViewClass"/>
-    <element name="ScrollableClass" type="ns:ScrollableClass"/>
-    <element name="SegmentedView" type="ns:SegmentedView"/>
-    <element name="Select" type="ns:Select"/>
-    <element name="SelectClass" type="ns:SelectClass"/>
-    <element name="SelectionView" type="ns:SelectionView"/>
-    <element name="Slider" type="ns:Slider"/>
-    <element name="SliderClass" type="ns:SliderClass"/>
-    <element name="SplitButton" type="ns:SplitButton"/>
-    <element name="SplitButtonClass" type="ns:SplitButtonClass"/>
-    <element name="Tab" type="ns:Tab"/>
-    <element name="TabView" type="ns:TabView"/>
-    <element name="TabViewClass" type="ns:TabViewClass"/>
-    <element name="TemplatePlaceHolder" type="ns:TemplatePlaceHolder"/>
-    <element name="TextWrapper" type="ns:TextWrapper"/>
-    <element name="TileList" type="ns:TileList"/>
-    <element name="TileListClass" type="ns:TileListClass"/>
-    <element name="TreeView" type="ns:TreeView"/>
-    <element name="TreeViewClass" type="ns:TreeViewClass"/>
-    <element name="View" type="ns:View"/>
-    <element name="VirtualItemsView" type="ns:VirtualItemsView"/>
-    <element name="VirtualScrollView" type="ns:VirtualScrollView"/>
-    <complexType name="AutoCompleteBoxClass">
-        <complexContent>
-            <extension base="ns:View">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.ui.AutoCompleteBoxClass"></documentation>
+    <import initializeInvisibleChildren="false"/>
+    <import initializeInvisibleChildren="false"/>
+    <element name="AutoCompleteBoxClass" type="ns:AutoCompleteBoxClass" initializeInvisibleChildren="false"/>
+    <element name="Button" type="ns:Button" initializeInvisibleChildren="false"/>
+    <element name="ButtonGroup" type="ns:ButtonGroup" initializeInvisibleChildren="false"/>
+    <element name="Checkbox" type="ns:Checkbox" initializeInvisibleChildren="false"/>
+    <element name="CheckboxClass" type="ns:CheckboxClass" initializeInvisibleChildren="false"/>
+    <element name="ColorPicker" type="ns:ColorPicker" initializeInvisibleChildren="false"/>
+    <element name="ColorPickerClass" type="ns:ColorPickerClass" initializeInvisibleChildren="false"/>
+    <element name="ComponentLoader" type="ns:ComponentLoader" initializeInvisibleChildren="false"/>
+    <element name="ContentPlaceHolder" type="ns:ContentPlaceHolder" initializeInvisibleChildren="false"/>
+    <element name="DataGrid" type="ns:DataGrid" initializeInvisibleChildren="false"/>
+    <element name="DataGridClass" type="ns:DataGridClass" initializeInvisibleChildren="false"/>
+    <element name="DataGridColumn" type="ns:DataGridColumn" initializeInvisibleChildren="false"/>
+    <element name="DataGridColumnClass" type="ns:DataGridColumnClass" initializeInvisibleChildren="false"/>
+    <element name="DataGridDateColumn" type="ns:DataGridDateColumn" initializeInvisibleChildren="false"/>
+    <element name="DataGridItemsView" type="ns:DataGridItemsView" initializeInvisibleChildren="false"/>
+    <element name="DataGridItemsViewClass" type="ns:DataGridItemsViewClass" initializeInvisibleChildren="false"/>
+    <element name="DataGridRow" type="ns:DataGridRow" initializeInvisibleChildren="false"/>
+    <element name="DataItemRenderer" type="ns:DataItemRenderer" initializeInvisibleChildren="false"/>
+    <element name="DatePicker" type="ns:DatePicker" initializeInvisibleChildren="false"/>
+    <element name="DatePickerClass" type="ns:DatePickerClass" initializeInvisibleChildren="false"/>
+    <element name="Dialog" type="ns:Dialog" initializeInvisibleChildren="false"/>
+    <element name="DialogClass" type="ns:DialogClass" initializeInvisibleChildren="false"/>
+    <element name="Field" type="ns:Field" initializeInvisibleChildren="false"/>
+    <element name="FieldClass" type="ns:FieldClass" initializeInvisibleChildren="false"/>
+    <element name="FileUpload" type="ns:FileUpload" initializeInvisibleChildren="false"/>
+    <element name="HtmlView" type="ns:HtmlView" initializeInvisibleChildren="false"/>
+    <element name="ItemsView" type="ns:ItemsView" initializeInvisibleChildren="false"/>
+    <element name="Link" type="ns:Link" initializeInvisibleChildren="false"/>
+    <element name="LinkClass" type="ns:LinkClass" initializeInvisibleChildren="false"/>
+    <element name="ListView" type="ns:ListView" initializeInvisibleChildren="false"/>
+    <element name="MenuButton" type="ns:MenuButton" initializeInvisibleChildren="false"/>
+    <element name="MenuButtonClass" type="ns:MenuButtonClass" initializeInvisibleChildren="false"/>
+    <element name="PlaceHolder" type="ns:PlaceHolder" initializeInvisibleChildren="false"/>
+    <element name="ProgressBar" type="ns:ProgressBar" initializeInvisibleChildren="false"/>
+    <element name="ProgressBarClass" type="ns:ProgressBarClass" initializeInvisibleChildren="false"/>
+    <element name="Radio" type="ns:Radio" initializeInvisibleChildren="false"/>
+    <element name="RadioGroup" type="ns:RadioGroup" initializeInvisibleChildren="false"/>
+    <element name="ScrollView" type="ns:ScrollView" initializeInvisibleChildren="false"/>
+    <element name="ScrollViewClass" type="ns:ScrollViewClass" initializeInvisibleChildren="false"/>
+    <element name="ScrollableClass" type="ns:ScrollableClass" initializeInvisibleChildren="false"/>
+    <element name="SegmentedView" type="ns:SegmentedView" initializeInvisibleChildren="false"/>
+    <element name="Select" type="ns:Select" initializeInvisibleChildren="false"/>
+    <element name="SelectClass" type="ns:SelectClass" initializeInvisibleChildren="false"/>
+    <element name="SelectionView" type="ns:SelectionView" initializeInvisibleChildren="false"/>
+    <element name="Slider" type="ns:Slider" initializeInvisibleChildren="false"/>
+    <element name="SliderClass" type="ns:SliderClass" initializeInvisibleChildren="false"/>
+    <element name="SplitButton" type="ns:SplitButton" initializeInvisibleChildren="false"/>
+    <element name="SplitButtonClass" type="ns:SplitButtonClass" initializeInvisibleChildren="false"/>
+    <element name="Tab" type="ns:Tab" initializeInvisibleChildren="false"/>
+    <element name="TabView" type="ns:TabView" initializeInvisibleChildren="false"/>
+    <element name="TabViewClass" type="ns:TabViewClass" initializeInvisibleChildren="false"/>
+    <element name="TemplatePlaceHolder" type="ns:TemplatePlaceHolder" initializeInvisibleChildren="false"/>
+    <element name="TextWrapper" type="ns:TextWrapper" initializeInvisibleChildren="false"/>
+    <element name="TileList" type="ns:TileList" initializeInvisibleChildren="false"/>
+    <element name="TileListClass" type="ns:TileListClass" initializeInvisibleChildren="false"/>
+    <element name="TreeView" type="ns:TreeView" initializeInvisibleChildren="false"/>
+    <element name="TreeViewClass" type="ns:TreeViewClass" initializeInvisibleChildren="false"/>
+    <element name="View" type="ns:View" initializeInvisibleChildren="false"/>
+    <element name="VirtualItemsView" type="ns:VirtualItemsView" initializeInvisibleChildren="false"/>
+    <element name="VirtualScrollView" type="ns:VirtualScrollView" initializeInvisibleChildren="false"/>
+    <complexType name="AutoCompleteBoxClass" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns:View" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/js.ui.AutoCompleteBoxClass" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
-                <attribute name="search"/>
-                <attribute name="type" default="text"/>
-                <attribute name="suggestions"/>
-                <attribute name="invalidationTime" default="250"/>
-                <attribute name="placeholder"/>
-                <attribute name="selectedSuggestion"/>
-                <attribute name="inputClass"/>
-                <attribute name="maxItems" default="5"/>
-                <attribute name="input"/>
-                <attribute name="onsuggestionClick" default="_onSuggestionClickHandler" type="string"/>
+                <attribute name="search" initializeInvisibleChildren="false"/>
+                <attribute name="type" initializeInvisibleChildren="false" default="text"/>
+                <attribute name="suggestions" initializeInvisibleChildren="false"/>
+                <attribute name="invalidationTime" initializeInvisibleChildren="false" default="250"/>
+                <attribute name="placeholder" initializeInvisibleChildren="false"/>
+                <attribute name="selectedSuggestion" initializeInvisibleChildren="false"/>
+                <attribute name="inputClass" initializeInvisibleChildren="false"/>
+                <attribute name="maxItems" initializeInvisibleChildren="false" default="5"/>
+                <attribute name="input" initializeInvisibleChildren="false"/>
+                <attribute name="onsuggestionClick" initializeInvisibleChildren="false" default="_onSuggestionClickHandler" type="string"/>
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="Button">
-        <complexContent>
-            <extension base="ns:Link">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.ui.Button"></documentation>
+    <complexType name="Button" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns:Link" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/js.ui.Button" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
-                <attribute name="labelClass"/>
-                <attribute name="type">
-                    <annotation>
-                        <documentation>
+                <attribute name="labelClass" initializeInvisibleChildren="false"/>
+                <attribute name="type" initializeInvisibleChildren="false">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         the type of the button
                     </documentation>
                     </annotation>
@@ -107,108 +107,113 @@
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="ButtonGroup">
-        <complexContent>
-            <extension base="ns:View">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.ui.ButtonGroup"></documentation>
+    <complexType name="ButtonGroup" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns:View" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/js.ui.ButtonGroup" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="Checkbox">
-        <complexContent>
-            <extension base="ns:CheckboxClass">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.ui.Checkbox"></documentation>
+    <complexType name="Checkbox" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns:CheckboxClass" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/js.ui.Checkbox" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
-                <attribute name="checked"/>
-                <attribute name="value"/>
-                <attribute name="label"/>
-                <attribute name="name"/>
+                <attribute name="checked" initializeInvisibleChildren="false"/>
+                <attribute name="value" initializeInvisibleChildren="false"/>
+                <attribute name="label" initializeInvisibleChildren="false"/>
+                <attribute name="name" initializeInvisibleChildren="false"/>
+                <attribute name="inputValue" initializeInvisibleChildren="false"/>
+                <attribute name="inputId" initializeInvisibleChildren="false"/>
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="CheckboxClass">
-        <complexContent>
-            <extension base="ns:View">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.ui.CheckboxClass"></documentation>
+    <complexType name="CheckboxClass" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns:View" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/js.ui.CheckboxClass" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
-                <attribute name="checked"/>
-                <attribute name="value"/>
-                <attribute name="label"/>
-                <attribute name="name"/>
+                <attribute name="checked" initializeInvisibleChildren="false"/>
+                <attribute name="value" initializeInvisibleChildren="false"/>
+                <attribute name="label" initializeInvisibleChildren="false"/>
+                <attribute name="name" initializeInvisibleChildren="false"/>
+                <attribute name="inputValue" initializeInvisibleChildren="false"/>
+                <attribute name="inputId" initializeInvisibleChildren="false"/>
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="ColorPicker">
-        <complexContent>
-            <extension base="ns:ColorPickerClass">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.ui.ColorPicker"></documentation>
+    <complexType name="ColorPicker" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns:ColorPickerClass" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/js.ui.ColorPicker" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
-                <attribute name="color"/>
-                <attribute name="paletteSize" default="300"/>
+                <attribute name="color" initializeInvisibleChildren="false"/>
+                <attribute name="paletteSize" initializeInvisibleChildren="false" default="300"/>
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="ColorPickerClass">
-        <complexContent>
-            <extension base="ns:View">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.ui.ColorPickerClass"></documentation>
+    <complexType name="ColorPickerClass" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns:View" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/js.ui.ColorPickerClass" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
-                <attribute name="color"/>
-                <attribute name="paletteSize" default="300"/>
-                <attribute name="oncolorSelect" default="_onColorSelectHandler" type="string"/>
+                <attribute name="color" initializeInvisibleChildren="false"/>
+                <attribute name="paletteSize" initializeInvisibleChildren="false" default="300"/>
+                <attribute name="oncolorSelect" initializeInvisibleChildren="false" default="_onColorSelectHandler" type="string"/>
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="ComponentLoader">
-        <complexContent>
-            <extension base="ns:View">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.ui.ComponentLoader"></documentation>
+    <complexType name="ComponentLoader" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns:View" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/js.ui.ComponentLoader" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
-                <attribute name="type"/>
-                <attribute name="error"/>
-                <attribute name="load" default="true"/>
-                <attribute name="instance"/>
-                <attribute name="loading"/>
+                <attribute name="type" initializeInvisibleChildren="false"/>
+                <attribute name="error" initializeInvisibleChildren="false"/>
+                <attribute name="load" initializeInvisibleChildren="false" default="true"/>
+                <attribute name="instance" initializeInvisibleChildren="false"/>
+                <attribute name="loading" initializeInvisibleChildren="false"/>
+                <attribute name="mediaQuery" initializeInvisibleChildren="false"/>
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="ContentPlaceHolder">
-        <complexContent>
-            <extension base="ns:View">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.ui.ContentPlaceHolder"></documentation>
+    <complexType name="ContentPlaceHolder" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns:View" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/js.ui.ContentPlaceHolder" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
-                <attribute name="name" use="required">
-                    <annotation>
-                        <documentation>
+                <attribute name="name" initializeInvisibleChildren="false" use="required">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         the unique name to identify the ContentPlaceHolder
 
                     </documentation>
@@ -217,51 +222,51 @@
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="DataGrid">
-        <complexContent>
-            <extension base="ns:DataGridClass">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.ui.DataGrid"></documentation>
+    <complexType name="DataGrid" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns:DataGridClass" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/js.ui.DataGrid" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
-                <attribute name="rowHeight" default="45"/>
-                <attribute name="width"/>
-                <attribute name="prefetchItemCount"/>
-                <attribute name="selectedItems"/>
-                <attribute name="selectionMode" default="multi"/>
-                <attribute name="data"/>
-                <attribute name="query"/>
+                <attribute name="rowHeight" initializeInvisibleChildren="false" default="45"/>
+                <attribute name="width" initializeInvisibleChildren="false"/>
+                <attribute name="prefetchItemCount" initializeInvisibleChildren="false"/>
+                <attribute name="selectedItems" initializeInvisibleChildren="false"/>
+                <attribute name="selectionMode" initializeInvisibleChildren="false" default="multi"/>
+                <attribute name="data" initializeInvisibleChildren="false"/>
+                <attribute name="query" initializeInvisibleChildren="false"/>
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="DataGridClass">
-        <complexContent>
-            <extension base="ns:View">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.ui.DataGridClass"></documentation>
+    <complexType name="DataGridClass" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns:View" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/js.ui.DataGridClass" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
-                <attribute name="rowHeight" default="45"/>
-                <attribute name="width"/>
-                <attribute name="prefetchItemCount"/>
-                <attribute name="selectedItems"/>
-                <attribute name="selectionMode" default="multi"/>
-                <attribute name="data"/>
-                <attribute name="query"/>
-                <attribute name="onrowClick" default="_onRowClickHandler" type="string">
-                    <annotation>
-                        <documentation>
+                <attribute name="rowHeight" initializeInvisibleChildren="false" default="45"/>
+                <attribute name="width" initializeInvisibleChildren="false"/>
+                <attribute name="prefetchItemCount" initializeInvisibleChildren="false"/>
+                <attribute name="selectedItems" initializeInvisibleChildren="false"/>
+                <attribute name="selectionMode" initializeInvisibleChildren="false" default="multi"/>
+                <attribute name="data" initializeInvisibleChildren="false"/>
+                <attribute name="query" initializeInvisibleChildren="false"/>
+                <attribute name="onrowClick" initializeInvisibleChildren="false" default="_onRowClickHandler" type="string">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         The rowClick event is dispatched if a row is clicked in the DataGrid.
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="onrowDblClick" default="_onRowDblClickHandler" type="string">
-                    <annotation>
-                        <documentation>
+                <attribute name="onrowDblClick" initializeInvisibleChildren="false" default="_onRowDblClickHandler" type="string">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         The rowDblClick event is dispatched if a row is double clicked in the DataGrid.
                     </documentation>
                     </annotation>
@@ -269,61 +274,61 @@
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="DataGridColumn">
-        <complexContent>
-            <extension base="ns:DataGridColumnClass">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.ui.DataGridColumn"></documentation>
+    <complexType name="DataGridColumn" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns:DataGridColumnClass" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/js.ui.DataGridColumn" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
-                <attribute name="sortPath">
-                    <annotation>
-                        <documentation>
+                <attribute name="sortPath" initializeInvisibleChildren="false">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         The sort path
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="path">
-                    <annotation>
-                        <documentation>
+                <attribute name="path" initializeInvisibleChildren="false">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         The path to the data to display
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="sortable" default="true">
-                    <annotation>
-                        <documentation>
+                <attribute name="sortable" initializeInvisibleChildren="false" default="true">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         Set's column to sortable
 
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="sortDirection">
-                    <annotation>
-                        <documentation>
+                <attribute name="sortDirection" initializeInvisibleChildren="false">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         Set's the default sort direction
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="name" default="column">
-                    <annotation>
-                        <documentation>
+                <attribute name="name" initializeInvisibleChildren="false" default="column">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         The name of the column
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="item" default="$dataItem.data">
-                    <annotation>
-                        <documentation>
+                <attribute name="item" initializeInvisibleChildren="false" default="$dataItem.data">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         The path to the item
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="title">
-                    <annotation>
-                        <documentation>
+                <attribute name="title" initializeInvisibleChildren="false">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         The title of the column
                     </documentation>
                     </annotation>
@@ -331,61 +336,61 @@
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="DataGridColumnClass">
-        <complexContent>
-            <extension base="ns1:Component">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.ui.DataGridColumnClass"></documentation>
+    <complexType name="DataGridColumnClass" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns1:Component" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/js.ui.DataGridColumnClass" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
-                <attribute name="sortPath">
-                    <annotation>
-                        <documentation>
+                <attribute name="sortPath" initializeInvisibleChildren="false">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         The sort path
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="path">
-                    <annotation>
-                        <documentation>
+                <attribute name="path" initializeInvisibleChildren="false">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         The path to the data to display
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="sortable" default="true">
-                    <annotation>
-                        <documentation>
+                <attribute name="sortable" initializeInvisibleChildren="false" default="true">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         Set's column to sortable
 
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="sortDirection">
-                    <annotation>
-                        <documentation>
+                <attribute name="sortDirection" initializeInvisibleChildren="false">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         Set's the default sort direction
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="name" default="column">
-                    <annotation>
-                        <documentation>
+                <attribute name="name" initializeInvisibleChildren="false" default="column">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         The name of the column
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="item" default="$dataItem.data">
-                    <annotation>
-                        <documentation>
+                <attribute name="item" initializeInvisibleChildren="false" default="$dataItem.data">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         The path to the item
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="title">
-                    <annotation>
-                        <documentation>
+                <attribute name="title" initializeInvisibleChildren="false">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         The title of the column
                     </documentation>
                     </annotation>
@@ -393,203 +398,203 @@
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="DataGridDateColumn">
-        <complexContent>
-            <extension base="ns:DataGridColumn">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.ui.DataGridDateColumn"></documentation>
+    <complexType name="DataGridDateColumn" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns:DataGridColumn" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/js.ui.DataGridDateColumn" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
-                <attribute name="dateFormat" default="MM-DD-YYYY"/>
-                <attribute name="parseFormat" default="YYYY-MM-DDTHH:mm:ssZ"/>
+                <attribute name="dateFormat" initializeInvisibleChildren="false" default="MM-DD-YYYY"/>
+                <attribute name="parseFormat" initializeInvisibleChildren="false" default="YYYY-MM-DDTHH:mm:ssZ"/>
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="DataGridItemsView">
-        <complexContent>
-            <extension base="ns:DataGridItemsViewClass">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.ui.DataGridItemsView"></documentation>
+    <complexType name="DataGridItemsView" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns:DataGridItemsViewClass" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/js.ui.DataGridItemsView" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
-                <attribute name="columns"/>
-                <attribute name="innerTableWidth" default="{$table.width}"/>
+                <attribute name="columns" initializeInvisibleChildren="false"/>
+                <attribute name="innerTableWidth" initializeInvisibleChildren="false" default="{$table.width}"/>
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="DataGridItemsViewClass">
-        <complexContent>
-            <extension base="ns:VirtualItemsView">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.ui.DataGridItemsViewClass"></documentation>
+    <complexType name="DataGridItemsViewClass" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns:VirtualItemsView" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/js.ui.DataGridItemsViewClass" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
-                <attribute name="columns"/>
-                <attribute name="innerTableWidth" default="{$table.width}"/>
+                <attribute name="columns" initializeInvisibleChildren="false"/>
+                <attribute name="innerTableWidth" initializeInvisibleChildren="false" default="{$table.width}"/>
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="DataGridRow">
-        <complexContent>
-            <extension base="ns:ItemsView">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.ui.DataGridRow"></documentation>
+    <complexType name="DataGridRow" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns:ItemsView" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/js.ui.DataGridRow" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
-                <attribute name="item" default="{$dataItem.data}"/>
+                <attribute name="item" initializeInvisibleChildren="false" default="{$dataItem.data}"/>
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="DataItemRenderer">
-        <complexContent>
-            <extension base="ns:View">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.ui.DataItemRenderer"></documentation>
+    <complexType name="DataItemRenderer" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns:View" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/js.ui.DataItemRenderer" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
-                <attribute name="dataItem"/>
+                <attribute name="dataItem" initializeInvisibleChildren="false"/>
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="DatePicker">
-        <complexContent>
-            <extension base="ns:DatePickerClass">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.ui.DatePicker"></documentation>
+    <complexType name="DatePicker" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns:DatePickerClass" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/js.ui.DatePicker" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
-                <attribute name="date"/>
-                <attribute name="minYear"/>
-                <attribute name="maxYear"/>
+                <attribute name="date" initializeInvisibleChildren="false"/>
+                <attribute name="minYear" initializeInvisibleChildren="false"/>
+                <attribute name="maxYear" initializeInvisibleChildren="false"/>
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="DatePickerClass">
-        <complexContent>
-            <extension base="ns:View">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.ui.DatePickerClass"></documentation>
+    <complexType name="DatePickerClass" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns:View" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/js.ui.DatePickerClass" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
-                <attribute name="date"/>
-                <attribute name="minYear"/>
-                <attribute name="maxYear"/>
+                <attribute name="date" initializeInvisibleChildren="false"/>
+                <attribute name="minYear" initializeInvisibleChildren="false"/>
+                <attribute name="maxYear" initializeInvisibleChildren="false"/>
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="Dialog">
-        <complexContent>
-            <extension base="ns:DialogClass">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.ui.Dialog"></documentation>
+    <complexType name="Dialog" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns:DialogClass" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/js.ui.Dialog" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
-                <attribute name="title"/>
-                <attribute name="closable" default="true"/>
-                <attribute name="size" default="normal"/>
-                <attribute name="tabindex"/>
-                <attribute name="name"/>
+                <attribute name="title" initializeInvisibleChildren="false"/>
+                <attribute name="closable" initializeInvisibleChildren="false" default="true"/>
+                <attribute name="size" initializeInvisibleChildren="false" default="normal"/>
+                <attribute name="tabindex" initializeInvisibleChildren="false"/>
+                <attribute name="name" initializeInvisibleChildren="false"/>
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="DialogClass">
-        <complexContent>
-            <extension base="ns1:Window">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.ui.DialogClass"></documentation>
+    <complexType name="DialogClass" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns1:Window" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/js.ui.DialogClass" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
-                <attribute name="title"/>
-                <attribute name="closable" default="true"/>
-                <attribute name="size" default="normal"/>
-                <attribute name="tabindex"/>
-                <attribute name="name"/>
-                <attribute name="oncloseButton" default="_onCloseButtonHandler" type="string"/>
+                <attribute name="title" initializeInvisibleChildren="false"/>
+                <attribute name="closable" initializeInvisibleChildren="false" default="true"/>
+                <attribute name="size" initializeInvisibleChildren="false" default="normal"/>
+                <attribute name="tabindex" initializeInvisibleChildren="false"/>
+                <attribute name="name" initializeInvisibleChildren="false"/>
+                <attribute name="oncloseButton" initializeInvisibleChildren="false" default="_onCloseButtonHandler" type="string"/>
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="Field">
-        <complexContent>
-            <extension base="ns:FieldClass">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.ui.Field"></documentation>
+    <complexType name="Field" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns:FieldClass" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/js.ui.Field" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
-                <attribute name="label"/>
-                <attribute name="inputId"/>
-                <attribute name="error"/>
-                <attribute name="required"/>
-                <attribute name="focused"/>
-                <attribute name="requiredClass" default="required"/>
+                <attribute name="label" initializeInvisibleChildren="false"/>
+                <attribute name="inputId" initializeInvisibleChildren="false"/>
+                <attribute name="error" initializeInvisibleChildren="false"/>
+                <attribute name="required" initializeInvisibleChildren="false"/>
+                <attribute name="focused" initializeInvisibleChildren="false"/>
+                <attribute name="requiredClass" initializeInvisibleChildren="false" default="required"/>
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="FieldClass">
-        <complexContent>
-            <extension base="ns:View">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.ui.FieldClass"></documentation>
+    <complexType name="FieldClass" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns:View" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/js.ui.FieldClass" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
-                <attribute name="label"/>
-                <attribute name="inputId"/>
-                <attribute name="error"/>
-                <attribute name="required"/>
-                <attribute name="focused"/>
-                <attribute name="requiredClass" default="required"/>
+                <attribute name="label" initializeInvisibleChildren="false"/>
+                <attribute name="inputId" initializeInvisibleChildren="false"/>
+                <attribute name="error" initializeInvisibleChildren="false"/>
+                <attribute name="required" initializeInvisibleChildren="false"/>
+                <attribute name="focused" initializeInvisibleChildren="false"/>
+                <attribute name="requiredClass" initializeInvisibleChildren="false" default="required"/>
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="FileUpload">
-        <complexContent>
-            <extension base="ns2:HtmlElement">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.ui.FileUpload"></documentation>
+    <complexType name="FileUpload" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns2:HtmlElement" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/js.ui.FileUpload" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
-                <attribute name="tagName" default="input"/>
-                <attribute name="multiSelect"/>
-                <attribute name="type" default="file"/>
-                <attribute name="accept"/>
+                <attribute name="tagName" initializeInvisibleChildren="false" default="input"/>
+                <attribute name="multiSelect" initializeInvisibleChildren="false"/>
+                <attribute name="type" initializeInvisibleChildren="false" default="file"/>
+                <attribute name="accept" initializeInvisibleChildren="false"/>
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="HtmlView">
-        <complexContent>
-            <extension base="ns:View">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.ui.HtmlView"></documentation>
+    <complexType name="HtmlView" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns:View" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/js.ui.HtmlView" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
-                <attribute name="html">
-                    <annotation>
-                        <documentation>
+                <attribute name="html" initializeInvisibleChildren="false">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         the html to render
                     </documentation>
                     </annotation>
@@ -597,47 +602,47 @@
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="ItemsView">
-        <complexContent>
-            <extension base="ns:View">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.ui.ItemsView"></documentation>
+    <complexType name="ItemsView" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns:View" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/js.ui.ItemsView" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
-                <attribute name="items"/>
-                <attribute name="itemKey" default="item"/>
-                <attribute name="indexKey" default="index"/>
+                <attribute name="items" initializeInvisibleChildren="false"/>
+                <attribute name="itemKey" initializeInvisibleChildren="false" default="item"/>
+                <attribute name="indexKey" initializeInvisibleChildren="false" default="index"/>
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="Link">
-        <complexContent>
-            <extension base="ns:LinkClass">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.ui.Link"></documentation>
+    <complexType name="Link" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns:LinkClass" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/js.ui.Link" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
-                <attribute name="href">
-                    <annotation>
-                        <documentation>
+                <attribute name="href" initializeInvisibleChildren="false">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         the href of the link element.
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="label">
-                    <annotation>
-                        <documentation>
+                <attribute name="label" initializeInvisibleChildren="false">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         the label of the Link rendered as text
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="target" default="intern">
-                    <annotation>
-                        <documentation>
+                <attribute name="target" initializeInvisibleChildren="false" default="intern">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         the target of the link element identifying how to open the link. If no target \
 is specified but a protocol for the href (e.g. http://) if will use external by default.
 
@@ -650,17 +655,25 @@ is specified but a protocol for the href (e.g. http://) if will use external by 
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="iconClass">
-                    <annotation>
-                        <documentation>
+                <attribute name="iconClass" initializeInvisibleChildren="false">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         the class name for the icon
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="iconLabel">
-                    <annotation>
-                        <documentation>
+                <attribute name="iconLabel" initializeInvisibleChildren="false">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         The inner label for the icon
+
+                    </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="title" initializeInvisibleChildren="false">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
+                        the title of the link
 
                     </documentation>
                     </annotation>
@@ -668,32 +681,32 @@ is specified but a protocol for the href (e.g. http://) if will use external by 
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="LinkClass">
-        <complexContent>
-            <extension base="ns:View">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.ui.LinkClass"></documentation>
+    <complexType name="LinkClass" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns:View" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/js.ui.LinkClass" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
-                <attribute name="href">
-                    <annotation>
-                        <documentation>
+                <attribute name="href" initializeInvisibleChildren="false">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         the href of the link element.
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="label">
-                    <annotation>
-                        <documentation>
+                <attribute name="label" initializeInvisibleChildren="false">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         the label of the Link rendered as text
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="target" default="intern">
-                    <annotation>
-                        <documentation>
+                <attribute name="target" initializeInvisibleChildren="false" default="intern">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         the target of the link element identifying how to open the link. If no target \
 is specified but a protocol for the href (e.g. http://) if will use external by default.
 
@@ -706,17 +719,25 @@ is specified but a protocol for the href (e.g. http://) if will use external by 
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="iconClass">
-                    <annotation>
-                        <documentation>
+                <attribute name="iconClass" initializeInvisibleChildren="false">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         the class name for the icon
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="iconLabel">
-                    <annotation>
-                        <documentation>
+                <attribute name="iconLabel" initializeInvisibleChildren="false">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         The inner label for the icon
+
+                    </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="title" initializeInvisibleChildren="false">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
+                        the title of the link
 
                     </documentation>
                     </annotation>
@@ -724,172 +745,174 @@ is specified but a protocol for the href (e.g. http://) if will use external by 
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="ListView">
-        <complexContent>
-            <extension base="ns:ItemsView">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.ui.ListView"></documentation>
+    <complexType name="ListView" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns:ItemsView" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/js.ui.ListView" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="MenuButton">
-        <complexContent>
-            <extension base="ns:MenuButtonClass">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.ui.MenuButton"></documentation>
+    <complexType name="MenuButton" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns:MenuButtonClass" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/js.ui.MenuButton" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
-                <attribute name="label">
-                    <annotation>
-                        <documentation>
+                <attribute name="label" initializeInvisibleChildren="false">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         The label of the button.
 
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="menuClassName" default="dropdown-menu">
-                    <annotation>
-                        <documentation>
+                <attribute name="menuClassName" initializeInvisibleChildren="false" default="dropdown-menu">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         The class name of the menu.
 
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="menuVisible">
-                    <annotation>
-                        <documentation>
+                <attribute name="menuVisible" initializeInvisibleChildren="false">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         Set's the menu visible.
 
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="labelClass">
-                    <annotation>
-                        <documentation>
+                <attribute name="labelClass" initializeInvisibleChildren="false">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         The class of the inner span in the link element
 
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="buttonClass" default="btn">
-                    <annotation>
-                        <documentation>
+                <attribute name="buttonClass" initializeInvisibleChildren="false" default="btn">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         The class of the inner link element
 
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="iconClass">
-                    <annotation>
-                        <documentation>
+                <attribute name="iconClass" initializeInvisibleChildren="false">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         the class name for the icon
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="iconLabel">
-                    <annotation>
-                        <documentation>
+                <attribute name="iconLabel" initializeInvisibleChildren="false">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         The inner label for the icon
 
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="closeBehavior"/>
-                <attribute name="tabIndex"/>
+                <attribute name="closeBehavior" initializeInvisibleChildren="false"/>
+                <attribute name="tabIndex" initializeInvisibleChildren="false"/>
+                <attribute name="title" initializeInvisibleChildren="false"/>
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="MenuButtonClass">
-        <complexContent>
-            <extension base="ns:View">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.ui.MenuButtonClass">
+    <complexType name="MenuButtonClass" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns:View" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/js.ui.MenuButtonClass" initializeInvisibleChildren="false">
                                  closes other menu buttons
  closes other menu buttons but not the parents
  closes no other menu buttons
                             </documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
-                <attribute name="label">
-                    <annotation>
-                        <documentation>
+                <attribute name="label" initializeInvisibleChildren="false">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         The label of the button.
 
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="menuClassName" default="dropdown-menu">
-                    <annotation>
-                        <documentation>
+                <attribute name="menuClassName" initializeInvisibleChildren="false" default="dropdown-menu">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         The class name of the menu.
 
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="menuVisible">
-                    <annotation>
-                        <documentation>
+                <attribute name="menuVisible" initializeInvisibleChildren="false">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         Set's the menu visible.
 
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="labelClass">
-                    <annotation>
-                        <documentation>
+                <attribute name="labelClass" initializeInvisibleChildren="false">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         The class of the inner span in the link element
 
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="buttonClass" default="btn">
-                    <annotation>
-                        <documentation>
+                <attribute name="buttonClass" initializeInvisibleChildren="false" default="btn">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         The class of the inner link element
 
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="iconClass">
-                    <annotation>
-                        <documentation>
+                <attribute name="iconClass" initializeInvisibleChildren="false">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         the class name for the icon
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="iconLabel">
-                    <annotation>
-                        <documentation>
+                <attribute name="iconLabel" initializeInvisibleChildren="false">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         The inner label for the icon
 
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="closeBehavior"/>
-                <attribute name="tabIndex"/>
+                <attribute name="closeBehavior" initializeInvisibleChildren="false"/>
+                <attribute name="tabIndex" initializeInvisibleChildren="false"/>
+                <attribute name="title" initializeInvisibleChildren="false"/>
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="PlaceHolder">
-        <complexContent>
-            <extension base="ns2:HtmlElement">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.ui.PlaceHolder"></documentation>
+    <complexType name="PlaceHolder" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns2:HtmlElement" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/js.ui.PlaceHolder" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
-                <attribute name="name" use="required">
-                    <annotation>
-                        <documentation>
+                <attribute name="name" initializeInvisibleChildren="false" use="required">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         the unique identifier for the placeholder within this component
 
                     </documentation>
@@ -898,83 +921,83 @@ is specified but a protocol for the href (e.g. http://) if will use external by 
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="ProgressBar">
-        <complexContent>
-            <extension base="ns:ProgressBarClass">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.ui.ProgressBar"></documentation>
+    <complexType name="ProgressBar" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns:ProgressBarClass" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/js.ui.ProgressBar" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
-                <attribute name="min"/>
-                <attribute name="max" default="100"/>
-                <attribute name="value"/>
+                <attribute name="min" initializeInvisibleChildren="false"/>
+                <attribute name="max" initializeInvisibleChildren="false" default="100"/>
+                <attribute name="value" initializeInvisibleChildren="false"/>
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="ProgressBarClass">
-        <complexContent>
-            <extension base="ns:View">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.ui.ProgressBarClass"></documentation>
+    <complexType name="ProgressBarClass" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns:View" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/js.ui.ProgressBarClass" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
-                <attribute name="min"/>
-                <attribute name="max" default="100"/>
-                <attribute name="value"/>
+                <attribute name="min" initializeInvisibleChildren="false"/>
+                <attribute name="max" initializeInvisibleChildren="false" default="100"/>
+                <attribute name="value" initializeInvisibleChildren="false"/>
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="Radio">
-        <complexContent>
-            <extension base="ns:Checkbox">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.ui.Radio"></documentation>
+    <complexType name="Radio" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns:Checkbox" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/js.ui.Radio" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="RadioGroup">
-        <complexContent>
-            <extension base="ns:View">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.ui.RadioGroup"></documentation>
+    <complexType name="RadioGroup" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns:View" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/js.ui.RadioGroup" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
-                <attribute name="value"/>
+                <attribute name="value" initializeInvisibleChildren="false"/>
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="ScrollView">
-        <complexContent>
-            <extension base="ns:ScrollViewClass">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.ui.ScrollView"></documentation>
+    <complexType name="ScrollView" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns:ScrollViewClass" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/js.ui.ScrollView" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
-                <attribute name="overflow" default="hidden"/>
-                <attribute name="verticalScroll" default="true"/>
-                <attribute name="horizontalScroll" default="true"/>
-                <attribute name="lockScrollDirection" default="true"/>
-                <attribute name="enableScroll"/>
-                <attribute name="enablePointer"/>
-                <attribute name="scrollTop"/>
-                <attribute name="scrollLeft"/>
-                <attribute name="restrictScrollToContainer"/>
-                <attribute name="syncToScrollPosition"/>
-                <attribute name="scrollContainerHeight" default="1116">
-                    <annotation>
-                        <documentation>
+                <attribute name="overflow" initializeInvisibleChildren="false" default="hidden"/>
+                <attribute name="verticalScroll" initializeInvisibleChildren="false" default="true"/>
+                <attribute name="horizontalScroll" initializeInvisibleChildren="false" default="true"/>
+                <attribute name="lockScrollDirection" initializeInvisibleChildren="false" default="true"/>
+                <attribute name="enableScroll" initializeInvisibleChildren="false"/>
+                <attribute name="enablePointer" initializeInvisibleChildren="false"/>
+                <attribute name="scrollTop" initializeInvisibleChildren="false"/>
+                <attribute name="scrollLeft" initializeInvisibleChildren="false"/>
+                <attribute name="restrictScrollToContainer" initializeInvisibleChildren="false"/>
+                <attribute name="syncToScrollPosition" initializeInvisibleChildren="false"/>
+                <attribute name="scrollContainerHeight" initializeInvisibleChildren="false" default="1116">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                          TODO: read from content, provide refresh method
                     </documentation>
                     </annotation>
@@ -982,27 +1005,27 @@ is specified but a protocol for the href (e.g. http://) if will use external by 
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="ScrollViewClass">
-        <complexContent>
-            <extension base="ns:View">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.ui.ScrollViewClass"></documentation>
+    <complexType name="ScrollViewClass" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns:View" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/js.ui.ScrollViewClass" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
-                <attribute name="verticalScroll" default="true"/>
-                <attribute name="horizontalScroll" default="true"/>
-                <attribute name="lockScrollDirection" default="true"/>
-                <attribute name="enableScroll"/>
-                <attribute name="enablePointer"/>
-                <attribute name="scrollTop"/>
-                <attribute name="scrollLeft"/>
-                <attribute name="restrictScrollToContainer"/>
-                <attribute name="syncToScrollPosition"/>
-                <attribute name="scrollContainerHeight" default="1116">
-                    <annotation>
-                        <documentation>
+                <attribute name="verticalScroll" initializeInvisibleChildren="false" default="true"/>
+                <attribute name="horizontalScroll" initializeInvisibleChildren="false" default="true"/>
+                <attribute name="lockScrollDirection" initializeInvisibleChildren="false" default="true"/>
+                <attribute name="enableScroll" initializeInvisibleChildren="false"/>
+                <attribute name="enablePointer" initializeInvisibleChildren="false"/>
+                <attribute name="scrollTop" initializeInvisibleChildren="false"/>
+                <attribute name="scrollLeft" initializeInvisibleChildren="false"/>
+                <attribute name="restrictScrollToContainer" initializeInvisibleChildren="false"/>
+                <attribute name="syncToScrollPosition" initializeInvisibleChildren="false"/>
+                <attribute name="scrollContainerHeight" initializeInvisibleChildren="false" default="1116">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                          TODO: read from content, provide refresh method
                     </documentation>
                     </annotation>
@@ -1010,38 +1033,38 @@ is specified but a protocol for the href (e.g. http://) if will use external by 
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="ScrollableClass">
-        <complexContent>
-            <extension base="ns:View">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.ui.ScrollableClass"></documentation>
+    <complexType name="ScrollableClass" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns:View" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/js.ui.ScrollableClass" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
-                <attribute name="direction" default="vertical"/>
-                <attribute name="size" default="100"/>
-                <attribute name="itemsSize" default="100"/>
-                <attribute name="totalCount" default="12"/>
-                <attribute name="scrollPaneSize"/>
-                <attribute name="itemsPerPage" default="1"/>
-                <attribute name="page"/>
+                <attribute name="direction" initializeInvisibleChildren="false" default="vertical"/>
+                <attribute name="size" initializeInvisibleChildren="false" default="100"/>
+                <attribute name="itemsSize" initializeInvisibleChildren="false" default="100"/>
+                <attribute name="totalCount" initializeInvisibleChildren="false" default="12"/>
+                <attribute name="scrollPaneSize" initializeInvisibleChildren="false"/>
+                <attribute name="itemsPerPage" initializeInvisibleChildren="false" default="1"/>
+                <attribute name="page" initializeInvisibleChildren="false"/>
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="SegmentedView">
-        <complexContent>
-            <extension base="ns:View">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.ui.SegmentedView"></documentation>
+    <complexType name="SegmentedView" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns:View" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/js.ui.SegmentedView" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
-                <attribute name="visibleView"/>
-                <attribute name="visibleIndex">
-                    <annotation>
-                        <documentation>
+                <attribute name="visibleView" initializeInvisibleChildren="false"/>
+                <attribute name="visibleIndex" initializeInvisibleChildren="false">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         shows the component with the visible index
 
                     </documentation>
@@ -1050,122 +1073,122 @@ is specified but a protocol for the href (e.g. http://) if will use external by 
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="Select">
-        <complexContent>
-            <extension base="ns:SelectClass">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.ui.Select"></documentation>
+    <complexType name="Select" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns:SelectClass" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/js.ui.Select" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
-                <attribute name="open"/>
-                <attribute name="selectedItem"/>
-                <attribute name="searchTerm"/>
-                <attribute name="placeHolder" default="Select Something"/>
-                <attribute name="searchPlaceHolder"/>
-                <attribute name="queryCreator"/>
-                <attribute name="itemHeight" default="30"/>
-                <attribute name="dropDownHeight" default="200"/>
+                <attribute name="open" initializeInvisibleChildren="false"/>
+                <attribute name="selectedItem" initializeInvisibleChildren="false"/>
+                <attribute name="searchTerm" initializeInvisibleChildren="false"/>
+                <attribute name="placeHolder" initializeInvisibleChildren="false" default="Select Something"/>
+                <attribute name="searchPlaceHolder" initializeInvisibleChildren="false"/>
+                <attribute name="queryCreator" initializeInvisibleChildren="false"/>
+                <attribute name="itemHeight" initializeInvisibleChildren="false" default="30"/>
+                <attribute name="dropDownHeight" initializeInvisibleChildren="false" default="200"/>
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="SelectClass">
-        <complexContent>
-            <extension base="ns:View">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.ui.SelectClass"></documentation>
+    <complexType name="SelectClass" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns:View" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/js.ui.SelectClass" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
-                <attribute name="open"/>
-                <attribute name="selectedItem"/>
-                <attribute name="searchTerm"/>
-                <attribute name="placeHolder" default="Select Something"/>
-                <attribute name="searchPlaceHolder"/>
-                <attribute name="queryCreator"/>
-                <attribute name="itemHeight" default="30"/>
-                <attribute name="dropDownHeight" default="200"/>
+                <attribute name="open" initializeInvisibleChildren="false"/>
+                <attribute name="selectedItem" initializeInvisibleChildren="false"/>
+                <attribute name="searchTerm" initializeInvisibleChildren="false"/>
+                <attribute name="placeHolder" initializeInvisibleChildren="false" default="Select Something"/>
+                <attribute name="searchPlaceHolder" initializeInvisibleChildren="false"/>
+                <attribute name="queryCreator" initializeInvisibleChildren="false"/>
+                <attribute name="itemHeight" initializeInvisibleChildren="false" default="30"/>
+                <attribute name="dropDownHeight" initializeInvisibleChildren="false" default="200"/>
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="SelectionView">
-        <complexContent>
-            <extension base="ns:ItemsView">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.ui.SelectionView"></documentation>
+    <complexType name="SelectionView" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns:ItemsView" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/js.ui.SelectionView" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
-                <attribute name="multiSelect">
-                    <annotation>
-                        <documentation>
+                <attribute name="multiSelect" initializeInvisibleChildren="false">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         If multi selection is allowed or not
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="placeHolderValue">
-                    <annotation>
-                        <documentation>
+                <attribute name="placeHolderValue" initializeInvisibleChildren="false">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         The default place holder value if a placeholder template is defined
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="selectedViews">
-                    <annotation>
-                        <documentation>
+                <attribute name="selectedViews" initializeInvisibleChildren="false">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         The list of selected views
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="selectedItems">
-                    <annotation>
-                        <documentation>
+                <attribute name="selectedItems" initializeInvisibleChildren="false">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         The list of selected items
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="selectedItem">
-                    <annotation>
-                        <documentation>
+                <attribute name="selectedItem" initializeInvisibleChildren="false">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         The selected item
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="selectedIndex">
-                    <annotation>
-                        <documentation>
+                <attribute name="selectedIndex" initializeInvisibleChildren="false">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         The selected view index
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="needsSelection">
-                    <annotation>
-                        <documentation>
+                <attribute name="needsSelection" initializeInvisibleChildren="false">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         If true, the first element is selected if no selectedItem is set
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="keyPath">
-                    <annotation>
-                        <documentation>
+                <attribute name="keyPath" initializeInvisibleChildren="false">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         A key path for comparison of items
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="forceSelectable" default="true">
-                    <annotation>
-                        <documentation>
+                <attribute name="forceSelectable" initializeInvisibleChildren="false" default="true">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         If false, elements are not selectable
 Useful for readonly selection
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="allowDeselection">
-                    <annotation>
-                        <documentation>
+                <attribute name="allowDeselection" initializeInvisibleChildren="false">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         If true an element can be deselected
 Default is false
 
@@ -1175,60 +1198,60 @@ Default is false
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="Slider">
-        <complexContent>
-            <extension base="ns:SliderClass">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.ui.Slider"></documentation>
+    <complexType name="Slider" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns:SliderClass" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/js.ui.Slider" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
-                <attribute name="min" default="1">
-                    <annotation>
-                        <documentation>
+                <attribute name="min" initializeInvisibleChildren="false" default="1">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         The minimum value
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="max" default="100">
-                    <annotation>
-                        <documentation>
+                <attribute name="max" initializeInvisibleChildren="false" default="100">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         The maximum value
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="step" default="1">
-                    <annotation>
-                        <documentation>
+                <attribute name="step" initializeInvisibleChildren="false" default="1">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         The step size which the handler should move
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="range">
-                    <annotation>
-                        <documentation>
+                <attribute name="range" initializeInvisibleChildren="false">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         If range is true two handles will be shown
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="value" default="1">
-                    <annotation>
-                        <documentation>
+                <attribute name="value" initializeInvisibleChildren="false" default="1">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         The current value
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="startValue" default="1">
-                    <annotation>
-                        <documentation>
+                <attribute name="startValue" initializeInvisibleChildren="false" default="1">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         The current start value, only used when range is set to true
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="orientation">
-                    <annotation>
-                        <documentation>
+                <attribute name="orientation" initializeInvisibleChildren="false">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         The orientation of the slider.
 Possible values are "horizontal" and "vertical"
 
@@ -1238,159 +1261,160 @@ Possible values are "horizontal" and "vertical"
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="SliderClass">
-        <complexContent>
-            <extension base="ns:View">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.ui.SliderClass"></documentation>
+    <complexType name="SliderClass" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns:View" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/js.ui.SliderClass" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
-                <attribute name="min" default="1">
-                    <annotation>
-                        <documentation>
+                <attribute name="min" initializeInvisibleChildren="false" default="1">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         The minimum value
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="max" default="100">
-                    <annotation>
-                        <documentation>
+                <attribute name="max" initializeInvisibleChildren="false" default="100">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         The maximum value
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="step" default="1">
-                    <annotation>
-                        <documentation>
+                <attribute name="step" initializeInvisibleChildren="false" default="1">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         The step size which the handler should move
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="range">
-                    <annotation>
-                        <documentation>
+                <attribute name="range" initializeInvisibleChildren="false">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         If range is true two handles will be shown
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="value" default="1">
-                    <annotation>
-                        <documentation>
+                <attribute name="value" initializeInvisibleChildren="false" default="1">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         The current value
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="startValue" default="1">
-                    <annotation>
-                        <documentation>
+                <attribute name="startValue" initializeInvisibleChildren="false" default="1">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         The current start value, only used when range is set to true
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="orientation">
-                    <annotation>
-                        <documentation>
+                <attribute name="orientation" initializeInvisibleChildren="false">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         The orientation of the slider.
 Possible values are "horizontal" and "vertical"
 
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="oninput" default="_onInputHandler" type="string"/>
+                <attribute name="oninput" initializeInvisibleChildren="false" default="_onInputHandler" type="string"/>
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="SplitButton">
-        <complexContent>
-            <extension base="ns:SplitButtonClass">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.ui.SplitButton"></documentation>
+    <complexType name="SplitButton" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns:SplitButtonClass" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/js.ui.SplitButton" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="SplitButtonClass">
-        <complexContent>
-            <extension base="ns:MenuButton">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.ui.SplitButtonClass"></documentation>
+    <complexType name="SplitButtonClass" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns:MenuButton" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/js.ui.SplitButtonClass" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="Tab">
-        <complexContent>
-            <extension base="ns:View">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.ui.Tab"></documentation>
+    <complexType name="Tab" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns:View" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/js.ui.Tab" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
-                <attribute name="title"/>
+                <attribute name="title" initializeInvisibleChildren="false"/>
+                <attribute name="tabClass" initializeInvisibleChildren="false"/>
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="TabView">
-        <complexContent>
-            <extension base="ns:TabViewClass">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.ui.TabView"></documentation>
+    <complexType name="TabView" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns:TabViewClass" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/js.ui.TabView" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
-                <attribute name="selectedIndex" default="null"/>
-                <attribute name="selectedTab" default="null"/>
-                <attribute name="selectedView"/>
-                <attribute name="tabClassName" default="nav nav-tabs"/>
-                <attribute name="menuClassName"/>
-                <attribute name="contentClassName"/>
-                <attribute name="tabItems"/>
+                <attribute name="selectedIndex" initializeInvisibleChildren="false" default="null"/>
+                <attribute name="selectedTab" initializeInvisibleChildren="false" default="null"/>
+                <attribute name="selectedView" initializeInvisibleChildren="false"/>
+                <attribute name="tabClassName" initializeInvisibleChildren="false" default="nav nav-tabs"/>
+                <attribute name="menuClassName" initializeInvisibleChildren="false"/>
+                <attribute name="contentClassName" initializeInvisibleChildren="false"/>
+                <attribute name="tabItems" initializeInvisibleChildren="false"/>
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="TabViewClass">
-        <complexContent>
-            <extension base="ns:View">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.ui.TabViewClass"></documentation>
+    <complexType name="TabViewClass" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns:View" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/js.ui.TabViewClass" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
-                <attribute name="selectedIndex"/>
-                <attribute name="selectedView"/>
-                <attribute name="selectedTab"/>
-                <attribute name="tabClassName" default="nav nav-tabs"/>
-                <attribute name="menuClassName"/>
-                <attribute name="contentClassName"/>
-                <attribute name="tabItems"/>
-                <attribute name="onselectTab" default="_onSelectTabHandler" type="string"/>
+                <attribute name="selectedIndex" initializeInvisibleChildren="false"/>
+                <attribute name="selectedView" initializeInvisibleChildren="false"/>
+                <attribute name="selectedTab" initializeInvisibleChildren="false"/>
+                <attribute name="tabClassName" initializeInvisibleChildren="false" default="nav nav-tabs"/>
+                <attribute name="menuClassName" initializeInvisibleChildren="false"/>
+                <attribute name="contentClassName" initializeInvisibleChildren="false"/>
+                <attribute name="tabItems" initializeInvisibleChildren="false"/>
+                <attribute name="onselectTab" initializeInvisibleChildren="false" default="_onSelectTabHandler" type="string"/>
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="TemplatePlaceHolder">
-        <complexContent>
-            <extension base="ns:View">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.ui.TemplatePlaceHolder"></documentation>
+    <complexType name="TemplatePlaceHolder" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns:View" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/js.ui.TemplatePlaceHolder" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
-                <attribute name="item"/>
-                <attribute name="templateName" use="required">
-                    <annotation>
-                        <documentation>
+                <attribute name="item" initializeInvisibleChildren="false"/>
+                <attribute name="templateName" initializeInvisibleChildren="false" use="required">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         the template name which to use
 
                     </documentation>
@@ -1399,88 +1423,88 @@ Possible values are "horizontal" and "vertical"
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="TextWrapper">
-        <complexContent>
-            <extension base="ns:View">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.ui.TextWrapper"></documentation>
+    <complexType name="TextWrapper" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns:View" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/js.ui.TextWrapper" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="TileList">
-        <complexContent>
-            <extension base="ns:TileListClass">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.ui.TileList"></documentation>
+    <complexType name="TileList" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns:TileListClass" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/js.ui.TileList" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
-                <attribute name="onkeydown" default="_onKeyDown"/>
-                <attribute name="scrollContainerClass">
-                    <annotation>
-                        <documentation>
+                <attribute name="onkeydown" initializeInvisibleChildren="false" default="_onKeyDown"/>
+                <attribute name="scrollContainerClass" initializeInvisibleChildren="false">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         Extra class for the scroll container
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="minItemSize" default="100">
-                    <annotation>
-                        <documentation>
+                <attribute name="minItemSize" initializeInvisibleChildren="false" default="100">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         The minimum size (width|height) of an item.
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="maxItemSize" default="150">
-                    <annotation>
-                        <documentation>
+                <attribute name="maxItemSize" initializeInvisibleChildren="false" default="150">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         The maximal size (width|height) of an item.
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="itemWidth">
-                    <annotation>
-                        <documentation>
+                <attribute name="itemWidth" initializeInvisibleChildren="false">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         The width of an item. Default is "auto"
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="itemHeight">
-                    <annotation>
-                        <documentation>
+                <attribute name="itemHeight" initializeInvisibleChildren="false">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         The height of an item. Default is "auto"
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="rows">
-                    <annotation>
-                        <documentation>
+                <attribute name="rows" initializeInvisibleChildren="false">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         The number of rows
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="cols">
-                    <annotation>
-                        <documentation>
+                <attribute name="cols" initializeInvisibleChildren="false">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         The number of cols
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="aspectRatio" default="1">
-                    <annotation>
-                        <documentation>
+                <attribute name="aspectRatio" initializeInvisibleChildren="false" default="1">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         calculates itemHeight, itemWidth if set to AUTO depending on the scrollDirection
 
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="scrollBarSize">
-                    <annotation>
-                        <documentation>
+                <attribute name="scrollBarSize" initializeInvisibleChildren="false">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         The scrollBarSize is used to add a padding for the scrollbar so that it doesn't hide the items
 
                     </documentation>
@@ -1489,75 +1513,75 @@ Possible values are "horizontal" and "vertical"
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="TileListClass">
-        <complexContent>
-            <extension base="ns:VirtualItemsView">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.ui.TileListClass"></documentation>
+    <complexType name="TileListClass" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns:VirtualItemsView" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/js.ui.TileListClass" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
-                <attribute name="scrollContainerClass">
-                    <annotation>
-                        <documentation>
+                <attribute name="scrollContainerClass" initializeInvisibleChildren="false">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         Extra class for the scroll container
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="minItemSize" default="100">
-                    <annotation>
-                        <documentation>
+                <attribute name="minItemSize" initializeInvisibleChildren="false" default="100">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         The minimum size (width|height) of an item.
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="maxItemSize" default="150">
-                    <annotation>
-                        <documentation>
+                <attribute name="maxItemSize" initializeInvisibleChildren="false" default="150">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         The maximal size (width|height) of an item.
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="itemWidth">
-                    <annotation>
-                        <documentation>
+                <attribute name="itemWidth" initializeInvisibleChildren="false">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         The width of an item. Default is "auto"
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="itemHeight">
-                    <annotation>
-                        <documentation>
+                <attribute name="itemHeight" initializeInvisibleChildren="false">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         The height of an item. Default is "auto"
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="rows">
-                    <annotation>
-                        <documentation>
+                <attribute name="rows" initializeInvisibleChildren="false">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         The number of rows
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="cols">
-                    <annotation>
-                        <documentation>
+                <attribute name="cols" initializeInvisibleChildren="false">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         The number of cols
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="aspectRatio" default="1">
-                    <annotation>
-                        <documentation>
+                <attribute name="aspectRatio" initializeInvisibleChildren="false" default="1">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         calculates itemHeight, itemWidth if set to AUTO depending on the scrollDirection
 
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="scrollBarSize">
-                    <annotation>
-                        <documentation>
+                <attribute name="scrollBarSize" initializeInvisibleChildren="false">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         The scrollBarSize is used to add a padding for the scrollbar so that it doesn't hide the items
 
                     </documentation>
@@ -1566,137 +1590,138 @@ Possible values are "horizontal" and "vertical"
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="TreeView">
-        <complexContent>
-            <extension base="ns:TreeViewClass">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.ui.TreeView"></documentation>
+    <complexType name="TreeView" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns:TreeViewClass" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/js.ui.TreeView" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
-                <attribute name="node"/>
-                <attribute name="selectedNode"/>
-                <attribute name="expanded" default="{node.expanded}"/>
-                <attribute name="root" default="{_self()}"/>
+                <attribute name="node" initializeInvisibleChildren="false"/>
+                <attribute name="selectedNode" initializeInvisibleChildren="false"/>
+                <attribute name="expanded" initializeInvisibleChildren="false" default="{node.expanded}"/>
+                <attribute name="root" initializeInvisibleChildren="false" default="{_self()}"/>
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="TreeViewClass">
-        <complexContent>
-            <extension base="ns:View">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.ui.TreeViewClass"></documentation>
+    <complexType name="TreeViewClass" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns:View" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/js.ui.TreeViewClass" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
-                <attribute name="node"/>
-                <attribute name="selectedNode"/>
-                <attribute name="expanded" default="{node.expanded}"/>
-                <attribute name="root" default="{_self()}"/>
+                <attribute name="node" initializeInvisibleChildren="false"/>
+                <attribute name="selectedNode" initializeInvisibleChildren="false"/>
+                <attribute name="expanded" initializeInvisibleChildren="false" default="{node.expanded}"/>
+                <attribute name="root" initializeInvisibleChildren="false" default="{_self()}"/>
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="View">
-        <complexContent>
-            <extension base="ns2:HtmlElement">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.ui.View"></documentation>
+    <complexType name="View" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns2:HtmlElement" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/js.ui.View" initializeInvisibleChildren="false"></documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
-                <attribute name="tagName" default="div"/>
+                <attribute name="tagName" initializeInvisibleChildren="false" default="div"/>
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="VirtualItemsView">
-        <complexContent>
-            <extension base="ns:View">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.ui.VirtualItemsView">
+    <complexType name="VirtualItemsView" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns:View" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/js.ui.VirtualItemsView" initializeInvisibleChildren="false">
                                 defines an ItemsView which can show parts of data
                             </documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
-                <attribute name="data">
-                    <annotation>
-                        <documentation>
+                <attribute name="data" initializeInvisibleChildren="false">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                          the data, which should be bound
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="scrollTop">
-                    <annotation>
-                        <documentation>
+                <attribute name="scrollTop" initializeInvisibleChildren="false">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                          TODO: update positions, after DOM Element scrollLeft and scrollTop changed
  scroll positions
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="scrollLeft"/>
-                <attribute name="width" default="300">
-                    <annotation>
-                        <documentation>
+                <attribute name="scrollLeft" initializeInvisibleChildren="false"/>
+                <attribute name="width" initializeInvisibleChildren="false" default="300">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                          TODO: update width and height, after DOM Element resized
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="height" default="300"/>
-                <attribute name="loading"/>
-                <attribute name="scrollToIndex"/>
-                <attribute name="horizontalGap"/>
-                <attribute name="verticalGap"/>
-                <attribute name="scrollDirection"/>
-                <attribute name="prefetchItemCount"/>
-                <attribute name="fetchPageDelay" default="500"/>
-                <attribute name="fetchWithFullData"/>
-                <attribute name="selectionMode"/>
-                <attribute name="selectedItems"/>
-                <attribute name="topPadding">
-                    <annotation>
-                        <documentation>
+                <attribute name="height" initializeInvisibleChildren="false" default="300"/>
+                <attribute name="loading" initializeInvisibleChildren="false"/>
+                <attribute name="scrollToIndex" initializeInvisibleChildren="false"/>
+                <attribute name="horizontalGap" initializeInvisibleChildren="false"/>
+                <attribute name="verticalGap" initializeInvisibleChildren="false"/>
+                <attribute name="scrollDirection" initializeInvisibleChildren="false"/>
+                <attribute name="prefetchItemCount" initializeInvisibleChildren="false"/>
+                <attribute name="fetchPageDelay" initializeInvisibleChildren="false" default="500"/>
+                <attribute name="fetchWithFullData" initializeInvisibleChildren="false"/>
+                <attribute name="selectionMode" initializeInvisibleChildren="false"/>
+                <attribute name="selectedItems" initializeInvisibleChildren="false"/>
+                <attribute name="preventOuterScrolling" initializeInvisibleChildren="false"/>
+                <attribute name="topPadding" initializeInvisibleChildren="false">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         Top padding for scroll container
 
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="leftPadding">
-                    <annotation>
-                        <documentation>
+                <attribute name="leftPadding" initializeInvisibleChildren="false">
+                    <annotation initializeInvisibleChildren="false">
+                        <documentation initializeInvisibleChildren="false">
                         Left Padding for scroll container
 
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="onitemClick" default="_onItemClickHandler" type="string"/>
-                <attribute name="onitemDblClick" default="_onItemDblClickHandler" type="string"/>
-                <attribute name="onitemMouseOver" default="_onItemMouseOverHandler" type="string"/>
-                <attribute name="onitemMouseOut" default="_onItemMouseOutHandler" type="string"/>
+                <attribute name="onitemClick" initializeInvisibleChildren="false" default="_onItemClickHandler" type="string"/>
+                <attribute name="onitemDblClick" initializeInvisibleChildren="false" default="_onItemDblClickHandler" type="string"/>
+                <attribute name="onitemMouseOver" initializeInvisibleChildren="false" default="_onItemMouseOverHandler" type="string"/>
+                <attribute name="onitemMouseOut" initializeInvisibleChildren="false" default="_onItemMouseOutHandler" type="string"/>
             </extension>
         </complexContent>
     </complexType>
-    <complexType name="VirtualScrollView">
-        <complexContent>
-            <extension base="ns:View">
-                <annotation>
-                    <documentation source="http://www.rappidjs.com/#/api/js.ui.VirtualScrollView">
+    <complexType name="VirtualScrollView" initializeInvisibleChildren="false">
+        <complexContent initializeInvisibleChildren="false">
+            <extension base="ns:View" initializeInvisibleChildren="false">
+                <annotation initializeInvisibleChildren="false">
+                    <documentation source="http://www.rappidjs.com/#/api/js.ui.VirtualScrollView" initializeInvisibleChildren="false">
                                 defines an ItemsView which can show parts of data
                             </documentation>
                 </annotation>
-                <sequence>
-                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                <sequence initializeInvisibleChildren="false">
+                    <any processContents="lax" minOccurs="0" maxOccurs="unbounded" initializeInvisibleChildren="false"/>
                 </sequence>
-                <attribute name="scrollTop"/>
-                <attribute name="scrollLeft"/>
-                <attribute name="updateHeightPolicy" default="in"/>
-                <attribute name="updateWidthPolicy" default="in"/>
-                <attribute name="vertical" default="true"/>
-                <attribute name="horizontal"/>
-                <attribute name="mouseTracking"/>
+                <attribute name="scrollTop" initializeInvisibleChildren="false"/>
+                <attribute name="scrollLeft" initializeInvisibleChildren="false"/>
+                <attribute name="updateHeightPolicy" initializeInvisibleChildren="false" default="in"/>
+                <attribute name="updateWidthPolicy" initializeInvisibleChildren="false" default="in"/>
+                <attribute name="vertical" initializeInvisibleChildren="false" default="true"/>
+                <attribute name="horizontal" initializeInvisibleChildren="false"/>
+                <attribute name="mouseTracking" initializeInvisibleChildren="false"/>
             </extension>
         </complexContent>
     </complexType>
