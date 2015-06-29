@@ -24,8 +24,9 @@
                 scrollContainerClass="nav nav-pills nav-stacked"
                 cols="1" data="{data}"
                 heightUpdatePolicy="out"
-                widthUpdatePolicy="out"
-                height="{dropDownHeight}" itemHeight="{itemHeight}" itemWidth="null" selectionMode="single">
+                widthUpdatePolicy="in"
+                verticalGap="0"
+                height="{dropDownHeight}" itemHeight="{itemHeight}" itemWidth="auto" selectionMode="single">
 
         </ui:TileList>
     </div>
