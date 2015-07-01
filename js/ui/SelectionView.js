@@ -230,6 +230,7 @@ define(["js/ui/ItemsView", "js/html/HtmlElement", "underscore", "js/core/List"],
                 this.addChild(this.$placeHolder, {childIndex: 0});
                 if (this.$placeHolder.isRendered()) {
                     this.$placeHolder.$el.selected = attr["selected"];
+                    this.$el.value = placeHolderValue || "";
                 }
             }
         },
