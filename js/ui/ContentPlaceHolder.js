@@ -8,7 +8,13 @@ define(["js/ui/View"], function (View) {
              * @type String
              * @required
              */
-            name: null
+            name: null,
+            /**
+             * the content element to fill the placeHolder
+             *
+             * @type js.core.Component.Content
+             */
+            content: null
         },
 
         _renderContent: function (content) {
