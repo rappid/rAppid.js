@@ -496,7 +496,7 @@ define(["js/core/Component", "js/core/Base", "js/data/Collection", "underscore",
                             }
 
 
-                        } else if (Collection && schemaType.classof(Collection)) {
+                        } else if (!(schemaType instanceof TypeResolver) && Collection && schemaType.classof(Collection)) {
                             var contextForChildren = this.$dataSource._getContext(schemaType, model, value);
                             if (contextForChildren) {
                                 if (model.$[key] instanceof Collection) {
@@ -513,7 +513,7 @@ define(["js/core/Component", "js/core/Base", "js/data/Collection", "underscore",
                             }
                         } else if (schemaType === Date && value && !(value instanceof Date)) {
                             newData[key] = moment(value, this.$dataSource.$.dateFormat).toDate();
-                        } else if (schemaType.classof(Entity)) {
+                        } else if (schemaType instanceof TypeResolver || schemaType.classof(Entity)) {
                             var id;
                             if (value && schemaType instanceof TypeResolver) {
                                 factory = schemaType.resolve(value, key);

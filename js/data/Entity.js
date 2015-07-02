@@ -1,5 +1,5 @@
-define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validator/Validator', 'underscore'],
-    function (require, Bindable, List, flow, Validator, _) {
+define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validator/Validator', 'underscore', 'js/data/TypeResolver'],
+    function (require, Bindable, List, flow, Validator, _, TypeResolver) {
 
         var undefined;
 
@@ -337,7 +337,7 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                 for (var key in this.schema) {
                     if (this.schema.hasOwnProperty(key)) {
                         schemaObject = this.schema[key];
-                        if (_.isString(schemaObject) || schemaObject instanceof Array || schemaObject instanceof Function) {
+                        if (_.isString(schemaObject) || schemaObject instanceof Array || schemaObject instanceof Function || schemaObject instanceof TypeResolver) {
                             schemaObject = {
                                 type: schemaObject
                             };
