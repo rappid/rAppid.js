@@ -131,12 +131,13 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore", "js/da
                 }, this.$);
 
                 var sortCacheId = query.sortCacheId();
+                if (sortCacheId) {
+                    if (!this.$sortCache[sortCacheId]) {
+                        this.$sortCache[sortCacheId] = this._createSortedCollection(query, options);
+                    }
 
-                if (!this.$sortCache[sortCacheId]) {
-                    this.$sortCache[sortCacheId] = this._createSortedCollection(query, options);
+                    return this.$sortCache[sortCacheId];
                 }
-
-                return this.$sortCache[sortCacheId];
             }
 
             return this;
