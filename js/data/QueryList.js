@@ -12,7 +12,7 @@ define(["js/core/List" , "underscore", "js/data/Query", 'js/lib/query/ArrayExecu
         return _getValueForItemField(item, field);
     };
 
-    return List.inherit("js.data.QueryList", {
+    var QueryList = List.inherit("js.data.QueryList", {
 
         defaults: {
             list: null,
@@ -152,5 +152,11 @@ define(["js/core/List" , "underscore", "js/data/Query", 'js/lib/query/ArrayExecu
             this.set('query', query);
             return this;
         }
+    }, {
+        createFromArray: function (items) {
+            return new QueryList({list: new List(items)});
+        }
     });
+
+    return QueryList;
 });
