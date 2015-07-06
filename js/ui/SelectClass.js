@@ -1,4 +1,4 @@
-define(["js/ui/View", 'js/data/Collection', 'js/core/List'], function (View, Collection, List) {
+define(["js/ui/View", 'js/data/Collection', 'js/core/List', 'js/data/QueryList'], function (View, Collection, List, QueryList) {
         var undefined,
             instances = [];
 
@@ -104,14 +104,10 @@ define(["js/ui/View", 'js/data/Collection', 'js/core/List'], function (View, Col
             },
 
             _search: function () {
-                if (this.$.searchTerm && this.$.searchTerm.length > 1) {
-                    if (this.$.data instanceof Collection) {
-                        this.queryList(this.$.searchTerm);
-                    } else if (this.$.data instanceof List) {
-                        this.filterList(this.$.searchTerm);
-                    }
-                } else if (this.$realData) {
-                    this.set('data', this.$realData);
+                if (this.$.data instanceof Collection || this.$.data instanceof QueryList) {
+                    this.queryList(this.$.searchTerm);
+                } else if (this.$.data instanceof List) {
+                    this.filterList(this.$.searchTerm);
                 }
                 clearTimeout(this.$searchTimeout);
                 this.$searchTimeout = undefined;
@@ -121,7 +117,10 @@ define(["js/ui/View", 'js/data/Collection', 'js/core/List'], function (View, Col
                 if (!this.$realData) {
                     this.$realData = this.$.data;
                 }
-                this.set({scrollTop: 0, data: this.$.data.query(this.createQuery(searchTerm))});
+                this.set({
+                    scrollTop: 0,
+                    data: this.$.data.query(this.createQuery(searchTerm))
+                });
             },
 
             createQuery: function (searchTerm) {
