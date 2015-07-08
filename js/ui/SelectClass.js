@@ -91,7 +91,8 @@ define(["js/ui/View", 'js/data/Collection', 'js/core/List', 'js/data/QueryList']
                 } else {
                     this._renderTemplateToPlaceHolder('emptySelection', 'emptySelection', {});
                     this.set("scrollTop", 0);
-                    this.$.tileList._selectItem(0, false, false);
+
+                    this.$.tileList && this.$.tileList._selectItem(0, false, false);
                 }
             },
 
