@@ -10,7 +10,9 @@ define(['js/ui/View', 'xaml!js/ui/DataGridColumn', 'js/core/List', 'underscore',
             selectedItems: List,
             selectionMode: "multi",
             data: null,
-            query: null
+            query: null,
+            $itemsView: null,
+            _loading: "{$itemsView.loading}"
         },
 
         events: [
@@ -57,6 +59,15 @@ define(['js/ui/View', 'xaml!js/ui/DataGridColumn', 'js/core/List', 'underscore',
                 }
             }
         },
+
+        _render_loading: function (loading) {
+            if (loading) {
+                this.addClass("loading");
+            } else {
+                this.removeClass("loading");
+            }
+        },
+
         sort: function (sortPath, sortDirection) {
             var sortQuery = new Query();
             sortQuery.sort((sortDirection === 1 ? "+" : "-") + sortPath);
