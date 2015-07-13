@@ -120,10 +120,7 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore", "js/da
          */
         sort: function (query) {
             if (query instanceof Query && query.query.sort) {
-                if (this.$.query) {
-                    query.query.where = this.$.query.query.where;
-                }
-
+                query.query.where = this.$.query ? this.$.query.query.where : {};
 
                 var options = _.defaults({}, {
                     query: query,
@@ -132,6 +129,7 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore", "js/da
 
                 var sortCacheId = query.sortCacheId();
                 if (sortCacheId) {
+                    options.$itemsCount = undefined;
                     if (!this.$sortCache[sortCacheId]) {
                         this.$sortCache[sortCacheId] = this._createSortedCollection(query, options);
                     }
