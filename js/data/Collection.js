@@ -112,6 +112,12 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore", "js/da
 
             return collection;
         },
+
+        _commit$itemsCount: function (itemsCount) {
+            if (this.$.sortParent) {
+                this.$.sortParent.set('$itemsCount', itemsCount);
+            }
+        },
         /**
          * Returns a sorted query collection
          *
@@ -124,12 +130,12 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore", "js/da
 
                 var options = _.defaults({}, {
                     query: query,
+                    sortParent: this,
                     root: this.getRoot()
                 }, this.$);
 
                 var sortCacheId = query.sortCacheId();
                 if (sortCacheId) {
-                    options.$itemsCount = undefined;
                     if (!this.$sortCache[sortCacheId]) {
                         this.$sortCache[sortCacheId] = this._createSortedCollection(query, options);
                     }
