@@ -47,7 +47,7 @@ define(["js/ui/View", 'js/data/Collection', 'js/core/List'], function (View) {
                  */
                 orientation: ORIENTATION.HORIZONTAL
             },
-            events: ["on:input"],
+            events: ["on:input", 'on:handleUp'],
 
             _handleDown: function (event, handleId) {
                 event.preventDefault();
@@ -58,11 +58,11 @@ define(["js/ui/View", 'js/data/Collection', 'js/core/List'], function (View) {
                 if (!this._windowUpListener || !this._windowMoveListener) {
                     var self = this;
                     this._windowUpListener = function (e) {
-                        return self._handleWindowUp(e);
+                        self._handleWindowUp(e);
                     };
 
                     this._windowMoveListener = function (e) {
-                        return self._handleWindowMove(e);
+                        self._handleWindowMove(e);
                     }
                 }
 
@@ -146,7 +146,13 @@ define(["js/ui/View", 'js/data/Collection', 'js/core/List'], function (View) {
                     } else {
                         this.set('startValue', v);
                     }
-                    this.trigger('on:input', {value: this.$.value, startValue: this.$.startValue});
+                    if(!this.$eventObject){
+                        this.$eventObject = {value: this.$.value, startValue: this.$.startValue};
+                    }
+                    this.$eventObject.value = this.$.value;
+                    this.$eventObject.startValue = this.$.startValue;
+
+                    this.trigger('on:input', this.$eventObject);
 
                 }
 
@@ -224,8 +230,10 @@ define(["js/ui/View", 'js/data/Collection', 'js/core/List'], function (View) {
 
             _handleWindowUp: function (e) {
                 this.$currentHandle = null;
+                this.trigger('on:handleUp', {value: this.$.value, startValue: this.$.startValue});
+
                 this.dom(this.$stage.$window).unbindDomEvent('pointerup', this._windowUpListener);
-                this.dom(this.$stage.$window).unbindDomEvent('pointermove', this._windowUpListener);
+                this.dom(this.$stage.$window).unbindDomEvent('pointermove', this._windowMoveListener);
 
             }
         });
