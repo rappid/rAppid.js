@@ -42,14 +42,14 @@ define(['js/core/DomElement', 'js/core/List', 'js/core/Bindable'], function (Dom
             },
 
             addChild: function (child) {
-                this.callBase();
                 child.$svgRoot = this.$svgRoot;
+                this.callBase();
             },
 
             getSvgRoot: function () {
-                if(!this.$svgRoot){
+                if (!this.$svgRoot) {
                     var parent = this.$parent;
-                    while(parent instanceof SvgElement && !parent.$svgRoot){
+                    while (parent instanceof SvgElement && !parent.$svgRoot) {
                         parent = parent.$parent;
                     }
 
@@ -184,7 +184,7 @@ define(['js/core/DomElement', 'js/core/List', 'js/core/Bindable'], function (Dom
                 this._setAttribute("href", href, SvgElement.XLINK_NAMESPACE);
             },
 
-            _renderId: function(id) {
+            _renderId: function (id) {
                 this._setAttribute("id", id);
             },
 
