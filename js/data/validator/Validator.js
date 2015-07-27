@@ -62,7 +62,7 @@ define(['js/core/Bindable', 'js/core/Base'], function (Bindable, Base) {
 
             try {
                 internalCallback(null, this._validate(entity, options));
-            } catch(e) {
+            } catch (e) {
                 internalCallback(e);
             }
 
@@ -84,8 +84,12 @@ define(['js/core/Bindable', 'js/core/Base'], function (Bindable, Base) {
          * @returns {boolean}
          * @private
          */
-        _validationRequired: function(entity) {
-            return !(this.$.field && !entity.schema[this.$.field].required && !entity.getTransformedValue(this.$.field));
+        _validationRequired: function (entity) {
+            var required = entity.schema[this.$.field].required;
+            if (typeof(required) == "function") {
+                required = required.call(entity);
+            }
+            return !(this.$.field && !required && !entity.getTransformedValue(this.$.field));
         },
 
         /***
@@ -114,7 +118,7 @@ define(['js/core/Bindable', 'js/core/Base'], function (Bindable, Base) {
          * @returns {js.data.validator.Validator.Error}
          * @private
          */
-        _createError: function(code, message, field){
+        _createError: function (code, message, field) {
             return new Validator.Error({
                 code: code,
                 message: message,
