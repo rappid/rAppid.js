@@ -439,7 +439,16 @@ define(["js/core/Component", "js/core/Base", "js/data/Collection", "underscore",
                     schemaType,
                     value,
                     factory,
-                    newData = {};
+                    newData = {},
+                    id;
+
+                // first parse idField ... this is needed to create the correct context for collections
+                if (schema[model.idField]) {
+                    id = this._getValueForKey(data, model.idField, schema[model.idField].type, schema[model.idField]);
+                    if (id != null) {
+                        model.set(model.idField, id);
+                    }
+                }
 
                 // convert top level properties to Models respective to there schema
                 for (var key in schema) {
@@ -514,7 +523,6 @@ define(["js/core/Component", "js/core/Base", "js/data/Collection", "underscore",
                         } else if (schemaType === Date && value && !(value instanceof Date)) {
                             newData[key] = moment(value, this.$dataSource.$.dateFormat).toDate();
                         } else if (schemaType instanceof TypeResolver || schemaType.classof(Entity)) {
-                            var id;
                             if (value && schemaType instanceof TypeResolver) {
                                 factory = schemaType.resolve(value, key);
                             } else {
