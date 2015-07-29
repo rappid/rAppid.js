@@ -142,11 +142,14 @@ define(['xaml!js/svg/SvgDescriptor', "js/svg/SvgElement", 'js/core/Base'], funct
                     current;
 
                 setTimeout(function () {
-                    text.setAttribute("font-family", fontFamily); // set to loading font
+                    text.setAttribute("font-family", "Serif"); // set to default font
                     try {
                         originalBox = text.getBBox();
                     } catch (e) {
                     }
+
+                    text.setAttribute("font-family", fontFamily); // set to loading font
+
 
                     setTimeout(checkFontLoaded, 0);
 
