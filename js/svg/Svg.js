@@ -93,7 +93,7 @@ define(['xaml!js/svg/SvgDescriptor', "js/svg/SvgElement", 'js/core/Base'], funct
 
                 hidden.appendChild(text);
 
-                if (/\.woff|\.eot/.test(src)) {
+                if (/\.woff|\.eot|\.ttf/.test(src)) {
 
                     var document = svg.$stage.$document,
                         body = document.getElementsByTagName("body")[0],
@@ -105,6 +105,8 @@ define(['xaml!js/svg/SvgDescriptor', "js/svg/SvgElement", 'js/core/Base'], funct
                     var srcAttribute = "";
                     if (src.indexOf(".woff") > -1) {
                         srcAttribute = "url('" + src + "') format('woff');";
+                    } else if (src.indexOf(".ttf") > -1) {
+                        srcAttribute = "url('" + src + "') format('truetype');"
                     } else {
                         srcAttribute = "url('" + src + "') ;";
                     }
