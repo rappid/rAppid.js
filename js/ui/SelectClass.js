@@ -4,6 +4,7 @@ define(["js/ui/View", 'js/data/Collection', 'js/core/List', 'js/data/QueryList']
 
         return View.inherit('js.ui.SelectClass', {
             defaults: {
+                data: null,
                 componentClass: 'select',
                 open: false,
                 selectedItem: null,
@@ -11,8 +12,10 @@ define(["js/ui/View", 'js/data/Collection', 'js/core/List', 'js/data/QueryList']
                 placeHolder: 'Select Something',
                 searchPlaceHolder: '',
                 queryCreator: null,
+                filterFnc: null,
                 itemHeight: 30,
-                dropDownHeight: 200
+                dropDownHeight: 200,
+                _tileListData: "{data}"
             },
 
             ctor: function () {
@@ -106,10 +109,19 @@ define(["js/ui/View", 'js/data/Collection', 'js/core/List', 'js/data/QueryList']
                 }, 200);
             },
 
+            _commitChangedAttributes: function ($) {
+                this.callBase();
+
+                if ($.data && this.$.searchTerm) {
+                    this._search();
+                }
+
+            },
+
             _search: function () {
                 if (this.$.data instanceof Collection || this.$.data instanceof QueryList) {
                     this.queryList(this.$.searchTerm);
-                } else if (this.$.data instanceof List) {
+                } else if (this.$.data instanceof List || this.$.data instanceof Array) {
                     this.filterList(this.$.searchTerm);
                 }
                 clearTimeout(this.$searchTimeout);
@@ -117,12 +129,9 @@ define(["js/ui/View", 'js/data/Collection', 'js/core/List', 'js/data/QueryList']
             },
 
             queryList: function (searchTerm) {
-                if (!this.$realData) {
-                    this.$realData = this.$.data;
-                }
                 this.set({
                     scrollTop: 0,
-                    data: this.$.data.query(this.createQuery(searchTerm))
+                    _tileListData: this.$.data.query(this.createQuery(searchTerm))
                 });
             },
 
@@ -134,6 +143,19 @@ define(["js/ui/View", 'js/data/Collection', 'js/core/List', 'js/data/QueryList']
                 return {};
             },
             filterList: function (searchTerm) {
+                var filterFnc = this.$.filterFnc;
+                if (filterFnc) {
+                    var filtered = [];
+                    if (this.$.data instanceof List) {
+                        var self = this;
+                        this.$.data.each(function (item) {
+                            if (filterFnc.call(self, item, searchTerm)) {
+                                filtered.push(item);
+                            }
+                        });
+                    }
+                    this.set('_tileListData', filtered);
+                }
 
             },
             _handleSelect: function (e) {

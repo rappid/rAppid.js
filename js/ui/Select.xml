@@ -22,7 +22,7 @@
                 onkeyup="_onEnter"
                 class="select-results"
                 scrollContainerClass="nav nav-pills nav-stacked"
-                cols="1" data="{data}"
+                cols="1" data="{_tileListData}"
                 heightUpdatePolicy="out"
                 widthUpdatePolicy="in"
                 verticalGap="0"
