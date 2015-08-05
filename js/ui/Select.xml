@@ -1,11 +1,11 @@
 <?xml version="1.0"?>
 <ui:SelectClass xmlns="http://www.w3.org/1999/xhtml" xmlns:js="js.core" xmlns:ui="js.ui">
     <a cid="selector" onclick="_handleSelect" onkeydown="_handleKey" class="select-choice">
-        <span visible="{selectedItem}" class="selected-item-container">
-            <ui:PlaceHolder name="selectedItem"/>
+        <span visible="{selectedItem}" class="selected-item-container" initializeInvisibleChildren="true">
+        <ui:PlaceHolder name="selectedItem"/>
         </span>
-        <span visible="{not(selectedItem)}">
-            <ui:PlaceHolder name="emptySelection"/>
+        <span visible="{not(selectedItem)}" initializeInvisibleChildren="true">
+        <ui:PlaceHolder name="emptySelection"/>
         </span>
         <abbr visible="{selectedItem}" onclick="_clearSelection"/>
         <div class="select-icon">
