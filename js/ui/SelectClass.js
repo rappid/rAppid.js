@@ -144,7 +144,7 @@ define(["js/ui/View", 'js/data/Collection', 'js/core/List', 'js/data/QueryList']
             },
             filterList: function (searchTerm) {
                 var filterFnc = this.$.filterFnc;
-                if (filterFnc) {
+                if (filterFnc && searchTerm) {
                     var filtered = [];
                     if (this.$.data instanceof List) {
                         var self = this;
@@ -155,6 +155,8 @@ define(["js/ui/View", 'js/data/Collection', 'js/core/List', 'js/data/QueryList']
                         });
                     }
                     this.set('_tileListData', filtered);
+                } else {
+                    this.set('_tileListData', this.$.data);
                 }
 
             },
