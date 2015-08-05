@@ -43,7 +43,7 @@ define(["js/ui/View", 'js/data/Collection', 'js/core/List', 'js/data/QueryList']
 
             _onKeyDown: function (e) {
                 if (e.domEvent.keyCode === 40 || e.domEvent.keyCode === 38) {
-                    if (this.$.tileList.$.data.size() > 0) {
+                    if (this.$.tileList.$.$dataAdapter.size() > 0) {
                         this.$.tileList._onKeyDown(e);
                     }
                 }
