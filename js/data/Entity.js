@@ -85,7 +85,7 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                                             value: value.$items[i]
                                         });
                                     }
-                                } else if (value.size() === 0 && !(this.runsInBrowser() && schemaObject.generated) && this._isRequired(entity, schemaObject.required) === true) {
+                                } else if (value.size() === 0 && !(this.runsInBrowser() && schemaObject.generated) && this._isRequired(entity, schemaObject) === true) {
                                     errors.push(this._createError("isEmptyError", key + " are empty", key));
                                 }
                             }
