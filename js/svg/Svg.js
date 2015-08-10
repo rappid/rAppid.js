@@ -70,7 +70,8 @@ define(['xaml!js/svg/SvgDescriptor', "js/svg/SvgElement", 'js/core/Base'], funct
 
     });
 
-    var GlobalFontCache = {};
+    var GlobalFontCache = {},
+        unknownFontBox = null;
 
     Svg.FontManager = Base.inherit("js.svg.Svg.FontManager", {
 
@@ -86,7 +87,6 @@ define(['xaml!js/svg/SvgDescriptor', "js/svg/SvgElement", 'js/core/Base'], funct
             var isSvgFont = src.indexOf(".svg") > -1;
 
             if (!font) {
-
                 var text = svg.$stage.$document.createElementNS(SvgElement.SVG_NAMESPACE, "text");
                 text.textContent = "SvgFontMeasurer";
                 var hidden = svg.$.hidden.$el;
@@ -132,6 +132,23 @@ define(['xaml!js/svg/SvgDescriptor', "js/svg/SvgElement", 'js/core/Base'], funct
                     svg.$.defs.addChild(fontElement);
                 }
 
+                if (!unknownFontBox) {
+                    var unknownFontStyle = document.createElement("style");
+
+                    unknownFontStyle.innerHTML = "@font-face{\n" +
+                        "font-family: '__unknown__';" +
+//                        "src: url('" + src.replace(".woff",".eot") + "'); " +
+//                        "src: url('" + src +);" +
+                        "src: url('')" +
+//                        "url('" + fontPath + ".ttf') format('truetype');" +
+                        "}\n";
+
+                    head.appendChild(unknownFontStyle);
+
+                    text.setAttribute("font-family", "__unknown__");
+                    unknownFontBox = text.getBBox();
+                }
+
                 font = GlobalFontCache[fontFamily] = {
 //                    font: font,
                     loaded: false,
@@ -143,18 +160,8 @@ define(['xaml!js/svg/SvgDescriptor', "js/svg/SvgElement", 'js/core/Base'], funct
                     originalBox,
                     current;
 
+
                 setTimeout(function () {
-                    text.setAttribute("font-family", "Serif"); // set to default font
-                    try {
-                        originalBox = text.getBBox();
-                    } catch (e) {
-                    }
-
-                    text.setAttribute("font-family", fontFamily); // set to loading font
-
-
-                    setTimeout(checkFontLoaded, 0);
-
                     function checkFontLoaded() {
                         try {
                             current = text.getBBox();
@@ -162,8 +169,7 @@ define(['xaml!js/svg/SvgDescriptor', "js/svg/SvgElement", 'js/core/Base'], funct
                         }
 
                         // compare bounding boxes of two
-                        if (!current || !originalBox || (maxChecks > 0 && current.x === originalBox.x && current.y === originalBox.y &&
-                            current.width === originalBox.width && current.height === originalBox.height)) {
+                        if (!current || (maxChecks > 0 && current.width === unknownFontBox.width && current.height === unknownFontBox.height)) {
                             maxChecks--;
 
                             // same check later
@@ -184,7 +190,13 @@ define(['xaml!js/svg/SvgDescriptor', "js/svg/SvgElement", 'js/core/Base'], funct
 
                         }
                     }
-                }, 100);
+
+                    text.setAttribute("font-family", fontFamily); // set to loading font
+
+                    setTimeout(checkFontLoaded, 0);
+
+                }, 0);
+
 
             } else {
 
