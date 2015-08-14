@@ -70,7 +70,7 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                             // TODO: add idField validator with this reg ex ^(?:[\w\-](?<!_))+$
                             if (this._isUndefined(value, schemaObject) && this._isRequired(entity, schemaObject)) {
                                 errors.push(this._createError("isUndefinedError", key + " is required", key));
-                            } else if (value && !this._isValidType(value, schemaObject.type)) {
+                            } else if (value != null && !this._isValidType(value, schemaObject.type)) {
                                 errors.push(this._createError("wrongTypeError", key + " is from wrong type", key));
                             } else if (value instanceof Entity && value.$isEntity && !schemaObject.isReference) {
                                 subEntities.push({
