@@ -1,5 +1,7 @@
 define(['js/core/Bindable', 'js/core/Base'], function (Bindable, Base) {
 
+    var undefined;
+
     var Validator = Bindable.inherit('js.data.validator.Validator', {
 
         $validatorCache: {},
@@ -89,7 +91,7 @@ define(['js/core/Bindable', 'js/core/Base'], function (Bindable, Base) {
             if (typeof(required) == "function") {
                 required = required.call(entity);
             }
-            return !(this.$.field && !required && !entity.getTransformedValue(this.$.field));
+            return !(this.$.field && !required && entity.getTransformedValue(this.$.field) == undefined);
         },
 
         /***
