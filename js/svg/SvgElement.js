@@ -48,9 +48,9 @@ define(['js/core/DomElement', 'js/core/List', 'js/core/Bindable'], function (Dom
 
             getSvgRoot: function () {
                 if (!this.$svgRoot) {
-                    var parent = this.$parent;
+                    var parent = this.$renderParent;
                     while (parent instanceof SvgElement && !parent.$svgRoot) {
-                        parent = parent.$parent;
+                        parent = parent.$renderParent;
                     }
 
                     if (!parent) {
@@ -189,9 +189,9 @@ define(['js/core/DomElement', 'js/core/List', 'js/core/Bindable'], function (Dom
             },
 
             localToGlobalFactor: function () {
-                if (this.$parent) {
+                if (this.$renderParent) {
                     // TODO: add scale
-                    return this.$parent.localToGlobalFactor();
+                    return this.$renderParent.localToGlobalFactor();
                 }
 
                 return {
@@ -201,9 +201,9 @@ define(['js/core/DomElement', 'js/core/List', 'js/core/Bindable'], function (Dom
             },
 
             globalToLocalFactor: function () {
-                if (this.$parent) {
+                if (this.$renderParent) {
                     // TODO: add scale
-                    return this.$parent.globalToLocalFactor();
+                    return this.$renderParent.globalToLocalFactor();
                 }
 
                 return {
