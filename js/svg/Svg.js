@@ -92,13 +92,12 @@ define(['xaml!js/svg/SvgDescriptor', "js/svg/SvgElement", 'js/core/Base'], funct
                 var hidden = svg.$.hidden.$el;
 
                 hidden.appendChild(text);
+                var document = svg.$stage.$document,
+                    body = document.getElementsByTagName("body")[0],
+                    head = document.getElementsByTagName("head")[0],
+                    style = document.createElement("style");
 
                 if (/\.woff|\.eot|\.ttf/.test(src)) {
-
-                    var document = svg.$stage.$document,
-                        body = document.getElementsByTagName("body")[0],
-                        head = document.getElementsByTagName("head")[0],
-                        style = document.createElement("style");
 
                     style.setAttribute("type", "text/css");
 
@@ -186,7 +185,7 @@ define(['xaml!js/svg/SvgDescriptor', "js/svg/SvgElement", 'js/core/Base'], funct
                                         // invoke callbacks
                                     }
                                 }
-                            }, 200);
+                            }, 300);
 
                         }
                     }
