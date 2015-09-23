@@ -87,7 +87,7 @@ define(["js/core/Component", "js/core/Base", "js/data/Collection", "underscore",
                             // create new Entity
                             cachedItem = new factory(hash);
 
-                            this.addEntity(cachedItem, true);
+                            this.addEntity(cachedItem, !!id);
                         }
 
                         return cachedItem;
@@ -156,18 +156,23 @@ define(["js/core/Component", "js/core/Base", "js/data/Collection", "underscore",
                  * @return {js.data.DataSource.Context}
                  */
                 getContext: function (contextModel, properties) {
-                    var cacheId = this.createContextCacheId(contextModel, properties);
+                    // for models without an id return always a new context for children that rely on it
+                    if(contextModel.identifier()){
+                        var cacheId = this.createContextCacheId(contextModel, properties);
 
-                    if (!cacheId) {
-                        // empty cacheId indicates the current context
-                        return this;
+                        if (!cacheId) {
+                            // empty cacheId indicates the current context
+                            return this;
+                        }
+
+                        if (!this.$contextCache.hasOwnProperty(cacheId)) {
+                            this.$contextCache[cacheId] = this.$dataSource.createContext(contextModel, properties, this);
+                        }
+
+                        return this.$contextCache[cacheId];
+                    } else {
+                        return this.$dataSource.createContext(contextModel, properties, this);
                     }
-
-                    if (!this.$contextCache.hasOwnProperty(cacheId)) {
-                        this.$contextCache[cacheId] = this.$dataSource.createContext(contextModel, properties, this);
-                    }
-
-                    return this.$contextCache[cacheId];
                 },
 
                 /***
