@@ -3,7 +3,8 @@ define(['js/ui/View', 'js/type/Color'], function (View, Color) {
     return View.inherit('js.ui.ColorPickerClass', {
         defaults: {
             color: Color.HSB,
-            paletteSize: 300,
+            paletteWidth: 300,
+            paletteHeight: 300,
             _palettePosition: {
                 x: 0,
                 y: 0
@@ -61,11 +62,11 @@ define(['js/ui/View', 'js/type/Color'], function (View, Color) {
 
         _updateColorAndPaletteCursor: function (pos) {
             pos.x = pos.x < 0 ? 0 : pos.x;
-            pos.x = pos.x > this.$.paletteSize ? this.$.paletteSize : pos.x;
+            pos.x = pos.x > this.$.paletteWidth ? this.$.paletteWidth : pos.x;
             pos.y = pos.y < 0 ? 0 : pos.y;
-            pos.y = pos.y > this.$.paletteSize ? this.$.paletteSize : pos.y;
-            var b = 100 * (1 - (pos.y / this.$.paletteSize)),
-                s = 100 * (pos.x / this.$.paletteSize);
+            pos.y = pos.y > this.$.paletteHeight ? this.$.paletteHeight : pos.y;
+            var b = 100 * (1 - (pos.y / this.$.paletteHeight)),
+                s = 100 * (pos.x / this.$.paletteWidth);
 
             var hsbColor = this.$.color.toHSB();
 
@@ -73,10 +74,10 @@ define(['js/ui/View', 'js/type/Color'], function (View, Color) {
         },
         _updateColorAndHueCursor: function (scale) {
             scale = scale < 0 ? 0 : scale;
-            scale = scale > this.$.paletteSize ? this.$.paletteSize : scale;
+            scale = scale > this.$.paletteWidth ? this.$.paletteWidth : scale;
 
             var hsbColor = this.$.color.toHSB(),
-                hue = Math.round(360 * (1 - scale / this.$.paletteSize));
+                hue = Math.round(360 * (1 - scale / this.$.paletteHeight));
 
             hue = hue >= 360 ? 359 : hue;
 
@@ -97,15 +98,28 @@ define(['js/ui/View', 'js/type/Color'], function (View, Color) {
             if (color) {
                 var hsbColor = color.toHSB();
                 var pos = {
-                    x: Math.round(this.$.paletteSize * hsbColor.s * 0.01),
-                    y: Math.round(this.$.paletteSize * (1 - hsbColor.b * 0.01))
+                    x: Math.round(this.$.paletteWidth * hsbColor.s * 0.01),
+                    y: Math.round(this.$.paletteHeight * (1 - hsbColor.b * 0.01))
                 };
                 this.set({
                     '_palettePosition': pos,
-                    '_scale': Math.round(this.$.paletteSize * (1 - hsbColor.h / 360))
+                    '_scale': Math.round(this.$.paletteHeight * (1 - hsbColor.h / 360))
                 });
             }
         },
+
+        _renderPaletteWidth: function (width) {
+            if (typeof(width) == "number") {
+                this._renderColor(this.$.color);
+            }
+        },
+
+        _renderPaletteHeight: function (height) {
+            if (typeof(height) == "number") {
+                this._renderColor(this.$.color);
+            }
+        },
+
         _commitColor: function (color, oldColor) {
             if (color) {
                 if (!oldColor || color.toHSB().h !== oldColor.toHSB().h) {
@@ -127,7 +141,7 @@ define(['js/ui/View', 'js/type/Color'], function (View, Color) {
                             e = e.changedTouches[0];
                         }
 
-                        self._updateColorAndHueCursor(self.$.hueBar.globalToLocal({x: 0, y: e.pageY}).y);
+                        self._updateColorAndHueCursor(Math.min(self.$.paletteHeight, self.$.hueBar.globalToLocal({x: 0, y: e.pageY}).y));
                         self._triggerColorChange();
                     }
                     return false;
