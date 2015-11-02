@@ -94,7 +94,6 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                 this.$invisibleChildMap = {};
                 this.$animationDurationCache = {};
                 this.$renderedChildren = [];
-                this.$contentChildren = [];
                 this.$domEventHandler = {};
                 this.factory.$domNodeAttributeCache = this.factory.$domNodeAttributeCache || {};
                 // go inherit tree up and search for descriptors
@@ -181,8 +180,6 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
                         if (this.isRendered()) {
                             this._renderChild(child, pos);
                         }
-                    } else if (child instanceof Content) {
-                        this.$contentChildren.push(child);
                     }
 
                 }
@@ -265,32 +262,6 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
 
                 return ret;
 
-            },
-
-            findContent: function (name) {
-
-                var child,
-                    content;
-
-                for (var i = 0; i < this.$contentChildren.length; i++) {
-                    child = this.$contentChildren[i];
-                    if (child instanceof Content && child.$.name === name) {
-                        return child;
-                    }
-                }
-
-                for (i = 0; i < this.$contentChildren.length; i++) {
-                    child = this.$contentChildren[i];
-                    if (child.findContent) {
-                        content = child.findContent(name);
-                        if (content) {
-                            return content;
-                        }
-                    }
-
-                }
-
-                return null;
             },
 
             render: function () {

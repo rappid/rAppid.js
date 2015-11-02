@@ -1,5 +1,5 @@
-define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validator/Validator', 'underscore'],
-    function (require, Bindable, List, flow, Validator, _) {
+define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validator/Validator', 'underscore', 'js/data/TypeResolver'],
+    function (require, Bindable, List, flow, Validator, _, TypeResolver) {
 
         var undefined;
 
@@ -70,7 +70,7 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                             // TODO: add idField validator with this reg ex ^(?:[\w\-](?<!_))+$
                             if (this._isUndefined(value, schemaObject) && this._isRequired(entity, schemaObject)) {
                                 errors.push(this._createError("isUndefinedError", key + " is required", key));
-                            } else if (value && !this._isValidType(value, schemaObject.type)) {
+                            } else if (value != null && !this._isValidType(value, schemaObject.type)) {
                                 errors.push(this._createError("wrongTypeError", key + " is from wrong type", key));
                             } else if (value instanceof Entity && value.$isEntity && !schemaObject.isReference) {
                                 subEntities.push({
@@ -85,7 +85,7 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                                             value: value.$items[i]
                                         });
                                     }
-                                } else if (value.size() === 0 && !(this.runsInBrowser() && schemaObject.generated) && this._isRequired(entity, schemaObject.required) === true) {
+                                } else if (value.size() === 0 && !(this.runsInBrowser() && schemaObject.generated) && this._isRequired(entity, schemaObject) === true) {
                                     errors.push(this._createError("isEmptyError", key + " are empty", key));
                                 }
                             }
@@ -337,7 +337,7 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                 for (var key in this.schema) {
                     if (this.schema.hasOwnProperty(key)) {
                         schemaObject = this.schema[key];
-                        if (_.isString(schemaObject) || schemaObject instanceof Array || schemaObject instanceof Function) {
+                        if (_.isString(schemaObject) || schemaObject instanceof Array || schemaObject instanceof Function || schemaObject instanceof TypeResolver) {
                             schemaObject = {
                                 type: schemaObject
                             };

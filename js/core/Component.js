@@ -21,6 +21,7 @@ define(["require", "js/core/Element", "js/core/TextElement", "underscore"],
                 this.$internalDescriptors = [];
                 this.$xamlDefaults = {};
                 this.$xamlAttributes = {};
+                this.$contentChildren = [];
 
                 var current = this,
                     lastDescriptor;
@@ -158,6 +159,8 @@ define(["require", "js/core/Element", "js/core/TextElement", "underscore"],
                         this._addTemplate(child);
                     } else if (child instanceof Component.Configuration) {
                         this._addConfiguration(child);
+                    } else if (child instanceof Component.Content) {
+                        this.$contentChildren.push(child);
                     }
                 } else {
                     this.$unitializedChildren = this.$unitializedChildren || [];
@@ -221,6 +224,32 @@ define(["require", "js/core/Element", "js/core/TextElement", "underscore"],
                 }
             },
 
+            findContent: function (name) {
+
+                var child,
+                    content;
+
+                for (var i = 0; i < this.$contentChildren.length; i++) {
+                    child = this.$contentChildren[i];
+                    if (child instanceof Component.Content && child.$.name === name) {
+                        return child;
+                    }
+                }
+
+                for (i = 0; i < this.$contentChildren.length; i++) {
+                    child = this.$contentChildren[i];
+                    if (child.findContent) {
+                        content = child.findContent(name);
+                        if (content) {
+                            return content;
+                        }
+                    }
+
+                }
+
+                return null;
+            },
+
             _initializeChildren: function (childComponents) {
                 for (var i = 0; i < childComponents.length; i++) {
                     // add the children
@@ -236,8 +265,8 @@ define(["require", "js/core/Element", "js/core/TextElement", "underscore"],
                 this.callBase();
 
                 if (this.$creationPolicy !== "full" && (attributes.hasOwnProperty("creationPolicy"))) {
-                        this.$creationPolicy = attributes.creationPolicy;
-                        delete attributes.creationPolicy;
+                    this.$creationPolicy = attributes.creationPolicy;
+                    delete attributes.creationPolicy;
                 }
 
             },

@@ -98,7 +98,7 @@
         sortCacheId: function () {
             var ret = [];
 
-            if (this.sort) {
+            if (this.query.sort) {
                 for (var i = 0; i < this.query.sort.length; i++) {
                     var sortItem = this.query.sort[i];
                     ret.push((sortItem.direction === -1 ? "-" : "+") + sortItem.field);

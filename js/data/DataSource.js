@@ -87,7 +87,7 @@ define(["js/core/Component", "js/core/Base", "js/data/Collection", "underscore",
                             // create new Entity
                             cachedItem = new factory(hash);
 
-                            this.addEntity(cachedItem, true);
+                            this.addEntity(cachedItem, !!id);
                         }
 
                         return cachedItem;
@@ -156,18 +156,23 @@ define(["js/core/Component", "js/core/Base", "js/data/Collection", "underscore",
                  * @return {js.data.DataSource.Context}
                  */
                 getContext: function (contextModel, properties) {
-                    var cacheId = this.createContextCacheId(contextModel, properties);
+                    // for models without an id return always a new context for children that rely on it
+                    if(contextModel.identifier()){
+                        var cacheId = this.createContextCacheId(contextModel, properties);
 
-                    if (!cacheId) {
-                        // empty cacheId indicates the current context
-                        return this;
+                        if (!cacheId) {
+                            // empty cacheId indicates the current context
+                            return this;
+                        }
+
+                        if (!this.$contextCache.hasOwnProperty(cacheId)) {
+                            this.$contextCache[cacheId] = this.$dataSource.createContext(contextModel, properties, this);
+                        }
+
+                        return this.$contextCache[cacheId];
+                    } else {
+                        return this.$dataSource.createContext(contextModel, properties, this);
                     }
-
-                    if (!this.$contextCache.hasOwnProperty(cacheId)) {
-                        this.$contextCache[cacheId] = this.$dataSource.createContext(contextModel, properties, this);
-                    }
-
-                    return this.$contextCache[cacheId];
                 },
 
                 /***
@@ -439,7 +444,16 @@ define(["js/core/Component", "js/core/Base", "js/data/Collection", "underscore",
                     schemaType,
                     value,
                     factory,
-                    newData = {};
+                    newData = {},
+                    id;
+
+                // first parse idField ... this is needed to create the correct context for collections
+                if (schema[model.idField]) {
+                    id = this._getValueForKey(data, model.idField, schema[model.idField].type, schema[model.idField]);
+                    if (id != null) {
+                        model.set(model.idField, id);
+                    }
+                }
 
                 // convert top level properties to Models respective to there schema
                 for (var key in schema) {
@@ -496,7 +510,7 @@ define(["js/core/Component", "js/core/Base", "js/data/Collection", "underscore",
                             }
 
 
-                        } else if (Collection && schemaType.classof(Collection)) {
+                        } else if (!(schemaType instanceof TypeResolver) && Collection && schemaType.classof(Collection)) {
                             var contextForChildren = this.$dataSource._getContext(schemaType, model, value);
                             if (contextForChildren) {
                                 if (model.$[key] instanceof Collection) {
@@ -513,8 +527,7 @@ define(["js/core/Component", "js/core/Base", "js/data/Collection", "underscore",
                             }
                         } else if (schemaType === Date && value && !(value instanceof Date)) {
                             newData[key] = moment(value, this.$dataSource.$.dateFormat).toDate();
-                        } else if (schemaType.classof(Entity)) {
-                            var id;
+                        } else if (schemaType instanceof TypeResolver || schemaType.classof(Entity)) {
                             if (value && schemaType instanceof TypeResolver) {
                                 factory = schemaType.resolve(value, key);
                             } else {

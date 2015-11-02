@@ -1,9 +1,9 @@
 define(["js/ui/View", 'js/data/Collection', 'js/core/List'], function (View) {
 
         var ORIENTATION = {
-                HORIZONTAL: "horizontal",
-                VERTICAL: "vertical"
-            };
+            HORIZONTAL: "horizontal",
+            VERTICAL: "vertical"
+        };
 
         return View.inherit('js.ui.SliderClass', {
             defaults: {
@@ -47,7 +47,7 @@ define(["js/ui/View", 'js/data/Collection', 'js/core/List'], function (View) {
                  */
                 orientation: ORIENTATION.HORIZONTAL
             },
-            events: ["on:input"],
+            events: ["on:input", 'on:handleUp'],
 
             _handleDown: function (event, handleId) {
                 event.preventDefault();
@@ -58,11 +58,11 @@ define(["js/ui/View", 'js/data/Collection', 'js/core/List'], function (View) {
                 if (!this._windowUpListener || !this._windowMoveListener) {
                     var self = this;
                     this._windowUpListener = function (e) {
-                        return self._handleWindowUp(e);
+                        self._handleWindowUp(e);
                     };
 
                     this._windowMoveListener = function (e) {
-                        return self._handleWindowMove(e);
+                        self._handleWindowMove(e);
                     }
                 }
 
@@ -114,42 +114,82 @@ define(["js/ui/View", 'js/data/Collection', 'js/core/List'], function (View) {
                         e = e.changedTouches[0];
                     }
 
-                    pos = this.globalToLocal({x: e.pageX, y: e.pageY});
+                    v = this._getValueForPosition(e.pageX, e.pageY);
 
-
-                    range = this.$.max - this.$.min;
-                    max = this._getMaxValueForHandle(this.$currentHandle);
-                    min = this._getMinValueForHandle(this.$currentHandle);
-
-                    if (this.$.orientation == ORIENTATION.HORIZONTAL) {
-                        v = (pos.x / this.$el.offsetWidth) * range;
-                    } else {
-                        v = ((this.$el.offsetHeight - pos.y) / this.$el.offsetHeight) * range;
-                    }
-
-                    v = Math.round(v / this.$.step) * this.$.step;
-
-                    v += this.$.min;
-
-                    var r = (v + this.$.min) % this.$.step;
-                    if (r !== 0 && r >= this.$.step * 0.5) {
-                        v = v - r + this.$.step;
-                    } else {
-                        v = v - r;
-                    }
-
-                    v = Math.min(max, v);
-                    v = Math.max(min, v);
 
                     if (this.$currentHandle === this.$.mainHandle) {
                         this.set('value', v);
                     } else {
                         this.set('startValue', v);
                     }
-                    this.trigger('on:input', {value: this.$.value, startValue: this.$.startValue});
+                    if (!this.$eventObject) {
+                        this.$eventObject = {value: this.$.value, startValue: this.$.startValue};
+                    }
+                    this.$eventObject.value = this.$.value;
+                    this.$eventObject.startValue = this.$.startValue;
+
+                    this.trigger('on:input', this.$eventObject);
 
                 }
 
+            },
+
+            _handleClick: function (e) {
+                if (!this.$.range) {
+                    e.preventDefault && e.preventDefault();
+                    var domEvent = e.domEvent;
+                    if (domEvent.changedTouches) {
+                        domEvent = domEvent.changedTouches[0];
+                    }
+
+                    var v = this._getValueForPosition(domEvent.pageX, domEvent.pageY);
+
+                    this.set('value', v);
+
+                    if (!this.$eventObject) {
+                        this.$eventObject = {value: this.$.value, startValue: this.$.startValue};
+                    }
+                    this.$eventObject.value = this.$.value;
+                    this.$eventObject.startValue = this.$.startValue;
+
+                    this.trigger('on:input', this.$eventObject);
+                    this.trigger('on:handleUp', {value: this.$.value, startValue: this.$.startValue});
+                }
+            },
+
+            _getValueForPosition: function (x, y) {
+                var v,
+                    range,
+                    max,
+                    min,
+                    pos = this.globalToLocal({x: x, y: y});
+
+
+                range = this.$.max - this.$.min;
+                max = this._getMaxValueForHandle(this.$currentHandle);
+                min = this._getMinValueForHandle(this.$currentHandle);
+
+                if (this.$.orientation == ORIENTATION.HORIZONTAL) {
+                    v = (pos.x / this.$el.offsetWidth) * range;
+                } else {
+                    v = ((this.$el.offsetHeight - pos.y) / this.$el.offsetHeight) * range;
+                }
+
+                v = Math.round(v / this.$.step) * this.$.step;
+
+                v += this.$.min;
+
+                var r = (v + this.$.min) % this.$.step;
+                if (r !== 0 && r >= this.$.step * 0.5) {
+                    v = v - r + this.$.step;
+                } else {
+                    v = v - r;
+                }
+
+                v = Math.min(max, v);
+                v = Math.max(min, v);
+
+                return v;
             },
 
             _handleKeyDown: function (e) {
@@ -224,8 +264,10 @@ define(["js/ui/View", 'js/data/Collection', 'js/core/List'], function (View) {
 
             _handleWindowUp: function (e) {
                 this.$currentHandle = null;
+                this.trigger('on:handleUp', {value: this.$.value, startValue: this.$.startValue});
+
                 this.dom(this.$stage.$window).unbindDomEvent('pointerup', this._windowUpListener);
-                this.dom(this.$stage.$window).unbindDomEvent('pointermove', this._windowUpListener);
+                this.dom(this.$stage.$window).unbindDomEvent('pointermove', this._windowMoveListener);
 
             }
         });

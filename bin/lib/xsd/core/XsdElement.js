@@ -11,6 +11,8 @@ define(["js/core/DomElement"], function (DomElement) {
                 /\$/
             ];
             this.$namespace = "http://www.w3.org/2001/XMLSchema";
+
+            delete this.defaults.initializeInvisibleChildren;
         }
 
     });

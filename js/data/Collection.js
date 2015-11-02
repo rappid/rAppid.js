@@ -68,7 +68,7 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore", "js/da
                     root: rootCollection
                 }, rootCollection.$);
 
-                var filterCacheId = query.whereCacheId(),
+                var filterCacheId = query.whereCacheId() + "_" + query.sortCacheId(),
                     cache = rootCollection.$filterCache;
 
                 if (filterCacheId) {
@@ -112,6 +112,12 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore", "js/da
 
             return collection;
         },
+
+        _commit$itemsCount: function (itemsCount) {
+            if (this.$.sortParent) {
+                this.$.sortParent.set('$itemsCount', itemsCount);
+            }
+        },
         /**
          * Returns a sorted query collection
          *
@@ -120,23 +126,22 @@ define(['require', "js/core/List", "js/data/Model", "flow", "underscore", "js/da
          */
         sort: function (query) {
             if (query instanceof Query && query.query.sort) {
-                if (this.$.query) {
-                    query.query.where = this.$.query.query.where;
-                }
-
+                query.query.where = this.$.query ? this.$.query.query.where : {};
 
                 var options = _.defaults({}, {
                     query: query,
+                    sortParent: this,
                     root: this.getRoot()
                 }, this.$);
 
                 var sortCacheId = query.sortCacheId();
+                if (sortCacheId) {
+                    if (!this.$sortCache[sortCacheId]) {
+                        this.$sortCache[sortCacheId] = this._createSortedCollection(query, options);
+                    }
 
-                if (!this.$sortCache[sortCacheId]) {
-                    this.$sortCache[sortCacheId] = this._createSortedCollection(query, options);
+                    return this.$sortCache[sortCacheId];
                 }
-
-                return this.$sortCache[sortCacheId];
             }
 
             return this;

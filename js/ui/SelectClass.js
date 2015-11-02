@@ -1,9 +1,10 @@
-define(["js/ui/View", 'js/data/Collection', 'js/core/List'], function (View, Collection, List) {
+define(["js/ui/View", 'js/data/Collection', 'js/core/List', 'js/data/QueryList'], function (View, Collection, List, QueryList) {
         var undefined,
             instances = [];
 
         return View.inherit('js.ui.SelectClass', {
             defaults: {
+                data: null,
                 componentClass: 'select',
                 open: false,
                 selectedItem: null,
@@ -11,8 +12,10 @@ define(["js/ui/View", 'js/data/Collection', 'js/core/List'], function (View, Col
                 placeHolder: 'Select Something',
                 searchPlaceHolder: '',
                 queryCreator: null,
+                filterFnc: null,
                 itemHeight: 30,
-                dropDownHeight: 200
+                dropDownHeight: 200,
+                _tileListData: "{data}"
             },
 
             ctor: function () {
@@ -40,7 +43,7 @@ define(["js/ui/View", 'js/data/Collection', 'js/core/List'], function (View, Col
 
             _onKeyDown: function (e) {
                 if (e.domEvent.keyCode === 40 || e.domEvent.keyCode === 38) {
-                    if (this.$.tileList.$.data.size() > 0) {
+                    if (this.$.tileList.$.$dataAdapter.size() > 0) {
                         this.$.tileList._onKeyDown(e);
                     }
                 }
@@ -90,6 +93,9 @@ define(["js/ui/View", 'js/data/Collection', 'js/core/List'], function (View, Col
                     this._renderTemplateToPlaceHolder('selectedItem', 'selectedItem', {item: item});
                 } else {
                     this._renderTemplateToPlaceHolder('emptySelection', 'emptySelection', {});
+                    this.set("scrollTop", 0);
+
+                    this.$.tileList && this.$.tileList._selectItem(0, false, false);
                 }
             },
 
@@ -103,25 +109,30 @@ define(["js/ui/View", 'js/data/Collection', 'js/core/List'], function (View, Col
                 }, 200);
             },
 
+            _commitChangedAttributes: function ($) {
+                this.callBase();
+
+                if ($.data && this.$.searchTerm) {
+                    this._search();
+                }
+
+            },
+
             _search: function () {
-                if (this.$.searchTerm && this.$.searchTerm.length > 1) {
-                    if (this.$.data instanceof Collection) {
-                        this.queryList(this.$.searchTerm);
-                    } else if (this.$.data instanceof List) {
-                        this.filterList(this.$.searchTerm);
-                    }
-                } else if (this.$realData) {
-                    this.set('data', this.$realData);
+                if (this.$.data instanceof Collection || this.$.data instanceof QueryList) {
+                    this.queryList(this.$.searchTerm);
+                } else if (this.$.data instanceof List || this.$.data instanceof Array) {
+                    this.filterList(this.$.searchTerm);
                 }
                 clearTimeout(this.$searchTimeout);
                 this.$searchTimeout = undefined;
             },
 
             queryList: function (searchTerm) {
-                if (!this.$realData) {
-                    this.$realData = this.$.data;
-                }
-                this.set({scrollTop: 0, data: this.$.data.query(this.createQuery(searchTerm))});
+                this.set({
+                    scrollTop: 0,
+                    _tileListData: this.$.data.query(this.createQuery(searchTerm))
+                });
             },
 
             createQuery: function (searchTerm) {
@@ -132,6 +143,21 @@ define(["js/ui/View", 'js/data/Collection', 'js/core/List'], function (View, Col
                 return {};
             },
             filterList: function (searchTerm) {
+                var filterFnc = this.$.filterFnc;
+                if (filterFnc && searchTerm) {
+                    var filtered = [];
+                    if (this.$.data instanceof List) {
+                        var self = this;
+                        this.$.data.each(function (item) {
+                            if (filterFnc.call(self, item, searchTerm)) {
+                                filtered.push(item);
+                            }
+                        });
+                    }
+                    this.set('_tileListData', filtered);
+                } else {
+                    this.set('_tileListData', this.$.data);
+                }
 
             },
             _handleSelect: function (e) {

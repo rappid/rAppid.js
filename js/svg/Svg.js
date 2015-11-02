@@ -16,6 +16,11 @@ define(['xaml!js/svg/SvgDescriptor', "js/svg/SvgElement", 'js/core/Base'], funct
             this.fontManager = new Svg.FontManager(this);
             this.$svgRoot = this;
 
+        },
+
+        _initializationComplete: function () {
+            this.callBase();
+
             this.setViewBox.apply(this, this.$.viewBox.split(" "));
         },
 
@@ -65,7 +70,8 @@ define(['xaml!js/svg/SvgDescriptor', "js/svg/SvgElement", 'js/core/Base'], funct
 
     });
 
-    var GlobalFontCache = {};
+    var GlobalFontCache = {},
+        unknownFontBox = null;
 
     Svg.FontManager = Base.inherit("js.svg.Svg.FontManager", {
 
@@ -81,25 +87,25 @@ define(['xaml!js/svg/SvgDescriptor', "js/svg/SvgElement", 'js/core/Base'], funct
             var isSvgFont = src.indexOf(".svg") > -1;
 
             if (!font) {
-
                 var text = svg.$stage.$document.createElementNS(SvgElement.SVG_NAMESPACE, "text");
                 text.textContent = "SvgFontMeasurer";
                 var hidden = svg.$.hidden.$el;
 
                 hidden.appendChild(text);
+                var document = svg.$stage.$document,
+                    body = document.getElementsByTagName("body")[0],
+                    head = document.getElementsByTagName("head")[0],
+                    style = document.createElement("style");
 
-                if (/\.woff|\.eot/.test(src)) {
-
-                    var document = svg.$stage.$document,
-                        body = document.getElementsByTagName("body")[0],
-                        head = document.getElementsByTagName("head")[0],
-                        style = document.createElement("style");
+                if (/\.woff|\.eot|\.ttf/.test(src)) {
 
                     style.setAttribute("type", "text/css");
 
                     var srcAttribute = "";
                     if (src.indexOf(".woff") > -1) {
                         srcAttribute = "url('" + src + "') format('woff');";
+                    } else if (src.indexOf(".ttf") > -1) {
+                        srcAttribute = "url('" + src + "') format('truetype');"
                     } else {
                         srcAttribute = "url('" + src + "') ;";
                     }
@@ -125,6 +131,23 @@ define(['xaml!js/svg/SvgDescriptor', "js/svg/SvgElement", 'js/core/Base'], funct
                     svg.$.defs.addChild(fontElement);
                 }
 
+                if (!unknownFontBox) {
+                    var unknownFontStyle = document.createElement("style");
+
+                    unknownFontStyle.innerHTML = "@font-face{\n" +
+                        "font-family: '__unknown__';" +
+//                        "src: url('" + src.replace(".woff",".eot") + "'); " +
+//                        "src: url('" + src +);" +
+                        "src: url('')" +
+//                        "url('" + fontPath + ".ttf') format('truetype');" +
+                        "}\n";
+
+                    head.appendChild(unknownFontStyle);
+
+                    text.setAttribute("font-family", "__unknown__");
+                    unknownFontBox = text.getBBox();
+                }
+
                 font = GlobalFontCache[fontFamily] = {
 //                    font: font,
                     loaded: false,
@@ -136,16 +159,8 @@ define(['xaml!js/svg/SvgDescriptor', "js/svg/SvgElement", 'js/core/Base'], funct
                     originalBox,
                     current;
 
+
                 setTimeout(function () {
-                    text.setAttribute("font-family", "__ABCDE__");  // set to undefined font and measure
-                    try {
-                        originalBox = text.getBBox();
-                    } catch (e) {
-                    }
-
-                    text.setAttribute("font-family", fontFamily); // set to loading font / first undefined
-                    setTimeout(checkFontLoaded, 0);
-
                     function checkFontLoaded() {
                         try {
                             current = text.getBBox();
@@ -153,8 +168,7 @@ define(['xaml!js/svg/SvgDescriptor', "js/svg/SvgElement", 'js/core/Base'], funct
                         }
 
                         // compare bounding boxes of two
-                        if (!current || !originalBox || (maxChecks > 0 && current.x === originalBox.x && current.y === originalBox.y &&
-                            current.width === originalBox.width && current.height === originalBox.height)) {
+                        if (!current || (maxChecks > 0 && current.width === unknownFontBox.width && current.height === unknownFontBox.height)) {
                             maxChecks--;
 
                             // same check later
@@ -171,11 +185,17 @@ define(['xaml!js/svg/SvgDescriptor', "js/svg/SvgElement", 'js/core/Base'], funct
                                         // invoke callbacks
                                     }
                                 }
-                            }, 200);
+                            }, 300);
 
                         }
                     }
-                }, 100);
+
+                    text.setAttribute("font-family", fontFamily); // set to loading font
+
+                    setTimeout(checkFontLoaded, 0);
+
+                }, 0);
+
 
             } else {
 

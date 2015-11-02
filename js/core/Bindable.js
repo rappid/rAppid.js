@@ -809,7 +809,12 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
                                     }
                                     newParameters.push(param);
                                 }
-                                scope = fnc.apply(scope, newParameters);
+                                if (fnc) {
+                                    scope = fnc.apply(scope, newParameters);
+                                } else {
+                                    this.log("Couldnt find fnc '" + pathElement.name + "'", "warn");
+                                    return undefined;
+                                }
                             } else if (pathElement.type == "var") {
                                 if (scope instanceof Bindable) {
                                     if (path.length - 1 === j) {

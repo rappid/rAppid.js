@@ -605,6 +605,10 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
              * @private
              */
             _selectItem: function (index, shiftDown, metaKey) {
+                if (!this.$.$dataAdapter) {
+                    return;
+                }
+
 
                 switch (this.$.selectionMode) {
                     case SELECTION_MODE_NONE:
