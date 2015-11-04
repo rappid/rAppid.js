@@ -8,7 +8,8 @@ define(["js/core/DomElement"], function (DomElement) {
             // clear class attributes
             this.$classAttributes = [
                 "cid",
-                /\$/
+                /\$/,
+                "initializeInvisibleChildren"
             ];
             this.$namespace = "http://www.w3.org/2001/XMLSchema";
         }
