@@ -98,7 +98,8 @@ define(['require', 'js/core/Bindable', 'js/core/List', 'flow', 'js/data/validato
                 var self = this,
                     subOptions = {
                         setErrors: options.setErrors,
-                        reset: options.reset
+                        reset: options.reset,
+                        validationOptions: options.validationOptions || options
                     };
 
                 flow()
