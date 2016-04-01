@@ -137,16 +137,15 @@ define(['xaml!js/svg/SvgDescriptor', "js/svg/SvgElement", 'js/core/Base'], funct
                     unknownFontStyle.innerHTML = "@font-face{\n" +
                         "font-family: '__unknown__';" +
 //                        "src: url('" + src.replace(".woff",".eot") + "'); " +
-//                        "src: url('" + src +);" +
-                        "src: url('')" +
-//                        "url('" + fontPath + ".ttf') format('truetype');" +
+                        "src: url('') format('truetype');" +
+                        "src: url('') format('woff');" +
+                        //"url('') format('truetype');" +
                         "}\n";
 
                     head.appendChild(unknownFontStyle);
-
-                    text.setAttribute("font-family", "__unknown__");
-                    unknownFontBox = text.getBBox();
                 }
+                text.setAttribute("font-family", fontFamily);
+                unknownFontBox = text.getBBox();
 
                 font = GlobalFontCache[fontFamily] = {
 //                    font: font,
@@ -191,7 +190,6 @@ define(['xaml!js/svg/SvgDescriptor', "js/svg/SvgElement", 'js/core/Base'], funct
                     }
 
                     text.setAttribute("font-family", fontFamily); // set to loading font
-
                     setTimeout(checkFontLoaded, 0);
 
                 }, 0);
