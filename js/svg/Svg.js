@@ -144,8 +144,10 @@ define(['xaml!js/svg/SvgDescriptor', "js/svg/SvgElement", 'js/core/Base'], funct
 
                     head.appendChild(unknownFontStyle);
                 }
-                text.setAttribute("font-family", fontFamily);
+
+                text.setAttribute("font-family", '__unknown__');
                 unknownFontBox = text.getBBox();
+                text.setAttribute("font-family", fontFamily);
 
                 font = GlobalFontCache[fontFamily] = {
 //                    font: font,
