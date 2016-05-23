@@ -1,8 +1,8 @@
-<parent:SliderClass xmlns="http://www.w3.org/1999/xhtml"
-                    xmlns:parent="js.ui"
-                    onclick="_handleClick">
+<ui:SliderClass xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="js.ui"
+                onclick="_handleClick">
 
-    <div cid="sliderBar" class="slider-bar" position="absolute" />
+    <div cid="sliderBar" class="slider-bar" position="absolute"/>
     <a cid="startHandle"
        position="absolute"
        visible="{range}"
@@ -11,14 +11,14 @@
        selectable="true"
        onkeydown="_handleKeyDown">
         <span class="inner-handle"/>
-       </a>
+    </a>
     <a cid="mainHandle"
        position="absolute"
        class="slider-handle main-handle"
        onpointerdown="_handleDown(event,'mainHandle')"
        selectable="true"
        onkeydown="_handleKeyDown">
-        <span class="inner-handle"/>
-       </a>
+        <ui:ContentPlaceHolder name="handle" tagName="span" class="inner-handle"/>
+    </a>
 
-</parent:SliderClass>
+</ui:SliderClass>
