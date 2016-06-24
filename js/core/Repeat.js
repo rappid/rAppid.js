@@ -1,4 +1,4 @@
-define(["js/core/Component", "js/core/Bindable", "js/core/List"], function (Component, Bindable, List) {
+define(["js/core/Component", "js/core/Bindable", "js/core/List", "underscore"], function (Component, Bindable, List, _) {
 
     return Component.inherit('js.core.Repeat', {
         defaults: {
