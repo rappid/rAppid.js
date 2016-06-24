@@ -1,5 +1,5 @@
-define(["js/data/DataSource", "js/data/Model", "flow", "js/data/LocalStorage"],
-    function (DataSource, Model, flow, LocalStorage) {
+define(["js/data/DataSource", "js/data/Model", "flow", "js/data/LocalStorage", "underscore"],
+    function (DataSource, Model, flow, LocalStorage, _) {
 
         var jsonFormatProcessor = new DataSource.JsonFormatProcessor();
 
