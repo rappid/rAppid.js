@@ -36,7 +36,7 @@
   ],
   "dependencies": {
     "underscore": "latest",
-    "requirejs": "latest",
+    "requirejs": "2.2.0",
     "flow.js": ">=0.2.5",
     "inherit.js": "latest",
     "ejs": "latest",
