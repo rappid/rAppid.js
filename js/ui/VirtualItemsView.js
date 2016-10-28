@@ -456,14 +456,15 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
                 }
                 var size = {},
                     topPadding = this.$.topPadding,
-                    leftPadding = this.$.leftPadding;
+                    leftPadding = this.$.leftPadding,
+                    maxSize = 10737418;
 
                 if (this.$.scrollDirection === SCROLL_DIRECTION_VERTICAL) {
                     var item_rows = Math.ceil(count / this.$._cols);
-                    size.height = item_rows * (this.$._itemHeight + this.$.verticalGap) + topPadding;
+                    size.height = Math.min(item_rows * (this.$._itemHeight + this.$.verticalGap) + topPadding, maxSize);
                 } else if (this.$.scrollDirection === SCROLL_DIRECTION_HORIZONTAL) {
                     var item_cols = Math.ceil(count / this.$._rows);
-                    size.width = item_cols * (this.$._itemWidth + this.$.horizontalGap) + leftPadding;
+                    size.width = Math.min(item_cols * (this.$._itemWidth + this.$.horizontalGap) + leftPadding, maxSize);
                 }
 
                 return size;
