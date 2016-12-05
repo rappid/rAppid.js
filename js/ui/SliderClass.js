@@ -224,6 +224,16 @@ define(["js/ui/View", 'js/data/Collection', 'js/core/List'], function (View) {
                 }
             },
 
+            _renderMax: function(max) {
+                this._renderValue(this.$.value);
+                this._renderStartValue(this.$.startValue);
+            },
+
+            _renderMin: function() {
+                this._renderValue(this.$.value);
+                this._renderStartValue(this.$.startValue);
+            },
+
             _onDomAdded: function () {
                 this.callBase();
 
