@@ -249,7 +249,6 @@ define(["js/ui/View", 'js/data/Collection', 'js/core/List'], function (View) {
             _updateHandle: function (handle, v) {
                 var percentage = ((v - this.$.min) / (this.$.max - this.$.min)),
                     $sliderEl = this.$.sliderBar.$el,
-                    pos,
                     widthAttribute = "offsetWidth",
                     leftAttribute = "left",
                     rightAttribute = "right";
@@ -258,16 +257,17 @@ define(["js/ui/View", 'js/data/Collection', 'js/core/List'], function (View) {
                     leftAttribute = "bottom";
                     rightAttribute = "top";
                 }
-                var offsetWidth = this.$el[widthAttribute];
-                pos = offsetWidth * percentage;
-                handle.$el.style[leftAttribute] = (pos - handle.$el[widthAttribute] * 0.5) + "px";
+
+
+                var rescaledPercentage = percentage * 100;
+                handle.$el.style[leftAttribute] = "calc(" + rescaledPercentage + "% - " + (handle.$el[widthAttribute] * 0.5) + "px)";
                 if (handle === this.$.mainHandle) {
-                    $sliderEl.style[rightAttribute] = (offsetWidth - pos) + "px";
+                    $sliderEl.style[rightAttribute] = rescaledPercentage + "%";
                     if (!this.$.range) {
-                        $sliderEl.style[leftAttribute] = "0px";
+                        $sliderEl.style[leftAttribute] = "0%";
                     }
                 } else {
-                    $sliderEl.style[leftAttribute] = pos + "px";
+                    $sliderEl.style[leftAttribute] = rescaledPercentage + "%";
                 }
 
             },
