@@ -262,7 +262,7 @@ define(["js/ui/View", 'js/data/Collection', 'js/core/List'], function (View) {
                 var rescaledPercentage = percentage * 100;
                 handle.$el.style[leftAttribute] = "calc(" + rescaledPercentage + "% - " + (handle.$el[widthAttribute] * 0.5) + "px)";
                 if (handle === this.$.mainHandle) {
-                    $sliderEl.style[rightAttribute] = rescaledPercentage + "%";
+                    $sliderEl.style[rightAttribute] = (100 - rescaledPercentage) + "%";
                     if (!this.$.range) {
                         $sliderEl.style[leftAttribute] = "0%";
                     }
