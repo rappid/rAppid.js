@@ -101,7 +101,6 @@ define(["js/ui/View", "js/core/List"], function (View, List) {
                 case KEY_RIGHT:
                 case KEY_DOWN:
                     return;
-                    return;
             }
 
             this.set('selectedSuggestion', null);
