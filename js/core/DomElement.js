@@ -905,7 +905,7 @@ define(["require", "js/core/EventDispatcher", "js/core/Component", "js/core/Cont
 
             _mapDOMEventType: function (type) {
                 if (type.indexOf("pointer") === 0) {
-                    if (this.$stage.$window.PointerEvent) {
+                    if (this.$stage.$browser.isIE && this.$stage.$window.PointerEvent) {
                         return type === "pointer" ? "click" : type;
                     } else if (this.$stage.$browser.msPointerEnabled) {
                         return pointerToMSPointerMap[type] || type;
