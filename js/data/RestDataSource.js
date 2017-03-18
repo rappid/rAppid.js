@@ -644,7 +644,10 @@ define(["js/data/DataSource", "js/data/Model", "underscore", "flow", "JSON", "js
                                 url: url,
                                 queryParameter: params,
                                 model: model,
-                                options: options
+                                options: options,
+                                data: payload,
+                                method: method,
+                                action: action
                             };
 
                             if (action === DataSource.ACTION.CREATE && model.resultType && xhr.status === 200) {
