@@ -620,6 +620,7 @@ if (typeof requirejs !== "undefined") {
     rAppid.defaultRewriteMap = defaultRewriteMap;
     rAppid.ApplicationContext = ApplicationContext;
     rAppid.Rewrite = Rewrite;
+    rAppid.ajaxWrapper = rAppidXhr;
 
     exports.rAppid = rAppid;
 
