@@ -57,7 +57,7 @@ define(["require", "js/core/Component", "underscore", "flow"], function (require
                 return;
             }
 
-            require(['json!' + self.$.path + '/' + self.$.locale], function (translations) {
+            require(['json!' + self.$.path + '/' + locale], function (translations) {
                 self.set({
                     translations: translations
                 });
