@@ -397,7 +397,9 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
             _scrollToIndex: function (index) {
                 this.$scrollToIndexPos = this.getPointFromIndex(index);
                 var scrollTop = this.$scrollToIndexPos.y;
+
                 if (this.isRendered()) {
+                    var iFixeAFirefoxBug = this.$el.scrollTop;
                     this.$el.scrollTop = scrollTop;
                 }
                 this.set('scrollTop', scrollTop);
