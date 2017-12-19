@@ -80,7 +80,56 @@ define(['xaml!js/svg/SvgDescriptor', "js/svg/SvgElement", 'js/core/Base'], funct
             this.callBase();
         },
 
+        callFunctions: function(listOfFunctions) {
+            if (!listOfFunctions) {
+                return;
+            }
+            for(var i = 0; i< listOfFunctions.length; i++) {
+                listOfFunctions[i]();
+            }
+        },
+
         loadExternalFont: function (fontFamily, src, callback) {
+            if (FontFace) {
+                this.cssLoadExternalFont(fontFamily, src, callback);
+            } else {
+                this._loadExternalFont(fontFamily, src, callback);
+            }
+        },
+
+        cssLoadExternalFont: function (fontFamily, src, callback) {
+            var font = GlobalFontCache[fontFamily],
+                self = this;
+
+            if (font && font.loaded) {
+                callback && callback();
+                return;
+            }
+
+            if (font && !font.loaded) {
+                callback && font.callbacks.push(callback);
+                return;
+            }
+
+            var fontFace = new FontFace(fontFamily, "url('" + src + "')");
+            font = GlobalFontCache[fontFamily] = {
+                loaded: false,
+                callbacks: [callback],
+                fontFace: fontFace
+            };
+
+            document.fonts.add(fontFace);
+            fontFace.loaded.then(function () {
+                font.loaded = true;
+                self.callFunctions(font.callbacks);
+            }, function () {
+                self.callFunctions(font.callbacks);
+            });
+
+            fontFace.load();
+        },
+
+        _loadExternalFont: function (fontFamily, src, callback) {
             var svg = this.$svg;
 
             var font = GlobalFontCache[fontFamily];
