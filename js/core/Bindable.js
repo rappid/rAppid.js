@@ -103,6 +103,7 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
                     this.$ = {};
                     this.$injected = {};
                     this.$bindingAttributes = {};
+                    this.$excludeBindingInitialization = this._generateDefaultsChain("$excludeBindingInitialization") || {};
 
                     this.$invalidatedProperties = {};
                     this.$invalidated = false;
@@ -114,22 +115,34 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
                     var defaultAttributes = this._defaultAttributes(),
                         defaultAttribute;
 
-                    var nonBindings = {};
+                    var nonBindings = {},
+                        k;
 
                     if (!evaluateBindingsInCtor) {
-                        for (var k in attributes) {
+                        for (k in attributes) {
                             if (attributes.hasOwnProperty(k)) {
                                 if (_.isString(attributes[k])) {
-                                    bindingDefinitions = bindingCreator.parse(attributes[k]);
 
-                                    if (bindingCreator.containsBindingDefinition(bindingDefinitions)) {
-                                        // we found an attribute containing a binding definition
+                                    if (this.$excludeBindingInitialization.hasOwnProperty(k)) {
                                         nonBindings[k] = true;
+                                    } else {
+                                        bindingDefinitions = bindingCreator.parse(attributes[k]);
+
+                                        if (bindingCreator.containsBindingDefinition(bindingDefinitions)) {
+                                            // we found an attribute containing a binding definition
+                                            nonBindings[k] = true;
+                                        }
                                     }
+
                                 }
                             }
                         }
-
+                    } else {
+                        for (k in this.$excludeBindingInitialization) {
+                            if (this.$excludeBindingInitialization.hasOwnProperty(k)) {
+                                nonBindings[k] = true;
+                            }
+                        }
                     }
 
                     for (var key in defaultAttributes) {
@@ -398,9 +411,11 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
 
                     // Resolve bindings and events
                     for (key in bindingAttributes) {
+
                         if (bindingAttributes.hasOwnProperty(key)) {
+
                             bindingAttribute = bindingAttributes[key];
-                            if (bindingAttribute) {
+                            if (bindingAttribute && !this.$excludeBindingInitialization.hasOwnProperty(key)) {
                                 value = bindingAttribute.value;
                                 bindingDefinitions = bindingAttribute.bindingDefinitions;
                                 $[key] = bindingCreator.evaluate(value, this, key, bindingDefinitions);
@@ -408,6 +423,8 @@ define(["js/core/EventDispatcher", "js/lib/parser", "js/core/Binding", "undersco
                                 value = $[key];
                                 bindingDefinitions = null;
                             }
+
+
                         }
                     }
 
