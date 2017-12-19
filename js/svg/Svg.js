@@ -114,10 +114,7 @@ define(['xaml!js/svg/SvgDescriptor', "js/svg/SvgElement", 'js/core/Base'], funct
                      http://paulirish.com/2009/bulletproof-font-face-implementation-syntax/ */
                     style.innerHTML = "@font-face{\n" +
                         "font-family: '" + fontFamily + "';" +
-//                        "src: url('" + src.replace(".woff",".eot") + "'); " +
-//                        "src: url('" + src +);" +
                         "src: " + srcAttribute +
-//                        "url('" + fontPath + ".ttf') format('truetype');" +
                         "}\n";
 
                     head.appendChild(style);
@@ -134,17 +131,11 @@ define(['xaml!js/svg/SvgDescriptor', "js/svg/SvgElement", 'js/core/Base'], funct
                 if (!unknownFontBox) {
                     var unknownFontStyle = document.createElement("style");
 
-                    unknownFontStyle.innerHTML = "@font-face{\n" +
-                        "font-family: '__unknown__';" +
-//                        "src: url('" + src.replace(".woff",".eot") + "'); " +
-//                        "src: url('" + src +);" +
-                        "src: url('')" +
-//                        "url('" + fontPath + ".ttf') format('truetype');" +
-                        "}\n";
+                    unknownFontStyle.innerHTML = "@font-face{\nfont-family: 'Verdana'}\n";
 
                     head.appendChild(unknownFontStyle);
 
-                    text.setAttribute("font-family", "__unknown__");
+                    text.setAttribute("font-family", "Verdana");
                     try {
                         unknownFontBox = text.getBBox();
                     } catch (e) {
