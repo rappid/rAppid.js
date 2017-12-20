@@ -103,7 +103,6 @@ define(['xaml!js/svg/SvgDescriptor', "js/svg/SvgElement", 'js/core/Base'], funct
 
             if (!window.FontFace) {
                 throw new Error('css font loading attempted without FontFace being available');
-                return;
             }
             
             if (font && font.loaded) {
