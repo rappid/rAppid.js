@@ -90,7 +90,7 @@ define(['xaml!js/svg/SvgDescriptor', "js/svg/SvgElement", 'js/core/Base'], funct
         },
 
         loadExternalFont: function (fontFamily, src, callback) {
-            if (FontFace) {
+            if (window.FontFace) {// FontFace is not available in ie11/Edge/OperaMini
                 this.cssLoadExternalFont(fontFamily, src, callback);
             } else {
                 this._loadExternalFont(fontFamily, src, callback);
@@ -101,6 +101,10 @@ define(['xaml!js/svg/SvgDescriptor', "js/svg/SvgElement", 'js/core/Base'], funct
             var font = GlobalFontCache[fontFamily],
                 self = this;
 
+            if (!window.FontFace) {
+                throw new Error('css font loading attempted without FontFace being available');
+            }
+            
             if (font && font.loaded) {
                 callback && callback();
                 return;
