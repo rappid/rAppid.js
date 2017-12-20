@@ -74,9 +74,9 @@ define(["js/html/HtmlElement", "js/core/Bus", "js/core/WindowManager", "js/core/
         _createBrowserObject: function () {
 
             function getVendorPrefix() {
+                if ('msTransition' in s || 'msScrollTransition') return "MS";
                 if ('WebkitTransition' in s) return "webkit";
                 if ('MozTransition' in s) return "Moz";
-                if ('msTransition' in s) return "MS";
                 if ('OTransition' in s) return "o";
                 return "";
             }
@@ -133,15 +133,29 @@ define(["js/html/HtmlElement", "js/core/Bus", "js/core/WindowManager", "js/core/
                     }
 
                     browser.os = os || "";
+                    browser.isFF = false;
+                    browser.isChrome = false;
+                    browser.isSafari = false;
 
-                    var browserName = /(firefox)|(chrome)|(safari)/i.exec(userAgent);
+                    debugger;
+                    browserName = /edge\/(\d+)/i.exec(userAgent);
                     if (browserName) {
-                        browser.isFF = !!browserName[1];
-                        browser.isChrome = !!browserName[2];
-                        browser.isSafari = !!browserName[3];
-                        browserName = browserName[0].toLowerCase();
+                        browser.version = browserName[1];
+                        browserName = "edge edge" + browserName[1];
                         browser.name = browserName;
+                    } else {
+                        var browserName = /(firefox)|(chrome)|(safari)/i.exec(userAgent);
+                        if (browserName) {
+                            browser.isFF = !!browserName[1];
+                            browser.isChrome = !!browserName[2];
+                            browser.isSafari = !!browserName[3];
+                            browserName = browserName[0].toLowerCase();
+                            browser.name = browserName;
+                        }
                     }
+
+                    browser.isEdge = !!browserName;
+
 
                     browserName = /msie\s(\d+)/i.exec(userAgent);
                     if (browserName) {
@@ -155,10 +169,12 @@ define(["js/html/HtmlElement", "js/core/Bus", "js/core/WindowManager", "js/core/
                         browser.isIE = false;
                     }
 
+
+
                     browser.name = browser.name || "";
 
                     var version = /(?:opera|chrome|safari|firefox|msie|trident)\/?\s*([\d]+)/i.exec(userAgent);
-                    if (version && version [1]) {
+                    if (!browser.version && version && version [1]) {
                         browser.version = version[1];
                     }
                 }
