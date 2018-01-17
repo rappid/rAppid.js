@@ -137,7 +137,6 @@ define(["js/html/HtmlElement", "js/core/Bus", "js/core/WindowManager", "js/core/
                     browser.isChrome = false;
                     browser.isSafari = false;
 
-                    debugger;
                     browserName = /edge\/(\d+)/i.exec(userAgent);
                     if (browserName) {
                         browser.version = browserName[1];
