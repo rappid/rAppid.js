@@ -103,7 +103,8 @@ define(["js/html/HtmlElement", "underscore"], function (HtmlElement, _) {
                     return null;
                 }
 
-                if (this.$.step == "any") {
+                var step = this.$.step;
+                if (step === "any" || (step !== undefined && step !== "" && parseFloat(step) !== parseInt(step))) {
                     value = parseFloat(value);
                 } else {
                     value = parseInt(value, 10);
