@@ -224,68 +224,72 @@ define([], function () {
 
                     if (!err && xml) {
 
-                        cleanUpDescriptor(xml.documentElement);
+                        try {
+                            cleanUpDescriptor(xml.documentElement);
 
-                        // require all dependencies
-                        var dependencies = findDependencies(xml.documentElement,
-                            config.namespaceMap, config.xamlClasses, config.rewriteMap, "xaml!" + name);
+                            // require all dependencies
+                            var dependencies = findDependencies(xml.documentElement,
+                                config.namespaceMap, config.xamlClasses, config.rewriteMap, "xaml!" + name);
 
 
-                        if (config.isBuild) {
-                            dependencies.splice(1, 0, "js/core/Element");
+                            if (config.isBuild) {
+                                dependencies.splice(1, 0, "js/core/Element");
 
-                            var text = "define(%dependencies%, %function%)";
-                            var fn = "function(baseClass, ELEMENT %parameter%){%GLOBALS% return baseClass.inherit({ %classDefinition% _$descriptor: ELEMENT.xmlStringToDom(%descriptor%)})}";
+                                var text = "define(%dependencies%, %function%)";
+                                var fn = "function(baseClass, ELEMENT %parameter%){%GLOBALS% return baseClass.inherit({ %classDefinition% _$descriptor: ELEMENT.xmlStringToDom(%descriptor%)})}";
 
-                            var depsEscaped = [];
-                            for (var i = 0; i < dependencies.length; i++) {
-                                depsEscaped.push("'" + dependencies[i] + "'");
-                            }
+                                var depsEscaped = [];
+                                for (var i = 0; i < dependencies.length; i++) {
+                                    depsEscaped.push("'" + dependencies[i] + "'");
+                                }
 
-                            text = text.replace('%dependencies%', '[' + depsEscaped.join(',') + ']');
+                                text = text.replace('%dependencies%', '[' + depsEscaped.join(',') + ']');
 
-                            var xmlContent = xml.documentElement.toString()
-                                .replace(/\\/g, "\\\\")
-                                .replace(/(\r\n|\n|\r)/gm, "\\n")
-                                .replace(/'/g, "\\'");
+                                var xmlContent = xml.documentElement.toString()
+                                    .replace(/\\/g, "\\\\")
+                                    .replace(/(\r\n|\n|\r)/gm, "\\n")
+                                    .replace(/'/g, "\\'");
 
-                            if (config.removeSpaces === true) {
-                                xmlContent = xmlContent.replace(/\s+/g, " ").replace(/\\[nr]/g, "");
-                            }
+                                if (config.removeSpaces === true) {
+                                    xmlContent = xmlContent.replace(/\s+/g, " ").replace(/\\[nr]/g, "");
+                                }
 
-                            var parameter = "",
-                                classDefinition = "",
-                                globals = "";
+                                var parameter = "",
+                                    classDefinition = "",
+                                    globals = "";
 
-                            fn = fn.replace('%parameter%', parameter);
-                            fn = fn.replace('%classDefinition%', classDefinition);
-                            fn = fn.replace('%GLOBALS%', globals);
-                            fn = fn.replace('%descriptor%', "'" + xmlContent + "'");
+                                fn = fn.replace('%parameter%', parameter);
+                                fn = fn.replace('%classDefinition%', classDefinition);
+                                fn = fn.replace('%GLOBALS%', globals);
+                                fn = fn.replace('%descriptor%', "'" + xmlContent + "'");
 
-                            text = text.replace('%function%', fn);
-                            load.fromText(name, "(function () {" + text + "}).call(this);");
+                                text = text.replace('%function%', fn);
+                                load.fromText(name, "(function () {" + text + "}).call(this);");
 
-                            buildMap[name] = text;
+                                buildMap[name] = text;
 
-                            parentRequire([name], function (value) {
-                                parentRequire(dependencies, function () {
-                                    load(value);
+                                parentRequire([name], function(value) {
+                                    parentRequire(dependencies, function() {
+                                        load(value);
+                                    });
                                 });
-                            });
-                        } else {
-                            // first item should be the dependency of the document element
-                            parentRequire(dependencies, function (value) {
+                            } else {
+                                // first item should be the dependency of the document element
+                                parentRequire(dependencies, function(value) {
 
-                                // dependencies are loaded
-                                var baseClass = arguments[0];
-                                var xamlFactory = baseClass.inherit(name.replace(/\//g, "."), {});
+                                    // dependencies are loaded
+                                    var baseClass = arguments[0];
+                                    var xamlFactory = baseClass.inherit(name.replace(/\//g, "."), {});
 
-                                xamlFactory.prototype._$descriptor = xml.documentElement;
+                                    xamlFactory.prototype._$descriptor = xml.documentElement;
 
-                                load(xamlFactory);
-                            }, function (err) {
-                                load.error(err);
-                            });
+                                    load(xamlFactory);
+                                }, function(err) {
+                                    load.error(err);
+                                });
+                            }
+                        } catch (e) {
+                            load.error(e);
                         }
                     } else {
                         load.error(new Error("XML " + url + " not found." + err));
