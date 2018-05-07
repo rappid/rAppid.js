@@ -336,6 +336,10 @@ if (typeof requirejs !== "undefined") {
             options && options.xhrCreated instanceof Function && options.xhrCreated(xhr);
             xhr.open(s.type, s.url, s.async);
 
+            if(options.withCredentials === true) {
+                xhr.withCredentials = true;
+            }
+
             if (s.hasContent && s.contentType !== false) {
                 xhr.setRequestHeader("Content-Type", s.contentType);
                 if (typeof window === "undefined") {

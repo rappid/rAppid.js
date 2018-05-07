@@ -95,7 +95,14 @@ define(["js/data/DataSource", "js/data/Model", "underscore", "flow", "JSON", "js
              * a suffix like `.json` to add to each request
              * @type String
              */
-            suffix: null
+            suffix: null,
+
+            /***
+             * If true credentials are sent with the CORS requests
+             * @type Boolean
+             */
+            withCredentials: false
+
         },
 
         ctor: function () {
@@ -307,11 +314,13 @@ define(["js/data/DataSource", "js/data/Model", "underscore", "flow", "JSON", "js
             flow()
                 .seq("xhr", function (cb) {
                     _.defaults(headers, (options || {}).headers, self.getHeaderParameters(RestDataSource.METHOD.GET, model));
+                    _.defaults(options, {withCredentials: self.$.withCredentials});
                     // send request
                     self.$stage.$applicationContext.ajax(url, {
                         type: RestDataSource.METHOD.GET,
                         queryParameter: params,
-                        headers: headers
+                        headers: headers,
+                        withCredentials: options.withCredentials
                     }, cb);
                 })
                 .seq(function (cb) {
@@ -620,6 +629,8 @@ define(["js/data/DataSource", "js/data/Model", "underscore", "flow", "JSON", "js
                         self.getQueryParameters(method, model));
                     _.defaults(headers, (options || {}).headers, self.getHeaderParameters(method, model));
 
+                    _.defaults(options, {withCredentials: self.$.withCredentials});
+
                     method = self._getHttpMethod(method);
 
                     var data = processor.compose(model, action, options);
@@ -635,7 +646,8 @@ define(["js/data/DataSource", "js/data/Model", "underscore", "flow", "JSON", "js
                         headers: headers,
                         xhrCreated: options.xhrCreated,
                         xhrBeforeSend: options.xhrBeforeSend,
-                        contentType: formatProcessor.getContentType()
+                        contentType: formatProcessor.getContentType(),
+                        withCredentials: options.withCredentials
                     }, function (err, xhr) {
 
                         if (!err) {
@@ -729,11 +741,14 @@ define(["js/data/DataSource", "js/data/Model", "underscore", "flow", "JSON", "js
             var url = this._buildUriForResource(rootCollection);
             var self = this;
 
+            _.defaults(options, {withCredentials: self.$.withCredentials});
+
             // send request
             this.$stage.$applicationContext.ajax(url, {
                 type: RestDataSource.METHOD.GET,
                 queryParameter: params,
-                headers: headers
+                headers: headers,
+                withCredentials: options.withCredentials
             }, function (err, xhr) {
                 if (!err && (xhr.status == 200 || xhr.status == 304)) {
                     // find formatProcessor that matches the content-type
