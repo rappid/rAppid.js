@@ -274,7 +274,7 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
                         self._startTracking(e.touches[0].clientX, e.touches[0].clientY);
                         e.preventDefault();
                     }
-                });
+                }, {passive: false});
                 this.bindDomEvent('touchmove', function (e) {
                     if (e.touches.length == 1) {
                         if (self.$isMouseDown) {
@@ -285,7 +285,7 @@ define(['js/ui/View', 'js/core/Bindable', 'js/core/List', 'js/data/Collection', 
                             self.$mousePos.y = e.touches[0].clientY;
                         }
                     }
-                });
+                }, {passive: false});
                 this.bindDomEvent('touchend', function (e) {
                     self._stopTracking();
                 });
