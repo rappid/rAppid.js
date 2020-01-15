@@ -2,7 +2,7 @@
 <ui:MenuButtonClass xmlns="http://www.w3.org/1999/xhtml" xmlns:js="js.core" xmlns:ui="js.ui">
     <js:Template name="layout">
         <ui:Button class="dropdown-toggle" componentClass="{buttonClass}" iconLabel="{iconLabel}" labelClass="{labelClass}"
-                tabindex="{tabIndex}" title="{title}">
+                tabindex="{tabIndex}" title="{title}" aria-label="{ariaLabel}">
             <js:Template name="layout">
                 <ui:PlaceHolder name="icon"/><span class="{labelClass}">{label} </span>
                 <span class="caret"/>
