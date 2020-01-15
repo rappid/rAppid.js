@@ -328,7 +328,7 @@ if (typeof requirejs !== "undefined") {
 
             if (s.queryParameter && underscore.keys(s.queryParameter).length > 0) {
                 // append query parameter to url
-                s.url += /\?/.test(s.url) ? "&" : "?" + this.createQueryString(s.queryParameter);
+                s.url += (/\?/.test(s.url) ? "&" : "?") + this.createQueryString(s.queryParameter);
             }
 
             // create new xhr
