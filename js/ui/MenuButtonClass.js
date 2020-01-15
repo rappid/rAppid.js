@@ -58,7 +58,9 @@ define(["js/ui/View", "js/core/Content", "js/ui/Button", "underscore"], function
 
             tabIndex: null,
 
-            title: null
+            title: null,
+
+            ariaLabel: "{title}"
         },
         $defaultContentName: 'menu',
 
