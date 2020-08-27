@@ -23,12 +23,13 @@ var optimizeConfig = {
     baseUrl: './public',
     modules: [],
     dir: "public-build",
-    optimize: 'uglify',
+    optimize: 'uglify2',
     optimizeCss: "standard",
     nodeRequire: require,
     findNestedDependencies: false,
     optimizeAllPluginResources: true,
-    preserveLicenseComments: true,
+    preserveLicenseComments: false,
+    generateSourceMaps: true,
     //If using UglifyJS for script optimization, these config options can be
     //used to pass configuration values to UglifyJS.
     //See https://github.com/mishoo/UglifyJS for the possible values.
