@@ -52,7 +52,7 @@ define(['js/ui/VirtualItemsView'], function (VirtualItemsView) {
              *
              * @type Number
              */
-            aspectRatio: 1,
+            itemAspectRatio: 1,
 
             horizontalGap: 10,
             /**
@@ -98,7 +98,7 @@ define(['js/ui/VirtualItemsView'], function (VirtualItemsView) {
 
         _commitChangedAttributes: function ($) {
 
-            if (this._hasSome($, ["itemWidth", "itemHeight", "aspectRation", "width", "height", "verticalGap", "horizontalGap"])) {
+            if (this._hasSome($, ["itemWidth", "itemHeight", "itemAspectRatio", "width", "height", "verticalGap", "horizontalGap"])) {
 
                 var cols = this.$.cols,
                     rows = this.$.rows,
@@ -110,7 +110,7 @@ define(['js/ui/VirtualItemsView'], function (VirtualItemsView) {
                     leftPadding = this.$.leftPadding,
                     itemWidth = this.$.itemWidth,
                     itemHeight = this.$.itemHeight,
-                    aspectRatio = this.$.aspectRatio,
+                    itemAspectRatio = this.$.itemAspectRatio,
                     scrollBarSize = this.$._scrollBarSize || 0,
                     setValues = true;
 
@@ -132,7 +132,7 @@ define(['js/ui/VirtualItemsView'], function (VirtualItemsView) {
                     }
 
                     if (itemHeight === AUTO) {
-                        itemHeight = itemWidth * aspectRatio;
+                        itemHeight = itemWidth * itemAspectRatio;
                     }
                 } else if (height != null && this.$.scrollDirection === VirtualItemsView.SCROLL_DIRECTION_HORIZONTAL) {
                     if (rows === AUTO) {
@@ -150,7 +150,7 @@ define(['js/ui/VirtualItemsView'], function (VirtualItemsView) {
                     }
 
                     if (itemWidth === AUTO) {
-                        itemWidth = itemHeight * aspectRatio;
+                        itemWidth = itemHeight * itemAspectRatio;
                     }
                 } else {
                     setValues = false;
