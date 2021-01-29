@@ -44,7 +44,8 @@
     "colors": "*",
     "xmlhttprequest": "latest",
     "xmldom": "0.1.15",
-    "esprima": "latest"
+    "esprima": "latest",
+    "lodash": "~2.4.1"
   },
   "optionalDependencies": {},
   "devDependencies": {

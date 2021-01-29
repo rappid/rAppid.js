@@ -44,7 +44,7 @@ module.exports = function (grunt) {
         this.requires("connect");
 
         var WebTestRunner = require("./").WebTestRunner,
-            _ = require("underscore"),
+            _ = require("lodash"),
             done = this.async(),
             grid = grunt.config.get("seleniumGrid") || {
                 host: "127.0.0.1",
