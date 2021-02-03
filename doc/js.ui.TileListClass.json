@@ -3646,8 +3646,8 @@
                 "Number"
             ]
         },
-        "aspectRatio": {
-            "name": "aspectRatio",
+        "itemAspectRatio": {
+            "name": "itemAspectRatio",
             "defaultType": "value",
             "visibility": "public",
             "value": 1,

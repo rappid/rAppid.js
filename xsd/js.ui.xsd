@@ -1494,7 +1494,7 @@ Possible values are "horizontal" and "vertical"
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="aspectRatio" initializeInvisibleChildren="false" default="1">
+                <attribute name="itemAspectRatio" initializeInvisibleChildren="false" default="1">
                     <annotation initializeInvisibleChildren="false">
                         <documentation initializeInvisibleChildren="false">
                         calculates itemHeight, itemWidth if set to AUTO depending on the scrollDirection
@@ -1571,7 +1571,7 @@ Possible values are "horizontal" and "vertical"
                     </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="aspectRatio" initializeInvisibleChildren="false" default="1">
+                <attribute name="itemAspectRatio" initializeInvisibleChildren="false" default="1">
                     <annotation initializeInvisibleChildren="false">
                         <documentation initializeInvisibleChildren="false">
                         calculates itemHeight, itemWidth if set to AUTO depending on the scrollDirection
